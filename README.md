@@ -25,6 +25,7 @@ Nothing in this tree has been run on a watch. Status on every manifest is `deriv
 12. `twatch-lora` provides `radio.lora` probe and register read
 13. `twatch-speaker` provides `audio.output` on the MAX98357A pads
 14. `twatch-mic` provides `audio.input` on the SPM1423 pads
+15. `twatch-ir` provides `ir.transmit` on the IR12-21C
 
 ## Charge current
 
@@ -40,11 +41,15 @@ The 470 mAh cell is damaged by a high charge setting. LilyGO says keep it below 
 
 ESP32-S3 PDM conversion exists only on I2S0, and the I2S FIFO has no CPU port. These ELFs bit-bang the pads instead of taking a GDMA channel. The requested rate is the PCM contract. The bit clock is the GPIO loop, not a PLL, so pitch and capture rate will drift. Neither ELF has been heard or captured on a watch.
 
+## Infrared
+
+The onboard part is an Everlight IR12-21C transmitter on GPIO2, the same pin LilyGO's IRsend example uses. The published pin map has no receiver, so there is no decode capability. `send_nec` writes an 8-bit address and command with their complements. `send_nec32` writes a 32-bit LSB-first frame. `send_raw` takes mark/space/mark microseconds at 20-56 kHz. Idle is pin low. The carrier is a busy loop, not the RMT peripheral, and has not been received by a target.
+
 ## What is not a driver yet
 
 - LoRa packet TX/RX. `twatch-lora` resets the radio, waits on BUSY, and can read an SX126x status or register. SX1280 boards share the pads; a failed SX126x probe is a failure, not a guessed radio.
 - POWER key as navigation. It is the AXP2101 PWRON pin (2 s on / 6 s off) and the PMU already owns address `0x34`.
-- Infrared GPIO2, RTC interrupt GPIO17, IMU interrupt GPIO14, LoRa IRQ GPIO9. Left unclaimed.
+- RTC interrupt GPIO17, IMU interrupt GPIO14, LoRa IRQ GPIO9. Left unclaimed.
 
 ## Build
 

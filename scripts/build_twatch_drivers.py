@@ -21,6 +21,7 @@ drivers = [
     ("twatch_lora", "drivers/twatch_lora/driver.c"),
     ("twatch_speaker", "drivers/twatch_speaker/driver.c"),
     ("twatch_mic", "drivers/twatch_mic/driver.c"),
+    ("twatch_ir", "drivers/twatch_ir/driver.c"),
 ]
 for name, src in drivers:
     out = root / "dist" / name

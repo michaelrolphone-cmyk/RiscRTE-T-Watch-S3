@@ -78,6 +78,21 @@ typedef struct {
     bool (*level)(void *context, uint16_t *rms_out);
     bool (*close)(void *context);
 } twatch_audio_in_api_v1;
+
+#define TWATCH_IR_API_V1 1u
+#define TWATCH_IR_CAPABILITY "ir.transmit"
+#define TWATCH_IR_MAX_RAW 128u
+typedef struct {
+    uint32_t api_version, struct_size;
+    void *context;
+    /* Standard NEC: 8-bit address, 8-bit command, both sent with complements. */
+    bool (*send_nec)(void *context, uint8_t address, uint8_t command);
+    /* 32-bit NEC frame, LSB first, as used by LilyGO IRsend.sendNEC. */
+    bool (*send_nec32)(void *context, uint32_t frame);
+    /* Even entries are marks, odd entries are spaces, microseconds. */
+    bool (*send_raw)(void *context, const uint16_t *microseconds, size_t count, uint16_t carrier_hz);
+    bool (*idle)(void *context);
+} twatch_ir_api_v1;
 #ifdef __cplusplus
 }
 #endif
