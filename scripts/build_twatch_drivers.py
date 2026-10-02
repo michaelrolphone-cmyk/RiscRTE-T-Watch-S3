@@ -19,7 +19,8 @@ drivers = [
     ("twatch_haptic", "drivers/twatch_haptic/driver.c"),
     ("twatch_button", "drivers/twatch_button/driver.c"),
     ("twatch_lora", "drivers/twatch_lora/driver.c"),
-    ("twatch_audio", "drivers/twatch_audio/driver.c"),
+    ("twatch_speaker", "drivers/twatch_speaker/driver.c"),
+    ("twatch_mic", "drivers/twatch_mic/driver.c"),
 ]
 for name, src in drivers:
     out = root / "dist" / name

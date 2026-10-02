@@ -23,7 +23,8 @@ Nothing in this tree has been run on a watch. Status on every manifest is `deriv
 10. `twatch-haptic` provides `haptic.effect`
 11. `twatch-button` provides `input.navigation` from BOOT/GPIO0 only
 12. `twatch-lora` provides `radio.lora` probe and register read
-13. `twatch-audio` holds the MAX98357A pads low
+13. `twatch-speaker` provides `audio.output` on the MAX98357A pads
+14. `twatch-mic` provides `audio.input` on the SPM1423 pads
 
 ## Charge current
 
@@ -31,9 +32,16 @@ The 470 mAh cell is damaged by a high charge setting. LilyGO says keep it below 
 
 `board.battery` returns millivolts from the AXP2101 ADC. `percent` is 255. This ELF does not invent a state of charge.
 
+## Audio
+
+`twatch-speaker` owns GPIO48 BCLK, GPIO15 WCLK, and GPIO46 DIN. `open` accepts 8000, 16000, 22050, or 44100 Hz, mono or stereo s16le. Mono is copied to both slots. `set_gain` is software scale. `silence` clocks out zeros and then holds the pads low. There is no MAX98357A SD pin on this map, so hardware gain is not claimed.
+
+`twatch-mic` owns GPIO44 clock and GPIO47 data. `open` accepts 8000 or 16000 Hz. `read` returns s16le frames from a 64:1 PDM decimator. `level` is the mean absolute value of the last read, not a calibrated SPL.
+
+ESP32-S3 PDM conversion exists only on I2S0, and the I2S FIFO has no CPU port. These ELFs bit-bang the pads instead of taking a GDMA channel. The requested rate is the PCM contract. The bit clock is the GPIO loop, not a PLL, so pitch and capture rate will drift. Neither ELF has been heard or captured on a watch.
+
 ## What is not a driver yet
 
-- PCM playback and the PDM microphone. `twatch-audio` only forces silence.
 - LoRa packet TX/RX. `twatch-lora` resets the radio, waits on BUSY, and can read an SX126x status or register. SX1280 boards share the pads; a failed SX126x probe is a failure, not a guessed radio.
 - POWER key as navigation. It is the AXP2101 PWRON pin (2 s on / 6 s off) and the PMU already owns address `0x34`.
 - Infrared GPIO2, RTC interrupt GPIO17, IMU interrupt GPIO14, LoRa IRQ GPIO9. Left unclaimed.

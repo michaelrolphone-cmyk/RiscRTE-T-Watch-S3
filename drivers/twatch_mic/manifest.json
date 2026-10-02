@@ -1,6 +1,6 @@
 {
   "type": "driver",
-  "id": "twatch-audio",
+  "id": "twatch-mic",
   "version": "0.1.0",
   "driver_abi": 2,
   "architecture": "xtensa-esp32s3",
@@ -10,7 +10,7 @@
   ],
   "provides": [
     {
-      "capability": "audio.sink",
+      "capability": "audio.input",
       "api": 1
     }
   ],

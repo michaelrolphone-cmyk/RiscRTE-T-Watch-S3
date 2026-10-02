@@ -49,13 +49,35 @@ typedef struct {
     /* Packet TX/RX is intentionally absent. A false probe is not a radio. */
 } twatch_radio_api_v1;
 
-#define TWATCH_AUDIO_API_V1 1u
-#define TWATCH_AUDIO_CAPABILITY "audio.sink"
+/* Speaker and microphone are separate providers. ESP32-S3 PDM exists only on
+ * I2S0, and the S3 I2S FIFO has no CPU port, so these ELFs bit-bang the pads
+ * instead of taking a GDMA channel the firmware may already own. */
+#define TWATCH_AUDIO_OUT_API_V1 1u
+#define TWATCH_AUDIO_OUT_CAPABILITY "audio.output"
+#define TWATCH_AUDIO_IN_API_V1 1u
+#define TWATCH_AUDIO_IN_CAPABILITY "audio.input"
+#define TWATCH_AUDIO_MAX_FRAMES 256u
 typedef struct {
     uint32_t api_version, struct_size;
     void *context;
+    /* rate_hz is the requested PCM rate. channels is 1 or 2. Software bit-bang
+     * does not lock to a PLL; a false return means the rate was rejected. */
+    bool (*open)(void *context, uint32_t rate_hz, uint8_t channels);
+    /* frames are s16le. Mono is written to both MAX98357A slots. */
+    bool (*write)(void *context, const int16_t *pcm, size_t frames);
+    bool (*set_gain)(void *context, uint16_t level, uint16_t maximum);
     bool (*silence)(void *context);
-} twatch_audio_api_v1;
+    bool (*close)(void *context);
+} twatch_audio_out_api_v1;
+typedef struct {
+    uint32_t api_version, struct_size;
+    void *context;
+    bool (*open)(void *context, uint32_t rate_hz);
+    /* Decimated s16le PCM. *got is the number of frames written. */
+    bool (*read)(void *context, int16_t *pcm, size_t frames, size_t *got);
+    bool (*level)(void *context, uint16_t *rms_out);
+    bool (*close)(void *context);
+} twatch_audio_in_api_v1;
 #ifdef __cplusplus
 }
 #endif

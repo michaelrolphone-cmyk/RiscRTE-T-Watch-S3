@@ -14,7 +14,8 @@
     "twatch-haptic",
     "twatch-button",
     "twatch-lora",
-    "twatch-audio"
+    "twatch-speaker",
+    "twatch-mic"
   ],
   "note": "platform-clock-v1 comes from RiscRTE-Drivers. Do not load i2c-esp32s3-v2 on this board."
 }
