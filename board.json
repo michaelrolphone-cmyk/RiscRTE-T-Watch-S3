@@ -1,0 +1,12 @@
+{
+  "board": "lilygo-t-watch-s3",
+  "product": "LILYGO T-Watch-S3",
+  "asin": "B0GPQ3TGLM",
+  "mcu": "esp32-s3",
+  "flash_mb": 16,
+  "psram_mb": 8,
+  "panel": "240x240 ST7789",
+  "battery_mah": 470,
+  "charge_current_ma": 100,
+  "source": "LilyGoLib lilygo-t-watch-s3 pin map and arduino-esp32 lilygo_twatch_s3 variant"
+}

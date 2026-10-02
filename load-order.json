@@ -1,0 +1,20 @@
+{
+  "board": "lilygo-t-watch-s3",
+  "asin": "B0GPQ3TGLM",
+  "load_order": [
+    "platform-clock-v1",
+    "twatch-gpio",
+    "twatch-i2c",
+    "twatch-i2c-touch",
+    "twatch-pmu",
+    "twatch-panel",
+    "twatch-touch",
+    "twatch-imu",
+    "twatch-rtc",
+    "twatch-haptic",
+    "twatch-button",
+    "twatch-lora",
+    "twatch-audio"
+  ],
+  "note": "platform-clock-v1 comes from RiscRTE-Drivers. Do not load i2c-esp32s3-v2 on this board."
+}
