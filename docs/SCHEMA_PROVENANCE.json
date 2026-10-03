@@ -1,13 +1,15 @@
 {
   "schema": 1,
   "upstream_repository": "https://github.com/michaelrolphone-cmyk/Garden-Controller",
-  "upstream_commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
   "upstream_path": "riscrte/hardware/board-manifest-v1.schema.json",
-  "clarification": "optional-reset-v1",
-  "semantics": "For display.spi and touch.i2c: reset=-1 requires both delays=0; a present reset requires both delays in 1..500ms. Driver-specific admission may be stricter. No C layout change.",
-  "upstream_schema_sha256": "efcf4c3479f91717a5f87fa2997dd125b3ddbecf18a02b5dcb96e59b52bc9e47",
+  "clarification": "optional-reset-and-controller-namespace-v1",
+  "semantics": "For display.spi and touch.i2c: reset=-1 requires both delays=0; a present reset requires both delays in 1..500ms. Driver-specific admission may be stricter. No C layout change. Canonical Garden controller_namespace esp32.peripheral/riscrte.logical semantics; logical records require physical_controller. C layout remains unchanged.",
   "derived_schemas": {
-    "board-manifest-v1.schema.json": "7231c299692dee48c9bbed0095e92887905a5eca5a16fbfe28b2cecb4a7ec483",
-    "twatch-board-v1.schema.json": "da7ce0399ed2c37655b38561eeef5acfb0c0541e4679b263d04d13c2f7bafe70"
-  }
+    "board-manifest-v1.schema.json": "001ea82caae4277ce31a5d9f1064b97618193e84504f6b7f4f094c947c42f7cc",
+    "twatch-board-v1.schema.json": "8458307a3bceedc431f5f04df587dd7c870658ccba08af4ada355238eee59f0a"
+  },
+  "original_upstream_commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
+  "original_upstream_schema_sha256": "efcf4c3479f91717a5f87fa2997dd125b3ddbecf18a02b5dcb96e59b52bc9e47",
+  "upstream_commit": "7e30afc407c86f34364cbfa2035d6f7893fdea8c",
+  "upstream_schema_sha256": "001ea82caae4277ce31a5d9f1064b97618193e84504f6b7f4f094c947c42f7cc"
 }

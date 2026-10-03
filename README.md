@@ -106,7 +106,11 @@ The ZIP includes all eight `hardware/*.json` profiles, `board.json`,
 provenance, mapping/backfill/inventory docs, exact SDK headers and upstream pins,
 capability declarations, licenses, and all source driver manifests. The baseline
 descriptor declares mapping/API versions, CPU identity, and explicit controller
-namespaces; it has no implicit physical variant. `baseline-record.json` records
+namespaces; it has no implicit physical variant. Each SPI bus declares
+`controller_namespace: riscrte.logical` and `physical_controller`2/3 while
+retaining logical `controller`0/1 in the typed C config. I2C declares
+`esp32.peripheral` with matching physical0/1. The shared contract is pinned to
+Garden7e30afc; no board-name inference or implicit +2 translation is allowed. `baseline-record.json` records
 every member's SHA-256 and size, source commit, and an aggregate source digest.
 
 Increment the baseline's numeric version whenever any included file changes,

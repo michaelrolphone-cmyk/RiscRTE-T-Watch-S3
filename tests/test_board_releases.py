@@ -12,6 +12,8 @@ import jsonschema
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import board_baseline as board
 import publish_drivers as p
+import check_twatch_drivers as checker
+import test_contracts as fixtures
 
 
 class BoardReleases(unittest.TestCase):
@@ -82,6 +84,31 @@ class BoardReleases(unittest.TestCase):
                     with self.subTest(schema=schema_name, type=config_type, pin=pin, delay=delay):
                         config.update(reset=pin, reset_assert_ms=delay, reset_recovery_ms=delay)
                         self.assertEqual(validator.is_valid(profile), valid)
+
+    def test_controller_namespace_mapping_and_alias_ownership(self):
+        profile = json.loads((self.root / 'hardware/sx1262-433-bma423.json').read_text())
+        manifests = [json.loads(path.read_text()) for path in (self.root / 'drivers').glob('*/manifest.json')]
+        checker.check_board(profile, manifests)
+        spi = next(bus for bus in profile['buses'] if bus['instance_id'] == 103)
+        self.assertEqual((spi['controller_namespace'], spi['controller'], spi['physical_controller']),
+                         ('riscrte.logical', 0, 2))
+        entry = next(d for d in profile['devices'] if d['config_type'] == 'display.spi')
+        _, typed = fixtures.config(entry, {b['instance_id']: b for b in profile['buses']}, False)
+        self.assertEqual(typed['bus']['controller'], 0)
+        self.assertNotIn('physical_controller', typed['bus'])
+        for mutation in ('missing_namespace', 'missing_mapping', 'physical_mismatch', 'physical_alias'):
+            modified = copy.deepcopy(profile)
+            bus = next(b for b in modified['buses'] if b['instance_id'] == 103)
+            if mutation == 'missing_namespace':
+                del bus['controller_namespace']
+            elif mutation == 'missing_mapping':
+                del bus['physical_controller']
+            elif mutation == 'physical_mismatch':
+                bus['controller_namespace'] = 'esp32.peripheral'
+            else:
+                next(b for b in modified['buses'] if b['instance_id'] == 104)['physical_controller'] = 2
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                checker.check_board(modified, manifests)
 
     def test_bumped_version_is_new_candidate(self):
         self.assertEqual(p.candidates({board.IDENTITY: '1.0.1'}, [

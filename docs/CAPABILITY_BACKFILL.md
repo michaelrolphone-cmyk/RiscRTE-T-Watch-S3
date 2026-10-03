@@ -11,8 +11,10 @@ Canonical Reader snapshot:
 `T5S3-Reader@3d9bc4f373679f5ae8dd184db6a8d0afa5a40231`. Provider v2, stream suffix,
 clock, I2C, display, raw touch and navigation headers are byte-for-byte copies.
 Their hashes and exact source pins are in [SDK sources](../sdk/SOURCES.json).
-The hardware mapping header and raw GPIO/SPI/radio proposals are copied unchanged from
-Garden `1f7fb82efec08cf8751057d84e707f20be2fb7a5`. These are proposals with
+The raw GPIO/SPI/radio proposals are copied unchanged from Garden
+`1f7fb82efec08cf8751057d84e707f20be2fb7a5`; the shared hardware mapping header,
+contract and common schema are aligned to
+`7e30afc407c86f34364cbfa2035d6f7893fdea8c` (comments/schema only, same C layout). These are proposals with
 implemented consumers, **not existing Reader services**.
 
 `RiscGpioBankV1.h` and `RiscBatteryGaugeV1.h` were local watch contracts in the
@@ -164,8 +166,12 @@ PMU; it is not a fine-grained rail lease. The same existing PMU dependency model
 applies to display/touch/radio. A future generic rail contract requires an
 explicit versioned migration, preserving these edges until that migration.
 
-SPI bus `controller` indexes0/1 are logical board-port controllers, mapped by the
-ESP32-S3 port to SPI2/SPI3. Bind each external `spi.bus@1` context using the
+Each SPI bus declares `controller_namespace: riscrte.logical` and an explicit
+`physical_controller`: logical0 maps to physical2/SPI2 and logical1 to
+physical3/SPI3. I2C buses declare `esp32.peripheral`, retaining physical0/1.
+These are not ESP-IDF enum values; the port translates explicitly. No implicit
++2 arithmetic or board-name inference is permitted. Physical-controller keys
+must arbitrate aliases together. Bind each external `spi.bus@1` context using the
 materialized bus instance (103/104 in these profiles), not package order.
 Panel0.2.1 commands, initialization and pixel rows all use the configured bus
 frequency, admitted up to10MHz. No command path may silently exceed a slower

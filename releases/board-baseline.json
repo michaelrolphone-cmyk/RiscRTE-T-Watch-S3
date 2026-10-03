@@ -11,15 +11,13 @@
   "profile_schema": "docs/twatch-board-v1.schema.json",
   "cpu_compatible": "espressif,esp32-s3",
   "controller_namespaces": {
-    "spi": "logical-zero-based",
-    "i2c": "hardware-zero-based",
-    "i2s": "hardware-zero-based"
-  },
-  "spi_controller_mapping": {
-    "0": "SPI2",
-    "1": "SPI3"
+    "spi": "riscrte.logical",
+    "i2c": "esp32.peripheral",
+    "i2s": "esp32.peripheral"
   },
   "schema_clarifications": [
-    "optional-reset-v1"
-  ]
+    "optional-reset-and-controller-namespace-v1"
+  ],
+  "controller_mapping_field": "buses[].physical_controller",
+  "shared_contract_commit": "7e30afc407c86f34364cbfa2035d6f7893fdea8c"
 }

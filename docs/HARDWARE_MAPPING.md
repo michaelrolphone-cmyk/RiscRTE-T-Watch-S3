@@ -57,7 +57,7 @@ T-Watch's additive TWatchHardwareV1.h owns controller.i2c, peripheral.i2c,
 power.axp2101, audio.i2s and radio.lora v1 layouts. Its audio.i2s is distinct from
 the shared audio.i2s-port record; consumers must never cast between them. Its
 nested power.axp2101 device.struct_size must cover the whole selected config.
-The common JSON schema intentionally
+No changes to T-Watch files are made here. The Garden JSON schema intentionally
 validates the seven Garden config types; extension projects supply explicit
 schemas for their registered additional types using the same envelope/bus/binding
 rules. Unknown types are rejected until that schema and exact typed materializer
@@ -86,20 +86,40 @@ raw claim fails. A future Driver Manager may filter by compatibility metadata,
 but filtering never replaces runtime validation or authorization.
 
 
-## Optional reset clarification v1
+## Additive v1 clarification after Garden 1f7fb82
 
-For `display.spi` and `touch.i2c`, `reset=-1` means physically absent and both
-`reset_assert_ms` and `reset_recovery_ms` must be zero. A present reset requires
-both delays in1..500ms. A driver may admit a stricter subset (the current watch
-panel accepts only absent reset). Both local common and extension schemas now
-apply these same rules. This clarifies the existing C layout without changing
-its version or copied header bytes. The original Garden schema required reset;
-[SCHEMA_PROVENANCE.json](SCHEMA_PROVENANCE.json) records that upstream revision,
-original hash, and derived hashes so consumers do not mistake this clarification
-for an unchanged upstream copy. Matching upstream adoption is coordinated
-separately; there is no silent cast or second C layout.
+Provenance: Garden `1f7fb82efec08cf8751057d84e707f20be2fb7a5` is the original
+shared-envelope snapshot used by T-Watch. This follow-up reconciles its local
+absent-reset clarification with the canonical Garden schema. C field order,
+types, sizes, ABI/config versions and existing controller numbers are unchanged.
 
-The immutable baseline descriptor explicitly declares CPU-compatible identity and
-controller namespaces. For this CPU port, logical SPI0/1 map to SPI2/SPI3;
-I2C/I2S indexes are hardware-zero-based. Preserve `bus.instance_id` when
-normalizing controller numbers. Never infer a namespace from `board_id`.
+For display.spi and touch.i2c, reset=-1 explicitly means the physical device has
+no reset GPIO. Both reset_assert_ms and reset_recovery_ms MUST then be0. A present
+reset pin (0..48) requires BOTH delays in1..500ms. All three fields remain required;
+absence is never inferred from a missing field. Other pins/timings keep their
+existing constraints. This is schema expressiveness, not a promise of chip
+support: Garden GC9A01/GDEY075T7/CST816D drivers still reject absent reset before
+I/O; a driver that supports reset-less hardware must skip reset operations.
+
+Each bus's board-port metadata declares controller_namespace using these exact
+strings:
+
+- `esp32.peripheral`: controller is the legacy physical ESP32 peripheral number.
+  Existing Garden SPI2 and I2C0 values stay unchanged. Optional physical_controller
+  must equal controller if supplied; this is not the ESP-IDF spi_host_device_t
+  enum and must be translated explicitly by the ESP32 port.
+- `riscrte.logical`: controller is a port-local logical index. physical_controller
+  is required and explicitly maps it to an ESP32 physical peripheral number.
+  Thus logical SPI0 may map to physical2, and logical SPI1 to physical3, only when
+  those exact mappings are declared. No implied +2 arithmetic is permitted.
+
+The additive JSON fields do not alter risc_hw_bus_v1: controller retains the
+original number; the loader uses namespace/mapping to select the scoped bus-owner
+context and validate claims. Arbitration keys use physical controller and bus
+kind, so logical aliases cannot create independent owners of one peripheral.
+Garden's catalogs now declare the namespace explicitly. Older v1 catalogs without
+it remain structurally readable but are not activation-ready: an explicit
+owner-authorized port mapping is required; never infer a namespace from board_id,
+chip/package name or a coincidental numeric value. Garden's mapping validator
+rejects an omitted namespace. Future non-ESP32 physical namespaces require their
+own registered semantics; these strings do not authorize unrelated CPU ports.

@@ -79,6 +79,17 @@
             },
             "required": [],
             "additionalProperties": false
+          },
+          "controller_namespace": {
+            "enum": [
+              "esp32.peripheral",
+              "riscrte.logical"
+            ]
+          },
+          "physical_controller": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
           }
         },
         "required": [
@@ -89,7 +100,33 @@
           "mode",
           "pins"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "controller_namespace": {
+                    "const": "esp32.peripheral"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "controller_namespace": {
+                    "const": "riscrte.logical"
+                  }
+                },
+                "required": [
+                  "controller_namespace",
+                  "physical_controller"
+                ]
+              }
+            ]
+          }
+        ]
       },
       "maxItems": 8
     },

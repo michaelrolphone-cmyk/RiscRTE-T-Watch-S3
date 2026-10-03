@@ -16,7 +16,9 @@
         "sclk": -1,
         "mosi": -1,
         "miso": -1
-      }
+      },
+      "controller_namespace": "esp32.peripheral",
+      "physical_controller": 0
     },
     {
       "instance_id": 102,
@@ -30,7 +32,9 @@
         "sclk": -1,
         "mosi": -1,
         "miso": -1
-      }
+      },
+      "controller_namespace": "esp32.peripheral",
+      "physical_controller": 1
     },
     {
       "instance_id": 103,
@@ -44,7 +48,9 @@
         "miso": -1,
         "sda": -1,
         "scl": -1
-      }
+      },
+      "controller_namespace": "riscrte.logical",
+      "physical_controller": 2
     },
     {
       "instance_id": 104,
@@ -58,7 +64,9 @@
         "miso": 4,
         "sda": -1,
         "scl": -1
-      }
+      },
+      "controller_namespace": "riscrte.logical",
+      "physical_controller": 3
     }
   ],
   "devices": [

@@ -16,7 +16,11 @@ def check_board(b,manifests):
         if pin==-1:return
         assert pin not in pins,(pin,owner,pins.get(pin));pins[pin]=owner
     for bus in buses.values():
-        assert (bus['kind'],bus['controller']) not in controllers;controllers.add((bus['kind'],bus['controller']))
+        namespace=bus.get('controller_namespace');assert namespace in ('esp32.peripheral','riscrte.logical')
+        physical=bus.get('physical_controller',bus['controller']);assert namespace!='esp32.peripheral' or physical==bus['controller']
+        assert bus['kind']!='spi' or physical in (2,3)
+        assert bus['kind']!='i2c' or physical in (0,1)
+        assert (bus['kind'],physical) not in controllers;controllers.add((bus['kind'],physical))
         assert bus['mode']==0
         fields=('sda','scl') if bus['kind']=='i2c' else ('sclk','mosi','miso')
         for k in fields:
