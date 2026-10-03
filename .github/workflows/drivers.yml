@@ -1,7 +1,6 @@
 name: T-Watch driver contracts
 on:
   pull_request:
-    branches: [main, master]
 permissions:
   contents: read
 jobs:
@@ -33,6 +32,29 @@ jobs:
         run: python scripts/board_baseline.py
       - name: Physical manifests, negative mappings and package hashes
         run: python scripts/check_twatch_drivers.py
+      - name: Clock app behavior with UBSan
+        run: python scripts/test_clock.py
+      - name: Actual Xtensa default application
+        run: python scripts/build_clock_app.py
+      - name: Explicit clock deployments and checksums
+        run: |
+          python scripts/build_clock_deployment.py --profile all
+          python scripts/verify_clock_deployment.py dist/clock-deployments/*.zip
+          python -m unittest discover -s tests -p test_clock_deployment.py -v
+          python scripts/clock_frame_fixtures.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-clock-deployments
+          path: |
+            dist/clock/default.elf
+            dist/clock/default.json
+            dist/clock/build-record.json
+            dist/clock-deployments/*.zip
+            dist/clock-deployments/catalog.json
+            dist/clock-frames/*.png
+            dist/clock-frames/*.rgb565
+            dist/clock-frames/expected.json
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-driver-packages

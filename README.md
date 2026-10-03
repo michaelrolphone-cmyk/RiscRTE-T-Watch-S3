@@ -130,3 +130,18 @@ The workflow's `release-catalog.json` lists selected releases with explicit
 kinds. Consumers must select supported kinds rather than infer them from IDs.
 Both automatic and manual publishing include baseline versions. No workflow
 uses a mutable board alias or overwrites an existing release asset.
+
+
+## Simple watch clock candidate
+
+The independent `apps/clock` application builds as `default.elf` against the
+pinned generic RiscRTE app service. It displays valid RTC time/date or an honest
+`TIME UNSET` state, with no time writes or assumed timezone. It loads only the
+five GPIO/I2C/PMU/panel/RTC providers needed for the clock. The firmware contains
+no watch UI or application logic.
+
+See [clock build/install/test instructions](docs/CLOCK_INSTALL.md). PR CI builds
+all target ELFs, checks app behavior, and retains eight explicitly selected,
+hashed deployment bundles plus representative display frames in the
+`twatch-clock-deployments` artifact. Physical testing is pending; generic native
+backend support must be verified in the selected runtime build before use.
