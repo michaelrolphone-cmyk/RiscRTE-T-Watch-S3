@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   pull_request:
-    branches: [main]
+    branches: [main, master]
 permissions:
   contents: read
 jobs:
@@ -23,6 +23,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/toolchain"
           tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
           echo "TWATCH_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+      - name: Release automation tests
+        run: python -m unittest discover -s tests -p test_releases.py -v
       - name: Host contract fixtures with UBSan
         run: python scripts/test_contracts.py
       - name: Target ABI, ELF imports and packages
