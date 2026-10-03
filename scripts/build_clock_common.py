@@ -23,7 +23,7 @@ STORE_PATHS = {'store/board.json', 'store/boot.json', 'store/default.elf',
 
 
 def store_paths(launcher=False):
-    return STORE_PATHS | ({'store/touch/driver.elf','store/touch/manifest.json'} |
+    return STORE_PATHS | ({'store/touch/driver.elf','store/touch/manifest.json','store/nav/driver.elf','store/nav/manifest.json'} |
         {'store/'+name+ext for name in ('springboard','battery','settings') for ext in ('.elf','.json')} if launcher else set())
 
 
@@ -114,7 +114,7 @@ def build(archives, out=None, root=ROOT, pr_head_sha=None, launcher=False):
     record['common_launcher' if launcher else 'common_clock']={
         'normalization': {'path': 'store/board.json', 'field': 'revision', 'value': profile_name},
         'store_files': len(store_paths(launcher)), 'inputs': provenance,
-        'scope': ('Seven-driver launcher closure' if launcher else 'Five-driver clock closure')+' only; no radio or IMU variant is selected',
+        'scope': ('Seven physical plus one logical navigation provider closure' if launcher else 'Five-driver clock closure')+' only; no radio or IMU variant is selected',
         'physical_verification': 'pending'}
     record['transformations'].append('Normalize only board.revision after all eight selected stores compare byte-for-byte')
     record['entries'] = [{'path': name, 'size_bytes': len(data), 'sha256': sha(data)}

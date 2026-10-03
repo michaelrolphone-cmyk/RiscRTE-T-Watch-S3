@@ -36,7 +36,7 @@ def build(runtime,artifact,head,runtime_source,out):
   assert len(common)==len(image)==1
   common_bytes=z.read(common[0]);image_bytes=z.read(image[0]);image_record=json.loads(z.read(image[0][:-4]+'.json'))
   assert image_record['sha256']==sha(image_bytes) and image_record['deployment_sha256']==sha(common_bytes)
-  assert image_record['round_trip_verified'] and image_record['files']==22 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
+  assert image_record['round_trip_verified'] and image_record['files']==24 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
  with tempfile.TemporaryDirectory() as tmp:
   p=Path(tmp)/'common.zip';p.write_bytes(common_bytes);record=verify(p)
  assert record['profile']=='launcher-common' and record['pull_request_head_sha']==head and record['source_sha']==head
@@ -45,7 +45,7 @@ def build(runtime,artifact,head,runtime_source,out):
  version=record['app_version'];assert re.fullmatch(r'\d+\.\d+\.\d+',version)
  with zipfile.ZipFile(io.BytesIO(common_bytes)) as z:
   members(z)
-  store={n:z.read(n) for n in z.namelist() if n.startswith('store/')};assert len(store)==22
+  store={n:z.read(n) for n in z.namelist() if n.startswith('store/')};assert len(store)==24
   board=json.loads(store['store/board.json']);assert {d['instance_id'] for d in board['devices']}=={1,2,3,4,5,6,8}
   assert next(b for b in board['buses'] if b['instance_id']==103)['frequency_hz']==40000000
   assert next(d for d in board['devices'] if d['instance_id']==5)['config']['rotation']==2
@@ -70,7 +70,7 @@ def build(runtime,artifact,head,runtime_source,out):
  manifest={'schema':1,'target':'Original/non-Plus LILYGO T-Watch-S3,16MB flash/8MB OPI PSRAM','app_version':version,'runtime_version':rc['firmware_version'],'runtime_commit':RUNTIME_SHA,'watch_pr_head':head,'runtime_artifact_sha256':sha(runtime.read_bytes()),'watch_artifact_sha256':sha(artifact.read_bytes()),'flash_start':0,'overwrite_bytes':len(merged),'flash_capacity_bytes':0x1000000,'merged_sha256':sha(merged),'components':parts,'clock_policy':record['clock_policy'],'time_policy':record['time_policy'],'settings_time_policy':json.loads(files['settings-time-policy.json']),'store':[{'path':n.removeprefix('store/'),'size_bytes':len(b),'sha256':sha(b)} for n,b in sorted(store.items())],'physical_verification':'Pending; host/model/target CI are not hardware qualification'}
  files['manifest.json']=encoded(manifest)
  name=f'twatch-s3-launcher-{version}.bin';files[name]=bytes(merged)
- files['FLASHING.md']=f'''# T-Watch-S3 launcher {version}\n\nTarget: original/non-Plus T-Watch-S3,16MB flash and8MB OPI PSRAM.\nMerged BIN address:0x0. This replaces the first8MiB, including NVS/settings; upper8MiB is untouched. Keep the accepted Clock0.3.1 image for recovery. No flashing was performed.\n\nClock opens shared Springboard by swipe; held drag continues, and Back from a shared app returns to Clock. Settings displays Denver and inverse-converts saves to the existing RTC UTC+08 basis. A spring gap is rejected and a fall fold requires explicit MDT/MST. Brightness remains gated until a complete fresh frame after cold activation/wake.\n\nTo flash after your own backup/decision, close serial monitors and replace PORT:\n\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nComponents: bootloader0x0; partitions0x8000; runtime0x10000; bootfs0x310000.\nWatch source:{head}\nRuntime source:{RUNTIME_SHA}\nMerged SHA256:{sha(merged)}\n\nThis bundle preserves accepted Clock0.3.1 separately. Physical touch alignment, frame rate, absence of startup flash and repeated wake remain to be observed.\n'''.encode()
+ files['FLASHING.md']=f'''# T-Watch-S3 launcher {version}\n\nTarget: original/non-Plus T-Watch-S3,16MB flash and8MB OPI PSRAM.\nMerged BIN address:0x0. This replaces the first8MiB, including NVS/settings; upper8MiB is untouched. Keep the accepted Clock0.3.1 image for recovery. No flashing was performed.\n\nClock opens shared Springboard by swipe with an80ms fade. Native touch direction is corrected; held drag continues. Crown is Back outside Clock and retains sleep on Clock. Center/first-ring icons open with one tap; farther icons center first. Settings displays Denver and inverse-converts saves to the existing RTC UTC+08 basis. A spring gap is rejected and a fall fold requires explicit MDT/MST. Backlight rail and PWM remain gated until a complete fresh frame after cold activation/wake.\n\nTo flash after your own backup/decision, close serial monitors and replace PORT:\n\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nComponents: bootloader0x0; partitions0x8000; runtime0x10000; bootfs0x310000.\nWatch source:{head}\nRuntime source:{RUNTIME_SHA}\nMerged SHA256:{sha(merged)}\n\nThis bundle preserves accepted Clock0.3.1 separately. Physical touch alignment, frame rate, absence of startup flash and repeated wake remain to be observed.\n'''.encode()
  files['SHA256SUMS']=''.join(f'{sha(b)}  {n}\n' for n,b in sorted(files.items())).encode()
  out.mkdir(parents=True,exist_ok=True);(out/name).write_bytes(merged)
  archive=out/f'twatch-s3-launcher-{version}-flashing.zip'

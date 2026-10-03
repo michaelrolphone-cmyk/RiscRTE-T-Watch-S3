@@ -2,6 +2,12 @@
 #include "RiscProviderV2.h"
 #include "RiscBatteryGaugeV1.h"
 #include "RiscLightSleepV1.h"
+/* Existing short/long bits retain their values. Edge bits preserve PMU
+ * press/release chronology for generic navigation consumers. */
+#define TWATCH_PMU_KEY_LONG 1u
+#define TWATCH_PMU_KEY_SHORT 2u
+#define TWATCH_PMU_KEY_DOWN 4u
+#define TWATCH_PMU_KEY_UP 8u
 typedef struct {
     risc_battery_gauge_api_v1 base;
     bool (*key_events)(void *, uint32_t *events);
@@ -9,6 +15,7 @@ typedef struct {
     bool (*prepare_sleep)(void *);
     bool (*resume)(void *);
     int32_t (*light_sleep)(void *, risc_light_sleep_result_v1 *);
+    bool (*backlight_power)(void *, bool enabled);
 } twatch_pmu_api_v1;
 #include <stdbool.h>
 #include <stddef.h>

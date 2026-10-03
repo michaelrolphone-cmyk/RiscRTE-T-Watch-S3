@@ -1,7 +1,7 @@
 #pragma once
 #include "RiscTouchV1.h"
-/* Watch deployment policy, not a raw-provider ABI change. The panel is rotated
- * 180 degrees; map copied snapshot coordinates before interpreting gestures. */
+/* The mounted panel mirrors both axes to match LILYGO rotation0, which
+ * already aligns with native FT6336 coordinates. Do not invert touch again. */
 typedef struct {
     risc_runtime_capability_v1 grant;
     const risc_touch_api_v1 *api;
@@ -45,7 +45,7 @@ static bool launcher_touch_swipe(watch_launcher_touch *t,bool *activity) {
     *activity=true;
     if (!t->neutral) return false;
     if(s.contacts[0].x>=s.width || s.contacts[0].y>=s.height){t->neutral=t->down=false;return false;}
-    uint16_t x=(uint16_t)(s.width-1u-s.contacts[0].x),y=(uint16_t)(s.height-1u-s.contacts[0].y);
+    uint16_t x=s.contacts[0].x,y=s.contacts[0].y;
     if(!t->down){t->down=true;t->id=s.contacts[0].id;t->x=x;t->y=y;return false;}
     if(t->id!=s.contacts[0].id){t->neutral=t->down=false;return false;}
     int dx=(int)x-t->x,dy=(int)y-t->y;

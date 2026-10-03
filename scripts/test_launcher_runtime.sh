@@ -22,8 +22,9 @@ cmp "$runtime/sdk/app/RiscRuntimeV1.h" "$watch/sdk/app/RiscRuntimeV1.h"
 incs=(-I"$watch/tests/runtime-stubs" -I"$runtime/src" -I"$runtime/sdk/app" -I"$runtime/sdk/driver" -I"$runtime/sdk/hardware" -I"$watch/sdk/driver" -I"$watch/include" -I"$watch" -I"$runtime/lib/ArduinoJson/src")
 watchincs=(-I"$watch/sdk/app" -I"$watch/sdk/driver" -I"$watch/include" -I"$watch")
 flags=(-O1 -g -fsanitize=undefined -fno-sanitize-recover=all -Wall -Wextra -Werror)
-for name in gpio i2c pmu panel touch rtc; do
+for name in gpio i2c pmu panel touch rtc nav; do
  src="$watch/drivers/twatch_$name/driver.c"
+ if [[ "$name" == nav ]]; then src="$watch/drivers/pmu_navigation/driver.c"; fi
  if [[ "$name" == i2c ]]; then src="$watch/drivers/twatch_i2c/i2c_main.c"; fi
  cc -std=c11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$src" -o "$build/$name/driver.elf"
 done
@@ -32,7 +33,7 @@ cc -std=c11 "${flags[@]}" -fPIC -fvisibility=hidden "${watchincs[@]}" -c "$watch
 c++ -std=c++11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$watch/apps/clock/effects/boot.cpp" "$build/crown.o" "$build/nova.o" -o "$build/default.elf"
 portable=(-I"$system/lib/PortableApps/include" -I"$system/lib/NativeApps/include")
 for name in springboard battery settings; do
- source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=180 -DPORTABLE_RTC_UTC8_DENVER)
+ source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER -DPORTABLE_INPUT_NAVIGATION)
  if [[ "$name" == battery ]]; then source="$utilities/Apps/battery.c"; fi
  if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP); fi
  cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$watch/dist/launcher/catalog.c" -o "$build/$name.elf"

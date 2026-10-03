@@ -1,8 +1,8 @@
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing
-bundle remain unchanged. This source builds clock0.4.0, panel0.3.3 and board
-baseline1.0.3; shared Springboard, Battery and Settings keep their own exact pinned
+bundle remain unchanged. This source builds clock0.4.1, panel0.3.4, PMU0.4.0 and board
+baseline1.0.4; shared Springboard, Battery and Settings keep their own exact pinned
 source versions in `apps/shared-sources.json`. No Watch copies of those apps exist.
 
 ## Behavior
@@ -11,7 +11,7 @@ source versions in `apps/shared-sources.json`. No Watch copies of those apps exi
   percentage (or honestly unknown), fixed UTC+08 RTC source to America/Denver,
   crown light sleep and60-second awake clock inactivity. No screen scrub; the
   completed boot logo holds250ms. Touch activity now resets clock inactivity.
-- A fresh single-finger swipe of20 logical pixels starts a six-frame quick fade.
+- A fresh single-finger swipe of20 logical pixels starts an80ms brightness fade.
   The clock keeps sampling during the fade, closes its input subscription/grant,
   and requests `springboard.elf`. A held contact continues as drag-only in the
   shared launcher; releasing that inherited gesture never launches an app.
@@ -33,9 +33,9 @@ source versions in `apps/shared-sources.json`. No Watch copies of those apps exi
 ## First-frame visibility
 
 The old cold-clock path requested brightness before its animation, and panel
-resume restored the PWM while old GRAM was still present. The panel now records
-requested brightness while dark and restores it only after every row of the
-first new frame completes. Partial transfers, failed presentation and failed
+resume restored the PWM while old GRAM was still present. The PMU now keeps its backlight rail off before panel GPIO initialization,
+while retaining display/touch power. The panel records intended brightness while
+dark and energizes that rail only after every row of a fresh frame completes. Partial transfers, failed presentation and failed
 unblank stay dark/fail closed. Wake retains the same saved brightness policy.
 This is a software-ordering correction; actual visual absence of the flash still
 needs observation on the watch. The fix ships only in this combined bundle.
@@ -49,9 +49,11 @@ No radio/IMU selection, extra rails or unverified hardware is inferred.
 
 Display rotation is180 and its SPI bus is40MHz. Raw touch stays unmodified in
 the physical driver; every deployed client explicitly transforms copied samples
-by `(239-x,239-y)` before hit-testing. This uses generic client configuration,
+using identity coordinates before hit-testing. LILYGO normal orientation already
+mirrors the panel and applies the80-row gap while returning raw FT6336 coordinates;
+a second180-degree touch rotation was incorrect. This uses generic client configuration,
 not an incompatible hardware-config ABI. Shared apps are built with
-`PORTABLE_TOUCH_ROTATION=180` and `PORTABLE_RTC_UTC8_DENVER`; Settings additionally
+`PORTABLE_TOUCH_ROTATION=0` and `PORTABLE_RTC_UTC8_DENVER`; Settings additionally
 uses `PORTABLE_SETTINGS_APP`.
 
 Per-app grants are exact: display and touch for all four apps; RTC for Clock,
@@ -76,10 +78,39 @@ rotation, held-entry safety, spring settling, Settings navigation and DST invers
 The target ELF validator checks all four application images.
 
 All eight explicit launcher projections are compared byte-for-byte, allowing
-only board.revision normalization, before `launcher-common` is produced. Its22
-store files include six unique driver artifact pairs and four app pairs. SPIFFS
+only board.revision normalization, before `launcher-common` is produced. Its24
+store files include seven unique driver artifact pairs (one logical) and four app pairs. SPIFFS
 is unpacked and compared against those exact files. Common means only this
 seven-instance closure is identical, not that the radio/IMU variant is known.
 
 Host models and target CI cannot establish physical touch alignment, visual
 frame rate, power draw, battery accuracy, crown timing or repeated wake quality.
+
+## Physical-feedback correction0.4.1
+
+The user reported reversed Springboard/Settings movement, slow fade/stutter,
+Battery appearing unresponsive, and a remaining startup flash on0.4.0. These
+reports supersede the earlier host-model result;0.4.0 is preserved for comparison.
+Shared clients now sample input while a frame is in flight, coalesce movement
+without losing a completed fresh tap, and avoid sleeping again for time already
+spent presenting. An optional previous-frame cache computes bounded changed-row
+damage; allocation failure falls back to full frames. The panel transfers those
+rows, but always forces a complete first frame after blanking/wake.
+
+`pmu-navigation` is a logical ELF with no hardware instance, depending on the
+sole selected PMU owner. It translates a fresh down→short-release sequence into
+existing `input.navigation@1` Back. All shared apps receive that explicit grant;
+Clock retains its sleep policy. Reset/foreground changes discard stale sequences.
+Crown Back works even if touch reads fail; Settings subpages cancel/back one level
+without saving, root returns to Clock. Clock drains the returned key event before
+arming sleep. No rotary navigation or new runtime ABI is asserted.
+
+Center and first-ring icons center/open from one tap. Farther icons center only;
+a subsequent tap opens. Hit testing and ring classification use the last visible
+geometry rather than an unpresented physics position. Slow valid frames no longer
+cancel a deliberate pending launch.
+
+Primary coordinate reference: LilyGoLib92f2ac3f `src/display/LilyGoDispInterface.cpp`
+normal rotation uses panel mirrors and gap80; `src/LilyGoWatchS3.cpp` returns
+FT6336 points without another coordinate flip. Physical confirmation of the new
+binary remains necessary; software timing models are not hardware FPS claims.

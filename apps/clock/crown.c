@@ -9,6 +9,8 @@ static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_CLOCK_LAUNCHER
 #include "launcher_touch.h"
 static watch_launcher_touch touch;
+static bool input_swipe_pending,input_activity_pending;
+static uint32_t touch_sampled_at;
 #endif
 static const risc_display_output_api_v1 *display;
 static const twatch_rtc_api_v1 *rtc;
@@ -48,6 +50,13 @@ static bool present(void) {
         } else healthy=false;
         /* A lost health sample must not abandon an already accepted transfer.
          * Drain it within the same bounded poll count, then exit the app. */
+#ifdef WATCH_CLOCK_LAUNCHER
+        if(healthy && touch.subscription && (uint32_t)(now-touch_sampled_at)>=16u) {
+            bool activity=false;
+            input_swipe_pending|=launcher_touch_swipe(&touch,&activity);
+            input_activity_pending|=activity;touch_sampled_at=now;
+        }
+#endif
         rt->yield_ms(1);
     }
     return false;
@@ -116,23 +125,17 @@ static bool startup(void) {
 }
 #ifdef WATCH_CLOCK_LAUNCHER
 static bool fade_to_launcher(void) {
-    /* Six completed frames. Continue sampling while fading; the next app adopts
-     * its live snapshot as drag-only, so no synthetic event/tap crosses apps. */
-    for(unsigned step=1;step<=6;step++) {
-        uint32_t now;bool activity;
-        risc_display_surface_v1 s={0};
-        (void)launcher_touch_swipe(&touch,&activity);
-        if(!alive(&now) || !frame(&s) || !draw_clock(now,&s)) return false;
-        for(uint32_t y=0;y<s.height;y++) {
-            uint16_t *row=(uint16_t *)((uint8_t *)s.pixels+y*s.stride_bytes);
-            for(uint32_t x=0;x<s.width;x++) {
-                uint16_t p=row[x];unsigned scale=6u-step;
-                row[x]=(uint16_t)((((p>>11)*scale/6u)<<11)|((((p>>5)&63u)*scale/6u)<<5)|((p&31u)*scale/6u));
-            }
-        }
-        if(!present() || !pace_frame(now)) return false;
+    /* Fade the already completed clock optically. Six full SPI frames made
+     * duration depend on physical transfer time and starved input. PWM steps
+     * take 80ms total and keep sampling; the panel rearms its fresh-frame gate
+     * at zero so the next app cannot expose the old clock while loading. */
+    for(unsigned step=1;step<=5;step++) {
+        bool activity=false;(void)launcher_touch_swipe(&touch,&activity);
+        if(!display->set_brightness(display->context,(uint16_t)(40u-step*8u),100))return false;
+        uint32_t now;if(!alive(&now))return false;
+        if(step<5)rt->yield_ms(20);
     }
-    return true;
+    return display->set_brightness(display->context,40,100);
 }
 #endif
 static bool sleep_cycle(void) {
@@ -161,7 +164,7 @@ static bool sleep_cycle(void) {
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
 #ifdef WATCH_CLOCK_LAUNCHER
-    touch=(watch_launcher_touch){0};
+    touch=(watch_launcher_touch){0};input_swipe_pending=input_activity_pending=false;touch_sampled_at=0;
 #endif
     held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
     reset_telemetry();
@@ -187,7 +190,8 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
     uint32_t discarded,now,armed_at=0,last_activity=0;
-    if (!display->set_brightness(display->context,40,100) ||
+    if (!display->set_brightness(display->context,0,100) ||
+        !display->set_brightness(display->context,40,100) ||
         !pmu->key_events(pmu->base.context,&discarded) || !startup() ||
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -203,7 +207,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (events&3u) last_activity=now;
 #ifdef WATCH_CLOCK_LAUNCHER
         bool activity=false;
-        bool swipe=launcher_touch_swipe(&touch,&activity);
+        bool sampled_swipe=launcher_touch_swipe(&touch,&activity);
+        bool swipe=input_swipe_pending||sampled_swipe;activity|=input_activity_pending;
+        input_swipe_pending=input_activity_pending=false;
         if(activity) last_activity=now;
         if(swipe) {
             if(!fade_to_launcher() || !launcher_touch_close(&touch)) break;

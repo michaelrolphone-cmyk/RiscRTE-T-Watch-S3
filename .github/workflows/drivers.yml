@@ -42,6 +42,7 @@ jobs:
           python scripts/test_clock.py
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
+          python scripts/test_navigation.py
           python apps/clock/nova/tests/run.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py
@@ -75,14 +76,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: ddfefe6ce3719cf9445858508b18f2b7790b7a2e
+          ref: 6eaf2aa7cfb396a18731fe35c0e70c9072a54e93
           path: .dependencies/system-apps
           persist-credentials: false
       - name: Pinned shared Battery source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: 7fbd031fa26a5090cbfbe161b1e612323571e697
+          ref: c440f15621ec8366ae8b8cb683822b1b0b91aa9e
           path: .dependencies/utilities
           persist-credentials: false
       - name: Exact paired runtime source

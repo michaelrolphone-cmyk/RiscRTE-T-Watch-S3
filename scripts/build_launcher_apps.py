@@ -23,7 +23,7 @@ def build(system,utilities):
              {'display_name':'Settings','file_name':'settings.elf','icon':'solid:f013'}]
     (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=3;\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
-    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':180,'rtc_policy':'fixed-UTC+08-to-America/Denver'}
+    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver'}
     build_clock(launcher=True)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
@@ -32,7 +32,7 @@ def build(system,utilities):
         mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(exports)+'; local: *; };\n')
         sources=[source,system/'lib/PortableApps/src/adapter.c',out/'catalog.c']
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
-        flags=['-DPORTABLE_TOUCH_ROTATION=180','-DPORTABLE_RTC_UTC8_DENVER']
+        flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_RTC_UTC8_DENVER']
         if name=='settings':flags.append('-DPORTABLE_SETTINGS_APP')
         elf=out/(name+'.elf')
         subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',ROOT/'sdk/app',ROOT/'sdk/driver',ROOT/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
@@ -46,6 +46,7 @@ def build(system,utilities):
         original=json.loads((ROOT/'apps/clock/manifest.json' if name=='default' else repo/'Apps'/(name+'.json')).read_text())
         requires=[{'capability':'display.output','api':1},{'capability':'input.touch.raw','api':1}]
         if name in ('springboard','settings'):requires.append({'capability':'rtc.clock','api':2})
+        requires.append({'capability':'input.navigation','api':1})
         if name=='battery':requires.append({'capability':'board.battery','api':1})
         manifest={'type':'application','id':'twatch-clock' if name=='default' else name,'version':original['version'],'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':requires}
         (out/(name+'.json')).write_text(json.dumps(manifest,indent=2)+'\n')

@@ -50,8 +50,8 @@ static bool read_reg(uint8_t reg, uint8_t *out, size_t n) {
     return bus->transact(bus->context, claim, &reg, 1, out, n, 40);
 }
 static const tw_hw_axp2101_v1 *power;
-static uint8_t saved_enable, saved_voltage[4], saved_irq;
-static bool changed;
+static uint8_t saved_enable, saved_voltage[4], saved_irq, power_enable;
+static bool changed, owns_backlight;
 static uint8_t sleep_irq[3];
 static bool sleep_changed, sleep_prepared, key_released;
 static bool rails(void) {
@@ -66,13 +66,18 @@ static bool rails(void) {
         return false;
     uint8_t mask = 0;
     changed = true;
+    owns_backlight=false;
     for (size_t i = 0; i < power->rail_count; i++) {
         uint8_t id = power->rails[i].id;
         mask |= (uint8_t)(1u << id);
+        if(id==1)owns_backlight=true;
         if (!write_reg((uint8_t)(0x92 + id), (uint8_t)((power->rails[i].millivolts - 500) / 100)))
             return false;
     }
-    if (!write_reg(AXP_LDO_ON, saved_enable | mask) || !write_reg(AXP_ICC, 4))
+    /* Backlight rail is gated until the panel completes a fresh frame. Keep
+     * display/touch powered; never let reset/default GPIO expose stale GRAM. */
+    power_enable=(saved_enable | mask) & (owns_backlight ? (uint8_t)~2u : 255u);
+    if (!write_reg(AXP_LDO_ON, power_enable) || !write_reg(AXP_ICC, 4))
         return false;
     uint8_t value = 0;
     if (!read_reg(AXP_ICC, &value, 1) || (value & 0x1f) != 4)
@@ -80,6 +85,18 @@ static bool rails(void) {
     if (!read_reg(AXP_ADC_EN, &value, 1) || !write_reg(AXP_ADC_EN, value | 1))
         return false;
     return write_reg(0x41, saved_irq | 0x0f);
+}
+static bool backlight_power(void *context,bool enable) {
+    (void)context;
+    if(!started || !owns_backlight)return false;
+    /* This ELF is the sole0x90 writer. The cached value preserves every
+     * unrelated rail; a one-millisecond ACK-bounded write avoids three blocking
+     * register round trips in the display completion path. */
+    uint8_t desired=enable?(uint8_t)(power_enable|2u):(uint8_t)(power_enable&~2u);
+    if(desired==power_enable)return true;
+    const uint8_t tx[]={AXP_LDO_ON,desired};
+    if(!bus->transact(bus->context,claim,tx,sizeof(tx),NULL,0,1))return false;
+    power_enable=desired;return true;
 }
 static bool key_events(void *context, uint32_t *events) {
     (void)context;
@@ -95,7 +112,7 @@ static bool key_events(void *context, uint32_t *events) {
     /* Return the PMIC's latched key events; ACK only the key bits. */
     if (!write_reg(0x49, v & 0x0f))
         return false;
-    *events = (v >> 2) & 3;
+    *events = ((v >> 2) & 3u) | ((v & 2u) ? TWATCH_PMU_KEY_DOWN : 0u) | ((v & 9u) ? TWATCH_PMU_KEY_UP : 0u);
     return true;
 }
 /* Snapshot all interrupt masks before mutation. Never alter charging, CPU,
@@ -181,7 +198,7 @@ static bool quiesce(void) {
     bool ok = true;
     if (sleep_changed && !resume_sleep(NULL)) return false;
     if (changed && claim) {
-        if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable))
+        if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable & (owns_backlight ? (uint8_t)~2u : 255u)))
             return false;
         for (size_t i = 0; i < power->rail_count; i++)
             if (!write_reg((uint8_t)(0x92 + power->rails[i].id), saved_voltage[i]))
@@ -256,7 +273,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
-                                      key_events, prepare_sleep, resume_sleep, light_sleep};
+                                      key_events, prepare_sleep, resume_sleep, light_sleep, backlight_power};
 static const risc_driver_diagnostics_v2 driver = {
     {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
      RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},

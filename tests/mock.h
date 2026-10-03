@@ -81,6 +81,9 @@ static bool m_pwm(void *c, uint64_t t, uint32_t hz, uint16_t v, uint16_t max) {
     (void)hz;
     return !m_fail_pwm && v <= max && m_gwrite(c, t, v != 0);
 }
+static bool m_backlight_powered;
+static bool m_backlight_power(void *c,bool on){(void)c;if(m_fail_io)return false;m_backlight_powered=on;return true;}
+static const twatch_pmu_api_v1 m_pmu={.base={1,sizeof(m_pmu),NULL,NULL},.backlight_power=m_backlight_power};
 static bool m_wave(void *c, uint64_t t, const uint32_t *p, size_t n) {
     (void)p;
     (void)n;
@@ -222,7 +225,7 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
         m_panel_first=((uint16_t)tx[0]<<8)|tx[1];
         m_panel_last=((uint16_t)tx[2]<<8)|tx[3];
         assert(m_panel_first < 320 && m_panel_last < 320 &&
-               m_panel_last == m_panel_first + 239);
+               m_panel_first <= m_panel_last);
         m_panel_have_rows=true;
     } else if (m_op == 0x2c) {
         assert(n==480 && m_panel_row<=m_panel_last);
