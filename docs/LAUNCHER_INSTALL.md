@@ -1,7 +1,7 @@
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing
-bundle remain unchanged. This source builds clock0.4.4, original panel0.3.3 and board
+bundle remain unchanged. This source builds clock0.4.5, original panel0.3.3 and board
 baseline1.0.3; shared Springboard, Battery and Settings keep their own exact pinned
 source versions in `apps/shared-sources.json`. No Watch copies of those apps exist.
 
@@ -12,7 +12,7 @@ source versions in `apps/shared-sources.json`. No Watch copies of those apps exi
   crown light sleep and60-second awake clock inactivity. No screen scrub; the
   completed boot logo holds250ms before a180ms simultaneous blur crossfade to Clock. Touch activity now resets clock inactivity.
 - A fresh single-finger swipe of20 logical pixels hands the last completed sharp
-  Clock frame to `springboard.elf`. The shared app performs a180ms blur crossfade
+  Clock frame to `springboard.elf`. The shared app performs a60ms blur crossfade
   while continuing the gesture, with outgoing/incoming opacity and sharpness
   reaching their final values together. No black-fade interlude is added. A held contact continues as drag-only in the
   shared launcher; releasing that inherited gesture never launches an app.
@@ -79,8 +79,8 @@ rotation, held-entry safety, spring settling, Settings navigation and DST invers
 The target ELF validator checks all four application images.
 
 All eight explicit launcher projections are compared byte-for-byte, allowing
-only board.revision normalization, before `launcher-common` is produced. Its22
-store files include six unique driver artifact pairs and four app pairs. SPIFFS
+only board.revision normalization, before `launcher-common` is produced. Its24
+store files include six unique driver artifact pairs and five app pairs. SPIFFS
 is unpacked and compared against those exact files. Common means only this
 seven-instance closure is identical, not that the radio/IMU variant is known.
 
@@ -89,3 +89,12 @@ frame rate, power draw, battery accuracy, crown timing or repeated wake quality.
 
 See GUI_INCREMENT.md for the exact unchanged physical-byte inventory and the
 separate later deep-sleep scope. Preserve the confirmed0.4.0 images for rollback.
+
+## Corrected navigation and retained wake visibility
+
+See GUI_INCREMENT.md for0.4.5. Normal return uses the same-source `clock.elf` with
+a60ms fade and no intro; Settings/Battery return explicitly to Springboard. Cold
+boot `default.elf` and successful sleep wake retain the intro. A single completed
+black frame before light sleep protects retained GRAM from brief wake visibility;
+refusal restores a completed Clock frame before lighting. Earlier cold-reset
+power/GPIO visibility before app entry remains unverified and is not claimed fixed.

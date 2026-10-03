@@ -54,9 +54,9 @@ def verify(path):
             {'capability':'board.battery','api':1,'instance_id':4}]}]
         if launcher:
             expected=[]
-            for name in ('default','springboard','battery','settings'):
+            for name in ('default','clock','springboard','battery','settings'):
                 grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
-                if name in ('default','springboard','settings'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
+                if name in ('default','clock','springboard','settings'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
                 grants.append({'capability':'board.battery','api':1,'instance_id':4})
                 expected.append({'manifest':name+'.json','grants':grants})
                 child=json.loads(z.read('store/'+name+'.json'))
@@ -68,11 +68,13 @@ def verify(path):
             sources=json.loads(z.read('shared-app-build.json'))
             if sources.get('touch_rotation')!=0 or sources.get('rtc_policy')!='fixed-UTC+08-to-America/Denver':
                 raise ValueError('Missing launcher transform/time policy')
+            if sources.get('return_targets')!={'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'} or sources.get('handoff_ms')!=60:
+                raise ValueError('Missing explicit return targets or fast handoff policy')
             policy=json.loads(z.read('settings-time-policy.json'))
             if policy!={'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0}:
                 raise ValueError('Invalid Settings inverse time policy')
             catalog=json.loads(z.read('shared/catalog.json'))
-            if [e['file_name'] for e in catalog]!=['default.elf','battery.elf','settings.elf']:
+            if [e['file_name'] for e in catalog]!=['clock.elf','battery.elf','settings.elf']:
                 raise ValueError('Invalid launcher catalog')
             for notice in ('LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','font-sources.json','time-sources.json','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
                 if not z.read('shared/'+notice):raise ValueError('Missing shared font/time provenance')

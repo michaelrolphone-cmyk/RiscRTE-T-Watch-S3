@@ -8,7 +8,9 @@
 #include "apps/clock/nova/nova.h"
 #include "apps/clock/effects/effects.h"
 void app_main(void);
-static uint16_t pixels[240*240],sharp_pixels[240*240],logo_pixels[240*240];
+static uint16_t pixels[240*240],sharp_pixels[240*240],logo_pixels[240*240],gram_pixels[240*240];
+static unsigned black_frames,black_resume_checks;
+static bool black_image(const uint16_t *p){for(unsigned i=0;i<240*240;i++)if(p[i])return false;return true;}
 static unsigned allocated,allocation_calls,allocation_failure,mixed_frames,exact_clock_frames,exact_logo_frames;
 static uint32_t transition_started;
 static bool transition_started_valid;
@@ -64,7 +66,8 @@ static bool info(void*c,risc_display_info_v1*s){(void)c;s->width=s->height=240;r
 static bool acquire_frame(void*c,uint32_t f,risc_display_surface_v1*s){(void)c;assert(!held&&!pending&&!panel_asleep&&f==5);held=true;*s=(risc_display_surface_v1){1,pixels,240,240,480,sizeof(pixels),5};return true;}
 static void release_frame(void*c,uint64_t t){(void)c;assert(t==1&&held);held=false;}
 static bool submit(void*c,uint64_t f,const risc_display_rect_v1*d,size_t n,const risc_display_present_options_v1*o,uint64_t*t){(void)c;(void)d;(void)n;(void)o;assert(f==1&&held&&!pending);if(stop_on_ready && frame_cost>=20 && frames && !(transition_started_valid && now==transition_started))assert((uint32_t)(now-present_started)==frame_cost);
- if(!frame_is_boot){
+ if(!frame_is_boot && black_image(pixels)){assert(visible_level==0);black_frames++;}
+ else if(!frame_is_boot){
   bool sharp=!memcmp(pixels,sharp_pixels,sizeof(pixels)),logo=!memcmp(pixels,logo_pixels,sizeof(pixels));
   if(transition_started_valid && (uint32_t)(now-transition_started)<180 && !allocation_failure){if(now==transition_started){assert(logo&&!sharp);exact_logo_frames++;}else{assert(!sharp&&!logo);mixed_frames++;}}
   else{assert(sharp);exact_clock_frames++;}
@@ -73,7 +76,7 @@ static bool present(void*c,uint64_t t,risc_display_present_status_v1*s){
  (void)c;assert(t==frames&&pending);present_polls++;
  if((fail_present&&present_polls==3)||(fail_transition&&mixed_frames>=2)){pending=false;s->state=RISC_DISPLAY_PRESENT_FAILED;}
  else if((uint32_t)(now-present_started)<frame_cost)s->state=RISC_DISPLAY_PRESENT_ACTIVE;
- else{pending=false;last_complete=frames;s->state=RISC_DISPLAY_PRESENT_COMPLETE;if(frame_is_final_boot){final_boot_done=now;expect_boot_hold=true;}}
+ else{pending=false;last_complete=frames;memcpy(gram_pixels,pixels,sizeof(gram_pixels));s->state=RISC_DISPLAY_PRESENT_COMPLETE;if(frame_is_final_boot){final_boot_done=now;expect_boot_hold=true;}}
  return true;
 }
 static bool bright(void*c,uint16_t v,uint16_t m){
@@ -84,10 +87,14 @@ static bool bright(void*c,uint16_t v,uint16_t m){
 }
 static bool panel_prepare(void*c){
  (void)c;assert(!held&&!pending);
- assert(!frame_is_boot);assert(panel_attempts<8);attempt_times[panel_attempts++]=elapsed();
+ assert(!frame_is_boot&&visible_level==0&&black_image(gram_pixels));assert(panel_attempts<8);attempt_times[panel_attempts++]=elapsed();
  panel_asleep=true;return mode!=2;
 }
-static bool panel_resume(void*c){(void)c;panel_asleep=false;resumes++;refresh_needed=true;rtc_before_resume=rtc_reads;battery_before_resume=battery_reads;return mode!=3;}
+static bool panel_resume(void*c){(void)c;
+ /* Model an unwanted backlight pulse exposing retained panel RAM before the
+  * resume hook takes control. Its visible contents must already be black. */
+ visible_level=40;assert(black_image(gram_pixels));black_resume_checks++;visible_level=0;
+ panel_asleep=false;resumes++;refresh_needed=true;rtc_before_resume=rtc_reads;battery_before_resume=battery_reads;return mode!=3;}
 static bool pmu_prepare(void*c){(void)c;assert(panel_asleep);pmu_asleep=true;prepares++;return mode!=4;}
 static bool pmu_resume(void*c){(void)c;pmu_asleep=false;return true;}
 static int32_t sleep_now(void*c,risc_light_sleep_result_v1*r){(void)c;assert(!held&&!pending&&panel_asleep&&pmu_asleep&&r->struct_size==sizeof(*r));assert(sleeps<8);sleep_times[sleeps++]=elapsed();r->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return mode==1?RISC_LIGHT_SLEEP_ACTIVE_WAKE:RISC_LIGHT_SLEEP_OK;}
@@ -133,9 +140,9 @@ static void reset(uint32_t cost,uint32_t begin,bool stop){
  face_calls=rtc_reads=battery_reads=first_face_at=last_face_at=first_rtc_at=last_rtc_at=last_battery_at=0;
  face_limit=rtc_kind=battery_kind=health_stop=seen_valid=seen_invalid=seen_zero=seen_unknown=seen_phase=0;
  no_keys=refresh_needed=frame_is_boot=frame_is_final_boot=expect_boot_hold=freeze_boot_hold=false;p.base.read=battery_read;
- final_boot_done=boot_calls=last_boot_age=panel_attempts=key_scenario=0;
+ final_boot_done=boot_calls=last_boot_age=panel_attempts=key_scenario=black_frames=black_resume_checks=0;
 }
-static void clean(void){assert(!allocated);assert(grants==3&&ungrants==3&&!held&&!pending&&!pmu_asleep&&!panel_asleep);}
+static void clean(void){assert(black_frames==panel_attempts&&black_resume_checks==resumes);assert(!allocated);assert(grants==3&&ungrants==3&&!held&&!pending&&!pmu_asleep&&!panel_asleep);}
 int main(void){
  /* Preserve repeated sleep/wake and restoration coverage with genuinely async
   * completion too, rather than a status mock that always finishes immediately. */
@@ -209,10 +216,10 @@ int main(void){
   mode=failure==3?4:failure;reset(7,wrap?UINT32_MAX-5000:0,false);
   no_keys=true;health_stop=132000;app_main();clean();
   assert(panel_attempts==2&&resumes==2);
-  assert(attempt_times[0]>=ready_at+60000&&attempt_times[0]<ready_at+60020);
+  assert(attempt_times[0]>=ready_at+60000&&attempt_times[0]<ready_at+60040);
   uint32_t between=attempt_times[1]-attempt_times[0];
   if(mode==0){assert(sleeps==2&&between>=62250&&between<62300);}
-  else{assert(between==60000);if(mode==1)assert(sleeps==2);else assert(!sleeps);}
+  else{assert(between==60014);if(mode==1)assert(sleeps==2);else assert(!sleeps);}
  }
  /* The supported PMU long-press event resets idle time but does not request
   * manual sleep; a held key is rejected by PMU preparation (mode4 above). */

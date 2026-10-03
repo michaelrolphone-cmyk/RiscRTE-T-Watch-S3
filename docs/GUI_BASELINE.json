@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "label": "0.4.4-gui",
+  "label": "0.4.5-gui",
   "baseline_commit": "599691a331a97132c0eede233042b63d1fda5747",
   "baseline_ci_run": 37142063108,
   "baseline_artifact_id": 11280254023,
@@ -15,7 +15,9 @@
     "battery.json",
     "settings.elf",
     "settings.json",
-    "boot.json"
+    "boot.json",
+    "clock.elf",
+    "clock.json"
   ],
   "touch_rotation_before": 180,
   "touch_rotation_after": 0,
@@ -74,5 +76,11 @@
       "instance_id": 8,
       "manifest": "rtc/manifest.json"
     }
-  ]
+  ],
+  "added_store_files": [
+    "clock.elf",
+    "clock.json"
+  ],
+  "physically_improved_gui_baseline_commit": "f8f9fd2305018c39fca7bbed2ac2e3bc80df54bc",
+  "physically_improved_gui_baseline_bin_sha256": "07460a22e28ad0b778304bb032fef1d2edf959a504c9121485727b26c17b26e8"
 }

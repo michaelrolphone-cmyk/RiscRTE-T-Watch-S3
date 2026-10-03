@@ -19,12 +19,14 @@ def verify(path):
         assert source['touch_rotation'] == 0
         assert source['full_frames'] is True
         assert source['retained_handoff'] is True
+        assert source['handoff_ms'] == 60
+        assert source['return_targets'] == {'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'}
         assert source['crown_navigation'] == 'app-local-original-pmu'
         assert source['shared_sources'] == json.loads((ROOT / 'apps/shared-sources.json').read_text())
     expected = baseline['baseline_store_sha256']
-    assert set(files) == set(expected) and len(files) == 22, 'Physical/provider store closure changed'
+    assert set(files) == set(expected)|set(baseline['added_store_files']) and len(files) == 24, 'Physical/provider store closure changed'
     actual = {n: hashlib.sha256(b).hexdigest() for n, b in sorted(files.items())}
-    changed = sorted(n for n in files if actual[n] != expected[n])
+    changed = sorted(n for n in files if actual[n] != expected.get(n))
     assert changed == sorted(baseline['changed_store_files']), changed
     # This separately protects all six packaged driver ELFs (seven mapped
     # physical instances), their manifests, and exact accepted board wiring.
@@ -44,7 +46,7 @@ def verify(path):
               'crown_navigation': 'app-local-original-pmu'}
     out = Path(path).parent / 'gui-increment-proof.json'
     out.write_text(json.dumps(record, indent=2) + '\n')
-    print('Verified GUI-only inventory: 13 unchanged physical/board files; 9 application/policy files changed')
+    print('Verified GUI-only inventory: 13 unchanged physical/board files; 11 application/policy files changed')
     return record
 
 if __name__ == '__main__':

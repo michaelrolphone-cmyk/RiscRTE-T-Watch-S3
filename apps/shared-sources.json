@@ -1,7 +1,7 @@
 {
   "system-apps": {
     "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-    "commit": "45735269c788671d414e44ce702a2447ecc42ff4"
+    "commit": "fe8b509fd01e8202eba0a167bdcc1fc8c1da0f17"
   },
   "utilities": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",

@@ -12,9 +12,9 @@ class CommonLauncher(unittest.TestCase):
    with zipfile.ZipFile(Path(tmp)/row['archive']) as z:
     record=json.loads(z.read('deployment-record.json'))
     self.assertEqual(record['profile'],'launcher-common')
-    self.assertEqual(record['common_launcher']['store_files'],22)
+    self.assertEqual(record['common_launcher']['store_files'],24)
     self.assertEqual(len(record['common_launcher']['inputs']),8)
-    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),22)
+    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),24)
     self.assertEqual(len(record['drivers']),7)
  def test_different_generation_rejected(self):
   paths=sorted((ROOT/'dist/launcher-deployments').glob('*.zip'))

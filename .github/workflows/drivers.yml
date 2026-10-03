@@ -75,7 +75,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 45735269c788671d414e44ce702a2447ecc42ff4
+          ref: fe8b509fd01e8202eba0a167bdcc1fc8c1da0f17
           path: .dependencies/system-apps
           persist-credentials: false
       - name: Pinned shared Battery source

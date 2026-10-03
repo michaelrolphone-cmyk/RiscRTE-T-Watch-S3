@@ -20,15 +20,17 @@ def build(system,utilities):
         raise ValueError('Clock and shared app transition implementations differ')
     cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc') or str(Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc')
     out=ROOT/'dist/launcher';out.mkdir(parents=True,exist_ok=True)
-    catalog=[{'display_name':'Clock','file_name':'default.elf','icon':'solid:f017'},
+    catalog=[{'display_name':'Clock','file_name':'clock.elf','icon':'solid:f017'},
              {'display_name':'Battery','file_name':'battery.elf','icon':'solid:f240'},
              {'display_name':'Settings','file_name':'settings.elf','icon':'solid:f013'}]
     (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=3;\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
-    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True}
+    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'}}
     build_clock(launcher=True)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
+    build_clock(launcher=True,returning=True)
+    record['apps']['clock']={**json.loads((out/'build-record.json').read_text()),'repository_sha':record['apps']['default']['repository_sha']}
     for name,repo,source in [('springboard',system,system/'Apps/springboard.c'),('battery',utilities,utilities/'Apps/battery.c'),('settings',system,system/'Apps/settings.c')]:
         exports=['app_main','app_module_init','app_module_fini']
         mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(exports)+'; local: *; };\n')
@@ -36,7 +38,8 @@ def build(system,utilities):
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
         flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL']
         if name=='settings':flags.append('-DPORTABLE_SETTINGS_APP')
-        if name=='springboard':flags.append('-DPORTABLE_RETAINED_RGB565_HANDOFF')
+        if name=='springboard':flags.extend(['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60'])
+        flags.append('-DPORTABLE_RETURN_APP="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"')
         elf=out/(name+'.elf')
         subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',ROOT/'sdk/app',ROOT/'sdk/driver',ROOT/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
         symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True)
@@ -55,7 +58,7 @@ def build(system,utilities):
         record['apps'][name]={'version':manifest['version'],'sha256':hashlib.sha256(data).hexdigest(),'imports':sorted(imports),'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()}
     validator=out/'validate-elf'
     subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-I'+str(system/'test/native_apps/stubs'),'-I'+str(system/'lib/elf_loader/include'),str(system/'lib/elf_loader/src/esp_elf_validate.c'),str(system/'test/native_apps/validate_test.c'),'-o',str(validator)],check=True)
-    for name in ('default','springboard','battery','settings'):
+    for name in ('default','clock','springboard','battery','settings'):
         subprocess.run([str(validator),str(out/(name+'.elf'))],check=True)
     for path in (system/'lib/PortableApps/fonts').glob('*.txt'):
         (out/path.name).write_bytes(path.read_bytes())
@@ -66,6 +69,6 @@ def build(system,utilities):
         target.write_bytes((system/'lib/PortableApps/settings_fonts'/name).read_bytes())
     (out/'RTC_PROVENANCE.json').write_bytes((system/'lib/PortableApps/RTC_PROVENANCE.json').read_bytes())
     (out/'build-record.json').write_text(json.dumps(record,indent=2)+'\n')
-    print('Four real Xtensa applications: ABI/import/export checks passed')
+    print('Five real Xtensa applications: ABI/import/export checks passed')
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--system-apps',required=True,type=Path);p.add_argument('--utilities',required=True,type=Path);a=p.parse_args();build(a.system_apps.resolve(),a.utilities.resolve())

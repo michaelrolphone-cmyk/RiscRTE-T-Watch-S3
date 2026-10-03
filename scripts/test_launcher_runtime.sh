@@ -30,12 +30,15 @@ done
 cc -std=c11 "${flags[@]}" -DWATCH_CLOCK_LAUNCHER -fPIC -fvisibility=hidden "${watchincs[@]}" -c "$watch/apps/clock/crown.c" -o "$build/crown.o"
 cc -std=c11 "${flags[@]}" -fPIC -fvisibility=hidden "${watchincs[@]}" -c "$watch/apps/clock/nova/nova.c" -o "$build/nova.o"
 c++ -std=c++11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$watch/apps/clock/effects/boot.cpp" "$build/crown.o" "$build/nova.o" -o "$build/default.elf"
+cc -std=c11 "${flags[@]}" -DWATCH_CLOCK_LAUNCHER -DWATCH_CLOCK_RETURN -fPIC -fvisibility=hidden "${watchincs[@]}" -c "$watch/apps/clock/crown.c" -o "$build/crown-return.o"
+c++ -std=c++11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$watch/apps/clock/effects/boot.cpp" "$build/crown-return.o" "$build/nova.o" -o "$build/clock.elf"
 portable=(-I"$system/lib/PortableApps/include" -I"$system/lib/NativeApps/include")
 for name in springboard battery settings; do
  source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER -DPORTABLE_FORCE_FULL_FRAMES -DPORTABLE_INPUT_NAVIGATION -DPORTABLE_INPUT_NAVIGATION_LOCAL)
  if [[ "$name" == battery ]]; then source="$utilities/Apps/battery.c"; fi
  if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP); fi
- if [[ "$name" == springboard ]]; then flags_app+=(-DPORTABLE_RETAINED_RGB565_HANDOFF); fi
+ if [[ "$name" == springboard ]]; then flags_app+=(-DPORTABLE_RETAINED_RGB565_HANDOFF -DPORTABLE_HANDOFF_EAGER_MS=60); fi
+ if [[ "$name" == springboard ]]; then flags_app+=('-DPORTABLE_RETURN_APP="clock.elf"'); else flags_app+=('-DPORTABLE_RETURN_APP="springboard.elf"'); fi
  cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "${watchincs[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$watch/dist/launcher/catalog.c" "$watch/apps/clock/portable_navigation.c" -o "$build/$name.elf"
 done
 c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${incs[@]}" \

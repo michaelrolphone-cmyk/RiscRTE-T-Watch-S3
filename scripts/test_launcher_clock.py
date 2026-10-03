@@ -10,3 +10,11 @@ for src in ('tests/launcher_app_test.c','apps/clock/nova/nova.c'):
 exe=out/'launcher-clock'
 subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*flags,str(ROOT/'apps/clock/effects/boot.cpp'),*objects,'-o',str(exe)],check=True)
 subprocess.run([str(exe)],check=True,timeout=30)
+
+for test in ('launcher-return','clock-touch-latency'):
+ source='tests/launcher_app_test.c' if test=='launcher-return' else 'tests/clock_touch_latency_test.c'
+ obj=out/(test+'.o')
+ subprocess.run([os.environ.get('CC','cc'),'-std=c11',*flags,'-DWATCH_CLOCK_RETURN','-c',str(ROOT/source),'-o',str(obj)],check=True)
+ exe=out/test
+ subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*flags,str(ROOT/'apps/clock/effects/boot.cpp'),str(out/'nova.o'),str(obj),'-o',str(exe)],check=True)
+ subprocess.run([str(exe)],check=True,timeout=30)

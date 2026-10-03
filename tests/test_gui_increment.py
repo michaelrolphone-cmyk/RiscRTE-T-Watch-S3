@@ -57,3 +57,13 @@ class GuiCustody(unittest.TestCase):
         boot['drivers'][0]['manifest'] = 'pmu/manifest.json'
         self.files['store/boot.json'] = json.dumps(boot).encode()
         self.check(self.files)
+
+    def test_wrong_return_target_rejected(self):
+        source = json.loads(self.files['shared-app-build.json'])
+        source['return_targets']['settings'] = 'default.elf'
+        self.files['shared-app-build.json'] = json.dumps(source).encode()
+        self.check(self.files)
+
+    def test_missing_normal_clock_entry_rejected(self):
+        self.files.pop('store/clock.elf')
+        self.check(self.files)

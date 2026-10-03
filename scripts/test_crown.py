@@ -13,6 +13,12 @@ for name,sources in [('crown',objects),('effects',[str(ROOT/'tests/clock_effects
  subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*common,str(ROOT/'apps/clock/effects/boot.cpp'),*sources,'-o',str(exe)],check=True)
  subprocess.run([str(exe)],check=True,timeout=30)
 
+return_obj=out/'clock-return.o'
+subprocess.run([os.environ.get('CC','cc'),'-std=c11',*common,'-c',str(ROOT/'tests/clock_return_test.c'),'-o',str(return_obj)],check=True)
+return_exe=out/'clock-return'
+subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*common,str(ROOT/'apps/clock/effects/boot.cpp'),str(out/'nova.o'),str(return_obj),'-o',str(return_exe)],check=True)
+subprocess.run([str(return_exe)],check=True,timeout=30)
+
 exe=out/'division'
 subprocess.run([os.environ.get('CC','cc'),'-std=c11',*common,str(ROOT/'apps/clock/effects/divdi3.c'),str(ROOT/'tests/effects_division_test.c'),'-o',str(exe)],check=True)
 subprocess.run([str(exe)],check=True,timeout=10)
