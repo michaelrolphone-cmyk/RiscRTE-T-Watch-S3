@@ -16,6 +16,9 @@ static risc_provider_dependency_v1 m_deps[] = {{"hardware.device", 1, &m_device}
 int main(void) {
     const risc_driver_v2 *d = t5_driver_get(2);
     size_t n = sizeof(m_deps) / sizeof(m_deps[0]);
+#if TEST_KIND == 5
+    m_panel_dc_pin=m_config.dc;
+#endif
     assert(d && d->quiesce && !t5_driver_get(1));
     assert(!d->start(NULL, 0));
     assert(m_live == 0);
@@ -149,11 +152,12 @@ int main(void) {
     assert(!a->present_status(NULL, t + 1, &status));
     const risc_driver_poll_v2 *extended = (const void *)d;
     const unsigned before_zero = m_spi_begins;
+    const unsigned before_exchanges = m_panel_exchanges;
     extended->poll(0);
     assert(m_spi_begins == before_zero && m_panel_row_count == 0);
     /* A frozen monotonic mock must still be bounded by the row ceiling. */
     extended->poll(20);
-    assert(m_panel_row_count == 32);
+    assert(m_panel_row_count == 32 && !m_spi_active);
     assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_ACTIVE);
     for (size_t i = 1; i < 8; i++)
         extended->poll(20);
@@ -164,7 +168,15 @@ int main(void) {
     const unsigned first_row = m_config.rotation == 2 ? 80 : 0;
     for (unsigned row = 0; row < 320; row++)
         assert(m_panel_rows[row] == (row >= first_row && row < first_row + 240));
-    assert(m_panel_row == first_row + 239);
+    assert(m_panel_first == first_row && m_panel_last == first_row + 239);
+    assert(m_panel_row == first_row + 240);
+    assert(m_panel_columns==1 && m_panel_windows==1 && m_panel_ramwrites==1);
+    assert(!m_spi_active);
+    /* One window (five transfers), then exactly 240 data transfers, although
+     * CS is released between every pair of rows and between provider polls. */
+    assert(m_panel_data_attempts==240 && m_panel_exchanges-before_exchanges==245);
+    assert(m_spi_begins==m_spi_ends);
+
     /* Nonzero bus cost consumes the supplied budget, reducing timeout per row. */
     assert(a->acquire(NULL, 5, &surface));
     assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
@@ -174,6 +186,8 @@ int main(void) {
     extended->poll(2);
     assert(m_now - poll_start == 1 && m_panel_row_count == 1);
     assert(m_spi_timeouts[0] == 2);
+    assert(m_panel_columns==2 && m_panel_windows==2 && m_panel_ramwrites==2);
+    assert(m_panel_row==first_row+1 && !m_spi_active);
     /* Never restart with a 1ms budget: the backend truncates deadlines to ms. */
     assert(m_spi_begins == 1);
     for (unsigned i = 1; i < 240; i++) extended->poll(2);
@@ -193,14 +207,30 @@ int main(void) {
     m_panel_row_count = m_spi_begins = 0;
     m_panel_fail_row = 3;
     extended->poll(20);
-    assert(m_panel_row_count == 2 && m_spi_begins == 3);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3 && !m_spi_active);
     assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_FAILED);
     assert(!a->acquire(NULL, 5, &surface));
     extended->poll(20);
-    assert(m_panel_row_count == 2 && m_spi_begins == 3);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3 && !m_spi_active);
     m_panel_fail_row = 0;
     assert(d->quiesce());
     assert(d->start(m_deps, n));
+    /* A failed CS/end leaves the bus retained, not falsely released. No frame
+     * retry occurs; quiescence must retry the failed drain/end before unload. */
+    assert(a->acquire(NULL, 5, &surface));
+    for (unsigned i=0; i<240*240; i++) ((uint16_t *)surface.pixels)[i]=0x1234;
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count=m_spi_begins=0;
+    m_fail_release=true;
+    extended->poll(20);
+    assert(m_panel_row_count==1 && m_spi_begins==1 && m_spi_active);
+    assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
+    assert(!a->acquire(NULL,5,&surface) && !d->quiesce() && m_live && m_spi_active);
+    extended->poll(20);
+    assert(m_panel_row_count==1 && m_spi_begins==1 && m_spi_active);
+    m_fail_release=false;
+    assert(d->quiesce() && !m_spi_active && !m_live);
+    assert(d->start(m_deps,n));
     assert(a->set_brightness(NULL, 1, 2));
     for(unsigned cycle=0;cycle<3;cycle++) {
         assert(power_api->prepare_sleep(NULL));
@@ -210,6 +240,13 @@ int main(void) {
         assert(power_api->resume(NULL));
         assert(m_op==0x29);
         assert(power_api->resume(NULL));
+        const unsigned windows_before=m_panel_windows;
+        assert(a->acquire(NULL,5,&surface));
+        for (unsigned i=0; i<240*240; i++) ((uint16_t *)surface.pixels)[i]=0x1234;
+        assert(a->submit(NULL,surface.frame,NULL,0,NULL,&t));
+        for(unsigned i=0;i<8;i++) extended->poll(20);
+        assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_COMPLETE);
+        assert(m_panel_windows==windows_before+1 && m_panel_row==first_row+240 && !m_spi_active);
     }
     m_fail_io=true;
     assert(!power_api->prepare_sleep(NULL));

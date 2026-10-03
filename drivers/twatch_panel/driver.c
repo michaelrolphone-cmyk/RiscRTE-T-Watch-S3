@@ -48,22 +48,15 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     return true;
 }
 static void hw_submit(void) {}
-/* CASET/RASET/RAMWR commands + 8 address bytes + 480 RGB565 bytes.
+/* Worst-case first row: window commands + 8 address bytes + RGB565 row.
  * Never start a row whose wire time alone exceeds the remaining deadline. */
 static uint32_t hw_row_min_budget_ms(void) {
     const uint32_t wire_bits_ms = (3u + 8u + STRIDE) * 8u * 1000u;
     return (wire_bits_ms + config->bus.frequency_hz - 1u) / config->bus.frequency_hz;
 }
 static bool hw_row(uint32_t y, const uint8_t *pixels) {
-    /* This 240x240 glass occupies 240 rows of the ST7789's 320-row RAM.
-     * MX|MY mirrors the visible range to 80..319; logical offsets remain zero.
-     * Keep the high address byte: the last 64 rows cross address 255.
-     * LILYGO LilyGoDispSPI::setRotation pairs mirror(true,true) with gap(0,80). */
-    const uint16_t address_y = (uint16_t)(y + (config->rotation == 2 ? 80u : 0u));
-    uint8_t x[] = {0, 0, 0, 239};
-    uint8_t row[] = {(uint8_t)(address_y >> 8), (uint8_t)address_y,
-                     (uint8_t)(address_y >> 8), (uint8_t)address_y}, wire[480];
-    for (size_t i = 0; i < 480; i += 2) {
+    uint8_t wire[STRIDE];
+    for (size_t i = 0; i < STRIDE; i += 2) {
         uint16_t v;
         memcpy(&v, pixels + i, 2);
         wire[i] = v >> 8;
@@ -71,17 +64,34 @@ static bool hw_row(uint32_t y, const uint8_t *pixels) {
     }
     if (!spi_begin(config->bus.frequency_hz))
         return false;
-    uint8_t cmds[] = {0x2a, 0x2b, 0x2c};
-    const uint8_t *data[] = {x, row, wire};
-    size_t sizes[] = {4, 4, 480};
     bool ok = true;
-    for (size_t i = 0; i < 3 && ok; i++) {
-        gpio_write(config->dc, false);
-        ok = !io_fault && spi->exchange(spi->context, spi_claim, &cmds[i], NULL, 1);
-        if (ok) {
-            gpio_write(config->dc, true);
-            ok = !io_fault && spi->exchange(spi->context, spi_claim, data[i], NULL, sizes[i]);
+    if (y == 0) {
+        /* The glass occupies 240 rows of 320-row RAM. MX|MY moves the visible
+         * range to 80..319; preserve both address bytes across row 255. Every
+         * new frame resets the full window and RAM write pointer explicitly. */
+        const uint16_t first = config->rotation == 2 ? 80u : 0u;
+        const uint16_t last = first + HEIGHT - 1u;
+        const uint8_t x[] = {0, 0, 0, WIDTH - 1u};
+        const uint8_t rows[] = {(uint8_t)(first >> 8), (uint8_t)first,
+                               (uint8_t)(last >> 8), (uint8_t)last};
+        const uint8_t cmds[] = {0x2a, 0x2b, 0x2c};
+        const uint8_t *data[] = {x, rows};
+        for (size_t i = 0; i < 3 && ok; i++) {
+            gpio_write(config->dc, false);
+            ok = !io_fault && spi->exchange(spi->context, spi_claim, &cmds[i], NULL, 1);
+            if (i < 2 && ok) {
+                gpio_write(config->dc, true);
+                ok = !io_fault && spi->exchange(spi->context, spi_claim, data[i], NULL, 4);
+            }
         }
+    }
+    /* ST7789V3 v0.1 section 8.5 permits byte-aligned frame-data pauses with
+     * CS high. The RAM pointer survives each drained/released row transaction.
+     * No bus ownership or DMA survives a successful poll. Never retry a partial
+     * failed row: the common provider fails the frame and blocks reacquisition. */
+    if (ok) {
+        gpio_write(config->dc, true);
+        ok = !io_fault && spi->exchange(spi->context, spi_claim, wire, NULL, sizeof(wire));
     }
     bool ended = spi_end();
     return ok && ended;

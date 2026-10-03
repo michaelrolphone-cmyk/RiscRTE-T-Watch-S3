@@ -53,6 +53,17 @@ jobs:
           for bundle in dist/clock-deployments/*.zip; do
             python scripts/build_clock_store.py "$bundle" --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
+      - name: Common crown clock deployment and verified SPIFFS image
+        env:
+          PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python -m unittest discover -s tests -p test_clock_common.py -v
+          python scripts/build_clock_common.py --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          python scripts/verify_clock_deployment.py dist/clock-common/*.zip
+          for bundle in dist/clock-common/*.zip; do
+            python scripts/build_clock_store.py "$bundle" --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" --output dist/clock-common
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-clock-deployments
@@ -67,6 +78,9 @@ jobs:
             dist/clock-frames/expected.json
             dist/clock-images/*.bin
             dist/clock-images/*.json
+            dist/clock-common/*.zip
+            dist/clock-common/*.bin
+            dist/clock-common/*.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:

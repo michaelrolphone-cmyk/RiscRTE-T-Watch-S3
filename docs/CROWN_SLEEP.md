@@ -70,11 +70,19 @@ completed final row publishes completion in that poll. SPI frequency is unchange
 The ripple selects its 16 scans by elapsed time and skips obsolete scans if a
 frame is slow; its final black frame still completes before sleep. This removes
 the compulsory sixteen slow transfers without extending the runtime poll budget.
+The panel programs CASET/RASET and RAMWR once per frame, then streams the 240
+480-byte rows into that window. Every row ends its SPI transaction and releases
+chip select; no shared bus lease spans a runtime yield. The controller's documented
+byte-aligned data-pause behavior retains its frame-memory pointer across these
+pauses. A new frame resets its window, and any failed transfer/end stops that
+presentation rather than blindly continuing. This reduces one frame from 1,440
+SPI exchange calls to 245 while retaining the same row/poll/deadline bounds.
 Actual physical frame rate still needs measurement.
 
 ## Primary sources
 
 - [LILYGO schematic, 2025-03-24](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/schematic/T_WATCH-S3%2025-03-24.pdf): SW7 Power Key connects PWR_KEY to AXP2101 PWRON; PMU_IRQ1 routes to GPIO21. No rotary encoder channels were established.
+- [ST7789V3 datasheet v0.1, sections 8.5 and 8.6](https://files.waveshare.com/upload/c/c1/ST7789V3_V0.1.pdf#page=59): frame-memory writes pause at completed bytes when chip select is released and continue from the retained pointer; these modes apply to serial and parallel interfaces.
 - [LILYGO display rotation](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/src/display/LilyGoDispInterface.cpp#L717-L741): mirror(true,true) pairs with the 80-row RAM gap; mirror(false,false) pairs with zero gap. Its rotation labels use a different baseline from the Watch package.
 - [LILYGO Watch initialization and lightSleep](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/src/LilyGoWatchS3.cpp): power-key wake uses PMU_INT, short-press IRQ, display sleep, and retained display/touch supply.
 - [AXP2101 datasheet v1.4](https://github.com/lewisxhe/XPowersLib/blob/d6997586e68f65afd51baa775903df930db39821/datasheet/AXP2101_Datasheet_V1.4_en.pdf): PWRON events, IRQ enables/status and write-one-to-clear semantics.
@@ -86,7 +94,9 @@ Host tests exercise real app/driver code, repeated wake, refused sleep, partial
 preparation, retained/error paths and cleanup. Display tests decode actual wire
 CASET/RASET/RAMWR data for both orientations, verify every RAM row including
 addresses above 255, and exercise row caps, elapsed budgets, remaining SPI
-timeouts, final-row completion and failed-transfer stopping. App tests include
+timeouts, final-row completion and failed-transfer stopping. Streaming checks
+cover a single exact frame window, chip-select release after every row, subsequent
+frame reset and failure recovery without retained bus ownership. App tests include
 asynchronous 2-second frames, obsolete-scan skipping and uptime wraparound;
 effects tests require a black background, light ink and a final black scrub. Target ELFs and merged image
 contents are checked separately. Physical crown behavior, orientation, repeated

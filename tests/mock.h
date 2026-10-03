@@ -17,6 +17,11 @@ static uint8_t m_madctl;
 static uint16_t m_panel_row, m_panel_rows[320];
 static unsigned m_panel_row_count, m_panel_row_cost_ms, m_spi_timeout, m_spi_begins;
 static unsigned m_spi_timeouts[512], m_panel_fail_row;
+static uint8_t m_panel_dc_pin;
+static uint16_t m_panel_first, m_panel_last;
+static unsigned m_panel_columns, m_panel_windows, m_panel_ramwrites, m_panel_exchanges;
+static unsigned m_panel_data_attempts, m_spi_ends;
+static bool m_spi_active, m_panel_have_columns, m_panel_have_rows;
 #endif
 static uint8_t m_pin[512], m_regs[256], m_op, m_phase;
 static uint16_t m_irq;
@@ -160,6 +165,8 @@ static bool m_begin(void *c, uint64_t t, uint32_t hz, uint8_t mode, uint32_t ms)
 #if TEST_KIND == 5
     m_spi_timeout = ms;
     m_spi_timeouts[m_spi_begins++ % 512] = ms;
+    assert(!m_spi_active);
+    if (!m_fail_io) m_spi_active = true;
 #endif
     return !m_fail_io;
 }
@@ -168,6 +175,49 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
     assert(m_tokens[t] && n <= 512);
     if (m_fail_io)
         return false;
+#if TEST_KIND == 5
+    assert(m_spi_active && tx && !rx);
+    bool dc = false, found_dc = false;
+    for (size_t i = 1; i < 512; i++)
+        if (m_tokens[i] && m_pin[i] == m_panel_dc_pin) {
+            dc = m_levels[i]; found_dc = true;
+        }
+    assert(found_dc);
+    m_panel_exchanges++;
+    if (!dc) {
+        assert(n == 1);
+        m_op = tx[0];
+        if (m_op == 0x2a) {m_panel_have_columns=false; m_panel_columns++;}
+        if (m_op == 0x2b) {m_panel_have_rows=false; m_panel_windows++;}
+        if (m_op == 0x2c) {
+            assert(m_panel_have_columns && m_panel_have_rows);
+            m_panel_row=m_panel_first; m_panel_ramwrites++;
+        }
+    } else if (m_op == 0x2a) {
+        assert(n==4 && tx[0]==0 && tx[1]==0 && tx[2]==0 && tx[3]==239);
+        m_panel_have_columns=true;
+    } else if (m_op == 0x2b) {
+        assert(n==4);
+        m_panel_first=((uint16_t)tx[0]<<8)|tx[1];
+        m_panel_last=((uint16_t)tx[2]<<8)|tx[3];
+        assert(m_panel_first < 320 && m_panel_last < 320 &&
+               m_panel_last == m_panel_first + 239);
+        m_panel_have_rows=true;
+    } else if (m_op == 0x2c) {
+        assert(n==480 && m_panel_row<=m_panel_last);
+        assert(tx[0]==0x12 && tx[1]==0x34);
+        m_panel_data_attempts++;
+        if (m_panel_fail_row && m_panel_row_count + 1 == m_panel_fail_row)
+            return false;
+        m_panel_rows[m_panel_row++]++;
+        m_panel_row_count++;
+        m_bytes+=n;
+        m_now+=m_panel_row_cost_ms;
+    } else if (m_op == 0x36) {
+        assert(n==1); m_madctl=*tx;
+    }
+    return true;
+#endif
     if (m_phase == 0 && tx) {
         m_op = tx[0];
         m_phase = 1;
@@ -176,15 +226,6 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
     if (tx && n==1 && m_op==0x36) m_madctl=*tx;
     if (tx && n == 1 && (*tx == 0x2a || *tx == 0x2b || *tx == 0x2c))
         m_op = *tx;
-#if TEST_KIND == 5
-    if (tx && n == 4 && m_op == 0x2a)
-        assert(tx[0] == 0 && tx[1] == 0 && tx[2] == 0 && tx[3] == 239);
-    if (tx && n == 4 && m_op == 0x2b) {
-        m_panel_row = ((uint16_t)tx[0] << 8) | tx[1];
-        assert(m_panel_row == (((uint16_t)tx[2] << 8) | tx[3]));
-        assert(m_panel_row < 320);
-    }
-#endif
     if (rx) {
         memset(rx, 0, n);
         if (m_phase >= 2) {
@@ -206,13 +247,6 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
     if (tx && m_op == 0x2c && n == 480) {
         m_bytes += n;
         assert(tx[0] == 0x12 && tx[1] == 0x34);
-#if TEST_KIND == 5
-        if (m_panel_fail_row && m_panel_row_count + 1 == m_panel_fail_row)
-            return false;
-        m_panel_rows[m_panel_row]++;
-        m_panel_row_count++;
-        m_now += m_panel_row_cost_ms;
-#endif
     }
     m_phase++;
     return true;
@@ -220,6 +254,11 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
 static bool m_end(void *c, uint64_t t) {
     (void)c;
     assert(m_tokens[t]);
+#if TEST_KIND == 5
+    assert(m_spi_active);
+    m_spi_ends++;
+    if (!m_fail_release) m_spi_active=false;
+#endif
     return !m_fail_release;
 }
 static bool m_clocks(void *c, uint64_t t, uint32_t hz, uint16_t n) {
