@@ -28,7 +28,7 @@ class BoardReleases(unittest.TestCase):
         (self.root / 'dist').mkdir()
         (self.root / 'dist/catalog.json').write_text('{"schema":1,"packages":[]}')
         self.sha = 'a' * 40
-        self.value = '1.0.0'
+        self.value = json.loads((self.root / board.MANIFEST).read_text())['version']
         self.tag = p.tag_for(board.IDENTITY, self.value)
         self.plan = {'schema': 1, 'source_sha': self.sha,
                      'packages': p.candidates({board.IDENTITY: self.value}, [])}
@@ -111,8 +111,10 @@ class BoardReleases(unittest.TestCase):
                 checker.check_board(modified, manifests)
 
     def test_bumped_version_is_new_candidate(self):
-        self.assertEqual(p.candidates({board.IDENTITY: '1.0.1'}, [
-            {'tag_name': self.tag, 'draft': False}])[0]['tag'], 'board-lilygo-t-watch-s3-v1.0.1')
+        major, minor, patch_version = map(int, self.value.split('.'))
+        bumped = f'{major}.{minor}.{patch_version+1}'
+        self.assertEqual(p.candidates({board.IDENTITY: bumped}, [
+            {'tag_name': self.tag, 'draft': False}])[0]['tag'], p.tag_for(board.IDENTITY,bumped))
 
     def test_incorrect_record_rejected(self):
         manifest, _, _, fingerprint = board.snapshot(self.root)

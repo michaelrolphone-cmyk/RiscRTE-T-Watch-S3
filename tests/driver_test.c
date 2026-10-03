@@ -1,3 +1,4 @@
+#include "twatch_power.h"
 #include "tests/mock.h"
 #include "fixture_config.h"
 #include DRIVER_SOURCE
@@ -15,6 +16,9 @@ static risc_provider_dependency_v1 m_deps[] = {{"hardware.device", 1, &m_device}
 int main(void) {
     const risc_driver_v2 *d = t5_driver_get(2);
     size_t n = sizeof(m_deps) / sizeof(m_deps[0]);
+#if TEST_KIND == 5
+    m_panel_dc_pin=m_config.dc;
+#endif
     assert(d && d->quiesce && !t5_driver_get(1));
     assert(!d->start(NULL, 0));
     assert(m_live == 0);
@@ -42,6 +46,20 @@ int main(void) {
     m_regs[3] = 0x4a;
     m_regs[0x34] = 0x0e;
     m_regs[0x35] = 0x74;
+    /* Nonzero sentinels catch accidental charger/CPU/gauge policy writes. */
+    const uint8_t pmu_policy_regs[] = {
+        0x12, 0x14, 0x15, 0x16, 0x17, 0x18, 0x61, 0x63, 0x64, 0x65,
+        0x67, 0x68, 0x6a, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0xa1, 0xa2
+    };
+    uint8_t pmu_policy_before[sizeof(pmu_policy_regs)];
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        m_regs[pmu_policy_regs[i]] = (uint8_t)(0x40 + i);
+    m_regs[0x17] = 0;
+    m_regs[0x18] = 0x0e;
+    m_regs[0x68] = 1;
+    m_regs[0xa2] = 0;
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        pmu_policy_before[i] = m_regs[pmu_policy_regs[i]];
 #elif TEST_KIND == 7
     m_regs[0] = m_config.chip_id;
 #elif TEST_KIND == 9
@@ -50,8 +68,17 @@ int main(void) {
     m_busy = m_config.busy;
 #endif
 #if TEST_KIND == 5
-    /* Both 10MHz and alternate 2MHz fixtures verify every init/command/row begin. */
+    /* 10MHz, alternate2MHz and deployment40MHz verify every SPI begin. */
     m_expected_spi_hz = m_config.bus.frequency_hz;
+    const uint32_t original_hz = m_config.bus.frequency_hz;
+    m_config.bus.frequency_hz = 40000001;
+    assert(!d->start(m_deps,n) && !m_live);
+    m_config.bus.frequency_hz = 0;
+    assert(!d->start(m_deps,n) && !m_live);
+    m_config.bus.frequency_hz = original_hz;
+    assert(tw_bus_limit(&m_config.bus,RISC_HW_BUS_SPI,40000000));
+    if (original_hz>10000000) assert(!tw_bus(&m_config.bus,RISC_HW_BUS_SPI));
+    assert(!tw_bus_limit(&m_config.bus,99,40000000));
     int16_t original_pin = m_config.backlight;
     m_config.backlight = -1;
     assert(!d->start(m_deps, n));
@@ -76,6 +103,16 @@ int main(void) {
     assert(!a->release(NULL, 0));
     assert(a->release(NULL, t));
     assert(!a->write(NULL, t, false));
+    m_serial+=3; /* Public bank token must differ from raw CPU token. */
+    assert(a->claim(NULL,21,RISC_GPIO_INPUT,&t));
+    risc_light_sleep_result_v1 sr={sizeof(sr),0};
+    assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_OK);
+    assert(m_sleep_token==m_serial && m_sleep_token!=t && sr.wake_cause==RISC_LIGHT_SLEEP_WAKE_GPIO);
+    assert(a->light_sleep(NULL,999,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->release(NULL,t));
+    assert(a->claim(NULL,6,RISC_GPIO_OUTPUT,&t));
+    assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->release(NULL,t));
 #elif TEST_KIND == 2 || TEST_KIND == 3
     const risc_i2c_bus_api_v1 *a = d->capability;
     uint64_t t = 0, u = 0;
@@ -94,20 +131,120 @@ int main(void) {
     risc_battery_sample_v1 battery;
     m_regs[1] = 0x20;
     assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+           battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING) &&
            (battery.flags & RISC_BATTERY_CHARGING));
+    assert(!a->base.read(NULL, NULL));
+    m_regs[0] = 0x08;
+    uint8_t pmu_registers_before[sizeof(m_regs)];
+    const unsigned battery_writes_before = m_writes;
+    /* Both ROM and existing SRAM models supply the chip's estimate. A4[7]
+     * is data, not a validity flag; zero must not be confused with unknown. */
+    const uint8_t valid_percent[] = {0, 1, 42, 99, 100};
+    for (unsigned model = 0; model < 2; ++model) {
+        m_regs[0xa2] = model ? 0x10 : 0;
+        for (size_t i = 0; i < sizeof(valid_percent); ++i) {
+            m_regs[0xa4] = valid_percent[i];
+            memcpy(pmu_registers_before, m_regs, sizeof(m_regs));
+            assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+                   battery.percent == valid_percent[i] && battery.flags == RISC_BATTERY_CHARGING);
+            assert(!memcmp(pmu_registers_before, m_regs, sizeof(m_regs)));
+        }
+    }
+    const uint8_t invalid_percent[] = {101, 127, 128, 200, 255};
+    for (size_t i = 0; i < sizeof(invalid_percent); ++i) {
+        m_regs[0xa4] = invalid_percent[i];
+        battery = (risc_battery_sample_v1){4200, 100, 0};
+        assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+               battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING));
+    }
+    m_regs[0xa2] = 0;
+    m_regs[0xa4] = 42;
+    const uint8_t unavailable[][2] = {
+        {0x00, 0x00}, /* No battery. */
+        {0x68, 0x00}, /* Battery detection disabled, presence may be stale. */
+        {0x18, 0x06}, /* Gauge disabled; preserve both charger bits. */
+        {0x17, 0x04}, /* Gauge held in reset. */
+        {0x17, 0x08}, /* Gauge reset requested. */
+        {0xa2, 0x01}, /* BROM programming enabled with ROM selected. */
+        {0xa2, 0x11}, /* BROM programming enabled with SRAM selected. */
+    };
+    for (size_t i = 0; i < sizeof(unavailable) / sizeof(unavailable[0]); ++i) {
+        const uint8_t reg = unavailable[i][0], saved_value = m_regs[reg];
+        m_regs[reg] = unavailable[i][1];
+        memcpy(pmu_registers_before, m_regs, sizeof(m_regs));
+        battery = (risc_battery_sample_v1){4200, 100, 0};
+        assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+               battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING));
+        assert(!memcmp(pmu_registers_before, m_regs, sizeof(m_regs)));
+        m_regs[reg] = saved_value;
+    }
+    /* Fail each read: voltage, presence/status, reset/enable, detection,
+     * model control and SOC. No old success or partial sample may escape. */
+    for (unsigned fail = 1; fail <= 6; ++fail) {
+        m_transfers = 0;
+        m_fail_transfer_at = fail;
+        battery = (risc_battery_sample_v1){4200, 100, RISC_BATTERY_CHARGING};
+        assert(!a->base.read(NULL, &battery) && battery.millivolts == 0 &&
+               battery.percent == 255 && battery.flags == RISC_BATTERY_PROFILE_MISSING);
+        m_fail_transfer_at = 0;
+        assert(a->base.read(NULL, &battery) && battery.percent == 42);
+    }
+    for (unsigned direction = 0; direction < 4; ++direction) {
+        m_regs[1] = (uint8_t)(direction << 5);
+        assert(a->base.read(NULL, &battery) && battery.percent == 42 &&
+               !!(battery.flags & RISC_BATTERY_CHARGING) == (direction == 1));
+    }
+    assert(m_writes == battery_writes_before);
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        assert(m_regs[pmu_policy_regs[i]] == pmu_policy_before[i]);
     m_regs[0x49] = 0x0c;
     uint32_t events = 0;
     assert(a->key_events(NULL, &events) && events == 3);
     assert(m_regs[0x62] == 4);
+    uint8_t irq0=m_regs[0x40],irq1=m_regs[0x41],irq2=m_regs[0x42];
+    for(unsigned cycle=0;cycle<3;cycle++) {
+        m_regs[0x49]=0x08;assert(a->key_events(NULL,&events)&&events==2);
+        assert(a->prepare_sleep(NULL));
+        assert(m_regs[0x40]==0&&m_regs[0x41]==8&&m_regs[0x42]==0);
+        risc_light_sleep_result_v1 sr={sizeof(sr),0};
+        assert(a->light_sleep(NULL,&sr)==RISC_LIGHT_SLEEP_OK && m_pin[m_sleep_token]==m_config.device.irq);
+        assert(a->resume(NULL));assert(a->resume(NULL));
+        assert(m_regs[0x40]==irq0&&m_regs[0x41]==irq1&&m_regs[0x42]==irq2);
+    }
+    m_regs[0x49]=0x02;assert(a->key_events(NULL,&events)&&!events);
+    assert(!a->prepare_sleep(NULL)); /* Held key never arms wake. */
+    m_regs[0x49]=0x09;assert(a->key_events(NULL,&events)&&events==2);
+    m_fail_io=true;assert(!a->prepare_sleep(NULL));m_fail_io=false;
+    assert(a->resume(NULL));
+    /* Teardown after new telemetry restores resources without touching
+     * charger, CPU supplies, battery parameters or gauge configuration. */
+    assert(d->quiesce() && m_live == 0);
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        assert(m_regs[pmu_policy_regs[i]] == pmu_policy_before[i]);
+    assert(m_regs[0x62] == 4); /* Existing 100 mA safety ceiling retained. */
+    battery = (risc_battery_sample_v1){4200, 100, RISC_BATTERY_CHARGING};
+    assert(!a->base.read(NULL, &battery) && battery.percent == 255 &&
+           battery.flags == RISC_BATTERY_PROFILE_MISSING);
+    assert(d->start(m_deps, n));
 #elif TEST_KIND == 5
+    assert(m_madctl==(m_config.rotation==2?0xc0:0));
     const risc_display_output_api_v1 *a = d->capability;
     risc_display_surface_v1 surface;
+    risc_display_info_v1 info={0};
+    assert(a->get_info(NULL,&info));
+    assert(info.nominal_refresh_millihz==(m_config.bus.frequency_hz==40000000?20000u:0u));
+    assert(!info.typical_present_latency_us);
     assert(a->acquire(NULL, 5, &surface));
+    const twatch_panel_power_v1 *power_api=d->capability;
+    assert(a->struct_size>=sizeof(*power_api));
+    assert(!power_api->prepare_sleep(NULL));
     assert(!d->quiesce());
     a->release(NULL, surface.frame);
     assert(d->quiesce());
     assert(d->start(m_deps, n));
     assert(a->acquire(NULL, 5, &surface));
+    assert(a->set_brightness(NULL,40,100));
+    assert(!m_levels[pins[m_config.backlight]]);
     uint16_t *p = surface.pixels;
     for (size_t i = 0; i < 240 * 240; i++)
         p[i] = 0x1234;
@@ -118,11 +255,135 @@ int main(void) {
     risc_display_present_status_v1 status;
     assert(!a->present_status(NULL, t + 1, &status));
     const risc_driver_poll_v2 *extended = (const void *)d;
-    for (size_t i = 0; i < 241; i++)
+    const unsigned before_zero = m_spi_begins;
+    const unsigned before_exchanges = m_panel_exchanges;
+    extended->poll(0);
+    assert(m_spi_begins == before_zero && m_panel_row_count == 0);
+    /* A frozen monotonic mock must still be bounded by the row ceiling. */
+    extended->poll(20);
+    assert(m_panel_row_count == 32 && !m_spi_active);
+    assert(!m_levels[pins[m_config.backlight]]);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_ACTIVE);
+    for (size_t i = 1; i < 8; i++)
         extended->poll(20);
     assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
     assert(m_bytes == 115200);
+    assert(m_levels[pins[m_config.backlight]]);
+    /* Decode the actual CASET/RASET/RAMWR stream, including addresses >255. */
+    assert(m_panel_row_count == 240);
+    const unsigned first_row = m_config.rotation == 2 ? 80 : 0;
+    for (unsigned row = 0; row < 320; row++)
+        assert(m_panel_rows[row] == (row >= first_row && row < first_row + 240));
+    assert(m_panel_first == first_row && m_panel_last == first_row + 239);
+    assert(m_panel_row == first_row + 240);
+    assert(m_panel_columns==1 && m_panel_windows==1 && m_panel_ramwrites==1);
+    assert(!m_spi_active);
+    /* One window (five transfers), then exactly 240 data transfers, although
+     * CS is released between every pair of rows and between provider polls. */
+    assert(m_panel_data_attempts==240 && m_panel_exchanges-before_exchanges==245);
+    assert(m_spi_begins==m_spi_ends);
+
+    /* Nonzero bus cost consumes the supplied budget, reducing timeout per row. */
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    m_panel_row_cost_ms = 1;
+    const uint64_t poll_start = m_now;
+    extended->poll(2);
+    assert(m_now - poll_start == 1 && m_panel_row_count == 1);
+    assert(m_spi_timeouts[0] == 2);
+    assert(m_panel_columns==2 && m_panel_windows==2 && m_panel_ramwrites==2);
+    assert(m_panel_row==first_row+1 && !m_spi_active);
+    /* Never restart with a 1ms budget: the backend truncates deadlines to ms. */
+    assert(m_spi_begins == 1);
+    for (unsigned i = 1; i < 240; i++) extended->poll(2);
+    assert(m_panel_row_count == 240);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    extended->poll(3);
+    assert(m_panel_row_count == 2 && m_spi_timeouts[0] == 3 && m_spi_timeouts[1] == 2);
+    for (unsigned i = 1; i < 120; i++) extended->poll(3);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
+    m_panel_row_cost_ms = 0;
+    /* A failed row stops the batch and never completes or accepts another frame. */
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    m_panel_fail_row = 3;
+    extended->poll(20);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3 && !m_spi_active);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_FAILED);
+    assert(!a->acquire(NULL, 5, &surface));
+    extended->poll(20);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3 && !m_spi_active);
+    m_panel_fail_row = 0;
+    assert(d->quiesce());
+    assert(d->start(m_deps, n));
+    /* A failed CS/end leaves the bus retained, not falsely released. No frame
+     * retry occurs; quiescence must retry the failed drain/end before unload. */
+    assert(a->acquire(NULL, 5, &surface));
+    for (unsigned i=0; i<240*240; i++) ((uint16_t *)surface.pixels)[i]=0x1234;
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count=m_spi_begins=0;
+    m_fail_release=true;
+    extended->poll(20);
+    assert(m_panel_row_count==1 && m_spi_begins==1 && m_spi_active);
+    assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
+    assert(!a->acquire(NULL,5,&surface) && !d->quiesce() && m_live && m_spi_active);
+    extended->poll(20);
+    assert(m_panel_row_count==1 && m_spi_begins==1 && m_spi_active);
+    m_fail_release=false;
+    assert(d->quiesce() && !m_spi_active && !m_live);
+    assert(d->start(m_deps,n));
     assert(a->set_brightness(NULL, 1, 2));
+    assert(!m_levels[pins[m_config.backlight]]); /* cold gate */
+    for(unsigned cycle=0;cycle<3;cycle++) {
+        assert(power_api->prepare_sleep(NULL));
+        assert(m_op==0x10);
+        assert(power_api->prepare_sleep(NULL));
+        assert(!a->acquire(NULL,5,&surface));
+        assert(power_api->resume(NULL));
+        assert(m_op==0x29);
+        assert(!m_levels[pins[m_config.backlight]]); /* no old GRAM on wake */
+        assert(power_api->resume(NULL));
+        const unsigned windows_before=m_panel_windows;
+        assert(a->acquire(NULL,5,&surface));
+        for (unsigned i=0; i<240*240; i++) ((uint16_t *)surface.pixels)[i]=0x1234;
+        assert(a->submit(NULL,surface.frame,NULL,0,NULL,&t));
+        extended->poll(20);
+        assert(!m_levels[pins[m_config.backlight]]); /* incomplete frame stays dark */
+        for(unsigned i=1;i<8;i++) extended->poll(20);
+        assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_COMPLETE);
+        assert(m_levels[pins[m_config.backlight]]); /* saved brightness restored */
+        assert(m_panel_windows==windows_before+1 && m_panel_row==first_row+240 && !m_spi_active);
+    }
+    m_fail_io=true;
+    assert(!power_api->prepare_sleep(NULL));
+    assert(!power_api->prepare_sleep(NULL));
+    assert(!power_api->resume(NULL));
+    assert(!a->acquire(NULL,5,&surface));
+    m_fail_io=false;
+    assert(power_api->resume(NULL));
+    assert(!m_levels[pins[m_config.backlight]]);
+    assert(a->acquire(NULL,5,&surface));
+    assert(a->submit(NULL,surface.frame,NULL,0,NULL,&t));
+    m_panel_row_count=0;m_panel_fail_row=3;
+    extended->poll(20);
+    assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
+    assert(!m_levels[pins[m_config.backlight]]); /* failed wake frame never unblanks */
+    m_panel_fail_row=0;
+    assert(d->quiesce() && d->start(m_deps,n));
+    assert(a->set_brightness(NULL,1,2));
+    assert(a->acquire(NULL,5,&surface));
+    for(unsigned i=0;i<240*240;i++)((uint16_t *)surface.pixels)[i]=0x1234;
+    assert(a->submit(NULL,surface.frame,NULL,0,NULL,&t));
+    m_fail_pwm=true;
+    for(unsigned i=0;i<8;i++)extended->poll(20);
+    assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
+    assert(!m_levels[pins[m_config.backlight]]); /* failed final unblank is not COMPLETE */
+    m_fail_pwm=false;
 #elif TEST_KIND == 6
     const risc_touch_api_v1 *a = d->capability;
     uint64_t sub = a->subscribe(NULL);

@@ -10,7 +10,7 @@ _Static_assert(sizeof(risc_driver_poll_v2) == 48, "poll suffix ABI");
 _Static_assert(sizeof(risc_hardware_device_v1) == 40, "hardware envelope ABI");
 _Static_assert(offsetof(risc_hardware_device_v1, config) == 36, "hardware config pointer ABI");
 _Static_assert(sizeof(risc_hw_bus_v1) == 40, "hardware bus ABI");
-_Static_assert(sizeof(garden_gpio_v1) == 36, "shared GPIO ABI");
+_Static_assert(sizeof(garden_gpio_v1) == 40, "shared GPIO ABI");
 _Static_assert(sizeof(garden_spi_v1) == 36, "shared SPI ABI");
 _Static_assert(sizeof(twatch_i2c_controller_v1) == 24, "raw I2C ABI");
 _Static_assert(sizeof(tw_hw_i2c_device_v1) == 56, "I2C device config ABI");
@@ -19,3 +19,6 @@ _Static_assert(sizeof(risc_i2c_bus_api_v1) == 24, "canonical I2C ABI");
 _Static_assert(sizeof(risc_battery_sample_v1) == 4, "battery sample ABI");
 _Static_assert(offsetof(twatch_pmu_api_v1, key_events) == sizeof(risc_battery_gauge_api_v1),
                "PMU append-only prefix");
+
+_Static_assert(offsetof(garden_gpio_v1,light_sleep)==36,"raw GPIO append-only prefix");
+_Static_assert(sizeof(risc_light_sleep_result_v1)==8,"sleep result ABI");
