@@ -46,6 +46,20 @@ int main(void) {
     m_regs[3] = 0x4a;
     m_regs[0x34] = 0x0e;
     m_regs[0x35] = 0x74;
+    /* Nonzero sentinels catch accidental charger/CPU/gauge policy writes. */
+    const uint8_t pmu_policy_regs[] = {
+        0x12, 0x14, 0x15, 0x16, 0x17, 0x18, 0x61, 0x63, 0x64, 0x65,
+        0x67, 0x68, 0x6a, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0xa1, 0xa2
+    };
+    uint8_t pmu_policy_before[sizeof(pmu_policy_regs)];
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        m_regs[pmu_policy_regs[i]] = (uint8_t)(0x40 + i);
+    m_regs[0x17] = 0;
+    m_regs[0x18] = 0x0e;
+    m_regs[0x68] = 1;
+    m_regs[0xa2] = 0;
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        pmu_policy_before[i] = m_regs[pmu_policy_regs[i]];
 #elif TEST_KIND == 7
     m_regs[0] = m_config.chip_id;
 #elif TEST_KIND == 9
@@ -117,7 +131,72 @@ int main(void) {
     risc_battery_sample_v1 battery;
     m_regs[1] = 0x20;
     assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+           battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING) &&
            (battery.flags & RISC_BATTERY_CHARGING));
+    assert(!a->base.read(NULL, NULL));
+    m_regs[0] = 0x08;
+    uint8_t pmu_registers_before[sizeof(m_regs)];
+    const unsigned battery_writes_before = m_writes;
+    /* Both ROM and existing SRAM models supply the chip's estimate. A4[7]
+     * is data, not a validity flag; zero must not be confused with unknown. */
+    const uint8_t valid_percent[] = {0, 1, 42, 99, 100};
+    for (unsigned model = 0; model < 2; ++model) {
+        m_regs[0xa2] = model ? 0x10 : 0;
+        for (size_t i = 0; i < sizeof(valid_percent); ++i) {
+            m_regs[0xa4] = valid_percent[i];
+            memcpy(pmu_registers_before, m_regs, sizeof(m_regs));
+            assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+                   battery.percent == valid_percent[i] && battery.flags == RISC_BATTERY_CHARGING);
+            assert(!memcmp(pmu_registers_before, m_regs, sizeof(m_regs)));
+        }
+    }
+    const uint8_t invalid_percent[] = {101, 127, 128, 200, 255};
+    for (size_t i = 0; i < sizeof(invalid_percent); ++i) {
+        m_regs[0xa4] = invalid_percent[i];
+        battery = (risc_battery_sample_v1){4200, 100, 0};
+        assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+               battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING));
+    }
+    m_regs[0xa2] = 0;
+    m_regs[0xa4] = 42;
+    const uint8_t unavailable[][2] = {
+        {0x00, 0x00}, /* No battery. */
+        {0x68, 0x00}, /* Battery detection disabled, presence may be stale. */
+        {0x18, 0x06}, /* Gauge disabled; preserve both charger bits. */
+        {0x17, 0x04}, /* Gauge held in reset. */
+        {0x17, 0x08}, /* Gauge reset requested. */
+        {0xa2, 0x01}, /* BROM programming enabled with ROM selected. */
+        {0xa2, 0x11}, /* BROM programming enabled with SRAM selected. */
+    };
+    for (size_t i = 0; i < sizeof(unavailable) / sizeof(unavailable[0]); ++i) {
+        const uint8_t reg = unavailable[i][0], saved_value = m_regs[reg];
+        m_regs[reg] = unavailable[i][1];
+        memcpy(pmu_registers_before, m_regs, sizeof(m_regs));
+        battery = (risc_battery_sample_v1){4200, 100, 0};
+        assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
+               battery.percent == 255 && (battery.flags & RISC_BATTERY_PROFILE_MISSING));
+        assert(!memcmp(pmu_registers_before, m_regs, sizeof(m_regs)));
+        m_regs[reg] = saved_value;
+    }
+    /* Fail each read: voltage, presence/status, reset/enable, detection,
+     * model control and SOC. No old success or partial sample may escape. */
+    for (unsigned fail = 1; fail <= 6; ++fail) {
+        m_transfers = 0;
+        m_fail_transfer_at = fail;
+        battery = (risc_battery_sample_v1){4200, 100, RISC_BATTERY_CHARGING};
+        assert(!a->base.read(NULL, &battery) && battery.millivolts == 0 &&
+               battery.percent == 255 && battery.flags == RISC_BATTERY_PROFILE_MISSING);
+        m_fail_transfer_at = 0;
+        assert(a->base.read(NULL, &battery) && battery.percent == 42);
+    }
+    for (unsigned direction = 0; direction < 4; ++direction) {
+        m_regs[1] = (uint8_t)(direction << 5);
+        assert(a->base.read(NULL, &battery) && battery.percent == 42 &&
+               !!(battery.flags & RISC_BATTERY_CHARGING) == (direction == 1));
+    }
+    assert(m_writes == battery_writes_before);
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        assert(m_regs[pmu_policy_regs[i]] == pmu_policy_before[i]);
     m_regs[0x49] = 0x0c;
     uint32_t events = 0;
     assert(a->key_events(NULL, &events) && events == 3);
@@ -137,6 +216,16 @@ int main(void) {
     m_regs[0x49]=0x09;assert(a->key_events(NULL,&events)&&events==2);
     m_fail_io=true;assert(!a->prepare_sleep(NULL));m_fail_io=false;
     assert(a->resume(NULL));
+    /* Teardown after new telemetry restores resources without touching
+     * charger, CPU supplies, battery parameters or gauge configuration. */
+    assert(d->quiesce() && m_live == 0);
+    for (size_t i = 0; i < sizeof(pmu_policy_regs); ++i)
+        assert(m_regs[pmu_policy_regs[i]] == pmu_policy_before[i]);
+    assert(m_regs[0x62] == 4); /* Existing 100 mA safety ceiling retained. */
+    battery = (risc_battery_sample_v1){4200, 100, RISC_BATTERY_CHARGING};
+    assert(!a->base.read(NULL, &battery) && battery.percent == 255 &&
+           battery.flags == RISC_BATTERY_PROFILE_MISSING);
+    assert(d->start(m_deps, n));
 #elif TEST_KIND == 5
     assert(m_madctl==(m_config.rotation==2?0xc0:0));
     const risc_display_output_api_v1 *a = d->capability;

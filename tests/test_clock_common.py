@@ -43,8 +43,8 @@ class CommonClock(unittest.TestCase):
         cls.root.mkdir()
         for name in ('hardware', 'drivers', 'apps/clock/nova/fonts'):
             shutil.copytree(ROOT / name, cls.root / name)
-        for name in ('board.json', 'apps/clock/manifest.json', 'apps/clock/runtime-requirements.json', 'sdk/app/SOURCES.json',
-                     'releases/board-baseline.json', 'docs/CLOCK_INSTALL.md', 'docs/CROWN_SLEEP.md'):
+        for name in ('board.json', 'apps/clock/manifest.json', 'apps/clock/runtime-requirements.json', 'apps/clock/time-policy.json', 'sdk/app/SOURCES.json',
+                     'releases/board-baseline.json', 'docs/CLOCK_INSTALL.md', 'docs/CROWN_SLEEP.md', 'docs/PMU_BATTERY.md'):
             target = cls.root / name
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, target)
@@ -121,6 +121,16 @@ class CommonClock(unittest.TestCase):
                 archives = self.mutate(directory, omit)
                 with self.assertRaisesRegex(ValueError, 'Missing NOVA font license/provenance'):
                     verify(archives[0])
+
+    def test_time_policy_mismatch_rejected_even_with_rehashed_membership(self):
+        def change(files, record):
+            policy=json.loads(files['time-policy.json'])
+            policy['rtc_basis']['utc_offset_minutes']=0
+            files['time-policy.json']=deployment.encoded(policy)
+        with tempfile.TemporaryDirectory() as directory:
+            archives=self.mutate(directory, change)
+            with self.assertRaisesRegex(ValueError, 'time policy'):
+                verify(archives[0])
 
     def test_selected_wiring_driver_and_app_differences_are_rejected(self):
         def wiring(files, record):

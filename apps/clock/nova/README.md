@@ -20,8 +20,10 @@ Its `84%` and `SYNCED` strings are placeholders, never runtime defaults.
   amber status dot and no seconds arc/dot. The renderer does not invent a zone.
 - Battery `0%` is a real empty reading. Invalid/unavailable/out-of-range readings
   show `--%` with no green fill. No voltage-derived estimate is made here.
-  The current unprofiled board driver returns 255/PROFILE_MISSING, so its honest
-  output is `--%`. The 84% examples are explicitly test inputs.
+  The initial clock 0.3.0 board driver returned 255/PROFILE_MISSING. Clock
+  0.3.1 reads the existing hardware gauge with documented admission checks;
+  unavailable still shows `--%`. See docs/PMU_BATTERY.md. The 84% examples are
+  explicitly test inputs.
 
 ## Integration contract
 

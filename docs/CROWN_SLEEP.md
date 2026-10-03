@@ -1,4 +1,4 @@
-# Crown clock 0.2.2
+# Crown clock 0.3.1
 
 Separate successor to the preserved 0.1.0 clock image. The user confirmed that
 0.1.0 runs on battery after correcting wiring; this is not qualification of the
@@ -12,8 +12,9 @@ without rotation. Both RASET address bytes are transmitted, including rows
 projection has no touch driver, so no inconsistent touch coordinates are exposed.
 A future touch-enabled projection must apply the matching transform.
 
-A completed short crown press runs the copied ripple transition, waits for all
-accepted presentation work, then prepares panel and PMU. Panel preparation
+A completed short crown press, or 60 seconds of awake inactivity, prepares
+panel and PMU after accepted presentation work completes. No scrub transition
+is shown on startup, lock, or sleep. Panel preparation
 refuses held frames and pending work, disables PWM backlight, issues display-off
 and sleep-in, and waits 120 ms. ALDO3 stays supplied. PMU preparation snapshots
 IRQ enables 0x40..0x42, masks everything except short-press 0x41 bit3, clears
@@ -42,16 +43,17 @@ dd7993308cf170feeb4a5883eba8857dc6243c8e; sdk/SOURCES.json pins hashes. Older ba
 GPIO consumers retain prefix-size checks; only sleep use requires the extension.
 
 Boot and every successful wake show the actual T5 ink sweep, forming logo blocks,
-wordmark unfolding and loading dots. The original 16-scan curling screen-clearing
-field supplies transitions; its precomputed arrival map is resampled into square
-portrait coordinates, and EPD black/white commands become RGB565 colors. These
-use light foreground on a black background; the existing dark clock palette is
-unchanged. The hardware inversion command remains the panel-required setting.
+wordmark unfolding and loading dots. The completed final logo frame remains
+visible for 250 ms before the clock appears. The old curling screen-clearing
+transition is no longer called or linked into the production application.
+The boot animation uses light foreground on a black background. The hardware inversion command remains the panel-required setting.
 These are app-side visual copies, not a display abstraction change. Exact source,
 licenses and reproducible map generator are in apps/clock/effects. Button events
 during animation and the first 250 ms after it are drained to avoid immediate
 resleep from a wake event. Hardware still supplies its own long-press power-off
-behavior; the app does not reinterpret long presses.
+behavior. Supported PMU short/long events reset the awake inactivity timer;
+the clock projection has no touch input. Wake and refused/held-key sleep
+attempts restart the timeout, preventing immediate repeated attempts.
 
 ## Display regression corrections
 
@@ -67,9 +69,8 @@ transaction, and caps a poll at 32 rows even if the clock stops advancing.
 A new row requires at least the original 2 ms allowance and its calculated wire
 time; a 1 ms remainder is not used with the backend's coarse-millisecond deadline. A
 completed final row publishes completion in that poll.
-The ripple selects its 16 scans by elapsed time and skips obsolete scans if a
-frame is slow; its final black frame still completes before sleep. This removes
-the compulsory sixteen slow transfers without extending the runtime poll budget.
+The 0.2.1 correction made ripple scans elapsed-time-driven. Clock 0.3.1 removes
+that transition entirely at the user's request.
 The panel programs CASET/RASET and RAMWR once per frame, then streams the 240
 480-byte rows into that window. Every row ends its SPI transaction and releases
 chip select; no shared bus lease spans a runtime yield. The controller's documented
@@ -146,8 +147,8 @@ verified navigation inputs. Do not assign rotary pins without hardware evidence.
 The supplied NOVA face is now the crown clock's production renderer. It defaults
 to 12-hour time with AM/PM. RTC fields are displayed as supplied; this app does
 not infer a timezone or claim synchronization. Failed or invalid readings show
-TIME UNSET. The PMU currently reports percent 255 with PROFILE_MISSING, so the
-face honestly shows --%; a future valid 0% remains distinct from unknown.
+TIME UNSET. In 0.3.0 the PMU always reported percent 255 with PROFILE_MISSING. The
+0.3.1 PMU reads the existing hardware gauge instead, as described below.
 
 The face renders on every paced iteration, independently of RTC sampling. A
 frame's rendering/presentation time counts toward the existing 20 ms interval;
@@ -156,7 +157,7 @@ most every 100 ms. An observed second change anchors its fractional phase, with
 up to one sampling interval of observation delay; civil time is never advanced
 from uptime. Battery is sampled at most every five seconds. Both cached states
 are invalidated after a sleep attempt/restoration. Crown key checks still occur
-between frames, and outgoing ripple frames use the same NOVA state.
+between frames. Clock 0.3.1 removes the outgoing ripple.
 
 The immutable glyph masks are checked in. Normal target builds neither download
 fonts nor run a rasterizer. Both SIL OFL licenses and font source provenance are
@@ -168,3 +169,50 @@ This release retains the 40 MHz projection, corrected 80-row window and streamin
 panel 0.3.2 from clock 0.2.2, and requires the exact RiscRTE 0.1.2 source
 a3d23da9cdc1b3a66c6429f29781856fa7fc8f75. Complete-frame timing regressions are
 host models, and neither those nor renderer CPU timings are measured watch FPS.
+
+
+## 0.3.1 interaction and telemetry update
+
+The idle timer starts only after boot/wake animation plus the 250 ms final-frame
+hold. It expires after 60,000 ms without supported PMU key activity, using unsigned
+elapsed-time subtraction across uptime wrap. Sleep refusal resets the interval;
+a held key cannot produce a busy retry loop. A manual released short press still
+requests sleep. The final-frame hold begins after successful presentation and
+has both elapsed and iteration bounds. No new touch input is claimed.
+
+PMU 0.3.1 reports the AXP2101's existing fuel-gauge estimate when battery presence,
+detection, gauge-enable, reset/programming and range checks permit it. The driver
+only reads these values; it does not upload a battery profile, reset the gauge or
+change charging settings. Unavailable/invalid remains --%, while valid 0 and 100
+are preserved. This is the PMIC's estimate, not a voltage-derived approximation
+or a claim of cell-specific accuracy. See PMU_BATTERY.md for pinned sources and
+admission tests. Board baseline 1.0.2 versions the changed PMU manifest.
+
+
+### Explicit temporary RTC basis and Denver display zone
+
+The reported watch calendar was Sunday October 4 at 00:40 while Denver local
+time was Saturday October 3 at 10:40. The app therefore has an explicit,
+temporary fixed UTC+08 RTC basis and America/Denver display zone. This is
+configuration established from that observation, not automatic timezone
+inference from the board. The earlier minus-two-hour proposal is not used.
+
+The conversion first subtracts eight hours to obtain UTC, then applies Denver's
+UTC−07 standard or UTC−06 daylight offset using UTC transition instants. Summer
+is a 14-hour subtraction from this configured RTC; winter is 15 hours. The
+2000..2006 first-Sunday-in-April/last-Sunday-in-October rules and the 2007 onward
+second-Sunday-in-March/first-Sunday-in-November rules are taken from
+[IANA tzdb 2026e northamerica](https://github.com/eggert/tz/blob/2026e/northamerica),
+Git blob e3a4bd6d5332b901961381432a6f53cc95ce530f. Future legal changes require
+updating this pinned policy; it is not a full runtime timezone database.
+
+Date, weekday, month, leap-day and year move with the time. Minutes/seconds are
+preserved. Results outside the existing 2000..2099 display domain remain UNSET.
+No RTC write, host clock or compiler timestamp is involved. The policy ships in
+time-policy.json and deployment provenance. Settings must replace this temporary
+app policy with shared RTC-basis/display-zone ownership before its editor can
+write local time; direct Denver wall-time writes into this UTC+08 RTC are unsafe.
+
+Tests compare all 876,600 supported RTC hours against independent IANA ZoneInfo
+conversion, and separately check exact DST transition seconds, the reported
+next-day case, winter offset, leap/year boundaries and untouched RTC input.

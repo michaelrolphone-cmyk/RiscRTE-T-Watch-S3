@@ -230,9 +230,19 @@ Physical profile selection, installation and hardware observations
 remain outstanding. No successful hardware execution is claimed here.
 
 
-Clock 0.3.0 uses the NOVA-7 face with a 12-hour AM/PM default. Its independently
+Clock 0.3.1 uses the NOVA-7 face with a 12-hour AM/PM default. Its independently
 paced animation requires the corrected runtime source recorded in
 runtime-requirements.json. Do not pair this 40 MHz deployment with the earlier
-3d0ae runtime binary. The current unprofiled PMU reports battery percentage as
-unknown (--%); RTC validity is not a synchronization claim. Font license and
+3d0ae runtime binary. Battery percentage comes from the existing AXP2101 gauge when its read-only
+admission checks succeed; unavailable remains --%. See PMU_BATTERY.md.
+RTC validity is not a synchronization claim. This build sleeps after 60 seconds
+of supported-input inactivity, omits scrub transitions, and holds the completed
+boot/wake logo for 250 ms. Font license and
 source notices are included in the deployment ZIP under licenses/nova.
+
+This candidate explicitly treats the existing RTC as UTC+08 wall time and displays
+America/Denver using DST, recorded in time-policy.json. It does not write the RTC.
+The source basis came from the reported watch/local dates, not host build time.
+Do not use a raw local-wall-time Settings editor against this basis; Settings
+must perform the matching inverse conversion first. Future timezone settings
+should replace this temporary app policy.

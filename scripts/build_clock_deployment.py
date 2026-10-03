@@ -49,6 +49,7 @@ def build(profile_path, root=ROOT):
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
     runtime = json.loads((root / 'apps/clock/runtime-requirements.json').read_text())
+    time_policy = json.loads((root / 'apps/clock/time-policy.json').read_text())
     files = {'store/default.elf': (root / 'dist/clock/default.elf').read_bytes(),
              'store/board.json': encoded(board),
              'store/default.json': (root / 'apps/clock/manifest.json').read_bytes(),
@@ -56,7 +57,9 @@ def build(profile_path, root=ROOT):
              'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
              'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
              'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes(),
-             'runtime-requirements.json': encoded(runtime)}
+             'PMU_BATTERY.md': (root / 'docs/PMU_BATTERY.md').read_bytes(),
+             'runtime-requirements.json': encoded(runtime),
+             'time-policy.json': encoded(time_policy)}
     for name in NOVA_NOTICES:
         files['licenses/nova/' + name] = (root / 'apps/clock/nova/fonts' / name).read_bytes()
     boot = {'board': 'board.json', 'default_app': 'default.elf', 'drivers': [],
@@ -93,6 +96,9 @@ def build(profile_path, root=ROOT):
               'app_id': 'twatch-clock', 'app_version': version, 'source_sha': source_sha,
               'profile': profile['revision'], 'physical_verification': 'pending',
               'runtime_sdk': sdk, 'runtime_requirements': runtime, 'drivers': selected,
+              'time_policy': time_policy,
+              'clock_policy': {'idle_sleep_ms': 60000,
+                               'boot_final_hold_ms': 250, 'screen_scrub': False},
               'transformations': ['Select device instances1,2,4,5,8 and buses101,103',
                                   'Limit PMU setup to declared ALDO2/ALDO3 rails1/2',
                                   'Set selected display SPI bus103 to40MHz and rotation180'],

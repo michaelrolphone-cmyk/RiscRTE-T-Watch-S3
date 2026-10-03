@@ -1,5 +1,6 @@
 #include "RiscRuntimeV1.h"
 #include "nova/nova.h"
+#include "display_time.h"
 #include "effects/effects.h"
 #include "twatch_power.h"
 #include "twatch_caps.h"
@@ -57,7 +58,7 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
      * edge anchors the fractional hand within one 100ms sampling interval. */
     if (!sampled_rtc || (uint32_t)(now-rtc_sampled_at)>=100u) {
         twatch_rtc_time_v1 date={0};
-        bool valid=rtc && rtc->read(rtc->context,&date) && tw_valid_time(&date);
+        bool valid=rtc && rtc->read(rtc->context,&date) && watch_display_time(&date,&date);
         if (valid && (!face.time_valid || !same_second(&date,&face.time))) rtc_second_at=now;
         face.time=date; face.time_valid=valid;
         rtc_sampled_at=now; sampled_rtc=true;
@@ -82,29 +83,21 @@ static bool pace_frame(uint32_t began) {
     if (spent < 20u) rt->yield_ms(20u - spent);
     return true;
 }
-static bool ripple(bool outgoing) {
+static bool hold_boot_frame(void) {
     uint32_t start,now;
     if (!alive(&start)) return false;
-    /* A slow presentation must skip obsolete scans, not stretch all sixteen
-     * scans into sixteen slow full-panel transfers. Always submit scan 15. */
-    for(unsigned count=0;count<16;count++) {
-        risc_display_surface_v1 s={0};
-        if (!alive(&now) || !frame(&s)) return false;
-        uint32_t age=now-start;
-        unsigned scan=age/20u;
-        if (scan>15) scan=15;
-        if (outgoing && !draw_clock(now,&s)) return false;
-        if (!outgoing) {
-            if (!watch_boot_render(&s,0)) return false;
-        }
-        if (!watch_ripple_render(&s,scan) || !present()) return false;
-        if (scan==15) return true;
-        if (!pace_frame(now)) return false;
+    /* Begin after the final presentation completed, not when it was submitted.
+     * A finite iteration guard also bounds a broken/non-advancing clock. */
+    for(unsigned n=0;n<=250;n++) {
+        if (!alive(&now)) return false;
+        uint32_t spent=now-start;
+        if (spent>=250u) return true;
+        uint32_t left=250u-spent;
+        rt->yield_ms(left<20u?left:20u);
     }
     return false;
 }
 static bool startup(void) {
-    if (!ripple(false)) return false;
     uint32_t start,now;
     if (!alive(&start)) return false;
     for(unsigned count=0;count<100;count++) {
@@ -112,13 +105,12 @@ static bool startup(void) {
         if (!alive(&now) || !frame(&s)) return false;
         uint32_t age=now-start;
         if (!watch_boot_render(&s,age>1800?1800:age) || !present()) return false;
-        if (age>=1800) return true;
+        if (age>=1800) return hold_boot_frame();
         if (!pace_frame(now)) return false;
     }
     return false;
 }
 static bool sleep_cycle(void) {
-    if (!ripple(true)) return false;
     /* Every preparation attempt is paired with resume, including partial
      * preparation and platform refusal. No framebuffer lease survives here. */
     bool panel_ok=panel->prepare_sleep(display->context);
@@ -165,17 +157,25 @@ __attribute__((visibility("default"))) void app_main(void) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
-    uint32_t discarded,now,armed_at=0;
+    uint32_t discarded,now,armed_at=0,last_activity=0;
     if (!display->set_brightness(display->context,40,100) ||
         !pmu->key_events(pmu->base.context,&discarded) || !startup() ||
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
+    last_activity=armed_at;
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
         uint32_t events=0;
         if (!pmu->key_events(pmu->base.context,&events)) break;
-        /* A short press is reported on release; ignore startup/wake tails. */
-        if ((events&2u) && (uint32_t)(now-armed_at)>=250) {
+        /* The clock closure currently exposes only PMU short/long key events.
+         * Do not invent touch activity. Short press is reported on release. */
+        if (events&3u) last_activity=now;
+        bool manual=(events&2u) && (uint32_t)(now-armed_at)>=250u;
+        bool idle=(uint32_t)(now-last_activity)>=60000u;
+        if (manual || idle) {
             if (!sleep_cycle() || !alive(&armed_at)) break;
+            /* A refused/held-key attempt also starts a new bounded interval;
+             * it must not turn an expired timeout into a busy retry loop. */
+            last_activity=armed_at;
             continue;
         }
         risc_display_surface_v1 s={0};

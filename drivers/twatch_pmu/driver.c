@@ -1,8 +1,9 @@
 /* AXP2101 bring-up and battery sample for the 470 mAh T-Watch-S3 cell.
  * Charge current is hardcoded to the XPowersLib 100 mA code. There is no
  * setter. LilyGO: keep charge current below 130 mA. Amazon listing notes:
- * do not set the library default above 125 mA. percent is 255 because this
- * PMIC has no profiled fuel gauge in this ELF. */
+ * do not set the library default above 125 mA. Percentage is the PMIC's
+ * existing fuel-gauge estimate; this driver never writes battery parameters.
+ * See docs/PMU_BATTERY.md for the read-only admission and accuracy limits. */
 #include "RiscBatteryGaugeV1.h"
 #include "twatch_caps.h"
 #include "RiscGpioBankV1.h"
@@ -10,7 +11,16 @@
 #include "RiscPlatformClockV1.h"
 #include "twatch_support.h"
 #include <stddef.h>
-#define AXP_STATUS2 0x01u
+#define AXP_STATUS1 0x00u
+#define AXP_GAUGE_RESET 0x17u
+#define AXP_BAT_DETECT 0x68u
+#define AXP_GAUGE_CTRL 0xa2u
+#define AXP_BAT_PERCENT 0xa4u
+#define AXP_BAT_PRESENT (1u << 3)
+#define AXP_GAUGE_ENABLED (1u << 3)
+#define AXP_GAUGE_RESET_MASK ((1u << 3) | (1u << 2))
+#define AXP_BAT_DETECT_ENABLED (1u << 0)
+#define AXP_BROM_WRITE_ENABLED (1u << 0)
 #define AXP_DC_ON 0x80u
 #define AXP_LDO_ON 0x90u
 #define AXP_ALDO2_V 0x93u
@@ -130,18 +140,35 @@ static int32_t light_sleep(void *context,risc_light_sleep_result_v1 *result) {
 }
 static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     (void)context;
-    if (!started || !out)
+    if (!out)
         return false;
     *out = (risc_battery_sample_v1){0, 255, RISC_BATTERY_PROFILE_MISSING};
-    uint8_t raw[2] = {0}, status = 0;
-    if (!read_reg(AXP_VBAT_H, raw, 2) || !read_reg(AXP_STATUS2, &status, 1)) {
+    if (!started)
+        return false;
+    uint8_t raw[2] = {0}, status[2] = {0}, gauge[2] = {0};
+    uint8_t detect = 0, control = 0, percent = 255;
+    /* 0x00/01: presence and charge direction; 0x17/18: reset and enable.
+     * Read every admission register successfully before publishing any SOC.
+     * These are observations only: never enable/reset/program the gauge here. */
+    if (!read_reg(AXP_VBAT_H, raw, 2) || !read_reg(AXP_STATUS1, status, 2) ||
+        !read_reg(AXP_GAUGE_RESET, gauge, 2) || !read_reg(AXP_BAT_DETECT, &detect, 1) ||
+        !read_reg(AXP_GAUGE_CTRL, &control, 1) || !read_reg(AXP_BAT_PERCENT, &percent, 1)) {
         set_error("AXP2101 battery read failed");
         return false;
     }
     uint16_t mv = (uint16_t)((((uint16_t)raw[0] & 0x3fu) << 8) | raw[1]);
     out->millivolts = mv;
-    if ((status & 0x60u) == 0x20u)
+    if ((status[1] & 0x60u) == 0x20u)
         out->flags |= RISC_BATTERY_CHARGING;
+    /* A2[4] selects ROM/SRAM, not profile validity. Both are readable.
+     * A4 is a full byte, not a 7-bit value plus a validity bit. In particular,
+     * preserve valid 0/100 and reject all values >100 without masking/clamping. */
+    if ((status[0] & AXP_BAT_PRESENT) && (detect & AXP_BAT_DETECT_ENABLED) &&
+        (gauge[1] & AXP_GAUGE_ENABLED) && !(gauge[0] & AXP_GAUGE_RESET_MASK) &&
+        !(control & AXP_BROM_WRITE_ENABLED) && percent <= 100) {
+        out->percent = percent;
+        out->flags &= (uint8_t)~RISC_BATTERY_PROFILE_MISSING;
+    }
     return true;
 }
 static bool last_error(char *dst, size_t cap) {

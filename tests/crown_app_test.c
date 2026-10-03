@@ -5,6 +5,7 @@
 #include "twatch_caps.h"
 #include "twatch_power.h"
 #include "apps/clock/nova/nova.h"
+#include "apps/clock/effects/effects.h"
 void app_main(void);
 static uint16_t pixels[240*240];
 static uint32_t now,frames,grants,ungrants,sleeps,prepares,resumes,keys,events,mode;
@@ -16,13 +17,26 @@ static uint32_t face_limit,rtc_kind,battery_kind,health_stop;
 static uint32_t seen_valid,seen_invalid,seen_zero,seen_unknown,seen_phase;
 static bool no_keys,refresh_needed;
 static uint32_t rtc_before_resume,battery_before_resume;
+static bool frame_is_boot,frame_is_final_boot,expect_boot_hold,freeze_boot_hold;
+static uint32_t final_boot_done,boot_calls,last_boot_age,panel_attempts,key_scenario;
+static uint32_t sleep_times[8],attempt_times[8];
+bool test_watch_boot_render(risc_display_surface_v1*s,uint32_t age){
+ frame_is_boot=true;frame_is_final_boot=age==1800;boot_calls++;last_boot_age=age;
+ return watch_boot_render(s,age);
+}
+bool test_watch_ripple_render(risc_display_surface_v1*s,unsigned scan){
+ (void)s;(void)scan;assert(!"Screen scrub must not run on startup or lock");return false;
+}
 bool test_nova_watch_render(risc_display_surface_v1*s,const nova_watch_state*f){
  nova_watch_labels labels; nova_watch_format(f,&labels);
+ if(expect_boot_hold){assert((uint32_t)(now-final_boot_done)==250);expect_boot_hold=false;}
+ frame_is_boot=frame_is_final_boot=false;
  if(refresh_needed){assert(rtc_reads>rtc_before_resume&&battery_reads>battery_before_resume);refresh_needed=false;}
  if(!face_calls)first_face_at=now;
  face_calls++;last_face_at=now;
  assert(f->subsecond_ms<=999 && f->animation_ms==now);
- if(f->time_valid){seen_valid++;assert(!strcmp(labels.status,"RTC"));assert(!strcmp(labels.meridiem,"PM"));}
+ if(f->time_valid){seen_valid++;assert(!strcmp(labels.status,"RTC"));if(rtc_kind==4){assert(!strcmp(labels.meridiem,"AM"));assert(!strcmp(labels.hour_minute,"10:40"));assert(f->time.year==2026&&f->time.month==10&&f->time.day==3&&f->time.weekday==6);}
+ else{assert(!strcmp(labels.meridiem,"PM"));assert(f->time.year==2026&&f->time.month==10&&f->time.day==2&&f->time.hour==22&&f->time.minute==30);}}
  else{seen_invalid++;assert(!strcmp(labels.status,"UNSET"));}
  if(f->battery_valid&&f->battery_percent==0){seen_zero++;assert(!strcmp(labels.battery,"0%"));}
  if(!f->battery_valid){seen_unknown++;assert(!strcmp(labels.battery,"--%"));}
@@ -31,10 +45,10 @@ bool test_nova_watch_render(risc_display_surface_v1*s,const nova_watch_state*f){
 }
 static uint32_t elapsed(void){return now-epoch;}
 static bool health(risc_runtime_health_v1*h){h->uptime_ms=now;return elapsed()<(health_stop?health_stop:16000) && !(stop_on_ready&&ready) && !(face_limit&&face_calls>=face_limit);}
-static void yield(uint32_t n){assert(n>=1&&n<=20);now+=n;}
+static void yield(uint32_t n){assert(n>=1&&n<=20);if(!(freeze_boot_hold&&expect_boot_hold))now+=n;}
 static bool diagnostic(const char*s){
  assert(!strncmp(s,"WATCH_CLOCK ",12));
- if(!strcmp(s,"WATCH_CLOCK ready crown=enabled")){ready=true;ready_at=elapsed();}
+ if(!strcmp(s,"WATCH_CLOCK ready crown=enabled")){ready=true;ready_at=elapsed();assert(last_boot_age==1800);assert((uint32_t)(now-final_boot_done)==250);}
  return true;
 }
 static bool info(void*c,risc_display_info_v1*s){(void)c;s->width=s->height=240;return true;}
@@ -45,32 +59,39 @@ static bool present(void*c,uint64_t t,risc_display_present_status_v1*s){
  (void)c;assert(t==frames&&pending);present_polls++;
  if(fail_present&&present_polls==3){pending=false;s->state=RISC_DISPLAY_PRESENT_FAILED;}
  else if((uint32_t)(now-present_started)<frame_cost)s->state=RISC_DISPLAY_PRESENT_ACTIVE;
- else{pending=false;s->state=RISC_DISPLAY_PRESENT_COMPLETE;}
+ else{pending=false;s->state=RISC_DISPLAY_PRESENT_COMPLETE;if(frame_is_final_boot){final_boot_done=now;expect_boot_hold=true;}}
  return true;
 }
 static bool bright(void*c,uint16_t v,uint16_t m){(void)c;assert(v==40&&m==100);return true;}
 static bool panel_prepare(void*c){
  (void)c;assert(!held&&!pending);
- for(unsigned i=0;i<240*240;i++)assert(pixels[i]==0);
+ assert(!frame_is_boot);assert(panel_attempts<8);attempt_times[panel_attempts++]=elapsed();
  panel_asleep=true;return mode!=2;
 }
 static bool panel_resume(void*c){(void)c;panel_asleep=false;resumes++;refresh_needed=true;rtc_before_resume=rtc_reads;battery_before_resume=battery_reads;return mode!=3;}
-static bool pmu_prepare(void*c){(void)c;assert(panel_asleep);pmu_asleep=true;prepares++;return true;}
+static bool pmu_prepare(void*c){(void)c;assert(panel_asleep);pmu_asleep=true;prepares++;return mode!=4;}
 static bool pmu_resume(void*c){(void)c;pmu_asleep=false;return true;}
-static int32_t sleep_now(void*c,risc_light_sleep_result_v1*r){(void)c;assert(!held&&!pending&&panel_asleep&&pmu_asleep&&r->struct_size==sizeof(*r));sleeps++;r->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return mode==1?RISC_LIGHT_SLEEP_ACTIVE_WAKE:RISC_LIGHT_SLEEP_OK;}
-static bool key(void*c,uint32_t*out){(void)c;keys++;*out=0;if(!no_keys && events<2 && elapsed()>=5000+events*5000){*out=2;events++;}return true;}
+static int32_t sleep_now(void*c,risc_light_sleep_result_v1*r){(void)c;assert(!held&&!pending&&panel_asleep&&pmu_asleep&&r->struct_size==sizeof(*r));assert(sleeps<8);sleep_times[sleeps++]=elapsed();r->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return mode==1?RISC_LIGHT_SLEEP_ACTIVE_WAKE:RISC_LIGHT_SLEEP_OK;}
+static bool key(void*c,uint32_t*out){
+ (void)c;keys++;*out=0;
+ if(key_scenario==1 && ready && !events && elapsed()>=ready_at+30000){*out=1;events++;}
+ else if(!no_keys && !key_scenario && events<2 && elapsed()>=5000+events*5000){*out=2;events++;}
+ return true;
+}
 static bool rtc_read(void*c,twatch_rtc_time_v1*t){
  (void)c;
  if(!rtc_reads)first_rtc_at=now;
- else if(no_keys)assert((uint32_t)(now-last_rtc_at)>=100);
+ else if(no_keys&&!refresh_needed)assert((uint32_t)(now-last_rtc_at)>=100);
  rtc_reads++;last_rtc_at=now;
  *t=(twatch_rtc_time_v1){2026,10,3,6,12,30,(uint8_t)((elapsed()/1000)%60)};
  if(rtc_kind==2)t->day=32;
+ if(rtc_kind==4)*t=(twatch_rtc_time_v1){2026,10,4,0,0,40,0};
  return rtc_kind!=1;
 }
+static bool rtc_write(void*c,const twatch_rtc_time_v1*t){(void)c;(void)t;assert(!"Display offset must not write RTC");return false;}
 static bool battery_read(void*c,risc_battery_sample_v1*s){
  (void)c;
- if(battery_reads&&no_keys)assert((uint32_t)(now-last_battery_at)>=5000);
+ if(battery_reads&&no_keys&&!refresh_needed)assert((uint32_t)(now-last_battery_at)>=5000);
  battery_reads++;last_battery_at=now;
  *s=(risc_battery_sample_v1){3900,255,RISC_BATTERY_PROFILE_MISSING};
  if(battery_kind==1)*s=(risc_battery_sample_v1){3300,0,0};
@@ -79,7 +100,7 @@ static bool battery_read(void*c,risc_battery_sample_v1*s){
 }
 static twatch_panel_power_v1 d={{1,sizeof(d),NULL,info,acquire_frame,release_frame,submit,present,NULL,bright},panel_prepare,panel_resume};
 static twatch_pmu_api_v1 p={{1,sizeof(p),NULL,battery_read},key,pmu_prepare,pmu_resume,sleep_now};
-static twatch_rtc_api_v1 r={2,sizeof(r),NULL,rtc_read,NULL,NULL,NULL};
+static twatch_rtc_api_v1 r={2,sizeof(r),NULL,rtc_read,rtc_write,NULL,NULL};
 static bool acquire(const char*n,uint32_t v,uint64_t id,risc_runtime_capability_v1*g){assert(!id&&g->struct_size==sizeof(*g));if(!strcmp(n,"display.output")){assert(v==1);g->api=&d;}else if(!strcmp(n,"board.battery")){assert(v==1);g->api=&p;}else{assert(!strcmp(n,"rtc.clock")&&v==2);g->api=&r;}grants++;return true;}
 static bool release(risc_runtime_capability_v1*g){assert(g->api&&!held&&!pending);g->api=NULL;ungrants++;return true;}
 static const risc_runtime_api_v1 api={1,sizeof(api),health,yield,diagnostic,NULL,acquire,release};
@@ -90,7 +111,8 @@ static void reset(uint32_t cost,uint32_t begin,bool stop){
  held=pending=panel_asleep=pmu_asleep=ready=fail_present=false;
  face_calls=rtc_reads=battery_reads=first_face_at=last_face_at=first_rtc_at=last_rtc_at=last_battery_at=0;
  face_limit=rtc_kind=battery_kind=health_stop=seen_valid=seen_invalid=seen_zero=seen_unknown=seen_phase=0;
- no_keys=refresh_needed=false;p.base.read=battery_read;
+ no_keys=refresh_needed=frame_is_boot=frame_is_final_boot=expect_boot_hold=freeze_boot_hold=false;p.base.read=battery_read;
+ final_boot_done=boot_calls=last_boot_age=panel_attempts=key_scenario=0;
 }
 static void clean(void){assert(grants==3&&ungrants==3&&!held&&!pending&&!pmu_asleep&&!panel_asleep);}
 int main(void){
@@ -104,15 +126,13 @@ int main(void){
   if(mode==2)assert(!sleeps&&resumes==2&&!prepares);
   if(mode==3)assert(sleeps==1&&resumes==1&&events==1);
  }
- /* A modeled two-second full-frame transfer used to spend 32 seconds on the
-  * ripple alone. Now only the current scan and final scan are presented, then
-  * the elapsed-time logo reaches its terminal frame. This is a host scenario,
-  * not a hardware frame-rate measurement. Verify uptime wrap as well. */
+ /* Startup has no scrub. Slow asynchronous logo frames still end with exactly
+  * 250ms holding the completed final frame. Verify uptime wrap as well. */
  mode=0;
  for(unsigned wrap=0;wrap<2;wrap++){
   reset(2000,wrap?UINT32_MAX-200:0,true);
   app_main();clean();
-  assert(ready&&ready_at<=8100&&frames==4&&present_polls>frames);
+  assert(ready&&ready_at==4250&&frames==2&&present_polls>frames);
   assert(!sleeps&&!prepares&&!resumes);
  }
  reset(95,0,true);app_main();clean();
@@ -143,5 +163,26 @@ int main(void){
  /* Health loss inside an accepted frame drains that operation before release. */
  reset(7,0,false);no_keys=true;health_stop=3001;
  app_main();clean();assert(ready&&face_calls>20);
- puts("Crown/NOVA: continuous real frames, independent telemetry, 12h labels, unknown/zero battery, wake refresh, health drain, async pacing and failures passed");
+ /* The reported next-day RTC case reaches the actual NOVA labels as 10:40 AM Saturday. */
+ reset(5,0,false);no_keys=true;face_limit=2;rtc_kind=4;app_main();clean();assert(seen_valid==2);
+ /* Holding the completed logo is bounded under both shutdown and clock stall. */
+ reset(7,0,false);no_keys=true;health_stop=1900;app_main();clean();assert(!ready&&!face_calls);
+ reset(7,0,false);no_keys=true;freeze_boot_hold=true;app_main();clean();assert(!ready&&!face_calls);
+ /* Inactivity begins after the final boot-frame hold, and restarts after wake
+  * or refusal. No touch capability is acquired and no per-frame retry storm. */
+ for(unsigned wrap=0;wrap<2;wrap++)for(unsigned failure=0;failure<4;failure++){
+  mode=failure==3?4:failure;reset(7,wrap?UINT32_MAX-5000:0,false);
+  no_keys=true;health_stop=132000;app_main();clean();
+  assert(panel_attempts==2&&resumes==2);
+  assert(attempt_times[0]>=ready_at+60000&&attempt_times[0]<ready_at+60020);
+  uint32_t between=attempt_times[1]-attempt_times[0];
+  if(mode==0){assert(sleeps==2&&between>=62050&&between<62100);}
+  else{assert(between==60000);if(mode==1)assert(sleeps==2);else assert(!sleeps);}
+ }
+ /* The supported PMU long-press event resets idle time but does not request
+  * manual sleep; a held key is rejected by PMU preparation (mode4 above). */
+ mode=0;reset(7,0,false);no_keys=true;key_scenario=1;health_stop=96000;
+ app_main();clean();assert(events==1&&sleeps==1);
+ assert(sleep_times[0]>=ready_at+90000&&sleep_times[0]<ready_at+90040);
+ puts("Crown/NOVA: no scrub, 250ms completed-frame hold, 60s inactivity/refusal/wrap, telemetry and lifecycle passed");
 }
