@@ -44,7 +44,7 @@ adjacent extracted tree is only a build convenience.
 ## Runtime and store installation contract
 
 Use generic RiscRTE commit
-`595aae84d39bad188be4394f8b85689e5bd73d7e` for this software checkpoint. The
+`e27d3d089086d79f06edeff4c2bd35f6e6243444` for this software checkpoint. The
 canonical app SDK remains byte-identical to the earlier commit recorded under
 `sdk/app/SOURCES.json`; the SDK pin and firmware pin serve different purposes. A stock older heartbeat firmware lacking app grants or
 native GPIO/I2C/SPI providers cannot run this clock. The loader must mount the
@@ -185,9 +185,11 @@ as permission to omit a required driver or silently bypass startup failure.
 
 ## Pinned integrated software checkpoint
 
-- Runtime source: [`595aae84d39bad188be4394f8b85689e5bd73d7e`](https://github.com/michaelrolphone-cmyk/RiscRTE/commit/595aae84d39bad188be4394f8b85689e5bd73d7e).
-- Runtime [integration CI run37099407211](https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/37099407211)
+- Runtime source: [`e27d3d089086d79f06edeff4c2bd35f6e6243444`](https://github.com/michaelrolphone-cmyk/RiscRTE/commit/e27d3d089086d79f06edeff4c2bd35f6e6243444).
+- Runtime [integration CI run37099823064](https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/37099823064)
   passed both host integration and the actual ESP32-S3 firmware/ELF/candidate build.
+  This revision includes the IDF4 partial-initialization cleanup fix and focused
+  failure-retention checks; use this pin instead of the earlier checkpoint.
 - The runtime test pins Watch source `aa7b03c15a59aa99b2d60ae20905edbdf62e35e6`.
   It loads the actual app and five modules using host instruction-set ELFs,
   through the real Runtime, dependency graph and generic CPU port. Only low-level
@@ -195,7 +197,7 @@ as permission to omit a required driver or silently bypass startup failure.
   match each production-renderer golden frame (valid RTC and TIME UNSET).
   No RTC date writes occur; bad PMU identity and SPI failure roll back with zero
   remaining model resources. See the runtime's pinned
-  [CPU port report](https://github.com/michaelrolphone-cmyk/RiscRTE/blob/595aae84d39bad188be4394f8b85689e5bd73d7e/docs/CPU_PORT.md).
+  [CPU port report](https://github.com/michaelrolphone-cmyk/RiscRTE/blob/e27d3d089086d79f06edeff4c2bd35f6e6243444/docs/CPU_PORT.md).
 - The integration profile `sx1262-915-bma423` is a test fixture, not an inference
   about the physical unit. Target Xtensa artifacts are built separately; the
   host integration does not execute Xtensa instructions or verify physical DMA.
