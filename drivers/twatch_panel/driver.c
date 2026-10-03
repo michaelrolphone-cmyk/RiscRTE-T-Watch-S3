@@ -2,14 +2,13 @@
 #include "twatch_power.h"
 #define TWATCH_PANEL_POWER 1
 static bool asleep, sleep_prepared, unblank_pending;
-static uint32_t frame_first_row,frame_end_row=240;
 static uint16_t brightness_level, brightness_maximum=100;
 #include "common/spi.h"
 #define WIDTH 240u
 #define HEIGHT 240u
 #define STRIDE 480u
 #define FORMAT RISC_DISPLAY_FORMAT_RGB565
-#define DISPLAY_FLAGS (RISC_DISPLAY_INFO_ASYNC_PRESENT | RISC_DISPLAY_INFO_BRIGHTNESS | RISC_DISPLAY_INFO_PARTIAL_DAMAGE)
+#define DISPLAY_FLAGS (RISC_DISPLAY_INFO_ASYNC_PRESENT | RISC_DISPLAY_INFO_BRIGHTNESS)
 #define DISPLAY_ID "twatch-panel"
 static const risc_hw_spi_display_v1 *config;
 static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
@@ -49,7 +48,6 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     return true;
 }
 static void hw_submit(void) {}
-static void hw_set_rows(uint32_t first,uint32_t end){frame_first_row=first;frame_end_row=end;}
 /* Worst-case first row: window commands + 8 address bytes + RGB565 row.
  * Never start a row whose wire time alone exceeds the remaining deadline. */
 static uint32_t hw_row_min_budget_ms(void) {
@@ -67,12 +65,12 @@ static bool hw_row(uint32_t y, const uint8_t *pixels) {
     if (!spi_begin(config->bus.frequency_hz))
         return false;
     bool ok = true;
-    if (y == frame_first_row) {
+    if (y == 0) {
         /* The glass occupies 240 rows of 320-row RAM. MX|MY moves the visible
          * range to 80..319; preserve both address bytes across row 255. Every
          * new frame resets the full window and RAM write pointer explicitly. */
-        const uint16_t first = (config->rotation == 2 ? 80u : 0u) + frame_first_row;
-        const uint16_t last = (config->rotation == 2 ? 80u : 0u) + frame_end_row - 1u;
+        const uint16_t first = config->rotation == 2 ? 80u : 0u;
+        const uint16_t last = first + HEIGHT - 1u;
         const uint8_t x[] = {0, 0, 0, WIDTH - 1u};
         const uint8_t rows[] = {(uint8_t)(first >> 8), (uint8_t)first,
                                (uint8_t)(last >> 8), (uint8_t)last};
@@ -98,7 +96,6 @@ static bool hw_row(uint32_t y, const uint8_t *pixels) {
     bool ended = spi_end();
     return ok && ended;
 }
-static uint32_t hw_finish_min_budget_ms(void){return 0u;}
 static int hw_finish(void) {
     /* Cold activation and wake retain unknown/old panel RAM. Make it visible
      * only after all rows of a new frame have drained successfully. A failed
@@ -113,11 +110,6 @@ static int hw_finish(void) {
 }
 static bool hw_brightness(uint16_t v, uint16_t max) {
     if (asleep) return false;
-    if (!v) {
-        bool pwm_off=gpio->pwm(gpio->context,pins[config->backlight],1000,config->backlight_active_high?0:max,max);
-        unblank_pending=true;brightness_level=0;brightness_maximum=max;
-        return pwm_off;
-    }
     if (!unblank_pending && !gpio->pwm(gpio->context, pins[config->backlight], 1000,
                      config->backlight_active_high ? v : max - v, max)) return false;
     brightness_level=v; brightness_maximum=max;

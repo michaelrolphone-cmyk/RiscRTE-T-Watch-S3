@@ -126,7 +126,7 @@ int main(int argc,char**argv){
  assert(m.railWrites==2); /* one startup, one restored teardown; none per frame */
  assert(m.edit?m.dateWrites==7:m.dateWrites==0);assert(!memcmp(m.registers[1]+2,raw,7));
  assert(!m.bus[0]&&!m.bus[1]&&!m.spi&&!m.held&&port.quiescent());for(bool pin:m.pins)assert(!pin);
- assert(m.partial_frames>0 && m.max_touch_gap<=65 && !m.sleep_attempts);
+ assert(m.partial_frames==0 && m.max_touch_gap<=65 && !m.sleep_attempts);
  fprintf(stderr,"Real modules PASS mode=%u rows=%u partial=%u touch=%u maxInputGap=%u RTCwrites=%u; all resources quiescent\n",mode,m.rows,m.partial_frames,m.touchReads,m.max_touch_gap,m.dateWrites);
  }
 }

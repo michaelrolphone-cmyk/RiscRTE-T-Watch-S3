@@ -8,7 +8,7 @@ static atomic_bool release_pending;
 static bool running, held, active, failed, closing;
 static uint64_t frame_serial, present_serial;
 static uint8_t present_state;
-static uint32_t next_row, end_row;
+static uint32_t next_row;
 static uint8_t pixels[STRIDE * HEIGHT] __attribute__((aligned(4)));
 static bool enter(void) {
     if (atomic_flag_test_and_set_explicit(&display_lock, memory_order_acquire))
@@ -89,18 +89,7 @@ static bool submit(void *c, risc_display_frame_v1 frame, const risc_display_rect
     if (ok) {
         held = false;
         active = true;
-        next_row = 0;end_row=HEIGHT;
-#ifdef TWATCH_PANEL_POWER
-        if(count && !unblank_pending) {
-            next_row=HEIGHT;end_row=0;
-            for(size_t i=0;i<count;i++) {
-                if((uint32_t)damage[i].y<next_row)next_row=(uint32_t)damage[i].y;
-                uint32_t end=(uint32_t)damage[i].y+damage[i].height;
-                if(end>end_row)end_row=end;
-            }
-        }
-        hw_set_rows(next_row,end_row);
-#endif
+        next_row = 0;
         present_state = RISC_DISPLAY_PRESENT_QUEUED;
         ++present_serial;
         if (out)
@@ -131,7 +120,7 @@ static void display_poll(uint32_t budget_ms) {
         /* Amortize owner-task scheduling across rows, without monopolizing it.
          * The item cap also bounds a stopped/coarse clock. Every SPI transaction
          * receives only the remainder of this poll's total time budget. */
-        for (unsigned rows = 0; rows < 32 && next_row < end_row; ++rows) {
+        for (unsigned rows = 0; rows < 32 && next_row < HEIGHT; ++rows) {
             uint64_t elapsed = timer->monotonic_ms(timer->context) - began;
             if (elapsed >= budget)
                 break;
@@ -154,11 +143,7 @@ static void display_poll(uint32_t budget_ms) {
         }
         /* The panel finish hook is nonblocking. A completed last row must not
          * cost another owner-task scheduling round just to publish its token. */
-        if (active && next_row == end_row
-#ifdef TWATCH_PANEL_POWER
-            && timer->monotonic_ms(timer->context)-began+hw_finish_min_budget_ms()<=budget
-#endif
-            ) {
+        if (active && next_row == HEIGHT) {
             int done = hw_finish();
             if (done) {
                 active = false;

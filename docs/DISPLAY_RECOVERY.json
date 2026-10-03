@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "baseline_watch_commit": "599691a331a97132c0eede233042b63d1fda5747",
+  "baseline_ci_run": 37142063108,
+  "baseline_artifact_id": 11280254023,
+  "panel_elf_sha256": "ae9b558a26d1a050e9a56c0866b479ec3dd1bf1fe5a51c51cbc949cc6f0c5f07",
+  "panel_elf_size_bytes": 11836,
+  "compiler": "xtensa-esp32s3-elf-gcc 8.4.0 esp-2021r2-patch5",
+  "source_sha256": {
+    "drivers/twatch_panel/driver.c": "9d26afd6611cf807feccf4246e69fb4a4a63b17cc2b8d7c7bb7a50890bbfc040",
+    "include/common/display.h": "23bc29b476ddf8ba805f8eb75df1930144ee0110387176f13617b009df246e2b",
+    "include/common/spi.h": "028131ce826cd652e5b41f3c511aeb12cd82bdc4119ec9b9ff27962eba15e469",
+    "include/common/gpio.h": "4a9d80486570d58a6a24c6d3c637da9fd8e72e4c52836592ee36aaba9597df40",
+    "include/twatch_power.h": "c66bc50c7e3f2404b6ec6e4991ef546b04576b6ee3b32ebe488ba40593310cee",
+    "include/twatch_support.h": "2be79a3e294f53dc22231eafd45e33aad5901f9c6670ea2a91d3f909fa53c91d"
+  },
+  "physical_evidence": "User reported 0.4.0 displayed normally; 0.4.1 stayed black and 0.4.2 showed static pixels. Recovery still requires device observation."
+}

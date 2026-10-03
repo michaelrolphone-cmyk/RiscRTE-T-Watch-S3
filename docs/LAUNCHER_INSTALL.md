@@ -1,8 +1,8 @@
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing
-bundle remain unchanged. This source builds clock0.4.2, panel0.3.5, PMU0.4.1 and board
-baseline1.0.5; shared Springboard, Battery and Settings keep their own exact pinned
+bundle remain unchanged. This source builds clock0.4.3, panel0.3.6, PMU0.4.1 and board
+baseline1.0.6; shared Springboard, Battery and Settings keep their own exact pinned
 source versions in `apps/shared-sources.json`. No Watch copies of those apps exist.
 
 ## Behavior
@@ -32,20 +32,25 @@ source versions in `apps/shared-sources.json`. No Watch copies of those apps exi
 
 ## First-frame visibility
 
-Version 0.4.1 was reported to remain black on the physical watch. Version
-0.4.2 restores the known-working 0.4.0 PMU rail startup/teardown policy and removes
-all dynamic backlight-rail operations from the panel. In particular, frame
-completion no longer depends on a new 1 ms I2C write. The optional PMU API suffix
-is retained for compatibility and uses the normal 40 ms register-write budget.
+Version 0.4.1 stayed black on the physical watch, and 0.4.2 showed static pixels.
+Version 0.4.3 restores the ENTIRE panel driver and common display implementation
+from the physically working 0.4.0 commit599691a. All transfers again cover240 rows;
+CASET/RASET/RAMWR, endian conversion, buffering, polling, brightness and wake
+behavior are the original implementation. PARTIAL_DAMAGE is not advertised,
+so shared clients do not allocate or use their optional partial-frame cache.
+The PMU retains the restored0.4.0 rail policy from0.4.2.
 
-The panel still claims its GPIO with the OFF latch and keeps PWM dark until
-all 240 fresh rows complete, including cold activation, wake and app handoff.
-Failed rows/PWM restoration still fail closed. The 0.4.1 input, crown Back,
-partial-update and tap fixes remain unchanged.
+`DISPLAY_RECOVERY.json` records the exact old source hashes and the actual old
+CI panel ELF hash. The pinned GCC8.4 build must reproduce that executable byte
+for byte; package version metadata is external and is incremented to0.3.6.
+No existing release is modified. Input/crown corrections remain in shared apps
+and do not alter the restored display provider. Runtimea3d23da9 and the40MHz
+SPI profile are unchanged. No retained-frame/blur work is included.
 
-This is a bounded rollback of the newly failing power path, not a claim that
-the physical failure was proved in a host model. The reported old-frame startup
-flash remains open, and both recovery and flash absence need watch observation.
+The initial flash remains open. The host models failed to predict the physical
+display failures; their results are not treated as hardware ground truth. The
+purpose is to return to the source and executable that actually displayed on
+the user's watch, then verify the new full bundle physically.
 
 ## Exact deployment boundary
 

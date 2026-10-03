@@ -43,7 +43,7 @@ static uint64_t frame_time(uint32_t hz, uint32_t quantum, uint32_t scheduler_ms,
     return result;
 }
 
-static void partial_rows(void) {
+static void full_rows_only(void) {
  const risc_driver_v2*d=t5_driver_get(2);const risc_driver_poll_v2*p=(const void*)d;
  m_config.bus.frequency_hz=m_expected_spi_hz=40000000;m_panel_dc_pin=m_config.dc;
  assert(d->start(deps,sizeof(deps)/sizeof(deps[0])));
@@ -56,10 +56,10 @@ static void partial_rows(void) {
   assert(a->submit(NULL,s.frame,&damage,1,NULL,&t));
   for(unsigned i=0;i<8;i++)p->poll(20);
   assert(a->present_status(NULL,t,&status)&&status.state==RISC_DISPLAY_PRESENT_COMPLETE);
-  assert(m_panel_row_count-rows==(cycle==1?10u:240u));
-  if(cycle==1){assert(m_panel_first==180&&m_panel_last==189);assert(power->prepare_sleep(NULL)&&power->resume(NULL));}
+  assert(m_panel_row_count-rows==240u);
+  if(cycle==1){assert(m_panel_first==80&&m_panel_last==319);assert(power->prepare_sleep(NULL)&&power->resume(NULL));}
  }
- assert(d->quiesce());puts("Partial row transfer and forced full first-frame/wake passed");
+ assert(d->quiesce());puts("Full 240-row transfer for every damage hint, including wake, passed");
 }
 int main(void) {
     /* Real panel/provider code, modeled wire cost and explicit per-exchange
@@ -77,6 +77,6 @@ int main(void) {
                overheads[i],(unsigned long long)before,old_polls,
                (unsigned long long)after,new_polls);
     }
-    partial_rows();
+    full_rows_only();
     return 0;
 }

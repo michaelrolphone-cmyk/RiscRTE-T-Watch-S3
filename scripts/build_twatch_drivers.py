@@ -11,6 +11,10 @@ def main():
     if not cc and fallback.exists():cc=str(fallback)
     if not cc:raise SystemExit('Set TWATCH_CC to xtensa-esp32s3-elf-gcc')
     nm=cc.removesuffix('gcc')+'nm';readelf=cc.removesuffix('gcc')+'readelf'
+    recovery=json.loads((ROOT/'docs/DISPLAY_RECOVERY.json').read_text())
+    for name,expected in recovery['source_sha256'].items():
+        assert digest((ROOT/name).read_bytes())==expected,('Display baseline source differs',name)
+    compiler=subprocess.check_output([cc,'--version'],text=True).splitlines()[0]
     generate();catalog=[]
     subprocess.run([cc,"-std=c11",f"-I{ROOT}/sdk/driver",f"-I{ROOT}/include","-fsyntax-only",str(ROOT/"tests/abi.c")],check=True)
     for mp in sorted((ROOT/'drivers').glob('*/manifest.json')):
@@ -18,6 +22,10 @@ def main():
         out=ROOT/'dist'/m['id'];out.mkdir(parents=True,exist_ok=True);elf=out/'driver.elf'
         args=[cc,'-std=c11','-shared','-fPIC','-fvisibility=hidden','-nostdlib','-mlongcalls','-Os','-ffreestanding','-fno-builtin','-Wall','-Wextra','-Wno-misleading-indentation','-Wno-unused-function','-Werror',f'-I{ROOT}/sdk/driver',f'-I{ROOT}/include',f'-I{ROOT}/dist/generated',f'-Wl,--version-script={ROOT}/exports.map','-Wl,-soname,driver.elf',str(src[0]),'-lgcc','-o',str(elf)]
         subprocess.run(args,check=True)
+        if m['id']=='twatch-panel' and '8.4.0' in compiler:
+            assert elf.stat().st_size==recovery['panel_elf_size_bytes']
+            assert digest(elf.read_bytes())==recovery['panel_elf_sha256'],'Panel differs from physically working 0.4.0 executable'
+            print('Panel ELF byte-identical to verified 0.4.0 CI baseline')
         header=subprocess.check_output([readelf,'-h',str(elf)],text=True)
         assert 'ELF32' in header and 'little endian' in header and 'Xtensa' in header and 'DYN' in header
         symbols=subprocess.check_output([nm,'-D',str(elf)],text=True)
