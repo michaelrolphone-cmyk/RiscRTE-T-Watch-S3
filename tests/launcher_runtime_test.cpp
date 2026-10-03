@@ -27,7 +27,7 @@ bool gpioClose(uint8_t p){assert(m.pins[p]);m.pins[p]=false;return true;}
 bool i2cOpen(uint8_t p,uint8_t sda,uint8_t scl,uint32_t hz){assert(p<2&&!m.bus[p]&&hz==100000);assert(sda==(p?39:10)&&scl==(p?40:11));m.bus[p]=true;return true;}
 bool i2cClose(uint8_t p){assert(p<2&&m.bus[p]);m.bus[p]=false;return true;}
 void contact(uint8_t*rx,unsigned x,unsigned y){ // logical → physical, independent expected transform
- x=239-x;y=239-y;rx[0]=1;rx[1]=(x>>8)&15;rx[2]=(uint8_t)x;rx[3]=(y>>8)&15;rx[4]=(uint8_t)y;
+ rx[0]=1;rx[1]=(x>>8)&15;rx[2]=(uint8_t)x;rx[3]=(y>>8)&15;rx[4]=(uint8_t)y;
 }
 bool i2cTransfer(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_t rn,uint32_t ms){
  assert(p<2&&m.bus[p]&&tn&&ms&&ms<=1000);

@@ -32,7 +32,7 @@ cc -std=c11 "${flags[@]}" -fPIC -fvisibility=hidden "${watchincs[@]}" -c "$watch
 c++ -std=c++11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$watch/apps/clock/effects/boot.cpp" "$build/crown.o" "$build/nova.o" -o "$build/default.elf"
 portable=(-I"$system/lib/PortableApps/include" -I"$system/lib/NativeApps/include")
 for name in springboard battery settings; do
- source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=180 -DPORTABLE_RTC_UTC8_DENVER)
+ source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER)
  if [[ "$name" == battery ]]; then source="$utilities/Apps/battery.c"; fi
  if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP); fi
  cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$watch/dist/launcher/catalog.c" -o "$build/$name.elf"

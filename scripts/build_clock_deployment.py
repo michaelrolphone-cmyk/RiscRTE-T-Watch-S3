@@ -76,7 +76,7 @@ def build(profile_path, root=ROOT, launcher=False):
             files['store/'+name+'.json']=(root/'dist/launcher'/(name+'.json')).read_bytes()
         for name in ('catalog.json','font-sources.json','time-sources.json','LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
             files['shared/'+name]=(root/'dist/launcher'/name).read_bytes()
-        files['settings-time-policy.json']=encoded({'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':180})
+        files['settings-time-policy.json']=encoded({'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0})
         files['shared-app-build.json']=(root/'dist/launcher/build-record.json').read_bytes()
         for name in ('default','springboard','battery','settings'):
             grants=[{'capability':'display.output','api':1,'instance_id':5},

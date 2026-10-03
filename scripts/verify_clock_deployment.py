@@ -66,10 +66,10 @@ def verify(path):
                 if elf[:7]!=b'\x7fELF\x01\x01\x01' or struct.unpack_from('<HH',elf,16)!=(3,94):raise ValueError('Launcher app is not target Xtensa ELF')
         if launcher:
             sources=json.loads(z.read('shared-app-build.json'))
-            if sources.get('touch_rotation')!=180 or sources.get('rtc_policy')!='fixed-UTC+08-to-America/Denver':
+            if sources.get('touch_rotation')!=0 or sources.get('rtc_policy')!='fixed-UTC+08-to-America/Denver':
                 raise ValueError('Missing launcher transform/time policy')
             policy=json.loads(z.read('settings-time-policy.json'))
-            if policy!={'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':180}:
+            if policy!={'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0}:
                 raise ValueError('Invalid Settings inverse time policy')
             catalog=json.loads(z.read('shared/catalog.json'))
             if [e['file_name'] for e in catalog]!=['default.elf','battery.elf','settings.elf']:
