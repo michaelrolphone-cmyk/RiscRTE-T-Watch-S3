@@ -1,48 +1,88 @@
-
 #!/usr/bin/env python3
-"""Host check: manifests, exported symbol, and exclusive pin claims."""
-import json, re, sys
+"""Validate schema, compatible matching, physical ownership, DAG and packages."""
+import copy,hashlib,json,re,zipfile
 from pathlib import Path
-root = Path(__file__).resolve().parents[1]
-pins = {
-    "TWATCH_PIN_I2C_SDA": 10, "TWATCH_PIN_I2C_SCL": 11,
-    "TWATCH_PIN_TOUCH_SDA": 39, "TWATCH_PIN_TOUCH_SCL": 40,
-    "TWATCH_PIN_TOUCH_INT": 16, "TWATCH_PIN_PMU_INT": 21,
-    "TWATCH_PIN_I2S_BCLK": 48, "TWATCH_PIN_I2S_WCLK": 15, "TWATCH_PIN_I2S_DOUT": 46,
-    "TWATCH_PIN_LORA_SCK": 3, "TWATCH_PIN_LORA_MISO": 4, "TWATCH_PIN_LORA_MOSI": 1,
-    "TWATCH_PIN_LORA_RST": 8, "TWATCH_PIN_LORA_BUSY": 7, "TWATCH_PIN_LORA_CS": 5,
-    "TWATCH_PIN_LCD_CS": 12, "TWATCH_PIN_LCD_MOSI": 13, "TWATCH_PIN_LCD_SCK": 18,
-    "TWATCH_PIN_LCD_DC": 38, "TWATCH_PIN_LCD_BL": 45, "TWATCH_PIN_BOOT": 0,
-    "TWATCH_PIN_IR": 2,
-}
-owners = {}
-errors = []
-for manifest in sorted((root / "drivers").glob("*/manifest.json")):
-    data = json.loads(manifest.read_text())
-    for key in ("id", "version", "driver_abi", "provides", "product_asin"):
-        if key not in data:
-            errors.append(f"{manifest}: missing {key}")
-    if data.get("driver_abi") != 2 or data.get("product_asin") != "B0GPQ3TGLM":
-        errors.append(f"{manifest}: abi/asin")
-    if data.get("status") != "derived-unverified-on-device":
-        errors.append(f"{manifest}: status must stay unverified until a watch run")
-    sources = list(manifest.parent.glob("*.c")) + list(manifest.parent.glob("*.h"))
-    text = "\n".join(p.read_text() for p in sources)
-    if "twatch_i2c_impl.h" in text:
-        text += (root / "include" / "twatch_i2c_impl.h").read_text()
-    if "t5_driver_get" not in text:
-        errors.append(f"{manifest.parent}: no t5_driver_get")
-    if "TWATCH_AXP_CHG" in text and "125" in text and "hardcoded" not in text:
-        errors.append("charge current must not be raised in source")
-    for name, pin in pins.items():
-        if name in text:
-            owners.setdefault(pin, set()).add(manifest.parent.name)
-for pin, who in owners.items():
-    if len(who) > 1:
-        errors.append(f"GPIO {pin} claimed by {sorted(who)}")
-if "4u" not in (root / "include" / "twatch_pins.h").read_text():
-    errors.append("100 mA charge code missing")
-if errors:
-    print("\n".join(errors))
-    sys.exit(1)
-print(f"ok {len(list((root/'drivers').glob('*/manifest.json')))} drivers, pins exclusive")
+import jsonschema
+ROOT=Path(__file__).resolve().parents[1]
+def read(p):return json.loads(p.read_text())
+def check_board(b,manifests):
+    schema=read(ROOT/'docs/twatch-board-v1.schema.json')
+    errors=list(jsonschema.Draft202012Validator(schema).iter_errors(b))
+    assert not errors,[(list(e.path),e.message[:120]) for e in errors]
+    buses={x['instance_id']:x for x in b['buses']};devices={x['instance_id']:x for x in b['devices']}
+    assert len(buses)==len(b['buses']) and len(devices)==len(b['devices']) and not set(buses)&set(devices)
+    pins={};addresses=set();controllers=set();graph={}
+    def own(pin,owner):
+        if pin==-1:return
+        assert pin not in pins,(pin,owner,pins.get(pin));pins[pin]=owner
+    for bus in buses.values():
+        assert (bus['kind'],bus['controller']) not in controllers;controllers.add((bus['kind'],bus['controller']))
+        assert bus['mode']==0
+        fields=('sda','scl') if bus['kind']=='i2c' else ('sclk','mosi','miso')
+        for k in fields:
+            pin=bus['pins'][k];assert pin>=0 or k=='miso';own(pin,'bus'+str(bus['instance_id']))
+        for k in set(bus['pins'])-set(fields):assert bus['pins'][k]==-1
+    for d in devices.values():
+        candidates=[m for m in manifests if any(h['compatible']==d['compatible'] and d['chip']['revision'] in h['revisions'] and h['config_type']==d['config_type'] and h['config_version']==d['config_version'] for h in m.get('hardware_compatibility',[]))]
+        assert len(candidates)==1,(d['compatible'],len(candidates));m=candidates[0];c=d['config'];base=c.get('device',c)
+        deps=d.get('bindings',{});graph[d['instance_id']]=set(deps.values());assert set(deps.values())<=set(devices)
+        for cap,target in deps.items():
+            td=devices[target];tm=next(x for x in manifests if any(h['compatible']==td['compatible'] and h['config_type']==td['config_type'] for h in x.get('hardware_compatibility',[])))
+            assert any(p['capability']==cap for p in tm['provides']),(cap,target)
+        if 'bus_instance_id' in base:
+            bid=base['bus_instance_id'];assert bid in buses
+            if 'address'in base:
+                assert buses[bid]['kind']=='i2c';key=(bid,base['address']);assert key not in addresses;addresses.add(key)
+                assert 'i2c.bus'in deps and devices[deps['i2c.bus']]['config']['bus_instance_id']==bid
+        if d['config_type']=='power.axp2101':
+            assert c['charge_ma']==100 and len({x['id'] for x in c['rails']})==len(c['rails'])
+            for r in c['rails']:assert r['millivolts']%100==0
+        for key in ('cs','dc','reset','backlight','busy','irq','bclk','ws','data'):
+            if key in base:own(base[key],d['instance_id'])
+        for pin in base.get('pins',[]):own(pin,d['instance_id'])
+        if d['config_type']=='radio.lora':assert c['minimum_hz']<=c['maximum_hz']
+    done=set()
+    def visit(i,active):
+        assert i not in active,'dependency cycle'
+        if i in done:return
+        for j in graph[i]:visit(j,active|{i})
+        done.add(i)
+    for i in graph:visit(i,set())
+    return len(pins)
+def main():
+    manifests=[read(p) for p in sorted((ROOT/'drivers').glob('*/manifest.json'))]
+    assert len({m['id'] for m in manifests})==len(manifests)
+    for m in manifests:
+        assert m['driver_abi']==2 and m['architecture']=='xtensa-esp32s3' and re.fullmatch(r'\d+\.\d+\.\d+',m['version']) and m['physical_verification']=='pending'
+        assert len({x['capability'] for x in m['requires']})==len(m['requires'])
+    for name,source in read(ROOT/'sdk/SOURCES.json').items():assert hashlib.sha256((ROOT/'sdk/driver'/name).read_bytes()).hexdigest()==source['sha256'],name
+    profiles=read(ROOT/'board.json');assert profiles['default'] is None
+    for p in profiles['profiles']:check_board(read(ROOT/p),manifests)
+    original=read(ROOT/profiles['profiles'][0]);bad=[]
+    b=copy.deepcopy(original);b['devices'][0]['compatible']='unknown,chip';bad.append(b)
+    b=copy.deepcopy(original);b['devices'][5]['config']['irq']=21;bad.append(b)
+    b=copy.deepcopy(original);b['devices'][7]['config']['address']=25;bad.append(b)
+    b=copy.deepcopy(original);b['devices'][5]['bindings']['i2c.bus']=2;bad.append(b)
+    b=copy.deepcopy(original);b['devices'][4]['config_version']=2;bad.append(b)
+    b=copy.deepcopy(original);b['devices'][3]['config']['charge_ma']=125;bad.append(b)
+    b=copy.deepcopy(original);b['devices'][1]['bindings']={'gpio.bank':1};b['devices'][0]['bindings']={'i2c.bus':2};bad.append(b)
+    b=copy.deepcopy(original);b['devices'][8]['config']['extra']=0;bad.append(b)
+    for i,b in enumerate(bad):
+        try:check_board(b,manifests)
+        except AssertionError:continue
+        raise AssertionError(f'invalid mapping {i} accepted')
+    print(len(profiles['profiles']),'board variants;',len(bad),'invalid mappings rejected;',len(manifests),'driver manifests')
+    catalog=ROOT/'dist/catalog.json'
+    if catalog.exists():
+        rows=read(catalog)['packages'];assert len(rows)==len(manifests)
+        for row in rows:
+            path=ROOT/'dist'/row['archive'];blob=path.read_bytes();assert len(blob)==row['size_bytes'] and hashlib.sha256(blob).hexdigest()==row['sha256']
+            with zipfile.ZipFile(path) as z:
+                m=json.loads(z.read('.package.json'));source=next(x for x in manifests if x['id']==row['id']);assert m['id']==source['id'] and m['version']==source['version']==row['version']
+                assert m.get('hardware_compatibility',[])==source.get('hardware_compatibility',[])
+                assert m['provides']==source['provides'] and m['requires']==[dict(capability=x['capability'],min_api=x['api']) for x in source['requires']]
+                for entry in m['entries']:
+                    b=z.read(entry['name']);assert len(b)==entry['size_bytes'] and hashlib.sha256(b).hexdigest()==entry['sha256']
+                cap=source['provides'][0];assert z.read('provider-abi.v1')==f"os-cpu-abi=1\nprovides={cap['capability']}\napi={cap['api']}\n".encode()
+        print(len(rows),'package/catalog/hash checks passed')
+if __name__=='__main__':main()

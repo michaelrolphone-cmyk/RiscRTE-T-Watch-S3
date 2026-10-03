@@ -1,0 +1,47 @@
+{
+  "RiscProviderV2.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17"
+  },
+  "RiscStreamProviderV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432"
+  },
+  "RiscDisplayOutputV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726"
+  },
+  "RiscTouchV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d"
+  },
+  "RiscI2cBusV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "a6b769efbbf7f3837a6a348689b0aee84bf687ae8e18a31d0296f3bfa6ac2004"
+  },
+  "RiscPlatformClockV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2"
+  },
+  "RiscInputNavigationV1.h": {
+    "repository": "T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "sha256": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26"
+  },
+  "RiscHardwareConfigV1.h": {
+    "repository": "Garden-Controller",
+    "commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
+    "sha256": "9e56a6a19644afe0dc72097d8b5ab88082f79dff7dc5e738afafa34800ceb071"
+  },
+  "GardenPlatformV1.h": {
+    "repository": "Garden-Controller",
+    "commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
+    "sha256": "5b5f806a34615feef3f736a6cbf8481854c789067f477bd19d187206a9de333d"
+  }
+}

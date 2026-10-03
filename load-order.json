@@ -1,22 +1,86 @@
 {
   "board": "lilygo-t-watch-s3",
-  "asin": "B0GPQ3TGLM",
-  "load_order": [
-    "platform-clock-v1",
-    "twatch-gpio",
-    "twatch-i2c",
-    "twatch-i2c-touch",
-    "twatch-pmu",
-    "twatch-panel",
-    "twatch-touch",
-    "twatch-imu",
-    "twatch-rtc",
-    "twatch-haptic",
-    "twatch-button",
-    "twatch-lora",
-    "twatch-speaker",
-    "twatch-mic",
-    "twatch-ir"
+  "teardown": "reverse dependency graph; retain failed-quiesce instances and all dependencies",
+  "external": [
+    "platform.board@2",
+    "hardware.device@1 (per-instance injected config)",
+    "platform.clock@1",
+    "platform.gpio@1",
+    "platform.i2c.controller@1",
+    "spi.bus@1",
+    "platform.i2s.controller@1",
+    "platform.carrier@1",
+    "platform.radio@1",
+    "platform.hci.controller@1"
   ],
-  "note": "platform-clock-v1 comes from RiscRTE-Drivers. Do not load i2c-esp32s3-v2 on this board."
+  "profile_package": "twatch-board",
+  "instance_order": [
+    {
+      "instance_id": 1,
+      "package": "twatch-gpio"
+    },
+    {
+      "instance_id": 2,
+      "package": "twatch-i2c"
+    },
+    {
+      "instance_id": 3,
+      "package": "twatch-i2c"
+    },
+    {
+      "instance_id": 4,
+      "package": "twatch-pmu"
+    },
+    {
+      "instance_id": 5,
+      "package": "twatch-panel"
+    },
+    {
+      "instance_id": 6,
+      "package": "twatch-touch"
+    },
+    {
+      "instance_id": 7,
+      "package": "twatch-imu"
+    },
+    {
+      "instance_id": 8,
+      "package": "twatch-rtc"
+    },
+    {
+      "instance_id": 9,
+      "package": "twatch-haptic"
+    },
+    {
+      "instance_id": 10,
+      "package": "twatch-button"
+    },
+    {
+      "instance_id": 11,
+      "package": "twatch-lora"
+    },
+    {
+      "instance_id": 12,
+      "package": "twatch-speaker"
+    },
+    {
+      "instance_id": 13,
+      "package": "twatch-mic"
+    },
+    {
+      "instance_id": 14,
+      "package": "twatch-ir"
+    },
+    {
+      "instance_id": 15,
+      "package": "wifi"
+    },
+    {
+      "instance_id": 16,
+      "package": "twatch-ble"
+    }
+  ],
+  "legacy_excluded": [
+    "twatch-i2c-touch"
+  ]
 }
