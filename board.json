@@ -1,12 +1,27 @@
 {
   "board": "lilygo-t-watch-s3",
-  "product": "LILYGO T-Watch-S3",
-  "asin": "B0GPQ3TGLM",
-  "mcu": "esp32-s3",
-  "flash_mb": 16,
-  "psram_mb": 8,
-  "panel": "240x240 ST7789",
-  "battery_mah": 470,
-  "charge_current_ma": 100,
-  "source": "LilyGoLib lilygo-t-watch-s3 pin map and arduino-esp32 lilygo_twatch_s3 variant"
+  "schema": "riscrte.board-variants",
+  "schema_version": 1,
+  "selection": "explicit-required",
+  "default": null,
+  "profiles": [
+    "hardware/sx1262-433-bma423.json",
+    "hardware/sx1262-433-bma456h.json",
+    "hardware/sx1262-868-bma423.json",
+    "hardware/sx1262-868-bma456h.json",
+    "hardware/sx1262-915-bma423.json",
+    "hardware/sx1262-915-bma456h.json",
+    "hardware/sx1280-2400-bma423.json",
+    "hardware/sx1280-2400-bma456h.json"
+  ],
+  "source_commit": "92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43",
+  "schematic": "T_WATCH-S3 25-03-24.pdf",
+  "physical_revision": "unconfirmed",
+  "physical_verification": "pending",
+  "excluded_variants": [
+    "T-Watch-S3 Plus",
+    "CC1101 retrofit",
+    "unlisted hardware revisions"
+  ],
+  "platform_resources": "platform-resources.json"
 }

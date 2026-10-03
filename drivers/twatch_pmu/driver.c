@@ -4,11 +4,11 @@
  * do not set the library default above 125 mA. percent is 255 because this
  * PMIC has no profiled fuel gauge in this ELF. */
 #include "RiscBatteryGaugeV1.h"
+#include "twatch_caps.h"
 #include "RiscGpioBankV1.h"
 #include "RiscI2cBusV1.h"
 #include "RiscPlatformClockV1.h"
-#include "twatch_pins.h"
-#include "twatch_util.h"
+#include "twatch_support.h"
 #include <stddef.h>
 #define AXP_STATUS2 0x01u
 #define AXP_DC_ON 0x80u
@@ -27,8 +27,11 @@ static const risc_platform_clock_api_v1 *clock_api;
 static const risc_gpio_bank_api_v1 *gpio_api;
 static uint64_t claim, irq_claim;
 static bool started;
+static const tw_hw_i2c_device_v1 *config;
 static char error[80];
-static void set_error(const char *msg) { twatch_copy_error(error, sizeof error, msg); }
+static void set_error(const char *msg) {
+    twatch_copy_error(error, sizeof error, msg);
+}
 static bool write_reg(uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
     return bus->transact(bus->context, claim, buf, 2, NULL, 0, 40);
@@ -36,27 +39,53 @@ static bool write_reg(uint8_t reg, uint8_t value) {
 static bool read_reg(uint8_t reg, uint8_t *out, size_t n) {
     return bus->transact(bus->context, claim, &reg, 1, out, n, 40);
 }
+static const tw_hw_axp2101_v1 *power;
+static uint8_t saved_enable, saved_voltage[4], saved_irq;
+static bool changed;
 static bool rails(void) {
-    /* 3.3 V on ALDO2 backlight, ALDO3 display+touch, ALDO4 LoRa, BLDO2 haptic.
-     * ALDO1 stays off: LilyGO marks it unused. DC1 (ESP32) is left as found. */
-    if (!write_reg(AXP_ALDO2_V, AXP_V_3V3) || !write_reg(AXP_ALDO3_V, AXP_V_3V3) ||
-        !write_reg(AXP_ALDO4_V, AXP_V_3V3) || !write_reg(AXP_BLDO2_V, AXP_V_3V3))
+    if (!read_reg(0x03, &saved_enable, 1) || saved_enable != 0x4a)
         return false;
-    uint8_t ldo = 0;
-    if (!read_reg(AXP_LDO_ON, &ldo, 1)) return false;
-    ldo = (uint8_t)((ldo & (uint8_t)~AXP_LDO_MASK) | AXP_LDO_MASK);
-    if (!write_reg(AXP_LDO_ON, ldo)) return false;
-    if (!write_reg(AXP_ICC, TWATCH_AXP_CHG_100MA)) return false;
-    uint8_t icc = 0xff;
-    if (!read_reg(AXP_ICC, &icc, 1) || (icc & 0x1fu) != TWATCH_AXP_CHG_100MA) {
-        set_error("charge current readback is not 100 mA code");
+    if (!read_reg(AXP_LDO_ON, &saved_enable, 1))
         return false;
+    for (size_t i = 0; i < power->rail_count; i++)
+        if (!read_reg((uint8_t)(0x92 + power->rails[i].id), &saved_voltage[i], 1))
+            return false;
+    if (!read_reg(0x41, &saved_irq, 1))
+        return false;
+    uint8_t mask = 0;
+    changed = true;
+    for (size_t i = 0; i < power->rail_count; i++) {
+        uint8_t id = power->rails[i].id;
+        mask |= (uint8_t)(1u << id);
+        if (!write_reg((uint8_t)(0x92 + id), (uint8_t)((power->rails[i].millivolts - 500) / 100)))
+            return false;
     }
-    return write_reg(AXP_ADC_EN, 0x01u);
+    if (!write_reg(AXP_LDO_ON, saved_enable | mask) || !write_reg(AXP_ICC, 4))
+        return false;
+    uint8_t value = 0;
+    if (!read_reg(AXP_ICC, &value, 1) || (value & 0x1f) != 4)
+        return false;
+    if (!read_reg(AXP_ADC_EN, &value, 1) || !write_reg(AXP_ADC_EN, value | 1))
+        return false;
+    return write_reg(0x41, saved_irq | 0x0c);
+}
+static bool key_events(void *context, uint32_t *events) {
+    (void)context;
+    if (!started || !events)
+        return false;
+    uint8_t v = 0;
+    if (!read_reg(0x49, &v, 1))
+        return false;
+    /* Return the PMIC's latched key events; ACK only the key bits. */
+    if (!write_reg(0x49, v & 0x0c))
+        return false;
+    *events = (v >> 2) & 3;
+    return true;
 }
 static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     (void)context;
-    if (!started || !out) return false;
+    if (!started || !out)
+        return false;
     *out = (risc_battery_sample_v1){0, 255, RISC_BATTERY_PROFILE_MISSING};
     uint8_t raw[2] = {0}, status = 0;
     if (!read_reg(AXP_VBAT_H, raw, 2) || !read_reg(AXP_STATUS2, &status, 1)) {
@@ -65,19 +94,33 @@ static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     }
     uint16_t mv = (uint16_t)((((uint16_t)raw[0] & 0x3fu) << 8) | raw[1]);
     out->millivolts = mv;
-    uint8_t chg = status & 0x07u;
-    if (chg == 1u || chg == 2u || chg == 3u) out->flags |= RISC_BATTERY_CHARGING;
+    if ((status & 0x60u) == 0x20u)
+        out->flags |= RISC_BATTERY_CHARGING;
     return true;
 }
 static bool last_error(char *dst, size_t cap) {
-    if (!error[0]) return false;
+    if (!error[0])
+        return false;
     twatch_copy_error(dst, cap, error);
     return true;
 }
 static bool quiesce(void) {
     bool ok = true;
-    if (claim && bus && !bus->release_device(bus->context, claim)) ok = false;
-    if (irq_claim && gpio_api && !gpio_api->release(gpio_api->context, irq_claim)) ok = false;
+    if (changed && claim) {
+        if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable))
+            return false;
+        for (size_t i = 0; i < power->rail_count; i++)
+            if (!write_reg((uint8_t)(0x92 + power->rails[i].id), saved_voltage[i]))
+                return false;
+        changed = false;
+    }
+    if (claim && bus) {
+        if (!bus->release_device(bus->context, claim))
+            return false;
+        claim = 0;
+    }
+    if (irq_claim && gpio_api && !gpio_api->release(gpio_api->context, irq_claim))
+        return false;
     claim = irq_claim = 0;
     bus = NULL;
     clock_api = NULL;
@@ -86,39 +129,63 @@ static bool quiesce(void) {
     return ok;
 }
 static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
-    if (started || !deps || count != 3u) return false;
-    for (size_t i = 0; i < count; ++i) {
-        if (twatch_equal(deps[i].capability_id, RISC_I2C_BUS_CAPABILITY)) bus = deps[i].api;
-        else if (twatch_equal(deps[i].capability_id, RISC_PLATFORM_CLOCK_CAPABILITY)) clock_api = deps[i].api;
-        else if (twatch_equal(deps[i].capability_id, RISC_GPIO_BANK_CAPABILITY)) gpio_api = deps[i].api;
+    if (started || claim || irq_claim)
+        return false;
+    power = tw_config(deps, count, "x-powers,axp2101", "power.axp2101", sizeof(*power));
+    if (!power || power->charge_ma != 100 || !power->rail_count || power->rail_count > 4 ||
+        power->reserved)
+        return false;
+    for (size_t i = 0; i < power->rail_count; i++) {
+        if (power->rails[i].id > 5 || power->rails[i].reserved ||
+            power->rails[i].millivolts < 500 || power->rails[i].millivolts > 3500 ||
+            power->rails[i].millivolts % 100)
+            return false;
+        for (size_t j = 0; j < i; j++)
+            if (power->rails[j].id == power->rails[i].id)
+                return false;
     }
-    if (!bus || !clock_api || !gpio_api) return false;
-    if (!bus->claim_device(bus->context, TWATCH_I2C_AXP2101, &claim) ||
-        !gpio_api->claim(gpio_api->context, TWATCH_PIN_PMU_INT, RISC_GPIO_INPUT, &irq_claim)) {
+    config = &power->device;
+    if (!tw_i2c_config_valid(config) || config->irq < 0 || config->chip_id != 0x4a)
+        return false;
+    bus = tw_dep(deps, count, "i2c.bus", sizeof(*bus));
+    clock_api = tw_dep(deps, count, "platform.clock", sizeof(*clock_api));
+    if (!tw_clock_valid(clock_api))
+        return false;
+    gpio_api = tw_dep(deps, count, "gpio.bank", sizeof(*gpio_api));
+    if (!tw_gpio_valid(gpio_api))
+        return false;
+    if (!tw_i2c_valid(bus))
+        return false;
+    if (!bus || !clock_api || !gpio_api)
+        return false;
+    if (!bus->claim_device(bus->context, config->address, &claim) ||
+        !gpio_api->claim(gpio_api->context, config->irq,
+                         RISC_GPIO_INPUT | (config->irq_pull_up ? RISC_GPIO_PULLUP : 0),
+                         &irq_claim)) {
         set_error("AXP2101 claim failed");
         (void)quiesce();
         return false;
     }
     if (!rails()) {
-        if (!error[0]) set_error("AXP2101 rail or charge setup failed");
+        if (!error[0])
+            set_error("AXP2101 rail or charge setup failed");
         (void)quiesce();
         return false;
     }
-    if (clock_api->sleep_ms) clock_api->sleep_ms(clock_api->context, 5);
+    if (clock_api->sleep_ms)
+        clock_api->sleep_ms(clock_api->context, 5);
     started = true;
     return true;
 }
-static void stop(void) { (void)quiesce(); }
-static const risc_battery_gauge_api_v1 api = {
-    RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample
-};
+static void stop(void) {
+    (void)quiesce();
+}
+static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
+                                      key_events};
 static const risc_driver_diagnostics_v2 driver = {
-    { RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu",
-      RISC_BATTERY_GAUGE_CAPABILITY, RISC_BATTERY_GAUGE_API_V1,
-      &api, start, stop, quiesce },
-    last_error
-};
-__attribute__((visibility("default")))
-const risc_driver_v2 *t5_driver_get(uint32_t abi) {
+    {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
+     RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},
+    last_error};
+__attribute__((visibility("default"))) const risc_driver_v2 *t5_driver_get(uint32_t abi) {
     return abi == RISC_PROVIDER_DRIVER_ABI_V2 ? &driver.base : NULL;
 }

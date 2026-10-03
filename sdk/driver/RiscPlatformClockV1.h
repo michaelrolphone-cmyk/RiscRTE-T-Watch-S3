@@ -1,10 +1,12 @@
 #pragma once
+/* Generic OS/CPU port service, independent of peripheral identity. Callers
+ * obtain it as a verified capability dependency, not as a raw firmware symbol.
+ * Duration is monotonic and sleep MUST yield to the scheduler. */
 #include "RiscProviderV2.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 #define RISC_PLATFORM_CLOCK_API_V1 1u
-#define RISC_PLATFORM_CLOCK_CAPABILITY "platform.clock"
 typedef struct {
     uint32_t api_version;
     uint32_t struct_size;

@@ -1,0 +1,29 @@
+{
+  "schema": "riscrte.platform-resource-inventory",
+  "schema_version": 1,
+  "board_id": "lilygo-t-watch-s3",
+  "source_commit": "92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43",
+  "physical_revision": "unconfirmed",
+  "cpu": {"compatible": "espressif,esp32-s3", "isa": "xtensa-lx7", "cores": 2, "frequency_hz": 240000000, "owner": "future CPU/ABI port"},
+  "memory": [
+    {"compatible": "jedec,spi-nor", "size_bytes": 16777216, "interface": "qspi", "owner": "boot/module-store port", "partition_map": null},
+    {"compatible": "espressif,esp32s3-opi-psram", "size_bytes": 8388608, "interface": "opi", "owner": "cache/allocator port"}
+  ],
+  "reserved_pins": [
+    {"pins": [19,20], "owner": "USB PHY and role", "compatible": "espressif,esp32s3-usb-otg", "status": "runtime-backfill-required"},
+    {"pins": [26,27,28,29,30,31,32,33,34,35,36,37], "owner": "flash/PSRAM", "status": "boot-reserved"}
+  ],
+  "usb": {"connector": "micro-usb", "d_minus": 19, "d_plus": 20, "vbus_input": true, "vbus_source": false, "default_role": null, "host_auto_start": false},
+  "rails": [
+    {"name": "DC1", "consumer": "ESP32-S3", "policy": "preserve"},
+    {"name": "ALDO2", "id": 1, "provider_instance": 4, "millivolts": 3300, "consumers": [5]},
+    {"name": "ALDO3", "id": 2, "provider_instance": 4, "millivolts": 3300, "consumers": [5,6]},
+    {"name": "ALDO4", "id": 3, "provider_instance": 4, "millivolts": 3300, "consumers": [11]},
+    {"name": "BLDO2", "id": 5, "provider_instance": 4, "millivolts": 3300, "consumers": [9]},
+    {"name": "VBACKUP", "consumer": "RTC backup battery", "policy": "preserve"}
+  ],
+  "battery": {"capacity_mah": 470, "charge_current_ma": 100, "manufacturer_max_exclusive_ma": 130, "charge_voltage_policy": "preserve existing"},
+  "boot_controls": {"boot_gpio": 0, "power_key": "AXP2101 PWRON", "hardware_on_seconds": 2, "hardware_off_seconds": 6},
+  "dma_policy": "Global reservation across SPI, I2S0 PDM, I2S1 TX and any USB provider; no fixed DMA channel guessed",
+  "rf_policy": "Explicit physical radio variant plus owner-authorized frequency/power policy; Wi-Fi/BLE coexistence belongs to port"
+}
