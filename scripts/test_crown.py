@@ -12,3 +12,7 @@ for name,sources in [('crown',objects),('effects',[str(ROOT/'tests/clock_effects
  exe=out/name
  subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*common,str(ROOT/'apps/clock/effects/boot.cpp'),*sources,'-o',str(exe)],check=True)
  subprocess.run([str(exe)],check=True,timeout=30)
+
+exe=out/'division'
+subprocess.run([os.environ.get('CC','cc'),'-std=c11',*common,str(ROOT/'apps/clock/effects/divdi3.c'),str(ROOT/'tests/effects_division_test.c'),'-o',str(exe)],check=True)
+subprocess.run([str(exe)],check=True,timeout=10)
