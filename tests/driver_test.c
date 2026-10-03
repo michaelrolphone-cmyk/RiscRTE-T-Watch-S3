@@ -11,7 +11,6 @@ static risc_provider_dependency_v1 m_deps[] = {{"hardware.device", 1, &m_device}
                                                {"spi.bus", 1, &m_spi},
                                                {"platform.i2s.controller", 1, &m_i2s},
                                                {"platform.carrier", 1, &m_carrier},
-                                               {"board.battery",1,&m_pmu},
                                                {"platform.radio", 1, &m_radio},
                                                {"platform.hci.controller", 1, &m_hci}};
 int main(void) {
@@ -39,10 +38,10 @@ int main(void) {
     m_deps[0].api_version = 2;
     assert(!d->start(m_deps, n));
     m_deps[0].api_version = 1;
-    risc_provider_dependency_v1 duplicates[13];
+    risc_provider_dependency_v1 duplicates[12];
     memcpy(duplicates, m_deps, sizeof(m_deps));
-    duplicates[12] = m_deps[0];
-    assert(!d->start(duplicates, 13));
+    duplicates[11] = m_deps[0];
+    assert(!d->start(duplicates, 12));
 #if TEST_KIND == 4
     m_regs[3] = 0x4a;
     m_regs[0x34] = 0x0e;
@@ -129,11 +128,6 @@ int main(void) {
     assert(!a->transact(NULL, t, tx, 1, &rx, 1, 20));
 #elif TEST_KIND == 4
     const twatch_pmu_api_v1 *a = d->capability;
-    assert(m_regs[0x90]&2u); /* physically working startup rail policy */
-    m_i2c_min_budget=2; /* valid bus whose completion cannot meet 1ms */
-    assert(a->backlight_power(NULL,false) && !(m_regs[0x90]&2u));
-    assert(a->backlight_power(NULL,true) && (m_regs[0x90]&2u));
-    m_i2c_min_budget=0;
     risc_battery_sample_v1 battery;
     m_regs[1] = 0x20;
     assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
@@ -205,11 +199,11 @@ int main(void) {
         assert(m_regs[pmu_policy_regs[i]] == pmu_policy_before[i]);
     m_regs[0x49] = 0x0c;
     uint32_t events = 0;
-    assert(a->key_events(NULL, &events) && events == (3|TWATCH_PMU_KEY_UP));
+    assert(a->key_events(NULL, &events) && events == 3);
     assert(m_regs[0x62] == 4);
     uint8_t irq0=m_regs[0x40],irq1=m_regs[0x41],irq2=m_regs[0x42];
     for(unsigned cycle=0;cycle<3;cycle++) {
-        m_regs[0x49]=0x08;assert(a->key_events(NULL,&events)&&events==(2|TWATCH_PMU_KEY_UP));
+        m_regs[0x49]=0x08;assert(a->key_events(NULL,&events)&&events==2);
         assert(a->prepare_sleep(NULL));
         assert(m_regs[0x40]==0&&m_regs[0x41]==8&&m_regs[0x42]==0);
         risc_light_sleep_result_v1 sr={sizeof(sr),0};
@@ -217,9 +211,9 @@ int main(void) {
         assert(a->resume(NULL));assert(a->resume(NULL));
         assert(m_regs[0x40]==irq0&&m_regs[0x41]==irq1&&m_regs[0x42]==irq2);
     }
-    m_regs[0x49]=0x02;assert(a->key_events(NULL,&events)&&events==TWATCH_PMU_KEY_DOWN);
+    m_regs[0x49]=0x02;assert(a->key_events(NULL,&events)&&!events);
     assert(!a->prepare_sleep(NULL)); /* Held key never arms wake. */
-    m_regs[0x49]=0x09;assert(a->key_events(NULL,&events)&&events==(2|TWATCH_PMU_KEY_UP));
+    m_regs[0x49]=0x09;assert(a->key_events(NULL,&events)&&events==2);
     m_fail_io=true;assert(!a->prepare_sleep(NULL));m_fail_io=false;
     assert(a->resume(NULL));
     /* Teardown after new telemetry restores resources without touching
@@ -390,7 +384,6 @@ int main(void) {
     assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
     assert(!m_levels[pins[m_config.backlight]]); /* failed final unblank is not COMPLETE */
     m_fail_pwm=false;
-    assert(m_backlight_calls==0); /* no panel rail calls at any lifecycle stage */
 #elif TEST_KIND == 6
     const risc_touch_api_v1 *a = d->capability;
     uint64_t sub = a->subscribe(NULL);

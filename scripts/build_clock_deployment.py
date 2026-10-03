@@ -82,8 +82,7 @@ def build(profile_path, root=ROOT, launcher=False):
             grants=[{'capability':'display.output','api':1,'instance_id':5},
                     {'capability':'input.touch.raw','api':1,'instance_id':6}]
             grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','springboard','settings') else None
-            if name!='default':grants.append({'capability':'input.navigation','api':1,'instance_id':0})
-            grants.append({'capability':'board.battery','api':1,'instance_id':4}) if name in ('default','battery') else None
+            grants.append({'capability':'board.battery','api':1,'instance_id':4})
             policy={'manifest':name+'.json','grants':grants}
             if name=='default':boot['app_capabilities'][0]=policy
             else:boot['app_capabilities'].append(policy)
@@ -117,18 +116,6 @@ def build(profile_path, root=ROOT, launcher=False):
         boot['drivers'].append({'manifest': path + '/manifest.json',
                                 'instance_id': device['instance_id']})
         selected.append({**package, 'instance_id': device['instance_id']})
-    if launcher:
-        manifest=next(m for m in manifests if m['id']=='pmu-navigation')
-        package=next(p for p in catalog if p['id']=='pmu-navigation')
-        archive=(root/'dist'/package['archive']).read_bytes()
-        if sha(archive)!=package['sha256'] or package['version']!=manifest['version']:raise ValueError('Stale logical navigation package')
-        with zipfile.ZipFile(root/'dist'/package['archive']) as z:
-            if json.loads(z.read('source-manifest.json'))!=manifest:raise ValueError('Navigation manifest mismatch')
-            files['store/nav/driver.elf']=z.read('driver.elf')
-        files['store/nav/manifest.json']=encoded(manifest)
-        files['packages/'+package['archive']]=archive
-        boot['drivers'].append({'manifest':'nav/manifest.json'})
-        selected.append({**package,'instance_id':0,'kind':'logical-navigation'})
     files['store/boot.json'] = encoded(boot)
     record = {'schema': 'riscrte.watch-'+flavor+'-deployment', 'schema_version': 1,
               'app_id': 'twatch-clock', 'app_version': version, 'source_sha': source_sha,

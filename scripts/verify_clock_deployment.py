@@ -46,7 +46,7 @@ def verify(path):
                 raise ValueError('Missing or mismatched corrected runtime requirement')
         if boot['default_app']!='default.elf' or app['file_name']!='default.elf' or app['entry']!='app_main':
             raise ValueError('Default application path mismatch')
-        if {d.get('instance_id',0) for d in boot['drivers']}!=({0,1,2,3,4,5,6,8} if launcher else {1,2,4,5,8}) or len(boot['drivers'])!=(8 if launcher else 5):
+        if {d['instance_id'] for d in boot['drivers']}!=({1,2,3,4,5,6,8} if launcher else {1,2,4,5,8}) or len(boot['drivers'])!=(7 if launcher else 5):
             raise ValueError('Unexpected clock driver closure')
         expected=[{'manifest':'default.json','grants':[
             {'capability':'display.output','api':1,'instance_id':5},
@@ -57,8 +57,7 @@ def verify(path):
             for name in ('default','springboard','battery','settings'):
                 grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
                 if name in ('default','springboard','settings'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
-                if name!='default':grants.append({'capability':'input.navigation','api':1,'instance_id':0})
-                if name in ('default','battery'):grants.append({'capability':'board.battery','api':1,'instance_id':4})
+                grants.append({'capability':'board.battery','api':1,'instance_id':4})
                 expected.append({'manifest':name+'.json','grants':grants})
                 child=json.loads(z.read('store/'+name+'.json'))
                 if child['file_name']!=name+'.elf' or child['entry']!='app_main' or child['requires']!=[{'capability':g['capability'],'api':g['api']} for g in grants]:

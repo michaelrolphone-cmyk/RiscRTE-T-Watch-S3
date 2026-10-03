@@ -45,7 +45,7 @@ def build(launcher=False):
     imports = {line.split()[-1] for line in symbols.splitlines() if ' U ' in ' '+line}
     exports = {line.split()[-1] for line in symbols.splitlines()
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
-    assert imports <= {'risc_runtime_get_api','memcpy','memset'}, imports
+    assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'}, imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
     manifest = json.loads((ROOT/'apps/clock/manifest.json').read_text())
     if launcher:

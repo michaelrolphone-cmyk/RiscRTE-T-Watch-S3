@@ -1,7 +1,7 @@
 {
   "type": "application",
   "id": "twatch-clock",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "architecture": "xtensa-esp32s3",
   "file_name": "default.elf",
   "entry": "app_main",

@@ -4,13 +4,13 @@
 #include "effects/effects.h"
 #include "twatch_power.h"
 #include "twatch_caps.h"
+#include "transitions/PortableTransition.h"
+#include <stdlib.h>
 
 static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_CLOCK_LAUNCHER
 #include "launcher_touch.h"
 static watch_launcher_touch touch;
-static bool input_swipe_pending,input_activity_pending;
-static uint32_t touch_sampled_at;
 #endif
 static const risc_display_output_api_v1 *display;
 static const twatch_rtc_api_v1 *rtc;
@@ -50,13 +50,6 @@ static bool present(void) {
         } else healthy=false;
         /* A lost health sample must not abandon an already accepted transfer.
          * Drain it within the same bounded poll count, then exit the app. */
-#ifdef WATCH_CLOCK_LAUNCHER
-        if(healthy && touch.subscription && (uint32_t)(now-touch_sampled_at)>=16u) {
-            bool activity=false;
-            input_swipe_pending|=launcher_touch_swipe(&touch,&activity);
-            input_activity_pending|=activity;touch_sampled_at=now;
-        }
-#endif
         rt->yield_ms(1);
     }
     return false;
@@ -110,6 +103,33 @@ static bool hold_boot_frame(void) {
     }
     return false;
 }
+/* Transient app-owned images only: the provider's lease is never retained
+ * across submit, sleep, or an application switch. Allocation failure preserves
+ * the normal sharp clock path instead of making Clock unavailable. */
+static bool logo_to_clock(void) {
+    const size_t bytes=240u*240u*sizeof(uint16_t);
+    uint16_t *old=malloc(bytes),*scratch=old?malloc(bytes):NULL;
+    bool ok=false;
+    if (!old || !scratch) {
+        risc_display_surface_v1 s={0};uint32_t now;
+        free(scratch);free(old);
+        return alive(&now) && frame(&s) && draw_clock(now,&s) && present() && pace_frame(now);
+    }
+    risc_display_surface_v1 logo={0,old,240,240,480,bytes,RISC_DISPLAY_FORMAT_RGB565};
+    uint32_t start,now;
+    if (!watch_boot_render(&logo,1800) || !alive(&start)) goto done;
+    for(unsigned count=0;count<100;count++) {
+        risc_display_surface_v1 s={0};
+        if (!alive(&now) || !frame(&s) || !draw_clock(now,&s)) goto done;
+        if (!count) start=now;
+        unsigned alpha=portable_transition_alpha(now-start);
+        if (!portable_transition_rgb565(s.pixels,s.stride_bytes,old,480,
+                scratch,bytes,240,240,alpha) || !present() || !pace_frame(now)) goto done;
+        if (alpha==256u) {ok=true;break;}
+    }
+done:
+    free(scratch);free(old);return ok;
+}
 static bool startup(void) {
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -118,26 +138,15 @@ static bool startup(void) {
         if (!alive(&now) || !frame(&s)) return false;
         uint32_t age=now-start;
         if (!watch_boot_render(&s,age>1800?1800:age) || !present()) return false;
-        if (age>=1800) return hold_boot_frame();
+        /* The retained provider may already contain a previous app's frame.
+         * Entry blanks it before acquiring other capabilities. Restore light
+         * only after the first complete new intro frame, never before submit. */
+        if (!count && !display->set_brightness(display->context,40,100)) return false;
+        if (age>=1800) return hold_boot_frame() && logo_to_clock();
         if (!pace_frame(now)) return false;
     }
     return false;
 }
-#ifdef WATCH_CLOCK_LAUNCHER
-static bool fade_to_launcher(void) {
-    /* Fade the already completed clock optically. Six full SPI frames made
-     * duration depend on physical transfer time and starved input. PWM steps
-     * take 80ms total and keep sampling; the panel rearms its fresh-frame gate
-     * at zero so the next app cannot expose the old clock while loading. */
-    for(unsigned step=1;step<=5;step++) {
-        bool activity=false;(void)launcher_touch_swipe(&touch,&activity);
-        if(!display->set_brightness(display->context,(uint16_t)(40u-step*8u),100))return false;
-        uint32_t now;if(!alive(&now))return false;
-        if(step<5)rt->yield_ms(20);
-    }
-    return display->set_brightness(display->context,40,100);
-}
-#endif
 static bool sleep_cycle(void) {
     /* Every preparation attempt is paired with resume, including partial
      * preparation and platform refusal. No framebuffer lease survives here. */
@@ -157,14 +166,14 @@ static bool sleep_cycle(void) {
     reset_telemetry();
     if (rc==RISC_LIGHT_SLEEP_OK) {
         rt->diagnostic("WATCH_CLOCK woke");
-        if (!startup()) return false;
+        if (!display->set_brightness(display->context,0,100) || !startup()) return false;
     } else rt->diagnostic("WATCH_CLOCK sleep=refused");
     return pmu->key_events(pmu->base.context,&discard);
 }
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
 #ifdef WATCH_CLOCK_LAUNCHER
-    touch=(watch_launcher_touch){0};input_swipe_pending=input_activity_pending=false;touch_sampled_at=0;
+    touch=(watch_launcher_touch){0};
 #endif
     held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
     reset_telemetry();
@@ -179,6 +188,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         !display->present_status || !display->set_brightness) goto done;
     panel=dg.api;
     if (!panel->prepare_sleep || !panel->resume) goto done;
+    if (!display->set_brightness(display->context,0,100)) goto done;
     have_p=rt->acquire("board.battery",1,0,&pg);
     if (!have_p) goto done;
     pmu=pg.api;
@@ -190,9 +200,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
     uint32_t discarded,now,armed_at=0,last_activity=0;
-    if (!display->set_brightness(display->context,0,100) ||
-        !display->set_brightness(display->context,40,100) ||
-        !pmu->key_events(pmu->base.context,&discarded) || !startup() ||
+    if (!pmu->key_events(pmu->base.context,&discarded) || !startup() ||
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
 #ifdef WATCH_CLOCK_LAUNCHER
     if(!rt->request_launch || !launcher_touch_open(&touch)) goto done;
@@ -207,12 +215,13 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (events&3u) last_activity=now;
 #ifdef WATCH_CLOCK_LAUNCHER
         bool activity=false;
-        bool sampled_swipe=launcher_touch_swipe(&touch,&activity);
-        bool swipe=input_swipe_pending||sampled_swipe;activity|=input_activity_pending;
-        input_swipe_pending=input_activity_pending=false;
+        bool swipe=launcher_touch_swipe(&touch,&activity);
         if(activity) last_activity=now;
         if(swipe) {
-            if(!fade_to_launcher() || !launcher_touch_close(&touch)) break;
+            /* The completed sharp Clock remains in provider-owned storage.
+             * Incoming Springboard owns the single blur/crossfade and adopts
+             * the still-held contact as drag-only; never fade through black. */
+            if(!launcher_touch_close(&touch)) break;
             if(rt->request_launch("springboard.elf")) break;
             rt->diagnostic("WATCH_CLOCK error=launcher-request");
             if(!launcher_touch_open(&touch) || !alive(&now)) break;

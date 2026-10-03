@@ -7,11 +7,11 @@ class Launcher(unittest.TestCase):
  def test_all_profiles(self):
   paths=list((ROOT/'dist/launcher-deployments').glob('*.zip'));self.assertEqual(len(paths),8)
   for path in paths:
-   r=verify(path);self.assertEqual(len(r['drivers']),8)
+   r=verify(path);self.assertEqual(len(r['drivers']),7)
    with zipfile.ZipFile(path) as z:
-    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),24)
+    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),22)
     boot=json.loads(z.read('store/boot.json'));self.assertEqual(boot['default_app'],'default.elf')
-    i2c=[d for d in boot['drivers'] if d.get('instance_id',0) in (2,3)]
+    i2c=[d for d in boot['drivers'] if d['instance_id'] in (2,3)]
     self.assertEqual(len(i2c),2)
     self.assertEqual(i2c[0]['manifest'],i2c[1]['manifest'])
     self.assertNotEqual(i2c[0]['instance_id'],i2c[1]['instance_id'])

@@ -1,7 +1,7 @@
 #pragma once
 #include "RiscTouchV1.h"
-/* The mounted panel mirrors both axes to match LILYGO rotation0, which
- * already aligns with native FT6336 coordinates. Do not invert touch again. */
+/* Watch deployment policy, not a raw-provider ABI change. The confirmed
+ * touch-direction variant uses identity coordinates in every GUI client. */
 typedef struct {
     risc_runtime_capability_v1 grant;
     const risc_touch_api_v1 *api;
