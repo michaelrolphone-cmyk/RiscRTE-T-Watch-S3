@@ -13,6 +13,11 @@ static bool m_admit(void) {
 static bool m_fail_io, m_fail_release;
 static bool m_tokens[512], m_levels[512];
 static uint8_t m_madctl;
+#if TEST_KIND == 5
+static uint16_t m_panel_row, m_panel_rows[320];
+static unsigned m_panel_row_count, m_panel_row_cost_ms, m_spi_timeout, m_spi_begins;
+static unsigned m_spi_timeouts[512], m_panel_fail_row;
+#endif
 static uint8_t m_pin[512], m_regs[256], m_op, m_phase;
 static uint16_t m_irq;
 static int m_busy = -1;
@@ -152,6 +157,10 @@ static bool m_begin(void *c, uint64_t t, uint32_t hz, uint8_t mode, uint32_t ms)
     assert(m_tokens[t] && hz && mode == 0 && ms);
     if (m_expected_spi_hz) assert(hz == m_expected_spi_hz);
     m_phase = 0;
+#if TEST_KIND == 5
+    m_spi_timeout = ms;
+    m_spi_timeouts[m_spi_begins++ % 512] = ms;
+#endif
     return !m_fail_io;
 }
 static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size_t n) {
@@ -167,6 +176,15 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
     if (tx && n==1 && m_op==0x36) m_madctl=*tx;
     if (tx && n == 1 && (*tx == 0x2a || *tx == 0x2b || *tx == 0x2c))
         m_op = *tx;
+#if TEST_KIND == 5
+    if (tx && n == 4 && m_op == 0x2a)
+        assert(tx[0] == 0 && tx[1] == 0 && tx[2] == 0 && tx[3] == 239);
+    if (tx && n == 4 && m_op == 0x2b) {
+        m_panel_row = ((uint16_t)tx[0] << 8) | tx[1];
+        assert(m_panel_row == (((uint16_t)tx[2] << 8) | tx[3]));
+        assert(m_panel_row < 320);
+    }
+#endif
     if (rx) {
         memset(rx, 0, n);
         if (m_phase >= 2) {
@@ -188,6 +206,13 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
     if (tx && m_op == 0x2c && n == 480) {
         m_bytes += n;
         assert(tx[0] == 0x12 && tx[1] == 0x34);
+#if TEST_KIND == 5
+        if (m_panel_fail_row && m_panel_row_count + 1 == m_panel_fail_row)
+            return false;
+        m_panel_rows[m_panel_row]++;
+        m_panel_row_count++;
+        m_now += m_panel_row_cost_ms;
+#endif
     }
     m_phase++;
     return true;

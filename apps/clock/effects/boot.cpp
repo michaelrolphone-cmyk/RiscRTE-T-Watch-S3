@@ -1,5 +1,5 @@
 // Adapted from pinned T5S3 StartupScreen.cpp. See SOURCES.json and reference/LICENSE.
-// Only the output mapping changes: portrait logical 320x320 -> RGB565 240x240.
+// Output mapping: portrait logical 320x320 -> RGB565 240x240, light ink on black.
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
@@ -9,11 +9,11 @@ constexpr int kLogoSize=240,kFrameHeight=320;
 constexpr uint8_t kLogoLayerCount=4,kFullCoverage=64;
 static uint32_t visualTimeMs;
 static const struct {int width,height;} videoSurface={320,320};
-static void setPhysicalPixel(uint8_t* buffer,size_t bytes,int x,int y,bool black) {
+static void setPhysicalPixel(uint8_t* buffer,size_t bytes,int x,int y,bool ink) {
   if(x<0 || y<0 || x>=320 || y>=320) return;
   const size_t offset=((size_t)(y*3/4)*240+(unsigned)(x*3/4))*2;
   if(offset+2>bytes) return;
-  uint16_t value=black?0:0xffff;memcpy(buffer+offset,&value,2);
+  uint16_t value=ink?0xffff:0;memcpy(buffer+offset,&value,2);
 }
 constexpr uint8_t kBayer8[8][8] = {
     {0, 48, 12, 60, 3, 51, 15, 63},
@@ -277,7 +277,7 @@ void drawVideoLogo(uint8_t* buffer, size_t bufferSize, uint8_t visibleBlocks,
 }
 extern "C" bool watch_boot_render(const risc_display_surface_v1* s,uint32_t ms) {
  if(!s || !s->pixels || s->width!=240 || s->height!=240 || s->stride_bytes!=480 || s->size_bytes<115200 || s->pixel_format!=5) return false;
- memset(s->pixels,255,115200);visualTimeMs=ms;
+ memset(s->pixels,0,115200);visualTimeMs=ms;
  drawVideoLogo((uint8_t*)s->pixels,115200,9,64,ms>1000?64:0);
  return true;
 }

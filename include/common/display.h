@@ -107,18 +107,37 @@ static bool present_status(void *c, risc_display_present_token_v1 token,
 static void display_poll(uint32_t budget_ms) {
     if (!budget_ms || !enter())
         return;
-    spi_timeout_ms = budget_ms < 20 ? budget_ms : 20;
     if (running && active && !failed) {
+        const uint32_t budget = budget_ms < 20 ? budget_ms : 20;
+        const uint64_t began = timer->monotonic_ms(timer->context);
         present_state = RISC_DISPLAY_PRESENT_ACTIVE;
-        if (next_row < HEIGHT) {
+        /* Amortize owner-task scheduling across rows, without monopolizing it.
+         * The item cap also bounds a stopped/coarse clock. Every SPI transaction
+         * receives only the remainder of this poll's total time budget. */
+        for (unsigned rows = 0; rows < 32 && next_row < HEIGHT; ++rows) {
+            uint64_t elapsed = timer->monotonic_ms(timer->context) - began;
+            if (elapsed >= budget)
+                break;
+            uint32_t remaining = budget - (uint32_t)elapsed;
+            /* Do not start a row whose wire bytes cannot fit. Each row
+             * retains the original 2 ms transaction allowance: a 1 ms remainder
+             * can already be almost exhausted on this millisecond-resolution
+             * clock, failing the next row between its command/data exchanges. */
+            if (remaining < hw_row_min_budget_ms() || remaining < 2)
+                break;
+            spi_timeout_ms = remaining;
             if (hw_row(next_row, pixels + next_row * STRIDE))
                 ++next_row;
             else {
                 failed = true;
                 active = false;
                 present_state = RISC_DISPLAY_PRESENT_FAILED;
+                break;
             }
-        } else {
+        }
+        /* The panel finish hook is nonblocking. A completed last row must not
+         * cost another owner-task scheduling round just to publish its token. */
+        if (active && next_row == HEIGHT) {
             int done = hw_finish();
             if (done) {
                 active = false;

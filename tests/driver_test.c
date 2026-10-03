@@ -148,10 +148,59 @@ int main(void) {
     risc_display_present_status_v1 status;
     assert(!a->present_status(NULL, t + 1, &status));
     const risc_driver_poll_v2 *extended = (const void *)d;
-    for (size_t i = 0; i < 241; i++)
+    const unsigned before_zero = m_spi_begins;
+    extended->poll(0);
+    assert(m_spi_begins == before_zero && m_panel_row_count == 0);
+    /* A frozen monotonic mock must still be bounded by the row ceiling. */
+    extended->poll(20);
+    assert(m_panel_row_count == 32);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_ACTIVE);
+    for (size_t i = 1; i < 8; i++)
         extended->poll(20);
     assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
     assert(m_bytes == 115200);
+    /* Decode the actual CASET/RASET/RAMWR stream, including addresses >255. */
+    assert(m_panel_row_count == 240);
+    const unsigned first_row = m_config.rotation == 2 ? 80 : 0;
+    for (unsigned row = 0; row < 320; row++)
+        assert(m_panel_rows[row] == (row >= first_row && row < first_row + 240));
+    assert(m_panel_row == first_row + 239);
+    /* Nonzero bus cost consumes the supplied budget, reducing timeout per row. */
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    m_panel_row_cost_ms = 1;
+    const uint64_t poll_start = m_now;
+    extended->poll(2);
+    assert(m_now - poll_start == 1 && m_panel_row_count == 1);
+    assert(m_spi_timeouts[0] == 2);
+    /* Never restart with a 1ms budget: the backend truncates deadlines to ms. */
+    assert(m_spi_begins == 1);
+    for (unsigned i = 1; i < 240; i++) extended->poll(2);
+    assert(m_panel_row_count == 240);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    extended->poll(3);
+    assert(m_panel_row_count == 2 && m_spi_timeouts[0] == 3 && m_spi_timeouts[1] == 2);
+    for (unsigned i = 1; i < 120; i++) extended->poll(3);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
+    m_panel_row_cost_ms = 0;
+    /* A failed row stops the batch and never completes or accepts another frame. */
+    assert(a->acquire(NULL, 5, &surface));
+    assert(a->submit(NULL, surface.frame, NULL, 0, NULL, &t));
+    m_panel_row_count = m_spi_begins = 0;
+    m_panel_fail_row = 3;
+    extended->poll(20);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3);
+    assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_FAILED);
+    assert(!a->acquire(NULL, 5, &surface));
+    extended->poll(20);
+    assert(m_panel_row_count == 2 && m_spi_begins == 3);
+    m_panel_fail_row = 0;
+    assert(d->quiesce());
+    assert(d->start(m_deps, n));
     assert(a->set_brightness(NULL, 1, 2));
     for(unsigned cycle=0;cycle<3;cycle++) {
         assert(power_api->prepare_sleep(NULL));

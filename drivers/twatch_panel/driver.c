@@ -48,8 +48,21 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     return true;
 }
 static void hw_submit(void) {}
+/* CASET/RASET/RAMWR commands + 8 address bytes + 480 RGB565 bytes.
+ * Never start a row whose wire time alone exceeds the remaining deadline. */
+static uint32_t hw_row_min_budget_ms(void) {
+    const uint32_t wire_bits_ms = (3u + 8u + STRIDE) * 8u * 1000u;
+    return (wire_bits_ms + config->bus.frequency_hz - 1u) / config->bus.frequency_hz;
+}
 static bool hw_row(uint32_t y, const uint8_t *pixels) {
-    uint8_t x[] = {0, 0, 0, 239}, row[] = {0, (uint8_t)y, 0, (uint8_t)y}, wire[480];
+    /* This 240x240 glass occupies 240 rows of the ST7789's 320-row RAM.
+     * MX|MY mirrors the visible range to 80..319; logical offsets remain zero.
+     * Keep the high address byte: the last 64 rows cross address 255.
+     * LILYGO LilyGoDispSPI::setRotation pairs mirror(true,true) with gap(0,80). */
+    const uint16_t address_y = (uint16_t)(y + (config->rotation == 2 ? 80u : 0u));
+    uint8_t x[] = {0, 0, 0, 239};
+    uint8_t row[] = {(uint8_t)(address_y >> 8), (uint8_t)address_y,
+                     (uint8_t)(address_y >> 8), (uint8_t)address_y}, wire[480];
     for (size_t i = 0; i < 480; i += 2) {
         uint16_t v;
         memcpy(&v, pixels + i, 2);

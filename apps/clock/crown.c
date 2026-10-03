@@ -41,17 +41,25 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     return watch_clock_render(surface,&date,valid,now/1000);
 }
 static bool ripple(bool outgoing) {
-    for(unsigned scan=0;scan<16;scan++) {
-        uint32_t now; risc_display_surface_v1 s={0};
+    uint32_t start,now;
+    if (!alive(&start)) return false;
+    /* A slow presentation must skip obsolete scans, not stretch all sixteen
+     * scans into sixteen slow full-panel transfers. Always submit scan 15. */
+    for(unsigned count=0;count<16;count++) {
+        risc_display_surface_v1 s={0};
         if (!alive(&now) || !frame(&s)) return false;
+        uint32_t age=now-start;
+        unsigned scan=age/20u;
+        if (scan>15) scan=15;
         if (outgoing && !draw_clock(now,&s)) return false;
         if (!outgoing) {
             if (!watch_boot_render(&s,0)) return false;
         }
         if (!watch_ripple_render(&s,scan) || !present()) return false;
+        if (scan==15) return true;
         rt->yield_ms(20);
     }
-    return true;
+    return false;
 }
 static bool startup(void) {
     if (!ripple(false)) return false;
