@@ -1,3 +1,15 @@
+# Diagnostic variant: 0.4.0 touch direction
+
+This branch preserves the original 0.4.0 implementation and source pins. Only
+the shared Springboard, Battery and Settings ELF builds select identity touch
+coordinates instead of the old 180-degree client transform described below.
+Display rotation itself remains unchanged. See TOUCH_DIRECTION_VARIANT.md and
+the exact 22-file custody proof. This is a configuration variant, not a release.
+
+The historical baseline description follows; its touch-transform180 statement
+is superseded by identity0 for these three shared apps only. Clock and every
+physical driver are byte-identical to the original confirmed-working image.
+
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing
