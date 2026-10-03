@@ -79,6 +79,17 @@
             },
             "required": [],
             "additionalProperties": false
+          },
+          "controller_namespace": {
+            "enum": [
+              "esp32.peripheral",
+              "riscrte.logical"
+            ]
+          },
+          "physical_controller": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
           }
         },
         "required": [
@@ -89,7 +100,33 @@
           "mode",
           "pins"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "controller_namespace": {
+                    "const": "esp32.peripheral"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "controller_namespace": {
+                    "const": "riscrte.logical"
+                  }
+                },
+                "required": [
+                  "controller_namespace",
+                  "physical_controller"
+                ]
+              }
+            ]
+          }
+        ]
       },
       "maxItems": 8
     },
@@ -571,7 +608,41 @@
                   "reset_assert_ms",
                   "reset_recovery_ms"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "reset": {
+                          "const": -1
+                        }
+                      },
+                      "required": [
+                        "reset"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "reset_assert_ms": {
+                          "const": 0
+                        },
+                        "reset_recovery_ms": {
+                          "const": 0
+                        }
+                      }
+                    },
+                    "else": {
+                      "properties": {
+                        "reset_assert_ms": {
+                          "minimum": 1
+                        },
+                        "reset_recovery_ms": {
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                ]
               },
               "bindings": {
                 "type": "object",
@@ -703,7 +774,41 @@
                   "reset_assert_ms",
                   "reset_recovery_ms"
                 ],
-                "additionalProperties": false
+                "additionalProperties": false,
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "reset": {
+                          "const": -1
+                        }
+                      },
+                      "required": [
+                        "reset"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "reset_assert_ms": {
+                          "const": 0
+                        },
+                        "reset_recovery_ms": {
+                          "const": 0
+                        }
+                      }
+                    },
+                    "else": {
+                      "properties": {
+                        "reset_assert_ms": {
+                          "minimum": 1
+                        },
+                        "reset_recovery_ms": {
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                ]
               },
               "bindings": {
                 "type": "object",

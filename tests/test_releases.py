@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from unittest.mock import patch
 import zipfile
 
@@ -90,13 +92,17 @@ class Custody(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.stage(self.plan, self.root)
 
-    def test_draft_resume_and_immutable_retries(self):
+    def test_empty_draft_retarget_resume_and_immutable_retries(self):
         record = p.stage(self.plan, self.root)['packages'][0]
-        remote = {'tag_name': record['tag'], 'target_commitish': 'a' * 40, 'draft': True, 'assets': []}
+        remote = {'id': 42, 'tag_name': record['tag'], 'target_commitish': 'b' * 40, 'draft': True, 'assets': []}
         stored = {}
         calls = []
         def fake_gh(*args):
             calls.append(args)
+            if args[0] == 'api' and '--method' in args:
+                self.assertIn('PATCH', args)
+                remote['target_commitish'] = 'a' * 40
+                return json.dumps(remote)
             if args[:2] == ('release', 'upload'):
                 file = Path(args[3]); stored[file.name] = file.read_bytes()
                 remote['assets'].append({'name': file.name})
@@ -126,9 +132,10 @@ class Custody(unittest.TestCase):
         remote = {'tag_name': record['tag'], 'target_commitish': 'a' * 40, 'draft': True, 'assets': []}
         stored = {}
         def fake_gh(*args):
-            if args[:2] == ('release', 'create'):
-                self.assertIn('--draft', args)
-                self.assertEqual(args[args.index('--target') + 1], 'a' * 40)
+            if args[0] == 'api' and '--method' in args:
+                self.assertIn('draft=true', args)
+                self.assertIn('target_commitish=' + 'a' * 40, args)
+                return json.dumps(remote)
             elif args[:2] == ('release', 'upload'):
                 file = Path(args[3]); stored[file.name] = file.read_bytes()
             elif args[:2] == ('release', 'download'):
@@ -143,11 +150,11 @@ class Custody(unittest.TestCase):
              patch.object(p, 'releases', side_effect=[[], [remote]]), \
              patch.object(p, 'gh', side_effect=fake_gh) as gh:
             p.publish_one('owner/repo', record)
-            self.assertEqual(gh.call_args_list[0].args[:2], ('release', 'create'))
+            self.assertIn('POST', gh.call_args_list[0].args)
 
     def test_draft_from_different_commit(self):
         record = p.stage(self.plan, self.root)['packages'][0]
-        remote = {'tag_name': record['tag'], 'target_commitish': 'b' * 40, 'draft': True}
+        remote = {'tag_name': record['tag'], 'target_commitish': 'b' * 40, 'draft': True, 'assets': [{'name': self.name}]}
         with patch.object(p, 'verify_existing_tag'), patch.object(p, 'releases', return_value=[remote]), \
              patch.object(p, 'gh') as gh:
             with self.assertRaises(ValueError):

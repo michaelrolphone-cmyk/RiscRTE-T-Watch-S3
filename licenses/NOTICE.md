@@ -6,7 +6,9 @@
 - Shared GPIO/SPI/radio and hardware mapping headers, Wi-Fi source/API, and common
   display/transport helpers originate in the same owner's
   [Garden PR69](https://github.com/michaelrolphone-cmyk/Garden-Controller/pull/69).
-  Headers are pinned to1f7fb82efec08cf8751057d84e707f20be2fb7a5; common helpers
+  Raw platform headers are pinned to1f7fb82efec08cf8751057d84e707f20be2fb7a5;
+  the hardware mapping header/contract/common schema follow
+  7e30afc407c86f34364cbfa2035d6f7893fdea8c with the same C layout. Common helpers
   were adapted from783a88daeb0af853d77acfed52ef66b96d9d156e. No separate license
   was found in that repository snapshot; no new third-party license grant is
   asserted. Reuse follows the repository owner's explicit task instruction.

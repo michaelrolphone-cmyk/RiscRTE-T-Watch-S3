@@ -81,10 +81,52 @@ physical verification remain pending.
 Publication is serialized. A release remains a draft until both assets are
 uploaded and downloaded for byte verification. Existing assets are never
 clobbered. On an interrupted run, use **Re-run failed jobs** on that original
-run: it resumes drafts and verifies already completed releases. If the source
-commit changed while a same-version draft exists, the action stops rather than
-mixing commits; rerun the original run or increment the affected version.
+run: it resumes drafts and verifies already completed releases. An empty unpublished draft may be retargeted after a failed create;
+existing tags and any uploaded content prevent retargeting. If the source
+commit changed while a same-version draft already has assets, the action stops
+rather than mixing commits; rerun the original run or increment the affected version.
 A repository policy that blocks release writes must allow the workflow's
 `contents: write` permission before publication can succeed.
 
-Offline release regression tests: `python3 -m unittest discover -s tests -p test_releases.py -v`.
+Offline release regression tests: `python3 -m unittest discover -s tests -p 'test_*releases.py' -v`.
+
+
+## Immutable board baseline releases
+
+`releases/board-baseline.json` explicitly versions the complete board definition,
+starting at **1.0.0**. Its independent release tag is
+`board-lilygo-t-watch-s3-v1.0.0`; the versioned artifact is
+`board-lilygo-t-watch-s3-1.0.0.zip`. Use that exact tag/asset URL and verify the
+release-record SHA-256. No `latest` or unversioned asset is the baseline source
+of truth. Individual JSON files also have immutable source-commit URLs recorded
+by provenance; archive-relative paths remain stable across versions.
+
+The ZIP includes all eight `hardware/*.json` profiles, `board.json`,
+`load-order.json`, `platform-resources.json`, both mapping schemas and schema
+provenance, mapping/backfill/inventory docs, exact SDK headers and upstream pins,
+capability declarations, licenses, and all source driver manifests. The baseline
+descriptor declares mapping/API versions, CPU identity, and explicit controller
+namespaces; it has no implicit physical variant. Each SPI bus declares
+`controller_namespace: riscrte.logical` and `physical_controller`2/3 while
+retaining logical `controller`0/1 in the typed C config. I2C declares
+`esp32.peripheral` with matching physical0/1. The shared contract is pinned to
+Garden7e30afc; no board-name inference or implicit +2 translation is allowed. `baseline-record.json` records
+every member's SHA-256 and size, source commit, and an aggregate source digest.
+
+Increment the baseline's numeric version whenever any included file changes,
+including driver manifest versions or schema clarifications. The publisher
+checks the source digest against the existing release even when the version
+would otherwise be skipped, and fails on a same-version content change.
+Unrelated source commits with identical baseline inputs remain a no-op. A bump
+creates a new immutable release; old assets are never replaced. Interrupted
+publication uses the same draft/resume/byte-verification rules as drivers.
+
+Build locally with `python3 scripts/board_baseline.py`. Output ZIPs are
+deterministic for the same source commit and bytes. `dist/board-catalog.json`
+uses the existing schema1 catalog envelope but marks entries `board-baseline`
+and architecture `independent`. It is a separate data catalog, **not an
+installable `.rte.zip` driver package**; `dist/catalog.json` remains driver-only.
+The workflow's `release-catalog.json` lists selected releases with explicit
+kinds. Consumers must select supported kinds rather than infer them from IDs.
+Both automatic and manual publishing include baseline versions. No workflow
+uses a mutable board alias or overwrites an existing release asset.

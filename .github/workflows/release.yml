@@ -59,11 +59,13 @@ jobs:
           tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
           echo "TWATCH_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
       - name: Release automation tests
-        run: python -m unittest discover -s tests -p test_releases.py -v
+        run: python -m unittest discover -s tests -p 'test_*releases.py' -v
       - name: Host contract fixtures with UBSan
         run: python scripts/test_contracts.py
       - name: Target ABI, ELF imports and packages
         run: python scripts/build_twatch_drivers.py
+      - name: Versioned board baseline
+        run: python scripts/board_baseline.py
       - name: Physical manifests, negative mappings and package hashes
         run: python scripts/check_twatch_drivers.py
       - name: Verify planned package custody
@@ -73,6 +75,8 @@ jobs:
           name: verified-driver-packages
           path: |
             dist/*.rte.zip
+            dist/board-*.zip
+            dist/board-catalog.json
             dist/catalog.json
             dist/release-catalog.json
           if-no-files-found: error

@@ -36,8 +36,8 @@
   },
   "RiscHardwareConfigV1.h": {
     "repository": "Garden-Controller",
-    "commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
-    "sha256": "9e56a6a19644afe0dc72097d8b5ab88082f79dff7dc5e738afafa34800ceb071"
+    "commit": "7e30afc407c86f34364cbfa2035d6f7893fdea8c",
+    "sha256": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240"
   },
   "GardenPlatformV1.h": {
     "repository": "Garden-Controller",

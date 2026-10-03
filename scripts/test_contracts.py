@@ -14,7 +14,7 @@ def config(entry,buses,alternate):
     def expand(c):
         c=dict(c)
         if 'bus_instance_id'in c:
-            bus=dict(buses[c.pop('bus_instance_id')]);bus['kind']=1 if bus['kind']=='spi' else 2;bus.update(bus.pop('pins'));bus['struct_size']='sizeof(risc_hw_bus_v1)';c['bus']=bus
+            bus=dict(buses[c.pop('bus_instance_id')]);bus.pop('controller_namespace');bus.pop('physical_controller');bus['kind']=1 if bus['kind']=='spi' else 2;bus.update(bus.pop('pins'));bus['struct_size']='sizeof(risc_hw_bus_v1)';c['bus']=bus
         if 'device'in c:c['device']=expand(c['device'])
         return c
     c=expand(entry['config']);typ=TYPES[entry['config_type']]
@@ -31,6 +31,7 @@ def config(entry,buses,alternate):
                 elif k in fields and isinstance(v,int) and v>=0:x[k]=(v+19)%49
                 elif k=='pins':x[k]=[(p+19)%49 for p in v]
         shift(c)
+        if entry['config_type']=='display.spi':c['bus']['frequency_hz']=2000000
     return typ,c
 def main():
     gen=generate();cc=os.environ.get('CC','clang');total=0

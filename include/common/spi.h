@@ -33,8 +33,8 @@ static inline bool spi_release(void) {
     spi_claim = 0;
     return true;
 }
-static inline bool display_command(uint8_t dc, uint8_t cmd, const uint8_t *bytes, size_t count) {
-    if (!spi_begin(10000000))
+static inline bool display_command(uint32_t hz, uint8_t dc, uint8_t cmd, const uint8_t *bytes, size_t count) {
+    if (!spi_begin(hz))
         return false;
     gpio_write(dc, false);
     bool ok = !io_fault && spi->exchange(spi->context, spi_claim, &cmd, NULL, 1);
