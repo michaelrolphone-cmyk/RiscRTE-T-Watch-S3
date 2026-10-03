@@ -1,0 +1,103 @@
+name: Publish versioned drivers
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: twatch-driver-publication
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    # Manual publishing is restricted to the default branch as well.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      changed: ${{ steps.plan.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compare manifest versions with existing releases
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_drivers.py plan
+      - uses: actions/upload-artifact@v4
+        with:
+          name: driver-release-plan
+          path: dist/release-plan.json
+          if-no-files-found: error
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.changed == 'true'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: driver-release-plan
+          path: dist
+      - name: Python validation tools
+        run: python -m pip install -r scripts/requirements.txt
+      - name: Pinned ESP32-S3 compiler
+        shell: bash
+        run: |
+          curl --fail --location --retry 2 --max-time 180 https://github.com/espressif/crosstool-NG/releases/download/esp-2021r2-patch5/xtensa-esp32s3-elf-gcc8_4_0-esp-2021r2-patch5-linux-amd64.tar.gz -o "$RUNNER_TEMP/toolchain.tar.gz"
+          echo "8aa17a6adf01efa5b1628c8ac578063a44d26ae9581d39486b92223a41ef262f  $RUNNER_TEMP/toolchain.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/toolchain"
+          tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
+          echo "TWATCH_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+      - name: Release automation tests
+        run: python -m unittest discover -s tests -p test_releases.py -v
+      - name: Host contract fixtures with UBSan
+        run: python scripts/test_contracts.py
+      - name: Target ABI, ELF imports and packages
+        run: python scripts/build_twatch_drivers.py
+      - name: Physical manifests, negative mappings and package hashes
+        run: python scripts/check_twatch_drivers.py
+      - name: Verify planned package custody
+        run: python scripts/publish_drivers.py stage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-driver-packages
+          path: |
+            dist/*.rte.zip
+            dist/catalog.json
+            dist/release-catalog.json
+          if-no-files-found: error
+
+  publish:
+    needs: [plan, build]
+    if: needs.plan.outputs.changed == 'true'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: driver-release-plan
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-driver-packages
+          path: dist
+      - name: Revalidate and publish immutable driver versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_drivers.py publish

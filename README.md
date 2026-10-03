@@ -41,9 +41,50 @@ The build locates `xtensa-esp32s3-elf-gcc` on PATH or the existing PlatformIO
 installation; `TWATCH_CC` overrides it. It compiles target layout assertions,
 checks ELF32/Xtensa/DYN, exports and imports, then creates one `.rte.zip` per
 package and a hashed catalog under ignored `dist/`. No script opens serial ports,
-resets, flashes, deploys, signs or releases anything.
+resets, flashes, deploys or signs anything. The separate release workflow below
+publishes validated packages to GitHub Releases.
 
 Existing watch package versions move from 0.1.0 to 0.2.0; new board/BLE packages
 start at 0.1.0. The reused Wi-Fi package is 0.1.2. Protocol API versions are
 separate: `radio.lora@2` and `rtc.clock@2` replace their former incomplete tables.
 See [third-party provenance](licenses/NOTICE.md) and [SDK pins](sdk/SOURCES.json).
+
+
+## Automatic and manual publishing
+
+Merge a numeric `MAJOR.MINOR.PATCH` increment in a driver's
+`drivers/*/manifest.json` to the default branch (`main` in this repository).
+The **Publish versioned drivers** action compares every manifest with existing
+GitHub Releases. It validates the complete suite and publishes only new package
+IDs or increased versions. The first run publishes all 17 current packages,
+including the deprecated manual-only touch alias. Unchanged versions are a no-op;
+a lower version fails with a rollback diagnostic. Bump every affected package
+when shared headers or board manifests change; changing code alone does not
+republish an existing version.
+
+For manual publication, open **Actions → Publish versioned drivers → Run workflow**
+and select `main`. The same version rules apply; this is not a force-overwrite
+switch. Dispatches on other branches are skipped. The trigger also supports
+`master` if that becomes the repository default later. Pull requests run checks
+without release permissions. No personal access token is required: only the
+publisher job grants the built-in `GITHUB_TOKEN` `contents: write`.
+
+Each release is tagged `driver-<id>-v<version>` at the exact source commit and
+contains the ordinary `.rte.zip` plus `release-record.json` with its SHA-256,
+size, architecture and source SHA. The Actions run also retains the complete
+build catalog, selected release catalog, packages and release plan. GitHub
+Releases serve as the version index here; unlike Reader's multi-product setup,
+this driver-only repository needs no separate mutable `release-index` branch.
+These are driver artifacts, not flashable firmware; runtime backfill and
+physical verification remain pending.
+
+Publication is serialized. A release remains a draft until both assets are
+uploaded and downloaded for byte verification. Existing assets are never
+clobbered. On an interrupted run, use **Re-run failed jobs** on that original
+run: it resumes drafts and verifies already completed releases. If the source
+commit changed while a same-version draft exists, the action stops rather than
+mixing commits; rerun the original run or increment the affected version.
+A repository policy that blocks release writes must allow the workflow's
+`contents: write` permission before publication can succeed.
+
+Offline release regression tests: `python3 -m unittest discover -s tests -p test_releases.py -v`.
