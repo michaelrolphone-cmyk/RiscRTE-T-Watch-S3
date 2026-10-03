@@ -32,7 +32,7 @@ def main():
         '-Wall','-Wextra','-Werror','-I'+str(ROOT/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
     subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
-                    '-shared','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
+                    '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
                     str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/render.c'),str(ROOT/'apps/clock/effects/ripple.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
