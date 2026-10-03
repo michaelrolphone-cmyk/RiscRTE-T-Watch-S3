@@ -41,7 +41,7 @@ class CommonClock(unittest.TestCase):
         cls.addClassCleanup(cls.temp.cleanup)
         cls.root = Path(cls.temp.name) / 'inputs'
         cls.root.mkdir()
-        for name in ('hardware', 'drivers'):
+        for name in ('hardware', 'drivers', 'apps/clock/nova/fonts'):
             shutil.copytree(ROOT / name, cls.root / name)
         for name in ('board.json', 'apps/clock/manifest.json', 'apps/clock/runtime-requirements.json', 'sdk/app/SOURCES.json',
                      'releases/board-baseline.json', 'docs/CLOCK_INSTALL.md', 'docs/CROWN_SLEEP.md'):
@@ -93,6 +93,9 @@ class CommonClock(unittest.TestCase):
             self.assertEqual(len(record['common_clock']['inputs']), 8)
             with zipfile.ZipFile(archive) as merged:
                 self.assertNotIn('source-profile.json', merged.namelist())
+                for name in deployment.NOVA_NOTICES:
+                    self.assertEqual(merged.read('licenses/nova/' + name),
+                                     (ROOT / 'apps/clock/nova/fonts' / name).read_bytes())
                 self.assertEqual({n for n in merged.namelist() if n.startswith('store/')}, common.STORE_PATHS)
                 self.assertEqual(json.loads(merged.read('store/board.json'))['revision'], common.PROFILE)
                 for item, original in zip(record['common_clock']['inputs'], self.archives):
@@ -109,6 +112,15 @@ class CommonClock(unittest.TestCase):
             second = common.build(list(reversed(self.archives)), out / 'second', self.root, pr_head_sha='c' * 40)
             self.assertEqual(row, second)
             self.assertEqual(archive.read_bytes(), (out / 'second' / second['archive']).read_bytes())
+
+    def test_font_notices_are_mandatory_even_with_rehashed_membership(self):
+        for notice in deployment.NOVA_NOTICES:
+            def omit(files, record):
+                del files['licenses/nova/' + notice]
+            with self.subTest(notice=notice), tempfile.TemporaryDirectory() as directory:
+                archives = self.mutate(directory, omit)
+                with self.assertRaisesRegex(ValueError, 'Missing NOVA font license/provenance'):
+                    verify(archives[0])
 
     def test_selected_wiring_driver_and_app_differences_are_rejected(self):
         def wiring(files, record):

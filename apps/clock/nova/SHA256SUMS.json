@@ -1,0 +1,21 @@
+{
+  "README.md": "3f259bbe66ed0d20563fab69abc42732ff9890e2831bc8b09fd72e1ad0239a85",
+  "assets.inc": "db6f5842db035cea83b8fdc0452db37d74e32ab29765b50e14ba289f00621b88",
+  "fonts/Orbitron-500.ttf": "e1dd2875a4cf1711615b7bc7eb2ae8d05bef3861f87a7fdd847a78199169b458",
+  "fonts/Orbitron-700.ttf": "a24fe8031eefd8451d40e31882868d768ce6bed7c3659293281b3c5c7732a952",
+  "fonts/Orbitron-OFL.txt": "ab609b0e110d622435ff337cdf233288556e011bbf9bd0550be98846c0630819",
+  "fonts/Rajdhani-500.ttf": "7377b0a3421b01dae185fc1262ea34a45f6ba226155f531e9e72f5262b56d802",
+  "fonts/Rajdhani-600.ttf": "bcffd70c330f38f97f49fbb41cad34a1628a7852c0e6d1d1418ebc162add3144",
+  "fonts/Rajdhani-OFL.txt": "f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f",
+  "fonts/SOURCES.txt": "b190ddfd5feca02a5c8ff7e982d75171728396888d65aa006f9b15e35c53ab29",
+  "generate_assets.py": "78d0546a22bd33e8ed5bc24eabe7fb2b7dc529cc73e885cab629f38b64f53289",
+  "nova.c": "e383430359b407a0a65785e56879da9ac611701ce63179fa518e38844f158b46",
+  "nova.h": "8ebe4b6c0958e46d91e4d6feb50cd30a894137c1381073c4093a20b7410535b9",
+  "reference/NOVA-7-original.html": "0253f6ff13097b258febcd9f39a200081e77109c3429beaf980137a65dccd842",
+  "reference/make_reference.py": "46dd15fd63d27ac483ae33588d3d297fe659af96d802c694b3a262f9b89b6bce",
+  "reference/reference-104218.svg": "a1c2c178aa881d813851385bd306d99e3989aaf7aa47dcced6299ad1b89c7690",
+  "tests/frame.c": "bc96e694bc9f3bcc81f6a61c786f0cf0383afaf634e588276255b22d68d739d8",
+  "tests/render_previews.py": "3c883563c9f2d7fb24ba33cf8388d4cf9ee1a9f80e8f1957e15c54540285c0be",
+  "tests/run.py": "fc21fecb8f7531f236856c35f595f7b2c25efb2d5fd9bd6710df47bddb7c854b",
+  "tests/test.c": "09ee7e9db4177c15cdeaee8d1a306948a2d8ddfd69d9d03fc0bbb5ee54d625a4"
+}

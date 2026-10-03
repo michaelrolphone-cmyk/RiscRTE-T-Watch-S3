@@ -228,3 +228,11 @@ supervised installation, use the explicit Watch clock store with the pinned
 runtime and matching partition layout, and verify the recorded image hashes.
 Physical profile selection, installation and hardware observations
 remain outstanding. No successful hardware execution is claimed here.
+
+
+Clock 0.3.0 uses the NOVA-7 face with a 12-hour AM/PM default. Its independently
+paced animation requires the corrected runtime source recorded in
+runtime-requirements.json. Do not pair this 40 MHz deployment with the earlier
+3d0ae runtime binary. The current unprofiled PMU reports battery percentage as
+unknown (--%); RTC validity is not a synchronization claim. Font license and
+source notices are included in the deployment ZIP under licenses/nova.

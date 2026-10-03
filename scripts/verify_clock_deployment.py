@@ -25,6 +25,10 @@ def verify(path):
         boot=json.loads(z.read('store/boot.json'))
         board=json.loads(z.read('store/board.json'))
         app=json.loads(z.read('store/default.json'))
+        if tuple(map(int,app['version'].split('.'))) >= (0,3,0):
+            for notice in ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt'):
+                if 'licenses/nova/' + notice not in names or not z.read('licenses/nova/' + notice):
+                    raise ValueError('Missing NOVA font license/provenance')
         if tuple(map(int,app['version'].split('.'))) >= (0,2,2):
             runtime=record.get('runtime_requirements')
             if (not runtime or json.loads(z.read('runtime-requirements.json')) != runtime or

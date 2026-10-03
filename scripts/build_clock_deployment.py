@@ -9,6 +9,7 @@ import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+NOVA_NOTICES = ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt')
 DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
 
 
@@ -56,6 +57,8 @@ def build(profile_path, root=ROOT):
              'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
              'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes(),
              'runtime-requirements.json': encoded(runtime)}
+    for name in NOVA_NOTICES:
+        files['licenses/nova/' + name] = (root / 'apps/clock/nova/fonts' / name).read_bytes()
     boot = {'board': 'board.json', 'default_app': 'default.elf', 'drivers': [],
             'app_capabilities': [{'manifest': 'default.json', 'grants': [
                 {'capability': 'display.output', 'api': 1, 'instance_id': 5},

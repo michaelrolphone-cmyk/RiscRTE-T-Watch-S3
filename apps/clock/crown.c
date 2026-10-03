@@ -1,5 +1,5 @@
 #include "RiscRuntimeV1.h"
-#include "render.h"
+#include "nova/nova.h"
 #include "effects/effects.h"
 #include "twatch_power.h"
 #include "twatch_caps.h"
@@ -10,6 +10,16 @@ static const twatch_rtc_api_v1 *rtc;
 static const twatch_pmu_api_v1 *pmu;
 static const twatch_panel_power_v1 *panel;
 static risc_display_frame_v1 held;
+static nova_watch_state face;
+static uint32_t rtc_sampled_at, rtc_second_at, battery_sampled_at;
+static bool sampled_rtc, sampled_battery;
+static void reset_telemetry(void) {
+    face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
+}
+static bool same_second(const twatch_rtc_time_v1 *a,const twatch_rtc_time_v1 *b) {
+    return a->year==b->year && a->month==b->month && a->day==b->day &&
+        a->hour==b->hour && a->minute==b->minute && a->second==b->second;
+}
 static bool alive(uint32_t *ms) {
     risc_runtime_health_v1 h={.struct_size=sizeof(h)};
     if (!rt->health(&h)) return false;
@@ -17,16 +27,22 @@ static bool alive(uint32_t *ms) {
 }
 static bool present(void) {
     risc_display_present_token_v1 token=0;
+    uint32_t start,now;
+    if (!alive(&start)) return false;
+    bool healthy=true;
     const risc_display_present_options_v1 opts={0,0,0};
     if (!display->submit(display->context,held,NULL,0,&opts,&token)) return false;
-    held=0; uint32_t start,now;
-    if (!alive(&start)) return false;
+    held=0;
     for(unsigned n=0;n<=10000;n++) {
         risc_display_present_status_v1 s={0};
         if (!display->present_status(display->context,token,&s)) return false;
-        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) return true;
-        if (s.state==RISC_DISPLAY_PRESENT_FAILED || s.state==RISC_DISPLAY_PRESENT_SUPERSEDED ||
-            !alive(&now) || (uint32_t)(now-start)>=10000) return false;
+        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) return healthy;
+        if (s.state==RISC_DISPLAY_PRESENT_FAILED || s.state==RISC_DISPLAY_PRESENT_SUPERSEDED) return false;
+        if (alive(&now)) {
+            if ((uint32_t)(now-start)>=10000) return false;
+        } else healthy=false;
+        /* A lost health sample must not abandon an already accepted transfer.
+         * Drain it within the same bounded poll count, then exit the app. */
         rt->yield_ms(1);
     }
     return false;
@@ -36,9 +52,27 @@ static bool frame(risc_display_surface_v1 *surface) {
     held=surface->frame;return held!=0;
 }
 static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
-    twatch_rtc_time_v1 date={0};
-    bool valid=rtc && rtc->read(rtc->context,&date) && tw_valid_time(&date);
-    return watch_clock_render(surface,&date,valid,now/1000);
+    /* RTC sampling and fractional phase are independent of the frame cadence.
+     * Only a successful RTC sample may advance civil time. The first observed
+     * edge anchors the fractional hand within one 100ms sampling interval. */
+    if (!sampled_rtc || (uint32_t)(now-rtc_sampled_at)>=100u) {
+        twatch_rtc_time_v1 date={0};
+        bool valid=rtc && rtc->read(rtc->context,&date) && tw_valid_time(&date);
+        if (valid && (!face.time_valid || !same_second(&date,&face.time))) rtc_second_at=now;
+        face.time=date; face.time_valid=valid;
+        rtc_sampled_at=now; sampled_rtc=true;
+    }
+    if (!sampled_battery || (uint32_t)(now-battery_sampled_at)>=5000u) {
+        risc_battery_sample_v1 sample={0};
+        face.battery_valid=pmu->base.read && pmu->base.read(pmu->base.context,&sample) &&
+            sample.percent<=100 && !(sample.flags&RISC_BATTERY_PROFILE_MISSING);
+        face.battery_percent=sample.percent;
+        battery_sampled_at=now; sampled_battery=true;
+    }
+    uint32_t phase=now-rtc_second_at;
+    face.subsecond_ms=face.time_valid ? (phase>999u?999u:(uint16_t)phase) : 0;
+    face.animation_ms=now;
+    return nova_watch_render(surface,&face);
 }
 static bool pace_frame(uint32_t began) {
     uint32_t now;
@@ -100,6 +134,7 @@ static bool sleep_cycle(void) {
     if (rc==RISC_LIGHT_SLEEP_RETAINED) {rt->diagnostic("WATCH_CLOCK error=sleep-retained");return false;}
     uint32_t discard;
     if (!pmu->key_events(pmu->base.context,&discard)) return false;
+    reset_telemetry();
     if (rc==RISC_LIGHT_SLEEP_OK) {
         rt->diagnostic("WATCH_CLOCK woke");
         if (!startup()) return false;
@@ -108,6 +143,7 @@ static bool sleep_cycle(void) {
 }
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1); held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
+    reset_telemetry();
     if (!rt || rt->api_version!=1 || rt->struct_size<RISC_RUNTIME_CAPABILITIES_V1_SIZE ||
         !rt->health || !rt->yield_ms || !rt->diagnostic || !rt->acquire || !rt->release) return;
     risc_runtime_capability_v1 dg={.struct_size=sizeof(dg)},rg={.struct_size=sizeof(rg)},pg={.struct_size=sizeof(pg)};
@@ -129,8 +165,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
-    uint32_t discarded,now,last=0,armed_at=0;
-    bool first=true;
+    uint32_t discarded,now,armed_at=0;
     if (!display->set_brightness(display->context,40,100) ||
         !pmu->key_events(pmu->base.context,&discarded) || !startup() ||
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
@@ -141,14 +176,10 @@ __attribute__((visibility("default"))) void app_main(void) {
         /* A short press is reported on release; ignore startup/wake tails. */
         if ((events&2u) && (uint32_t)(now-armed_at)>=250) {
             if (!sleep_cycle() || !alive(&armed_at)) break;
-            first=true;continue;
+            continue;
         }
-        if (first || (uint32_t)(now-last)>=1000) {
-            risc_display_surface_v1 s={0};
-            if (!frame(&s) || !draw_clock(now,&s) || !present()) break;
-            first=false;last=now;
-        }
-        rt->yield_ms(20);
+        risc_display_surface_v1 s={0};
+        if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
     }
 done:
     if (held && display && display->release) display->release(display->context,held);

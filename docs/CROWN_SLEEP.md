@@ -139,3 +139,32 @@ wake and current draw remain pending user testing of this successor image.
 After delivery: resume shared Springboard and Settings work (time/timezone/time
 format/orientation), correct touch transforms, shared Font Awesome icons and
 verified navigation inputs. Do not assign rotary pins without hardware evidence.
+
+
+## NOVA-7 clock 0.3.0
+
+The supplied NOVA face is now the crown clock's production renderer. It defaults
+to 12-hour time with AM/PM. RTC fields are displayed as supplied; this app does
+not infer a timezone or claim synchronization. Failed or invalid readings show
+TIME UNSET. The PMU currently reports percent 255 with PROFILE_MISSING, so the
+face honestly shows --%; a future valid 0% remains distinct from unknown.
+
+The face renders on every paced iteration, independently of RTC sampling. A
+frame's rendering/presentation time counts toward the existing 20 ms interval;
+no extra sleep is added when that interval is already spent. RTC is sampled at
+most every 100 ms. An observed second change anchors its fractional phase, with
+up to one sampling interval of observation delay; civil time is never advanced
+from uptime. Battery is sampled at most every five seconds. Both cached states
+are invalidated after a sleep attempt/restoration. Crown key checks still occur
+between frames, and outgoing ripple frames use the same NOVA state.
+
+The immutable glyph masks are checked in. Normal target builds neither download
+fonts nor run a rasterizer. Both SIL OFL licenses and font source provenance are
+included under licenses/nova in every variant and common deployment ZIP. The
+common store still contains exactly 14 files; licenses are outside the SPIFFS
+store. See apps/clock/nova/README.md for renderer/source details and host checks.
+
+This release retains the 40 MHz projection, corrected 80-row window and streaming
+panel 0.3.2 from clock 0.2.2, and requires the exact RiscRTE 0.1.2 source
+a3d23da9cdc1b3a66c6429f29781856fa7fc8f75. Complete-frame timing regressions are
+host models, and neither those nor renderer CPU timings are measured watch FPS.
