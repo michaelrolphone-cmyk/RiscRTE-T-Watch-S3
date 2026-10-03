@@ -25,7 +25,7 @@ def build(system,utilities):
         subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',ROOT/'sdk/app',ROOT/'sdk/driver',ROOT/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
         symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True)
         imports={line.split()[-1] for line in symbols.splitlines() if ' U ' in ' '+line}
-        allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','free','abs','strcpy'}
+        allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','free','strcpy'}
         assert imports<=allowed,(name,imports-allowed)
         actual={line.split()[-1] for line in symbols.splitlines() if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
         assert actual==set(exports),(name,actual)
