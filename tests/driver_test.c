@@ -50,6 +50,8 @@ int main(void) {
     m_busy = m_config.busy;
 #endif
 #if TEST_KIND == 5
+    /* Both 10MHz and alternate 2MHz fixtures verify every init/command/row begin. */
+    m_expected_spi_hz = m_config.bus.frequency_hz;
     int16_t original_pin = m_config.backlight;
     m_config.backlight = -1;
     assert(!d->start(m_deps, n));

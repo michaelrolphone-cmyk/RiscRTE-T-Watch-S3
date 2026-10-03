@@ -11,7 +11,7 @@ Canonical Reader snapshot:
 `T5S3-Reader@3d9bc4f373679f5ae8dd184db6a8d0afa5a40231`. Provider v2, stream suffix,
 clock, I2C, display, raw touch and navigation headers are byte-for-byte copies.
 Their hashes and exact source pins are in [SDK sources](../sdk/SOURCES.json).
-The hardware mapping and raw GPIO/SPI/radio proposals are copied unchanged from
+The hardware mapping header and raw GPIO/SPI/radio proposals are copied unchanged from
 Garden `1f7fb82efec08cf8751057d84e707f20be2fb7a5`. These are proposals with
 implemented consumers, **not existing Reader services**.
 
@@ -39,11 +39,11 @@ singleton descriptor for a different device is forbidden. A driver-manager
 compatible-hardware filter, module instantiation, config injection, per-instance
 resolver and resource arbitration are future Reader work, not supplied here.
 
-The common JSON schema is retained unchanged for provenance. The
+Both schemas apply the optional-reset clarification recorded in
+[SCHEMA_PROVENANCE.json](SCHEMA_PROVENANCE.json); the original upstream hash is retained. The
 [T-Watch extension schema](twatch-board-v1.schema.json) registers controller.gpio,
-controller.i2c, peripheral.i2c, power.axp2101, audio.i2s and radio.lora. It permits
-absent display/touch reset (`-1`) and zero reset delay, as the common header
-allows optional hardware. Array counts and reserved-zero fields are generated
+controller.i2c, peripheral.i2c, power.axp2101, audio.i2s and radio.lora. Absent display/touch reset (`-1`) requires both reset delays zero; present
+reset requires positive bounded delays. Array counts and reserved-zero fields are generated
 by the materializer, not independently trusted JSON values. `power.axp2101` has
 the whole config size in its nested `device.struct_size`. Other exact layouts
 are in [TWatchHardwareV1.h](../sdk/driver/TWatchHardwareV1.h).
@@ -151,3 +151,22 @@ All local capability contexts are private to an independently mapped ELF instanc
 The raw controller APIs, schema materializers and device-manager filtering are
 **specified, not implemented in Reader by this PR**. No UI/app/default launcher,
 watch firmware image, hardware qualification, release or deployment is included.
+
+
+## Power dependency and SPI namespace integration notes
+
+The DRV2605 haptic manifest binds `board.battery@1` to PMU instance4 as a
+startup/shutdown dependency: the selected profile configures BLDO2 (rail5) at
+3.3V before haptic activation and keeps it alive until haptic quiescence. The
+haptic protocol does not select that rail, and the generic runtime must not
+hardcode BLDO2 or watch instance IDs. This dependency currently pins the entire
+PMU; it is not a fine-grained rail lease. The same existing PMU dependency model
+applies to display/touch/radio. A future generic rail contract requires an
+explicit versioned migration, preserving these edges until that migration.
+
+SPI bus `controller` indexes0/1 are logical board-port controllers, mapped by the
+ESP32-S3 port to SPI2/SPI3. Bind each external `spi.bus@1` context using the
+materialized bus instance (103/104 in these profiles), not package order.
+Panel0.2.1 commands, initialization and pixel rows all use the configured bus
+frequency, admitted up to10MHz. No command path may silently exceed a slower
+board-configured limit.

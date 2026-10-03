@@ -31,6 +31,7 @@ def config(entry,buses,alternate):
                 elif k in fields and isinstance(v,int) and v>=0:x[k]=(v+19)%49
                 elif k=='pins':x[k]=[(p+19)%49 for p in v]
         shift(c)
+        if entry['config_type']=='display.spi':c['bus']['frequency_hz']=2000000
     return typ,c
 def main():
     gen=generate();cc=os.environ.get('CC','clang');total=0

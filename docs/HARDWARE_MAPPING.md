@@ -57,7 +57,7 @@ T-Watch's additive TWatchHardwareV1.h owns controller.i2c, peripheral.i2c,
 power.axp2101, audio.i2s and radio.lora v1 layouts. Its audio.i2s is distinct from
 the shared audio.i2s-port record; consumers must never cast between them. Its
 nested power.axp2101 device.struct_size must cover the whole selected config.
-No changes to T-Watch files are made here. The Garden JSON schema intentionally
+The common JSON schema intentionally
 validates the seven Garden config types; extension projects supply explicit
 schemas for their registered additional types using the same envelope/bus/binding
 rules. Unknown types are rejected until that schema and exact typed materializer
@@ -84,3 +84,22 @@ I2C devices may share a bus with distinct addresses; SPI devices share controlle
 signals with distinct CS. Configuration and scoped context must agree, otherwise
 raw claim fails. A future Driver Manager may filter by compatibility metadata,
 but filtering never replaces runtime validation or authorization.
+
+
+## Optional reset clarification v1
+
+For `display.spi` and `touch.i2c`, `reset=-1` means physically absent and both
+`reset_assert_ms` and `reset_recovery_ms` must be zero. A present reset requires
+both delays in1..500ms. A driver may admit a stricter subset (the current watch
+panel accepts only absent reset). Both local common and extension schemas now
+apply these same rules. This clarifies the existing C layout without changing
+its version or copied header bytes. The original Garden schema required reset;
+[SCHEMA_PROVENANCE.json](SCHEMA_PROVENANCE.json) records that upstream revision,
+original hash, and derived hashes so consumers do not mistake this clarification
+for an unchanged upstream copy. Matching upstream adoption is coordinated
+separately; there is no silent cast or second C layout.
+
+The immutable baseline descriptor explicitly declares CPU-compatible identity and
+controller namespaces. For this CPU port, logical SPI0/1 map to SPI2/SPI3;
+I2C/I2S indexes are hardware-zero-based. Preserve `bus.instance_id` when
+normalizing controller numbers. Never infer a namespace from `board_id`.

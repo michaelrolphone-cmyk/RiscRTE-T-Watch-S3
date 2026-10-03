@@ -28,17 +28,17 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
                     &spi_claim) ||
         !spi_claim)
         return false;
-    if (!display_command(config->dc, 0x01, NULL, 0))
+    if (!display_command(config->bus.frequency_hz, config->dc, 0x01, NULL, 0))
         return false;
     timer->sleep_ms(timer->context, 150);
-    if (!display_command(config->dc, 0x11, NULL, 0))
+    if (!display_command(config->bus.frequency_hz, config->dc, 0x11, NULL, 0))
         return false;
     timer->sleep_ms(timer->context, 120);
     uint8_t format = 0x55, madctl = 0;
-    if (!display_command(config->dc, 0x3a, &format, 1) ||
-        !display_command(config->dc, 0x36, &madctl, 1) ||
-        !display_command(config->dc, 0x21, NULL, 0) ||
-        !display_command(config->dc, 0x13, NULL, 0) || !display_command(config->dc, 0x29, NULL, 0))
+    if (!display_command(config->bus.frequency_hz, config->dc, 0x3a, &format, 1) ||
+        !display_command(config->bus.frequency_hz, config->dc, 0x36, &madctl, 1) ||
+        !display_command(config->bus.frequency_hz, config->dc, 0x21, NULL, 0) ||
+        !display_command(config->bus.frequency_hz, config->dc, 0x13, NULL, 0) || !display_command(config->bus.frequency_hz, config->dc, 0x29, NULL, 0))
         return false;
     return true;
 }

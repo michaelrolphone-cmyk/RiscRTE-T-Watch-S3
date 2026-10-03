@@ -136,9 +136,11 @@ static bool m_sclaim(void *c, uint8_t clk, uint8_t mosi, int8_t miso, uint8_t cs
     m_pin[*t] = cs;
     return true;
 }
+static uint32_t m_expected_spi_hz;
 static bool m_begin(void *c, uint64_t t, uint32_t hz, uint8_t mode, uint32_t ms) {
     (void)c;
     assert(m_tokens[t] && hz && mode == 0 && ms);
+    if (m_expected_spi_hz) assert(hz == m_expected_spi_hz);
     m_phase = 0;
     return !m_fail_io;
 }
