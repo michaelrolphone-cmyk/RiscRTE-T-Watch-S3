@@ -3,6 +3,7 @@
 import argparse,hashlib,io,json,re,struct,subprocess,tempfile,zipfile
 from pathlib import Path,PurePosixPath
 from verify_clock_deployment import verify
+from rtc_metadata import normalize as normalize_rtc
 ROOT=Path(__file__).resolve().parents[1]
 RUNTIME_SHA=json.loads((ROOT/'apps/clock/runtime-requirements.json').read_text())['source_sha']
 RUNTIME_ZIP_SHA='b429078d216ded3cb6476d7bf0f54494132fa679c0ad20e8594e50fca7165c1b'
@@ -36,6 +37,10 @@ def build(runtime,artifact,head,runtime_source,out):
   assert len(common)==len(image)==1
   proof=json.loads(z.read(next(n for n in names if n.endswith('sleep-increment-proof.json'))))
   assert proof['label']=='0.5.0-sleep' and proof['unchanged_file_count']==11
+  rtc_raw=z.read(next(n for n in names if n.endswith('compiled-driver.elf')))
+  rtc_proof=json.loads(z.read(next(n for n in names if n.endswith('metadata-proof.json'))))
+  rtc_canonical,rtc_checked=normalize_rtc(rtc_raw)
+  assert all(rtc_proof[k]==v for k,v in rtc_checked.items()) and '8.4.0' in rtc_proof['compiler']
   common_bytes=z.read(common[0]);image_bytes=z.read(image[0]);image_record=json.loads(z.read(image[0][:-4]+'.json'))
   assert image_record['sha256']==sha(image_bytes) and image_record['deployment_sha256']==sha(common_bytes)
   assert image_record['round_trip_verified'] and image_record['files']==24 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
@@ -53,6 +58,7 @@ def build(runtime,artifact,head,runtime_source,out):
   assert proof['baseline_store_sha256']==baseline['baseline_store_sha256']
   changed=sorted(n.removeprefix('store/') for n,b in store.items() if sha(b)!=baseline['baseline_store_sha256'].get(n.removeprefix('store/')))
   assert changed==sorted(baseline['changed_store_files'])
+  assert store['store/rtc/driver.elf']==rtc_canonical
   board=json.loads(store['store/board.json']);assert {d['instance_id'] for d in board['devices']}=={1,2,3,4,5,6,8}
   assert next(b for b in board['buses'] if b['instance_id']==103)['frequency_hz']==40000000
   assert next(d for d in board['devices'] if d['instance_id']==5)['config']['rotation']==2
@@ -62,6 +68,8 @@ def build(runtime,artifact,head,runtime_source,out):
  files['licenses/BOOT_WORDMARK_LICENSE.txt']=(ROOT/'apps/clock/effects/reference/BOOT_WORDMARK_LICENSE.txt').read_bytes()
  files['reproduce/RUNTIME-LICENSE']=(runtime_source/'LICENSE').read_bytes()
  files['provenance/sleep-increment-proof.json']=encoded(proof)
+ files['provenance/rtc-metadata-proof.json']=encoded(rtc_proof)
+ files['provenance/rtc-compiled.elf']=rtc_raw
  files['DEEP_SLEEP.md']=(ROOT/'docs/DEEP_SLEEP.md').read_bytes()
  files['provenance/runtime-candidate.json']=encoded(rc)
  files['provenance/common-deployment.zip']=common_bytes

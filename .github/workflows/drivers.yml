@@ -133,6 +133,8 @@ jobs:
             dist/launcher-common/*.zip
             dist/launcher-common/*.bin
             dist/launcher-common/*.json
+            dist/twatch-rtc/metadata-proof.json
+            dist/twatch-rtc/compiled-driver.elf
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
@@ -153,6 +155,7 @@ jobs:
             dist/clock-common/*.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: twatch-driver-packages
           path: |
@@ -160,4 +163,7 @@ jobs:
             dist/board-*.zip
             dist/board-catalog.json
             dist/catalog.json
+            dist/twatch-rtc/driver.elf
+            dist/twatch-rtc/metadata-proof.json
+            dist/twatch-rtc/compiled-driver.elf
           if-no-files-found: error

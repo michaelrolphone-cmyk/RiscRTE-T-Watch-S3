@@ -93,3 +93,13 @@ with zero unloads and pinned resources. Exact
 source target CI, payload hashes, all eight board-profile projections, SPIFFS
 round trips and a source/ELF inventory must pass before delivering the BIN.
 These checks are software evidence, not physical wake/current qualification.
+
+### Immutable RTC metadata custody
+
+GCC8.4 can renumber the RTC's compiler-generated local `days$NNNN` symbol after
+unrelated header declarations are added. The build checks the single 12-byte
+calendar object and may normalize only its equal-length name in the non-allocated
+`.strtab`, outside every PT_LOAD range. The resulting **entire ELF** must hash
+exactly to the physically accepted RTC0.2.0 artifact; any other byte change fails.
+Raw compiled bytes and a before/after proof accompany CI. The deployed RTC bytes,
+code, relocations, data and package identity remain exact baseline bytes.
