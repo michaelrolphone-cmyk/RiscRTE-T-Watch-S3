@@ -136,3 +136,46 @@ this app holds no worker tasks, timers or persistent caller buffers, releases
 unsubmitted frames and capability grants on return, and reads RTC anew on a
 fresh invocation. No deep-sleep or wake implementation is included, and no
 shutdown request or wake behavior is assumed from the current runtime API.
+
+## First physical boot checklist
+
+Before installing, record the physical unit's model/revision and select exactly
+one matching profile. Record the Watch commit, deployment ZIP SHA-256, bootfs
+image SHA-256, generic runtime commit/build identity, firmware SHA-256 and the
+partition-table SHA-256 together. The SDK pin alone is insufficient: use the
+runtime revision whose native-provider and five-module integration checks have
+passed. The runtime owner supplies that final firmware revision and build
+artifacts; this repository does not yet certify a firmware/board combination.
+
+Confirm that the selected build mounts `bootfs` at `/bootfs`, uses the stated
+partition dimensions and SPIFFS settings, and supplies the scoped GPIO, I2C,
+SPI and monotonic-clock providers. Confirm its configured serial console route
+and use 115200 baud where applicable. Installation and power cycling are separate
+physical actions; none of these build/verification commands performs them.
+
+For the first supervised boot, retain the complete serial log from the earliest
+build-identity line, not only the last error. Record the screen with a photo and
+then a short video covering at least three seconds of operation. A successful
+clock candidate should show `RTE_BOOT board=validated drivers=admitted`, followed
+by `WATCH_CLOCK ready time=rtc` or `WATCH_CLOCK ready time=unset`. Confirm that
+seconds advance for a valid RTC, or that uptime advances while `TIME UNSET`
+remains visible. Observe for at least one minute for resets, flicker or recurring
+errors. This observation is a first-boot check, not endurance qualification.
+
+| Observation | Evidence to retain and next check |
+| --- | --- |
+| No serial output | Record the selected console route, host port and firmware build identity; this alone does not identify a driver failure. |
+| `RTE_BOOT error=storage-mount` | Retain the numeric code and partition/image hashes; check partition and SPIFFS settings. Do not format as an automatic recovery. |
+| `RTE_BOOT error=manifest` | Retain the complete `detail` text, `boot.json`, `board.json` and deployment checksum. Check matching SDK/contracts and scoped provider availability. |
+| `RTE_BOOT error=runtime` before any clock-ready line | Retain the complete `detail` and preceding log; driver admission does not prove that PMU, panel or RTC startup succeeded. |
+| `WATCH_CLOCK error=display-grant-or-api` or `display-format` | Record the runtime commit, grant policy and display table/format diagnostic; check the canonical API and 240x240 RGB565 support. |
+| `WATCH_CLOCK error=brightness`, `frame-*`, `present` or `present-timeout` | Retain the exact error, elapsed time, screen state and full log; inspect the display/provider transfer and cleanup result. A ready line must follow completed presentation. |
+| `WATCH_CLOCK ready time=unset` with an advancing uptime | This is the intended fallback for an invalid/voltage-low/unreadable calendar. Record it; the app does not set RTC time or infer a timezone. |
+| `WATCH_CLOCK ready time=rtc` but a blank, mirrored or incorrectly colored screen | Retain a photo/video and logs, plus the physical revision. A software completion token does not verify wiring, orientation, electrical timing or visible output. |
+| `RTE_BOOT state=idle reason=app-returned` | Retain any preceding `WATCH_CLOCK error` and cleanup diagnostics; a continuously running clock is not expected to return normally during this observation. |
+
+The deployment deliberately requires all five drivers. A physically missing RTC
+or a failed RTC **driver startup** can prevent the whole graph from starting;
+the app's `TIME UNSET` fallback only applies after the app runs (for example, a
+voltage-low calendar or a failed subsequent read). Do not interpret that fallback
+as permission to omit a required driver or silently bypass startup failure.
