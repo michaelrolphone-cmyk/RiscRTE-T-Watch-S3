@@ -10,6 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
+LAUNCHER_DEVICES = {**DEVICES, 3: 'i2ctouch', 6: 'touch'}
 
 
 def encoded(value):
@@ -20,12 +21,12 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def selected_board(profile):
+def selected_board(profile, devices=DEVICES):
     board = copy.deepcopy(profile)
-    board['devices'] = [d for d in board['devices'] if d['instance_id'] in DEVICES]
-    if {d['instance_id'] for d in board['devices']} != DEVICES.keys():
+    board['devices'] = [d for d in board['devices'] if d['instance_id'] in devices]
+    if {d['instance_id'] for d in board['devices']} != devices.keys():
         raise ValueError('Profile does not have the complete clock dependency closure')
-    board['buses'] = [b for b in board['buses'] if b['instance_id'] in (101, 103)]
+    board['buses'] = [b for b in board['buses'] if b['instance_id'] in ((101, 102, 103) if 3 in devices else (101, 103))]
     pmu = next(d for d in board['devices'] if d['instance_id'] == 4)
     # Only LCD/backlight rails: do not energize radio/haptic to display a clock.
     pmu['config']['rails'] = [r for r in pmu['config']['rails'] if r['id'] in (1, 2)]
@@ -34,17 +35,19 @@ def selected_board(profile):
     return board
 
 
-def build(profile_path, root=ROOT):
+def build(profile_path, root=ROOT, launcher=False):
     profile = json.loads(profile_path.read_text())
-    board = selected_board(profile)
+    devices = LAUNCHER_DEVICES if launcher else DEVICES
+    flavor = 'launcher' if launcher else 'clock'
+    board = selected_board(profile, devices)
     version = json.loads((root / 'apps/clock/manifest.json').read_text())['version']
     source_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
-    files = {'store/default.elf': (root / 'dist/clock/default.elf').read_bytes(),
+    files = {'store/default.elf': (root / 'dist' / flavor / 'default.elf').read_bytes(),
              'store/board.json': encoded(board),
-             'store/default.json': (root / 'apps/clock/manifest.json').read_bytes(),
+             'store/default.json': (root / 'dist' / flavor / 'default.json').read_bytes(),
              'source-profile.json': profile_path.read_bytes(),
              'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
              'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes()}
@@ -52,6 +55,20 @@ def build(profile_path, root=ROOT):
             'app_capabilities': [{'manifest': 'default.json', 'grants': [
                 {'capability': 'display.output', 'api': 1, 'instance_id': 5},
                 {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8}]}]}
+    if launcher:
+        for name in ('springboard','battery'):
+            files['store/'+name+'.elf']=(root/'dist/launcher'/(name+'.elf')).read_bytes()
+            files['store/'+name+'.json']=(root/'dist/launcher'/(name+'.json')).read_bytes()
+        files['shared-app-build.json']=(root/'dist/launcher/build-record.json').read_bytes()
+        for name in ('default','springboard','battery'):
+            grants=[{'capability':'display.output','api':1,'instance_id':5},
+                    {'capability':'input.touch.raw','api':1,'instance_id':6}]
+            grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name=='default' else None
+            grants.append({'capability':'board.battery','api':1,'instance_id':4}) if name=='battery' else None
+            policy={'manifest':name+'.json','grants':grants}
+            if name=='default':boot['app_capabilities'][0]=policy
+            else:boot['app_capabilities'].append(policy)
+        files['INSTALL.md']=(root/'docs/LAUNCHER_INSTALL.md').read_bytes()
     selected = []
     for device in board['devices']:
         candidates = [m for m in manifests if any(
@@ -69,31 +86,31 @@ def build(profile_path, root=ROOT):
             elf = archive.read('driver.elf')
             if json.loads(archive.read('source-manifest.json')) != manifest:
                 raise ValueError('Source manifest differs from packaged driver')
-        prefix = 'store/' + DEVICES[device['instance_id']]
+        prefix = 'store/' + devices[device['instance_id']]
         files[prefix + '/driver.elf'] = elf
         files[prefix + '/manifest.json'] = encoded(manifest)
         files['packages/' + package['archive']] = data
-        boot['drivers'].append({'manifest': DEVICES[device['instance_id']] + '/manifest.json',
+        boot['drivers'].append({'manifest': devices[device['instance_id']] + '/manifest.json',
                                 'instance_id': device['instance_id']})
         selected.append({**package, 'instance_id': device['instance_id']})
     files['store/boot.json'] = encoded(boot)
-    record = {'schema': 'riscrte.watch-clock-deployment', 'schema_version': 1,
+    record = {'schema': 'riscrte.watch-'+flavor+'-deployment', 'schema_version': 1,
               'app_id': 'twatch-clock', 'app_version': version, 'source_sha': source_sha,
               'profile': profile['revision'], 'physical_verification': 'pending',
               'runtime_sdk': sdk, 'drivers': selected,
-              'transformations': ['Select device instances1,2,4,5,8 and buses101,103',
+              'transformations': ['Select explicit '+flavor+' device closure '+','.join(map(str,sorted(devices))),
                                   'Limit PMU setup to declared ALDO2/ALDO3 rails1/2'],
               'entries': [{'path': name, 'size_bytes': len(data), 'sha256': sha(data)}
                           for name, data in sorted(files.items())]}
     files['deployment-record.json'] = encoded(record)
-    out = root / 'dist/clock-deployments' / profile['revision']
+    out = root / ('dist/'+flavor+'-deployments') / profile['revision']
     out.mkdir(parents=True, exist_ok=True)
     # A versioned ZIP is authoritative. The staging tree is convenience only.
     for name, data in files.items():
         path = out / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
-    name = f"twatch-clock-{version}-{profile['revision']}.zip"
+    name = f"twatch-{flavor}-{version}-{profile['revision']}.zip"
     archive_path = out.parent / name
     with zipfile.ZipFile(archive_path, 'w', compression=zipfile.ZIP_STORED) as z:
         for path, data in sorted(files.items()):
@@ -107,14 +124,15 @@ def build(profile_path, root=ROOT):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile', required=True, help='Explicit profile stem, or all for eight separate bundles')
+    parser.add_argument('--launcher',action='store_true',help='Separate touch launcher deployment; clock remains default')
     args = parser.parse_args()
     paths = sorted((ROOT / 'hardware').glob('*.json'))
     if args.profile != 'all':
         paths = [p for p in paths if p.stem == args.profile]
     if not paths:
         raise SystemExit('Unknown profile; no implicit variant selected')
-    catalog = {'schema': 1, 'deployments': [build(path) for path in paths]}
-    (ROOT / 'dist/clock-deployments/catalog.json').write_bytes(encoded(catalog))
+    catalog = {'schema': 1, 'deployments': [build(path, launcher=args.launcher) for path in paths]}
+    (ROOT / ('dist/'+('launcher' if args.launcher else 'clock')+'-deployments/catalog.json')).write_bytes(encoded(catalog))
     print(f"Built {len(paths)} explicit clock bundles; no hardware access")
 
 

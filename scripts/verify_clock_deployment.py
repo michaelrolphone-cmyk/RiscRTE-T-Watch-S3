@@ -22,22 +22,35 @@ def verify(path):
             data=z.read(entry['path'])
             if len(data)!=entry['size_bytes'] or hashlib.sha256(data).hexdigest()!=entry['sha256']:
                 raise ValueError('Deployment checksum mismatch')
+        launcher=record['schema']=='riscrte.watch-launcher-deployment'
         boot=json.loads(z.read('store/boot.json'))
         board=json.loads(z.read('store/board.json'))
         app=json.loads(z.read('store/default.json'))
         if boot['default_app']!='default.elf' or app['file_name']!='default.elf' or app['entry']!='app_main':
             raise ValueError('Default application path mismatch')
-        if {d['instance_id'] for d in boot['drivers']}!={1,2,4,5,8} or len(boot['drivers'])!=5:
+        if {d['instance_id'] for d in boot['drivers']}!=({1,2,3,4,5,6,8} if launcher else {1,2,4,5,8}) or len(boot['drivers'])!=(7 if launcher else 5):
             raise ValueError('Unexpected clock driver closure')
         expected=[{'manifest':'default.json','grants':[
             {'capability':'display.output','api':1,'instance_id':5},
             {'capability':'rtc.clock','api':2,'instance_id':8}]}]
+        if launcher:
+            expected=[]
+            for name in ('default','springboard','battery'):
+                grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
+                if name=='default':grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
+                if name=='battery':grants.append({'capability':'board.battery','api':1,'instance_id':4})
+                expected.append({'manifest':name+'.json','grants':grants})
+                child=json.loads(z.read('store/'+name+'.json'))
+                if child['file_name']!=name+'.elf' or child['entry']!='app_main' or child['requires']!=[{'capability':g['capability'],'api':g['api']} for g in grants]:
+                    raise ValueError('Launcher app identity or declared capabilities mismatch')
+                elf=z.read('store/'+name+'.elf')
+                if elf[:7]!=b'\x7fELF\x01\x01\x01' or struct.unpack_from('<HH',elf,16)!=(3,94):raise ValueError('Launcher app is not target Xtensa ELF')
         if boot['app_capabilities']!=expected:
             raise ValueError('Unexpected application grant policy')
         manifests=[]
         for driver in boot['drivers']:
             manifest=json.loads(z.read('store/'+driver['manifest']))
-            manifests.append(manifest)
+            if manifest not in manifests:manifests.append(manifest)
             elf=z.read('store/'+str(PurePosixPath(driver['manifest']).parent/manifest['file_name']))
             if elf[:7]!=b'\x7fELF\x01\x01\x01' or struct.unpack_from('<HH',elf,16)!=(3,94):
                 raise ValueError('Driver is not a target Xtensa shared ELF')
