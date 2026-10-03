@@ -1,3 +1,4 @@
+#include "twatch_power.h"
 #include "tests/mock.h"
 #include "fixture_config.h"
 #include DRIVER_SOURCE
@@ -76,6 +77,16 @@ int main(void) {
     assert(!a->release(NULL, 0));
     assert(a->release(NULL, t));
     assert(!a->write(NULL, t, false));
+    m_serial+=3; /* Public bank token must differ from raw CPU token. */
+    assert(a->claim(NULL,21,RISC_GPIO_INPUT,&t));
+    risc_light_sleep_result_v1 sr={sizeof(sr),0};
+    assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_OK);
+    assert(m_sleep_token==m_serial && m_sleep_token!=t && sr.wake_cause==RISC_LIGHT_SLEEP_WAKE_GPIO);
+    assert(a->light_sleep(NULL,999,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->release(NULL,t));
+    assert(a->claim(NULL,6,RISC_GPIO_OUTPUT,&t));
+    assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->release(NULL,t));
 #elif TEST_KIND == 2 || TEST_KIND == 3
     const risc_i2c_bus_api_v1 *a = d->capability;
     uint64_t t = 0, u = 0;
@@ -99,10 +110,29 @@ int main(void) {
     uint32_t events = 0;
     assert(a->key_events(NULL, &events) && events == 3);
     assert(m_regs[0x62] == 4);
+    uint8_t irq0=m_regs[0x40],irq1=m_regs[0x41],irq2=m_regs[0x42];
+    for(unsigned cycle=0;cycle<3;cycle++) {
+        m_regs[0x49]=0x08;assert(a->key_events(NULL,&events)&&events==2);
+        assert(a->prepare_sleep(NULL));
+        assert(m_regs[0x40]==0&&m_regs[0x41]==8&&m_regs[0x42]==0);
+        risc_light_sleep_result_v1 sr={sizeof(sr),0};
+        assert(a->light_sleep(NULL,&sr)==RISC_LIGHT_SLEEP_OK && m_pin[m_sleep_token]==m_config.device.irq);
+        assert(a->resume(NULL));assert(a->resume(NULL));
+        assert(m_regs[0x40]==irq0&&m_regs[0x41]==irq1&&m_regs[0x42]==irq2);
+    }
+    m_regs[0x49]=0x02;assert(a->key_events(NULL,&events)&&!events);
+    assert(!a->prepare_sleep(NULL)); /* Held key never arms wake. */
+    m_regs[0x49]=0x09;assert(a->key_events(NULL,&events)&&events==2);
+    m_fail_io=true;assert(!a->prepare_sleep(NULL));m_fail_io=false;
+    assert(a->resume(NULL));
 #elif TEST_KIND == 5
+    assert(m_madctl==(m_config.rotation==2?0xc0:0));
     const risc_display_output_api_v1 *a = d->capability;
     risc_display_surface_v1 surface;
     assert(a->acquire(NULL, 5, &surface));
+    const twatch_panel_power_v1 *power_api=d->capability;
+    assert(a->struct_size>=sizeof(*power_api));
+    assert(!power_api->prepare_sleep(NULL));
     assert(!d->quiesce());
     a->release(NULL, surface.frame);
     assert(d->quiesce());
@@ -123,6 +153,22 @@ int main(void) {
     assert(a->present_status(NULL, t, &status) && status.state == RISC_DISPLAY_PRESENT_COMPLETE);
     assert(m_bytes == 115200);
     assert(a->set_brightness(NULL, 1, 2));
+    for(unsigned cycle=0;cycle<3;cycle++) {
+        assert(power_api->prepare_sleep(NULL));
+        assert(m_op==0x10);
+        assert(power_api->prepare_sleep(NULL));
+        assert(!a->acquire(NULL,5,&surface));
+        assert(power_api->resume(NULL));
+        assert(m_op==0x29);
+        assert(power_api->resume(NULL));
+    }
+    m_fail_io=true;
+    assert(!power_api->prepare_sleep(NULL));
+    assert(!power_api->prepare_sleep(NULL));
+    assert(!power_api->resume(NULL));
+    assert(!a->acquire(NULL,5,&surface));
+    m_fail_io=false;
+    assert(power_api->resume(NULL));
 #elif TEST_KIND == 6
     const risc_touch_api_v1 *a = d->capability;
     uint64_t sub = a->subscribe(NULL);

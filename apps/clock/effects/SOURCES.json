@@ -1,0 +1,26 @@
+[
+  {
+    "repository": "michaelrolphone-cmyk/T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "path": "src/components/StartupScreen.cpp",
+    "sha256": "5b73c2d86ef1cb464a1e0c92ce4074195d6ddb91db6a919cba976eb43c054d43"
+  },
+  {
+    "repository": "michaelrolphone-cmyk/T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "path": "src/native/NativeVideoBootScrub.h",
+    "sha256": "bdb7904ac1ed0aa4aa2b5609c712ea1951069a96255ab1eee34c294d63025a80"
+  },
+  {
+    "repository": "michaelrolphone-cmyk/T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "path": "docs/BOOT_WORDMARK_LICENSE.txt",
+    "sha256": "b8ce9d7b6c01274678913cf9fcb86b98bf3f33a500a90cc2e4b75efb9f447c72"
+  },
+  {
+    "repository": "michaelrolphone-cmyk/T5S3-Reader",
+    "commit": "3d9bc4f373679f5ae8dd184db6a8d0afa5a40231",
+    "path": "LICENSE",
+    "sha256": "7212963b5b1b5ee34ca158163356beb1e6945dd2cc5d320f1fe7573c424ea640"
+  }
+]

@@ -33,7 +33,9 @@ jobs:
       - name: Physical manifests, negative mappings and package hashes
         run: python scripts/check_twatch_drivers.py
       - name: Clock app behavior with UBSan
-        run: python scripts/test_clock.py
+        run: |
+          python scripts/test_clock.py
+          python scripts/test_crown.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py
       - name: Explicit clock deployments and checksums

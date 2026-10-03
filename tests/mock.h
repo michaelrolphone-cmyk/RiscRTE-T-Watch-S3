@@ -12,6 +12,7 @@ static bool m_admit(void) {
 }
 static bool m_fail_io, m_fail_release;
 static bool m_tokens[512], m_levels[512];
+static uint8_t m_madctl;
 static uint8_t m_pin[512], m_regs[256], m_op, m_phase;
 static uint16_t m_irq;
 static int m_busy = -1;
@@ -71,13 +72,18 @@ static bool m_wave(void *c, uint64_t t, const uint32_t *p, size_t n) {
     (void)n;
     return m_gwrite(c, t, false);
 }
+static uint64_t m_sleep_token;
+static int32_t m_light_sleep(void *c,uint64_t t,bool high,risc_light_sleep_result_v1 *out) {
+    (void)c; assert(t && m_tokens[t] && !high && out->struct_size==sizeof(*out));
+    m_sleep_token=t;out->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return RISC_LIGHT_SLEEP_OK;
+}
 static garden_gpio_v1 m_gpio = {1,       sizeof(m_gpio), NULL,   m_gclaim, m_gwrite,
-                                m_gread, m_pwm,          m_free, m_wave};
+                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep};
 static bool m_bank_claim(void *c, uint8_t pin, uint32_t flags, uint64_t *t) {
     return m_gclaim(c, pin, flags & RISC_GPIO_OUTPUT, false, flags & RISC_GPIO_PULLUP, t);
 }
 static risc_gpio_bank_api_v1 m_bank = {1,        sizeof(m_bank), NULL,  m_bank_claim,
-                                       m_gwrite, m_gread,        m_free};
+                                       m_gwrite, m_gread,        m_free, m_light_sleep};
 static uint64_t m_time(void *c) {
     (void)c;
     return m_now;
@@ -103,6 +109,10 @@ static bool m_transfer(void *c, uint64_t t, const uint8_t *tx, size_t tn, uint8_
         return false;
     uint8_t reg = tn ? tx[0] : 0;
     for (size_t i = 1; i < tn; i++) {
+#if TEST_KIND == 4
+        if (reg+i-1 >= 0x48 && reg+i-1 <= 0x4a) m_regs[(uint8_t)(reg+i-1)] &= (uint8_t)~tx[i];
+        else
+#endif
         m_regs[(uint8_t)(reg + i - 1)] = tx[i];
         m_writes++;
     }
@@ -154,6 +164,7 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
         m_phase = 1;
         return true;
     }
+    if (tx && n==1 && m_op==0x36) m_madctl=*tx;
     if (tx && n == 1 && (*tx == 0x2a || *tx == 0x2b || *tx == 0x2c))
         m_op = *tx;
     if (rx) {

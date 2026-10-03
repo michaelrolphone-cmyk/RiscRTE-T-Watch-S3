@@ -1,4 +1,8 @@
 #include "twatch_support.h"
+#include "twatch_power.h"
+#define TWATCH_PANEL_POWER 1
+static bool asleep, sleep_prepared;
+static uint16_t brightness_level, brightness_maximum=100;
 #include "common/spi.h"
 #define WIDTH 240u
 #define HEIGHT 240u
@@ -14,7 +18,7 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!config || config->width != 240 || config->height != 240 || !tw_bus(&config->bus, 1) ||
         !tw_pin(config->cs) || !tw_pin(config->dc) || !tw_pin(config->backlight) ||
         config->busy != -1 || config->power_count || config->offset_x || config->offset_y ||
-        config->rotation || config->reserved[0] || config->reserved[1] || config->reserved[2] ||
+        (config->rotation != 0 && config->rotation != 2) || config->reserved[0] || config->reserved[1] || config->reserved[2] ||
         config->reset != -1 || config->backlight_active_high > 1)
         return false;
     int16_t p[] = {config->bus.sclk, config->bus.mosi, config->bus.miso,
@@ -34,7 +38,8 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!display_command(config->bus.frequency_hz, config->dc, 0x11, NULL, 0))
         return false;
     timer->sleep_ms(timer->context, 120);
-    uint8_t format = 0x55, madctl = 0;
+    uint8_t format = 0x55, madctl = config->rotation == 2 ? 0xc0 : 0;
+    asleep = sleep_prepared = false; brightness_level = 0; brightness_maximum = 100;
     if (!display_command(config->bus.frequency_hz, config->dc, 0x3a, &format, 1) ||
         !display_command(config->bus.frequency_hz, config->dc, 0x36, &madctl, 1) ||
         !display_command(config->bus.frequency_hz, config->dc, 0x21, NULL, 0) ||
@@ -72,8 +77,11 @@ static int hw_finish(void) {
     return 1;
 }
 static bool hw_brightness(uint16_t v, uint16_t max) {
-    return gpio->pwm(gpio->context, pins[config->backlight], 1000,
-                     config->backlight_active_high ? v : max - v, max);
+    if (asleep) return false;
+    if (!gpio->pwm(gpio->context, pins[config->backlight], 1000,
+                     config->backlight_active_high ? v : max - v, max)) return false;
+    brightness_level=v; brightness_maximum=max;
+    return true;
 }
 static bool hw_stop(void) {
     io_fault = false;
@@ -86,3 +94,38 @@ static bool hw_stop(void) {
     return gpio_clean();
 }
 #include "common/display.h"
+
+/* No rail removal: ALDO3 also powers touch and must stay supplied in sleep. */
+static bool panel_prepare_sleep(void *context) {
+    (void)context;
+    if (!enter()) return false;
+    bool ok = running && !held && !active && !failed;
+    if (ok && asleep) ok = sleep_prepared;
+    else if (ok) {
+        closing = true; /* Blocks new frames even if a command fails. */
+        asleep = true; /* resume must undo a partially completed sequence. */
+        ok = gpio->pwm(gpio->context,pins[config->backlight],1000,
+                       config->backlight_active_high ? 0 : 100,100) &&
+             display_command(config->bus.frequency_hz,config->dc,0x28,NULL,0) &&
+             display_command(config->bus.frequency_hz,config->dc,0x10,NULL,0);
+        if (ok) {timer->sleep_ms(timer->context,120);sleep_prepared=true;}
+    }
+    leave(); return ok;
+}
+static bool panel_resume(void *context) {
+    (void)context;
+    if (!enter()) return false;
+    bool ok = running;
+    if (ok && asleep) {
+        ok = display_command(config->bus.frequency_hz,config->dc,0x11,NULL,0);
+        if (ok) {
+            timer->sleep_ms(timer->context,120);
+            ok = display_command(config->bus.frequency_hz,config->dc,0x29,NULL,0) &&
+                 gpio->pwm(gpio->context,pins[config->backlight],1000,
+                    config->backlight_active_high ? brightness_level : brightness_maximum-brightness_level,
+                    brightness_maximum);
+        }
+        if (ok) {asleep=sleep_prepared=false;closing=false;}
+    }
+    leave(); return ok;
+}

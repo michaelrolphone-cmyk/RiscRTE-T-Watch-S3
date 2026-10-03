@@ -1,3 +1,5 @@
+> Clock 0.2.0 adds crown light sleep, 180-degree orientation and copied T5 boot/wake effects. See [CROWN_SLEEP.md](CROWN_SLEEP.md). Requires the coordinated generic GPIO sleep runtime, not the earlier 0.1.0 runtime binary.
+
 # Watch clock software candidate
 
 This is a watch application and selected external ELF drivers for the generic

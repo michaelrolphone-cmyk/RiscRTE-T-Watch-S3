@@ -28,6 +28,7 @@ class Deployment(unittest.TestCase):
         selected=builder.selected_board(profile)
         self.assertEqual(json.dumps(profile),before)
         self.assertEqual({b['instance_id'] for b in selected['buses']},{101,103})
+        self.assertEqual(next(d for d in selected['devices'] if d['instance_id']==5)['config']['rotation'],2)
         self.assertEqual({d['instance_id'] for d in selected['devices']},{1,2,4,5,8})
 
     def test_corruption_and_extra_grant_rejected(self):

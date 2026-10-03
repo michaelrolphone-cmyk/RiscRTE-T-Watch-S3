@@ -78,7 +78,7 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
         config->pull_up > 1 || config->reserved || !config->debounce_us ||
         config->debounce_us > 1000000)
         return false;
-    gpio = tw_dep(d, n, "platform.gpio", sizeof(*gpio));
+    gpio = tw_dep(d, n, "platform.gpio", offsetof(garden_gpio_v1,light_sleep));
     clock_api = tw_dep(d, n, "platform.clock", sizeof(*clock_api));
     if (!gpio || !gpio->claim || !gpio->read || !gpio->release || !tw_clock_valid(clock_api))
         return false;

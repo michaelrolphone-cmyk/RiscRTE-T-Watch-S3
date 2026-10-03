@@ -1,9 +1,14 @@
 #pragma once
 #include "RiscProviderV2.h"
 #include "RiscBatteryGaugeV1.h"
+#include "RiscLightSleepV1.h"
 typedef struct {
     risc_battery_gauge_api_v1 base;
     bool (*key_events)(void *, uint32_t *events);
+    /* Append-only crown sleep preparation. See docs/CROWN_SLEEP.md. */
+    bool (*prepare_sleep)(void *);
+    bool (*resume)(void *);
+    int32_t (*light_sleep)(void *, risc_light_sleep_result_v1 *);
 } twatch_pmu_api_v1;
 #include <stdbool.h>
 #include <stddef.h>

@@ -42,6 +42,8 @@ static bool read_reg(uint8_t reg, uint8_t *out, size_t n) {
 static const tw_hw_axp2101_v1 *power;
 static uint8_t saved_enable, saved_voltage[4], saved_irq;
 static bool changed;
+static uint8_t sleep_irq[3];
+static bool sleep_changed, sleep_prepared, key_released;
 static bool rails(void) {
     if (!read_reg(0x03, &saved_enable, 1) || saved_enable != 0x4a)
         return false;
@@ -67,7 +69,7 @@ static bool rails(void) {
         return false;
     if (!read_reg(AXP_ADC_EN, &value, 1) || !write_reg(AXP_ADC_EN, value | 1))
         return false;
-    return write_reg(0x41, saved_irq | 0x0c);
+    return write_reg(0x41, saved_irq | 0x0f);
 }
 static bool key_events(void *context, uint32_t *events) {
     (void)context;
@@ -76,11 +78,55 @@ static bool key_events(void *context, uint32_t *events) {
     uint8_t v = 0;
     if (!read_reg(0x49, &v, 1))
         return false;
+    /* Rising edge/short press is released; falling alone is held. Wake and
+     * startup events are drained by the app before it arms sleep requests. */
+    if (v & 0x09) key_released = true;
+    else if (v & 0x02) key_released = false;
     /* Return the PMIC's latched key events; ACK only the key bits. */
-    if (!write_reg(0x49, v & 0x0c))
+    if (!write_reg(0x49, v & 0x0f))
         return false;
     *events = (v >> 2) & 3;
     return true;
+}
+/* Snapshot all interrupt masks before mutation. Never alter charging, CPU,
+ * LCD/touch, or RTC rails. An incomplete restore retains the state for retry. */
+static bool resume_sleep(void *context) {
+    (void)context;
+    if (!started) return false;
+    if (!sleep_changed) return true;
+    bool ok = true;
+    for (unsigned i=0;i<3;i++) {
+        if (!write_reg((uint8_t)(0x40+i),sleep_irq[i])) ok=false;
+    }
+    if (ok) {sleep_changed=sleep_prepared=false;key_released=false;}
+    return ok;
+}
+static bool prepare_sleep(void *context) {
+    (void)context;
+    if (!started || !key_released) return false;
+    if (sleep_changed) return sleep_prepared;
+    if (!read_reg(0x40,sleep_irq,3)) return false;
+    sleep_changed=true;
+    if (!write_reg(0x40,0) || !write_reg(0x41,0x08) || !write_reg(0x42,0)) return false;
+    /* This sole PMU IRQ owner clears latched status as in vendor lightSleep. */
+    uint32_t ignored;
+    if (!key_events(NULL,&ignored) || !key_released) return false;
+    for(unsigned i=0;i<3;i++)if(!write_reg((uint8_t)(0x48+i),0xff))return false;
+    for(unsigned i=0;i<5;i++) {
+        bool high=false;
+        if (!gpio_api->read(gpio_api->context,irq_claim,&high) || !high) return false;
+        clock_api->sleep_ms(clock_api->context,10);
+        uint8_t status;
+        if (!read_reg(0x49,&status,1) || (status&0x0f)) return false;
+    }
+    sleep_prepared=true;
+    return true;
+}
+static int32_t light_sleep(void *context,risc_light_sleep_result_v1 *result) {
+    (void)context;
+    if (!started || !sleep_prepared || !result || result->struct_size<sizeof(*result)) return RISC_LIGHT_SLEEP_INVALID;
+    if (gpio_api->struct_size<RISC_GPIO_BANK_LIGHT_SLEEP_V1_SIZE || !gpio_api->light_sleep) return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    return gpio_api->light_sleep(gpio_api->context,irq_claim,false,result);
 }
 static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     (void)context;
@@ -106,6 +152,7 @@ static bool last_error(char *dst, size_t cap) {
 }
 static bool quiesce(void) {
     bool ok = true;
+    if (sleep_changed && !resume_sleep(NULL)) return false;
     if (changed && claim) {
         if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable))
             return false;
@@ -151,7 +198,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     clock_api = tw_dep(deps, count, "platform.clock", sizeof(*clock_api));
     if (!tw_clock_valid(clock_api))
         return false;
-    gpio_api = tw_dep(deps, count, "gpio.bank", sizeof(*gpio_api));
+    gpio_api = tw_dep(deps, count, "gpio.bank", offsetof(risc_gpio_bank_api_v1,light_sleep));
     if (!tw_gpio_valid(gpio_api))
         return false;
     if (!tw_i2c_valid(bus))
@@ -174,6 +221,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     }
     if (clock_api->sleep_ms)
         clock_api->sleep_ms(clock_api->context, 5);
+    key_released = false;
     started = true;
     return true;
 }
@@ -181,7 +229,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
-                                      key_events};
+                                      key_events, prepare_sleep, resume_sleep, light_sleep};
 static const risc_driver_diagnostics_v2 driver = {
     {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
      RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},

@@ -31,6 +31,7 @@ def selected_board(profile):
     pmu['config']['rails'] = [r for r in pmu['config']['rails'] if r['id'] in (1, 2)]
     if {r['id'] for r in pmu['config']['rails']} != {1, 2}:
         raise ValueError('Profile does not declare both required display rails')
+    next(d for d in board['devices'] if d['instance_id']==5)['config']['rotation']=2
     return board
 
 
@@ -47,11 +48,13 @@ def build(profile_path, root=ROOT):
              'store/default.json': (root / 'apps/clock/manifest.json').read_bytes(),
              'source-profile.json': profile_path.read_bytes(),
              'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
-             'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes()}
+             'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
+             'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes()}
     boot = {'board': 'board.json', 'default_app': 'default.elf', 'drivers': [],
             'app_capabilities': [{'manifest': 'default.json', 'grants': [
                 {'capability': 'display.output', 'api': 1, 'instance_id': 5},
-                {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8}]}]}
+                {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8},
+                {'capability': 'board.battery', 'api': 1, 'instance_id': 4}]}]}
     selected = []
     for device in board['devices']:
         candidates = [m for m in manifests if any(

@@ -31,7 +31,8 @@ def verify(path):
             raise ValueError('Unexpected clock driver closure')
         expected=[{'manifest':'default.json','grants':[
             {'capability':'display.output','api':1,'instance_id':5},
-            {'capability':'rtc.clock','api':2,'instance_id':8}]}]
+            {'capability':'rtc.clock','api':2,'instance_id':8},
+            {'capability':'board.battery','api':1,'instance_id':4}]}]
         if boot['app_capabilities']!=expected:
             raise ValueError('Unexpected application grant policy')
         manifests=[]
