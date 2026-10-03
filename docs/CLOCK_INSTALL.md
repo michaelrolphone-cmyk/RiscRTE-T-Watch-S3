@@ -43,8 +43,10 @@ adjacent extracted tree is only a build convenience.
 
 ## Runtime and store installation contract
 
-Use generic RiscRTE source compatible with the exact SDK commit recorded under
-`sdk/app/SOURCES.json`. A stock older heartbeat firmware lacking app grants or
+Use generic RiscRTE commit
+`595aae84d39bad188be4394f8b85689e5bd73d7e` for this software checkpoint. The
+canonical app SDK remains byte-identical to the earlier commit recorded under
+`sdk/app/SOURCES.json`; the SDK pin and firmware pin serve different purposes. A stock older heartbeat firmware lacking app grants or
 native GPIO/I2C/SPI providers cannot run this clock. The loader must mount the
 selected `store/` at `/bootfs` and provide bounded, scoped native GPIO, I2C, SPI,
 and monotonic-time providers. Watch chip protocols and pin assignments remain in
@@ -144,8 +146,8 @@ one matching profile. Record the Watch commit, deployment ZIP SHA-256, bootfs
 image SHA-256, generic runtime commit/build identity, firmware SHA-256 and the
 partition-table SHA-256 together. The SDK pin alone is insufficient: use the
 runtime revision whose native-provider and five-module integration checks have
-passed. The runtime owner supplies that final firmware revision and build
-artifacts; this repository does not yet certify a firmware/board combination.
+passed. The pinned software checkpoint below supplies that revision and test evidence;
+this repository does not yet certify a physical firmware/board combination.
 
 Confirm that the selected build mounts `bootfs` at `/bootfs`, uses the stated
 partition dimensions and SPIFFS settings, and supplies the scoped GPIO, I2C,
@@ -179,3 +181,46 @@ or a failed RTC **driver startup** can prevent the whole graph from starting;
 the app's `TIME UNSET` fallback only applies after the app runs (for example, a
 voltage-low calendar or a failed subsequent read). Do not interpret that fallback
 as permission to omit a required driver or silently bypass startup failure.
+
+
+## Pinned integrated software checkpoint
+
+- Runtime source: [`595aae84d39bad188be4394f8b85689e5bd73d7e`](https://github.com/michaelrolphone-cmyk/RiscRTE/commit/595aae84d39bad188be4394f8b85689e5bd73d7e).
+- Runtime [integration CI run37099407211](https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/37099407211)
+  passed both host integration and the actual ESP32-S3 firmware/ELF/candidate build.
+- The runtime test pins Watch source `aa7b03c15a59aa99b2d60ae20905edbdf62e35e6`.
+  It loads the actual app and five modules using host instruction-set ELFs,
+  through the real Runtime, dependency graph and generic CPU port. Only low-level
+  GPIO/I2C/SPI operations are modeled. All 115200 reconstructed SPI pixel bytes
+  match each production-renderer golden frame (valid RTC and TIME UNSET).
+  No RTC date writes occur; bad PMU identity and SPI failure roll back with zero
+  remaining model resources. See the runtime's pinned
+  [CPU port report](https://github.com/michaelrolphone-cmyk/RiscRTE/blob/595aae84d39bad188be4394f8b85689e5bd73d7e/docs/CPU_PORT.md).
+- The integration profile `sx1262-915-bma423` is a test fixture, not an inference
+  about the physical unit. Target Xtensa artifacts are built separately; the
+  host integration does not execute Xtensa instructions or verify physical DMA.
+
+The subsequent Watch checklist/pin changes are documentation-only. App, driver,
+manifest and selected store contents are unchanged from the integration-tested
+Watch source. Each newly built deployment ZIP nevertheless has its own source
+revision and checksum because it includes `INSTALL.md` and provenance. Keep the
+checksum from the artifact actually selected; do not relabel an older ZIP or
+assume its hash remains valid. The app SDK pin remains `be6efce33...`, independently
+of the runtime firmware revision above.
+
+For a source build, use a new isolated runtime checkout at the pinned full SHA,
+install its `requirements-ci.txt` into a dedicated environment, and set a
+checkout-local `PLATFORMIO_CORE_DIR`. Copy only the verified, explicitly selected
+Watch bundle's `store/` contents into that checkout's empty `build/store/`.
+Run `pio run -e esp32s3 -j 1`, then `pio run -e esp32s3 -t buildfs -j 1`.
+Retain `.pio/build/esp32s3/{firmware.bin,bootloader.bin,partitions.bin,spiffs.bin}`
+together with the full source SHA and SHA-256 of each image. These commands build
+software only. Do not run `build_apps.py`: it installs the runtime test heartbeat
+and replaces the selected Watch application/store.
+
+The generic runtime CI candidate contains its own heartbeat test store. Its
+complete bundle is **not** a preassembled Watch clock deployment. For tomorrow's
+supervised installation, use the explicit Watch clock store with the pinned
+runtime and matching partition layout, and verify the recorded image hashes.
+Physical profile selection, installation and hardware observations
+remain outstanding. No successful hardware execution is claimed here.
