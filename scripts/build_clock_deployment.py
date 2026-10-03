@@ -9,6 +9,7 @@ import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+NOVA_NOTICES = ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt')
 DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
 
 
@@ -31,6 +32,11 @@ def selected_board(profile):
     pmu['config']['rails'] = [r for r in pmu['config']['rails'] if r['id'] in (1, 2)]
     if {r['id'] for r in pmu['config']['rails']} != {1, 2}:
         raise ValueError('Profile does not declare both required display rails')
+    panel = next(d for d in board['devices'] if d['instance_id'] == 5)
+    panel['config']['rotation'] = 2
+    # Manufacturer's exact Watch-S3 ST7789 setup uses40MHz. Keep the source
+    # eight-profile baseline and all unrelated buses unchanged.
+    next(b for b in board['buses'] if b['instance_id'] == panel['config']['bus_instance_id'])['frequency_hz'] = 40000000
     return board
 
 
@@ -42,16 +48,25 @@ def build(profile_path, root=ROOT):
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
+    runtime = json.loads((root / 'apps/clock/runtime-requirements.json').read_text())
+    time_policy = json.loads((root / 'apps/clock/time-policy.json').read_text())
     files = {'store/default.elf': (root / 'dist/clock/default.elf').read_bytes(),
              'store/board.json': encoded(board),
              'store/default.json': (root / 'apps/clock/manifest.json').read_bytes(),
              'source-profile.json': profile_path.read_bytes(),
              'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
-             'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes()}
+             'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
+             'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes(),
+             'PMU_BATTERY.md': (root / 'docs/PMU_BATTERY.md').read_bytes(),
+             'runtime-requirements.json': encoded(runtime),
+             'time-policy.json': encoded(time_policy)}
+    for name in NOVA_NOTICES:
+        files['licenses/nova/' + name] = (root / 'apps/clock/nova/fonts' / name).read_bytes()
     boot = {'board': 'board.json', 'default_app': 'default.elf', 'drivers': [],
             'app_capabilities': [{'manifest': 'default.json', 'grants': [
                 {'capability': 'display.output', 'api': 1, 'instance_id': 5},
-                {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8}]}]}
+                {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8},
+                {'capability': 'board.battery', 'api': 1, 'instance_id': 4}]}]}
     selected = []
     for device in board['devices']:
         candidates = [m for m in manifests if any(
@@ -80,9 +95,13 @@ def build(profile_path, root=ROOT):
     record = {'schema': 'riscrte.watch-clock-deployment', 'schema_version': 1,
               'app_id': 'twatch-clock', 'app_version': version, 'source_sha': source_sha,
               'profile': profile['revision'], 'physical_verification': 'pending',
-              'runtime_sdk': sdk, 'drivers': selected,
+              'runtime_sdk': sdk, 'runtime_requirements': runtime, 'drivers': selected,
+              'time_policy': time_policy,
+              'clock_policy': {'idle_sleep_ms': 60000,
+                               'boot_final_hold_ms': 250, 'screen_scrub': False},
               'transformations': ['Select device instances1,2,4,5,8 and buses101,103',
-                                  'Limit PMU setup to declared ALDO2/ALDO3 rails1/2'],
+                                  'Limit PMU setup to declared ALDO2/ALDO3 rails1/2',
+                                  'Set selected display SPI bus103 to40MHz and rotation180'],
               'entries': [{'path': name, 'size_bytes': len(data), 'sha256': sha(data)}
                           for name, data in sorted(files.items())]}
     files['deployment-record.json'] = encoded(record)

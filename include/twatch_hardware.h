@@ -25,6 +25,18 @@ static inline bool tw_unique(const int16_t *p, size_t n) {
     }
     return true;
 }
+/* Explicit override used by the display only; ordinary tw_bus stays unchanged. */
+static inline bool tw_bus_limit(const risc_hw_bus_v1 *b, uint32_t kind, uint32_t spi_max_hz) {
+    if (b->struct_size < sizeof(*b) || b->kind != kind || !b->instance_id || b->controller > 1 ||
+        b->reserved[0] || b->reserved[1] || b->reserved[2] || b->mode || !b->frequency_hz)
+        return false;
+    if (kind == RISC_HW_BUS_I2C)
+        return tw_pin(b->sda) && tw_pin(b->scl) && b->sda != b->scl && b->sclk == -1 &&
+               b->mosi == -1 && b->miso == -1 && b->frequency_hz <= 400000;
+    int16_t p[] = {b->sclk, b->mosi, b->miso};
+    return tw_pin(b->sclk) && tw_pin(b->mosi) && tw_unique(p, 3) && b->sda == -1 && b->scl == -1 &&
+           kind == RISC_HW_BUS_SPI && b->frequency_hz <= spi_max_hz;
+}
 static inline bool tw_bus(const risc_hw_bus_v1 *b, uint32_t kind) {
     if (b->struct_size < sizeof(*b) || b->kind != kind || !b->instance_id || b->controller > 1 ||
         b->reserved[0] || b->reserved[1] || b->reserved[2] || b->mode || !b->frequency_hz)

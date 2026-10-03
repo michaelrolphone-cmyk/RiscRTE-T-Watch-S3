@@ -26,11 +26,15 @@ def main():
     elf = out/'default.elf'
     exports_map=out/'exports.map'
     exports_map.write_text('{ global: app_main; local: *; };\n')
-    subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls',
+    effect_obj=out/'boot-effect.o'
+    subprocess.run([cc.removesuffix('gcc')+'g++','-std=c++11','-Os','-fPIC','-mtext-section-literals','-mlongcalls',
+        '-fvisibility=hidden','-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-ffreestanding','-fno-builtin',
+        '-Wall','-Wextra','-Werror','-I'+str(ROOT/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
+    subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
-                    '-shared','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
+                    '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
-                    str(ROOT/'apps/clock/main.c'),str(ROOT/'apps/clock/render.c'),
+                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
     readelf = cc.removesuffix('gcc')+'readelf'
     nm = cc.removesuffix('gcc')+'nm'

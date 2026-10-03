@@ -44,7 +44,9 @@ def check_board(b,manifests):
         for key in ('cs','dc','reset','backlight','busy','irq','bclk','ws','data'):
             if key in base:own(base[key],d['instance_id'])
         for pin in base.get('pins',[]):own(pin,d['instance_id'])
-        if d['config_type']=='radio.lora':assert c['minimum_hz']<=c['maximum_hz']
+        if d['config_type']=='radio.lora':
+            assert c['minimum_hz']<=c['maximum_hz']
+            assert buses[c['bus_instance_id']]['frequency_hz']<=10000000
     done=set()
     def visit(i,active):
         assert i not in active,'dependency cycle'

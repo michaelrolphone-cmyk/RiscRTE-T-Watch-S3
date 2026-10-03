@@ -198,7 +198,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         config->irq == config->bus.scl || config->irq_pull_up > 1 || config->irq_active_high > 1)
         return false;
     bus = tw_dep(deps, count, "i2c.bus", sizeof(*bus));
-    gpio_api = tw_dep(deps, count, "gpio.bank", sizeof(*gpio_api));
+    gpio_api = tw_dep(deps, count, "gpio.bank", offsetof(risc_gpio_bank_api_v1,light_sleep));
     clock_api = tw_dep(deps, count, "platform.clock", sizeof(*clock_api));
     if (!tw_i2c_valid(bus) || !tw_gpio_valid(gpio_api) || !tw_clock_valid(clock_api))
         return false;
