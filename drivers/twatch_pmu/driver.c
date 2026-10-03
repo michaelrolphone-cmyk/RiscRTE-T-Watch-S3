@@ -74,9 +74,9 @@ static bool rails(void) {
         if (!write_reg((uint8_t)(0x92 + id), (uint8_t)((power->rails[i].millivolts - 500) / 100)))
             return false;
     }
-    /* Backlight rail is gated until the panel completes a fresh frame. Keep
-     * display/touch powered; never let reset/default GPIO expose stale GRAM. */
-    power_enable=(saved_enable | mask) & (owns_backlight ? (uint8_t)~2u : 255u);
+    /* Restore the physically working 0.4.0 rail policy. Frame visibility is
+     * controlled by the panel GPIO/PWM, with no I2C operation in present(). */
+    power_enable=saved_enable | mask;
     if (!write_reg(AXP_LDO_ON, power_enable) || !write_reg(AXP_ICC, 4))
         return false;
     uint8_t value = 0;
@@ -90,12 +90,12 @@ static bool backlight_power(void *context,bool enable) {
     (void)context;
     if(!started || !owns_backlight)return false;
     /* This ELF is the sole0x90 writer. The cached value preserves every
-     * unrelated rail; a one-millisecond ACK-bounded write avoids three blocking
-     * register round trips in the display completion path. */
+     * unrelated rail. Retain the optional suffix for ABI compatibility, but
+     * the panel no longer calls it. Any caller receives the normal PMU budget. */
     uint8_t desired=enable?(uint8_t)(power_enable|2u):(uint8_t)(power_enable&~2u);
     if(desired==power_enable)return true;
     const uint8_t tx[]={AXP_LDO_ON,desired};
-    if(!bus->transact(bus->context,claim,tx,sizeof(tx),NULL,0,1))return false;
+    if(!bus->transact(bus->context,claim,tx,sizeof(tx),NULL,0,40))return false;
     power_enable=desired;return true;
 }
 static bool key_events(void *context, uint32_t *events) {
@@ -198,7 +198,7 @@ static bool quiesce(void) {
     bool ok = true;
     if (sleep_changed && !resume_sleep(NULL)) return false;
     if (changed && claim) {
-        if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable & (owns_backlight ? (uint8_t)~2u : 255u)))
+        if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable))
             return false;
         for (size_t i = 0; i < power->rail_count; i++)
             if (!write_reg((uint8_t)(0x92 + power->rails[i].id), saved_voltage[i]))

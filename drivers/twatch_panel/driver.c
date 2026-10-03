@@ -1,9 +1,7 @@
 #include "twatch_support.h"
-#include "twatch_caps.h"
 #include "twatch_power.h"
 #define TWATCH_PANEL_POWER 1
 static bool asleep, sleep_prepared, unblank_pending;
-static const twatch_pmu_api_v1 *panel_pmu;
 static uint32_t frame_first_row,frame_end_row=240;
 static uint16_t brightness_level, brightness_maximum=100;
 #include "common/spi.h"
@@ -28,8 +26,6 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
                    config->cs,       config->dc,       config->backlight};
     if (!tw_unique(p, 6) || !spi_dependencies(d, n))
         return false;
-    panel_pmu=tw_dep(d,n,"board.battery",sizeof(*panel_pmu));
-    if(!panel_pmu || !panel_pmu->backlight_power || !panel_pmu->backlight_power(panel_pmu->base.context,false))return false;
     if (!gpio_claim(config->backlight, true, !config->backlight_active_high) ||
         !gpio_output(config->dc))
         return false;
@@ -102,7 +98,7 @@ static bool hw_row(uint32_t y, const uint8_t *pixels) {
     bool ended = spi_end();
     return ok && ended;
 }
-static uint32_t hw_finish_min_budget_ms(void){return unblank_pending?2u:0u;}
+static uint32_t hw_finish_min_budget_ms(void){return 0u;}
 static int hw_finish(void) {
     /* Cold activation and wake retain unknown/old panel RAM. Make it visible
      * only after all rows of a new frame have drained successfully. A failed
@@ -111,7 +107,6 @@ static int hw_finish(void) {
         if (!gpio->pwm(gpio->context, pins[config->backlight], 1000,
                        config->backlight_active_high ? brightness_level : brightness_maximum-brightness_level,
                        brightness_maximum)) return -1;
-        if(!panel_pmu->backlight_power(panel_pmu->base.context,brightness_level!=0))return -1;
         unblank_pending=false;
     }
     return 1;
@@ -119,10 +114,9 @@ static int hw_finish(void) {
 static bool hw_brightness(uint16_t v, uint16_t max) {
     if (asleep) return false;
     if (!v) {
-        bool powered_off=panel_pmu->backlight_power(panel_pmu->base.context,false);
         bool pwm_off=gpio->pwm(gpio->context,pins[config->backlight],1000,config->backlight_active_high?0:max,max);
         unblank_pending=true;brightness_level=0;brightness_maximum=max;
-        return powered_off && pwm_off;
+        return pwm_off;
     }
     if (!unblank_pending && !gpio->pwm(gpio->context, pins[config->backlight], 1000,
                      config->backlight_active_high ? v : max - v, max)) return false;
@@ -131,7 +125,6 @@ static bool hw_brightness(uint16_t v, uint16_t max) {
 }
 static bool hw_stop(void) {
     io_fault = false;
-    if(panel_pmu && !panel_pmu->backlight_power(panel_pmu->base.context,false))return false;
     if (config && tw_pin(config->backlight) && pins[config->backlight])
         gpio_write(config->backlight, !config->backlight_active_high);
     if (io_fault || !spi_release())
@@ -152,9 +145,8 @@ static bool panel_prepare_sleep(void *context) {
         closing = true; /* Blocks new frames even if a command fails. */
         asleep = true; /* resume must undo a partially completed sequence. */
         unblank_pending = true;
-        bool powered_off=panel_pmu->backlight_power(panel_pmu->base.context,false);
         ok = gpio->pwm(gpio->context,pins[config->backlight],1000,
-                       config->backlight_active_high ? 0 : 100,100) && powered_off &&
+                       config->backlight_active_high ? 0 : 100,100) &&
              display_command(config->bus.frequency_hz,config->dc,0x28,NULL,0) &&
              display_command(config->bus.frequency_hz,config->dc,0x10,NULL,0);
         if (ok) {timer->sleep_ms(timer->context,120);sleep_prepared=true;}
@@ -166,7 +158,7 @@ static bool panel_resume(void *context) {
     if (!enter()) return false;
     bool ok = running;
     if (ok && asleep) {
-        ok = panel_pmu->backlight_power(panel_pmu->base.context,false) && display_command(config->bus.frequency_hz,config->dc,0x11,NULL,0);
+        ok = display_command(config->bus.frequency_hz,config->dc,0x11,NULL,0);
         if (ok) {
             timer->sleep_ms(timer->context,120);
             /* Resume the controller while keeping the backlight off. hw_finish

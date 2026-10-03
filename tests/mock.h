@@ -82,7 +82,8 @@ static bool m_pwm(void *c, uint64_t t, uint32_t hz, uint16_t v, uint16_t max) {
     return !m_fail_pwm && v <= max && m_gwrite(c, t, v != 0);
 }
 static bool m_backlight_powered;
-static bool m_backlight_power(void *c,bool on){(void)c;if(m_fail_io)return false;m_backlight_powered=on;return true;}
+static unsigned m_backlight_calls, m_i2c_min_budget;
+static bool m_backlight_power(void *c,bool on){(void)c;++m_backlight_calls;if(m_fail_io)return false;m_backlight_powered=on;return true;}
 static const twatch_pmu_api_v1 m_pmu={.base={1,sizeof(m_pmu),NULL,NULL},.backlight_power=m_backlight_power};
 static bool m_wave(void *c, uint64_t t, const uint32_t *p, size_t n) {
     (void)p;
@@ -128,7 +129,7 @@ static bool m_transfer(void *c, uint64_t t, const uint8_t *tx, size_t tn, uint8_
                        uint32_t ms) {
     (void)c;
     assert(t && m_tokens[t] && ms);
-    if (m_fail_io || (m_fail_transfer_at && ++m_transfers == m_fail_transfer_at))
+    if (ms < m_i2c_min_budget || m_fail_io || (m_fail_transfer_at && ++m_transfers == m_fail_transfer_at))
         return false;
     uint8_t reg = tn ? tx[0] : 0;
     for (size_t i = 1; i < tn; i++) {

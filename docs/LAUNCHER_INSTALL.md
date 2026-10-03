@@ -1,8 +1,8 @@
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing
-bundle remain unchanged. This source builds clock0.4.1, panel0.3.4, PMU0.4.0 and board
-baseline1.0.4; shared Springboard, Battery and Settings keep their own exact pinned
+bundle remain unchanged. This source builds clock0.4.2, panel0.3.5, PMU0.4.1 and board
+baseline1.0.5; shared Springboard, Battery and Settings keep their own exact pinned
 source versions in `apps/shared-sources.json`. No Watch copies of those apps exist.
 
 ## Behavior
@@ -32,13 +32,20 @@ source versions in `apps/shared-sources.json`. No Watch copies of those apps exi
 
 ## First-frame visibility
 
-The old cold-clock path requested brightness before its animation, and panel
-resume restored the PWM while old GRAM was still present. The PMU now keeps its backlight rail off before panel GPIO initialization,
-while retaining display/touch power. The panel records intended brightness while
-dark and energizes that rail only after every row of a fresh frame completes. Partial transfers, failed presentation and failed
-unblank stay dark/fail closed. Wake retains the same saved brightness policy.
-This is a software-ordering correction; actual visual absence of the flash still
-needs observation on the watch. The fix ships only in this combined bundle.
+Version 0.4.1 was reported to remain black on the physical watch. Version
+0.4.2 restores the known-working 0.4.0 PMU rail startup/teardown policy and removes
+all dynamic backlight-rail operations from the panel. In particular, frame
+completion no longer depends on a new 1 ms I2C write. The optional PMU API suffix
+is retained for compatibility and uses the normal 40 ms register-write budget.
+
+The panel still claims its GPIO with the OFF latch and keeps PWM dark until
+all 240 fresh rows complete, including cold activation, wake and app handoff.
+Failed rows/PWM restoration still fail closed. The 0.4.1 input, crown Back,
+partial-update and tap fixes remain unchanged.
+
+This is a bounded rollback of the newly failing power path, not a claim that
+the physical failure was proved in a host model. The reported old-frame startup
+flash remains open, and both recovery and flash absence need watch observation.
 
 ## Exact deployment boundary
 

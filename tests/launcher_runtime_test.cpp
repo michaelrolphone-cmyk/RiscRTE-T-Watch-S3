@@ -10,7 +10,7 @@ namespace {
 struct Model {
  bool pins[49]{},levels[49]{},bus[2]{},spi=false,held=false;
  uint8_t registers[2][256]{};uint64_t time=0,app_start=0;
- unsigned calls=0,rows=0,pwm=0,dateWrites=0,clockReady=0,clockLoads=0,springLoads=0,batteryLoads=0,settingsLoads=0,touchReads=0;
+ unsigned railWrites=0,calls=0,rows=0,pwm=0,dateWrites=0,clockReady=0,clockLoads=0,springLoads=0,batteryLoads=0,settingsLoads=0,touchReads=0;
  unsigned row=0,last_row=319,command=0,frame_rows=0,mode=0,key_stage=0,partial_frames=0,max_touch_gap=0,sleep_attempts=0;uint64_t sub_us=0,touch_at=0;std::string app;bool edit=false;
 } m;
 RiscCpu::Port* cpu;
@@ -23,7 +23,7 @@ bool log(const char*s){puts(s);assert(!strstr(s,"error="));if(!strncmp(s,"WATCH_
 bool gpioOpen(uint8_t p,bool out,bool initial,bool){assert(p<49&&!m.pins[p]);m.pins[p]=true;m.levels[p]=out?initial:true;return true;}
 bool gpioWrite(uint8_t p,bool value){assert(m.pins[p]);m.levels[p]=value;return true;}
 bool gpioRead(uint8_t p,bool*v){assert(m.pins[p]);*v=m.levels[p];return true;}
-bool gpioPwm(uint8_t p,uint32_t hz,uint16_t duty,uint16_t maximum){assert(p==45&&hz==1000&&maximum&&duty<=maximum);if(duty){assert(m.frame_rows==240);m.pwm++;}m.levels[p]=duty!=0;return true;}
+bool gpioPwm(uint8_t p,uint32_t hz,uint16_t duty,uint16_t maximum){assert(p==45&&hz==1000&&maximum&&duty<=maximum);if(duty){assert(m.frame_rows==240 && (m.registers[0][0x90]&2u));m.pwm++;}m.levels[p]=duty!=0;return true;}
 bool gpioClose(uint8_t p){assert(m.pins[p]);m.pins[p]=false;return true;}
 bool i2cOpen(uint8_t p,uint8_t sda,uint8_t scl,uint32_t hz){assert(p<2&&!m.bus[p]&&hz==100000);assert(sda==(p?39:10)&&scl==(p?40:11));m.bus[p]=true;return true;}
 bool i2cClose(uint8_t p){assert(p<2&&m.bus[p]);m.bus[p]=false;return true;}
@@ -62,6 +62,12 @@ bool i2cTransfer(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_
    assert(age<3000);
   }
   return true;
+ }
+ if(a==0x34 && tn>1 && tx[0]==0x90){
+  // A bounded delayed PMU completion: old 1ms rail writes cannot succeed.
+  // Startup/teardown use 40ms; no application presentation may change rails.
+  if(ms<2)return false;
+  advance_us(1500);m.railWrites++;
  }
  if(m.mode)advance_us(500);
  if(a==0x34 && tx[0]==0x49 && m.mode>=2 && (m.app=="battery.elf" || m.app=="settings.elf")) {
@@ -117,6 +123,7 @@ int main(int argc,char**argv){
  if(!runtime.prepare(argv[1])||!runtime.run()){fprintf(stderr,"Runtime failure: %s\n",runtime.error());return 1;}
  assert(m.clockLoads==3&&m.clockReady==3&&m.springLoads==2&&m.batteryLoads==1&&m.settingsLoads==1);
  assert(m.touchReads>40&&m.rows>240&&m.pwm>=1);
+ assert(m.railWrites==2); /* one startup, one restored teardown; none per frame */
  assert(m.edit?m.dateWrites==7:m.dateWrites==0);assert(!memcmp(m.registers[1]+2,raw,7));
  assert(!m.bus[0]&&!m.bus[1]&&!m.spi&&!m.held&&port.quiescent());for(bool pin:m.pins)assert(!pin);
  assert(m.partial_frames>0 && m.max_touch_gap<=65 && !m.sleep_attempts);

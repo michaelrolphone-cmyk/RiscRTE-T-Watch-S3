@@ -129,9 +129,11 @@ int main(void) {
     assert(!a->transact(NULL, t, tx, 1, &rx, 1, 20));
 #elif TEST_KIND == 4
     const twatch_pmu_api_v1 *a = d->capability;
-    assert(!(m_regs[0x90]&2u));
-    assert(a->backlight_power(NULL,true) && (m_regs[0x90]&2u));
+    assert(m_regs[0x90]&2u); /* physically working startup rail policy */
+    m_i2c_min_budget=2; /* valid bus whose completion cannot meet 1ms */
     assert(a->backlight_power(NULL,false) && !(m_regs[0x90]&2u));
+    assert(a->backlight_power(NULL,true) && (m_regs[0x90]&2u));
+    m_i2c_min_budget=0;
     risc_battery_sample_v1 battery;
     m_regs[1] = 0x20;
     assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
@@ -388,6 +390,7 @@ int main(void) {
     assert(a->present_status(NULL,t,&status) && status.state==RISC_DISPLAY_PRESENT_FAILED);
     assert(!m_levels[pins[m_config.backlight]]); /* failed final unblank is not COMPLETE */
     m_fail_pwm=false;
+    assert(m_backlight_calls==0); /* no panel rail calls at any lifecycle stage */
 #elif TEST_KIND == 6
     const risc_touch_api_v1 *a = d->capability;
     uint64_t sub = a->subscribe(NULL);
