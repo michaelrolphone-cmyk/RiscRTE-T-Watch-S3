@@ -27,7 +27,10 @@ jobs:
       - name: Release automation tests
         run: python -m unittest discover -s tests -p 'test_*releases.py' -v
       - name: Host contract fixtures with UBSan
-        run: python scripts/test_contracts.py
+        run: |
+          python scripts/test_contracts.py
+          python scripts/test_panel_throughput.py
+          python -m unittest discover -s tests -p test_clock_performance.py -v
       - name: Target ABI, ELF imports and packages
         run: python scripts/build_twatch_drivers.py
       - name: Versioned board baseline
@@ -35,7 +38,11 @@ jobs:
       - name: Physical manifests, negative mappings and package hashes
         run: python scripts/check_twatch_drivers.py
       - name: Clock app behavior with UBSan
-        run: python scripts/test_clock.py
+        run: |
+          python scripts/test_clock.py
+          python scripts/test_crown.py
+          python scripts/test_launcher_clock.py
+          python apps/clock/nova/tests/run.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py
       - name: Explicit clock deployments and checksums
@@ -53,33 +60,59 @@ jobs:
           for bundle in dist/clock-deployments/*.zip; do
             python scripts/build_clock_store.py "$bundle" --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      - name: Pinned shared Springboard source
+      - name: Common crown clock deployment and verified SPIFFS image
+        env:
+          PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python -m unittest discover -s tests -p test_clock_common.py -v
+          python scripts/build_clock_common.py --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          python scripts/verify_clock_deployment.py dist/clock-common/*.zip
+          for bundle in dist/clock-common/*.zip; do
+            python scripts/build_clock_store.py "$bundle" --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" --output dist/clock-common
+          done
+      - name: Pinned shared System Apps source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: db2866c54b29f3f0e479f8949b8fe2abfc00fb11
+          ref: ddfefe6ce3719cf9445858508b18f2b7790b7a2e
           path: .dependencies/system-apps
           persist-credentials: false
       - name: Pinned shared Battery source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: 3a9f3c2eb2a6fc78ba7b88b47a91e4a19128144e
+          ref: 7fbd031fa26a5090cbfbe161b1e612323571e697
           path: .dependencies/utilities
           persist-credentials: false
-      - name: Shared apps and optional launcher packages
+      - name: Exact paired runtime source
+        uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: a3d23da9cdc1b3a66c6429f29781856fa7fc8f75
+          path: .dependencies/runtime
+          persist-credentials: false
+      - name: Shared apps and launcher deployments
         run: |
           python .dependencies/system-apps/scripts/test_portable_apps.py --utilities .dependencies/utilities
           python scripts/build_launcher_apps.py --system-apps .dependencies/system-apps --utilities .dependencies/utilities
           python scripts/build_clock_deployment.py --profile all --launcher
           python scripts/verify_clock_deployment.py dist/launcher-deployments/*.zip
           python -m unittest discover -s tests -p test_launcher_deployment.py -v
-      - name: Verified launcher store images
+          bash scripts/test_launcher_runtime.sh .dependencies/runtime .dependencies/system-apps .dependencies/utilities
+      - name: Common launcher and verified SPIFFS images
         env:
           PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          python -m unittest discover -s tests -p test_launcher_common.py -v
+          python scripts/build_launcher_common.py --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          python scripts/verify_clock_deployment.py dist/launcher-common/*.zip
           for bundle in dist/launcher-deployments/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-images --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
+          done
+          for bundle in dist/launcher-common/*.zip; do
+            python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
       - uses: actions/upload-artifact@v4
         with:
@@ -91,6 +124,9 @@ jobs:
             dist/launcher-deployments/catalog.json
             dist/launcher-images/*.bin
             dist/launcher-images/*.json
+            dist/launcher-common/*.zip
+            dist/launcher-common/*.bin
+            dist/launcher-common/*.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
@@ -106,6 +142,9 @@ jobs:
             dist/clock-frames/expected.json
             dist/clock-images/*.bin
             dist/clock-images/*.json
+            dist/clock-common/*.zip
+            dist/clock-common/*.bin
+            dist/clock-common/*.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:

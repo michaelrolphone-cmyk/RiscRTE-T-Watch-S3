@@ -1,8 +1,5 @@
 #include "RiscRuntimeV1.h"
 #include "render.h"
-#ifdef WATCH_CLOCK_LAUNCHER
-#include "PortableTouch.h"
-#endif
 
 static bool display_valid(const risc_display_output_api_v1 *d) {
     return d && d->api_version==1 && d->struct_size>=sizeof(*d) && d->get_info &&
@@ -22,10 +19,6 @@ __attribute__((visibility("default"))) void app_main(void) {
     const risc_display_output_api_v1 *display=has_display?display_grant.api:NULL;
     bool has_rtc=false;
     risc_display_frame_v1 held=0;
-#ifdef WATCH_CLOCK_LAUNCHER
-    portable_touch touch={0};
-    if(!portable_touch_open(&touch,runtime)) {runtime->diagnostic("WATCH_CLOCK error=touch-init");goto cleanup;}
-#endif
     if(!display_valid(display)) {
         runtime->diagnostic("WATCH_CLOCK error=display-grant-or-api");goto cleanup;
     }
@@ -62,13 +55,6 @@ __attribute__((visibility("default"))) void app_main(void) {
                 runtime->diagnostic("WATCH_CLOCK error=present-timeout");break;
             }
         }
-#ifdef WATCH_CLOCK_LAUNCHER
-        uint16_t tap_x=0,tap_y=0;
-        if(!pending && portable_touch_tap(&touch,&tap_x,&tap_y) && tap_x<240 && tap_y<240) {
-            if(runtime->request_launch && runtime->request_launch("springboard.elf"))break;
-            runtime->diagnostic("WATCH_CLOCK error=launcher-request");
-        }
-#endif
         if(!pending && (first || (uint32_t)(health.uptime_ms-last_draw)>=1000)) {
             twatch_rtc_time_v1 time={0};
             bool valid=rtc && rtc->read(rtc->context,&time) && tw_valid_time(&time);
@@ -94,9 +80,6 @@ __attribute__((visibility("default"))) void app_main(void) {
         runtime->yield_ms(pending?1:20);
     }
 cleanup:
-#ifdef WATCH_CLOCK_LAUNCHER
-    if(!portable_touch_close(&touch,runtime))runtime->diagnostic("WATCH_CLOCK error=touch-release");
-#endif
     if(held && display && display->release)display->release(display->context,held);
     if(has_rtc && !runtime->release(&rtc_grant))runtime->diagnostic("WATCH_CLOCK error=rtc-release");
     if(has_display && !runtime->release(&display_grant))runtime->diagnostic("WATCH_CLOCK error=display-release");

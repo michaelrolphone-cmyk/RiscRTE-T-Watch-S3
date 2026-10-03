@@ -1,5 +1,6 @@
 #pragma once
 #include "RiscProviderV2.h"
+#include "RiscLightSleepV1.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,7 +20,11 @@ typedef struct {
     bool (*write)(void *context, uint64_t claim, bool level);
     bool (*read)(void *context, uint64_t claim, bool *level_out);
     bool (*release)(void *context, uint64_t claim);
+    /* Validate this facade's input claim, translate to its private raw token;
+     * never forward the public token unchanged. Retain it on RETAINED. */
+    risc_gpio_light_sleep_v1 light_sleep;
 } risc_gpio_bank_api_v1;
+#define RISC_GPIO_BANK_LIGHT_SLEEP_V1_SIZE (offsetof(risc_gpio_bank_api_v1, light_sleep) + sizeof(((risc_gpio_bank_api_v1*)0)->light_sleep))
 #ifdef __cplusplus
 }
 #endif
