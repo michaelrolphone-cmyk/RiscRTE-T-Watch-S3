@@ -1,3 +1,15 @@
+# Current 0.5.0 sleep increment
+
+Settings offers saved Light Sleep / Deep Sleep selection; Light is the initial
+default. Both use the crown and 60-second Clock idle policy. Deep wakes through
+a fresh default Clock boot, with no ULP program or measured-current claim.
+Internal SPIFFS bundles all apps/drivers; namespace-scoped NVS stores only the
+selected mode. Full merged reflashing replaces the lower 8 MiB including NVS.
+See [deep-sleep details and error behavior](DEEP_SLEEP.md). The accepted 0.4.5
+GUI and earlier BINs are preserved independently.
+
+The earlier GUI design and installation history follows.
+
 # Optional NOVA launcher and Settings bundle
 
 This is the optional Watch PR5 line. The accepted PR6 clock0.3.1 and its flashing

@@ -18,6 +18,10 @@ def build(system,utilities):
             raise ValueError('Shared RTC forward policy differs from deployed Clock: '+relative)
     if (system/'lib/PortableApps/include/PortableTransition.h').read_bytes()!=(ROOT/'apps/clock/transitions/PortableTransition.h').read_bytes():
         raise ValueError('Clock and shared app transition implementations differ')
+    if (system/'lib/PortableApps/include/PortableSleepPolicy.h').read_bytes()!=(ROOT/'apps/clock/PortableSleepPolicy.h').read_bytes():
+        raise ValueError('Clock and Settings sleep policy differ')
+    if (system/'lib/PortableApps/include/RiscKeyValueV1.h').read_bytes()!=(ROOT/'sdk/app/RiscKeyValueV1.h').read_bytes():
+        raise ValueError('Clock and Settings key-value ABI differ')
     cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc') or str(Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc')
     out=ROOT/'dist/launcher';out.mkdir(parents=True,exist_ok=True)
     catalog=[{'display_name':'Clock','file_name':'clock.elf','icon':'solid:f017'},
@@ -26,6 +30,7 @@ def build(system,utilities):
     (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=3;\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
     record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'}}
+    record['sleep_policy']={'default':'light','choice':'storage.key-value@1','instance_id':1,'key':'sleep_mode','deep_wake':'fresh-default','ulp_program':False}
     build_clock(launcher=True)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
@@ -37,7 +42,7 @@ def build(system,utilities):
         sources=[source,system/'lib/PortableApps/src/adapter.c',out/'catalog.c',ROOT/'apps/clock/portable_navigation.c']
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
         flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL']
-        if name=='settings':flags.append('-DPORTABLE_SETTINGS_APP')
+        if name=='settings':flags.extend(['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_SETTINGS_VERSION=\"'+json.loads((system/'Apps/settings.json').read_text())['version']+'\"'])
         if name=='springboard':flags.extend(['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60'])
         flags.append('-DPORTABLE_RETURN_APP="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"')
         elf=out/(name+'.elf')
@@ -53,6 +58,7 @@ def build(system,utilities):
         requires=[{'capability':'display.output','api':1},{'capability':'input.touch.raw','api':1}]
         if name in ('springboard','settings'):requires.append({'capability':'rtc.clock','api':2})
         requires.append({'capability':'board.battery','api':1})
+        if name=='settings':requires.append({'capability':'storage.key-value','api':1})
         manifest={'type':'application','id':'twatch-clock' if name=='default' else name,'version':original['version'],'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':requires}
         (out/(name+'.json')).write_text(json.dumps(manifest,indent=2)+'\n')
         record['apps'][name]={'version':manifest['version'],'sha256':hashlib.sha256(data).hexdigest(),'imports':sorted(imports),'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()}

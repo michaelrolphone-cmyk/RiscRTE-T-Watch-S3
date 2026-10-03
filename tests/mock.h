@@ -92,12 +92,12 @@ static int32_t m_light_sleep(void *c,uint64_t t,bool high,risc_light_sleep_resul
     m_sleep_token=t;out->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return RISC_LIGHT_SLEEP_OK;
 }
 static garden_gpio_v1 m_gpio = {1,       sizeof(m_gpio), NULL,   m_gclaim, m_gwrite,
-                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep};
+                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep, NULL, NULL};
 static bool m_bank_claim(void *c, uint8_t pin, uint32_t flags, uint64_t *t) {
     return m_gclaim(c, pin, flags & RISC_GPIO_OUTPUT, false, flags & RISC_GPIO_PULLUP, t);
 }
 static risc_gpio_bank_api_v1 m_bank = {1,        sizeof(m_bank), NULL,  m_bank_claim,
-                                       m_gwrite, m_gread,        m_free, m_light_sleep};
+                                       m_gwrite, m_gread,        m_free, m_light_sleep, NULL};
 static uint64_t m_time(void *c) {
     (void)c;
 #if TEST_KIND == 5

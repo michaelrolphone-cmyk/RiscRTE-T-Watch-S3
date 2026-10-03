@@ -9,6 +9,7 @@
 namespace {
 struct Model {
  bool pins[49]{},levels[49]{},bus[2]{},spi=false,held=false;
+ bool sleep_test=false,pad_held=false;unsigned sleep_fault=0,sleep_attempts=0,sleep_unloads=0;uint64_t sleep_attempt_at=0;
  uint8_t registers[2][256]{},frame[240*240*2]{},retained_clock[240*240*2]{};uint64_t time=0,app_start=0,clock_ready_at=0;
  unsigned retained_checks=0,returnLoads=0,terminalLoads=0;std::string previous_app;bool clock_ready=false;
  unsigned frames_in_app=0,calls=0,rows=0,pwm=0,dateWrites=0,clockReady=0,clockLoads=0,springLoads=0,batteryLoads=0,settingsLoads=0,touchReads=0;
@@ -17,8 +18,8 @@ struct Model {
 RiscCpu::Port* cpu;
 bool owner(){return true;}
 uint64_t now(){return m.time;}
-void delay(uint32_t ms){m.time+=ms;assert(m.time<30000);}
-bool live(risc_runtime_health_v1*h){assert(++m.calls<100000);h->uptime_ms=(uint32_t)m.time;return m.clockReady<(m.crown_spring?3u:2u);}
+void delay(uint32_t ms){m.time+=ms;assert(m.time<(m.sleep_test?80000u:30000u));}
+bool live(risc_runtime_health_v1*h){assert(++m.calls<100000);h->uptime_ms=(uint32_t)m.time;if(m.sleep_test)return !m.sleep_attempts || m.time-m.sleep_attempt_at<700;return m.clockReady<(m.crown_spring?3u:2u);}
 bool log(const char*s){puts(s);assert(!strstr(s,"error="));if(!strncmp(s,"WATCH_CLOCK ready",17)){m.clockReady++;if(m.app=="clock.elf")assert(m.time-m.app_start<300);else assert(m.time-m.app_start>=2000);m.clock_ready_at=m.time;m.clock_ready=true;}return true;}
 bool gpioOpen(uint8_t p,bool out,bool initial,bool){assert(p<49&&!m.pins[p]);m.pins[p]=true;m.levels[p]=out?initial:true;return true;}
 bool gpioWrite(uint8_t p,bool value){assert(m.pins[p]);m.levels[p]=value;return true;}
@@ -35,6 +36,7 @@ bool i2cTransfer(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_
  if(p){
   assert(a==0x38&&tn==1&&tx[0]==2&&rn==13);memset(rx,0,rn);m.touchReads++;
   unsigned age=(unsigned)(m.time-m.app_start);
+  if(m.sleep_test)return true;
   if(m.crown&&m.app=="battery.elf"&&age>=50){m.touch_failures++;return false;}
   if(m.app=="default.elf"||m.app=="clock.elf"){
    // First poll is neutral, then a held movement begins after startup.
@@ -65,6 +67,7 @@ bool i2cTransfer(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_
   // PMU IRQ status is write-one-to-clear, not ordinary RAM.
   if(a==0x34&&reg>=0x48&&reg<=0x4a)r[reg]&=(uint8_t)~tx[i];else r[reg]=tx[i];reg++;
  }}
+ if(m.sleep_test&&a==0x34&&reg==0x49&&rn==1&&m.clock_ready&&!m.keys_in_app&&m.time-m.clock_ready_at>=300){r[0x49]|=8;m.keys_in_app++;}
  if(a==0x34&&reg==0x49&&rn==1&&m.crown){
   unsigned age=(unsigned)(m.time-m.app_start);
   bool back=(m.app=="battery.elf"&&age>=220&&!m.keys_in_app) ||
@@ -88,8 +91,12 @@ bool spiTransfer(uint8_t p,const uint8_t*tx,uint8_t*,size_t n,uint32_t ms){
 }
 bool spiEnd(uint8_t p,uint8_t cs,uint32_t){assert(p==2&&cs==12&&m.held);m.held=false;m.levels[cs]=true;return true;}
 bool spiClose(uint8_t p){assert(p==2&&!m.held);m.spi=false;return true;}
+int32_t kvGet(void*,uint32_t ns,const char*key,void*data,uint32_t capacity,uint32_t*size){assert(ns==1&&!strcmp(key,"sleep_mode"));*size=0;if(m.sleep_test){assert(capacity>=4);memcpy(data,"\x53\x01\x01\xa4",4);*size=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}
+int32_t kvPut(void*,uint32_t,const char*,const void*,uint32_t){assert(!"Existing GUI flows never save sleep mode");return RISC_KEY_VALUE_IO;}
+const RiscBoot::KeyValueBackend kv={nullptr,kvGet,kvPut};
 bool bind(RiscBoot::Runtime&r){return cpu->bind(r);}
 }
+extern "C" void watch_test_unloading(){if(m.sleep_test)++m.sleep_unloads;}
 extern "C" void watch_test_loading(const char*path){
  const char*name=strrchr(path,'/');name=name?name+1:path;if(!strcmp(name,"driver.elf"))return;
  if(!strcmp(name,"springboard.elf")){assert((m.app=="default.elf"||m.app=="clock.elf"||m.app=="battery.elf"||m.app=="settings.elf")&&m.frame_rows==240);memcpy(m.retained_clock,m.frame,sizeof(m.frame));}
@@ -108,7 +115,7 @@ int main(int argc,char**argv){
  m.registers[0][0x34]=0x0f;m.registers[0][0x35]=0xa0;
  const uint8_t raw[]={0,0x40,0,4,0,0x10,0x26};memcpy(m.registers[1]+2,raw,7);
  RiscCpu::Port port({owner,now,delay,gpioOpen,gpioWrite,gpioRead,gpioPwm,gpioClose,i2cOpen,i2cTransfer,i2cClose,spiOpen,spiBegin,spiTransfer,spiEnd,spiClose});cpu=&port;
- RiscBoot::Runtime runtime({owner,live,delay,log,bind});
+ RiscBoot::Runtime runtime({owner,live,delay,log,bind,&kv,[](){return cpu->appExitSafe();}});
  if(!runtime.prepare(argv[1])||!runtime.run()){fprintf(stderr,"Runtime failure: %s\n",runtime.error());return 1;}
  unsigned extra=m.crown_spring?1u:0u;
  assert(m.clockLoads==1&&m.returnLoads==1+extra&&m.terminalLoads==1&&m.clockReady==2+extra&&m.springLoads==3+extra&&m.batteryLoads==1&&m.settingsLoads==1);
@@ -118,4 +125,5 @@ int main(int argc,char**argv){
  assert(!m.bus[0]&&!m.bus[1]&&!m.spi&&!m.held&&port.quiescent());for(bool pin:m.pins)assert(!pin);
  fprintf(stderr,"Real modules PASS scenario=%u frames=%u touch=%u crown=%u retained=%u RTCwrites=%u; all resources quiescent\n",scenario,m.rows/240,m.touchReads,m.crown_events,m.retained_checks,m.dateWrites);
  }
+ return 0;
 }

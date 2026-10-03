@@ -138,6 +138,14 @@ static int32_t light_sleep(void *context,risc_light_sleep_result_v1 *result) {
     if (gpio_api->struct_size<RISC_GPIO_BANK_LIGHT_SLEEP_V1_SIZE || !gpio_api->light_sleep) return RISC_LIGHT_SLEEP_UNSUPPORTED;
     return gpio_api->light_sleep(gpio_api->context,irq_claim,false,result);
 }
+static int32_t deep_sleep(void *context) {
+    (void)context;
+    if (!started || !sleep_prepared) return RISC_DEEP_SLEEP_INVALID;
+    if (gpio_api->struct_size<RISC_GPIO_BANK_DEEP_SLEEP_V1_SIZE || !gpio_api->deep_sleep) return RISC_DEEP_SLEEP_UNSUPPORTED;
+    /* Identical acknowledged short-press IRQ preparation, same owned input.
+     * App chooses mode; no Watch schedule or GPIO number enters the runtime. */
+    return gpio_api->deep_sleep(gpio_api->context,irq_claim,false);
+}
 static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     (void)context;
     if (!out)
@@ -256,7 +264,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
-                                      key_events, prepare_sleep, resume_sleep, light_sleep};
+                                      key_events, prepare_sleep, resume_sleep, light_sleep, deep_sleep};
 static const risc_driver_diagnostics_v2 driver = {
     {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
      RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},

@@ -2,6 +2,7 @@
 #include "twatch_power.h"
 #define TWATCH_PANEL_POWER 1
 static bool asleep, sleep_prepared, unblank_pending;
+static bool deep_held, deep_retained;
 static uint16_t brightness_level, brightness_maximum=100;
 #include "common/spi.h"
 #define WIDTH 240u
@@ -116,6 +117,7 @@ static bool hw_brightness(uint16_t v, uint16_t max) {
     return true;
 }
 static bool hw_stop(void) {
+    if (deep_held || deep_retained) return false;
     io_fault = false;
     if (config && tw_pin(config->backlight) && pins[config->backlight])
         gpio_write(config->backlight, !config->backlight_active_high);
@@ -148,7 +150,13 @@ static bool panel_prepare_sleep(void *context) {
 static bool panel_resume(void *context) {
     (void)context;
     if (!enter()) return false;
-    bool ok = running;
+    bool ok = running && !deep_retained;
+    if (ok && deep_held) {
+        int32_t rc=gpio->deep_sleep_hold(gpio->context,pins[config->backlight],false);
+        if (rc==RISC_DEEP_SLEEP_RETAINED) deep_retained=true;
+        ok=rc==0;
+        if (ok) deep_held=false;
+    }
     if (ok && asleep) {
         ok = display_command(config->bus.frequency_hz,config->dc,0x11,NULL,0);
         if (ok) {
@@ -162,4 +170,24 @@ static bool panel_resume(void *context) {
         if (ok) {asleep=sleep_prepared=false;closing=false;}
     }
     leave(); return ok;
+}
+
+/* Deep-only suffix. Keep the accepted light-sleep and rendering path intact.
+ * PWM duty zero is still an active PWM resource; stop it with a successful
+ * static write before requesting pad retention across deep sleep/reset. */
+static int32_t panel_prepare_deep_sleep(void *context) {
+    if (deep_retained) return RISC_DEEP_SLEEP_RETAINED;
+    if (!gpio || gpio->struct_size<GARDEN_GPIO_DEEP_SLEEP_HOLD_V1_SIZE ||
+        !gpio->deep_sleep_hold) return RISC_DEEP_SLEEP_UNSUPPORTED;
+    if (deep_held) return 0;
+    if (!panel_prepare_sleep(context)) return RISC_DEEP_SLEEP_PLATFORM;
+    if (!enter()) return RISC_DEEP_SLEEP_BUSY;
+    int32_t rc=RISC_DEEP_SLEEP_PLATFORM;
+    if (running && asleep && sleep_prepared && !held && !active && !failed &&
+        gpio->write(gpio->context,pins[config->backlight],!config->backlight_active_high)) {
+        rc=gpio->deep_sleep_hold(gpio->context,pins[config->backlight],true);
+        if (rc==0) deep_held=true;
+        else if (rc==RISC_DEEP_SLEEP_RETAINED) deep_retained=true;
+    }
+    leave();return rc;
 }

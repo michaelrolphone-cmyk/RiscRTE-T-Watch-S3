@@ -6,9 +6,9 @@ import zipfile
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from verify_gui_increment import verify
+from verify_sleep_increment import verify
 
-class GuiCustody(unittest.TestCase):
+class SleepCustody(unittest.TestCase):
     def setUp(self):
         paths = list((ROOT / 'dist/launcher-common').glob('*-launcher-common.zip'))
         self.assertEqual(len(paths), 1)
@@ -22,14 +22,14 @@ class GuiCustody(unittest.TestCase):
                 for n, data in files.items(): z.writestr(n, data)
             if succeeds:
                 result = verify(path)
-                self.assertEqual(result['unchanged_file_count'], 13)
+                self.assertEqual(result['unchanged_file_count'], 11)
             else:
                 with self.assertRaises(AssertionError): verify(path)
 
     def test_exact_candidate(self): self.check(self.files, True)
 
     def test_physical_driver_change_rejected(self):
-        self.files['store/pmu/driver.elf'] += b'changed'
+        self.files['store/touch/driver.elf'] += b'changed'
         self.check(self.files)
 
     def test_board_change_rejected(self):
@@ -67,3 +67,17 @@ class GuiCustody(unittest.TestCase):
     def test_missing_normal_clock_entry_rejected(self):
         self.files.pop('store/clock.elf')
         self.check(self.files)
+
+    def test_namespace_change_rejected(self):
+        boot=json.loads(self.files['store/boot.json'])
+        next(g for g in boot['app_capabilities'][0]['grants'] if g['capability']=='storage.key-value')['instance_id']=2
+        self.files['store/boot.json']=json.dumps(boot).encode();self.check(self.files)
+
+    def test_unrelated_app_storage_grant_rejected(self):
+        boot=json.loads(self.files['store/boot.json'])
+        next(a for a in boot['app_capabilities'] if a['manifest']=='battery.json')['grants'].append({'capability':'storage.key-value','api':1,'instance_id':1})
+        self.files['store/boot.json']=json.dumps(boot).encode();self.check(self.files)
+
+    def test_ulp_claim_rejected(self):
+        source=json.loads(self.files['shared-app-build.json']);source['sleep_policy']['ulp_program']=True
+        self.files['shared-app-build.json']=json.dumps(source).encode();self.check(self.files)

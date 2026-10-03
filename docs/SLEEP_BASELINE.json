@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "label": "0.5.0-sleep",
+  "baseline_commit": "e44028c79dfde440bba421b81b16c169e3225e8a",
+  "baseline_bin_sha256": "23940b19b8b25e59ba063c339766908310a19007c43bf326f5af790d0e82389e",
+  "baseline_store_sha256": {
+    "battery.elf": "219a488b0ad6c6dddd4c7e863fdb818a8ba3ad76b846ea76916e606fbbb98374",
+    "battery.json": "b6c64ff5218168e2519dd8605b737eb6bb6ae733902e0f4520b3860605adcc33",
+    "board.json": "224339f27cf0782473fc418c5d8e21fbe3dd36d2b23741241f2970b2c2137859",
+    "boot.json": "c413b525dbfb34f47198adb2a4bbbc0b84b1487d7225a0c180ed5ff3ce1cfa76",
+    "clock.elf": "4749f31fad7621c639430ef3d32235ac4f851bb08cf79dc8c598704ec45dad51",
+    "clock.json": "9951e4e0fbcd0bd7b9b14d628fef075b68f6d0fe0915f1de90a3537b26daafe1",
+    "default.elf": "6c90005bfe2f86ec2a0a438608352a10b113c0b74f5146bccc1f86fdcf284bec",
+    "default.json": "019aaea237612c0842f9cee427df51634d1faadc260a13ef8f22b71c81982d94",
+    "gpio/driver.elf": "1e7018993f5107389761d030866aee4fb055c77ac9705ca6b706edec0f1435ac",
+    "gpio/manifest.json": "4fc7056739b0e5a7e0a21e41dd0def535a3a8c11d23fb9eb526b93ed7fa5368d",
+    "i2c/driver.elf": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+    "i2c/manifest.json": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+    "panel/driver.elf": "ae9b558a26d1a050e9a56c0866b479ec3dd1bf1fe5a51c51cbc949cc6f0c5f07",
+    "panel/manifest.json": "b0d29a95da7fba6593ba44d42142171c92f8feb478bc69e4bc68c43b2131bf5f",
+    "pmu/driver.elf": "3dce836e347b967888dbc8a369ebb4677ffe48feee21ae7c7c68c525e33fb5bf",
+    "pmu/manifest.json": "2d5abec1fd15df077a0791217409dd09e935f19883b1f281312182a42211887e",
+    "rtc/driver.elf": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+    "rtc/manifest.json": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+    "settings.elf": "bba93270ed248b1bdb43dd2bfd11a72671b4b33068da55dd71e50d0f59aa4529",
+    "settings.json": "c926a70e4bccbb0715d57544ff7ee60fd8dfab1613eaa7448d027394c8575bbb",
+    "springboard.elf": "13bf99f34ad8ca4cfef56b2946717268f2f81d2cd5e4580e497da4eb8c2b151f",
+    "springboard.json": "e72775688f131f356799334a1ae9d0086534bf3023dd4b706d7351f582ba75a0",
+    "touch/driver.elf": "f15b964c77433f49414fc591e1960a614d617daecc7a8ae8b4b3952109841ddc",
+    "touch/manifest.json": "aff7b544d1298a6e4a3c9318c7f208567ca09cde8513bdbe1a24706097d496ec"
+  },
+  "changed_store_files": [
+    "boot.json",
+    "clock.elf",
+    "clock.json",
+    "default.elf",
+    "default.json",
+    "gpio/driver.elf",
+    "gpio/manifest.json",
+    "panel/driver.elf",
+    "panel/manifest.json",
+    "pmu/driver.elf",
+    "pmu/manifest.json",
+    "settings.elf",
+    "settings.json"
+  ],
+  "baseline_driver_instances": [
+    {
+      "instance_id": 1,
+      "manifest": "gpio/manifest.json"
+    },
+    {
+      "instance_id": 2,
+      "manifest": "i2c/manifest.json"
+    },
+    {
+      "instance_id": 3,
+      "manifest": "i2c/manifest.json"
+    },
+    {
+      "instance_id": 4,
+      "manifest": "pmu/manifest.json"
+    },
+    {
+      "instance_id": 5,
+      "manifest": "panel/manifest.json"
+    },
+    {
+      "instance_id": 6,
+      "manifest": "touch/manifest.json"
+    },
+    {
+      "instance_id": 8,
+      "manifest": "rtc/manifest.json"
+    }
+  ],
+  "unchanged_source_sha256": {
+    "include/common/spi.h": "028131ce826cd652e5b41f3c511aeb12cd82bdc4119ec9b9ff27962eba15e469",
+    "include/common/gpio.h": "4a9d80486570d58a6a24c6d3c637da9fd8e72e4c52836592ee36aaba9597df40",
+    "drivers/twatch_touch/driver.c": "0d976c03897d7afd5d405b811436b1ec7d65e8a817c16c527397fb2bc9f47e07",
+    "drivers/twatch_rtc/driver.c": "b8d91acc9ae532eb9aea688ee347bc42db5ae7353a4c4b392e9dc6710c8b0eec",
+    "drivers/twatch_i2c/i2c_main.c": "f837410c20d86ec0b497a4c9648bc7c994278b34e3b5214836dd25cd1beba060",
+    "apps/clock/nova/nova.c": "e383430359b407a0a65785e56879da9ac611701ce63179fa518e38844f158b46",
+    "apps/clock/transitions/PortableTransition.h": "627e00b7c8143d946556f67a61803a56335f747dd8f6489bbfcabaef015542d2",
+    "apps/clock/portable_navigation.c": "b0d1729346d4b808395766c1c7f1800866d02a54a9e3e39baa8dd425854da84e",
+    "apps/clock/launcher_touch.h": "a07c2e253f94c37f7529cf97ba3288863fc6f438631ffd69bdb63f0c28eeb293",
+    "apps/clock/display_time.h": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03"
+  },
+  "unchanged_panel_function_sha256": {
+    "hw_start": "0d62ab36fbe4da969d7cef9edf296bf1b569afbe1f0914ae9f219c0a930f5575",
+    "hw_submit": "626330341052ce7ee87cacd5210d182fd995a7ec4cd68f29eb63dc63a2d67397",
+    "hw_row_min_budget_ms": "411c413e802ecd5bd5468c8bcbad1c647677a02c6b7d01b2e32c41eb94453376",
+    "hw_row": "f6b5388986ce6c18e9698a89cdb9584c860f24c93f417967430942b24d7311c6",
+    "hw_finish": "c1614e5eb6a9911fed78e8910bdebfc4c895d7cd6f9f8ec46f8e027da5a955ed",
+    "hw_brightness": "472d6f7146c08fa8c2c5599be392c2a48f274bffa310e9bd786e1e80ffb9a379"
+  }
+}

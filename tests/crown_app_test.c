@@ -124,8 +124,8 @@ static bool battery_read(void*c,risc_battery_sample_v1*s){
  if(battery_kind==2)*s=(risc_battery_sample_v1){3300,0,RISC_BATTERY_PROFILE_MISSING};
  return battery_kind!=3;
 }
-static twatch_panel_power_v1 d={{1,sizeof(d),NULL,info,acquire_frame,release_frame,submit,present,NULL,bright},panel_prepare,panel_resume};
-static twatch_pmu_api_v1 p={{1,sizeof(p),NULL,battery_read},key,pmu_prepare,pmu_resume,sleep_now};
+static twatch_panel_power_v1 d={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit,present,NULL,bright},panel_prepare,panel_resume,NULL};
+static twatch_pmu_api_v1 p={{1,TWATCH_PMU_LIGHT_SLEEP_SIZE,NULL,battery_read},key,pmu_prepare,pmu_resume,sleep_now,NULL};
 static twatch_rtc_api_v1 r={2,sizeof(r),NULL,rtc_read,rtc_write,NULL,NULL};
 static bool acquire(const char*n,uint32_t v,uint64_t id,risc_runtime_capability_v1*g){assert(!id&&g->struct_size==sizeof(*g));if(!strcmp(n,"display.output")){assert(v==1);g->api=&d;}else if(!strcmp(n,"board.battery")){assert(v==1);g->api=&p;}else{assert(!strcmp(n,"rtc.clock")&&v==2);g->api=&r;}grants++;return true;}
 static bool release(risc_runtime_capability_v1*g){assert(g->api&&!held&&!pending);g->api=NULL;ungrants++;return true;}

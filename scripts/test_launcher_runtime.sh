@@ -5,7 +5,7 @@ runtime="$(cd "${1:?Pass exact paired Runtime source}" && pwd)"
 system="$(cd "${2:?Pass exact shared System Apps source}" && pwd)"
 utilities="$(cd "${3:?Pass exact shared Utilities source}" && pwd)"
 # The runtime pairing is part of the deployment contract, not a moving checkout.
-[[ "$(git -C "$runtime" rev-parse HEAD)" == a3d23da9cdc1b3a66c6429f29781856fa7fc8f75 ]]
+[[ "$(git -C "$runtime" rev-parse HEAD)" == fe9d3c877ac98e52670d458f45b59fda8011a4fd ]]
 [[ -z "$(git -C "$runtime" status --porcelain --untracked-files=no)" ]]
 python3 - "$watch" "$system" "$utilities" <<'PYPINS'
 import json,pathlib,subprocess,sys
@@ -36,7 +36,7 @@ portable=(-I"$system/lib/PortableApps/include" -I"$system/lib/NativeApps/include
 for name in springboard battery settings; do
  source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER -DPORTABLE_FORCE_FULL_FRAMES -DPORTABLE_INPUT_NAVIGATION -DPORTABLE_INPUT_NAVIGATION_LOCAL)
  if [[ "$name" == battery ]]; then source="$utilities/Apps/battery.c"; fi
- if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP); fi
+ if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP -DPORTABLE_SLEEP_SETTINGS); fi
  if [[ "$name" == springboard ]]; then flags_app+=(-DPORTABLE_RETAINED_RGB565_HANDOFF -DPORTABLE_HANDOFF_EAGER_MS=60); fi
  if [[ "$name" == springboard ]]; then flags_app+=('-DPORTABLE_RETURN_APP="clock.elf"'); else flags_app+=('-DPORTABLE_RETURN_APP="springboard.elf"'); fi
  cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "${watchincs[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$watch/dist/launcher/catalog.c" "$watch/apps/clock/portable_navigation.c" -o "$build/$name.elf"
@@ -46,3 +46,8 @@ c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${in
  "$runtime/src/ports/esp32s3/CpuPort.cpp" "$runtime/src/runtime/drivers/ProviderModuleV2.cpp" "$runtime/src/runtime/drivers/ProviderGraphV2.cpp" \
  "$watch/tests/launcher_runtime_test.cpp" -ldl -o "$build/test"
 "$build/test" "$build"
+c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${incs[@]}" \
+ "$runtime/src/bootstrap/Board.cpp" "$runtime/src/bootstrap/Json.cpp" "$runtime/src/bootstrap/Runtime.cpp" \
+ "$runtime/src/ports/esp32s3/CpuPort.cpp" "$runtime/src/runtime/drivers/ProviderModuleV2.cpp" "$runtime/src/runtime/drivers/ProviderGraphV2.cpp" \
+ "$watch/tests/deep_sleep_runtime_test.cpp" -ldl -o "$build/deep-test"
+"$build/deep-test" "$build"

@@ -2,6 +2,7 @@
 #include "RiscProviderV2.h"
 #include "RiscBatteryGaugeV1.h"
 #include "RiscLightSleepV1.h"
+#include "RiscDeepSleepV1.h"
 typedef struct {
     risc_battery_gauge_api_v1 base;
     bool (*key_events)(void *, uint32_t *events);
@@ -9,7 +10,11 @@ typedef struct {
     bool (*prepare_sleep)(void *);
     bool (*resume)(void *);
     int32_t (*light_sleep)(void *, risc_light_sleep_result_v1 *);
+    /* Successful terminal entry never returns; old light-sleep prefix intact. */
+    int32_t (*deep_sleep)(void *);
 } twatch_pmu_api_v1;
+#define TWATCH_PMU_LIGHT_SLEEP_SIZE offsetof(twatch_pmu_api_v1, deep_sleep)
+#define TWATCH_PMU_DEEP_SLEEP_SIZE sizeof(twatch_pmu_api_v1)
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

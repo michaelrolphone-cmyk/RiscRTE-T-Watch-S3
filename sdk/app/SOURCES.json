@@ -10,5 +10,11 @@
     "path": "docs/APP_CAPABILITIES.md",
     "commit": "be6efce33a19d3a21ced4077a038fdcc7b9b94a3",
     "sha256": "a59d26f09377680ba82be1f6cf17c66e452c5a910bc4952f39b49d6cd234d257"
+  },
+  "RiscKeyValueV1.h": {
+    "repository": "michaelrolphone-cmyk/RiscRTE",
+    "commit": "bd73f918bd2392693e4ee7719f289da7531da4b1",
+    "path": "sdk/app/RiscKeyValueV1.h",
+    "sha256": "5d5524ffd27b164f31505c5f538f528b39b35e356922e03e2eb59a9c68677b56"
   }
 }

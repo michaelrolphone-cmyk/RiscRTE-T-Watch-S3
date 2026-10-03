@@ -41,7 +41,7 @@ def verify(path):
         if tuple(map(int,app['version'].split('.'))) >= (0,2,2):
             runtime=record.get('runtime_requirements')
             if (not runtime or json.loads(z.read('runtime-requirements.json')) != runtime or
-                    runtime.get('source_sha') != 'a3d23da9cdc1b3a66c6429f29781856fa7fc8f75' or
+                    runtime != json.loads((Path(__file__).resolve().parents[1]/'apps/clock/runtime-requirements.json').read_text()) or
                     runtime.get('required_behavior', {}).get('spi_max_hz') != 40000000):
                 raise ValueError('Missing or mismatched corrected runtime requirement')
         if boot['default_app']!='default.elf' or app['file_name']!='default.elf' or app['entry']!='app_main':
@@ -58,6 +58,7 @@ def verify(path):
                 grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
                 if name in ('default','clock','springboard','settings'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
                 grants.append({'capability':'board.battery','api':1,'instance_id':4})
+                if name in ('default','clock','settings'):grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
                 expected.append({'manifest':name+'.json','grants':grants})
                 child=json.loads(z.read('store/'+name+'.json'))
                 if child['file_name']!=name+'.elf' or child['entry']!='app_main' or child['requires']!=[{'capability':g['capability'],'api':g['api']} for g in grants]:

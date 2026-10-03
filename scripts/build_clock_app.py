@@ -53,6 +53,7 @@ def build(launcher=False, returning=False):
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:
         manifest['requires'].insert(1,{'capability':'input.touch.raw','api':1})
+        manifest['requires'].append({'capability':'storage.key-value','api':1})
     (out/('clock.json' if returning else 'default.json')).write_text(json.dumps(manifest,indent=2)+'\n')
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,

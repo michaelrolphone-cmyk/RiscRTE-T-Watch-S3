@@ -69,6 +69,16 @@ static int32_t light_sleep(void *c,uint64_t token,bool high,risc_light_sleep_res
     }
     return RISC_LIGHT_SLEEP_INVALID;
 }
+static int32_t deep_sleep(void *c,uint64_t token,bool high) {
+    (void)c;
+    if (!started || !token) return RISC_DEEP_SLEEP_INVALID;
+    if (hw->struct_size<GARDEN_GPIO_DEEP_SLEEP_V1_SIZE || !hw->deep_sleep) return RISC_DEEP_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token) {
+        if (!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT)) return RISC_DEEP_SLEEP_INVALID;
+        return hw->deep_sleep(hw->context,slots[i].raw,high);
+    }
+    return RISC_DEEP_SLEEP_INVALID;
+}
 static bool quiesce(void) {
     for (size_t i = 0; i < 48; i++)
         if (slots[i].token)
@@ -91,5 +101,5 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     return true;
 }
 static const risc_gpio_bank_api_v1 api = {1,         sizeof(api), NULL,       claim_pin,
-                                          write_pin, read_pin,    release_pin, light_sleep};
+                                          write_pin, read_pin,    release_pin, light_sleep, deep_sleep};
 TW_DRIVER("twatch-gpio", "gpio.bank", 1, api)

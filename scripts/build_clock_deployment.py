@@ -83,10 +83,12 @@ def build(profile_path, root=ROOT, launcher=False):
                     {'capability':'input.touch.raw','api':1,'instance_id':6}]
             grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings') else None
             grants.append({'capability':'board.battery','api':1,'instance_id':4})
+            if name in ('default','clock','settings'):grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
             policy={'manifest':name+'.json','grants':grants}
             if name=='default':boot['app_capabilities'][0]=policy
             else:boot['app_capabilities'].append(policy)
         files['INSTALL.md']=(root/'docs/LAUNCHER_INSTALL.md').read_bytes()
+        files['DEEP_SLEEP.md']=(root/'docs/DEEP_SLEEP.md').read_bytes()
     selected = []
     artifact_paths = {}
     for device in board['devices']:

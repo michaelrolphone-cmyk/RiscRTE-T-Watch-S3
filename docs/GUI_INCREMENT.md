@@ -1,3 +1,6 @@
+> Historical 0.4.5 GUI milestone, physically accepted. Current 0.5.0 sleep
+> changes are documented in DEEP_SLEEP.md and guarded by SLEEP_BASELINE.json.
+
 # Watch GUI correction 0.4.5
 
 Built from physically improved0.4.4. Physical driver ELFs/manifests, seven mapped instances, board wiring and runtime remain byte-identical to the confirmed baseline.

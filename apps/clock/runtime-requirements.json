@@ -1,14 +1,18 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "a3d23da9cdc1b3a66c6429f29781856fa7fc8f75",
-  "firmware_version": "0.1.2",
+  "source_sha": "fe9d3c877ac98e52670d458f45b59fda8011a4fd",
+  "firmware_version": "0.1.5",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
     "provider_poll_total_budget_ms": 10,
-    "scheduler_waits_per_yield": 1
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true
   },
   "abi_changed": false,
-  "reason": "The clock display projection requires 40 MHz admission and bounded progress scheduling; older 10 MHz runtimes refuse this store."
+  "reason": "Owned deep sleep, static output retention, bounded namespace-scoped persisted settings and a pre-unload native retention barrier; accepted display scheduling unchanged."
 }

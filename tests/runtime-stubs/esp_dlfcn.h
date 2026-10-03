@@ -24,3 +24,7 @@ inline void* esp_dlopen_instance(const char* path) {
   void* result=ok?dlopen(tmp,RTLD_NOW|RTLD_LOCAL):nullptr;
   unlink(tmp); return result;
 }
+
+extern "C" void watch_test_unloading();
+inline int watch_test_dlclose(void* module) {watch_test_unloading();return dlclose(module);}
+#define dlclose watch_test_dlclose

@@ -48,8 +48,8 @@ class ClockPerformance(unittest.TestCase):
 
     def test_runtime_pair_is_explicit(self):
         runtime=json.loads((ROOT/'apps/clock/runtime-requirements.json').read_text())
-        self.assertEqual(runtime['source_sha'],'a3d23da9cdc1b3a66c6429f29781856fa7fc8f75')
-        self.assertEqual(runtime['firmware_version'],'0.1.2')
+        self.assertEqual(runtime['source_sha'],'fe9d3c877ac98e52670d458f45b59fda8011a4fd')
+        self.assertEqual(runtime['firmware_version'],'0.1.5')
         self.assertEqual(runtime['required_behavior']['provider_poll_max_quantum_ms'],8)
         self.assertEqual(runtime['required_behavior']['scheduler_waits_per_yield'],1)
         self.assertFalse(runtime['abi_changed'])
