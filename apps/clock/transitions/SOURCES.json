@@ -1,0 +1,8 @@
+{
+  "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+  "source_path": "lib/PortableApps/include/PortableTransition.h",
+  "vendored_path": "apps/clock/transitions/PortableTransition.h",
+  "sha256": "627e00b7c8143d946556f67a61803a56335f747dd8f6489bbfcabaef015542d2",
+  "source_pin": "apps/shared-sources.json:system-apps",
+  "contract": "Builder requires byte identity with the pinned shared source. All buffers remain application-owned; no provider or runtime ABI changes."
+}

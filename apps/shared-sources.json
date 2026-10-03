@@ -1,0 +1,10 @@
+{
+  "system-apps": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+    "commit": "fe8b509fd01e8202eba0a167bdcc1fc8c1da0f17"
+  },
+  "utilities": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+    "commit": "c440f15621ec8366ae8b8cb683822b1b0b91aa9e"
+  }
+}

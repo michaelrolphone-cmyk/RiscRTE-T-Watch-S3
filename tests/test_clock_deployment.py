@@ -13,7 +13,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class Deployment(unittest.TestCase):
     def test_all_variants_minimal_and_verified(self):
-        paths=list((ROOT/'dist/clock-deployments').glob('*.zip'))
+        version=json.loads((ROOT/'apps/clock/manifest.json').read_text())['version']
+        paths=list((ROOT/'dist/clock-deployments').glob('twatch-clock-'+version+'-*.zip'))
         self.assertEqual(len(paths),8)
         for path in paths:
             with self.subTest(path=path.name):
@@ -28,6 +29,11 @@ class Deployment(unittest.TestCase):
         selected=builder.selected_board(profile)
         self.assertEqual(json.dumps(profile),before)
         self.assertEqual({b['instance_id'] for b in selected['buses']},{101,103})
+        self.assertEqual(next(d for d in selected['devices'] if d['instance_id']==5)['config']['rotation'],2)
+        self.assertEqual(next(b for b in selected['buses'] if b['instance_id']==103)['frequency_hz'],40000000)
+        self.assertEqual(next(b for b in profile['buses'] if b['instance_id']==103)['frequency_hz'],10000000)
+        self.assertEqual(next(b for b in selected['buses'] if b['instance_id']==101),
+                         next(b for b in profile['buses'] if b['instance_id']==101))
         self.assertEqual({d['instance_id'] for d in selected['devices']},{1,2,4,5,8})
 
     def test_corruption_and_extra_grant_rejected(self):

@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Assemble verified launcher CI + exact paired runtime; never access a device."""
+import argparse,hashlib,io,json,re,struct,subprocess,tempfile,zipfile
+from pathlib import Path,PurePosixPath
+from verify_clock_deployment import verify
+ROOT=Path(__file__).resolve().parents[1]
+RUNTIME_SHA='a3d23da9cdc1b3a66c6429f29781856fa7fc8f75'
+RUNTIME_ZIP_SHA='aa735b17db5f8b5004da0a690a7dfbcd370e1f518f0558e8fdd0dfd6b755541e'
+def sha(b):return hashlib.sha256(b).hexdigest()
+def encoded(o):return (json.dumps(o,indent=2)+'\n').encode()
+def members(z):
+ names=z.namelist()
+ if len(names)!=len(set(names)) or any(PurePosixPath(n).is_absolute() or '..' in PurePosixPath(n).parts for n in names):raise ValueError('Unsafe or duplicate archive members')
+ if len(names)>1000 or sum(e.file_size for e in z.infolist())>160*1024*1024:raise ValueError('Archive exceeds bounded artifact limits')
+ return names
+def build(runtime,artifact,head,runtime_source,out):
+ if not re.fullmatch('[0-9a-f]{40}',head):raise ValueError('Exact PR head required')
+ subprocess.run(['git','diff','--exit-code',head,'--'],cwd=ROOT,check=True,stdout=subprocess.DEVNULL)
+ if subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=runtime_source,text=True).strip():raise ValueError('Runtime source must be clean')
+ if sha(runtime.read_bytes())!=RUNTIME_ZIP_SHA:raise ValueError('Runtime artifact differs from accepted exact pair')
+ if subprocess.check_output(['git','rev-parse','HEAD'],cwd=runtime_source,text=True).strip()!=RUNTIME_SHA:raise ValueError('Runtime source must match accepted pair')
+ with zipfile.ZipFile(runtime) as z:
+  members(z);rc=json.loads(z.read('candidate.json'))
+  assert rc['source_sha']==RUNTIME_SHA and rc['flash_bytes']==0x1000000 and rc['bootfs_offset']==0x310000 and rc['bootfs_bytes']==0x4f0000 and rc['usb_cdc_on_boot']
+  for n,e in rc['assets'].items():
+   data=z.read(n);assert len(data)==e['bytes'] and sha(data)==e['sha256']
+  components={n:z.read(n) for n in ('bootloader.bin','partitions.bin','firmware.bin')}
+  files={'reproduce/'+n:z.read(n) for n in ('platformio.ini','partitions.csv','requirements-ci.txt')}
+  for n in ('bootloader.bin','firmware.bin'):
+   b=components[n];assert b[0]==0xe9 and b[3]>>4==4 and struct.unpack_from('<H',b,12)[0]==9
+  assert RUNTIME_SHA.encode() in components['firmware.bin']
+ with zipfile.ZipFile(artifact) as z:
+  names=members(z)
+  common=[n for n in names if n.endswith('-launcher-common.zip')]
+  image=[n for n in names if n.endswith('-launcher-common-bootfs.bin')]
+  assert len(common)==len(image)==1
+  proof=json.loads(z.read(next(n for n in names if n.endswith('gui-increment-proof.json'))))
+  assert proof['label']=='0.4.5-gui' and proof['unchanged_file_count']==13
+  common_bytes=z.read(common[0]);image_bytes=z.read(image[0]);image_record=json.loads(z.read(image[0][:-4]+'.json'))
+  assert image_record['sha256']==sha(image_bytes) and image_record['deployment_sha256']==sha(common_bytes)
+  assert image_record['round_trip_verified'] and image_record['files']==24 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
+ with tempfile.TemporaryDirectory() as tmp:
+  p=Path(tmp)/'common.zip';p.write_bytes(common_bytes);record=verify(p)
+ assert record['profile']=='launcher-common' and record['pull_request_head_sha']==head and record['source_sha']==head
+ assert record['source_sha']==image_record['watch_source_sha'] and len(record['common_launcher']['inputs'])==8
+ assert record['runtime_requirements']['source_sha']==RUNTIME_SHA and record['runtime_requirements']['firmware_version']==rc['firmware_version']
+ version=record['app_version'];assert re.fullmatch(r'\d+\.\d+\.\d+',version)
+ with zipfile.ZipFile(io.BytesIO(common_bytes)) as z:
+  members(z)
+  store={n:z.read(n) for n in z.namelist() if n.startswith('store/')};assert len(store)==24
+  assert proof['variant_store_sha256']=={n.removeprefix('store/'):sha(b) for n,b in sorted(store.items())}
+  baseline=json.loads((ROOT/'docs/GUI_BASELINE.json').read_text())
+  assert proof['baseline_store_sha256']==baseline['baseline_store_sha256']
+  changed=sorted(n.removeprefix('store/') for n,b in store.items() if sha(b)!=baseline['baseline_store_sha256'].get(n.removeprefix('store/')))
+  assert changed==sorted(baseline['changed_store_files'])
+  board=json.loads(store['store/board.json']);assert {d['instance_id'] for d in board['devices']}=={1,2,3,4,5,6,8}
+  assert next(b for b in board['buses'] if b['instance_id']==103)['frequency_hz']==40000000
+  assert next(d for d in board['devices'] if d['instance_id']==5)['config']['rotation']==2
+  files.update({n:z.read(n) for n in z.namelist() if n.startswith(('licenses/','shared/')) or n in ('INSTALL.md','CROWN_SLEEP.md','PMU_BATTERY.md','time-policy.json','settings-time-policy.json','runtime-requirements.json')})
+ files.update(store)
+ files.update({'licenses/'+p.name:p.read_bytes() for p in (ROOT/'licenses').glob('*') if p.is_file()})
+ files['licenses/BOOT_WORDMARK_LICENSE.txt']=(ROOT/'apps/clock/effects/reference/BOOT_WORDMARK_LICENSE.txt').read_bytes()
+ files['reproduce/RUNTIME-LICENSE']=(runtime_source/'LICENSE').read_bytes()
+ files['provenance/gui-increment-proof.json']=encoded(proof)
+ files['GUI_INCREMENT.md']=(ROOT/'docs/GUI_INCREMENT.md').read_bytes()
+ files['provenance/runtime-candidate.json']=encoded(rc)
+ files['provenance/common-deployment.zip']=common_bytes
+ files['provenance/bootfs.json']=encoded(image_record)
+ components['bootfs.bin']=image_bytes
+ merged=bytearray(b'\xff'*0x800000);parts=[];cursor=0
+ for name,offset in [('bootloader.bin',0),('partitions.bin',0x8000),('firmware.bin',0x10000),('bootfs.bin',0x310000)]:
+  data=components[name];assert offset>=cursor and offset+len(data)<=len(merged)
+  merged[offset:offset+len(data)]=data;files['components/'+name]=data;cursor=offset+len(data)
+  parts.append({'file':'components/'+name,'offset':hex(offset),'size_bytes':len(data),'sha256':sha(data)})
+ cursor=0
+ for part in parts:
+  offset=int(part['offset'],16);assert all(v==255 for v in merged[cursor:offset]);assert merged[offset:offset+part['size_bytes']]==files[part['file']];cursor=offset+part['size_bytes']
+ assert all(v==255 for v in merged[cursor:])
+ manifest={'schema':1,'target':'Original/non-Plus LILYGO T-Watch-S3,16MB flash/8MB OPI PSRAM','app_version':version,'runtime_version':rc['firmware_version'],'runtime_commit':RUNTIME_SHA,'watch_pr_head':head,'runtime_artifact_sha256':sha(runtime.read_bytes()),'watch_artifact_sha256':sha(artifact.read_bytes()),'flash_start':0,'overwrite_bytes':len(merged),'flash_capacity_bytes':0x1000000,'merged_sha256':sha(merged),'components':parts,'clock_policy':record['clock_policy'],'time_policy':record['time_policy'],'settings_time_policy':json.loads(files['settings-time-policy.json']),'store':[{'path':n.removeprefix('store/'),'size_bytes':len(b),'sha256':sha(b)} for n,b in sorted(store.items())],'physical_verification':'Pending; host/model/target CI are not hardware qualification'}
+ manifest['configuration_variant']='0.4.5-gui'
+ manifest['changed_from_0_4_0']=changed
+ files['manifest.json']=encoded(manifest)
+ name=f'twatch-s3-launcher-{version}.bin';files[name]=bytes(merged)
+ files['FLASHING.md']=f'''# T-Watch-S3 launcher {version}\n\nTarget: original/non-Plus T-Watch-S3,16MB flash and8MB OPI PSRAM.\nMerged BIN address:0x0. This replaces the first8MiB, including NVS/settings; upper8MiB is untouched. Keep the physically confirmed0.4.0 and0.4.0-touch-direction images for recovery. No flashing was performed.\n\nClock opens shared Springboard by swipe with a retained-frame blur crossfade; held drag continues, and root Back from Settings/Battery returns to Springboard. Springboard Back returns through the normal Clock entry, which fades in without replaying boot intro. Crown in Clock retains light sleep. Settings displays Denver and inverse-converts saves to the existing RTC UTC+08 basis. A spring gap is rejected and a fall fold requires explicit MDT/MST. Brightness remains gated until a complete fresh frame after cold activation/wake.\n\nTo flash after your own backup/decision, close serial monitors and replace PORT:\n\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nComponents: bootloader0x0; partitions0x8000; runtime0x10000; bootfs0x310000.\nWatch source:{head}\nRuntime source:{RUNTIME_SHA}\nMerged SHA256:{sha(merged)}\n\nThe original0.4.0 panel, PMU, all physical driver ELFs, board wiring and runtime remain byte-identical. Only GUI application/policy files change. Boot/normal-return entry separation, faster retained handoffs, explicit return targets, gesture sampling and retained-GRAM wake protection have software checks; physical behavior and repeated wake still need hardware observation. No deep/ultra sleep or partial-frame optimization is included.\n'''.encode()
+ files['SHA256SUMS']=''.join(f'{sha(b)}  {n}\n' for n,b in sorted(files.items())).encode()
+ out.mkdir(parents=True,exist_ok=True);(out/name).write_bytes(merged)
+ archive=out/f'twatch-s3-launcher-{version}-flashing.zip'
+ with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+  for n,b in sorted(files.items()):
+   entry=zipfile.ZipInfo(n,(2026,1,1,0,0,0));entry.compress_type=zipfile.ZIP_DEFLATED;entry.external_attr=0o100644<<16;z.writestr(entry,b)
+ with zipfile.ZipFile(archive) as z:
+  assert z.testzip() is None
+  for n,b in files.items():assert z.read(n)==b
+ result={'head':head,'version':version,'bin':str(out/name),'bin_sha256':sha(merged),'zip':str(archive),'zip_sha256':sha(archive.read_bytes()),'members':len(files)}
+ (out/'bundle-record.json').write_bytes(encoded(result));print(json.dumps(result,indent=2));return result
+if __name__=='__main__':
+ p=argparse.ArgumentParser(description=__doc__)
+ for n in ('runtime','artifact','runtime-source','output'):p.add_argument('--'+n,required=True,type=Path)
+ p.add_argument('--pr-head',required=True);a=p.parse_args()
+ build(a.runtime,a.artifact,a.pr_head,a.runtime_source,a.output)

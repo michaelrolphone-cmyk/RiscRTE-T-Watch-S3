@@ -145,3 +145,13 @@ all target ELFs, checks app behavior, and retains eight explicitly selected,
 hashed deployment bundles plus representative display frames in the
 `twatch-clock-deployments` artifact. Physical testing is pending; generic native
 backend support must be verified in the selected runtime build before use.
+
+
+## Optional NOVA launcher and basic Settings
+
+The separate PR5 bundle keeps Clock as the default and adds the shared
+Springboard, Battery and Settings applications. It includes continuous
+swipe-to-launcher handoff, explicit180-degree touch mapping, seven physical
+driver instances, Denver display/inverse RTC policy and first-safe-frame
+backlight gating. See [launcher build and verification](docs/LAUNCHER_INSTALL.md).
+The accepted PR6 clock0.3.1 bundle is preserved unchanged.
