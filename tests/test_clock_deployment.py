@@ -13,7 +13,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class Deployment(unittest.TestCase):
     def test_all_variants_minimal_and_verified(self):
-        paths=list((ROOT/'dist/clock-deployments').glob('*.zip'))
+        version=json.loads((ROOT/'apps/clock/manifest.json').read_text())['version']
+        paths=list((ROOT/'dist/clock-deployments').glob('twatch-clock-'+version+'-*.zip'))
         self.assertEqual(len(paths),8)
         for path in paths:
             with self.subTest(path=path.name):
