@@ -54,8 +54,17 @@ int main(void) {
     m_busy = m_config.busy;
 #endif
 #if TEST_KIND == 5
-    /* Both 10MHz and alternate 2MHz fixtures verify every init/command/row begin. */
+    /* 10MHz, alternate2MHz and deployment40MHz verify every SPI begin. */
     m_expected_spi_hz = m_config.bus.frequency_hz;
+    const uint32_t original_hz = m_config.bus.frequency_hz;
+    m_config.bus.frequency_hz = 40000001;
+    assert(!d->start(m_deps,n) && !m_live);
+    m_config.bus.frequency_hz = 0;
+    assert(!d->start(m_deps,n) && !m_live);
+    m_config.bus.frequency_hz = original_hz;
+    assert(tw_bus_limit(&m_config.bus,RISC_HW_BUS_SPI,40000000));
+    if (original_hz>10000000) assert(!tw_bus(&m_config.bus,RISC_HW_BUS_SPI));
+    assert(!tw_bus_limit(&m_config.bus,99,40000000));
     int16_t original_pin = m_config.backlight;
     m_config.backlight = -1;
     assert(!d->start(m_deps, n));

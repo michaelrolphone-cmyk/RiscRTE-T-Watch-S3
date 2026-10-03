@@ -43,7 +43,7 @@ class CommonClock(unittest.TestCase):
         cls.root.mkdir()
         for name in ('hardware', 'drivers'):
             shutil.copytree(ROOT / name, cls.root / name)
-        for name in ('board.json', 'apps/clock/manifest.json', 'sdk/app/SOURCES.json',
+        for name in ('board.json', 'apps/clock/manifest.json', 'apps/clock/runtime-requirements.json', 'sdk/app/SOURCES.json',
                      'releases/board-baseline.json', 'docs/CLOCK_INSTALL.md', 'docs/CROWN_SLEEP.md'):
             target = cls.root / name
             target.parent.mkdir(parents=True, exist_ok=True)

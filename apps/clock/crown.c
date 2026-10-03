@@ -40,6 +40,14 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     bool valid=rtc && rtc->read(rtc->context,&date) && tw_valid_time(&date);
     return watch_clock_render(surface,&date,valid,now/1000);
 }
+static bool pace_frame(uint32_t began) {
+    uint32_t now;
+    if (!alive(&now)) return false;
+    uint32_t spent = now - began;
+    /* Presentation time already counts toward the 20ms animation interval. */
+    if (spent < 20u) rt->yield_ms(20u - spent);
+    return true;
+}
 static bool ripple(bool outgoing) {
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -57,7 +65,7 @@ static bool ripple(bool outgoing) {
         }
         if (!watch_ripple_render(&s,scan) || !present()) return false;
         if (scan==15) return true;
-        rt->yield_ms(20);
+        if (!pace_frame(now)) return false;
     }
     return false;
 }
@@ -71,7 +79,7 @@ static bool startup(void) {
         uint32_t age=now-start;
         if (!watch_boot_render(&s,age>1800?1800:age) || !present()) return false;
         if (age>=1800) return true;
-        rt->yield_ms(20);
+        if (!pace_frame(now)) return false;
     }
     return false;
 }

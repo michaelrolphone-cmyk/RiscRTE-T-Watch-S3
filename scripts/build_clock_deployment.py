@@ -31,7 +31,11 @@ def selected_board(profile):
     pmu['config']['rails'] = [r for r in pmu['config']['rails'] if r['id'] in (1, 2)]
     if {r['id'] for r in pmu['config']['rails']} != {1, 2}:
         raise ValueError('Profile does not declare both required display rails')
-    next(d for d in board['devices'] if d['instance_id']==5)['config']['rotation']=2
+    panel = next(d for d in board['devices'] if d['instance_id'] == 5)
+    panel['config']['rotation'] = 2
+    # Manufacturer's exact Watch-S3 ST7789 setup uses40MHz. Keep the source
+    # eight-profile baseline and all unrelated buses unchanged.
+    next(b for b in board['buses'] if b['instance_id'] == panel['config']['bus_instance_id'])['frequency_hz'] = 40000000
     return board
 
 
@@ -43,13 +47,15 @@ def build(profile_path, root=ROOT):
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
+    runtime = json.loads((root / 'apps/clock/runtime-requirements.json').read_text())
     files = {'store/default.elf': (root / 'dist/clock/default.elf').read_bytes(),
              'store/board.json': encoded(board),
              'store/default.json': (root / 'apps/clock/manifest.json').read_bytes(),
              'source-profile.json': profile_path.read_bytes(),
              'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
              'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
-             'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes()}
+             'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes(),
+             'runtime-requirements.json': encoded(runtime)}
     boot = {'board': 'board.json', 'default_app': 'default.elf', 'drivers': [],
             'app_capabilities': [{'manifest': 'default.json', 'grants': [
                 {'capability': 'display.output', 'api': 1, 'instance_id': 5},
@@ -83,9 +89,10 @@ def build(profile_path, root=ROOT):
     record = {'schema': 'riscrte.watch-clock-deployment', 'schema_version': 1,
               'app_id': 'twatch-clock', 'app_version': version, 'source_sha': source_sha,
               'profile': profile['revision'], 'physical_verification': 'pending',
-              'runtime_sdk': sdk, 'drivers': selected,
+              'runtime_sdk': sdk, 'runtime_requirements': runtime, 'drivers': selected,
               'transformations': ['Select device instances1,2,4,5,8 and buses101,103',
-                                  'Limit PMU setup to declared ALDO2/ALDO3 rails1/2'],
+                                  'Limit PMU setup to declared ALDO2/ALDO3 rails1/2',
+                                  'Set selected display SPI bus103 to40MHz and rotation180'],
               'entries': [{'path': name, 'size_bytes': len(data), 'sha256': sha(data)}
                           for name, data in sorted(files.items())]}
     files['deployment-record.json'] = encoded(record)

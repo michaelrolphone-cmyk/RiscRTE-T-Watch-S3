@@ -12,7 +12,7 @@ static uint32_t epoch,frame_cost,present_started,present_polls,ready_at;
 static bool ready,stop_on_ready,fail_present;
 static uint32_t elapsed(void){return now-epoch;}
 static bool health(risc_runtime_health_v1*h){h->uptime_ms=now;return elapsed()<16000 && !(stop_on_ready&&ready);}
-static void yield(uint32_t n){assert(n==1||n==20);now+=n;}
+static void yield(uint32_t n){assert(n>=1&&n<=20);now+=n;}
 static bool diagnostic(const char*s){
  assert(!strncmp(s,"WATCH_CLOCK ",12));
  if(!strcmp(s,"WATCH_CLOCK ready crown=enabled")){ready=true;ready_at=elapsed();}
@@ -21,7 +21,7 @@ static bool diagnostic(const char*s){
 static bool info(void*c,risc_display_info_v1*s){(void)c;s->width=s->height=240;return true;}
 static bool acquire_frame(void*c,uint32_t f,risc_display_surface_v1*s){(void)c;assert(!held&&!pending&&!panel_asleep&&f==5);held=true;*s=(risc_display_surface_v1){1,pixels,240,240,480,sizeof(pixels),5};return true;}
 static void release_frame(void*c,uint64_t t){(void)c;assert(t==1&&held);held=false;}
-static bool submit(void*c,uint64_t f,const risc_display_rect_v1*d,size_t n,const risc_display_present_options_v1*o,uint64_t*t){(void)c;(void)d;(void)n;(void)o;assert(f==1&&held&&!pending);held=false;pending=true;present_started=now;*t=++frames;return true;}
+static bool submit(void*c,uint64_t f,const risc_display_rect_v1*d,size_t n,const risc_display_present_options_v1*o,uint64_t*t){(void)c;(void)d;(void)n;(void)o;assert(f==1&&held&&!pending);if(stop_on_ready && frame_cost>=20 && frames)assert((uint32_t)(now-present_started)==frame_cost);held=false;pending=true;present_started=now;*t=++frames;return true;}
 static bool present(void*c,uint64_t t,risc_display_present_status_v1*s){
  (void)c;assert(t==frames&&pending);present_polls++;
  if(fail_present&&present_polls==3){pending=false;s->state=RISC_DISPLAY_PRESENT_FAILED;}

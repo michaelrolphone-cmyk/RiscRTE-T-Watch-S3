@@ -25,7 +25,10 @@ jobs:
       - name: Release automation tests
         run: python -m unittest discover -s tests -p 'test_*releases.py' -v
       - name: Host contract fixtures with UBSan
-        run: python scripts/test_contracts.py
+        run: |
+          python scripts/test_contracts.py
+          python scripts/test_panel_throughput.py
+          python -m unittest discover -s tests -p test_clock_performance.py -v
       - name: Target ABI, ELF imports and packages
         run: python scripts/build_twatch_drivers.py
       - name: Versioned board baseline

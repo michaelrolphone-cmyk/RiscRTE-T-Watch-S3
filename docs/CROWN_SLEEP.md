@@ -1,4 +1,4 @@
-# Crown clock 0.2.1
+# Crown clock 0.2.2
 
 Separate successor to the preserved 0.1.0 clock image. The user confirmed that
 0.1.0 runs on battery after correcting wiring; this is not qualification of the
@@ -66,7 +66,7 @@ elapsed-time budget (at most 20 ms), passes only the remaining timeout to each
 transaction, and caps a poll at 32 rows even if the clock stops advancing.
 A new row requires at least the original 2 ms allowance and its calculated wire
 time; a 1 ms remainder is not used with the backend's coarse-millisecond deadline. A
-completed final row publishes completion in that poll. SPI frequency is unchanged.
+completed final row publishes completion in that poll.
 The ripple selects its 16 scans by elapsed time and skips obsolete scans if a
 frame is slow; its final black frame still completes before sleep. This removes
 the compulsory sixteen slow transfers without extending the runtime poll budget.
@@ -79,10 +79,44 @@ presentation rather than blindly continuing. This reduces one frame from 1,440
 SPI exchange calls to 245 while retaining the same row/poll/deadline bounds.
 Actual physical frame rate still needs measurement.
 
+## 0.2.2 LCD throughput correction
+
+Hardware feedback confirmed the 0.2.1 address correction but still found low frame
+rate and skipped animation phases. The remaining limits were the 10 MHz software
+SPI ceiling, a 2 ms runtime provider quantum, duplicate runtime waits, and an
+unconditional 20 ms wait after each completed app frame. The paired correction
+uses an 8 ms maximum generic provider quantum within a 10 ms aggregate budget,
+one scheduler wait, and only the remaining part of the app's 20 ms frame interval.
+This changes complete-frame throughput, rather than merely hiding late frames.
+
+Only the clock deployment's selected display SPI bus is projected to 40 MHz.
+The eight source physical profiles remain unchanged at 10 MHz; no radio or IMU
+variant is selected. The exact manufacturer's T-Watch-S3 ST7789 setup below
+specifies 40 MHz with the same 240x240 geometry and display pins. Panel 0.3.2
+explicitly admits up to 40 MHz, while ordinary Watch SPI drivers retain their
+10 MHz limit and Watch I2C retains its 400 kHz limit. Local schema provenance
+records this derivation, preserving the upstream schema identity and C ABI.
+Board baseline 1.0.1 versions the changed schema/manifests.
+
+The 0.2.2 store requires RiscRTE firmware 0.1.2 at exact source
+`a3d23da9cdc1b3a66c6429f29781856fa7fc8f75`, recorded in
+`apps/clock/runtime-requirements.json` and each deployment record. The previous
+3d0ae01065c00d4f7285dd0a4433a1326125ed10 runtime rejects its 40 MHz bus and must not
+be reused with this store. The combined deliverable records the exact runtime
+and Watch source commits; the app SDK layout is unchanged.
+
+A deadline-aware host regression executes the production panel/provider code,
+including all 245 exchanges and 115,200 pixel bytes. With explicit transport
+costs of 0/100/250 microseconds per exchange, old-policy frames take approximately
+460/585/765 ms and corrected-policy frames 31/56/96 ms. These controlled test
+scenarios are not measurements of a physical watch and do not establish a
+hardware frame-rate guarantee.
+
 ## Primary sources
 
 - [LILYGO schematic, 2025-03-24](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/schematic/T_WATCH-S3%2025-03-24.pdf): SW7 Power Key connects PWR_KEY to AXP2101 PWRON; PMU_IRQ1 routes to GPIO21. No rotary encoder channels were established.
 - [ST7789V3 datasheet v0.1, sections 8.5 and 8.6](https://files.waveshare.com/upload/c/c1/ST7789V3_V0.1.pdf#page=59): frame-memory writes pause at completed bytes when chip select is released and continue from the retained pointer; these modes apply to serial and parallel interfaces.
+- [Manufacturer T-Watch-S3 TFT setup, pinned commit 9884d6](https://github.com/Xinyuan-LilyGO/TTGO_TWatch_Library/blob/9884d62113cd2f7aa77cd179c346b9017eb08301/extras/Setup212_LilyGo_T_Watch_S3.h): ST7789_DRIVER, 240x240, matching pins and SPI_FREQUENCY 40000000; exact Git blob 3273ca23cc7016b4fd210eb0711ba891a823e7bb.
 - [LILYGO display rotation](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/src/display/LilyGoDispInterface.cpp#L717-L741): mirror(true,true) pairs with the 80-row RAM gap; mirror(false,false) pairs with zero gap. Its rotation labels use a different baseline from the Watch package.
 - [LILYGO Watch initialization and lightSleep](https://github.com/Xinyuan-LilyGO/LilyGoLib/blob/92f2ac3f90944edd4c1ba293d4a4ca8d3f524e43/src/LilyGoWatchS3.cpp): power-key wake uses PMU_INT, short-press IRQ, display sleep, and retained display/touch supply.
 - [AXP2101 datasheet v1.4](https://github.com/lewisxhe/XPowersLib/blob/d6997586e68f65afd51baa775903df930db39821/datasheet/AXP2101_Datasheet_V1.4_en.pdf): PWRON events, IRQ enables/status and write-one-to-clear semantics.

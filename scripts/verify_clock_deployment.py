@@ -25,6 +25,12 @@ def verify(path):
         boot=json.loads(z.read('store/boot.json'))
         board=json.loads(z.read('store/board.json'))
         app=json.loads(z.read('store/default.json'))
+        if tuple(map(int,app['version'].split('.'))) >= (0,2,2):
+            runtime=record.get('runtime_requirements')
+            if (not runtime or json.loads(z.read('runtime-requirements.json')) != runtime or
+                    runtime.get('source_sha') != 'a3d23da9cdc1b3a66c6429f29781856fa7fc8f75' or
+                    runtime.get('required_behavior', {}).get('spi_max_hz') != 40000000):
+                raise ValueError('Missing or mismatched corrected runtime requirement')
         if boot['default_app']!='default.elf' or app['file_name']!='default.elf' or app['entry']!='app_main':
             raise ValueError('Default application path mismatch')
         if {d['instance_id'] for d in boot['drivers']}!={1,2,4,5,8} or len(boot['drivers'])!=5:

@@ -15,7 +15,7 @@ static bool hw_start(const risc_provider_dependency_v1 *d, size_t n) {
     if (spi_claim || !gpio_clean())
         return false;
     config = tw_config(d, n, "sitronix,st7789v3", "display.spi", sizeof(*config));
-    if (!config || config->width != 240 || config->height != 240 || !tw_bus(&config->bus, 1) ||
+    if (!config || config->width != 240 || config->height != 240 || !tw_bus_limit(&config->bus, RISC_HW_BUS_SPI, 40000000) ||
         !tw_pin(config->cs) || !tw_pin(config->dc) || !tw_pin(config->backlight) ||
         config->busy != -1 || config->power_count || config->offset_x || config->offset_y ||
         (config->rotation != 0 && config->rotation != 2) || config->reserved[0] || config->reserved[1] || config->reserved[2] ||

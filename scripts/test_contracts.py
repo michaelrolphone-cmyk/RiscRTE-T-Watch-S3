@@ -35,13 +35,16 @@ def config(entry,buses,alternate):
     return typ,c
 def main():
     gen=generate();cc=os.environ.get('CC','clang');total=0
-    for alternate in (False,True):
+    for variant in range(3):
+        alternate=variant!=0
         board=json.loads((ROOT/'hardware'/('sx1280-2400-bma456h.json' if alternate else 'sx1262-915-bma423.json')).read_text());buses={b['instance_id']:b for b in board['buses']}
         for kind,entry in enumerate(board['devices'],1):
+            if variant==2 and kind!=5:continue
             mp=next(p for p in (ROOT/'drivers').glob('*/manifest.json') if any(h['compatible']==entry['compatible'] and h['config_type']==entry['config_type'] for h in json.loads(p.read_text()).get('hardware_compatibility',[])));entry['driver']=json.loads(mp.read_text())['id'];src=next(mp.parent.glob('*.c'));typ,c=config(entry,buses,alternate)
+            if variant==2:c['bus']['frequency_hz']=40000000
             config_header=f'static {typ} m_config={initializer(c)};\nstatic risc_hardware_device_v1 m_device={{1,sizeof(m_device),{entry["instance_id"]},"{entry["compatible"]}","unspecified","{entry["config_type"]}",1,sizeof(m_config),&m_config}};\n'
             (gen/'fixture_config.h').write_text(config_header)
-            out=ROOT/'dist'/f'test-{entry["driver"]}-{int(alternate)}'
+            out=ROOT/'dist'/f'test-{entry["driver"]}-{variant}'
             args=[cc,'-std=c11','-g','-fsanitize=undefined','-fno-sanitize-recover=all','-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),'-I'+str(gen),'-I'+str(ROOT),f'-DTEST_KIND={kind}',f'-DDRIVER_SOURCE="{src}"',str(ROOT/'tests/driver_test.c'),'-o',str(out)]
             subprocess.run(args,check=True);subprocess.run([str(out)],check=True);total+=1
     # Catalog selection has no hardware dependencies.

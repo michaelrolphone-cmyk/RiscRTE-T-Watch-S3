@@ -22,6 +22,10 @@ static uint16_t m_panel_first, m_panel_last;
 static unsigned m_panel_columns, m_panel_windows, m_panel_ramwrites, m_panel_exchanges;
 static unsigned m_panel_data_attempts, m_spi_ends;
 static bool m_spi_active, m_panel_have_columns, m_panel_have_rows;
+/* Deterministic transport model used only by the throughput regression. */
+static bool m_panel_model;
+static uint64_t m_panel_model_us, m_panel_model_deadline_us;
+static uint32_t m_panel_model_hz, m_panel_model_overhead_us;
 #endif
 static uint8_t m_pin[512], m_regs[256], m_op, m_phase;
 static uint16_t m_irq;
@@ -96,11 +100,17 @@ static risc_gpio_bank_api_v1 m_bank = {1,        sizeof(m_bank), NULL,  m_bank_c
                                        m_gwrite, m_gread,        m_free, m_light_sleep};
 static uint64_t m_time(void *c) {
     (void)c;
+#if TEST_KIND == 5
+    if (m_panel_model) return m_panel_model_us / 1000u;
+#endif
     return m_now;
 }
 static void m_sleep(void *c, uint32_t n) {
     (void)c;
     m_now += n;
+#if TEST_KIND == 5
+    if (m_panel_model) m_panel_model_us += (uint64_t)n * 1000u;
+#endif
 }
 static risc_platform_clock_api_v1 m_clock = {1, sizeof(m_clock), NULL, m_time, m_sleep};
 static bool m_iclaim(void *c, uint8_t a, uint64_t *t) {
@@ -167,6 +177,10 @@ static bool m_begin(void *c, uint64_t t, uint32_t hz, uint8_t mode, uint32_t ms)
     m_spi_timeouts[m_spi_begins++ % 512] = ms;
     assert(!m_spi_active);
     if (!m_fail_io) m_spi_active = true;
+    if (m_panel_model) {
+        m_panel_model_hz = hz;
+        m_panel_model_deadline_us = (m_panel_model_us / 1000u + ms) * 1000u;
+    }
 #endif
     return !m_fail_io;
 }
@@ -177,6 +191,13 @@ static bool m_exchange(void *c, uint64_t t, const uint8_t *tx, uint8_t *rx, size
         return false;
 #if TEST_KIND == 5
     assert(m_spi_active && tx && !rx);
+    if (m_panel_model) {
+        const uint64_t wire_us = ((uint64_t)n * 8000000u + m_panel_model_hz - 1u) / m_panel_model_hz;
+        if (m_panel_model_us >= m_panel_model_deadline_us ||
+            m_panel_model_us + wire_us + m_panel_model_overhead_us > m_panel_model_deadline_us)
+            return false;
+        m_panel_model_us += wire_us + m_panel_model_overhead_us;
+    }
     bool dc = false, found_dc = false;
     for (size_t i = 1; i < 512; i++)
         if (m_tokens[i] && m_pin[i] == m_panel_dc_pin) {
