@@ -34,7 +34,7 @@ def main():
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
-                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/render.c'),str(ROOT/'apps/clock/effects/ripple.c'),str(effect_obj),
+                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/render.c'),str(ROOT/'apps/clock/effects/ripple.c'),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
     readelf = cc.removesuffix('gcc')+'readelf'
     nm = cc.removesuffix('gcc')+'nm'
