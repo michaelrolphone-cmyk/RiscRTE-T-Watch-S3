@@ -42,6 +42,15 @@ jobs:
           python scripts/verify_clock_deployment.py dist/clock-deployments/*.zip
           python -m unittest discover -s tests -p test_clock_deployment.py -v
           python scripts/clock_frame_fixtures.py
+      - name: Pinned SPIFFS tool and verified store images
+        env:
+          PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+          for bundle in dist/clock-deployments/*.zip; do
+            python scripts/build_clock_store.py "$bundle" --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-clock-deployments
@@ -54,6 +63,8 @@ jobs:
             dist/clock-frames/*.png
             dist/clock-frames/*.rgb565
             dist/clock-frames/expected.json
+            dist/clock-images/*.bin
+            dist/clock-images/*.json
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:

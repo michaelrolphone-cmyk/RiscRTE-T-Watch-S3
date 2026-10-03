@@ -64,6 +64,30 @@ configuration. Use matching firmware, bootloader, partition table and SPIFFS
 artifacts from that one build; never combine images from unrelated revisions.
 Store mounting must remain non-formatting on failure.
 
+## Optional verified SPIFFS image
+
+CI also uses pinned PlatformIO `tool-mkspiffs@2.230.0` to build a separate bootfs
+image for every explicit profile, then unpacks each image and compares all14
+files byte-for-byte with its deployment ZIP. The image size is0x4f0000, page256,
+block4096. The adjacent JSON records the deployment checksum, image checksum,
+tool executable checksum, source revision, partition offset and round-trip result.
+These files are in the same CI artifact under `clock-images/`.
+
+To reproduce one locally after verifying its bundle:
+
+```sh
+.venv/bin/python scripts/build_clock_store.py \
+  dist/clock-deployments/twatch-clock-0.1.0-<profile>.zip \
+  --mkspiffs /path/to/tool-mkspiffs/mkspiffs_espressif32_arduino
+```
+
+The script never flashes. The output is a **store image only**, not runtime
+firmware or a bootloader. Use it only with the matching explicit partition table
+and a generic runtime build that supplies the required native backends. Image
+checksums are recorded per build; cross-platform filesystem-tool binaries are
+not claimed to produce identical physical SPIFFS layouts. Payload round-trip
+identity is checked on every build.
+
 ## Expected behavior and morning checks
 
 The app draws a240x240 RGB565 digital clock, RTC date, and uptime. It reads the
