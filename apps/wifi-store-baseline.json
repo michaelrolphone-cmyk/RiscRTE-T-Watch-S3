@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "watch_source": "c3a43464cb5beedf02d82ba4dcdf77e27a224079",
+  "bin_sha256": "96f46a82ad159680d2984711e135fa4e274666698163a3b22aa56db3b38164bb",
+  "files": {
+    "alarm-service/driver.elf": {
+      "size_bytes": 28396,
+      "sha256": "f70d5b42fb2dc255538970c3240083b21e714913c0e589f913731cf63abadeec"
+    },
+    "alarm-service/manifest.json": {
+      "size_bytes": 677,
+      "sha256": "0b8e21efa559cdd86b390e0ff631e5d21adb791539910232350ef5853e7ae29e"
+    },
+    "alarms.elf": {
+      "size_bytes": 69204,
+      "sha256": "ecdcbb99294e348bcc460f120c86e288570c6257b45d5169ad11bcb04067fa05"
+    },
+    "alarms.json": {
+      "size_bytes": 569,
+      "sha256": "67eff2ce5b4cd58446f65c788b8edf86152b72a2e745c2bbe9d0e23229528c4f"
+    },
+    "battery.elf": {
+      "size_bytes": 61964,
+      "sha256": "5e27f8460328b407816256e3721c1da6e89159a5159e7cb41e1956b43b9766ab"
+    },
+    "battery.json": {
+      "size_bytes": 441,
+      "sha256": "79cc9f02da91a9e8adf1e6b7fed5b58be18d99bd693126f24814c72f08a97b20"
+    },
+    "board.json": {
+      "size_bytes": 6374,
+      "sha256": "7e5734dd0494606bab0eefda1d95c80d790803775112c2f4918a28bd1e6c39a7"
+    },
+    "boot.json": {
+      "size_bytes": 9647,
+      "sha256": "dd38a526440eb7eae9386c2e21c47524e2f716e40021a69b922c614fe3d883d4"
+    },
+    "calculator.elf": {
+      "size_bytes": 68668,
+      "sha256": "185cda843b5cf101c4e53e9594b4f6ef76a451de8e7f77b04ba8f8e338e0ef22"
+    },
+    "calculator.json": {
+      "size_bytes": 447,
+      "sha256": "bb2c16ad597f79d4c35defde85c4c257d837cc504101631ffcb09a39a750408a"
+    },
+    "clock.elf": {
+      "size_bytes": 829156,
+      "sha256": "8721e108c89c4faeb0a47695ea24ea0cbc2e1f8386733302181f5a83f02431ab"
+    },
+    "clock.json": {
+      "size_bytes": 581,
+      "sha256": "859c016d8292a42092094a25635371bfd07d3ec1889842efdc0c70aea630de2d"
+    },
+    "countdown.elf": {
+      "size_bytes": 67760,
+      "sha256": "d85e1d9d2591e1daa6a462792aa7ec7278bc3d1d983a25b4af737ab1522074f6"
+    },
+    "countdown.json": {
+      "size_bytes": 575,
+      "sha256": "d0917f6b6de9cc4c0e65780846899d3cda1650add5a98961252ba637491978b2"
+    },
+    "default.elf": {
+      "size_bytes": 828276,
+      "sha256": "561c95c65a2d8bd3a9f1e8b0beb1590dda626d41dfd19c40a6745a8b3a01064f"
+    },
+    "default.json": {
+      "size_bytes": 576,
+      "sha256": "3cc814263468a631d4210cc6c6af7e9656db5a1982c8d336eea3feb7312a152c"
+    },
+    "gpio/driver.elf": {
+      "size_bytes": 5284,
+      "sha256": "d4eae1b73fb8994af9b38bea2f214c384cf672e85d8945bbd560dfca2c1089b4"
+    },
+    "gpio/manifest.json": {
+      "size_bytes": 689,
+      "sha256": "17c15220f29aff5c2407680e9a762124211081e1a65d7167d85924501cead5aa"
+    },
+    "haptic/driver.elf": {
+      "size_bytes": 4516,
+      "sha256": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30"
+    },
+    "haptic/manifest.json": {
+      "size_bytes": 738,
+      "sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1"
+    },
+    "i2c/driver.elf": {
+      "size_bytes": 4968,
+      "sha256": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579"
+    },
+    "i2c/manifest.json": {
+      "size_bytes": 694,
+      "sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b"
+    },
+    "panel/driver.elf": {
+      "size_bytes": 12604,
+      "sha256": "a7cddc560dc83e9a7ea8f408ed17637098bdc64fb9b02b028749f49c9d782aad"
+    },
+    "panel/manifest.json": {
+      "size_bytes": 876,
+      "sha256": "8d7ab89dd35c8e8dfc3766e11e0ab51ee0c053fbc4b904617eef86e3ccc5be61"
+    },
+    "pmu/driver.elf": {
+      "size_bytes": 8420,
+      "sha256": "507e11ecba4ad5c4007ba28e7d0589ccc20e0d0fc7a70db650d7fd7018815c5d"
+    },
+    "pmu/manifest.json": {
+      "size_bytes": 805,
+      "sha256": "5c007c8c2d245b940064c70aaab01d1a6d22edb52ff5ec61af5f786a7c36ccb2"
+    },
+    "points_in_time.elf": {
+      "size_bytes": 74076,
+      "sha256": "ae2caf39189ddb71ba6eb3c0d0e217e1ea997e87bf2a784a8489c1ff9741bc1c"
+    },
+    "points_in_time.json": {
+      "size_bytes": 585,
+      "sha256": "c457ba127dcd59ec11ddca61612e39540db273ca0be3801c240f0ab3674bcce0"
+    },
+    "rtc/driver.elf": {
+      "size_bytes": 6108,
+      "sha256": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756"
+    },
+    "rtc/manifest.json": {
+      "size_bytes": 731,
+      "sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e"
+    },
+    "settings.elf": {
+      "size_bytes": 116044,
+      "sha256": "d7f619722ffc1294c6c3c255a93265904159f0b579996fdd0ac5af0a0c4c26de"
+    },
+    "settings.json": {
+      "size_bytes": 573,
+      "sha256": "864ed22296d7b354116bb064f478f0149ebf35ad2963236fc24a02cf95ac2fc0"
+    },
+    "speaker/driver.elf": {
+      "size_bytes": 5244,
+      "sha256": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e"
+    },
+    "speaker/manifest.json": {
+      "size_bytes": 689,
+      "sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0"
+    },
+    "springboard.elf": {
+      "size_bytes": 87264,
+      "sha256": "477a759933596dfd1d0bf4fcca478c0515249191ce88c5fedcc4ac6ffed4dc9c"
+    },
+    "springboard.json": {
+      "size_bytes": 510,
+      "sha256": "42ba31a0f48c22634871f15b39a57c5e559b676bf82cb501ce9db80ba7be4ca6"
+    },
+    "stopwatch.elf": {
+      "size_bytes": 67512,
+      "sha256": "d7d7938075a16aa98a753d82fd15a6c1aeaec646f400a5114e18847f11272ba1"
+    },
+    "stopwatch.json": {
+      "size_bytes": 575,
+      "sha256": "0dbb46af3d3d27ab57f5acdc7497b0bf14362f0e53741af0082c4ec4954b0f99"
+    },
+    "touch/driver.elf": {
+      "size_bytes": 8604,
+      "sha256": "f15b964c77433f49414fc591e1960a614d617daecc7a8ae8b4b3952109841ddc"
+    },
+    "touch/manifest.json": {
+      "size_bytes": 871,
+      "sha256": "aff7b544d1298a6e4a3c9318c7f208567ca09cde8513bdbe1a24706097d496ec"
+    },
+    "wifi/driver.elf": {
+      "size_bytes": 6080,
+      "sha256": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592"
+    },
+    "wifi/manifest.json": {
+      "size_bytes": 689,
+      "sha256": "1d127070ae492e36d910e4c4807ab5478eca7f7f2e09c1bad1ae5e103354431c"
+    },
+    "wifi_settings.elf": {
+      "size_bytes": 118988,
+      "sha256": "2296ebfca983c1f8fb9bc0dfc01df37acbc81005043a8af95dcc75d8982ab728"
+    },
+    "wifi_settings.json": {
+      "size_bytes": 643,
+      "sha256": "6e8c10ae14f4147e477f39c2e961c4835b76494cda05dd8e760e1393d0760e6a"
+    }
+  }
+}

@@ -208,9 +208,10 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
 static bool panel_prepare_sleep(void *context);
 static bool panel_resume(void *context);
 static int32_t panel_prepare_deep_sleep(void *context);
+static int32_t panel_resume_status(void *context);
 static const twatch_panel_power_v1 api = {{
     1, sizeof(api), NULL, get_info, acquire, release, submit, present_status,
-    wait_present, set_brightness}, panel_prepare_sleep, panel_resume, panel_prepare_deep_sleep};
+    wait_present, set_brightness}, panel_prepare_sleep, panel_resume, panel_prepare_deep_sleep, panel_resume_status};
 #else
 static const risc_display_output_api_v1 api = {
     1,       sizeof(api), NULL,           get_info,     acquire,

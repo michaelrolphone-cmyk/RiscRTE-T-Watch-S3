@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "source_sha": "8688f92069b99547f0d25ecbd12cfcad3bb52c53",
+  "firmware_version": "0.1.8",
+  "required_behavior": {
+    "spi_max_hz": 40000000,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true,
+    "owned_timed_light_sleep": true,
+    "owned_timed_deep_sleep": true,
+    "provider_bound_key_value": true,
+    "app_policy_capacity": 16,
+    "native_i2s_tx_cleanup": true
+  },
+  "abi_changed": false,
+  "reason": "Explicit alarm-service deployment with native output cleanup, exact key mapping and owned timed Light/Deep consumption."
+}

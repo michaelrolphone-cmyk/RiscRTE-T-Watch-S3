@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NOVA Watch Faces — 8 × 240×240</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--cap:#7d8c90;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:#000}
+body{min-height:100vh;padding:28px 16px;font-family:'Rajdhani','Segoe UI',sans-serif}
+h1{margin:0 0 24px;text-align:center;font:500 14px 'Orbitron','Segoe UI',sans-serif;letter-spacing:.3em;color:var(--cap)}
+#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:30px 16px;justify-items:center;max-width:1200px;margin:0 auto}
+figure{margin:0;text-align:center}
+.case{padding:12px;border-radius:34px;background:linear-gradient(145deg,#2a2d30,#0a0b0c);box-shadow:0 0 0 2px #1b1d1f,0 14px 30px #000}
+svg.w{display:block;width:240px;height:240px;border-radius:22px;background:#000;overflow:hidden}
+figcaption{margin-top:12px;font-size:13px;letter-spacing:.3em;color:var(--cap)}
+.f{fill:none}
+.o{font-family:'Orbitron','Rajdhani','Segoe UI',sans-serif}
+.r{font-family:'Rajdhani','Segoe UI',sans-serif}
+.m{font-family:'Share Tech Mono','Courier New',monospace}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+<h1>NOVA · 240 × 240</h1>
+<div id="grid"></div>
+<script>
+const R=Math.PI/180,p2=n=>('0'+n).slice(-2),G='filter="url(#g)"';
+const P=(r,a,x=120,y=120)=>[(x+r*Math.sin(a*R)).toFixed(1),(y-r*Math.cos(a*R)).toFixed(1)];
+const A=(r,a,b,x=120,y=120)=>{b=Math.min(b,a+359.9);return `M${P(r,a,x,y)} A${r} ${r} 0 ${b-a>180?1:0} 1 ${P(r,b,x,y)}`};
+const L=(a,r1,r2,c,w,x=120,y=120)=>{const u=P(r1,a,x,y),v=P(r2,a,x,y);return `<line x1="${u[0]}" y1="${u[1]}" x2="${v[0]}" y2="${v[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`};
+const X=(x,y,s,z,c,k='o',e='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${z}" fill="${c}" class="${k}" ${e}>${s}</text>`;
+const C=(x,y,r,c,e='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${e}/>`;
+const RC=(r,c,w,x=120,y=120)=>`<circle cx="${x}" cy="${y}" r="${r}" class="f" stroke="${c}" stroke-width="${w}"/>`;
+const S=(d,c,w,e='')=>`<path d="${d}" class="f" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const FIT='textLength="{w}" lengthAdjust="spacingAndGlyphs"';
+const fit=w=>FIT.replace('{w}',w);
+const batt=(y,w=7,g=2,lbl='BATT 84%',lc='#7d8c90')=>{const x0=120-(10*w+9*g)/2;let o=X(120,y-6,lbl,9,lc,'r','letter-spacing="2"');for(let i=0;i<10;i++)o+=`<rect x="${x0+i*(w+g)}" y="${y}" width="${w}" height="5" rx="1" fill="${i<8?'#3dff9a':'#0a2014'}"/>`;return o};
+const bar=(x,y,w,c,bg)=>`<rect x="${x}" y="${y}" width="${w}" height="3" rx="1.5" fill="${bg}"/><rect x="${x}" y="${y}" width="${(w*.84).toFixed(1)}" height="3" rx="1.5" fill="${c}"/>`;
+
+const F=[
+['NOVA',t=>{let o='';
+ for(let i=0;i<60;i++)o+=L(i*6,116,i%5?111:105,i%5?'#0e4f5c':'#19e3ff',i%5?1:2);
+ return o+RC(98,'#0b1719',2.5)+S(A(98,0,Math.max(t.sf*6,.5)),'#19e3ff',2.5,G)
+ +X(120,64,t.dt,12,'#19e3ff','r','letter-spacing="2.5"')
+ +X(120,128,`${t.h}<tspan fill="#19e3ff" fill-opacity="${t.blink?1:.25}">:</tspan>${t.m}`,40,'#fff','o','font-weight="700" '+fit(132))
+ +X(120,150,t.s,10,'#19e3ff')
+ +`<line x1="46" y1="158" x2="194" y2="158" stroke="#0e4f5c"/>`
+ +X(120,175,'BATTERY 84%',9,'#7d8c90','r','letter-spacing="2"')
+ +`<rect x="95" y="182" width="50" height="3" rx="1.5" fill="#0a2014"/><rect x="95" y="182" width="42" height="3" rx="1.5" fill="#3dff9a"/>`}],
+
+['ANALOG',t=>{let o='';
+ for(let i=0;i<60;i++){const b=i%5==0;o+=L(i*6,116,b?102:111,b?'#fff':'#444',b?(i%15?3:4):1)}
+ return o+X(120,84,'NOVA',10,'#888','r','letter-spacing="4"')+X(120,154,t.dt,11,'#888','r','letter-spacing="2"')+X(120,170,'BATT 84%',9,'#3dff9a','r','letter-spacing="2"')+bar(105,176,30,'#3dff9a','#0a2014')
+ +L(t.hf*30,-12,56,'#fff',6)+L(t.mf*6,-14,86,'#fff',4)+L(t.sf*6,-24,98,'#ff7a1a',1.6)
+ +C(120,120,6,'#000','stroke="#ff7a1a" stroke-width="2"')}],
+
+['RADAR',t=>{let o='';
+ [96,64,32].forEach(r=>o+=RC(r,'#0f3a24',1));
+ o+=L(0,-96,96,'#0f3a24',1)+L(90,-96,96,'#0f3a24',1)+RC(110,'#3dff9a',1.5);
+ for(let i=0;i<12;i++)o+=L(i*30,110,104,'#3dff9a',1.5);
+ const a=t.sf*6;
+ for(let i=19;i>=0;i--)o+=`<path d="M120 120 L${P(96,a-(i+1)*3)} L${P(96,a-i*3)} Z" fill="#3dff9a" fill-opacity="${((1-i/20)*.3).toFixed(2)}"/>`;
+ o+=L(a,0,96,'#3dff9a',1.5);
+ [[40,30],[70,140],[85,250],[25,200]].forEach(([r,g])=>{const d=((a-g)%360+360)%360;o+=C(...P(r,g),3,'#3dff9a',`fill-opacity="${Math.max(.12,1-d/200).toFixed(2)}"`)});
+ return o+X(120,128,t.h+':'+t.m,26,'#fff','o','stroke="#000" stroke-width="5" paint-order="stroke"')
+ +X(120,150,t.dt,10,'#3dff9a','r','letter-spacing="2" stroke="#000" stroke-width="4" paint-order="stroke"')
+ +`<rect x="68" y="162" width="104" height="24" rx="4" fill="#000" fill-opacity=".7"/>`+batt(176,7,2,'BATT 84%','#3dff9a')}],
+
+['HEX',t=>{const H=r=>[0,1,2,3,4,5].map(i=>P(r,i*60).join(',')).join(' ');
+ return `<polygon points="${H(112)}" class="f" stroke="#2a0f3a" stroke-width="3"/>`
+ +`<polygon points="${H(112)}" class="f" stroke="#c15bff" stroke-width="3" stroke-linejoin="round" pathLength="60" stroke-dasharray="${Math.max(t.sf,.3)} 60" ${G}/>`
+ +`<polygon points="${H(100)}" class="f" stroke="#2a0f3a" stroke-width="1"/>`
+ +X(120,58,t.dt,11,'#c15bff','r','letter-spacing="2.5"')
+ +X(120,110,t.h,54,'#fff','o','font-weight="700" '+fit(88))
+ +X(120,170,t.m,54,'#c15bff','o','font-weight="700" '+fit(88))
+ +X(120,198,'84%',12,'#3dff9a')}],
+
+['TERMINAL',t=>{const u=Math.floor(performance.now()/1000),d=t.d;
+ return `<path d="M30 54V40h14M210 54V40h-14M30 186v14h14M210 186v14h-14" class="f" stroke="#ffb020" stroke-width="1.5"/>`
+ +X(120,62,'&gt; NOVA.OS 7.2',11,'#ffb020','m')
+ +X(120,80,`UPTIME ${p2(u/3600|0)}:${p2(u/60%60|0)}:${p2(u%60)}`,10,'#2f9c66','m')
+ +X(120,122,`${t.h}:${t.m}:${t.s}`,34,'#3dff9a','m',fit(166))
+ +X(120,146,`DATE ${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`,11,'#3dff9a','m')
+ +X(120,164,'BATT ████████░░ 84%',11,'#3dff9a','m')
+ +X(120,184,t.blink?'&gt; █':'&gt;',11,'#ffb020','m')}],
+
+['MINIMAL',t=>X(120,60,t.dt,12,'#ff5a5f','r','letter-spacing="3"')
+ +X(120,126,`${t.h}<tspan fill="#ff5a5f">:</tspan>${t.m}`,56,'#fff','o','font-weight="500" '+fit(172))
+ +`<rect x="60" y="146" width="120" height="2" rx="1" fill="#1c1c1c"/><rect x="60" y="146" width="${(120*t.sf/60).toFixed(1)}" height="2" rx="1" fill="#ff5a5f"/>`
+ +batt(180,7,2)],
+
+['BINARY',t=>{const ds=(t.h+t.m+t.s).split('').map(Number),xs=[48,76,108,136,168,196],ys=[76,102,128,154];let o=RC(112,'#1a1204',1.5);
+ ds.forEach((v,i)=>ys.forEach((y,j)=>{const on=v>>(3-j)&1;o+=C(xs[i],y,8,on?'#ffb020':'#241a05',on?'':'')}));
+ return o+X(120,50,'B C D',10,'#ffb020','o','letter-spacing="6"')
+ +X(62,178,'HH',9,'#7d8c90','o')+X(122,178,'MM',9,'#7d8c90','o')+X(182,178,'SS',9,'#7d8c90','o')
+ +X(120,198,`${t.h}:${t.m}:${t.s}`,14,'#fff','o')+X(120,216,'BAT 84%',9,'#3dff9a','o','letter-spacing="2"')}],
+
+['CHRONO',t=>{let o='';
+ for(let i=0;i<60;i++){const b=i%5==0;o+=L(i*6,116,b?104:111,b?'#fff':'#555',b?3:1)}
+ o+=X(120,84,'NOVA',10,'#ff7a1a','r','letter-spacing="4"')+X(120,160,'CHRONO',9,'#888','r','letter-spacing="3"')+batt(178,7,2);
+ o+=RC(26,'#444',1.5,76,120)+RC(26,'#444',1.5,164,120);
+ for(let i=0;i<12;i++)o+=L(i*30,26,22,'#777',1,76,120);
+ o+=L(t.sf*6,-6,22,'#ff7a1a',1.5,76,120)+C(76,120,2.5,'#ff7a1a')
+ +X(164,108,'DATE',7,'#888','r','letter-spacing="1.5"')+X(164,126,t.day,16,'#fff','o');
+ return o+L(t.hf*30,-10,56,'#fff',5)+L(t.mf*6,-12,88,'#fff',3.5)+L(t.mf*6,60,88,'#ff7a1a',3.5)+C(120,120,5,'#ff7a1a')}]
+];
+
+const now=()=>{const d=new Date(),ms=d.getMilliseconds(),sf=d.getSeconds()+ms/1e3,mf=d.getMinutes()+sf/60,hf=d.getHours()%12+mf/60,
+ w=d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),mo=d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+ return{d,sf,mf,hf,h:p2(d.getHours()),m:p2(d.getMinutes()),s:p2(d.getSeconds()),dt:`${w} ${p2(d.getDate())} ${mo}`,day:d.getDate(),blink:ms<500}};
+
+const grid=document.getElementById('grid');
+F.forEach(([n])=>grid.insertAdjacentHTML('beforeend',`<figure><div class="case"><svg class="w" viewBox="0 0 240 240" role="img" aria-label="${n} watch face"></svg></div><figcaption>${n}</figcaption></figure>`));
+const sv=[...grid.querySelectorAll('svg.w')];
+let last=0;
+(function loop(ts){if(ts-last>50){last=ts;const t=now();sv.forEach((s,i)=>{s.innerHTML=F[i][1](t)})}requestAnimationFrame(loop)})(0);
+</script>
+</body>
+</html>

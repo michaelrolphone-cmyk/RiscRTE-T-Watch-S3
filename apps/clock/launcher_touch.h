@@ -27,28 +27,17 @@ static bool launcher_touch_open(watch_launcher_touch *t) {
     if (!t->subscription || !t->api->snapshot(t->api->context,&s)) return false;
     t->neutral=s.contact_count==0; return true;
 }
-static bool launcher_touch_swipe(watch_launcher_touch *t,bool *activity) {
-    *activity=false;
-    if (!t->subscription) return false;
+/* Drain queued notifications, then use the provider's authoritative snapshot.
+ * A gap/multitouch/id replacement cancels every gesture until neutral. */
+static unsigned launcher_touch_sample(watch_launcher_touch *t,watch_face_picker *picker,uint32_t now,bool *activity) {
+    *activity=false;if(!t->subscription)return WATCH_FACE_NONE;
     bool ok=t->api->poll(t->api->context,1);
     for(unsigned n=0;n<RISC_TOUCH_QUEUE_LENGTH;n++) {
-        risc_touch_event_v1 e={0};
-        int32_t count=t->api->next(t->api->context,t->subscription,&e);
-        if(count<=0){if(count<0)ok=false;break;}
-        *activity=true;
+        risc_touch_event_v1 e={0};int32_t count=t->api->next(t->api->context,t->subscription,&e);
+        if(count<=0){if(count<0)ok=false;break;}*activity=true;
     }
     risc_touch_snapshot_v1 s={0};
-    if (!t->api->snapshot(t->api->context,&s) || !ok || s.width!=240 || s.height!=240 || s.contact_count>1) {
-        t->neutral=t->down=false; return false;
-    }
-    if (!s.contact_count) {t->neutral=true;t->down=false;return false;}
-    *activity=true;
-    if (!t->neutral) return false;
-    if(s.contacts[0].x>=s.width || s.contacts[0].y>=s.height){t->neutral=t->down=false;return false;}
-    uint16_t x=s.contacts[0].x,y=s.contacts[0].y;
-    if(!t->down){t->down=true;t->id=s.contacts[0].id;t->x=x;t->y=y;return false;}
-    if(t->id!=s.contacts[0].id){t->neutral=t->down=false;return false;}
-    int dx=(int)x-t->x,dy=(int)y-t->y;
-    if(dx>=20 || dx<=-20 || dy>=20 || dy<=-20){t->neutral=t->down=false;return true;}
-    return false;
+    bool valid=t->api->snapshot(t->api->context,&s)&&ok&&s.width==240&&s.height==240;
+    if(s.contact_count)*activity=true;
+    return watch_face_input(picker,now,valid,s.contact_count,s.contacts[0].id,s.contacts[0].x,s.contacts[0].y);
 }

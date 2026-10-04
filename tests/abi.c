@@ -28,3 +28,11 @@ _Static_assert(offsetof(garden_gpio_v1,deep_sleep_hold)==44,"raw hold append-onl
 
 _Static_assert(offsetof(garden_gpio_v1,light_sleep_for)==48,"raw timer append-only");
 _Static_assert(TWATCH_PMU_DEEP_SLEEP_SIZE==36,"old PMU Deep ABI size preserved");
+
+#include "../drivers/twatch_wifi/WifiApi.h"
+_Static_assert(GARDEN_RADIO_PREFIX_V1_SIZE==44,"radio legacy prefix unchanged");
+_Static_assert(GARDEN_RADIO_SCAN_V1_SIZE==56,"radio scan suffix target size");
+_Static_assert(sizeof(garden_radio_scan_entry_v1)==37,"bounded copied AP entry");
+_Static_assert(sizeof(garden_radio_scan_result_v1)==600,"bounded AP scan snapshot");
+_Static_assert(WIFI_PREFIX_V1_SIZE==40,"Wi-Fi legacy prefix unchanged");
+_Static_assert(WIFI_MANAGEMENT_V1_SIZE==56,"Wi-Fi management suffix target size");

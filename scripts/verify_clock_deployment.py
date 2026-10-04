@@ -35,7 +35,10 @@ def verify(path):
             if record.get('clock_policy') != {'idle_sleep_ms': 60000, 'boot_final_hold_ms': 250, 'screen_scrub': False}:
                 raise ValueError('Mismatched clock interaction policy')
         if tuple(map(int,app['version'].split('.'))) >= (0,3,0):
-            for notice in ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt'):
+            notices=('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt')
+            if tuple(map(int,app['version'].split('.'))) >= (0,6,0):
+                notices+=('ShareTechMono-OFL.txt',)
+            for notice in notices:
                 if 'licenses/nova/' + notice not in names or not z.read('licenses/nova/' + notice):
                     raise ValueError('Missing NOVA font license/provenance')
         if tuple(map(int,app['version'].split('.'))) >= (0,2,2):

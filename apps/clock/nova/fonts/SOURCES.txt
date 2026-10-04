@@ -5,3 +5,7 @@ Rajdhani-600.ttf: https://fonts.gstatic.com/s/rajdhani/v17/LDI2apCSOBg7S-QT7pbYF
 Orbitron-OFL.txt: https://raw.githubusercontent.com/google/fonts/main/ofl/orbitron/OFL.txt
 Rajdhani-OFL.txt: https://raw.githubusercontent.com/google/fonts/main/ofl/rajdhani/OFL.txt
 Retrieved 2026-10-03. Font binaries retained unmodified, only raster glyph subsets ship to firmware.
+
+ShareTechMono-Regular.ttf: https://github.com/google/fonts/raw/main/ofl/sharetechmono/ShareTechMono-Regular.ttf
+ShareTechMono-OFL.txt: https://raw.githubusercontent.com/google/fonts/main/ofl/sharetechmono/OFL.txt
+Retrieved 2026-10-04. Unmodified SIL OFL font.

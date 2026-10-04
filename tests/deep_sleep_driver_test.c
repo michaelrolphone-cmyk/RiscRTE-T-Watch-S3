@@ -41,7 +41,10 @@ static int32_t tracked_deep(void *c,uint64_t t,bool high) {
     for(unsigned i=0;i<512;++i)assert(!active_pwm[i]);
     m_sleep_token=t;++deep_calls;return deep_result;
 }
-static unsigned timer_calls;
+static unsigned timer_calls,deep_timer_calls;
+static int32_t tracked_deep_timed(void *c,uint64_t t,bool high,uint32_t ms) {
+ assert(ms==300000);deep_timer_calls++;return tracked_deep(c,t,high);
+}
 static int32_t tracked_timed(void *c,uint64_t t,bool high,uint32_t ms,risc_light_sleep_result_v1*out) {
     assert(ms==300000);timer_calls++;return m_light_sleep(c,t,high,out);
 }
@@ -54,6 +57,7 @@ int main(int argc,char **argv) {
     m_gpio.claim=tracked_claim;m_gpio.write=tracked_write;m_gpio.pwm=tracked_pwm;
     m_gpio.release=tracked_free;m_gpio.deep_sleep=tracked_deep;m_gpio.deep_sleep_hold=tracked_hold;
     m_bank.deep_sleep=tracked_deep;m_bank.light_sleep_for=tracked_timed;m_gpio.light_sleep_for=tracked_timed;
+    m_bank.deep_sleep_for=tracked_deep_timed;m_gpio.deep_sleep_for=tracked_deep_timed;
 #if TEST_KIND==4
     m_regs[3]=0x4a;
 #elif TEST_KIND==5
@@ -70,6 +74,17 @@ int main(int argc,char **argv) {
     risc_light_sleep_result_v1 timed_result={sizeof(timed_result),99};
     for(unsigned n=0;n<3;n++)assert(a->light_sleep_for(NULL,token,false,300000,&timed_result)==0 && m_sleep_token!=token);
     assert(timer_calls==3);
+    for(int32_t rc=RISC_DEEP_SLEEP_RETAINED;rc<0;rc++) {
+        deep_result=rc;assert(a->deep_sleep_for(NULL,token,false,300000)==rc);
+    }
+    deep_result=RISC_DEEP_SLEEP_ACTIVE_WAKE;
+    assert(a->deep_sleep_for(NULL,token,false,0)==RISC_DEEP_SLEEP_INVALID);
+    assert(a->deep_sleep_for(NULL,token,false,86400001)==RISC_DEEP_SLEEP_INVALID);
+    m_gpio.struct_size=GARDEN_GPIO_DEEP_SLEEP_FOR_V1_SIZE-1;
+    assert(a->deep_sleep_for(NULL,token,false,300000)==RISC_DEEP_SLEEP_UNSUPPORTED);
+    m_gpio.struct_size=sizeof(m_gpio);m_gpio.deep_sleep_for=NULL;
+    assert(a->deep_sleep_for(NULL,token,false,300000)==RISC_DEEP_SLEEP_UNSUPPORTED);
+    m_gpio.deep_sleep_for=tracked_deep_timed;
     assert(a->light_sleep_for(NULL,token,false,0,&timed_result)==RISC_LIGHT_SLEEP_INVALID);
     assert(a->light_sleep_for(NULL,token,false,86400001,&timed_result)==RISC_LIGHT_SLEEP_INVALID);
     m_gpio.struct_size=GARDEN_GPIO_DEEP_SLEEP_HOLD_V1_SIZE;
@@ -83,18 +98,22 @@ int main(int argc,char **argv) {
     m_gpio.struct_size=sizeof(m_gpio);
     assert(a->release(NULL,token));
     assert(a->deep_sleep(NULL,token,false)==RISC_DEEP_SLEEP_INVALID);
+    assert(a->deep_sleep_for(NULL,token,false,300000)==RISC_DEEP_SLEEP_INVALID);
     assert(a->light_sleep_for(NULL,token,false,300000,&timed_result)==RISC_LIGHT_SLEEP_INVALID);
     assert(a->claim(NULL,6,RISC_GPIO_OUTPUT,&token));
     assert(a->deep_sleep(NULL,token,false)==RISC_DEEP_SLEEP_INVALID);
+    assert(a->deep_sleep_for(NULL,token,false,300000)==RISC_DEEP_SLEEP_INVALID);
     assert(a->light_sleep_for(NULL,token,false,300000,&timed_result)==RISC_LIGHT_SLEEP_INVALID);
     assert(a->release(NULL,token));
     assert(a->claim(NULL,6,RISC_GPIO_INPUT|RISC_GPIO_OUTPUT,&token));
     assert(a->deep_sleep(NULL,token,false)==RISC_DEEP_SLEEP_INVALID);
+    assert(a->deep_sleep_for(NULL,token,false,300000)==RISC_DEEP_SLEEP_INVALID);
     assert(a->light_sleep_for(NULL,token,false,300000,&timed_result)==RISC_LIGHT_SLEEP_INVALID);
     assert(a->release(NULL,token));
 #elif TEST_KIND==4
     const twatch_pmu_api_v1 *a=d->capability;
     assert(a->deep_sleep(NULL)==RISC_DEEP_SLEEP_INVALID);
+    assert(a->deep_sleep_for(NULL,300000)==RISC_DEEP_SLEEP_INVALID);
     uint8_t rails_before=m_regs[0x90];
     for(unsigned cycle=0;cycle<3;++cycle) {
         m_regs[0x49]=8;uint32_t events;assert(a->key_events(NULL,&events) && events==2);
@@ -103,6 +122,17 @@ int main(int argc,char **argv) {
         assert(a->deep_sleep(NULL)==RISC_DEEP_SLEEP_UNSUPPORTED);
         m_bank.struct_size=sizeof(m_bank);
         assert(a->deep_sleep(NULL)==RISC_DEEP_SLEEP_ACTIVE_WAKE);
+        assert(a->deep_sleep_for(NULL,0)==RISC_DEEP_SLEEP_INVALID);
+        assert(a->deep_sleep_for(NULL,86400001)==RISC_DEEP_SLEEP_INVALID);
+        for(int32_t rc=RISC_DEEP_SLEEP_RETAINED;rc<0;rc++) {
+            deep_result=rc;assert(a->deep_sleep_for(NULL,300000)==rc);
+        }
+        deep_result=RISC_DEEP_SLEEP_ACTIVE_WAKE;
+        m_bank.struct_size=RISC_GPIO_BANK_DEEP_SLEEP_FOR_V1_SIZE-1;
+        assert(a->deep_sleep_for(NULL,300000)==RISC_DEEP_SLEEP_UNSUPPORTED);
+        m_bank.struct_size=sizeof(m_bank);m_bank.deep_sleep_for=NULL;
+        assert(a->deep_sleep_for(NULL,300000)==RISC_DEEP_SLEEP_UNSUPPORTED);
+        m_bank.deep_sleep_for=tracked_deep_timed;
         risc_light_sleep_result_v1 timed_result={sizeof(timed_result),99};
         m_bank.struct_size=RISC_GPIO_BANK_DEEP_SLEEP_V1_SIZE;
         assert(a->light_sleep_for(NULL,300000,&timed_result)==RISC_LIGHT_SLEEP_UNSUPPORTED);
@@ -126,7 +156,7 @@ int main(int argc,char **argv) {
         m_regs[0x49]=1;assert(a->key_events(NULL,&events)&&events==0);
         assert(a->prepare_sleep(NULL));assert(a->resume(NULL));
     }
-    assert(deep_calls==3);
+    assert(deep_calls==3+deep_timer_calls);
 #elif TEST_KIND==5
     const twatch_panel_power_v1 *a=d->capability;
     /* Missing suffix cleanly refuses without a single sleep command. */
@@ -143,6 +173,7 @@ int main(int argc,char **argv) {
     int32_t rc=a->prepare_deep_sleep(NULL);
     if(!strcmp(mode,"retained-hold")) {
         assert(rc==RISC_DEEP_SLEEP_RETAINED && deep_retained);
+        assert(a->resume_status(NULL)==RISC_DEEP_SLEEP_RETAINED);
         assert(!a->resume(NULL) && !d->quiesce());
         assert(a->prepare_deep_sleep(NULL)==RISC_DEEP_SLEEP_RETAINED);
         puts("deep panel retained hold blocks I/O and teardown");return 0;
@@ -155,10 +186,16 @@ int main(int argc,char **argv) {
         assert(!d->quiesce());
         assert(a->prepare_deep_sleep(NULL)==0 && hold_calls==1);
         if(!strcmp(mode,"retained-unhold")) {
+            assert(a->resume_status(NULL)==RISC_DEEP_SLEEP_RETAINED);
             assert(!a->resume(NULL) && deep_retained && !d->quiesce());
             puts("deep panel retained unhold blocks I/O and teardown");return 0;
         }
-        assert(a->resume(NULL) && !deep_held && unhold_at>hold_at && pwm_at>unhold_at);
+        if(!strcmp(mode,"resume-spi-error")) {
+            m_fail_io=true;
+            assert(a->resume_status(NULL)==RISC_LIGHT_SLEEP_PLATFORM && !deep_held && !deep_retained);
+            m_fail_io=false; /* Ordinary restore error can be retried safely. */
+        }
+        assert(a->resume_status(NULL)==0 && !deep_held && unhold_at>hold_at && pwm_at>unhold_at);
     }
     for(unsigned i=0;i<3;++i) {
         assert(a->prepare_deep_sleep(NULL)==0 && deep_held);

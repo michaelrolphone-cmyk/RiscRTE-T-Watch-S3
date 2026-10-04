@@ -27,9 +27,9 @@ void nova_watch_format(const nova_watch_state *s, nova_watch_labels *out) {
     out->battery_valid=s && s->battery_valid && s->battery_percent<=100;
     if (out->time_valid) {
         const twatch_rtc_time_v1 *t=&s->time;
-        unsigned h=t->hour%12; if (!h) h=12;
+        unsigned h=s->hour_24?t->hour:t->hour%12; if (!s->hour_24&&!h) h=12;
         two(out->hour_minute,h);two(out->hour_minute+3,t->minute);two(out->seconds,t->second);
-        memcpy(out->meridiem,t->hour<12?"AM":"PM",3);memcpy(out->status,"RTC",4);
+        memcpy(out->meridiem,s->hour_24?"":t->hour<12?"AM":"PM",s->hour_24?1:3);memcpy(out->status,"RTC",4);
         static const char weekdays[]="SUNMONTUEWEDTHUFRISAT";
         static const char months[]="JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
         static const uint8_t offsets[]={0,3,2,5,0,3,5,1,4,6,2,4};
@@ -177,3 +177,5 @@ bool nova_watch_render(risc_display_surface_v1 *s,const nova_watch_state *state)
     }
     return true;
 }
+
+#include "../faces/render.inc"
