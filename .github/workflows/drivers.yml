@@ -688,7 +688,6 @@ jobs:
       - name: Assemble installable latest-main Watch image
         env:
           TWATCH_HEAD: ${{ github.sha }}
-          TWATCH_MKSPIFFS: ${{ github.workspace }}/.pio-mkspiffs-placeholder
         run: |
           python scripts/build_latest_main_flash.py \
             --artifact-dir .latest/watch-artifact \
