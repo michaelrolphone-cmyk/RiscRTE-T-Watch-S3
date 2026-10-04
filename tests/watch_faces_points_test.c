@@ -108,13 +108,13 @@ int main(int argc,char**argv) {
     fixture(&s,&p,0);risc_display_surface_v1 surf={0,tight,240,240,480,sizeof(tight),5};
     surf.size_bytes--;memset(tight,0x39,sizeof(tight));assert(!nova_watch_face_render(&surf,&s,24));for(unsigned i=0;i<sizeof(tight);i++)assert(tight[i]==0x39);surf.size_bytes++;surf.stride_bytes=UINT32_MAX;assert(!nova_watch_face_render(&surf,&s,24));surf.stride_bytes=480;
     /* Copied keys must detect a projection changed in-place. */
-    const watch_face_page*page=watch_face_page_for(4);face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==3);
-    p.now_rtc++;s.time.second++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==1);
-    p.revision++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==3);
-    p.next[0].at_rtc++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==3);
+    const watch_face_page*page=watch_face_page_for(4);face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls==3);
+    p.now_rtc++;s.time.second++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls==1);
+    p.revision++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls==3);
+    p.next[0].at_rtc++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls==3);
     for(unsigned slot=0;slot<6;slot++)assert(!(cache.valid_mask&(1u<<slot))||cache.face_ids[slot]<WATCH_FACE_COUNT);
     int positions[WATCH_FACE_CATEGORY_COUNT]={0,0,0,0,-108*256};
-    for(int pos=40;pos>=-1240;pos-=11){face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,32,256,&cache));assert(face_test_calls<=6);face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,32,256,&cache));assert(face_test_calls==1);}
+    for(int pos=40;pos>=-1240;pos-=11){face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls<=6);face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,WATCH_FACE_COUNT,256,&cache));assert(face_test_calls==1);}
     assert(sizeof(cache.pixels)==6*240*240*2);
     assert(nova_watch_alarm_render(&surf,false,false,false,false,false,true));memcpy(compare,tight,sizeof(tight));assert(nova_watch_alarm_label_render(&surf,NULL,false,false,false,false,false,true));assert(!memcmp(compare,tight,sizeof(tight)));
     assert(nova_watch_alarm_label_render(&surf,"WORK START",false,false,false,false,false,true));assert(memcmp(compare,tight,sizeof(tight)));
