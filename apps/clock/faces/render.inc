@@ -48,7 +48,7 @@ static void frect(canvas*c,int x,int y,int w,int h,uint16_t color) {
 }
 /* Q4 round strokes, with four coverage samples per destination pixel. */
 #ifdef WATCH_FACE_RENDER_TEST
-static unsigned face_test_calls,face_test_line_pixels,face_test_mask;
+static unsigned face_test_calls,face_test_line_pixels;static uint64_t face_test_mask;
 #endif
 static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color) {
     int dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy,r=width/2;
@@ -136,7 +136,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
 #endif
     nova_watch_state empty={0};if(!state)state=&empty;if(id>=WATCH_FACE_COUNT)id=0;
 #ifdef WATCH_FACE_RENDER_TEST
-    face_test_mask|=1u<<id;
+    face_test_mask|=UINT64_C(1)<<id;
 #endif
     nova_watch_labels l;nova_watch_format(state,&l);
     /* Use the shared format policy; analog geometry below still uses civil
