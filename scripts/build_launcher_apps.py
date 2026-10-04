@@ -38,6 +38,8 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     if wifi:catalog += [{'display_name':'Wi-Fi','file_name':'wifi_settings.elf','icon':'solid:f1eb'}]
     if updates is not None:catalog += [{'display_name':'Firmware Update' if n=='ota_update' else 'App Store','file_name':n+'.elf','icon':'solid:f021' if n=='ota_update' else 'solid:f019'} for n in updates]
     if productivity:catalog += [{'display_name':'Points in Time','file_name':'points_in_time.elf','icon':'solid:f783'}]
+    if len({entry['icon'] for entry in catalog}) != len(catalog):raise ValueError('Every delivered Watch launcher app requires a distinct icon')
+    if alarms and not {'solid:f0f3','solid:f254'} <= {entry['icon'] for entry in catalog}:raise ValueError('Alarm bell/hourglass icons missing from delivered catalog')
     (out/'daily_catalog.c').write_text('#include \"PortableApps.h\"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count='+(str(len(catalog)))+';\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
     record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf','calculator':'springboard.elf','stopwatch':'springboard.elf'}}
