@@ -75,7 +75,7 @@ jobs:
 
       - name: Stable picker/category IDs
         run: |
-          cc -std=c11 -O2 -Wall -Wextra -Werror -I. tests/watch_face_categories_test.c -o /tmp/watch-face-categories
+          cc -std=c11 -O2 -Wall -Wextra -Werror -I. -Isdk/app tests/watch_face_categories_test.c -o /tmp/watch-face-categories
           /tmp/watch-face-categories
 
       - name: Recurrence projection and Clock lifecycle
