@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "899ad7c0d01a5e1a1299a1bd1644724c6504c939",
-  "firmware_version": "0.1.15",
+  "source_sha": "0fa8c576f547817b8124ed10686d80a6351bb634",
+  "firmware_version": "0.1.16",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -32,10 +32,14 @@
     "store_abi": 1,
     "paired_metadata_psram_only": true,
     "independent_graph_provider_registry": true,
-    "explicit_key_value_v2": true
+    "explicit_key_value_v2": true,
+    "native_i2s_pdm_rx": true,
+    "bounded_pdm_audio_input": true,
+    "healthy_audio_bound_storage": true,
+    "audio_failure_storage_barrier": true
   },
   "abi_changed": true,
-  "reason": "Additive provider-only HTTPS and paired-bank capabilities, plus the app Runtime health-confirmation suffix. Old app ABI prefix remains compatible; updates require explicit paired layout.",
+  "reason": "Additive provider-only HTTPS/paired-bank capabilities plus bounded native ESP32-S3 I2S/PDM RX for external audio.input drivers. Board microphone policy remains driver-owned; old app ABI prefix remains compatible and updates require the explicit paired layout.",
   "deployment": {
     "target": "esp32s3-16mb-paired",
     "layout": "riscrte-paired-16m-v1",
@@ -45,8 +49,8 @@
     "existing_8MiB_ota_compatible": false,
     "candidate_artifact": {
       "status": "verified-exact-source-ci-artifact",
-      "ci_run": 37236426591,
-      "artifact_sha256": "39e5e654b070f37fa6a8e20cd0fd4e05b0309e15c508c3bce427f1fc8ff9933b"
+      "ci_run": 37243452733,
+      "artifact_sha256": "85f5d79a3d8071c4ecde71006e18d03802b89179a0f574adaf161fff462b05a1"
     },
     "partitions": {
       "app0": {
