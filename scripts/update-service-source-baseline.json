@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "system_apps_source_sha": "bcb5e4541fbc3139534c978fe32deb1256644de0",
+  "system_apps_source_sha": "e3f8a0317854370d6242b2f5f98787b0f32fef04",
   "source_sha256": {
     "Apps/update_portable.inc": "ff8fff46607d0d1a82ae77a30f4507fa7e11dce58f034b87eb36123901f36396",
     "Services/update/Catalog.h": "eaa756582b2ff8a2bc2e04480072b6bc2cb987fc14f80ef441475f0e9057d3b2",
@@ -67,14 +67,14 @@
     "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029"
   },
   "application_versions": {
-    "springboard": "1.4.2",
+    "springboard": "1.4.3",
     "settings": "1.2.3",
     "wifi_settings": "1.1.0",
     "ota_update": "1.0.2",
     "app_store": "1.0.8"
   },
   "application_manifest_sha256": {
-    "springboard": "681fbdf477b4eedece95bf4901507efb1c1dff847c9cb42ba55d26fe1cff5345",
+    "springboard": "b05bfb6a816b0a373a117fff89abde7c327b1679a3d572b8f75ef6ae6ad4a5d1",
     "settings": "8ae0411c1c3e9d4c33d8cd63842b7a4ecda58c37c4046b3723c71feef25566dc",
     "wifi_settings": "32d4f23986ae23f48a00f6cefe34da4a0eb423bde5d59f3f179033680e78c2d5",
     "ota_update": "6361bffc6620c8ee7b26d7f525475c17b74b378c8e1db8a0cc0586c3e0f4e413",
