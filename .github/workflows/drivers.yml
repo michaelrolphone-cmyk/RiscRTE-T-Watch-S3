@@ -584,8 +584,9 @@ jobs:
             dist/update-common/*.zip
             dist/update-common/*.bin
             dist/update-common/*.json
-            dist/update-validation/**/*.json
-            dist/update-validation/**/*.log
+            dist/update-validation/**/admission-provenance.json
+            dist/update-validation/**/execution-provenance.json
+            dist/update-validation/**/abi-provenance.json
           if-no-files-found: error
           retention-days: 14
 
