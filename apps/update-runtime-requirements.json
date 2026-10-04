@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "76212b70e02e10a88e300af6bafe363c11364a05",
-  "firmware_version": "0.1.11",
+  "source_sha": "47576084c8f25b1648b79205f8d68f5e5d3feaea",
+  "firmware_version": "0.1.15",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -30,7 +30,9 @@
     "default_app_health_confirmation": true,
     "rollback_until_health_confirmation": true,
     "store_abi": 1,
-    "paired_metadata_psram_only": true
+    "paired_metadata_psram_only": true,
+    "independent_graph_provider_registry": true,
+    "explicit_key_value_v2": true
   },
   "abi_changed": true,
   "reason": "Additive provider-only HTTPS and paired-bank capabilities, plus the app Runtime health-confirmation suffix. Old app ABI prefix remains compatible; updates require explicit paired layout.",
@@ -43,8 +45,8 @@
     "existing_8MiB_ota_compatible": false,
     "candidate_artifact": {
       "status": "verified-exact-source-ci-artifact",
-      "ci_run": 37202528313,
-      "artifact_sha256": "3d2ca0ed3d651c09ed96559812669e5e7d23020a4db7fbb2216858ffb3c0c7f6"
+      "ci_run": 37216258671,
+      "artifact_sha256": "6aa27bc386bb1ccd3041ef24bb06c75f4d159b89b1a0a60e23d47c12c5b97601"
     },
     "partitions": {
       "app0": {

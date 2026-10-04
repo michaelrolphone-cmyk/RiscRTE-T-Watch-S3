@@ -67,3 +67,9 @@ retention is checked in an isolated process that exits without destroying its
 intentionally retained owner/graph, matching the production lifetime contract. These are
 host-source integration tests and target ABI compilation, not Xtensa execution,
 physical first boot, RF qualification, flashing, or a release claim.
+
+All paired stores now use Runtime's production target module registry
+(dlfcn.c/dlmod.c), with only relocation delegated to native host mappings.
+This covers same-basename hardware, Alarm and update providers before default
+Clock startup and boot-health confirmation. The helper implementation and actual
+registry sources are included in each execution's source hash inventory.
