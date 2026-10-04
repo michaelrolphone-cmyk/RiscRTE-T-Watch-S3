@@ -110,6 +110,68 @@ static const char*ps_problem(const nova_watch_state*s,const nova_watch_labels*l)
     if(p->phase>NOVA_PHASE_WIND_DOWN)return "SCHEDULE ERROR";
     return NULL;
 }
+static const nova_point_event*ps_matching_end(const nova_points_state*p,const nova_point_event*start) {
+    if(!start||start->is_end||(start->kind!=NOVA_POINT_LUNCH&&start->kind!=NOVA_POINT_BREAK))return NULL;
+    const nova_point_event*best=NULL;
+    for(unsigned pass=0;pass<2;pass++) {
+        const nova_point_event*events=pass?p->next:p->today;unsigned count=pass?p->next_count:p->today_count;
+        for(unsigned i=0;i<count;i++) {
+            const nova_point_event*e=events+i;
+            if(!e->is_end||e->kind!=start->kind||e->source_slot!=start->source_slot||e->at_rtc<=start->at_rtc)continue;
+            if(!best||e->at_rtc<best->at_rtc)best=e;
+        }
+    }
+    return best;
+}
+static bool ps_active_interval(const nova_points_state*p,const nova_point_event**start,const nova_point_event**end) {
+    const nova_point_event*a=NULL,*b=NULL;
+    if(p->previous_valid&&!p->previous.is_end&&
+       (p->previous.kind==NOVA_POINT_LUNCH||p->previous.kind==NOVA_POINT_BREAK)) {
+        b=ps_matching_end(p,&p->previous);
+        if(b&&p->previous.at_rtc<=p->now_rtc&&p->now_rtc<b->at_rtc)a=&p->previous;
+    }
+    for(unsigned i=0;!a&&i<p->today_count;i++) {
+        const nova_point_event*e=p->today+i;
+        if(e->is_end||(e->kind!=NOVA_POINT_LUNCH&&e->kind!=NOVA_POINT_BREAK)||e->at_rtc>p->now_rtc)continue;
+        const nova_point_event*q=ps_matching_end(p,e);
+        if(q&&p->now_rtc<q->at_rtc){a=e;b=q;}
+    }
+    if(start)*start=a;if(end)*end=b;return a&&b;
+}
+static const nova_point_event*ps_upcoming_start(const nova_points_state*p,uint32_t after,bool strict) {
+    for(unsigned i=0;i<p->next_count;i++) {
+        const nova_point_event*e=p->next+i;
+        if(e->is_end)continue;
+        if(strict?e->at_rtc>after:e->at_rtc>=after)return e;
+    }
+    return NULL;
+}
+static int ps_clock_angle(const nova_point_event*e) {
+    return (int)(((unsigned)(e->hour%12)*60u+e->minute)*128u);
+}
+static void ps_clock_arc(canvas*c,int radius,int from,int to,int width,uint16_t color) {
+    const int full=360*256;
+    while(from<0)from+=full;from%=full;
+    while(to<=from)to+=full;if(to-from>full)to=from+full;
+    int px,py;fpoint(from,radius,120,120,&px,&py);
+    for(int a=from+2*256;a<to+2*256;a+=2*256) {
+        int q=a>to?to:a,x,y;fpoint(q%full,radius,120,120,&x,&y);fline(c,px,py,x,y,width,color);px=x;py=y;
+    }
+}
+static void ps_up_next_marker(canvas*c,const nova_points_state*p,const nova_point_event*e) {
+    if(!e||e->is_end)return;
+    const nova_point_event*end=ps_matching_end(p,e);
+    bool active=end&&e->at_rtc<=p->now_rtc&&p->now_rtc<end->at_rtc;
+    if(end) {
+        if(end->at_rtc<=p->now_rtc)return;
+        if(e->at_rtc>p->now_rtc&&e->at_rtc-p->now_rtc>43200u)return;
+    } else {
+        if(e->at_rtc<=p->now_rtc||e->at_rtc-p->now_rtc>43200u)return;
+    }
+    int angle=ps_clock_angle(e),x,y;uint16_t col=ps_color(e);
+    if(end&&end->at_rtc>e->at_rtc)ps_clock_arc(c,88,angle,ps_clock_angle(end),active?80:48,col);
+    fpoint(angle,88,120,120,&x,&y);fcirc(c,x,y,(active?5:4)*16,0,col);
+}
 static void ps_problem_face(canvas*c,const nova_watch_state*s,const nova_watch_labels*l,unsigned id,const char*problem) {
     if(id==1)fcirc(c,1920,1920,98*16,8*16,PS_BG);
     ps_clock(c,l,id==1?62:48,18,FWHITE);
@@ -221,7 +283,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         }
         ftext(c,&ff_r9,"LEFT H:MM",186,179,0,0,PS_CAP,0);
         ps_battery(c,s,l,196,FAMBER);
-    } else { /* WORKDAY */
+    } else if(id==7) { /* WORKDAY */
         ps_clock(c,l,62,30,FWHITE);ftext(c,&ff_r9,"WORKDAY",120,84,768,0,PS_CAP,0);
         bool paired=p->work_valid&&ps_event_valid(&p->work_start)&&ps_event_valid(&p->work_end)&&
             p->work_start.kind==NOVA_POINT_WORK_START&&p->work_end.kind==NOVA_POINT_WORK_END&&
@@ -246,5 +308,39 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         ps_event_clock(clock,&p->work_start,s->hour_24,false);ftext(c,&ff_r9,clock,65,177,0,0,PS_CAP,0);
         ps_event_clock(clock,&p->work_end,s->hour_24,p->work_end.day_offset!=p->work_start.day_offset);ftext(c,&ff_r9,clock,174,177,0,0,PS_CAP,0);
         ps_battery(c,s,l,196,col);
+    } else { /* UP NEXT: attached NOVA-7 Points in Time face. */
+        const nova_point_event*active_start=NULL,*active_end=NULL;
+        bool active=ps_active_interval(p,&active_start,&active_end);
+        const nova_point_event*upcoming=ps_upcoming_start(p,p->now_rtc,false);
+        const nova_point_event*primary=active?active_start:upcoming;
+        const nova_point_event*target=active?active_end:upcoming;
+        uint16_t accent=primary?ps_color(primary):PS_CAP;
+        uint32_t target_rtc=target?target->at_rtc:0;
+        uint32_t left=target_rtc>p->now_rtc?target_rtc-p->now_rtc:0;
+        unsigned bar=0;
+        if(active)bar=ps_fraction(p->now_rtc,active_start->at_rtc,active_end->at_rtc);
+        else if(upcoming&&p->previous_valid)bar=ps_fraction(p->now_rtc,p->previous.at_rtc,upcoming->at_rtc);
+        for(int i=0;i<60;i++)frad(c,i*6*256,i%5?111:105,116,120,120,i%5?16:32,i%5?FC(14,79,92):FCYAN);
+        fcirc(c,1920,1920,98*16,40,FC(11,23,25));
+        unsigned sub=s->subsecond_ms<1000?s->subsecond_ms:999;
+        unsigned second_angle=((unsigned)s->time.second*1000u+sub)*360u*256u/60000u;
+        farc(c,98,(int)second_angle,FCYAN,40);
+        for(unsigned i=0;i<p->today_count;i++)if(!p->today[i].is_end)ps_up_next_marker(c,p,p->today+i);
+        for(unsigned i=0;i<p->next_count;i++)if(!p->next[i].is_end&&p->next[i].day_offset>0)ps_up_next_marker(c,p,p->next+i);
+        ftext(c,&ff_r10,l->date,120,58,768,0,FCYAN,0);
+        if(primary){fc_join(label,sizeof(label),active?"NOW - ":"NEXT - ",ps_event_name(primary,false),"");}
+        else memcpy(label,"NO POINTS",10);
+        ftext(c,&ff_r10,label,120,76,512,ps_fit(&ff_r10,label,512,186),accent,0);
+        ps_clock(c,l,118,34,FWHITE);
+        if(target){ps_duration(timer,left,false);fc_join(label,sizeof(label),active?"LEFT ":"IN ",timer,"");}
+        else memcpy(label,"ADD A POINT",12);
+        ftext(c,&ff_o14,label,120,139,256,ps_fit(&ff_o14,label,256,174),FCYAN,0);
+        frect(c,60,146,120,3,FC(18,38,43));if(bar)frect(c,60,146,(int)(120u*bar/1024u),3,accent);
+        const nova_point_event*then=NULL;
+        if(active)then=upcoming;
+        else if(upcoming)then=ps_upcoming_start(p,upcoming->at_rtc,true);
+        if(then){ps_event_clock(clock,then,s->hour_24,true);fc_join(label,sizeof(label),"THEN ",ps_event_name(then,false)," ");fc_join(label,sizeof(label),label,clock,"");ftext(c,&ff_r9,label,120,164,384,ps_fit(&ff_r9,label,384,188),PS_CAP,0);}
+        else ftext(c,&ff_r9,"THEN --",120,164,384,0,PS_CAP,0);
+        for(unsigned i=0;i<10;i++)frect(c,81+(int)i*8,176,6,4,l->battery_valid&&i<s->battery_percent/10?FGREEN:FC(10,32,20));
     }
 }
