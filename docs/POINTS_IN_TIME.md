@@ -1,16 +1,16 @@
 # Points in Time development integration
 
-Clock 0.7.0 adds a fifth SCHEDULE category with eight companion faces, IDs24–31.
-The original24 IDs retain their identity and original pixels. The separately
+Clock 0.8.0 keeps the fifth SCHEDULE category and adds the owner-supplied NOVA-7 UP NEXT face as stable ID32, for nine companion faces across IDs24–32.
+The original32 IDs retain their identity; the new face is appended without renumbering persisted selections. The separately
 owned Productivity app configures recurring Work Start, Work End, Lunch, Break
-and Bedtime points. It starts with an empty catalog; attachment times and battery
-values are illustrative design data only.
+and Bedtime points. Points in Time 0.2.0 uses the NOVA-7 black/cyan presentation, chronological scrolling list, edit rows, day presets and drum-style time/duration controls. It starts with an empty catalog; attachment times and battery values are illustrative design data only.
 
 ## Ownership and limits
 
 - Productivity owns the app and explicit user edits. Utilities owns the compact
   record codecs, daily recurrence, durable occurrence ledger, output arbitration,
   recovery, acknowledgement and sleep deadline selection.
+- The supplied HTML also illustrates extra/custom point kinds and a separate 3-minute warning. Those are deliberately not exposed until the shared 64-byte service record and two-edge occurrence ledger define them; the UI never presents a control that cannot persist or schedule correctly.
 - Eight independently enabled point slots, each with selected weekdays and local
   hour/minute. More than one Break/Lunch is allowed. Lunch/Break can have an
   elapsed duration of0–720 minutes; zero means no automatic end notification.
