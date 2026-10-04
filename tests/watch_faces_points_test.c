@@ -71,7 +71,8 @@ int main(int argc,char**argv) {
     e.hour=23;e.minute=59;e.day_offset=7;ps_event_clock(text,&e,false,true);assert(!strcmp(text,"11:59 PM +7D"));ps_event_clock(text,&e,true,true);assert(!strcmp(text,"23:59 +7D"));
     e.is_end=true;assert(!ps_event_valid(&e));e.kind=NOVA_POINT_LUNCH;assert(!strcmp(ps_event_name(&e,false),"BACK"));
     assert(WATCH_FACE_COUNT==33&&WATCH_FACE_CATEGORY_COUNT==5);
-    for(unsigned i=0;i<8;i++){assert(watch_face_pages[4].ids[i]==24+i);assert(watch_face_category_for(24+i)==4);}
+    assert(watch_face_pages[4].count==9);
+    for(unsigned i=0;i<9;i++){assert(watch_face_pages[4].ids[i]==24+i);assert(watch_face_category_for(24+i)==4);}
     nova_watch_state s;nova_points_state p;
     for(unsigned scenario=0;scenario<18;scenario++)for(unsigned face=24;face<WATCH_FACE_COUNT;face++) {
         fixture(&s,&p,scenario);guarded_render(&s,face);
