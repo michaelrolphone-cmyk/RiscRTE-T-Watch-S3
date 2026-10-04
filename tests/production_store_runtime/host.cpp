@@ -1,6 +1,7 @@
 // Production boot policy, Runtime/CpuPort, all selected production providers,
 // and the actual default Clock. Only the lowest native hardware is modeled.
 #include "ports/esp32s3/CpuPort.h"
+#include "backend.h"
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -110,8 +111,11 @@ extern "C" void production_test_loaded(void* module){
 extern "C" void production_test_unloading(void* module){
   ++m.moduleUnloads;if(module==m.application){++m.appUnloads;m.appLoaded=false;}
 }
+extern "C" void risc_test_native_loading(const char* path){production_test_loading(path);}
+extern "C" void risc_test_native_loaded(const char*,void* module){production_test_loaded(module);}
+extern "C" void risc_test_native_unloading(const char*,void* module){production_test_unloading(module);}
 int main(int argc,char** argv){
-  assert(argc==2||argc==3);
+  assert(argc==2||argc==4);
   setvbuf(stdout,nullptr,_IONBF,0);
   m.registers[0][3]=0x4a;m.registers[0][0x34]=0x0f;m.registers[0][0x35]=0xa0;
   m.registers[2][0]=0x60; // DRV2605 chip identity.
@@ -121,6 +125,7 @@ int main(int argc,char** argv){
   hardware.i2sOpen=[](uint8_t,uint8_t,uint8_t,uint8_t,uint32_t){assert(!"No alarm audio expected");return false;};
   hardware.i2sWrite=[](uint8_t,const int16_t*,size_t,size_t*,uint32_t){assert(!"No alarm audio expected");return false;};
   hardware.i2sClose=[](uint8_t){assert(!"No alarm audio expected");return false;};
+#ifdef PRODUCTION_HAS_RADIO
   hardware.radioJoin=[](const char*,const char*){++m.radioActivity;assert(!"No RF activity expected");return false;};
   hardware.radioState=[](uint8_t* state,int8_t* rssi){*state=0;*rssi=-127;return true;};
   hardware.radioLeave=[](){return true;};
@@ -128,30 +133,48 @@ int main(int argc,char** argv){
   hardware.radioScanStart=[](){++m.radioActivity;assert(!"No RF activity expected");return false;};
   hardware.radioScanPoll=[](garden_radio_scan_result_v1*){assert(!"No RF activity expected");return false;};
   hardware.radioScanCancel=[](){return true;};hardware.radioIdle=[](){return true;};
+#endif
   RiscCpu::Port port(hardware);cpu=&port;
   const RiscBoot::KeyValueBackend kv={nullptr,kvGet,kvPut};
   RiscBoot::Runtime runtime({owner,health,delay,log,bind,&kv,
-    [](){return cpu->appExitSafe();},[](){return cpu->providerStorageSafe();}});
+    [](){return cpu->appExitSafe();}
+#ifdef PRODUCTION_STORAGE_SAFE
+    ,[](){return cpu->providerStorageSafe();}
+#endif
+  });
   const bool prepared=runtime.prepare(argv[1]);
-  if(argc==3){
-    if(prepared||strcmp(runtime.error(),argv[2])){
-      fprintf(stderr,"Expected prepare rejection '%s'; got prepared=%d error='%s'\n",argv[2],prepared,runtime.error());return 2;
+  if(argc==4&&!strcmp(argv[2],"prepare")){
+    if(prepared||strcmp(runtime.error(),argv[3])){
+      fprintf(stderr,"Expected prepare rejection '%s'; got prepared=%d error='%s'\n",argv[3],prepared,runtime.error());return 2;
     }
     assert(m.moduleLoads==0&&m.milliseconds==0&&port.quiescent());
     printf("Expected admission rejection before module load: %s\n",runtime.error());return 0;
   }
   if(!prepared){fprintf(stderr,"prepare: %s\n",runtime.error());return 2;}
-  if(!runtime.run()){fprintf(stderr,"run: %s\n",runtime.error());return 3;}
+  const bool ran=runtime.run();
+  if(argc==4&&!strcmp(argv[2],"runtime")){
+    if(ran||strcmp(runtime.error(),argv[3])){
+      fprintf(stderr,"Expected runtime rejection '%s'; got ran=%d error='%s'\n",argv[3],ran,runtime.error());return 3;
+    }
+    assert(!m.appLoads&&!m.appUnloads&&!m.frames&&m.moduleLoads==m.moduleUnloads);
+    assert(!m.radioActivity&&!m.storageWrites&&!m.buses[0]&&!m.buses[1]&&!m.spi&&!m.held&&port.quiescent());
+    assert(!risc_test_native_mapping_count());
+    for(bool pin:m.pins)assert(!pin);
+    printf("Expected native registry startup rejection before Clock: %s; modules=%u/%u; all resources quiescent\n",runtime.error(),m.moduleLoads,m.moduleUnloads);
+    return 0;
+  }
+  if(!ran){fprintf(stderr,"run: %s\n",runtime.error());return 3;}
   printf("Lifecycle observed: ready=%u apps=%u/%u modules=%u/%u frames=%u namespace1=%u namespace5=%u touch=%u elapsed=%llu\n",
     m.ready,m.appLoads,m.appUnloads,m.moduleLoads,m.moduleUnloads,m.frames,m.appSettingsReads,m.appPointsReads,m.touchReads,
     (unsigned long long)m.milliseconds);
   assert(m.ready&&m.appLoads==1&&m.appUnloads==1&&m.moduleLoads==m.moduleUnloads);
-  assert(m.appSettingsReads==2&&m.appPointsReads==1&&m.frames>0&&m.frameRows==240&&m.brightness>0);
+  assert(m.appSettingsReads==2&&m.appPointsReads==PRODUCTION_POINTS_READS&&m.frames>0&&m.frameRows==240&&m.brightness>0);
   bool nonzero=false;for(uint8_t pixel:m.frame)nonzero|=pixel!=0;assert(nonzero);
   assert(m.touchReads>0&&!m.rtcWrites&&!m.storageWrites&&!m.radioActivity);
   assert(!memcmp(m.registers[1]+2,date,sizeof(date)));
   assert(!m.buses[0]&&!m.buses[1]&&!m.spi&&!m.held&&port.quiescent());for(bool pin:m.pins)assert(!pin);
-  printf("Production default Clock PASS: namespaces 1+5, frames=%u, settings_reads=%u, points_reads=%u, modules=%u/%u, all resources quiescent, no RF\n",
+  assert(!risc_test_native_mapping_count());
+  printf("Production default Clock PASS: target registry, frames=%u, settings_reads=%u, points_reads=%u, modules=%u/%u, all resources quiescent, no RF\n",
     m.frames,m.appSettingsReads,m.appPointsReads,m.moduleLoads,m.moduleUnloads);
   return 0;
 }

@@ -138,7 +138,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
     require(json.loads(files['shared/update-sources.json']) == json.loads(files['shared/alarm-sources.json'])
             == pins, 'Source pins changed')
     require(json.loads(files['runtime-requirements.json']) == record['runtime_requirements'] == runtime
-            and runtime['source_sha'] == pins['runtime']['commit'] and runtime['firmware_version'] == '0.1.11',
+            and runtime['source_sha'] == pins['runtime']['commit'] and runtime['firmware_version'] == json.loads((root/'apps/update-runtime-artifact.json').read_text())['firmware_version'],
             'Runtime source/version mismatch')
     deployment = runtime['deployment']
     require(deployment['layout'] == update['layout'] and deployment['store_abi'] == 1 and
