@@ -64,7 +64,8 @@
     "lib/PortableApps/time/denver/display_time.h": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03",
     "lib/PortableApps/time/denver/twatch_calendar.h": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
     "lib/PortableApps/time/denver/twatch_caps.h": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e",
-    "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029"
+    "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029",
+    "lib/PortableApps/catalog-icons.json": "c4928d91f5a4d9a3b36abf612b0248ee6f0c57ef35bfd9eb0afd1478db5284da"
   },
   "application_versions": {
     "springboard": "1.4.4",
