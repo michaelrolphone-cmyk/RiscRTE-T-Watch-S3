@@ -2,8 +2,9 @@
 
 This separate nine-app deployment selects the original Utilities singleton
 alarm-service0.1.0. No firmware scheduler, board-local schedule copy, recurrence
-or snooze policy is introduced. Clock0.6.1 follows independently reviewed
-picker0.6.0. Stable product1.0.0 and its release descriptors remain immutable.
+or snooze policy is introduced. Clock0.6.5 incorporates independently reviewed
+picker0.6.4, including all24 faces, cyclic category motion, focused caching and
+persisted12/24-hour display choice. Stable product1.0.0 and its release descriptors remain immutable.
 
 The explicit physical closure is GPIO1, I2C2, touch-I2C3, PMU4, panel5, touch6,
 RTC8, haptic9 and speaker12. PMU configuration keeps only display rails1/2 and
@@ -20,12 +21,17 @@ retain existing namespace1 scope; Stopwatch retains namespace2. Runtime0.1.8
 supplies the reviewed generic capacity16 and native I2S cleanup prerequisite.
 
 The shared adapter keeps each app's stack, model and completed frame during an
-alert. Clock keeps face/picker state in its own invocation. Every normal service
+alert. Clock keeps the selected global face ID, category/axis positions and its
+six-card picker allocation in its own invocation. An opening queued inside a
+pending frame is cancelled before it becomes visible; alert-dismissal contact
+and queued selection/launcher actions are suppressed. Every normal service
 phase runs at an explicit settled display point before Back, gesture, app switch,
 or sleep decisions. Pending/failed presentations run only bounded independent
 stop_only cleanup; uncertain cleanup retains the invocation and grants with no
 further foreground/service I/O; Runtime provider polling retains its yield contract. Exact-current dismissal is not complete before safe output stop and
 durable service reconciliation. New due occurrences stay in the alert view.
+Dismissal starts a fresh60-second inactivity interval, so even a long alert
+returns to a visible retained picker before Clock can sleep again.
 
 Clock handles due work before fresh-boot or Light-wake intro. Owned Light/Deep
 entry consumes a fresh prepare_sleep decision on the same serialized task. The
@@ -45,6 +51,23 @@ service/storage call. Native-retained results propagate through Clock/shared
 callers directly to Runtime before any app cleanup or provider poll.
 Unsupported short tables refuse; negative entry statuses propagate;
 retained native state never executes restore I/O. Board baseline is1.1.3.
+
+## Common store and development image
+
+The alarm-specific common builder verifies all eight profile archives, then
+normalizes only board.revision after their selected stores compare byte-for-byte.
+It retains enough provenance to reconstruct every original archive. The38-file
+store has nine app policies and the same explicit five-key service mapping.
+The SPIFFS builder uses pinned mkspiffs2.230.0 and unpacks its result to verify
+every file against that common archive.
+
+The development-image builder requires a clean reviewed Watch tree, a successful
+exact-head CI artifact receipt, and the exact Runtime0.1.8 16MiB-target components.
+It verifies the image headers, partition table, firmware version and source
+identity, service and driver payloads, and the final store. The merged image is
+8MiB at offset0 on16MiB hardware using the existing layout. Its NVS region is
+erased: writing that complete image resets saved settings, alarms and timers.
+Build/verification never opens a serial port or flashes a device.
 
 ## Validation boundary
 

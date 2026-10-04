@@ -4,7 +4,8 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts'))
 from verify_alarm_deployment import verify
 class AlarmAuthority(unittest.TestCase):
  def setUp(self):
-  paths=list((ROOT/'dist/alarm-launcher-deployments').glob('*sx1262-915-bma423.zip'));self.assertEqual(len(paths),1)
+  version=json.loads((ROOT/'apps/clock/manifest.json').read_text())['version']
+  paths=list((ROOT/'dist/alarm-launcher-deployments').glob('twatch-alarm-launcher-'+version+'-sx1262-915-bma423.zip'));self.assertEqual(len(paths),1)
   self.path=paths[0]
   with zipfile.ZipFile(self.path) as z:self.files={n:z.read(n) for n in z.namelist()}
  def reject(self,name,edit):
@@ -20,7 +21,7 @@ class AlarmAuthority(unittest.TestCase):
    with zipfile.ZipFile(path,'w') as z:
     for n,data in files.items():z.writestr(n,data)
    with self.assertRaises((AssertionError,ValueError,KeyError,StopIteration)):verify(path)
- def test_exact_nine_app_five_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.6.1')
+ def test_exact_nine_app_five_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.6.5')
  def test_app_authority_is_exact(self):
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'].append({'capability':'audio.output','api':1,'instance_id':12}))
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'][-2].update(instance_id=4))

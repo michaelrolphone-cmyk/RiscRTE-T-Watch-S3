@@ -22,9 +22,10 @@ static bool clock_alarm_failure(void);
 #include "faces/picker.h"
 #include "launcher_touch.h"
 #include "PortableSleepPolicy.h"
+#include "PortableTimeFormat.h"
 static unsigned sleep_mode;
 static watch_face_picker picker;
-static uint16_t *picker_scratch;
+static nova_watch_picker_cache *picker_scratch;
 static bool picker_open_pending,picker_select_pending,picker_save_failed;
 static unsigned picker_selection_pending;
 static watch_launcher_touch touch;
@@ -43,7 +44,7 @@ static void sample_launcher_touch(uint32_t now, bool force) {
     unsigned action=launcher_touch_sample(&touch,&picker,now,&activity);
     if(action==WATCH_FACE_LAUNCHER)launcher_swipe_pending=true;
     if(action==WATCH_FACE_OPEN)picker_open_pending=true;
-    if(action==WATCH_FACE_SELECT){picker_selection_pending=picker.target;picker_select_pending=true;}
+    if(action==WATCH_FACE_SELECT){picker_selection_pending=watch_face_page_for(picker.category)->ids[picker.target];picker_select_pending=true;}
     if (activity) launcher_activity_pending=true;
 }
 #endif
@@ -58,6 +59,18 @@ static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
 }
+#ifdef WATCH_CLOCK_LAUNCHER
+static bool reload_time_format(void) {
+    unsigned mode=PORTABLE_TIME_FORMAT_12;
+    risc_runtime_capability_v1 grant={.struct_size=sizeof(grant)};
+    if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,PORTABLE_TIME_FORMAT_STORE_INSTANCE,&grant)) {
+        (void)portable_time_format_load(grant.api,&mode);
+        if(!rt->release(&grant))return false;
+    }
+    face.hour_24=mode==PORTABLE_TIME_FORMAT_24;
+    return true;
+}
+#endif
 static bool same_second(const twatch_rtc_time_v1 *a,const twatch_rtc_time_v1 *b) {
     return a->year==b->year && a->month==b->month && a->day==b->day &&
         a->hour==b->hour && a->minute==b->minute && a->second==b->second;
@@ -128,7 +141,8 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     #ifdef WATCH_CLOCK_LAUNCHER
     if(picker.open&&picker_scratch) {
         watch_face_animate(&picker,now);
-        return nova_watch_picker_render(surface,&face,picker.selected,picker.position,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
+        picker.category_positions[picker.category]=picker.position;
+        return nova_watch_picker_collections_render(surface,&face,picker.selected,picker.category_position,picker.category_positions,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
     }
     return nova_watch_face_render(surface,&face,picker.selected);
 #else
@@ -283,6 +297,9 @@ static int sleep_cycle(void) {
     if(rc<0)return false;
     uint32_t discard;
     reset_telemetry();
+#ifdef WATCH_CLOCK_LAUNCHER
+    if(!reload_time_format())return false;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
     /* Due work is handled before wake intro; short/crown and touch are fresh. */
     if(!launcher_touch_open(&touch) || !clock_alarm_foreground() || !launcher_touch_close(&touch))return false;
@@ -348,6 +365,8 @@ __attribute__((visibility("default"))) void app_main(void) {
     if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,WATCH_FACE_STORE_INSTANCE,&face_grant)) {
         unsigned selected=0;int rc=watch_face_load(face_grant.api,&selected);
         picker.selected=(uint8_t)selected;
+        unsigned format=PORTABLE_TIME_FORMAT_12;(void)portable_time_format_load(face_grant.api,&format);
+        face.hour_24=format==PORTABLE_TIME_FORMAT_24;
         if(!rt->release(&face_grant))goto done;
         if(rc!=RISC_KEY_VALUE_OK&&rc!=RISC_KEY_VALUE_NOT_FOUND)rt->diagnostic("WATCH_CLOCK face=unreadable default=nova");
     }
@@ -401,7 +420,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         launcher_activity_pending=false;
         if(picker_open_pending) {
             picker_open_pending=false;
-            if(!picker_scratch)picker_scratch=malloc(240u*240u*sizeof(uint16_t));
+            if(!picker_scratch){picker_scratch=malloc(sizeof(*picker_scratch));if(picker_scratch)picker_scratch->valid_mask=0;}
             if(!picker_scratch){watch_face_close(&picker);rt->diagnostic("WATCH_CLOCK picker=out-of-memory");}
         }
         /* Crown close/sleep supersedes any contact action sampled while an
@@ -414,7 +433,11 @@ __attribute__((visibility("default"))) void app_main(void) {
                 saved=watch_face_save(setting.api,picker_selection_pending);
                 if(!rt->release(&setting))break;
             }
-            if(saved)picker.selected=(uint8_t)picker_selection_pending;
+            if(saved) {
+                picker.selected=(uint8_t)picker_selection_pending;
+                watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
+                picker_open_pending=launcher_swipe_pending=false;
+            }
             picker_save_failed=!saved;
             rt->diagnostic(saved?"WATCH_CLOCK face=saved":"WATCH_CLOCK face=save-failed");
         }

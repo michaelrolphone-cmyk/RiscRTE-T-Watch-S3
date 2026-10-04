@@ -9,6 +9,11 @@ static int32_t clock_alarm_seen_error;
 static uint32_t clock_alarm_seen_snapshot;
 static void clock_alarm_cancel_input(void) {
     launcher_swipe_pending=launcher_activity_pending=false;
+    /* A long press sampled inside present() marks the picker open before the
+     * settled loop allocates its cache. Cancelling that queued opening must
+     * also close the unpresented picker, or invisible picker input would live
+     * on after the alert. A displayed picker retains its state and allocation. */
+    if(picker_open_pending && !picker_scratch)watch_face_close(&picker);
     picker_open_pending=picker_select_pending=false;
     watch_face_reset_contact(&picker);
 }
@@ -77,7 +82,12 @@ static bool clock_alarm_foreground(void) {
         if(old!=clock_alarm.status.state || old_error!=clock_alarm.status.error)redraw=true;
         if(clock_alarm.status.state==ALARM_STATE_READY && !portable_alarm_owned(&clock_alarm))break;
     }
-    clock_alarm_modal=false;clock_alarm_cancel_input();return true;
+    clock_alarm_modal=false;clock_alarm_cancel_input();
+    /* The alert can outlast Clock's idle interval. Its dismissal is activity:
+     * the settled main loop must present the retained picker before starting
+     * a fresh inactivity interval, rather than immediately sleeping it. */
+    launcher_activity_pending=true;
+    return true;
 }
 static void clock_alarm_finish(void) {
     if(clock_alarm.api && !clock_alarm_failed_cleaned &&

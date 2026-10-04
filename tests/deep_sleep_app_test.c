@@ -18,7 +18,7 @@ static void yield_ms(uint32_t n){now+=n;}
 bool test_face(risc_display_surface_v1 *s,const nova_watch_state *f){(void)f;memset(s->pixels,0x57,sizeof(pixels));return true;}
 bool test_boot(const risc_display_surface_v1 *s,uint32_t ms){(void)ms;assert(!ready);++boot_frames;memset(s->pixels,0,sizeof(pixels));return true;}
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id){(void)id;return test_face(s,f);}
-bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id,int position,const char*status,unsigned pulse_face,unsigned pulse_scale,uint16_t*scratch){(void)pulse_face;(void)pulse_scale;(void)position;(void)status;(void)scratch;return nova_watch_face_render(s,f,id);}
+bool nova_watch_picker_collections_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id,int position,const int positions[WATCH_FACE_CATEGORY_COUNT],const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*scratch){(void)positions;(void)pulse_face;(void)pulse_scale;(void)position;(void)status;(void)scratch;return nova_watch_face_render(s,f,id);}
 unsigned nova_watch_picker_pulse(uint32_t age){(void)age;return 256;}
 static bool diagnostic(const char *s){
  if(strstr(s,"ready")){ready=true;ready_at=now;assert(kv_reads==1 && kv_grants==kv_releases);}
@@ -58,7 +58,7 @@ static bool unsub(void*c,uint64_t t){(void)c;assert(t);++closed;return true;}
 static bool touch_poll(void*c,size_t n){(void)c;assert(n==1);return true;}
 static int32_t next(void*c,uint64_t t,risc_touch_event_v1*e){(void)c;(void)t;(void)e;return 0;}
 static bool snapshot(void*c,risc_touch_snapshot_v1*s){(void)c;*s=(risc_touch_snapshot_v1){.width=240,.height=240};return true;}
-static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(void)c;if(!strcmp(k,WATCH_FACE_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}assert(!strcmp(k,PORTABLE_SLEEP_KEY)&&cap==4);++kv_reads;*size=0;
+static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(void)c;if(!strcmp(k,WATCH_FACE_KEY)||!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}assert(!strcmp(k,PORTABLE_SLEEP_KEY)&&cap==4);++kv_reads;*size=0;
  if(scenario==9||scenario==12)return RISC_KEY_VALUE_NOT_FOUND;
  if(scenario==10)return RISC_KEY_VALUE_IO;
  *size=4;memcpy(b,(uint8_t[]){0x53,scenario==11?2:1,1,0xa4},4);return 0;

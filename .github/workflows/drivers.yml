@@ -48,6 +48,8 @@ jobs:
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
           python scripts/test_watch_faces.py
+          python scripts/test_watch_faces_collection_two.py
+          python scripts/test_calendar_watch_faces.py
           python apps/clock/nova/tests/run.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py
@@ -121,7 +123,7 @@ jobs:
           for bundle in dist/launcher-common/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      # Clock0.6.0's immutable picker-only custody is maintained by its own PR.
+      # Picker-only custody is maintained by its own PR.
       # This increment adds explicit output drivers and alarm grants, verified
       # by the independent alarm closure/negative tests in the alarm job below.
       - uses: actions/upload-artifact@v4
@@ -187,7 +189,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: f204477b287263fa6c5a2d095829caf86b327506
+          ref: 71dd405da28f938175d23bc042af18c1bfeff50e
           path: .alarm-dependencies/system-apps
           persist-credentials: false
       - uses: actions/checkout@v4
@@ -216,7 +218,9 @@ jobs:
         run: |
           python -m pip install platformio==6.1.19
           pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
           echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+          echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
       - name: Nine native apps, unchanged original service and exact deployment authority
         run: |
           python scripts/build_twatch_drivers.py
@@ -227,6 +231,15 @@ jobs:
           python scripts/build_clock_deployment.py --profile all --launcher --alarms
           python scripts/verify_alarm_deployment.py dist/alarm-launcher-deployments/*.zip
           python -m unittest discover -s tests -p test_alarm_deployment.py -v
+      - name: Common alarm store, semantic custody and exact SPIFFS round trip
+        env:
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m unittest discover -s tests -p test_alarm_bundle.py -v
+          python scripts/build_alarm_common.py dist/alarm-launcher-deployments/*.zip --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          for bundle in dist/alarm-common/*.zip; do
+            python scripts/build_alarm_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-alarm-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -235,4 +248,7 @@ jobs:
             dist/alarm-launcher/*.json
             dist/alarm-launcher-deployments/*.zip
             dist/alarm-launcher-deployments/catalog.json
+            dist/alarm-common/*.zip
+            dist/alarm-common/*.bin
+            dist/alarm-common/*.json
           if-no-files-found: error

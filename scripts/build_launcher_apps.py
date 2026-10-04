@@ -20,6 +20,8 @@ def build(system,utilities,alarms=False,runtime=None):
         raise ValueError('Clock and shared app transition implementations differ')
     if (system/'lib/PortableApps/include/PortableSleepPolicy.h').read_bytes()!=(ROOT/'apps/clock/PortableSleepPolicy.h').read_bytes():
         raise ValueError('Clock and Settings sleep policy differ')
+    if alarms and (system/'lib/PortableApps/include/PortableTimeFormat.h').read_bytes()!=(ROOT/'apps/clock/PortableTimeFormat.h').read_bytes():
+        raise ValueError('Clock and Settings time-format record differ')
     if (system/'lib/PortableApps/include/RiscKeyValueV1.h').read_bytes()!=(ROOT/'sdk/app/RiscKeyValueV1.h').read_bytes():
         raise ValueError('Clock and Settings key-value ABI differ')
     cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc') or str(Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc')
