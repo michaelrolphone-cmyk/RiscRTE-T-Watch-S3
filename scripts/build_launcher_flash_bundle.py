@@ -35,15 +35,15 @@ def build(runtime,artifact,head,runtime_source,out):
   common=[n for n in names if n.endswith('-launcher-common.zip')]
   image=[n for n in names if n.endswith('-launcher-common-bootfs.bin')]
   assert len(common)==len(image)==1
-  proof=json.loads(z.read(next(n for n in names if n.endswith('sleep-increment-proof.json'))))
-  assert proof['label']=='0.5.0-sleep' and proof['unchanged_file_count']==11
+  proof=json.loads(z.read(next(n for n in names if n.endswith('daily-apps-increment-proof.json'))))
+  assert proof['label']=='0.5.1-daily-apps' and proof['unchanged_file_count']==19
   rtc_raw=z.read(next(n for n in names if n.endswith('compiled-driver.elf')))
   rtc_proof=json.loads(z.read(next(n for n in names if n.endswith('metadata-proof.json'))))
   rtc_canonical,rtc_checked=normalize_rtc(rtc_raw)
   assert all(rtc_proof[k]==v for k,v in rtc_checked.items()) and '8.4.0' in rtc_proof['compiler']
   common_bytes=z.read(common[0]);image_bytes=z.read(image[0]);image_record=json.loads(z.read(image[0][:-4]+'.json'))
   assert image_record['sha256']==sha(image_bytes) and image_record['deployment_sha256']==sha(common_bytes)
-  assert image_record['round_trip_verified'] and image_record['files']==24 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
+  assert image_record['round_trip_verified'] and image_record['files']==28 and image_record['partition_offset']==0x310000 and len(image_bytes)==0x4f0000
  with tempfile.TemporaryDirectory() as tmp:
   p=Path(tmp)/'common.zip';p.write_bytes(common_bytes);record=verify(p)
  assert record['profile']=='launcher-common' and record['pull_request_head_sha']==head and record['source_sha']==head
@@ -52,11 +52,11 @@ def build(runtime,artifact,head,runtime_source,out):
  version=record['app_version'];assert re.fullmatch(r'\d+\.\d+\.\d+',version)
  with zipfile.ZipFile(io.BytesIO(common_bytes)) as z:
   members(z)
-  store={n:z.read(n) for n in z.namelist() if n.startswith('store/')};assert len(store)==24
+  store={n:z.read(n) for n in z.namelist() if n.startswith('store/')};assert len(store)==28
   assert proof['variant_store_sha256']=={n.removeprefix('store/'):sha(b) for n,b in sorted(store.items())}
-  baseline=json.loads((ROOT/'docs/SLEEP_BASELINE.json').read_text())
+  baseline=json.loads((ROOT/'docs/DAILY_APPS_BASELINE.json').read_text())
   assert proof['baseline_store_sha256']==baseline['baseline_store_sha256']
-  changed=sorted(n.removeprefix('store/') for n,b in store.items() if sha(b)!=baseline['baseline_store_sha256'].get(n.removeprefix('store/')))
+  changed=sorted(n.removeprefix('store/') for n,b in store.items() if n.removeprefix('store/') in baseline['baseline_store_sha256'] and sha(b)!=baseline['baseline_store_sha256'][n.removeprefix('store/')])
   assert changed==sorted(baseline['changed_store_files'])
   assert store['store/rtc/driver.elf']==rtc_canonical
   board=json.loads(store['store/board.json']);assert {d['instance_id'] for d in board['devices']}=={1,2,3,4,5,6,8}
@@ -67,7 +67,7 @@ def build(runtime,artifact,head,runtime_source,out):
  files.update({'licenses/'+p.name:p.read_bytes() for p in (ROOT/'licenses').glob('*') if p.is_file()})
  files['licenses/BOOT_WORDMARK_LICENSE.txt']=(ROOT/'apps/clock/effects/reference/BOOT_WORDMARK_LICENSE.txt').read_bytes()
  files['reproduce/RUNTIME-LICENSE']=(runtime_source/'LICENSE').read_bytes()
- files['provenance/sleep-increment-proof.json']=encoded(proof)
+ files['provenance/daily-apps-increment-proof.json']=encoded(proof)
  files['provenance/rtc-metadata-proof.json']=encoded(rtc_proof)
  files['provenance/rtc-compiled.elf']=rtc_raw
  files['DEEP_SLEEP.md']=(ROOT/'docs/DEEP_SLEEP.md').read_bytes()
@@ -85,11 +85,12 @@ def build(runtime,artifact,head,runtime_source,out):
   offset=int(part['offset'],16);assert all(v==255 for v in merged[cursor:offset]);assert merged[offset:offset+part['size_bytes']]==files[part['file']];cursor=offset+part['size_bytes']
  assert all(v==255 for v in merged[cursor:])
  manifest={'schema':1,'target':'Original/non-Plus LILYGO T-Watch-S3,16MB flash/8MB OPI PSRAM','app_version':version,'runtime_version':rc['firmware_version'],'runtime_commit':RUNTIME_SHA,'watch_pr_head':head,'runtime_artifact_sha256':sha(runtime.read_bytes()),'watch_artifact_sha256':sha(artifact.read_bytes()),'flash_start':0,'overwrite_bytes':len(merged),'flash_capacity_bytes':0x1000000,'merged_sha256':sha(merged),'components':parts,'clock_policy':record['clock_policy'],'time_policy':record['time_policy'],'settings_time_policy':json.loads(files['settings-time-policy.json']),'store':[{'path':n.removeprefix('store/'),'size_bytes':len(b),'sha256':sha(b)} for n,b in sorted(store.items())],'physical_verification':'Pending; host/model/target CI are not hardware qualification'}
- manifest['configuration_variant']='0.5.0-sleep'
- manifest['changed_from_0_4_5']=changed
+ manifest['configuration_variant']='0.5.1-daily-apps'
+ manifest['changed_from_0_5_0']=changed
+ manifest['added_store_files']=baseline['added_store_files']
  files['manifest.json']=encoded(manifest)
  name=f'twatch-s3-launcher-{version}.bin';files[name]=bytes(merged)
- files['FLASHING.md']=f'''# T-Watch-S3 launcher {version}\n\nTarget: original/non-Plus T-Watch-S3,16MB flash and8MB OPI PSRAM.\nMerged BIN address:0x0. This replaces the first8MiB, including NVS/settings; upper8MiB is untouched. Keep the physically accepted0.4.5 image for recovery. No flashing was performed.\n\nClock opens shared Springboard by swipe with a retained-frame blur crossfade; held drag continues, and root Back from Settings/Battery returns to Springboard. Springboard Back returns through the normal Clock entry, which fades in without replaying boot intro. Settings offers saved Light or Deep sleep; Light is default. Deep wakes by a fresh Clock boot on crown press. Settings displays Denver and inverse-converts saves to the existing RTC UTC+08 basis. A spring gap is rejected and a fall fold requires explicit MDT/MST. Brightness remains gated until a complete fresh frame after cold activation/wake.\n\nTo flash after your own backup/decision, close serial monitors and replace PORT:\n\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nComponents: bootloader0x0; partitions0x8000; runtime0x10000; bootfs0x310000.\nWatch source:{head}\nRuntime source:{RUNTIME_SHA}\nMerged SHA256:{sha(merged)}\n\nThe accepted0.4.5 GUI, board wiring, panel rendering/transport, touch/RTC/I2C drivers and rail policy are retained. Three drivers gain only deep-sleep suffixes; generic runtime adds owned deep sleep, bounded persisted settings and retained-unload safety. Deep powers down the CPU and reboots on crown wake; no ULP program, timer/alarm wake, double-tap, rail-off or partial-frame optimization is included. Host/CI checks do not establish physical wake reliability or current draw.\n'''.encode()
+ files['FLASHING.md']=f'''# T-Watch-S3 launcher {version}\n\nTarget: original/non-Plus T-Watch-S3,16MB flash and8MB OPI PSRAM.\nMerged BIN address:0x0. This replaces the first8MiB, including NVS/settings; upper8MiB is untouched. Keep the delivered0.5.0 and physically accepted0.4.5 images for recovery. No flashing was performed.\n\nClock opens shared Springboard by swipe with a retained-frame blur crossfade; held drag continues, and root Back from Settings/Battery returns to Springboard. Springboard Back returns through the normal Clock entry, which fades in without replaying boot intro. Settings offers saved Light or Deep sleep; Light is default. Deep wakes by a fresh Clock boot on crown press. Settings displays Denver and inverse-converts saves to the existing RTC UTC+08 basis. A spring gap is rejected and a fall fold requires explicit MDT/MST. Brightness remains gated until a complete fresh frame after cold activation/wake.\n\nTo flash after your own backup/decision, close serial monitors and replace PORT:\n\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nComponents: bootloader0x0; partitions0x8000; runtime0x10000; bootfs0x310000.\nWatch source:{head}\nRuntime source:{RUNTIME_SHA}\nMerged SHA256:{sha(merged)}\n\nThe delivered0.5.0 physical drivers, Clock rendering, Settings and Battery bytes stay unchanged. Shared Calculator0.1.0 and Stopwatch0.1.0 are added through Springboard1.3.8. Calculator uses six-place decimal arithmetic. Stopwatch shows monotonic centiseconds while open and uses raw RTC seconds for approximate persisted recovery; RTC edits while closed can change the restored result. No runtime or driver change is included. Deep powers down the CPU and reboots on crown wake; no ULP program, timer/alarm wake, double-tap, rail-off or partial-frame optimization is included. Host/CI checks do not establish physical wake reliability or current draw.\n'''.encode()
  files['SHA256SUMS']=''.join(f'{sha(b)}  {n}\n' for n,b in sorted(files.items())).encode()
  out.mkdir(parents=True,exist_ok=True);(out/name).write_bytes(merged)
  archive=out/f'twatch-s3-launcher-{version}-flashing.zip'

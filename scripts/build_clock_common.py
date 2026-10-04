@@ -24,7 +24,7 @@ STORE_PATHS = {'store/board.json', 'store/boot.json', 'store/default.elf',
 
 def store_paths(launcher=False):
     return STORE_PATHS | ({'store/touch/driver.elf','store/touch/manifest.json'} |
-        {'store/'+name+ext for name in ('clock','springboard','battery','settings') for ext in ('.elf','.json')} if launcher else set())
+        {'store/'+name+ext for name in ('clock','springboard','battery','settings','calculator','stopwatch') for ext in ('.elf','.json')} if launcher else set())
 
 
 def normalized_store(files, profile, launcher=False):

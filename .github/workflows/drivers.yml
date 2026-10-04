@@ -76,14 +76,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: fd6bed09fe6716c8d3a75c0538c4f232f3cc388e
+          ref: 1589b54aeaf23d3cd82c9ab74c3c5de715e4abf8
           path: .dependencies/system-apps
           persist-credentials: false
       - name: Pinned shared Battery source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: c440f15621ec8366ae8b8cb683822b1b0b91aa9e
+          ref: 75cdc530db9afc5b016c898edcf154978862c77c
           path: .dependencies/utilities
           persist-credentials: false
       - name: Exact paired runtime source
@@ -116,10 +116,10 @@ jobs:
           for bundle in dist/launcher-common/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      - name: Accepted GUI baseline and bounded sleep change inventory
+      - name: Delivered GUI/sleep baseline and bounded daily-app inventory
         run: |
-          python scripts/verify_sleep_increment.py dist/launcher-common/*-launcher-common.zip
-          python -m unittest discover -s tests -p test_sleep_increment.py -v
+          python scripts/verify_daily_increment.py dist/launcher-common/*-launcher-common.zip
+          python -m unittest discover -s tests -p test_daily_increment.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-launcher-deployments

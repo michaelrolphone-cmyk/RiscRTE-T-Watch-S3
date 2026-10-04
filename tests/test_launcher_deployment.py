@@ -9,7 +9,7 @@ class Launcher(unittest.TestCase):
   for path in paths:
    r=verify(path);self.assertEqual(len(r['drivers']),7)
    with zipfile.ZipFile(path) as z:
-    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),24)
+    self.assertEqual(len([n for n in z.namelist() if n.startswith('store/')]),28)
     boot=json.loads(z.read('store/boot.json'));self.assertEqual(boot['default_app'],'default.elf')
     i2c=[d for d in boot['drivers'] if d['instance_id'] in (2,3)]
     self.assertEqual(len(i2c),2)
