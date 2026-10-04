@@ -12,8 +12,11 @@ if __name__=='__main__':
  build_service(s,u,r,points=True,wifi=True)
 
  baseline=json.loads((ROOT/'apps/wifi-preserved-elf-baseline.json').read_text())
+ mismatches={}
  for name,expected in baseline['apps'].items():
   data=(ROOT/'dist/wifi-launcher'/name).read_bytes()
-  if len(data)!=expected['size_bytes'] or hashlib.sha256(data).hexdigest()!=expected['sha256']:
-   raise ValueError('Wi-Fi unexpectedly changed a delivered executable: '+name)
+  actual={'size_bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+  if actual!=expected:mismatches[name]=actual
+ if mismatches:
+  raise ValueError('Wi-Fi unexpectedly changed delivered executables: '+json.dumps(mismatches,sort_keys=True))
  print('Ten unrelated delivered app/service ELF files remain byte-identical')
