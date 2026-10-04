@@ -1,4 +1,4 @@
-/* Eight attachment-derived faces. Included by nova.c to reuse its validated
+/* Schedule and attachment-derived faces. Included by nova.c to reuse its validated
  * RGB565 canvas, blending, RTC formatter and integer sine table. */
 typedef struct { uint8_t ch; int8_t left,top; uint8_t width,height; uint16_t advance; uint32_t data; } face_glyph;
 typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
@@ -12,7 +12,7 @@ typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
 #define FAMBER FC(255,176,32)
 #define FORANGE FC(255,122,26)
 #define FMUTED FC(125,140,144)
-static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY"};
+static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY","UP NEXT"};
 const char *nova_watch_face_name(unsigned id) {return id<WATCH_FACE_COUNT?face_names[id]:face_names[0];}
 static const face_glyph *fglyph(const face_font *font,char ch) {
     for(unsigned i=0;i<font->count;i++)if(font->glyphs[i].ch==(uint8_t)ch)return font->glyphs+i;
