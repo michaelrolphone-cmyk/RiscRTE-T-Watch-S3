@@ -14,7 +14,9 @@ BASELINE_SOURCE = '216e2d73b72cca6c3bcf75ad9ef56466b8861144'
 APPS = ('default', 'clock', 'springboard', 'battery', 'settings', 'calculator',
         'stopwatch', 'alarms', 'countdown', 'points_in_time', 'wifi_settings')
 SELECTIONS = ((), ('ota_update',), ('ota_update', 'app_store'))
-CHANGED = {'boot.json', 'default.elf', 'default.json', 'clock.json', 'springboard.elf', 'springboard.json'}
+CHANGED = {'boot.json', 'default.elf', 'default.json', 'clock.json', 'springboard.elf', 'springboard.json',
+           'battery.elf', 'settings.elf', 'calculator.elf', 'stopwatch.elf', 'alarms.elf',
+           'countdown.elf', 'points_in_time.elf', 'wifi_settings.elf'}
 NATIVE = ('platform.http-client', 'platform.bank-store', 'platform.clock')
 PARTITIONS = {'app0': {'offset': 0x10000, 'size': 0x300000},
               'bootfs0': {'offset': 0x310000, 'size': 0x4f0000},
