@@ -65,3 +65,21 @@ These ELF hashes came from the clean pinned SystemApps source and its canonical
 provider build script. They establish reproducibility of those providers; they do
 not establish successful native Runtime target compilation, free RAM on hardware,
 TLS connection latency, OTA rollback behavior on a device, or final artifact custody.
+
+## Recovery and durable publication, 2026-10-04
+
+The development workspace was replaced after the earlier local qualification.
+The published Runtime0.1.11 head76212b70 and its successful CI37202528313 remain
+available. Its paired artifact11303128669 has been downloaded again and matched
+to the hosted7,030,843-byte ZIP digest; the committed update-runtime-artifact.json
+now records exact component custody. The separate SystemApps updater branches
+include the final cancel/retry and uncertain-activation UI fixes.
+
+This checkpoint restores the pending branch-mode/typed-sidecar/atomic-publication
+checks, checked TLS-close fixture, and current source pins. Focused Python tests
+were rerun after recovery. Historical local evidence cited above is not evidence
+of a new recovery run; every final Watch branch must pass its own exact-head CI.
+The final flashing-image assembler remains gated on that CI receipt, native
+artifact reproduction, actual store admission, and default Clock execution on
+the final extracted store. No recovery-time device operation or BIN delivery is
+claimed here.

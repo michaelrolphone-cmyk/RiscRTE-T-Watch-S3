@@ -107,7 +107,8 @@ static int chain(void*,mbedtls_x509_crt*,int,uint32_t*){return 0;}
 esp_err_t esp_crt_bundle_attach(void* p){static_cast<mbedtls_ssl_config*>(p)->f_vrfy=chain;return ESP_OK;}
 esp_tls_t* esp_tls_init(){unsigned i=networkOpens++;requests.emplace_back();wireAt.push_back(0);wires.emplace_back();return new esp_tls_t{i};}
 int esp_tls_conn_destroy(esp_tls_t* p){++networkCloses;delete p;return closeFailure?-1:0;}
-int esp_tls_conn_new_async(const char* host,int n,int port,const esp_tls_cfg_t* c,esp_tls_t*){assert(n>0&&host[n]==0&&port==443&&c->non_block&&!c->skip_common_name);tlsConfig={};assert(c->crt_bundle_attach(&tlsConfig)==0&&tlsConfig.major==3&&tlsConfig.minor==3);return 1;}
+extern "C" int __wrap_close(int fd){assert(fd==7);return closeFailure?-1:0;}
+int esp_tls_conn_new_async(const char* host,int n,int port,const esp_tls_cfg_t* c,esp_tls_t* tls){tls->sockfd=7;tls->server_fd.fd=7;assert(n>0&&host[n]==0&&port==443&&c->non_block&&!c->skip_common_name);tlsConfig={};assert(c->crt_bundle_attach(&tlsConfig)==0&&tlsConfig.major==3&&tlsConfig.minor==3);return 1;}
 ssize_t esp_tls_conn_write(esp_tls_t* p,const void* b,size_t n){requests[p->index].append(static_cast<const char*>(b),n);return n;}
 ssize_t esp_tls_conn_read(esp_tls_t* p,void* out,size_t n){
  if(freezeNetwork)return ESP_TLS_ERR_SSL_WANT_READ;

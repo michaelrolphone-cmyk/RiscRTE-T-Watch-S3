@@ -17,8 +17,8 @@ for kind in 0 1; do
  c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -fPIC -fvisibility=hidden -shared -DUPDATE_FIRMWARE="$kind" "$apps/Services/update/service.cpp" -o "$build/modules/update-$kind.elf"
 done
 sources=("$runtime/src/bootstrap/Json.cpp" "$runtime/src/bootstrap/Board.cpp" "$runtime/src/bootstrap/Runtime.cpp" "$runtime/src/runtime/drivers/ProviderGraphV2.cpp" "$runtime/src/runtime/drivers/ProviderModuleV2.cpp" "$runtime/src/ports/esp32s3/CpuPort.cpp" "$runtime/src/runtime/update/PairedBank.cpp" "$runtime/src/runtime/update/StoreAudit.cpp")
-c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration"
-c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -DRISC_TEST_RECOVERY_NEW=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration-new-runtime"
+c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=close -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration"
+c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -DRISC_TEST_RECOVERY_NEW=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=close -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration-new-runtime"
 run_case() {
  local kind="$1" scenario="$2" dir="$build/$1-$2"
  mkdir -p "$dir"

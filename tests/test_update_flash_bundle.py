@@ -1,16 +1,39 @@
 """Paired assembly boundaries and exact external-custody receipt negatives."""
 import copy
+import json
+import tempfile
 import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from build_update_flash_bundle import assemble, receipt, JOBS, FLASH_BYTES
+from build_update_flash_bundle import assemble, receipt, JOBS, FLASH_BYTES, require_branch_mode, require_typed_record
 from build_wifi_common import sha
 
 class PairedBundleTests(unittest.TestCase):
  def components(self):
   return {'bootloader.bin':b'loader','partitions.bin':b'partitions','firmware.bin':b'firmware',
           'bootfs.bin':b'\xff'*0x4f0000,'otadata.bin':b'\xff'*8192,'bank_state.bin':b'\xff'*8192}
+ def test_branch_mode_is_not_an_artifact_choice(self):
+  with tempfile.TemporaryDirectory() as temporary:
+   root=Path(temporary);(root/'apps').mkdir()
+   for mode,apps in [('paired',[]),('ota',['ota_update']),('all',['ota_update','app_store'])]:
+    (root/'apps/update-lane.json').write_text(json.dumps({'schema':1,'mode':mode}))
+    require_branch_mode(root,{'updates':{'apps':apps}})
+    for other in [[],['ota_update'],['ota_update','app_store']]:
+     if other!=apps:
+      with self.assertRaises(ValueError):require_branch_mode(root,{'updates':{'apps':other}})
+   (root/'apps/update-lane.json').write_text(json.dumps({'schema':True,'mode':'all'}))
+   with self.assertRaises(ValueError):require_branch_mode(root,{'updates':{'apps':['ota_update','app_store']}})
+ def test_sidecar_exact_types_and_compatibility(self):
+  expected={'schema':1,'image':'bank0.bin','layout':'riscrte-paired-16m-v1','store_abi':1,
+            'migration_only':True,'apps':['ota_update'],'round_trip_verified':True,'size_bytes':5177344}
+  require_typed_record(dict(expected),expected)
+  for field,value in [('schema',True),('store_abi',True),('store_abi',999),('layout','legacy-8m'),
+                      ('migration_only',False),('migration_only',1),('apps',[]),('image','wrong.bin'),
+                      ('round_trip_verified',1),('size_bytes',5177344.0)]:
+   bad=dict(expected);bad[field]=value
+   with self.subTest(field=field,value=value),self.assertRaises(ValueError):require_typed_record(bad,expected)
+  with self.assertRaises(ValueError):require_typed_record(dict(expected,extra='surprise'),expected)
  def test_full16m_and_erased_inactive(self):
   data,parts=assemble(self.components())
   self.assertEqual(len(data),FLASH_BYTES);self.assertEqual(len(parts),6)

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "c988875d688a161addfe96d7fbb6792673d3f75d",
+  "source_sha": "76212b70e02e10a88e300af6bafe363c11364a05",
   "firmware_version": "0.1.11",
   "required_behavior": {
     "spi_max_hz": 40000000,
@@ -42,9 +42,9 @@
     "migration": "explicit-user-controlled-full-16MiB-reflash-only",
     "existing_8MiB_ota_compatible": false,
     "candidate_artifact": {
-      "status": "awaiting-exact-source-ci-artifact",
-      "ci_run": null,
-      "artifact_sha256": null
+      "status": "verified-exact-source-ci-artifact",
+      "ci_run": 37202528313,
+      "artifact_sha256": "3d2ca0ed3d651c09ed96559812669e5e7d23020a4db7fbb2216858ffb3c0c7f6"
     },
     "partitions": {
       "app0": {

@@ -295,7 +295,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 text = command([host, destination, scenario], timeout=60)
                 marker = next(line.removeprefix('UPDATE_CLOCK_RESULT ') for line in text.splitlines() if line.startswith('UPDATE_CLOCK_RESULT '))
                 outcomes.append(dict(json.loads(marker), output=text))
-            if any(key.startswith('software-update-') for key in selections):
+            if any(json.loads(content[d['manifest']])['id'].startswith('software-update-') for d in boot['drivers']):
                 outcomes.append(dict(scenario='missing-bank', **json.loads(command([host, destination, 'missing-bank'], timeout=60))))
             require(_files(original) == content, 'Original store changed after Clock execution')
             require(expected_json == {name: data for name, data in _files(destination).items() if name.endswith('.json')}, 'Host execution changed production JSON')

@@ -52,12 +52,33 @@ def receipt(record, raw, head, tree):
             all(j.get('conclusion')=='success' for j in jobs),'All seven exact-head jobs must pass')
 
 
+
+def require_branch_mode(root,record):
+    from build_update_apps import MODES
+    lane=json.loads((Path(root)/'apps/update-lane.json').read_text())
+    require(type(lane.get('schema')) is int and lane=={'schema':1,'mode':lane.get('mode')} and
+            lane['mode'] in MODES and tuple(record['updates']['apps'])==MODES[lane['mode']],
+            'Deployment app selection differs from this branch mode')
+
+
+def require_typed_record(actual,expected):
+    require(actual==expected and all(type(actual[k]) is type(v) for k,v in expected.items()),
+            'Hosted store record mismatch')
+
+
 def runtime_files(raw, runtime_source, root=ROOT):
     pin=json.loads((root/'apps/update-runtime-artifact.json').read_text())
     requirements=json.loads((root/'apps/update-runtime-requirements.json').read_text())
     source(runtime_source,pin['source_sha'])
     require(pin['source_sha']==requirements['source_sha'] and
             pin['artifact_sha256']==sha(raw),'Runtime archive/source differs from committed custody')
+    require(pin.get('repository')=='michaelrolphone-cmyk/RiscRTE' and
+            pin.get('artifact_name')=='riscrte-esp32s3-16mb-paired-'+pin['source_sha'] and
+            type(pin.get('artifact_size_bytes')) is int and pin['artifact_size_bytes']==len(raw),
+            'Runtime artifact repository/name/size custody mismatch')
+    require(requirements['deployment']['candidate_artifact']=={
+            'status':'verified-exact-source-ci-artifact','ci_run':pin['run_id'],
+            'artifact_sha256':pin['artifact_sha256']},'Runtime requirements do not admit this audited artifact')
     require(pin.get('target')=='esp32s3-16mb-paired' and pin.get('conclusion')=='success' and
             all(type(pin.get(k)) is int and pin[k]>0 for k in ('run_id','artifact_id')),
             'Runtime paired target has no successful external artifact receipt')
@@ -152,16 +173,19 @@ def build(runtime,artifact,head,tree,receipt_path,runtime_source,system_apps,uti
     with tempfile.TemporaryDirectory() as temporary:
         path=Path(temporary)/'common.zip';path.write_bytes(common)
         record=verify(path,root=root,expected_head=head);files=read_zip(path)
+        require_branch_mode(root,record)
         for item in record['common_update_launcher']['inputs']:
             original=artifacts[one(item['archive'])]
             require(sha(original)==item['sha256'] and len(original)==item['size_bytes'],'Hosted original ZIP mismatch')
             stores.append((item['archive'],archive_store(original)))
         store={n[6:]:b for n,b in files.items() if n.startswith('store/')}
         expected={'schema':1,'profile':PROFILE,'watch_source_sha':head,'deployment_sha256':sha(common),
+                  'image':Path(image_name).name,'layout':LAYOUT,'store_abi':1,'migration_only':True,
+                  'apps':record['updates']['apps'],'physical_verification':'pending',
                   'sha256':sha(image),'size_bytes':SIZE,'partition_label':'bootfs0','partition_offset':OFFSET,
                   'page_size':256,'block_size':4096,'tool_sha256':TOOL_SHA256,'files':len(store),
                   'payload_bytes':sum(map(len,store.values())),'round_trip_verified':True}
-        require(all(image_record.get(k)==v for k,v in expected.items()),'Hosted store record mismatch')
+        require_typed_record(image_record,expected)
         image_path=Path(temporary)/'bootfs.bin';image_path.write_bytes(image);check_image(image_path,store,tool)
     stores.extend([('common-deployment',store),('hosted-spiffs',unpack_image(image,tool))])
     components={n:native[n] for n in ('bootloader.bin','partitions.bin','firmware.bin')}
@@ -189,6 +213,9 @@ def build(runtime,artifact,head,tree,receipt_path,runtime_source,system_apps,uti
              'MIGRATION.md':(root/'docs/UPDATE_MIGRATION.md').read_bytes(),
              'licenses/RUNTIME-LICENSE':(Path(runtime_source)/'LICENSE').read_bytes()}
     deliver.update({'components/'+n:b for n,b in components.items()})
+    deliver.update({'reproduce/'+n:native[n] for n in ('firmware.elf','platformio.ini','partitions-paired.csv','requirements-ci.txt')})
+    deliver.update({'licenses/'+p.name:p.read_bytes() for p in (root/'licenses').glob('*') if p.is_file()})
+    deliver['licenses/BOOT_WORDMARK_LICENSE.txt']=(root/'apps/clock/effects/reference/BOOT_WORDMARK_LICENSE.txt').read_bytes()
     deliver.update({n:b for n,b in files.items() if n.startswith(('licenses/','shared/'))})
     deliver['SHA256SUMS']=''.join(sha(b)+'  '+n+'\n' for n,b in sorted(deliver.items())).encode()
     output=Path(out);require(not output.exists(),'Use a new output directory; never overwrite prior delivery')
@@ -202,8 +229,7 @@ def build(runtime,artifact,head,tree,receipt_path,runtime_source,system_apps,uti
         require(read_zip(archive)==deliver,'Migration archive round-trip differs')
         report.update(migration_zip=archive.name,migration_zip_sha256=sha(archive.read_bytes()))
         (stage/name).write_bytes(merged);(stage/'manifest.json').write_bytes(encoded(report))
-        output.mkdir()
-        for path in stage.iterdir():path.replace(output/path.name)
+        stage.rename(output)  # Publish complete verified output atomically.
     return report
 
 
