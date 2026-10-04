@@ -1,0 +1,20 @@
+{
+  "source_sha": "e972f0ff951ca96ca0999ee728dbad3a92434c4f",
+  "artifact_sha256": "29ccd7b1accececdb64857859bae2ba1ada2b2764974bad5629ce794429305b3",
+  "run_id": 37193572745,
+  "artifact_id": 11300241841,
+  "components": {
+    "bootloader.bin": {
+      "size_bytes": 15104,
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+    },
+    "partitions.bin": {
+      "size_bytes": 3072,
+      "sha256": "80709764d8fc263606d5b9b06cfa4d4254884c3748bd0392bb2600b46d761e43"
+    },
+    "firmware.bin": {
+      "size_bytes": 844512,
+      "sha256": "725ea7b0213d8724f81e1b8b9377ebb5ac316c287bc378f4f2beee5c8fe3db0b"
+    }
+  }
+}

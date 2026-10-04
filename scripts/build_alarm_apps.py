@@ -4,14 +4,15 @@ import argparse,hashlib,json,os,shutil,subprocess
 from pathlib import Path
 from build_launcher_apps import build,ROOT
 
-def build_service(system,utilities,runtime,points=False):
-    pins=json.loads((ROOT/('apps/points-sources.json' if points else 'apps/alarm-sources.json')).read_text())
+def build_service(system,utilities,runtime,points=False,wifi=False):
+    if wifi and not points:raise ValueError("Wi-Fi requires Points service")
+    pins=json.loads((ROOT/('apps/wifi-sources.json' if wifi else 'apps/points-sources.json' if points else 'apps/alarm-sources.json')).read_text())
     for name,repo in [('system-apps',system),('utilities',utilities),('runtime',runtime)]:
         if subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()!=pins[name]['commit'] or subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=repo,text=True).strip():
             raise ValueError('Clean exact alarm source required: '+name)
     cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
     if not cc:raise ValueError('Set pinned TWATCH_CC')
-    out=ROOT/('dist/points-launcher' if points else 'dist/alarm-launcher');out.mkdir(parents=True,exist_ok=True)
+    out=ROOT/('dist/wifi-launcher' if wifi else 'dist/points-launcher' if points else 'dist/alarm-launcher');out.mkdir(parents=True,exist_ok=True)
     mapping=out/'alarm-service.map';mapping.write_text('{ global: t5_driver_get; local: *; };\n')
     elf=out/'alarm-service.elf'
     subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*(['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER'] if points else []),*['-I'+str(p) for p in [utilities/'lib/Alarm/include',runtime/'sdk/driver',system/'lib/PortableApps/include']],str(utilities/'Services/alarm_service/service.c'),'-lgcc','-o',str(elf)],check=True)

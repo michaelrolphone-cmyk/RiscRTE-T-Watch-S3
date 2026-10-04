@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   push:
-    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time]
+    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings]
   pull_request:
 permissions:
   contents: read
@@ -334,4 +334,88 @@ jobs:
             dist/points-common/*.bin
             dist/points-common/*.json
             dist/points-native/*.png
+          if-no-files-found: error
+
+  wifi-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 83167b245149b1114a0497ab09bf2b410cd715ff
+          path: .wifi-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          path: .wifi-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: 43c23fee899cd2af8b6b5339b80e778018fb6295
+          path: .wifi-dependencies/productivity
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: e972f0ff951ca96ca0999ee728dbad3a92434c4f
+          path: .wifi-dependencies/runtime
+          persist-credentials: false
+      - name: Production Wi-Fi, saved-profile reuse and radio sleep lifecycle
+        run: |
+          python scripts/test_wifi_driver.py
+          python .wifi-dependencies/system-apps/scripts/test_portable_wifi.py
+          python tests/wifi_cross_layer/run.py --runtime .wifi-dependencies/runtime --system-apps .wifi-dependencies/system-apps --utilities .wifi-dependencies/utilities
+          SANITIZE=1 python tests/wifi_cross_layer/run.py --runtime .wifi-dependencies/runtime --system-apps .wifi-dependencies/system-apps --utilities .wifi-dependencies/utilities
+          python scripts/test_points_integration.py --system-apps .wifi-dependencies/system-apps --utilities .wifi-dependencies/utilities
+          python tests/alarm_cross_layer/run.py --points --watch . --runtime .wifi-dependencies/runtime --utilities .wifi-dependencies/utilities --system-apps .wifi-dependencies/system-apps
+          SANITIZE=1 python tests/alarm_cross_layer/run.py --points --watch . --runtime .wifi-dependencies/runtime --utilities .wifi-dependencies/utilities --system-apps .wifi-dependencies/system-apps
+      - name: Pinned target tools
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+          echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
+      - name: Eleven native apps, radio isolation and all profile closures
+        run: |
+          python scripts/build_twatch_drivers.py
+          python scripts/board_baseline.py
+          python scripts/check_twatch_drivers.py
+          python scripts/build_wifi_apps.py --system-apps .wifi-dependencies/system-apps --utilities .wifi-dependencies/utilities --runtime .wifi-dependencies/runtime --productivity .wifi-dependencies/productivity
+          bash scripts/test_alarm_target_loader.sh .wifi-dependencies/runtime .wifi-dependencies/utilities wifi-launcher
+          python scripts/build_clock_deployment.py --profile all --launcher --alarms --points --wifi
+          python scripts/verify_wifi_deployment.py dist/wifi-launcher-deployments/*.zip
+          python -m unittest discover -s tests -p test_wifi_deployment.py -v
+      - name: Exact common store, semantic custody and SPIFFS round trip
+        env:
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m unittest discover -s tests -p test_wifi_bundle.py -v
+          python scripts/build_wifi_common.py dist/wifi-launcher-deployments/*.zip --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          for bundle in dist/wifi-common/*.zip; do
+            python scripts/build_wifi_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-wifi-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/wifi-launcher/*.elf
+            dist/wifi-launcher/*.json
+            dist/wifi-launcher-deployments/*.zip
+            dist/wifi-launcher-deployments/catalog.json
+            dist/wifi-common/*.zip
+            dist/wifi-common/*.bin
+            dist/wifi-common/*.json
+            dist/wifi-tests/*
           if-no-files-found: error

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "watch_source": "84f30702c65b524e2573429cc984d4264921c153",
+  "purpose": "Wi-Fi integration may add its app/driver and launcher entry; other delivered app and service executable bytes are invariant",
+  "apps": {
+    "alarm-service.elf": {
+      "size_bytes": 28396,
+      "sha256": "f70d5b42fb2dc255538970c3240083b21e714913c0e589f913731cf63abadeec"
+    },
+    "alarms.elf": {
+      "size_bytes": 69204,
+      "sha256": "ecdcbb99294e348bcc460f120c86e288570c6257b45d5169ad11bcb04067fa05"
+    },
+    "battery.elf": {
+      "size_bytes": 61964,
+      "sha256": "5e27f8460328b407816256e3721c1da6e89159a5159e7cb41e1956b43b9766ab"
+    },
+    "calculator.elf": {
+      "size_bytes": 68668,
+      "sha256": "185cda843b5cf101c4e53e9594b4f6ef76a451de8e7f77b04ba8f8e338e0ef22"
+    },
+    "clock.elf": {
+      "size_bytes": 829156,
+      "sha256": "8721e108c89c4faeb0a47695ea24ea0cbc2e1f8386733302181f5a83f02431ab"
+    },
+    "countdown.elf": {
+      "size_bytes": 67760,
+      "sha256": "d85e1d9d2591e1daa6a462792aa7ec7278bc3d1d983a25b4af737ab1522074f6"
+    },
+    "default.elf": {
+      "size_bytes": 828276,
+      "sha256": "561c95c65a2d8bd3a9f1e8b0beb1590dda626d41dfd19c40a6745a8b3a01064f"
+    },
+    "points_in_time.elf": {
+      "size_bytes": 74076,
+      "sha256": "ae2caf39189ddb71ba6eb3c0d0e217e1ea997e87bf2a784a8489c1ff9741bc1c"
+    },
+    "settings.elf": {
+      "size_bytes": 116044,
+      "sha256": "d7f619722ffc1294c6c3c255a93265904159f0b579996fdd0ac5af0a0c4c26de"
+    },
+    "stopwatch.elf": {
+      "size_bytes": 67512,
+      "sha256": "d7d7938075a16aa98a753d82fd15a6c1aeaec646f400a5114e18847f11272ba1"
+    }
+  }
+}

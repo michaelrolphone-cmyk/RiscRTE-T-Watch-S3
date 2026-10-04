@@ -10,7 +10,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False):
+    if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
     if alarm_system and not launcher:raise ValueError("Alarm Clock requires launcher input")
     cc = os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
     fallback = Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc'
@@ -22,7 +23,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Canonical app SDK hash mismatch')
-    out = ROOT/('dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
+    out = ROOT/('dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
     elf = out/('clock.elf' if returning else 'default.elf')
     exports_map=out/'exports.map'

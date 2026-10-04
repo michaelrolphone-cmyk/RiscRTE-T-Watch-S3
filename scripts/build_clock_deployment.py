@@ -13,6 +13,7 @@ NOVA_NOTICES = ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'ShareTechMono-OFL.txt',
 DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
 LAUNCHER_DEVICES = {**DEVICES, 3: 'i2ctouch', 6: 'touch'}
 ALARM_DEVICES = {**LAUNCHER_DEVICES, 9:'haptic', 12:'speaker'}
+WIFI_DEVICES = {**ALARM_DEVICES, 15:'wifi'}
 
 
 def encoded(value):
@@ -42,12 +43,13 @@ def selected_board(profile, devices=DEVICES, alarms=False):
     return board
 
 
-def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False):
+def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, wifi=False):
+    if wifi and not points:raise ValueError("Wi-Fi preserves the complete Points baseline")
     if points and not alarms:raise ValueError("Points requires alarm service deployment")
     if alarms and not launcher:raise ValueError("Alarms requires launcher deployment")
     profile = json.loads(profile_path.read_text())
-    devices = ALARM_DEVICES if alarms else LAUNCHER_DEVICES if launcher else DEVICES
-    flavor = 'points-launcher' if points else 'alarm-launcher' if alarms else 'launcher' if launcher else 'clock'
+    devices = WIFI_DEVICES if wifi else ALARM_DEVICES if alarms else LAUNCHER_DEVICES if launcher else DEVICES
+    flavor = 'wifi-launcher' if wifi else 'points-launcher' if points else 'alarm-launcher' if alarms else 'launcher' if launcher else 'clock'
     app_dir='dist/'+flavor
     board = selected_board(profile, devices, alarms)
     version = json.loads((root / 'apps/clock/manifest.json').read_text())['version']
@@ -55,7 +57,7 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False):
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
-    runtime = json.loads((root / ('apps/alarm-runtime-requirements.json' if alarms else 'apps/clock/runtime-requirements.json')).read_text())
+    runtime = json.loads((root / ('apps/wifi-runtime-requirements.json' if wifi else 'apps/alarm-runtime-requirements.json' if alarms else 'apps/clock/runtime-requirements.json')).read_text())
     time_policy = json.loads((root / 'apps/clock/time-policy.json').read_text())
     files = {'store/default.elf': (root / 'dist' / flavor / 'default.elf').read_bytes(),
              'store/board.json': encoded(board),
@@ -75,23 +77,25 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False):
                 {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8},
                 {'capability': 'board.battery', 'api': 1, 'instance_id': 4}]}]}
     if launcher:
-        for name in ('clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ()):
+        for name in ('clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ()):
             files['store/'+name+'.elf']=(root/app_dir/(name+'.elf')).read_bytes()
             files['store/'+name+'.json']=(root/app_dir/(name+'.json')).read_bytes()
         for name in ('catalog.json','font-sources.json','time-sources.json','LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
             files['shared/'+name]=(root/app_dir/name).read_bytes()
         files['settings-time-policy.json']=encoded({'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0})
         files['shared-app-build.json']=(root/app_dir/'build-record.json').read_bytes()
-        for name in ('default','clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ()):
+        for name in ('default','clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ()):
             grants=[{'capability':'display.output','api':1,'instance_id':5},
                     {'capability':'input.touch.raw','api':1,'instance_id':6}]
-            grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings','stopwatch','alarms','countdown','points_in_time') else None
+            grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings','stopwatch','alarms','countdown','points_in_time','wifi_settings') else None
             grants.append({'capability':'board.battery','api':1,'instance_id':4})
             if name in ('default','clock','settings'):grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
             if name in ('alarms','countdown'):grants.append({'capability':'storage.key-value','api':1,'instance_id':3})
             if points and name in ('default','clock','points_in_time'):grants.append({'capability':'storage.key-value','api':1,'instance_id':5})
             if points and name=='points_in_time':grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
             if name=='stopwatch':grants.append({'capability':'storage.key-value','api':1,'instance_id':2})
+            if name=='wifi_settings':
+                grants.extend([{'capability':'storage.key-value','api':1,'instance_id':6},{'capability':'net.wifi','api':1,'instance_id':15}])
             if alarms:grants.append({'capability':'alarm.service','api':1,'instance_id':0})
             policy={'manifest':name+'.json','grants':grants}
             if name=='default':boot['app_capabilities'][0]=policy
@@ -138,7 +142,8 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False):
             {'key':'alert_mode','namespace':1,'access':'read'}]+([{'key':'points_cfg','namespace':5,'access':'read'},{'key':'points_occ','namespace':4,'access':'read-write'}] if points else [])})
         files['ALARM_INTEGRATION.md']=(root/'docs/ALARM_INTEGRATION.md').read_bytes()
         files['shared/alarm-service-build.json']=(root/app_dir/'alarm-service-build.json').read_bytes()
-        files['shared/alarm-sources.json']=(root/('apps/points-sources.json' if points else 'apps/alarm-sources.json')).read_bytes()
+        files['shared/alarm-sources.json']=(root/('apps/wifi-sources.json' if wifi else 'apps/points-sources.json' if points else 'apps/alarm-sources.json')).read_bytes()
+        if wifi:files['WIFI_SETTINGS.md']=(root/'docs/WIFI_SETTINGS.md').read_bytes()
         if points:files['POINTS_IN_TIME.md']=(root/'docs/POINTS_IN_TIME.md').read_bytes()
     files['store/boot.json'] = encoded(boot)
     record = {'schema': 'riscrte.watch-'+flavor+'-deployment', 'schema_version': 1,
@@ -175,6 +180,7 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile', required=True, help='Explicit profile stem, or all for eight separate bundles')
+    parser.add_argument('--wifi', action='store_true')
     parser.add_argument('--points', action='store_true')
     parser.add_argument('--alarms',action='store_true',help='Explicit nine-app alarm development deployment')
     parser.add_argument('--launcher',action='store_true',help='Separate touch launcher deployment; clock remains default')
@@ -184,8 +190,8 @@ def main():
         paths = [p for p in paths if p.stem == args.profile]
     if not paths:
         raise SystemExit('Unknown profile; no implicit variant selected')
-    catalog = {'schema': 1, 'deployments': [build(path, launcher=args.launcher,alarms=args.alarms,points=args.points) for path in paths]}
-    (ROOT / ('dist/'+('points-launcher' if args.points else 'alarm-launcher' if args.alarms else 'launcher' if args.launcher else 'clock')+'-deployments/catalog.json')).write_bytes(encoded(catalog))
+    catalog = {'schema': 1, 'deployments': [build(path, launcher=args.launcher,alarms=args.alarms,points=args.points,wifi=args.wifi) for path in paths]}
+    (ROOT / ('dist/'+('wifi-launcher' if args.wifi else 'points-launcher' if args.points else 'alarm-launcher' if args.alarms else 'launcher' if args.launcher else 'clock')+'-deployments/catalog.json')).write_bytes(encoded(catalog))
     print(f"Built {len(paths)} explicit clock bundles; no hardware access")
 
 
