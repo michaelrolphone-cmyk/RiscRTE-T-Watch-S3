@@ -191,8 +191,16 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
                 {'app_main', 'app_module_init', 'app_module_fini'}), 'Unexpected app native imports/exports')
     catalog_apps = ('clock', 'battery', 'settings', 'calculator', 'stopwatch', 'alarms',
                     'countdown', 'wifi_settings') + selected + ('points_in_time',)
-    require([v['file_name'] for v in json.loads(files['shared/catalog.json'])] ==
-            [a+'.elf' for a in catalog_apps], 'Catalog app membership/order differs')
+    catalog=json.loads(files['shared/catalog.json'])
+    require([v['file_name'] for v in catalog] == [a+'.elf' for a in catalog_apps],
+            'Catalog app membership/order differs')
+    icon_map={'clock':'solid:f017','battery':'solid:f240','settings':'solid:f013',
+              'calculator':'solid:f1ec','stopwatch':'solid:f2f2','alarms':'solid:f0f3',
+              'countdown':'solid:f254','wifi_settings':'solid:f1eb','ota_update':'solid:f021',
+              'app_store':'solid:f019','points_in_time':'solid:f783'}
+    require([v['icon'] for v in catalog] == [icon_map[a] for a in catalog_apps] and
+            len({v['icon'] for v in catalog}) == len(catalog),
+            'Catalog icons are missing, reused or not the verified Font Awesome mapping')
     require(metadata['return_targets'] == {'springboard': 'clock.elf', **{a: 'springboard.elf'
             for a in APPS+selected if a not in ('default', 'clock', 'springboard')}}, 'Return targets differ')
     service_sources = json.loads((root/'scripts/update-service-source-baseline.json').read_text())
