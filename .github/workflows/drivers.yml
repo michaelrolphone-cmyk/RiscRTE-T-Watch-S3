@@ -670,6 +670,7 @@ jobs:
           persist-credentials: false
       - name: Install pinned build tools
         run: |
+          python -m pip install -r scripts/requirements.txt
           python -m pip install platformio==6.1.19
           python -m pip install -r .latest/runtime/requirements-ci.txt
           pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
