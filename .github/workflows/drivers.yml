@@ -639,13 +639,13 @@ jobs:
 
   latest-main-image:
     needs: [software-checks, alarm-integration, points-integration, wifi-integration, production-store-admission, update-integration, update-cross-layer]
-    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-22.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -683,11 +683,11 @@ jobs:
           python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
       - uses: actions/download-artifact@v4
         with:
-          name: twatch-update-integration-${{ github.sha }}
+          name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: .latest/watch-artifact
       - name: Assemble installable latest-main Watch image
         env:
-          TWATCH_HEAD: ${{ github.sha }}
+          TWATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python scripts/build_latest_main_flash.py \
             --artifact-dir .latest/watch-artifact \
