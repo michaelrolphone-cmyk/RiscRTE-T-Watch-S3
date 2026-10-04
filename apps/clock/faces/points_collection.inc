@@ -136,7 +136,9 @@ static bool ps_active_interval(const nova_points_state*p,const nova_point_event*
         const nova_point_event*q=ps_matching_end(p,e);
         if(q&&p->now_rtc<q->at_rtc){a=e;b=q;}
     }
-    if(start)*start=a;if(end)*end=b;return a&&b;
+    if(start)*start=a;
+    if(end)*end=b;
+    return a&&b;
 }
 static const nova_point_event*ps_upcoming_start(const nova_points_state*p,uint32_t after,bool strict) {
     for(unsigned i=0;i<p->next_count;i++) {
@@ -151,8 +153,10 @@ static int ps_clock_angle(const nova_point_event*e) {
 }
 static void ps_clock_arc(canvas*c,int radius,int from,int to,int width,uint16_t color) {
     const int full=360*256;
-    while(from<0)from+=full;from%=full;
-    while(to<=from)to+=full;if(to-from>full)to=from+full;
+    while(from<0)from+=full;
+    from%=full;
+    while(to<=from)to+=full;
+    if(to-from>full)to=from+full;
     int px,py;fpoint(from,radius,120,120,&px,&py);
     for(int a=from+2*256;a<to+2*256;a+=2*256) {
         int q=a>to?to:a,x,y;fpoint(q%full,radius,120,120,&x,&y);fline(c,px,py,x,y,width,color);px=x;py=y;
