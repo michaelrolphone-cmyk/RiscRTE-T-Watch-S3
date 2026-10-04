@@ -1,11 +1,25 @@
 #!/usr/bin/env python3
 """Actual Runtime/CpuPort/provider/grant lifecycle, using synthetic RF hardware."""
-import argparse,json,os,subprocess
+import argparse,json,os,subprocess,tempfile,shutil
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--runtime',type=Path,required=True);p.add_argument('--system-apps',type=Path,required=True);p.add_argument('--utilities',type=Path,required=True);a=p.parse_args()
 w=Path(__file__).resolve().parents[2];r=a.runtime.resolve();s=a.system_apps.resolve();u=a.utilities.resolve();here=Path(__file__).resolve().parent;b=w/'dist/wifi-cross-layer';b.mkdir(parents=True,exist_ok=True)
 san=['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame-pointer'] if os.environ.get('SANITIZE')=='1' else []
-incs=['-I'+str(x) for x in [here,w/'include',w/'drivers/twatch_wifi',r/'sdk/app',r/'sdk/driver',r/'sdk/hardware',w/'sdk/driver',s/'lib/PortableApps/include',u/'lib/Alarm/include',s/'lib/NativeApps/include']] 
+# One physical copy of each header: pragma-once cannot reliably deduplicate
+# byte-identical SDK copies with different checkout timestamps/inodes in CI.
+# Keep canonical Runtime precedence and reject any disagreeing shared header,
+# rather than weakening type checks or changing a production ABI.
+sdk_temporary=tempfile.TemporaryDirectory(prefix='wifi-sdk-',dir=b)
+sdk_root=Path(sdk_temporary.name);sdk=sdk_root/'include';sdk.mkdir()
+for folder in [r/'sdk/app',r/'sdk/driver',r/'sdk/hardware',w/'sdk/app',w/'sdk/driver',w/'drivers/twatch_wifi',s/'lib/PortableApps/include',s/'lib/NativeApps/include']:
+ for header in folder.glob('*.h'):
+  target=sdk/header.name;data=header.read_bytes()
+  if target.exists():
+   if target.read_bytes()!=data:raise ValueError('Shared SDK header disagreement: '+header.name)
+  else:target.write_bytes(data)
+# Preserve the shared portable clock header's relative include topology.
+shutil.copytree(s/'lib/PortableApps/time',sdk_root/'time')
+incs=['-I'+str(x) for x in [here,w/'include',sdk,u/'lib/Alarm/include']]
 def run(c):subprocess.run(list(map(str,c)),check=True)
 for name,source in [('wifi',w/'drivers/twatch_wifi/driver.c'),('sleep',here/'sleep.c'),('default',here/'app.c'),('observer',here/'observer.c'),('consumer',here/'consumer.c')]:
  run(['cc',*san,'-std=c11','-Wall','-Wextra','-Werror','-fPIC','-fvisibility=hidden','-shared',*incs,source,'-o',b/(name+'.elf')])
