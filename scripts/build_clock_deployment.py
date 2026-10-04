@@ -14,6 +14,7 @@ DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
 LAUNCHER_DEVICES = {**DEVICES, 3: 'i2ctouch', 6: 'touch'}
 ALARM_DEVICES = {**LAUNCHER_DEVICES, 9:'haptic', 12:'speaker'}
 WIFI_DEVICES = {**ALARM_DEVICES, 15:'wifi'}
+AUDIO_DEVICES = {**WIFI_DEVICES, 13:'mic'}
 
 
 def encoded(value):
@@ -43,7 +44,8 @@ def selected_board(profile, devices=DEVICES, alarms=False):
     return board
 
 
-def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, wifi=False, updates=None):
+def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, wifi=False, updates=None, audio=False):
+    if audio and updates is None:raise ValueError('Audio Tools require the current paired Watch lane')
     if updates is not None:
         updates = tuple(updates)
         if not wifi or updates not in ((), ('ota_update',), ('ota_update', 'app_store')):
@@ -52,7 +54,7 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
     if points and not alarms:raise ValueError("Points requires alarm service deployment")
     if alarms and not launcher:raise ValueError("Alarms requires launcher deployment")
     profile = json.loads(profile_path.read_text())
-    devices = WIFI_DEVICES if wifi else ALARM_DEVICES if alarms else LAUNCHER_DEVICES if launcher else DEVICES
+    devices = AUDIO_DEVICES if audio else WIFI_DEVICES if wifi else ALARM_DEVICES if alarms else LAUNCHER_DEVICES if launcher else DEVICES
     flavor = 'update-launcher' if updates is not None else 'wifi-launcher' if wifi else 'points-launcher' if points else 'alarm-launcher' if alarms else 'launcher' if launcher else 'clock'
     app_dir='dist/'+flavor
     board = selected_board(profile, devices, alarms)
@@ -81,14 +83,14 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
                 {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8},
                 {'capability': 'board.battery', 'api': 1, 'instance_id': 4}]}]}
     if launcher:
-        for name in ('clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ())+(updates or ()):
+        for name in ('clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ())+ (('frequency_generator','audio_spectrum') if audio else ()) +(updates or ()):
             files['store/'+name+'.elf']=(root/app_dir/(name+'.elf')).read_bytes()
             files['store/'+name+'.json']=(root/app_dir/(name+'.json')).read_bytes()
         for name in ('catalog.json','font-sources.json','time-sources.json','LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
             files['shared/'+name]=(root/app_dir/name).read_bytes()
         files['settings-time-policy.json']=encoded({'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0})
         files['shared-app-build.json']=(root/app_dir/'build-record.json').read_bytes()
-        for name in ('default','clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ())+(updates or ()):
+        for name in ('default','clock','springboard','battery','settings','calculator','stopwatch')+(('alarms','countdown') if alarms else ())+(('points_in_time',) if points else ())+(('wifi_settings',) if wifi else ())+ (('frequency_generator','audio_spectrum') if audio else ()) +(updates or ()):
             grants=[{'capability':'display.output','api':1,'instance_id':5},
                     {'capability':'input.touch.raw','api':1,'instance_id':6}]
             grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings','stopwatch','alarms','countdown','points_in_time','wifi_settings','ota_update','app_store') else None
@@ -102,6 +104,8 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
                 grants.extend([{'capability':'storage.key-value','api':1,'instance_id':6},{'capability':'net.wifi','api':1,'instance_id':15}])
             if name in ('ota_update', 'app_store'):
                 grants.append({'capability':'software.update.'+('firmware' if name=='ota_update' else 'apps'),'api':1,'instance_id':0})
+            if name=='frequency_generator':grants.append({'capability':'audio.output','api':1,'instance_id':12})
+            if name=='audio_spectrum':grants.append({'capability':'audio.input','api':1,'instance_id':13})
             if alarms:grants.append({'capability':'alarm.service','api':1,'instance_id':0})
             policy={'manifest':name+'.json','grants':grants}
             if name=='default':boot['app_capabilities'][0]=policy
@@ -179,11 +183,12 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
               'entries': [{'path': name, 'size_bytes': len(data), 'sha256': sha(data)}
                           for name, data in sorted(files.items())]}
     if updates is not None:
-        record['updates'] = {'apps':list(updates), 'layout':'riscrte-paired-16m-v1',
+        record['updates'] = {'apps':list(updates), 'audio_apps':['frequency_generator','audio_spectrum'] if audio else [], 'layout':'riscrte-paired-16m-v1',
                              'store_abi':1, 'flash_bytes':0x1000000,
                              'migration_only':True, 'existing_8MiB_ota_compatible':False,
                              'rtc_utc_offset_seconds':28800, 'wifi_namespace':6,
-                             'wifi_instance':15, 'native_tables':'provider-only',
+                             'wifi_instance':15, 'audio_output_instance':12 if audio else None,
+                             'audio_input_instance':13 if audio else None, 'native_tables':'provider-only',
                              'baseline_watch_source_sha':'216e2d73b72cca6c3bcf75ad9ef56466b8861144'}
     files['deployment-record.json'] = encoded(record)
     out = root / ('dist/'+flavor+'-deployments') / profile['revision']
@@ -209,6 +214,7 @@ def main():
     parser.add_argument('--profile', required=True, help='Explicit profile stem, or all for eight separate bundles')
     parser.add_argument('--updates', nargs='*', choices=('ota_update','app_store'), default=None, help='Explicit paired lane; no values selects paired-only')
     parser.add_argument('--wifi', action='store_true')
+    parser.add_argument('--audio', action='store_true')
     parser.add_argument('--points', action='store_true')
     parser.add_argument('--alarms',action='store_true',help='Explicit nine-app alarm development deployment')
     parser.add_argument('--launcher',action='store_true',help='Separate touch launcher deployment; clock remains default')
@@ -218,7 +224,7 @@ def main():
         paths = [p for p in paths if p.stem == args.profile]
     if not paths:
         raise SystemExit('Unknown profile; no implicit variant selected')
-    catalog = {'schema': 1, 'deployments': [build(path, launcher=args.launcher,alarms=args.alarms,points=args.points,wifi=args.wifi,updates=args.updates) for path in paths]}
+    catalog = {'schema': 1, 'deployments': [build(path, launcher=args.launcher,alarms=args.alarms,points=args.points,wifi=args.wifi,updates=args.updates,audio=args.audio) for path in paths]}
     (ROOT / ('dist/'+('update-launcher' if args.updates is not None else 'wifi-launcher' if args.wifi else 'points-launcher' if args.points else 'alarm-launcher' if args.alarms else 'launcher' if args.launcher else 'clock')+'-deployments/catalog.json')).write_bytes(encoded(catalog))
     print(f"Built {len(paths)} explicit clock bundles; no hardware access")
 
