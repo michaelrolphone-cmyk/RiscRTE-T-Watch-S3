@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   push:
-    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission]
+    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission, feat/watch-frequency-generator]
   pull_request:
 permissions:
   contents: read
@@ -486,4 +486,98 @@ jobs:
             dist/production-admission/*.json
             dist/production-admission/execution/provenance.json
             dist/production-admission/execution-san/provenance.json
+          if-no-files-found: error
+
+  audio-integration:
+    needs: wifi-integration
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - name: Read reviewed exact audio source pins
+        id: audio-pins
+        run: |
+          python - <<'PY'
+          import os, sys
+          sys.path.insert(0, 'scripts')
+          from audio_deployment import configuration
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              for name, pin in configuration()['sources'].items():
+                  output.write(name.replace('-', '_')+'='+pin['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.audio-pins.outputs.system_apps }}
+          path: .audio-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.audio-pins.outputs.utilities }}
+          path: .audio-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.audio-pins.outputs.runtime }}
+          path: .audio-dependencies/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 83167b245149b1114a0497ab09bf2b410cd715ff
+          path: .audio-dependencies/baseline-system-apps
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-wifi-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .audio-baseline
+      - name: Pinned target and SPIFFS tools
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+          echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
+      - name: Add audio app, independently rebuild target bytes and preserve baseline
+        env:
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          AUDIO_SYSTEM_APPS: .audio-dependencies/system-apps
+          AUDIO_UTILITIES: .audio-dependencies/utilities
+          AUDIO_BASELINE_SYSTEM_APPS: .audio-dependencies/baseline-system-apps
+        run: |
+          python scripts/build_audio_apps.py --system-apps "$AUDIO_SYSTEM_APPS" --utilities "$AUDIO_UTILITIES" --baseline-system-apps "$AUDIO_BASELINE_SYSTEM_APPS" --baseline .audio-baseline/wifi-common/*-common.zip
+          bash scripts/test_alarm_target_loader.sh .audio-dependencies/runtime "$AUDIO_UTILITIES" audio-tools
+          python scripts/build_audio_deployment.py .audio-baseline/wifi-launcher-deployments/*.zip .audio-baseline/wifi-common/*-common.zip --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          python scripts/build_audio_store.py dist/audio-deployments/*-audio-tools-common.zip --mkspiffs "$TWATCH_MKSPIFFS"
+          python -m unittest discover -s tests -p test_audio_deployment.py -v
+      - name: Actual Runtime admits every full production profile and extracted SPIFFS
+        run: |
+          python scripts/check_runtime_store_admission.py --runtime .audio-dependencies/runtime --archive dist/audio-deployments/*.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 10 --output dist/audio-admission/all-stores.json
+          SANITIZE=1 python scripts/check_runtime_store_admission.py --runtime .audio-dependencies/runtime --archive dist/audio-deployments/*.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 10 --output dist/audio-admission/all-stores-san.json
+      - name: Actual Clock and audio application on unchanged complete stores
+        run: |
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/clock
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/clock-san
+          SANITIZE=0 python scripts/test_production_store_runtime.py --audio --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline-system-apps .audio-dependencies/baseline-system-apps --audio-catalog dist/audio-tools/catalog.json --archive dist/audio-deployments/*-audio-tools-common.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/apps
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --audio --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline-system-apps .audio-dependencies/baseline-system-apps --audio-catalog dist/audio-tools/catalog.json --archive dist/audio-deployments/*-audio-tools-common.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/apps-san
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-audio-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/audio-tools/*.elf
+            dist/audio-tools/*.json
+            dist/audio-deployments/*.zip
+            dist/audio-deployments/catalog.json
+            dist/audio-common/*.bin
+            dist/audio-common/*.json
+            dist/audio-admission/*.json
+            dist/audio-execution/*/provenance.json
           if-no-files-found: error

@@ -39,6 +39,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('runtime', 'system-apps', 'utilities'):
         parser.add_argument('--' + name, required=True, type=Path)
+    parser.add_argument('--audio', action='store_true', help='Actual Audio Tools source with complete production JSON')
+    parser.add_argument('--audio-catalog', type=Path)
+    parser.add_argument('--baseline-system-apps', type=Path)
+    parser.add_argument('--scenario', action='append', default=[])
     parser.add_argument('--store', type=Path, action='append', default=[],
                         help='Exact production deployment store; repeat to check several stores')
     parser.add_argument('--archive', type=Path, nargs='+', action='extend', default=[])
@@ -160,6 +164,38 @@ def main():
         destination = Path(record['host_store'])
         shutil.copy2(clock, destination/'default.elf')
         assert record['json_sha256'] == {str(path.relative_to(destination)): sha(path) for path in destination.rglob('*.json')}
+    if args.audio:
+        from audio_deployment import APPS, catalog_source, compile_definitions, read_zip, verify
+        if not args.baseline_system_apps or not args.audio_catalog:
+            parser.error('--audio requires --baseline-system-apps and --audio-catalog')
+        target_catalog=json.loads(args.audio_catalog.read_text())
+        for archive in args.archive:
+            verify(archive)
+            assert json.loads(read_zip(archive)['catalog.json'])==target_catalog
+        baseline_system=args.baseline_system_apps.resolve()
+        provenance['sources']['baseline-system-apps']=source_state(baseline_system)
+        for name in ('springboard',*APPS):
+            shared=baseline_system if name=='springboard' else system
+            app_source=shared/'Apps/springboard.c' if name=='springboard' else utilities/'Apps'/(name+'.c')
+            catalog=modules/(name+'-catalog.c')
+            catalog.write_text(catalog_source(target_catalog if name=='springboard' else target_catalog[:3]))
+            app_sources=[app_source,shared/'lib/PortableApps/src/adapter.c',catalog,
+                         ROOT/'apps/clock/portable_navigation.c',ROOT/'apps/clock/portable_sleep.c']
+            if name=='springboard':app_sources.append(shared/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
+            app_includes=['-I'+str(p) for p in (shared/'lib/PortableApps/include',shared/'lib/NativeApps/include',utilities/'Apps',utilities/'lib/Alarm/include')]+includes
+            module=modules/(name+'.elf')
+            run([cc,'-std=c11',*flags,'-fPIC','-shared','-fvisibility=hidden',*app_includes,*compile_definitions(name),*app_sources,'-o',module])
+            compiled_sources+=app_sources
+            for record in provenance['stores']:
+                destination=Path(record['host_store'])
+                assert (destination/(name+'.json')).is_file(), 'Actual audio manifest required'
+                shutil.copy2(module,destination/(name+'.elf'))
+        returning=modules/'clock.elf';crown=modules/'returning-crown.o'
+        run([cc,'-std=c11',*flags,'-fPIC','-fvisibility=hidden',*clock_includes,*clock_flags,
+             '-DWATCH_CLOCK_RETURN','-c',ROOT/'apps/clock/crown.c','-o',crown])
+        run([cxx,'-std=c++11',*flags,'-fPIC','-shared','-fvisibility=hidden',*includes,
+             ROOT/'apps/clock/effects/boot.cpp',crown,*objects[1:],'-o',returning])
+        for record in provenance['stores']:shutil.copy2(returning,Path(record['host_store'])/'clock.elf')
     host_includes = ['-I' + str(path) for path in (HERE, runtime/'src', runtime/'sdk/app',
                      runtime/'sdk/driver', runtime/'sdk/hardware', ROOT/'sdk/driver',
                      ROOT/'include', runtime/'lib/ArduinoJson/src')]
@@ -167,18 +203,28 @@ def main():
         'src/bootstrap/Runtime.cpp', 'src/ports/esp32s3/CpuPort.cpp',
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp')]
     executable = build/'production-store-test'
+    host_source = HERE/('audio_host.cpp' if args.audio else 'host.cpp')
     run([cxx, '-std=c++17', *flags, '-O0', '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
-         *host_includes, *runtime_sources, HERE/'host.cpp', '-ldl', '-o', executable])
+         *host_includes, '-I'+str(utilities/'lib/Alarm/include'), *runtime_sources, host_source, '-ldl', '-o', executable])
     provenance['compiled_source_sha256'] = {str(path): sha(path) for path in [*runtime_sources,
-        *compiled_sources, HERE/'host.cpp', HERE/'esp_dlfcn.h', ROOT/'apps/clock/effects/boot.cpp']}
+        *compiled_sources, HERE/'host.cpp', host_source, HERE/'esp_dlfcn.h', ROOT/'apps/clock/effects/boot.cpp']}
     for record in provenance['stores']:
         print('Unchanged production JSON:', record['source'], flush=True)
-        command = [executable, record['host_store']]
-        if args.expect_prepare_error:
-            command.append(args.expect_prepare_error)
-        result = subprocess.run(list(map(str, command)), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=60)
-        record['returncode'], record['output'] = result.returncode, result.stdout
-        print(result.stdout, end='', flush=True)
+        scenarios=args.scenario if args.scenario else (['crown-back','touch-back','restart','open-failure',
+            'partial-write','write-failure','close-retained','open-retained','write-retained',
+            'display-failure','touch-failure','health-failure','idle-sleep','alarm-preempt'] if args.audio else [None])
+        record['executions']=[]
+        for scenario in scenarios:
+            command=[executable,record['host_store']]
+            if scenario:command.append(scenario)
+            if args.expect_prepare_error:command.append(args.expect_prepare_error)
+            result=subprocess.run(list(map(str,command)),text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=60)
+            record['executions'].append(dict(scenario=scenario,returncode=result.returncode,output=result.stdout))
+            record['returncode'],record['output']=result.returncode,result.stdout
+            print(result.stdout,end='',flush=True)
+            if result.returncode:
+                (build/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+                raise SystemExit(result.returncode)
         # Recheck the input and host copy after execution: the harness never
         # rewrites the boot, board or any application/provider policy.
         for location in (Path(record['source']), Path(record['host_store'])):
@@ -189,9 +235,7 @@ def main():
         for item in provenance['inputs']:
             assert item['sha256'] == sha(Path(item['path']))
         (build/'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
-        if result.returncode:
-            raise SystemExit(result.returncode)
-    print('All production-store Clock checks passed; JSON hashes unchanged.', flush=True)
+    print('All production-store '+('audio' if args.audio else 'Clock')+' checks passed; JSON hashes unchanged.', flush=True)
     if temporary:
         temporary.cleanup()
 

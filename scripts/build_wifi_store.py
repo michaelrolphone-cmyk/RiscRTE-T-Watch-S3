@@ -32,10 +32,10 @@ def check_image(image, expected, tool):
         require(actual == expected, 'SPIFFS round-trip differs from exact deployment store')
 
 
-def build(archive, tool, out):
+def build(archive, tool, out, verify_archive=verify):
     archive, tool, out = Path(archive), Path(tool).resolve(), Path(out)
     check_tool(tool)
-    record = verify(archive)
+    record = verify_archive(archive)
     expected = {n[6:]: b for n, b in read_zip(archive).items() if n.startswith('store/')}
     require(all(len(('/' + n).encode()) < 32 for n in expected),
             'SPIFFS object name exceeds pinned runtime limit')
@@ -53,7 +53,7 @@ def build(archive, tool, out):
         subprocess.run([str(tool), '-c', str(source), '-p', '256', '-b', '4096',
                         '-s', str(SIZE), str(image)], check=True, timeout=60)
     check_image(image, expected, tool)
-    metadata = {'schema': 1, 'profile': PROFILE, 'watch_source_sha': record['source_sha'],
+    metadata = {'schema': 1, 'profile': record['profile'], 'watch_source_sha': record['source_sha'],
                 'deployment_sha256': sha(archive.read_bytes()), 'image': image.name,
                 'sha256': sha(image.read_bytes()), 'size_bytes': SIZE,
                 'partition_label': 'bootfs', 'partition_offset': OFFSET, 'page_size': 256,

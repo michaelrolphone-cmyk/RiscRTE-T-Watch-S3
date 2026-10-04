@@ -49,12 +49,16 @@ def verify_source(root, tree, runtime_source):
             'Runtime source has tracked modifications')
 
 
-def verify_runtime(files):
+def verify_runtime(files, runtime_pin=None, runtime_version=None):
+    pin = runtime_pin if runtime_pin is not None else _RUNTIME
+    runtime_sha = pin["source_sha"]
+    assets = {name:(v["size_bytes"],v["sha256"]) for name,v in pin["components"].items()}
+    version = runtime_version if runtime_version is not None else RUNTIME_VERSION
     require(set(files) == {'SHA256SUMS', 'candidate.json', 'firmware.elf', 'platformio.ini',
-                           'partitions.csv', 'requirements-ci.txt', *RUNTIME_ASSETS},
+                           'partitions.csv', 'requirements-ci.txt', *assets},
             'Unexpected runtime artifact members')
     candidate = json.loads(files['candidate.json'])
-    expected = {'schema': 1, 'source_sha': RUNTIME_SHA, 'firmware_version': RUNTIME_VERSION,
+    expected = {'schema': 1, 'source_sha': runtime_sha, 'firmware_version': version,
                 'target': 'esp32s3-16mb-usb', 'flash_bytes': 0x1000000,
                 'layout_used_bytes': MERGED_SIZE, 'app_offset': 0x10000,
                 'bootfs_offset': OFFSET, 'bootfs_bytes': SIZE, 'usb_cdc_on_boot': True,
@@ -66,7 +70,7 @@ def verify_runtime(files):
     for name, info in candidate['assets'].items():
         require(len(files[name]) == info['bytes'] and sha(files[name]) == info['sha256'],
                 'Runtime candidate checksum mismatch: ' + name)
-    for name, (size, digest) in RUNTIME_ASSETS.items():
+    for name, (size, digest) in assets.items():
         require(len(files[name]) == size and sha(files[name]) == digest,
                 'Wrong pinned runtime component: ' + name)
     for name in ('bootloader.bin', 'firmware.bin'):
@@ -74,7 +78,7 @@ def verify_runtime(files):
         require(data[0] == 0xe9 and data[3] >> 4 == 4 and
                 struct.unpack_from('<H', data, 12)[0] == 9,
                 'Runtime component is not ESP32-S3 with 16MiB flash header')
-    require(RUNTIME_SHA.encode() in files['firmware.bin'], 'Runtime source marker missing')
+    require(runtime_sha.encode() in files['firmware.bin'], 'Runtime source marker missing')
     partitions = []
     for index in range(0, len(files['partitions.bin']), 32):
         raw = files['partitions.bin'][index:index + 32]
@@ -89,10 +93,10 @@ def verify_runtime(files):
     return candidate
 
 
-def verify_receipt(receipt, raw, head, tree):
+def verify_receipt(receipt, raw, head, tree, required_jobs=None, artifact_prefix="twatch-wifi-integration-"):
     expected = {'repository': 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3',
                 'head': head, 'tree': tree, 'conclusion': 'success', 'expired': False,
-                'artifact_name': 'twatch-wifi-integration-' + head,
+                'artifact_name': artifact_prefix + head,
                 'artifact_sha256': sha(raw)}
     require(exact_sha(head) and exact_sha(tree) and
             all(receipt.get(k) == v for k, v in expected.items()),
@@ -100,12 +104,12 @@ def verify_receipt(receipt, raw, head, tree):
     require(all(type(receipt.get(k)) is int and receipt[k] > 0 for k in ('run_id', 'artifact_id')),
             'External CI run/artifact identity missing')
     jobs = receipt.get('jobs')
-    names = {'software-checks', 'alarm-integration', 'points-integration',
+    names = required_jobs if required_jobs is not None else {'software-checks', 'alarm-integration', 'points-integration',
              'wifi-integration', 'production-store-admission'}
     require(isinstance(jobs, list) and len(jobs) == len(names) and
             all(isinstance(job, dict) and job.get('conclusion') == 'success' for job in jobs) and
             {job.get('name') for job in jobs} == names,
-            'All five exact-head CI jobs, including production store admission, must pass')
+            'All exact-head CI jobs, including production store admission, must pass')
 
 
 def assemble_components(components):
