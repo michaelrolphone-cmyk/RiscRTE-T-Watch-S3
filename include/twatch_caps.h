@@ -1,10 +1,26 @@
 #pragma once
 #include "RiscProviderV2.h"
 #include "RiscBatteryGaugeV1.h"
+#include "RiscLightSleepV1.h"
+#include "RiscDeepSleepV1.h"
 typedef struct {
     risc_battery_gauge_api_v1 base;
     bool (*key_events)(void *, uint32_t *events);
+    /* Append-only crown sleep preparation. See docs/CROWN_SLEEP.md. */
+    bool (*prepare_sleep)(void *);
+    bool (*resume)(void *);
+    int32_t (*light_sleep)(void *, risc_light_sleep_result_v1 *);
+    /* Successful terminal entry never returns; old light-sleep prefix intact. */
+    int32_t (*deep_sleep)(void *);
+    /* Optional owned timer; no application schedule in this driver. */
+    int32_t (*light_sleep_for)(void *, uint32_t duration_ms, risc_light_sleep_result_v1 *);
+    /* Observe latched key bits AND physical IRQ without acknowledging either.
+     * A key at the timer boundary takes priority over application deep entry. */
+    bool (*sleep_wake_pending)(void *, bool *pending);
 } twatch_pmu_api_v1;
+#define TWATCH_PMU_LIGHT_SLEEP_SIZE offsetof(twatch_pmu_api_v1, deep_sleep)
+#define TWATCH_PMU_DEEP_SLEEP_SIZE offsetof(twatch_pmu_api_v1, light_sleep_for)
+#define TWATCH_PMU_TIMED_SLEEP_SIZE sizeof(twatch_pmu_api_v1)
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

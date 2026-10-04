@@ -123,3 +123,20 @@ owner-authorized port mapping is required; never infer a namespace from board_id
 chip/package name or a coincidental numeric value. Garden's mapping validator
 rejects an omitted namespace. Future non-ESP32 physical namespaces require their
 own registered semantics; these strings do not authorize unrelated CPU ports.
+
+
+## Local 40 MHz panel admission derivation
+
+The Watch clock 0.2.2 deployment explicitly projects its selected display SPI bus
+to 40 MHz, matching the pinned manufacturer's non-Plus T-Watch-S3 TFT setup. The
+eight physical profiles are unchanged. The local derived shared-envelope schema
+admits SPI 1..40000000 Hz and I2C 1..1000000 Hz by kind; the Watch schema narrows
+I2C to 400000 Hz. C field layouts, API versions, controller namespaces and pin
+ownership are unchanged. Existing non-panel Watch SPI driver admission remains
+10 MHz.
+
+SCHEMA_PROVENANCE.json retains the canonical upstream commit/hash and records
+these local derivations and their new hashes separately. This is not a change to
+the Garden repository or an instruction to overclock unrelated peripherals. The
+clock store requires the paired runtime whose generic SPI admission and bounded
+provider scheduling implement these limits; an older 10 MHz runtime refuses it.

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "label": "0.4.0-touch-direction",
+  "baseline_commit": "599691a331a97132c0eede233042b63d1fda5747",
+  "baseline_ci_run": 37142063108,
+  "baseline_artifact_id": 11280254023,
+  "baseline_artifact_sha256": "9db702fc3a265ba7f0fd8a3945cf5747fa08cebd0c132c43a9a565f747b523ed",
+  "baseline_merged_bin_sha256": "7733e285a5bf880bb8cf545dfb87ff5efe65b3d4645d70ae0ab5275d7daf4972",
+  "changed_store_files": [
+    "springboard.elf",
+    "battery.elf",
+    "settings.elf"
+  ],
+  "touch_rotation_before": 180,
+  "touch_rotation_after": 0,
+  "baseline_store_sha256": {
+    "battery.elf": "e3da52eea74af27f972566a4be47d216e8ea38cd336caacea608d8d6de87d3c1",
+    "battery.json": "74def7ce662973113350c8ec7b9ebf076cefd68763c9ada11d505b2d3ce3ae65",
+    "board.json": "224339f27cf0782473fc418c5d8e21fbe3dd36d2b23741241f2970b2c2137859",
+    "boot.json": "759b5621069212d7b6d14646132755b8c764806da43b2459263cecd3c42ff9b5",
+    "default.elf": "f46ca9347a8f65fffc5118d584e70646dd147b6685db1074441ac410db0e888c",
+    "default.json": "5a377c943b30a0a078e4d725a5da4da203b4eb81b0438448073fc53b75056522",
+    "gpio/driver.elf": "1e7018993f5107389761d030866aee4fb055c77ac9705ca6b706edec0f1435ac",
+    "gpio/manifest.json": "4fc7056739b0e5a7e0a21e41dd0def535a3a8c11d23fb9eb526b93ed7fa5368d",
+    "i2c/driver.elf": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+    "i2c/manifest.json": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+    "panel/driver.elf": "ae9b558a26d1a050e9a56c0866b479ec3dd1bf1fe5a51c51cbc949cc6f0c5f07",
+    "panel/manifest.json": "b0d29a95da7fba6593ba44d42142171c92f8feb478bc69e4bc68c43b2131bf5f",
+    "pmu/driver.elf": "3dce836e347b967888dbc8a369ebb4677ffe48feee21ae7c7c68c525e33fb5bf",
+    "pmu/manifest.json": "2d5abec1fd15df077a0791217409dd09e935f19883b1f281312182a42211887e",
+    "rtc/driver.elf": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+    "rtc/manifest.json": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+    "settings.elf": "a43d60225b478550c7d114aa3ee120c2e278c46a378c09cf8a3b3af95193805a",
+    "settings.json": "6da8bb427e300105d772dd749c7d5854fd8230a2a3030af047bfc1422fb4c3a4",
+    "springboard.elf": "d646525999b1e253c22ba868e2be60c9ccdc241c7270d21e9d949e789ea6c55b",
+    "springboard.json": "24cdb39031473e429011f5a54b8452cfffec6ffc2f2d4694dd01a772fe53bf42",
+    "touch/driver.elf": "f15b964c77433f49414fc591e1960a614d617daecc7a8ae8b4b3952109841ddc",
+    "touch/manifest.json": "aff7b544d1298a6e4a3c9318c7f208567ca09cde8513bdbe1a24706097d496ec"
+  }
+}

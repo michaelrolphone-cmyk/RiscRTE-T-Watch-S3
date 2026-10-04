@@ -3,6 +3,7 @@
 import hashlib,json,os,shutil,subprocess,zipfile
 from pathlib import Path
 from generate_board import generate
+from rtc_metadata import normalize as normalize_rtc
 ROOT=Path(__file__).resolve().parents[1]
 def digest(b):return hashlib.sha256(b).hexdigest()
 def main():
@@ -10,6 +11,7 @@ def main():
     fallback=Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc'
     if not cc and fallback.exists():cc=str(fallback)
     if not cc:raise SystemExit('Set TWATCH_CC to xtensa-esp32s3-elf-gcc')
+    compiler=subprocess.check_output([cc,'--version'],text=True).splitlines()[0]
     nm=cc.removesuffix('gcc')+'nm';readelf=cc.removesuffix('gcc')+'readelf'
     generate();catalog=[]
     subprocess.run([cc,"-std=c11",f"-I{ROOT}/sdk/driver",f"-I{ROOT}/include","-fsyntax-only",str(ROOT/"tests/abi.c")],check=True)
@@ -18,6 +20,14 @@ def main():
         out=ROOT/'dist'/m['id'];out.mkdir(parents=True,exist_ok=True);elf=out/'driver.elf'
         args=[cc,'-std=c11','-shared','-fPIC','-fvisibility=hidden','-nostdlib','-mlongcalls','-Os','-ffreestanding','-fno-builtin','-Wall','-Wextra','-Wno-misleading-indentation','-Wno-unused-function','-Werror',f'-I{ROOT}/sdk/driver',f'-I{ROOT}/include',f'-I{ROOT}/dist/generated',f'-Wl,--version-script={ROOT}/exports.map','-Wl,-soname,driver.elf',str(src[0]),'-lgcc','-o',str(elf)]
         subprocess.run(args,check=True)
+        if m['id']=='twatch-rtc' and m['version']=='0.2.0' and '8.4.0' in compiler:
+            (out/'compiled-driver.elf').write_bytes(elf.read_bytes())
+            normalized,proof=normalize_rtc(elf.read_bytes())
+            proof['compiler']=compiler
+            (out/'metadata-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+            elf.write_bytes(normalized)
+            print('RTC immutable metadata proof:',json.dumps(proof,sort_keys=True))
+            subprocess.run([os.environ.get('PYTHON','python3'),str(ROOT/'scripts/test_rtc_metadata.py'),str(elf)],check=True)
         header=subprocess.check_output([readelf,'-h',str(elf)],text=True)
         assert 'ELF32' in header and 'little endian' in header and 'Xtensa' in header and 'DYN' in header
         symbols=subprocess.check_output([nm,'-D',str(elf)],text=True)

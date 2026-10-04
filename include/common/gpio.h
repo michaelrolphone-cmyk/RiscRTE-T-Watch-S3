@@ -9,7 +9,7 @@ static inline bool gpio_dependencies(const risc_provider_dependency_v1 *d, size_
     for (size_t i = 0; i < 49; i++)
         if (pins[i])
             return false;
-    gpio = garden_dependency(d, n, "platform.gpio", sizeof(*gpio));
+    gpio = garden_dependency(d, n, "platform.gpio", offsetof(garden_gpio_v1,light_sleep));
     timer = garden_dependency(d, n, "platform.clock", sizeof(*timer));
     io_fault = false;
     return gpio && gpio->claim && gpio->write && gpio->read && gpio->pwm && gpio->release &&

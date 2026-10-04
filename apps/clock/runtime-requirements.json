@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "source_sha": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
+  "firmware_version": "0.1.6",
+  "required_behavior": {
+    "spi_max_hz": 40000000,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true,
+    "owned_timed_light_sleep": true
+  },
+  "abi_changed": false,
+  "reason": "Owned bounded Light timer with GPIO wake; app-side Hybrid progression; existing native retention barrier and display schedule preserved."
+}

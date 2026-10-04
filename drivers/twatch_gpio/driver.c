@@ -59,6 +59,36 @@ static bool release_pin(void *c, uint64_t t) {
         }
     return false;
 }
+static int32_t light_sleep(void *c,uint64_t token,bool high,risc_light_sleep_result_v1 *out) {
+    (void)c;
+    if (!started || !token || !out || out->struct_size<sizeof(*out)) return RISC_LIGHT_SLEEP_INVALID;
+    if (hw->struct_size<GARDEN_GPIO_LIGHT_SLEEP_V1_SIZE || !hw->light_sleep) return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token) {
+        if (!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT)) return RISC_LIGHT_SLEEP_INVALID;
+        return hw->light_sleep(hw->context,slots[i].raw,high,out);
+    }
+    return RISC_LIGHT_SLEEP_INVALID;
+}
+static int32_t deep_sleep(void *c,uint64_t token,bool high) {
+    (void)c;
+    if (!started || !token) return RISC_DEEP_SLEEP_INVALID;
+    if (hw->struct_size<GARDEN_GPIO_DEEP_SLEEP_V1_SIZE || !hw->deep_sleep) return RISC_DEEP_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token) {
+        if (!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT)) return RISC_DEEP_SLEEP_INVALID;
+        return hw->deep_sleep(hw->context,slots[i].raw,high);
+    }
+    return RISC_DEEP_SLEEP_INVALID;
+}
+static int32_t light_sleep_for(void *c,uint64_t token,bool high,uint32_t duration,risc_light_sleep_result_v1 *out) {
+    (void)c;
+    if (!started || !token || !out || out->struct_size<sizeof(*out) || !duration || duration>RISC_TIMED_SLEEP_MAX_MS) return RISC_LIGHT_SLEEP_INVALID;
+    if (hw->struct_size<GARDEN_GPIO_LIGHT_SLEEP_FOR_V1_SIZE || !hw->light_sleep_for) return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token) {
+        if (!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT)) return RISC_LIGHT_SLEEP_INVALID;
+        return hw->light_sleep_for(hw->context,slots[i].raw,high,duration,out);
+    }
+    return RISC_LIGHT_SLEEP_INVALID;
+}
 static bool quiesce(void) {
     for (size_t i = 0; i < 48; i++)
         if (slots[i].token)
@@ -74,12 +104,12 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
         tw_config(d, n, "espressif,esp32s3-gpio", "controller.gpio", sizeof(*config));
     if (!config || config->unit || config->features)
         return false;
-    hw = tw_dep(d, n, "platform.gpio", sizeof(*hw));
+    hw = tw_dep(d, n, "platform.gpio", offsetof(garden_gpio_v1,light_sleep));
     if (!hw || !hw->claim || !hw->write || !hw->read || !hw->release)
         return false;
     started = true;
     return true;
 }
 static const risc_gpio_bank_api_v1 api = {1,         sizeof(api), NULL,       claim_pin,
-                                          write_pin, read_pin,    release_pin};
+                                          write_pin, read_pin,    release_pin, light_sleep, deep_sleep, light_sleep_for, NULL};
 TW_DRIVER("twatch-gpio", "gpio.bank", 1, api)

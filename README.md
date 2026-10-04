@@ -1,7 +1,12 @@
 # RiscRTE T-Watch-S3 hardware packages
 
-Future-target, software-only driver preparation for the **non-Plus LILYGO
-T-Watch-S3**. This is not a RiscRTE firmware port and has not run on a watch.
+External driver/application packages for the **non-Plus LILYGO T-Watch-S3**.
+The owner physically accepted the 0.4.5 GUI increment. The delivered 0.5.0 sleep
+increment adds saved Light/Deep selection and remains pending physical
+sleep/wake/current validation. The delivered 0.5.1 added shared Calculator and persistent Stopwatch. Current
+0.5.2 adds Hybrid Light-to-Deep sleep, app idle retention and Springboard polish; see [daily tools](docs/DAILY_TOOLS.md) and the
+[deep-sleep contract](docs/DEEP_SLEEP.md).
+Generic firmware mechanism stays in the separately pinned RiscRTE runtime.
 
 - [Hardware inventory, sources and coverage](docs/HARDWARE_INVENTORY.md)
 - [Exact runtime backfill contracts](docs/CAPABILITY_BACKFILL.md)
@@ -130,3 +135,28 @@ The workflow's `release-catalog.json` lists selected releases with explicit
 kinds. Consumers must select supported kinds rather than infer them from IDs.
 Both automatic and manual publishing include baseline versions. No workflow
 uses a mutable board alias or overwrites an existing release asset.
+
+
+## Simple watch clock candidate
+
+The independent `apps/clock` application builds as `default.elf` against the
+pinned generic RiscRTE app service. It displays valid RTC time/date or an honest
+`TIME UNSET` state, with no time writes or assumed timezone. It loads only the
+five GPIO/I2C/PMU/panel/RTC providers needed for the clock. The firmware contains
+no watch UI or application logic.
+
+See [clock build/install/test instructions](docs/CLOCK_INSTALL.md). PR CI builds
+all target ELFs, checks app behavior, and retains eight explicitly selected,
+hashed deployment bundles plus representative display frames in the
+`twatch-clock-deployments` artifact. Physical testing is pending; generic native
+backend support must be verified in the selected runtime build before use.
+
+
+## Optional NOVA launcher and basic Settings
+
+The separate PR5 bundle keeps Clock as the default and adds the shared
+Springboard, Battery and Settings applications. It includes continuous
+swipe-to-launcher handoff, explicit180-degree touch mapping, seven physical
+driver instances, Denver display/inverse RTC policy and first-safe-frame
+backlight gating. See [launcher build and verification](docs/LAUNCHER_INSTALL.md).
+The accepted PR6 clock0.3.1 bundle is preserved unchanged.

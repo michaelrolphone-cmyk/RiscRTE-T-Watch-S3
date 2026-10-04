@@ -2,7 +2,7 @@
   "schema": "riscrte.board-baseline",
   "schema_version": 1,
   "id": "lilygo-t-watch-s3",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "mapping_schema": "riscrte.board-hardware",
   "mapping_schema_version": 1,
   "hardware_device_api": 1,
@@ -16,7 +16,8 @@
     "i2s": "esp32.peripheral"
   },
   "schema_clarifications": [
-    "optional-reset-and-controller-namespace-v1"
+    "optional-reset-and-controller-namespace-v1",
+    "spi40mhz-typed-bus-limits-v1"
   ],
   "controller_mapping_field": "buses[].physical_controller",
   "shared_contract_commit": "7e30afc407c86f34364cbfa2035d6f7893fdea8c"

@@ -48,7 +48,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     config = tw_config(deps, count, "ti,drv2605", "peripheral.i2c", sizeof(*config));
     if (!tw_i2c_config_valid(config))
         return false;
-    gpio_api = tw_dep(deps, count, "gpio.bank", sizeof(*gpio_api));
+    gpio_api = tw_dep(deps, count, "gpio.bank", offsetof(risc_gpio_bank_api_v1,light_sleep));
     if (config->irq != -1 && !tw_gpio_valid(gpio_api))
         return false;
     bus = tw_dep(deps, count, "i2c.bus", sizeof(*bus));
