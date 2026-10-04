@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "source_sha": "c988875d688a161addfe96d7fbb6792673d3f75d",
+  "firmware_version": "0.1.11",
+  "required_behavior": {
+    "spi_max_hz": 40000000,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true,
+    "owned_timed_light_sleep": true,
+    "owned_timed_deep_sleep": true,
+    "provider_bound_key_value": true,
+    "app_policy_capacity": 16,
+    "native_i2s_tx_cleanup": true,
+    "native_station_radio": true,
+    "bounded_asynchronous_radio_scan": true,
+    "radio_cleanup_sleep_barrier": true,
+    "explicit_multiple_key_value_namespaces": true,
+    "ambiguous_key_value_instance_zero_denied": true,
+    "provider_only_https": true,
+    "provider_only_bank_store": true,
+    "paired_firmware_store": true,
+    "immutable_active_bank": true,
+    "exact_app_authority_preservation": true,
+    "default_app_health_confirmation": true,
+    "rollback_until_health_confirmation": true,
+    "store_abi": 1,
+    "paired_metadata_psram_only": true
+  },
+  "abi_changed": true,
+  "reason": "Additive provider-only HTTPS and paired-bank capabilities, plus the app Runtime health-confirmation suffix. Old app ABI prefix remains compatible; updates require explicit paired layout.",
+  "deployment": {
+    "target": "esp32s3-16mb-paired",
+    "layout": "riscrte-paired-16m-v1",
+    "flash_bytes": 16777216,
+    "store_abi": 1,
+    "migration": "explicit-user-controlled-full-16MiB-reflash-only",
+    "existing_8MiB_ota_compatible": false,
+    "candidate_artifact": {
+      "status": "awaiting-exact-source-ci-artifact",
+      "ci_run": null,
+      "artifact_sha256": null
+    },
+    "partitions": {
+      "app0": {
+        "offset": 65536,
+        "size": 3145728
+      },
+      "bootfs0": {
+        "offset": 3211264,
+        "size": 5177344
+      },
+      "app1": {
+        "offset": 8388608,
+        "size": 3145728
+      },
+      "bootfs1": {
+        "offset": 11534336,
+        "size": 5177344
+      },
+      "otadata": {
+        "offset": 16711680,
+        "size": 8192
+      },
+      "bank_state": {
+        "offset": 16719872,
+        "size": 8192
+      }
+    }
+  }
+}

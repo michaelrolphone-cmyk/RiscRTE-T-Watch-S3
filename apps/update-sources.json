@@ -1,0 +1,18 @@
+{
+  "system-apps": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+    "commit": "009e3d272092af4ac808f1898f40f9a0d6c46d0c"
+  },
+  "utilities": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+    "commit": "5418d9dc7f9963d96b5b8b11c40658ee753d9cbd"
+  },
+  "runtime": {
+    "repository": "michaelrolphone-cmyk/RiscRTE",
+    "commit": "c988875d688a161addfe96d7fbb6792673d3f75d"
+  },
+  "productivity": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
+    "commit": "43c23fee899cd2af8b6b5339b80e778018fb6295"
+  }
+}

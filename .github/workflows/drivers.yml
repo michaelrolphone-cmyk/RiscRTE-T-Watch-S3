@@ -487,3 +487,141 @@ jobs:
             dist/production-admission/execution/provenance.json
             dist/production-admission/execution-san/provenance.json
           if-no-files-found: error
+
+  update-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - name: Read exact update source pins
+        id: pins
+        run: |
+          python - <<'PY'
+          import json,os
+          pins=json.load(open('apps/update-sources.json'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            for name,value in pins.items():out.write(name+'='+value['commit']+'\n')
+            out.write('mode='+json.load(open('apps/update-lane.json'))['mode']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs['system-apps'] }}
+          path: .update-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .update-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .update-dependencies/productivity
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .update-dependencies/runtime
+          persist-credentials: false
+      - name: Pinned target compiler and SPIFFS tool
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+          echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
+      - name: Original drivers and exact selected updater apps/providers
+        env:
+          UPDATE_MODE: ${{ steps.pins.outputs.mode }}
+        run: |
+          python scripts/build_twatch_drivers.py
+          python scripts/board_baseline.py
+          python scripts/check_twatch_drivers.py
+          python scripts/build_update_apps.py --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --runtime .update-dependencies/runtime --productivity .update-dependencies/productivity --mode "$UPDATE_MODE"
+          python scripts/build_update_deployment.py --mode "$UPDATE_MODE"
+          python scripts/verify_update_deployment.py dist/update-launcher-deployments/*.zip
+          python -m unittest discover -s tests -p 'test_update_*.py' -v
+          python tests/update_store_inputs_test.py
+      - name: Eight original archives, common store and SPIFFS custody
+        env:
+          WATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python scripts/build_update_common.py dist/update-launcher-deployments/*.zip --pr-head-sha "$WATCH_HEAD"
+          for bundle in dist/update-common/*.zip; do
+            python scripts/build_update_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
+          done
+      - name: Actual production-store admission and real default Clock health
+        run: |
+          python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/normal
+          ADDRESS_SANITIZE=1 SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/sanitized
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/update-launcher/*.elf
+            dist/update-launcher/*.json
+            dist/update-launcher-deployments/*.zip
+            dist/update-launcher-deployments/catalog.json
+            dist/update-common/*.zip
+            dist/update-common/*.bin
+            dist/update-common/*.json
+            dist/update-validation/**/*.json
+            dist/update-validation/**/*.log
+          if-no-files-found: error
+          retention-days: 14
+
+  update-cross-layer:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read exact backend pins
+        id: pins
+        run: |
+          python - <<'PY'
+          import json,os
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            for name,value in json.load(open('apps/update-sources.json')).items():
+              out.write(name+'='+value['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs['system-apps'] }}
+          path: .update-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .update-dependencies/runtime
+          persist-credentials: false
+      - name: Source-wired transport, update, rollback and isolation faults
+        run: |
+          mkdir -p dist/update-cross-layer
+          python tests/update_cross_layer/decode_bootloader.py dist/update-cross-layer/bootloader-corpus.bin
+          BUILD_DIR="$PWD/dist/update-cross-layer/normal" JOBS=2 bash tests/update_cross_layer/run.sh .update-dependencies/runtime .update-dependencies/system-apps "$PWD/dist/update-cross-layer/bootloader-corpus.bin" | tee dist/update-cross-layer/normal.log
+          SANITIZE=1 BUILD_DIR="$PWD/dist/update-cross-layer/sanitized" JOBS=2 bash tests/update_cross_layer/run.sh .update-dependencies/runtime .update-dependencies/system-apps "$PWD/dist/update-cross-layer/bootloader-corpus.bin" | tee dist/update-cross-layer/sanitized.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-update-faults-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/update-cross-layer/*.log
+            dist/update-cross-layer/**/power-flash.bin.gz
+          if-no-files-found: error
+          retention-days: 14
