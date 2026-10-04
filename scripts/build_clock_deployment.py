@@ -9,7 +9,7 @@ import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-NOVA_NOTICES = ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'SOURCES.txt')
+NOVA_NOTICES = ('Orbitron-OFL.txt', 'Rajdhani-OFL.txt', 'ShareTechMono-OFL.txt', 'SOURCES.txt')
 DEVICES = {1: 'gpio', 2: 'i2c', 4: 'pmu', 5: 'panel', 8: 'rtc'}
 LAUNCHER_DEVICES = {**DEVICES, 3: 'i2ctouch', 6: 'touch'}
 
