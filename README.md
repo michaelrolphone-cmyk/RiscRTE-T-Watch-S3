@@ -1,7 +1,12 @@
 # RiscRTE T-Watch-S3 hardware packages
 
-Future-target, software-only driver preparation for the **non-Plus LILYGO
-T-Watch-S3**. This is not a RiscRTE firmware port and has not run on a watch.
+External driver/application packages for the **non-Plus LILYGO T-Watch-S3**.
+The owner physically accepted the 0.4.5 GUI increment. The delivered 0.5.0 sleep
+increment adds saved Light/Deep selection and remains pending physical
+sleep/wake/current validation. The delivered 0.5.1 added shared Calculator and persistent Stopwatch. Current
+0.5.2 adds Hybrid Light-to-Deep sleep, app idle retention and Springboard polish; see [daily tools](docs/DAILY_TOOLS.md) and the
+[deep-sleep contract](docs/DEEP_SLEEP.md).
+Generic firmware mechanism stays in the separately pinned RiscRTE runtime.
 
 - [Hardware inventory, sources and coverage](docs/HARDWARE_INVENTORY.md)
 - [Exact runtime backfill contracts](docs/CAPABILITY_BACKFILL.md)
@@ -81,10 +86,77 @@ physical verification remain pending.
 Publication is serialized. A release remains a draft until both assets are
 uploaded and downloaded for byte verification. Existing assets are never
 clobbered. On an interrupted run, use **Re-run failed jobs** on that original
-run: it resumes drafts and verifies already completed releases. If the source
-commit changed while a same-version draft exists, the action stops rather than
-mixing commits; rerun the original run or increment the affected version.
+run: it resumes drafts and verifies already completed releases. An empty unpublished draft may be retargeted after a failed create;
+existing tags and any uploaded content prevent retargeting. If the source
+commit changed while a same-version draft already has assets, the action stops
+rather than mixing commits; rerun the original run or increment the affected version.
 A repository policy that blocks release writes must allow the workflow's
 `contents: write` permission before publication can succeed.
 
-Offline release regression tests: `python3 -m unittest discover -s tests -p test_releases.py -v`.
+Offline release regression tests: `python3 -m unittest discover -s tests -p 'test_*releases.py' -v`.
+
+
+## Immutable board baseline releases
+
+`releases/board-baseline.json` explicitly versions the complete board definition,
+starting at **1.0.0**. Its independent release tag is
+`board-lilygo-t-watch-s3-v1.0.0`; the versioned artifact is
+`board-lilygo-t-watch-s3-1.0.0.zip`. Use that exact tag/asset URL and verify the
+release-record SHA-256. No `latest` or unversioned asset is the baseline source
+of truth. Individual JSON files also have immutable source-commit URLs recorded
+by provenance; archive-relative paths remain stable across versions.
+
+The ZIP includes all eight `hardware/*.json` profiles, `board.json`,
+`load-order.json`, `platform-resources.json`, both mapping schemas and schema
+provenance, mapping/backfill/inventory docs, exact SDK headers and upstream pins,
+capability declarations, licenses, and all source driver manifests. The baseline
+descriptor declares mapping/API versions, CPU identity, and explicit controller
+namespaces; it has no implicit physical variant. Each SPI bus declares
+`controller_namespace: riscrte.logical` and `physical_controller`2/3 while
+retaining logical `controller`0/1 in the typed C config. I2C declares
+`esp32.peripheral` with matching physical0/1. The shared contract is pinned to
+Garden7e30afc; no board-name inference or implicit +2 translation is allowed. `baseline-record.json` records
+every member's SHA-256 and size, source commit, and an aggregate source digest.
+
+Increment the baseline's numeric version whenever any included file changes,
+including driver manifest versions or schema clarifications. The publisher
+checks the source digest against the existing release even when the version
+would otherwise be skipped, and fails on a same-version content change.
+Unrelated source commits with identical baseline inputs remain a no-op. A bump
+creates a new immutable release; old assets are never replaced. Interrupted
+publication uses the same draft/resume/byte-verification rules as drivers.
+
+Build locally with `python3 scripts/board_baseline.py`. Output ZIPs are
+deterministic for the same source commit and bytes. `dist/board-catalog.json`
+uses the existing schema1 catalog envelope but marks entries `board-baseline`
+and architecture `independent`. It is a separate data catalog, **not an
+installable `.rte.zip` driver package**; `dist/catalog.json` remains driver-only.
+The workflow's `release-catalog.json` lists selected releases with explicit
+kinds. Consumers must select supported kinds rather than infer them from IDs.
+Both automatic and manual publishing include baseline versions. No workflow
+uses a mutable board alias or overwrites an existing release asset.
+
+
+## Simple watch clock candidate
+
+The independent `apps/clock` application builds as `default.elf` against the
+pinned generic RiscRTE app service. It displays valid RTC time/date or an honest
+`TIME UNSET` state, with no time writes or assumed timezone. It loads only the
+five GPIO/I2C/PMU/panel/RTC providers needed for the clock. The firmware contains
+no watch UI or application logic.
+
+See [clock build/install/test instructions](docs/CLOCK_INSTALL.md). PR CI builds
+all target ELFs, checks app behavior, and retains eight explicitly selected,
+hashed deployment bundles plus representative display frames in the
+`twatch-clock-deployments` artifact. Physical testing is pending; generic native
+backend support must be verified in the selected runtime build before use.
+
+
+## Optional NOVA launcher and basic Settings
+
+The separate PR5 bundle keeps Clock as the default and adds the shared
+Springboard, Battery and Settings applications. It includes continuous
+swipe-to-launcher handoff, explicit180-degree touch mapping, seven physical
+driver instances, Denver display/inverse RTC policy and first-safe-frame
+backlight gating. See [launcher build and verification](docs/LAUNCHER_INSTALL.md).
+The accepted PR6 clock0.3.1 bundle is preserved unchanged.

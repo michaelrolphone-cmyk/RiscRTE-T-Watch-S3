@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "upstream_repository": "https://github.com/michaelrolphone-cmyk/Garden-Controller",
+  "upstream_path": "riscrte/hardware/board-manifest-v1.schema.json",
+  "clarification": "optional-reset-and-controller-namespace-v1",
+  "semantics": "For display.spi and touch.i2c: reset=-1 requires both delays=0; a present reset requires both delays in 1..500ms. Driver-specific admission may be stricter. No C layout change. Canonical Garden controller_namespace esp32.peripheral/riscrte.logical semantics; logical records require physical_controller. C layout remains unchanged.",
+  "derived_schemas": {
+    "board-manifest-v1.schema.json": "202417a13b764df42aa6b00bbc896d30a79fea2e91d7dcbc7e207e7589e8c233",
+    "twatch-board-v1.schema.json": "f5339515c2a3833edbacff4b94b2fee3ab65cf97b5eb5bcf43abc5a17e489229"
+  },
+  "original_upstream_commit": "1f7fb82efec08cf8751057d84e707f20be2fb7a5",
+  "original_upstream_schema_sha256": "efcf4c3479f91717a5f87fa2997dd125b3ddbecf18a02b5dcb96e59b52bc9e47",
+  "upstream_commit": "7e30afc407c86f34364cbfa2035d6f7893fdea8c",
+  "upstream_schema_sha256": "001ea82caae4277ce31a5d9f1064b97618193e84504f6b7f4f094c947c42f7cc",
+  "local_clarifications": {
+    "spi40mhz-typed-bus-limits-v1": {
+      "semantics": "Local derived schema admission: SPI up to 40 MHz; shared envelope I2C up to 1 MHz and Watch I2C up to 400 kHz. Panel driver explicitly admits 40 MHz while ordinary Watch SPI peripherals retain 10 MHz. No C layout/API change or physical-profile frequency change.",
+      "source_repository": "https://github.com/Xinyuan-LilyGO/TTGO_TWatch_Library",
+      "source_commit": "9884d62113cd2f7aa77cd179c346b9017eb08301",
+      "source_path": "extras/Setup212_LilyGo_T_Watch_S3.h",
+      "source_blob_sha": "3273ca23cc7016b4fd210eb0711ba891a823e7bb",
+      "purpose": "Exact non-Plus T-Watch-S3 ST7789 240x240 setup declares SPI_FREQUENCY 40000000 using the same display pins."
+    }
+  }
+}

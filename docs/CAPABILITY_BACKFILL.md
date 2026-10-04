@@ -11,8 +11,10 @@ Canonical Reader snapshot:
 `T5S3-Reader@3d9bc4f373679f5ae8dd184db6a8d0afa5a40231`. Provider v2, stream suffix,
 clock, I2C, display, raw touch and navigation headers are byte-for-byte copies.
 Their hashes and exact source pins are in [SDK sources](../sdk/SOURCES.json).
-The hardware mapping and raw GPIO/SPI/radio proposals are copied unchanged from
-Garden `1f7fb82efec08cf8751057d84e707f20be2fb7a5`. These are proposals with
+The raw GPIO/SPI/radio proposals are copied unchanged from Garden
+`1f7fb82efec08cf8751057d84e707f20be2fb7a5`; the shared hardware mapping header,
+contract and common schema are aligned to
+`7e30afc407c86f34364cbfa2035d6f7893fdea8c` (comments/schema only, same C layout). These are proposals with
 implemented consumers, **not existing Reader services**.
 
 `RiscGpioBankV1.h` and `RiscBatteryGaugeV1.h` were local watch contracts in the
@@ -39,11 +41,11 @@ singleton descriptor for a different device is forbidden. A driver-manager
 compatible-hardware filter, module instantiation, config injection, per-instance
 resolver and resource arbitration are future Reader work, not supplied here.
 
-The common JSON schema is retained unchanged for provenance. The
+Both schemas apply the optional-reset clarification recorded in
+[SCHEMA_PROVENANCE.json](SCHEMA_PROVENANCE.json); the original upstream hash is retained. The
 [T-Watch extension schema](twatch-board-v1.schema.json) registers controller.gpio,
-controller.i2c, peripheral.i2c, power.axp2101, audio.i2s and radio.lora. It permits
-absent display/touch reset (`-1`) and zero reset delay, as the common header
-allows optional hardware. Array counts and reserved-zero fields are generated
+controller.i2c, peripheral.i2c, power.axp2101, audio.i2s and radio.lora. Absent display/touch reset (`-1`) requires both reset delays zero; present
+reset requires positive bounded delays. Array counts and reserved-zero fields are generated
 by the materializer, not independently trusted JSON values. `power.axp2101` has
 the whole config size in its nested `device.struct_size`. Other exact layouts
 are in [TWatchHardwareV1.h](../sdk/driver/TWatchHardwareV1.h).
@@ -101,7 +103,7 @@ quiesce before unmapping, not by another start. Nonzero claims block restart.
 |---|---|
 | `gpio.bank@1` | preserves original claim/write/read/release table;48 leases, monotonic public tokens; unsupported pulldown/open-drain flags reject. I2C no longer uses GPIO bit-banging |
 | `i2c.bus@1` | canonical8-address token owner, atomic try-lock over whole transaction; device release cannot race an active call; configured controller closes only after all address leases end. No token0 release |
-| `board.battery@1` | millivolts, percent255=profile unavailable; charging bit from PMIC status[6:5]. `twatch_pmu_api_v1` appends key_events; bits0=long and1=short from IRQ register0x49, ACK only0x0c. Check struct_size before suffix use. ID/rail bounds/100mA readback required. Up to4 configured ALDO/BLDO rails, indices0..5=ALDO1..4/BLDO1..2. Restore original rail voltage/enables and key-IRQ enables on teardown; keep100mA charge ceiling. DC1/backup/charge voltage untouched |
+| `board.battery@1` | millivolts and read-only AXP2101 SOC estimate0..100 when documented admission checks pass; percent255=unavailable (legacy PROFILE_MISSING flag). See PMU_BATTERY.md for guards and accuracy limits. Charging bit from PMIC status[6:5]. `twatch_pmu_api_v1` appends key_events; bits0=long and1=short from IRQ register0x49, ACK only0x0c. Check struct_size before suffix use. ID/rail bounds/100mA readback required. Up to4 configured ALDO/BLDO rails, indices0..5=ALDO1..4/BLDO1..2. Restore original rail voltage/enables and key-IRQ enables on teardown; keep100mA charge ceiling. DC1/backup/charge voltage untouched |
 | `display.output@1` | canonical240x240 RGB565, one115200-byte retained frame; submit nonblocking, frame lease consumed; one latest monotonic present token. One480-byte row per poll; damage validated then conservatively full-frame. FIFO only. Native RGB565 becomes MSB-first wire. PWM brightness. Atomic try-lock; client serializes frame lease calls. quiesce cancels queued transfer because all raw operations drain before each poll returns; held user frame still blocks unload |
 | `input.touch.raw@1` | canonical four subscribers/32-slot ring each, hardware contact IDs, two contacts. One coherent13-byte report per poll (regardless of larger budget), no reliance on a latched IRQ edge. Atomic try-lock over I/O and state. Invalid report/overflow yields GAP; transient read error preserves unread events. Subscriptions block quiesce; all must unsubscribe |
 | `motion.accel@1` | read XYZ and chip_id;100Hz/±4g configured; signed16-bit raw register representation, not calibrated SI units. Reject observed ID outside explicit profile. Stop acceleration before release. Feature firmware, step counting, gesture algorithms and FIFO are not advertised |
@@ -151,3 +153,26 @@ All local capability contexts are private to an independently mapped ELF instanc
 The raw controller APIs, schema materializers and device-manager filtering are
 **specified, not implemented in Reader by this PR**. No UI/app/default launcher,
 watch firmware image, hardware qualification, release or deployment is included.
+
+
+## Power dependency and SPI namespace integration notes
+
+The DRV2605 haptic manifest binds `board.battery@1` to PMU instance4 as a
+startup/shutdown dependency: the selected profile configures BLDO2 (rail5) at
+3.3V before haptic activation and keeps it alive until haptic quiescence. The
+haptic protocol does not select that rail, and the generic runtime must not
+hardcode BLDO2 or watch instance IDs. This dependency currently pins the entire
+PMU; it is not a fine-grained rail lease. The same existing PMU dependency model
+applies to display/touch/radio. A future generic rail contract requires an
+explicit versioned migration, preserving these edges until that migration.
+
+Each SPI bus declares `controller_namespace: riscrte.logical` and an explicit
+`physical_controller`: logical0 maps to physical2/SPI2 and logical1 to
+physical3/SPI3. I2C buses declare `esp32.peripheral`, retaining physical0/1.
+These are not ESP-IDF enum values; the port translates explicitly. No implicit
++2 arithmetic or board-name inference is permitted. Physical-controller keys
+must arbitrate aliases together. Bind each external `spi.bus@1` context using the
+materialized bus instance (103/104 in these profiles), not package order.
+Panel0.2.1 commands, initialization and pixel rows all use the configured bus
+frequency, admitted up to10MHz. No command path may silently exceed a slower
+board-configured limit.

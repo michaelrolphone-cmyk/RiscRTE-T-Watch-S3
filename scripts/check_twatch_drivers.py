@@ -16,7 +16,11 @@ def check_board(b,manifests):
         if pin==-1:return
         assert pin not in pins,(pin,owner,pins.get(pin));pins[pin]=owner
     for bus in buses.values():
-        assert (bus['kind'],bus['controller']) not in controllers;controllers.add((bus['kind'],bus['controller']))
+        namespace=bus.get('controller_namespace');assert namespace in ('esp32.peripheral','riscrte.logical')
+        physical=bus.get('physical_controller',bus['controller']);assert namespace!='esp32.peripheral' or physical==bus['controller']
+        assert bus['kind']!='spi' or physical in (2,3)
+        assert bus['kind']!='i2c' or physical in (0,1)
+        assert (bus['kind'],physical) not in controllers;controllers.add((bus['kind'],physical))
         assert bus['mode']==0
         fields=('sda','scl') if bus['kind']=='i2c' else ('sclk','mosi','miso')
         for k in fields:
@@ -40,7 +44,9 @@ def check_board(b,manifests):
         for key in ('cs','dc','reset','backlight','busy','irq','bclk','ws','data'):
             if key in base:own(base[key],d['instance_id'])
         for pin in base.get('pins',[]):own(pin,d['instance_id'])
-        if d['config_type']=='radio.lora':assert c['minimum_hz']<=c['maximum_hz']
+        if d['config_type']=='radio.lora':
+            assert c['minimum_hz']<=c['maximum_hz']
+            assert buses[c['bus_instance_id']]['frequency_hz']<=10000000
     done=set()
     def visit(i,active):
         assert i not in active,'dependency cycle'
