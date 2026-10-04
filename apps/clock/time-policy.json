@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "temporary_app_policy": true,
+  "rtc_basis": {
+    "kind": "fixed-offset-wall-time",
+    "utc_offset_minutes": 480,
+    "origin": "Explicit configuration from the reported RTC date/time and Denver local date/time"
+  },
+  "display_zone": "America/Denver",
+  "rules": {
+    "source": "IANA tzdb 2026e northamerica",
+    "source_url": "https://github.com/eggert/tz/blob/2026e/northamerica",
+    "source_git_blob": "e3a4bd6d5332b901961381432a6f53cc95ce530f",
+    "supported_years": [2000, 2099],
+    "standard_utc_offset_minutes": -420,
+    "daylight_utc_offset_minutes": -360
+  },
+  "writes_rtc": false,
+  "replacement": "Shared Settings must explicitly own RTC basis and display zone; its editor must convert display wall time before RTC writes"
+}
