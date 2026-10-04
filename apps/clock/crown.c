@@ -16,7 +16,7 @@ static const risc_runtime_api_v1 *rt;
 #include "PortableSleepPolicy.h"
 static unsigned sleep_mode;
 static watch_face_picker picker;
-static uint16_t *picker_scratch;
+static nova_watch_picker_cache *picker_scratch;
 static bool picker_open_pending,picker_select_pending,picker_save_failed;
 static unsigned picker_selection_pending;
 static watch_launcher_touch touch;
@@ -352,7 +352,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         launcher_activity_pending=false;
         if(picker_open_pending) {
             picker_open_pending=false;
-            if(!picker_scratch)picker_scratch=malloc(240u*240u*sizeof(uint16_t));
+            if(!picker_scratch){picker_scratch=malloc(sizeof(*picker_scratch));if(picker_scratch)picker_scratch->valid_mask=0;}
             if(!picker_scratch){watch_face_close(&picker);rt->diagnostic("WATCH_CLOCK picker=out-of-memory");}
         }
         /* Crown close/sleep supersedes any contact action sampled while an
@@ -365,7 +365,11 @@ __attribute__((visibility("default"))) void app_main(void) {
                 saved=watch_face_save(setting.api,picker_selection_pending);
                 if(!rt->release(&setting))break;
             }
-            if(saved)picker.selected=(uint8_t)picker_selection_pending;
+            if(saved) {
+                picker.selected=(uint8_t)picker_selection_pending;
+                watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
+                picker_open_pending=launcher_swipe_pending=false;
+            }
             picker_save_failed=!saved;
             rt->diagnostic(saved?"WATCH_CLOCK face=saved":"WATCH_CLOCK face=save-failed");
         }

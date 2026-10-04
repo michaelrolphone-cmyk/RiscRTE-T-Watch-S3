@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Only Clock0.6.0 changes; accepted Watch1.0 drivers, app grants and shared ELFs stay exact."""
+"""Only Clock0.6.2 changes; accepted Watch1.0 drivers, app grants and shared ELFs stay exact."""
 import hashlib,json,sys,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -17,9 +17,9 @@ def verify(path):
  assert changed==ALLOWED,changed
  assert {k:v for k,v in metadata.items() if k!='apps'}==baseline['shared_metadata']
  for name in ('default','clock'):
-  assert json.loads(files[name+'.json'])=={**baseline['manifests'][name+'.json'],'version':'0.6.0'}
+  assert json.loads(files[name+'.json'])=={**baseline['manifests'][name+'.json'],'version':'0.6.2'}
  for name,record in metadata['apps'].items():assert record['sha256']==sha(files[name+'.elf'])
- proof={'source':baseline['source'],'candidate':'Clock0.6.0 development','changed_files':sorted(changed),'unchanged_files':sorted(set(files)-changed),'store_sha256':{n:sha(b) for n,b in files.items()}}
+ proof={'source':baseline['source'],'candidate':'Clock0.6.2 development','changed_files':sorted(changed),'unchanged_files':sorted(set(files)-changed),'store_sha256':{n:sha(b) for n,b in files.items()}}
  (Path(path).parent/'face-picker-increment-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
  print('Face picker custody: exactly four Clock files changed; 24 accepted files unchanged; no driver, grant, shared-app or product1.0 mutation')
  return proof

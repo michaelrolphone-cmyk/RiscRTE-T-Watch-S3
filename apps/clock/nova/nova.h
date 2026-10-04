@@ -26,8 +26,15 @@ bool nova_watch_render(risc_display_surface_v1 *surface, const nova_watch_state 
 const char *nova_watch_face_name(unsigned id);
 bool nova_watch_face_render(risc_display_surface_v1 *surface, const nova_watch_state *state, unsigned face_id);
 unsigned nova_watch_picker_pulse(uint32_t elapsed_ms);
+/* Caller-owned, picker-lifetime cache. Only visible cards occupy these slots;
+ * focused pixels are live, neighbors freeze between meaningful data changes. */
+typedef struct {
+    uint8_t valid_mask,face_ids[3];
+    nova_watch_state stamp;
+    uint16_t pixels[3][240*240];
+} nova_watch_picker_cache;
 bool nova_watch_picker_render(risc_display_surface_v1 *surface, const nova_watch_state *state,
-    unsigned selected, int position_q8, const char *status, unsigned pulse_face, unsigned pulse_scale_q8, uint16_t *scratch);
+    unsigned selected, int position_q8, const char *status, unsigned pulse_face, unsigned pulse_scale_q8, nova_watch_picker_cache *cache);
 #ifdef __cplusplus
 }
 #endif

@@ -42,7 +42,7 @@ int main(int argc,char**argv) {
     watch_face_picker resistance={.open=true,.neutral=true,.position=24*256};
     watch_face_input(&resistance,0,true,1,1,100,92);watch_face_input(&resistance,8,true,1,1,124,92);
     assert(resistance.position==36*256); /*24px drag / (1 +24/24)*/
-    uint8_t pixels[240*488+32],scratch[240*240*2];memset(pixels,0xa5,sizeof(pixels));
+    uint8_t pixels[240*488+32];nova_watch_picker_cache scratch={0};memset(pixels,0xa5,sizeof(pixels));
     risc_display_surface_v1 s={0,pixels+16,240,240,488,240*488,5};
     nova_watch_state state={.time={.year=2026,.month=10,.day=4,.weekday=0,.hour=10,.minute=42,.second=18},.time_valid=true,.battery_valid=true,.battery_percent=84,.subsecond_ms=250,.animation_ms=42000};
     for(unsigned i=0;i<8;i++) {
@@ -50,7 +50,7 @@ int main(int argc,char**argv) {
         for(unsigned n=0;n<16;n++)assert(pixels[n]==0xa5&&pixels[sizeof(pixels)-n-1]==0xa5);
         for(unsigned y=0;y<240;y++)for(unsigned n=480;n<488;n++)assert(pixels[16+y*488+n]==0xa5);
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/face-%u.rgb565",argv[1],i);FILE*f=fopen(path,"wb");assert(f);for(unsigned y=0;y<240;y++)assert(fwrite(pixels+16+y*488,1,480,f)==480);fclose(f);}
-        assert(nova_watch_picker_render(&s,&state,i,-(int)i*WATCH_FACE_PITCH,NULL,8,256,(uint16_t*)scratch));
+        assert(nova_watch_picker_render(&s,&state,i,-(int)i*WATCH_FACE_PITCH,NULL,8,256,&scratch));
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/picker-%u.rgb565",argv[1],i);FILE*f=fopen(path,"wb");assert(f);for(unsigned y=0;y<240;y++)assert(fwrite(pixels+16+y*488,1,480,f)==480);fclose(f);}
         state.time_valid=false;state.battery_valid=false;assert(nova_watch_face_render(&s,&state,i));state.time_valid=true;state.battery_valid=true;
     }

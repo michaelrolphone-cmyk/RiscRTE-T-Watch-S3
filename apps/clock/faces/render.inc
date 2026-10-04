@@ -44,6 +44,9 @@ static void frect(canvas*c,int x,int y,int w,int h,uint16_t color) {
     for(int j=y;j<y+h;j++)if(j>=0&&j<240)for(int i=x;i<x+w;i++)if(i>=0&&i<240)put(at(c,i,j),color);
 }
 /* Q4 round strokes, with four coverage samples per destination pixel. */
+#ifdef WATCH_FACE_RENDER_TEST
+static unsigned face_test_calls,face_test_line_pixels;
+#endif
 static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color) {
     int dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy,r=width/2;
     int minx=((x1<x2?x1:x2)-r-16)/16,maxx=((x1>x2?x1:x2)+r+16)/16;
@@ -52,7 +55,29 @@ static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color)
     if(miny<0)miny=0;
     if(maxx>239)maxx=239;
     if(maxy>239)maxy=239;
-    for(int y=miny;y<=maxy;y++)for(int x=minx;x<=maxx;x++) {
+    /* Every covered sample lies within r of a point on the segment. Limit
+     * each row to the segment's x range for that row's y +/- r, then expand
+     * by r. The extra Q4 unit/pixel makes truncating division conservative.
+     * This keeps exactly the same four samples and round endcaps without
+     * scanning the empty rectangle around a long diagonal. */
+    int lx=x1,ly=y1,hx=x2,hy=y2;
+    if(ly>hy){lx=x2;ly=y2;hx=x1;hy=y1;}
+    for(int y=miny;y<=maxy;y++) {
+        int first=minx,last=maxx;
+        if(hy>ly) {
+            int lo=y*16+4-r,hi=y*16+12+r;
+            if(lo<ly)lo=ly;
+            if(hi>hy)hi=hy;
+            if(lo>hy||hi<ly)continue;
+            int a=lx+(hx-lx)*(lo-ly)/(hy-ly),b=lx+(hx-lx)*(hi-ly)/(hy-ly);
+            int left=((a<b?a:b)-r-17)/16,right=((a>b?a:b)+r+17)/16;
+            if(left>first)first=left;
+            if(right<last)last=right;
+        }
+        for(int x=first;x<=last;x++) {
+#ifdef WATCH_FACE_RENDER_TEST
+        face_test_line_pixels++;
+#endif
         unsigned a=0;
         for(int sy=4;sy<16;sy+=8)for(int sx=4;sx<16;sx+=8) {
             int xx=x*16+sx-x1,yy=y*16+sy-y1,dot=xx*dx+yy*dy;
@@ -61,6 +86,7 @@ static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color)
             else{int cross=xx*dy-yy*dx;a+=(int64_t)cross*cross<=(int64_t)r*r*len;}
         }
         if(a)blend(at(c,x,y),color,a*255/4);
+        }
     }
 }
 static void fcirc(canvas*c,int cx,int cy,int radius,int width,uint16_t color) {
@@ -94,8 +120,14 @@ static void fbattery(canvas*c,const nova_watch_state*s,const nova_watch_labels*l
     if(segments){int x=120-(10*width+9*spacing)/2;for(unsigned i=0;i<10;i++)frect(c,x+(int)i*(width+spacing),y,width,5,valid&&i<percent/10?FGREEN:FC(10,32,20));}
     else{frect(c,120-width/2,y,width,3,FC(10,32,20));frect(c,120-width/2,y,(int)(width*percent/100),3,FGREEN);}
 }
+static bool face_surface_valid(const risc_display_surface_v1*s) {
+    return s&&s->pixels&&s->pixel_format==5&&s->width==240&&s->height==240&&s->stride_bytes>=480&&s->stride_bytes<=UINT32_MAX/240&&s->size_bytes>=s->stride_bytes*240;
+}
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned id) {
-    if(!s||!s->pixels||s->pixel_format!=5||s->width!=240||s->height!=240||s->stride_bytes<480||s->stride_bytes>UINT32_MAX/240||s->size_bytes<s->stride_bytes*240)return false;
+    if(!face_surface_valid(s))return false;
+#ifdef WATCH_FACE_RENDER_TEST
+    face_test_calls++;
+#endif
     nova_watch_state empty={0};if(!state)state=&empty;if(id>=8)id=0;
     nova_watch_labels l;nova_watch_format(state,&l);
     /* Preserve the existing deployment's RTC/timezone conversion, display 24h
@@ -165,26 +197,53 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
     return true;
 }
 /* Rendered previews are the exact same production face function. Scratch is
- * app-owned, allocated only while browsing, and never a provider frame lease. */
+ * app-owned, allocated only while browsing, and never a provider frame lease.
+ * Three full-resolution slots preserve sampling at every card scale. */
 unsigned nova_watch_picker_pulse(uint32_t age_ms) {
     if(age_ms>=334u)return 256u;
     return 256u+(unsigned)(sine(age_ms*180u*256u/334u)*5243/(32767*256));
 }
-bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const char*status,unsigned pulse_face,unsigned pulse_scale,uint16_t*scratch) {
-    if(!scratch||!nova_watch_face_render(s,state,selected))return false;
+bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
+    if(!cache||!face_surface_valid(s))return false;
+    nova_watch_state empty={0};if(!state)state=&empty;
+    /* Neighbor seconds and subsecond animation freeze while out of focus.
+     * Refresh visible caches on minute/date or telemetry changes, never merely
+     * because a new animation frame has arrived. No offscreen work is done. */
+    const nova_watch_state*old=&cache->stamp;
+    if(cache->valid_mask&&(old->time_valid!=state->time_valid||old->battery_valid!=state->battery_valid||
+        old->battery_percent!=state->battery_percent||old->time.year!=state->time.year||
+        old->time.month!=state->time.month||old->time.day!=state->time.day||
+        old->time.hour!=state->time.hour||old->time.minute!=state->time.minute))cache->valid_mask=0;
+    cache->stamp=*state;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
-    risc_display_surface_v1 tmp={0,scratch,240,240,480,240*240*2,5};
+
     int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>7)near=7;
+    struct card { int size,x,y,scale; bool visible; } cards[8];
+    for(unsigned id=0;id<8;id++) {
+        int offset=(int)id*108*256+position,abs=offset<0?-offset:offset;
+        int scale=256-(abs<135*256?abs:135*256)*102/(108*256);
+        if(id==pulse_face&&pulse_scale>=256&&pulse_scale<=277)scale=scale*(int)pulse_scale/256;
+        int size=132*scale/256,x=120+offset/256-size/2,y=92-size/2;
+        cards[id]=(struct card){size,x,y,scale,x<240&&x+size>0&&y<240&&y+size>0};
+    }
     /* Far cards first, center card last, as in the source z-index. */
     for(int pass=7;pass>=0;pass--)for(unsigned id=0;id<8;id++) {
         int offset=(int)id*108*256+position,abs=offset<0?-offset:offset;
         if((int)id!=near-pass&&(int)id!=near+pass)continue;
         if(!pass&&id!=(unsigned)near)continue;
-        if(abs>238*256)continue;
-        if(!nova_watch_face_render(&tmp,state,id))return false;
-        int scale=256-(abs<135*256?abs:135*256)*102/(108*256);
-        if(id==pulse_face&&pulse_scale>=256&&pulse_scale<=277)scale=scale*(int)pulse_scale/256;
-        int size=132*scale/256,cx=120+offset/256,x0=cx-size/2,y0=92-size/2;
+        if(!cards[id].visible)continue;
+        int scale=cards[id].scale,size=cards[id].size,x0=cards[id].x,y0=cards[id].y;
+        unsigned slot=3;
+        for(unsigned k=0;k<3;k++)if((cache->valid_mask&(1u<<k))&&cache->face_ids[k]==id){slot=k;break;}
+        bool cached=slot<3;
+        if(!cached)for(unsigned k=0;k<3;k++)if(!(cache->valid_mask&(1u<<k))||!cards[cache->face_ids[k]].visible){slot=k;break;}
+        if(slot==3)return false; /* Geometry guarantees at most three visible. */
+        uint16_t*scratch=cache->pixels[slot];
+        if(!cached||id==(unsigned)near) {
+            risc_display_surface_v1 tmp={0,scratch,240,240,480,240*240*2,5};
+            if(!nova_watch_face_render(&tmp,state,id))return false;
+            cache->face_ids[slot]=(uint8_t)id;cache->valid_mask|=(uint8_t)(1u<<slot);
+        }
         int radius=14*scale/256,border=id==selected?2*scale/256:scale/256;if(border<1)border=1;
         unsigned opacity=255-(unsigned)(abs<108*256?abs:108*256)*128/(108*256);
         for(int y=0;y<size;y++)for(int x=0;x<size;x++)if(x+x0>=0&&x+x0<240&&y+y0>=0&&y+y0<240){

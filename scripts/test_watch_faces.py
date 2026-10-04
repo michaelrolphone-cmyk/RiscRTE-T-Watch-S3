@@ -13,3 +13,19 @@ for i,name in enumerate(('NOVA','ANALOG','RADAR','HEX','TERMINAL','MINIMAL','BIN
    v=b[j]|b[j+1]<<8;rgb.extend(((v>>11)*255//31,((v>>5)&63)*255//63,(v&31)*255//31))
   im=Image.frombytes('RGB',(240,240),bytes(rgb));im.save(out/f'{prefix}-{i}.png');sheet.paste(im,(i%4*255,i//4*270));ImageDraw.Draw(sheet).text((i%4*255+80,i//4*270+250),name,fill='white')
 faces.save(out/'native-faces.png');picker.save(out/'native-pickers.png')
+
+# These 96 golden frames were rendered by the delivered0.6.0 source before
+# optimizing. Preserve approved pixels at RTC phases, fractional scroll and
+# enlarged selection-pulse edges, not just an isolated static screenshot.
+import ctypes,hashlib,json
+source=str(ROOT/'tests/watch_faces_work_test.c')
+flags=['-std=c11','-O2','-Wall','-Wextra','-Werror',*['-I'+str(ROOT/p) for p in ('sdk/app','sdk/driver','include','.')]]
+cc=os.environ.get('CC','cc')
+subprocess.run([cc,*flags,'-fsanitize=undefined','-fno-sanitize-recover=all',source,'-o',str(out/'work-test')],check=True)
+subprocess.run([str(out/'work-test')],check=True,timeout=30)
+subprocess.run([cc,*flags,'-shared','-fPIC',source,'-o',str(out/'raster-test.so')],check=True)
+lib=ctypes.CDLL(str(out/'raster-test.so'));pixels=ctypes.create_string_buffer(115200)
+for case in json.loads((ROOT/'tests/watch_faces_raster_golden.json').read_text()):
+ lib.render_sample(pixels,case['id'],case['ms'],case['picker'],case['position'],case['scale'])
+ assert hashlib.sha256(pixels.raw).hexdigest()==case['sha256'],case
+print('96 delivered0.6.0 face/picker frames remain byte-identical')
