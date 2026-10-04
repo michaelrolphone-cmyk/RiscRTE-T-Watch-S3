@@ -32,7 +32,7 @@ values are illustrative design data only.
 ## Foreground, sleep and rendering
 
 The original ordinary alarm.service@1 copied status/token/sleep ABI is unchanged.
-The opt-in0.2.0 service uses existing output and failure-only cleanup phases.
+The opt-in0.2.1 service uses existing output and failure-only cleanup phases.
 Named Points alerts use the existing retained foreground modal in all apps;
 Clock retains its picker state, cancels stale input, and starts a fresh60-second
 idle period after dismissal. The Points app owns nested Back navigation; only a
