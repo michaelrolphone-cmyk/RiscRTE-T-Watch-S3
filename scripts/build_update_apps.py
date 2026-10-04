@@ -12,6 +12,8 @@ from build_launcher_apps import ROOT, build as build_apps
 from build_alarm_apps import build_service
 
 MODES = {'paired': (), 'ota': ('ota_update',), 'all': ('ota_update', 'app_store')}
+ICON_REFRESH_ELFS = {'springboard.elf','battery.elf','settings.elf','calculator.elf','stopwatch.elf',
+                     'alarms.elf','countdown.elf','points_in_time.elf','wifi_settings.elf'}
 
 
 def sha(data):
@@ -74,7 +76,7 @@ def build(system, utilities, runtime, productivity, updates=('ota_update', 'app_
     baseline = json.loads((ROOT/'scripts/update-preservation-baseline.json').read_text())
     preserved = {}
     for path, expected in baseline['files'].items():
-        if not path.endswith('.elf') or path in ('default.elf', 'springboard.elf'):
+        if not path.endswith('.elf') or path == 'default.elf' or path in ICON_REFRESH_ELFS:
             continue
         artifact = 'alarm-service.elf' if path == 'alarm-service/driver.elf' else path
         if '/' in artifact:  # Physical drivers are independently pinned at deployment verification.
