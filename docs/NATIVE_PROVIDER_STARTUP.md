@@ -55,3 +55,10 @@ failure, lost frame health, confirmation refusal and native retention. Native
 transport and bank writes remain forbidden during Clock startup. The unchanged
 44-file delivered store remains the preservation reference until the separately
 owned Nova app integration establishes its exact replacement inputs.
+
+The update CI artifact includes the original archives, common SPIFFS and
+admission/execution/ABI provenance JSON. Temporary copied-store JSON remains
+local to the runner: including it expanded the artifact to1,680 members and
+exceeded the final assembler's1,000-member safety bound. The bounded reader is
+unchanged; original profile/common content and source hashes remain available
+for independent reproduction and final-image checks.
