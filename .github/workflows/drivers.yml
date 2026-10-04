@@ -45,6 +45,8 @@ jobs:
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
           python scripts/test_watch_faces.py
+          python scripts/test_watch_faces_collection_two.py
+          python scripts/test_calendar_watch_faces.py
           python apps/clock/nova/tests/run.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py

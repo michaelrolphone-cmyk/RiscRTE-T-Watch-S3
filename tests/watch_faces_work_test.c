@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <stdio.h>
 static unsigned reference_pixels;
+static const uint8_t original_ids[]={0,1,2,3,4,5,6,7};
+static const watch_face_page original_page={original_ids,8,NULL};
 static void reference_line(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color) {
     int dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy,r=width/2;
     int minx=((x1<x2?x1:x2)-r-16)/16,maxx=((x1>x2?x1:x2)+r+16)/16;
@@ -36,9 +38,9 @@ static void compare_line(int x,int y,int xx,int yy,int width) {
     assert(!memcmp(before,after,sizeof(before)));
 }
 void render_sample(void*p,unsigned id,unsigned ms,int picker,int pos,unsigned scale) {
-    nova_watch_state state={.time={.year=2026,.month=10,.day=4,.weekday=0,.hour=10,.minute=42,.second=ms/1000%60},.time_valid=true,.battery_valid=true,.battery_percent=84,.subsecond_ms=ms%1000,.animation_ms=42000+ms};
+    nova_watch_state state={.time={.year=2026,.month=10,.day=4,.weekday=0,.hour=10,.minute=42,.second=ms/1000%60},.time_valid=true,.battery_valid=true,.battery_percent=84,.subsecond_ms=ms%1000,.animation_ms=42000+ms,.hour_24=true};
     risc_display_surface_v1 s={0,p,240,240,480,115200,5};nova_watch_picker_cache scratch={0};
-    if(picker)assert(nova_watch_picker_render(&s,&state,id,pos,NULL,id,scale,&scratch));else assert(nova_watch_face_render(&s,&state,id));
+    if(picker)assert(nova_watch_picker_render(&s,&state,id,pos,&original_page,NULL,id,scale,&scratch));else assert(nova_watch_face_render(&s,&state,id));
 }
 int main(void) {
     compare_line(12*16,12*16,228*16,228*16,32);
@@ -63,31 +65,51 @@ int main(void) {
     nova_watch_picker_cache cache={0};uint16_t pixels[240*240],frozen[240*240],live[240*240];
     risc_display_surface_v1 surf={0,pixels,240,240,480,sizeof(pixels),5},expected={0,live,240,240,480,sizeof(live),5};
     nova_watch_state state={.time={2026,10,4,0,10,42,18},.time_valid=true,.battery_valid=true,.battery_percent=84,.subsecond_ms=250};
-    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-2*108*256,NULL,8,256,&cache));assert(face_test_calls==3);
+    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-2*108*256,&original_page,NULL,8,256,&cache));assert(face_test_calls==3);
     unsigned slot=0;while(cache.face_ids[slot]!=1)slot++;memcpy(frozen,cache.pixels[slot],sizeof(frozen));
+    face_test_mask=0;
     state.subsecond_ms=800;state.animation_ms=1000;state.time.second=19;
-    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-2*108*256,NULL,8,256,&cache));assert(face_test_calls==1);
+    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,12,-2*108*256,&original_page,NULL,8,256,&cache));assert(face_test_calls==1&&face_test_mask==(1u<<2));
     assert(!memcmp(frozen,cache.pixels[slot],sizeof(frozen))); /* neighbor froze */
     assert(nova_watch_face_render(&expected,&state,2));unsigned focused=0;while(cache.face_ids[focused]!=2)focused++;
     assert(!memcmp(live,cache.pixels[focused],sizeof(live)));
     /* Changing focus makes the formerly frozen neighbor live immediately. */
-    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,NULL,8,256,&cache));assert(face_test_calls<=2);
+    face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,&original_page,NULL,8,256,&cache));assert(face_test_calls<=2);
     assert(nova_watch_face_render(&expected,&state,1));assert(!memcmp(live,cache.pixels[slot],sizeof(live)));
-    for(unsigned change=0;change<5;change++) {
+    for(unsigned change=0;change<6;change++) {
         if(change==0)state.time.minute++;
         if(change==1)state.time.day++;
         if(change==2)state.battery_percent--;
         if(change==3)state.time_valid=false;
         if(change==4)state.battery_valid=false;
-        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,NULL,8,256,&cache));assert(face_test_calls==3);
-        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,NULL,8,256,&cache));assert(face_test_calls==1);
+        if(change==5)state.hour_24=true;
+        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,&original_page,NULL,8,256,&cache));assert(face_test_calls==3);
+        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,-108*256,&original_page,NULL,8,256,&cache));assert(face_test_calls==1);
     }
     /* Traverse repeatedly: no stale slot aliases or offscreen work. */
     for(int pos=0;pos>=-7*108*256;pos-=13*256) {
-        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,pos,NULL,2,277,&cache));assert(face_test_calls<=3);
+        face_test_calls=0;assert(nova_watch_picker_render(&surf,&state,2,pos,&original_page,NULL,2,277,&cache));assert(face_test_calls<=3);
+    }
+    const unsigned hours[]={0,11,12,23};
+    const char*expected12[]={"12:00","11:59","12:00","11:59"};
+    const char*expected24[]={"00:00","11:59","12:00","23:59"};
+    for(unsigned h=0;h<4;h++)for(unsigned format=0;format<2;format++) {
+        state.time_valid=state.battery_valid=true;state.time.hour=(uint8_t)hours[h];state.time.minute=(uint8_t)(h%2?59:0);state.hour_24=format!=0;
+        nova_watch_labels labels;nova_watch_format(&state,&labels);
+        assert(!strcmp(labels.hour_minute,format?expected24[h]:expected12[h]));
+        assert(!strcmp(labels.meridiem,format?"":h<2?"AM":"PM"));
+        for(unsigned id=0;id<WATCH_FACE_COUNT;id++) {
+            assert(nova_watch_face_render(&surf,&state,id));
+            unsigned category=watch_face_category_for(id),index=watch_face_index_for(category,id);
+            face_test_calls=0;face_test_mask=0;
+            assert(nova_watch_picker_render(&surf,&state,23,-(int)index*108*256,watch_face_page_for(category),NULL,24,256,&cache));
+            face_test_calls=0;face_test_mask=0;
+            assert(nova_watch_picker_render(&surf,&state,23,-(int)index*108*256,watch_face_page_for(category),NULL,24,256,&cache));
+            assert(face_test_calls==1&&face_test_mask==(1u<<id));
+        }
     }
     risc_display_surface_v1 invalid={0,after,240,240,480,115199,5};nova_watch_picker_cache scratch={0};
-    assert(!nova_watch_picker_render(&invalid,NULL,0,0,NULL,0,256,&scratch));
-    invalid.size_bytes++;invalid.pixel_format=4;assert(!nova_watch_picker_render(&invalid,NULL,0,0,NULL,0,256,&scratch));
+    assert(!nova_watch_picker_render(&invalid,NULL,0,0,&original_page,NULL,0,256,&scratch));
+    invalid.size_bytes++;invalid.pixel_format=4;assert(!nova_watch_picker_render(&invalid,NULL,0,0,&original_page,NULL,0,256,&scratch));
     puts("2085 capsule strokes exact; diagonal tested work cut >15x; standalone1face and picker<=3visible faces, no discarded render");
 }

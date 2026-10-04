@@ -83,7 +83,7 @@ static risc_touch_api_v1 ta={1,sizeof(ta),NULL,subscribe,unsubscribe,poll,next,s
 static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit_frame,status,NULL,brightness},prepare,resume,NULL};
 static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending};
 static twatch_rtc_api_v1 ra={2,sizeof(ra),NULL,rtc_read,NULL,NULL,NULL};
-static int32_t face_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){(void)c;*z=0;if(strcmp(k,WATCH_FACE_KEY))return RISC_KEY_VALUE_NOT_FOUND;face_reads++;if(scenario==15&&face_writes)return RISC_KEY_VALUE_IO;if(!saved_face)return RISC_KEY_VALUE_NOT_FOUND;assert(n==4);memcpy(b,saved_blob,4);*z=4;return 0;}
+static int32_t face_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){(void)c;*z=0;if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){if(scenario==17||scenario==18){assert(n==4);uint8_t f[]={0x54,1,1,scenario==17?0xa4:0};memcpy(b,f,4);*z=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}if(strcmp(k,WATCH_FACE_KEY))return RISC_KEY_VALUE_NOT_FOUND;face_reads++;if(scenario==15&&face_writes)return RISC_KEY_VALUE_IO;if(!saved_face)return RISC_KEY_VALUE_NOT_FOUND;assert(n==4);memcpy(b,saved_blob,4);*z=4;return 0;}
 static int32_t face_put(void*c,const char*k,const void*b,uint32_t n){(void)c;assert(!strcmp(k,WATCH_FACE_KEY)&&n==4);face_writes++;if(scenario==11)return RISC_KEY_VALUE_IO;memcpy(saved_blob,b,4);saved_face=true;return 0;}
 static const risc_key_value_v1 face_kv={1,sizeof(face_kv),NULL,face_get,face_put};
 static bool acquire_cap(const char*n,uint32_t v,uint64_t id,risc_runtime_capability_v1*g){(void)v;if(!strcmp(n,RISC_KEY_VALUE_CAPABILITY)){if(scenario<8)return false;assert(id==1);grants++;g->api=&face_kv;return true;}assert(!id);grants++;if(!strcmp(n,"display.output"))g->api=&da;else if(!strcmp(n,"board.battery"))g->api=&pa;else if(!strcmp(n,"rtc.clock"))g->api=&ra;else{assert(!strcmp(n,"input.touch.raw"));g->api=&ta;}return true;}
@@ -96,8 +96,8 @@ static bool launch(const char*p){assert(!strcmp(p,"springboard.elf")&&!owned&&!p
 static const risc_runtime_api_v1 runtime={1,sizeof(runtime),health,yield,diagnostic,launch,acquire_cap,release_cap};
 const risc_runtime_api_v1*risc_runtime_get_api(uint32_t v){assert(v==1);return &runtime;}
 int main(void){
- for(unsigned run=0;run<16;run++){
-  scenario=run==10?12:run==11?10:run==12?11:run==13?14:run==14?15:run==15?16:run;
+ for(unsigned run=0;run<18;run++){
+  scenario=run==10?12:run==11?10:run==12?11:run==13?14:run==14?15:run==15?16:run==16?17:run==17?18:run;
   face_writes=face_reads=ready_time=cache_allocations=0;assert(!allocations);
   if(scenario!=12)saved_face=false;
   clock_ms=submitted=released=grants=ungrants=subscribed=unsubscribed=polls=launches=sleeps=touch_step=0;
@@ -112,6 +112,7 @@ int main(void){
   if(scenario==10)assert(!picker.open&&face_writes==1&&saved_face&&!picker_scratch);
   if(scenario==11)assert(picker.open&&face_writes==1&&!saved_face&&picker.selected==0&&picker_save_failed);
   if(scenario==12)assert(face_reads>=1&&picker.selected>0&&!face_writes&&saved_face);
+  if(scenario==17||scenario==18)assert(face.hour_24==(scenario==17));
   if(scenario==16)assert(cache_allocations==1&&!picker.open&&!picker_scratch&&!face_writes);
   if(scenario==15)assert(picker.open&&face_writes==1&&saved_face&&picker.selected==0&&picker_save_failed);
   if(scenario==14)assert(!picker.open&&!picker_scratch&&face_writes==1&&saved_blob[2]==0&&picker.selected==0&&picker.target==1);

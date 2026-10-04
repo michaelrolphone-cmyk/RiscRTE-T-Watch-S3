@@ -5,8 +5,8 @@ ROOT=Path(__file__).resolve().parents[1];out=ROOT/'dist/watch-faces';out.mkdir(p
 subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O2','-Wall','-Wextra','-Werror','-fsanitize=undefined','-fno-sanitize-recover=all',*['-I'+str(ROOT/p) for p in ('sdk/app','sdk/driver','include','.')],str(ROOT/'tests/watch_faces_test.c'),str(ROOT/'apps/clock/nova/nova.c'),'-o',str(out/'test')],check=True)
 subprocess.run([str(out/'test'),str(out)],check=True)
 from PIL import Image,ImageDraw
-faces=Image.new('RGB',(1020,540),'black');picker=Image.new('RGB',(1020,540),'black')
-for i,name in enumerate(('NOVA','ANALOG','RADAR','HEX','TERMINAL','MINIMAL','BINARY','CHRONO')):
+faces=Image.new('RGB',(1020,1620),'black');picker=Image.new('RGB',(1020,1620),'black')
+for i,name in enumerate(('NOVA','ANALOG','RADAR','HEX','TERMINAL','MINIMAL','BINARY','CHRONO','AURORA','HORIZON','GIANT','MOON','TOPO','ORRERY','FLIP','MATRIX','GRID','RIBBON','YEAR','24H','AGENDA','DATE','DOTS','PROGRESS')):
  for prefix,sheet in [('face',faces),('picker',picker)]:
   b=(out/f'{prefix}-{i}.rgb565').read_bytes();rgb=[]
   for j in range(0,len(b),2):
@@ -29,3 +29,9 @@ for case in json.loads((ROOT/'tests/watch_faces_raster_golden.json').read_text()
  lib.render_sample(pixels,case['id'],case['ms'],case['picker'],case['position'],case['scale'])
  assert hashlib.sha256(pixels.raw).hexdigest()==case['sha256'],case
 print('96 delivered0.6.0 face/picker frames remain byte-identical')
+
+subprocess.run([cc,*flags,'-fsanitize=undefined','-fno-sanitize-recover=all',str(ROOT/'tests/watch_face_categories_test.c'),'-o',str(out/'category-test')],check=True)
+subprocess.run([str(out/'category-test')],check=True)
+
+subprocess.run([cc,*flags,'-fsanitize=undefined','-fno-sanitize-recover=all',str(ROOT/'tests/watch_face_division_test.c'),str(ROOT/'apps/clock/effects/divdi3.c'),'-o',str(out/'division-test')],check=True)
+subprocess.run([str(out/'division-test')],check=True)

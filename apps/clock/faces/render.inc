@@ -12,13 +12,13 @@ typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
 #define FAMBER FC(255,176,32)
 #define FORANGE FC(255,122,26)
 #define FMUTED FC(125,140,144)
-static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO"};
-const char *nova_watch_face_name(unsigned id) {return id<8?face_names[id]:face_names[0];}
+static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS"};
+const char *nova_watch_face_name(unsigned id) {return id<WATCH_FACE_COUNT?face_names[id]:face_names[0];}
 static const face_glyph *fglyph(const face_font *font,char ch) {
     for(unsigned i=0;i<font->count;i++)if(font->glyphs[i].ch==(uint8_t)ch)return font->glyphs+i;
     return NULL;
 }
-static void ftext(canvas *c,const face_font *font,const char *s,int cx,int y,int spacing,int fit,uint16_t color,uint16_t colon) {
+static void ftext_alpha(canvas *c,const face_font *font,const char *s,int cx,int y,int spacing,int fit,uint16_t color,uint16_t colon,const uint8_t*alpha) {
     int width=0;
     for(const char *p=s;*p;p++){const face_glyph*g=fglyph(font,*p);if(g)width+=g->advance+spacing;}
     if(!width)return;
@@ -32,7 +32,7 @@ static void ftext(canvas *c,const face_font *font,const char *s,int cx,int y,int
             unsigned frac=(unsigned)(src-sx*256);
             for(unsigned gy=0;gy<g->height;gy++) {
                 int dy=y+g->top+(int)gy;if(dy<0||dy>=240)continue;
-                const uint8_t*row=face_alpha+g->data+gy*g->width;
+                const uint8_t*row=alpha+g->data+gy*g->width;
                 unsigned a=sx>=0&&sx<g->width?row[sx]:0,b=sx+1>=0&&sx+1<g->width?row[sx+1]:0;
                 blend(at(c,(unsigned)dx,(unsigned)dy),*s==':'&&colon?colon:color,(a*(256-frac)+b*frac+128)>>8);
             }
@@ -40,12 +40,15 @@ static void ftext(canvas *c,const face_font *font,const char *s,int cx,int y,int
         pen+=(g->advance+spacing)*scale/256;
     }
 }
+static void ftext(canvas*c,const face_font*font,const char*s,int cx,int y,int spacing,int fit,uint16_t color,uint16_t colon) {
+    ftext_alpha(c,font,s,cx,y,spacing,fit,color,colon,face_alpha);
+}
 static void frect(canvas*c,int x,int y,int w,int h,uint16_t color) {
     for(int j=y;j<y+h;j++)if(j>=0&&j<240)for(int i=x;i<x+w;i++)if(i>=0&&i<240)put(at(c,i,j),color);
 }
 /* Q4 round strokes, with four coverage samples per destination pixel. */
 #ifdef WATCH_FACE_RENDER_TEST
-static unsigned face_test_calls,face_test_line_pixels;
+static unsigned face_test_calls,face_test_line_pixels,face_test_mask;
 #endif
 static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color) {
     int dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy,r=width/2;
@@ -120,6 +123,8 @@ static void fbattery(canvas*c,const nova_watch_state*s,const nova_watch_labels*l
     if(segments){int x=120-(10*width+9*spacing)/2;for(unsigned i=0;i<10;i++)frect(c,x+(int)i*(width+spacing),y,width,5,valid&&i<percent/10?FGREEN:FC(10,32,20));}
     else{frect(c,120-width/2,y,width,3,FC(10,32,20));frect(c,120-width/2,y,(int)(width*percent/100),3,FGREEN);}
 }
+#include "collection_two.inc"
+#include "calendar_collection.inc"
 static bool face_surface_valid(const risc_display_surface_v1*s) {
     return s&&s->pixels&&s->pixel_format==5&&s->width==240&&s->height==240&&s->stride_bytes>=480&&s->stride_bytes<=UINT32_MAX/240&&s->size_bytes>=s->stride_bytes*240;
 }
@@ -128,18 +133,22 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
 #ifdef WATCH_FACE_RENDER_TEST
     face_test_calls++;
 #endif
-    nova_watch_state empty={0};if(!state)state=&empty;if(id>=8)id=0;
+    nova_watch_state empty={0};if(!state)state=&empty;if(id>=WATCH_FACE_COUNT)id=0;
+#ifdef WATCH_FACE_RENDER_TEST
+    face_test_mask|=1u<<id;
+#endif
     nova_watch_labels l;nova_watch_format(state,&l);
-    /* Preserve the existing deployment's RTC/timezone conversion, display 24h
-     * as supplied in both new designs; never infer time from animation uptime. */
-    if(l.time_valid)two(l.hour_minute,state->time.hour);
+    /* Use the shared format policy; analog geometry below still uses civil
+     * time. Never overwrite the configured twelve-hour labels with RTC hours. */
     unsigned sub=state->subsecond_ms<1000?state->subsecond_ms:999;
     int sec=l.time_valid?(int)(state->time.second*1000u+sub)*1536/1000:0;
     int min=l.time_valid?(int)state->time.minute*1536+sec/60:0;
     int hour=l.time_valid?(int)(state->time.hour%12)*7680+min/12:0;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
     char hms[9];memcpy(hms,l.hour_minute,5);hms[5]=':';memcpy(hms+6,l.seconds,3);
-    if(id==0) {
+    if(id>=16)fcalendar_collection(&c,state,&l,id-16,sec,min,hour,sub);
+    else if(id>=8)fcollection_two(&c,state,&l,id-8,sec,min,hour,sub);
+    else if(id==0) {
         for(int i=0;i<60;i++)frad(&c,i*1536,i%5?111:105,116,120,120,i%5?16:32,i%5?FC(14,79,92):FCYAN);
         fcirc(&c,1920,1920,98*16,40,FC(11,23,25));if(l.time_valid){farc(&c,98,sec,FC(5,45,51),88);farc(&c,98,sec,FCYAN,40);}
         ftext(&c,&ff_r12,l.date,120,64,640,0,l.time_valid?FCYAN:FORANGE,0);
@@ -194,6 +203,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
         for(unsigned i=0;i<8;i++)if(hms[i]!=':'){for(unsigned j=0;j<4;j++)fcirc(&c,xs[k]*16,(76+(int)j*26)*16,128,0,l.time_valid&&((hms[i]-'0')>>(3-j)&1)?FAMBER:FC(36,26,5));k++;}
         ftext(&c,&ff_o10,"B C D",120,50,1536,0,FAMBER,0);ftext(&c,&ff_o9,"HH",62,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"MM",122,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"SS",182,178,0,0,FMUTED,0);ftext(&c,&ff_o14,hms,120,198,0,0,FWHITE,0);char bat[10]="BAT ";unsigned i=0;while(l.battery[i]){bat[4+i]=l.battery[i];i++;}bat[4+i]=0;ftext(&c,&ff_o9,bat,120,216,512,0,FGREEN,0);
     }
+    if(l.time_valid&&!state->hour_24)ftext(&c,&ff_r9,l.meridiem,217,233,128,0,FMUTED,0);
     return true;
 }
 /* Rendered previews are the exact same production face function. Scratch is
@@ -203,34 +213,37 @@ unsigned nova_watch_picker_pulse(uint32_t age_ms) {
     if(age_ms>=334u)return 256u;
     return 256u+(unsigned)(sine(age_ms*180u*256u/334u)*5243/(32767*256));
 }
-bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
-    if(!cache||!face_surface_valid(s))return false;
+bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const watch_face_page*page,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
+    if(!cache||!page||!page->ids||!page->count||page->count>WATCH_FACE_COUNT||!face_surface_valid(s))return false;
+    for(unsigned i=0;i<page->count;i++)if(page->ids[i]>=WATCH_FACE_COUNT)return false;
     nova_watch_state empty={0};if(!state)state=&empty;
     /* Neighbor seconds and subsecond animation freeze while out of focus.
      * Refresh visible caches on minute/date or telemetry changes, never merely
      * because a new animation frame has arrived. No offscreen work is done. */
     const nova_watch_state*old=&cache->stamp;
-    if(cache->valid_mask&&(old->time_valid!=state->time_valid||old->battery_valid!=state->battery_valid||
+    if(cache->valid_mask&&(old->hour_24!=state->hour_24||old->time_valid!=state->time_valid||old->battery_valid!=state->battery_valid||
         old->battery_percent!=state->battery_percent||old->time.year!=state->time.year||
         old->time.month!=state->time.month||old->time.day!=state->time.day||
         old->time.hour!=state->time.hour||old->time.minute!=state->time.minute))cache->valid_mask=0;
     cache->stamp=*state;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
 
-    int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>7)near=7;
-    struct card { int size,x,y,scale; bool visible; } cards[8];
-    for(unsigned id=0;id<8;id++) {
-        int offset=(int)id*108*256+position,abs=offset<0?-offset:offset;
+    int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>=(int)page->count)near=(int)page->count-1;
+    struct card { int size,x,y,scale; bool visible; } cards[WATCH_FACE_COUNT]={0};
+    for(unsigned index=0;index<page->count;index++) {
+        unsigned id=page->ids[index];
+        int offset=(int)index*108*256+position,abs=offset<0?-offset:offset;
         int scale=256-(abs<135*256?abs:135*256)*102/(108*256);
         if(id==pulse_face&&pulse_scale>=256&&pulse_scale<=277)scale=scale*(int)pulse_scale/256;
         int size=132*scale/256,x=120+offset/256-size/2,y=92-size/2;
         cards[id]=(struct card){size,x,y,scale,x<240&&x+size>0&&y<240&&y+size>0};
     }
     /* Far cards first, center card last, as in the source z-index. */
-    for(int pass=7;pass>=0;pass--)for(unsigned id=0;id<8;id++) {
-        int offset=(int)id*108*256+position,abs=offset<0?-offset:offset;
-        if((int)id!=near-pass&&(int)id!=near+pass)continue;
-        if(!pass&&id!=(unsigned)near)continue;
+    for(int pass=(int)page->count-1;pass>=0;pass--)for(unsigned index=0;index<page->count;index++) {
+        unsigned id=page->ids[index];
+        int offset=(int)index*108*256+position,abs=offset<0?-offset:offset;
+        if((int)index!=near-pass&&(int)index!=near+pass)continue;
+        if(!pass&&index!=(unsigned)near)continue;
         if(!cards[id].visible)continue;
         int scale=cards[id].scale,size=cards[id].size,x0=cards[id].x,y0=cards[id].y;
         unsigned slot=3;
@@ -239,7 +252,7 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
         if(!cached)for(unsigned k=0;k<3;k++)if(!(cache->valid_mask&(1u<<k))||!cards[cache->face_ids[k]].visible){slot=k;break;}
         if(slot==3)return false; /* Geometry guarantees at most three visible. */
         uint16_t*scratch=cache->pixels[slot];
-        if(!cached||id==(unsigned)near) {
+        if(!cached||index==(unsigned)near) {
             risc_display_surface_v1 tmp={0,scratch,240,240,480,240*240*2,5};
             if(!nova_watch_face_render(&tmp,state,id))return false;
             cache->face_ids[slot]=(uint8_t)id;cache->valid_mask|=(uint8_t)(1u<<slot);
@@ -254,8 +267,9 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
             if(x<border||x>=size-border||y<border||y>=size-border||(edge&&ey&&edge*edge+ey*ey>=(radius-border)*(radius-border)))blend(at(&c,x+x0,y+y0),id==selected?FCYAN:FC(34,48,52),opacity*mask/255);
         }
     }
-    ftext(&c,&ff_o13,face_names[near],120,183,532,0,FWHITE,0);
-    ftext(&c,&ff_rp11,status?status:(near==(int)selected?"CURRENT":"TAP TO SET"),120,201,563,0,status?FORANGE:near==(int)selected?FGREEN:FC(107,130,136),0);
-    for(int i=0;i<8;i++)fcirc(&c,(81+i*11)*16+8,222*16+8,40,0,i==near?FCYAN:FC(31,42,45));
+    ftext(&c,&ff_o13,face_names[page->ids[near]],120,183,532,0,FWHITE,0);
+    ftext(&c,&ff_rp11,status?status:(page->ids[near]==selected?"CURRENT":"TAP TO SET"),120,201,563,0,status?FORANGE:page->ids[near]==selected?FGREEN:FC(107,130,136),0);
+    for(unsigned i=0;i<page->count;i++)fcirc(&c,(240-(int)(page->count-1)*11+(int)i*22)*8,222*16+8,40,0,(int)i==near?FCYAN:FC(31,42,45));
+    if(page->name){ftext(&c,&ff_rp11,page->name,120,15,384,0,FMUTED,0);fline(&c,36*16,12*16,39*16,9*16,16,FMUTED);fline(&c,39*16,9*16,42*16,12*16,16,FMUTED);fline(&c,198*16,9*16,201*16,12*16,16,FMUTED);fline(&c,201*16,12*16,204*16,9*16,16,FMUTED);}
     return true;
 }

@@ -1,4 +1,4 @@
-# Clock 0.6.2: eight faces and picker (development)
+# Clock 0.6.2: 24 faces and categorized picker (development)
 
 This is an app-only increment based on accepted Watch product 1.0.0 source
 `f07f33e8e1726fbe1ae49e01bf5a23d0a72c038a`. It does not modify or republish that
@@ -8,8 +8,8 @@ and combined alarm integration are separate gates.
 
 ## Supplied design inventory
 
-The two original owner-supplied HTML files are retained byte-for-byte in
-`apps/clock/faces/reference/`. Both contain the same eight 240x240 faces, ordered
+The four owner-supplied HTML files are retained byte-for-byte in
+`apps/clock/faces/reference/`. The original pair contains the first eight 240x240 faces, ordered
 NOVA, ANALOG, RADAR, HEX, TERMINAL, MINIMAL, BINARY, CHRONO. Their actual SVG
 geometry was rendered and visually inspected before implementation.
 
@@ -22,12 +22,33 @@ geometry was rendered and visually inspected before implementation.
 - BINARY: six BCD columns for HH:MM:SS, conventional time below
 - CHRONO: white/orange analog hands, seconds and date subdials
 
+The two subsequent supplied collections add AURORA, HORIZON, GIANT, MOON,
+TOPO, ORRERY, FLIP, MATRIX, GRID, RIBBON, YEAR, 24H, AGENDA, DATE, DOTS and
+PROGRESS. The navigation groups are:
+
+- Analog: ANALOG, CHRONO, ORRERY
+- Large Digital: NOVA, HEX, MINIMAL, AURORA, GIANT, TOPO, FLIP, MATRIX
+- Compact Digital: RADAR, TERMINAL, BINARY, HORIZON, MOON
+- Calendar: GRID, RIBBON, YEAR, 24H, AGENDA, DATE, DOTS, PROGRESS
+
+Global IDs 0–7 retain their original identities; new collections append 8–23.
+Calendar arithmetic derives weekday, leap days, ISO week and progress from the
+actual RTC date, including month/year boundaries. AGENDA keeps the live time
+ruler but states CALENDAR UNAVAILABLE rather than inventing personal meetings.
+TOPO labels its animated map as decorative/synthetic terrain. MOON uses the
+supplied approximate mean lunar phase; it is not an astronomical ephemeris.
+
 The reference picker uses 132px preview cards at y92, a 108px pitch, side-card
 scale/opacity and edge fading, name/status at y183/y201, and eight dots at y222.
 The same production face renderer paints full faces and every card.
 
 Dynamic values use the existing RTC wall-time conversion and battery capability.
-The new reference faces display 24-hour values. No RTC writes occur. Missing
+All faces use the shared time-format labels and an AM/PM marker in 12-hour mode.
+The accepted Settings policy is 12-hour; a format-aware field supports 24-hour
+consumers without changing civil-time geometry. The optional shared namespace 1
+`time_format` record is read on entry and after returning from sleep; it defaults
+to 12-hour on missing/corrupt/unavailable storage and is never written by Clock.
+The matching Settings selector is a separate app change. No RTC writes occur. Missing
 telemetry shows dashes/TIME UNSET and empty unknown battery bars rather than the
 HTML examples' constant 84%. The Terminal heading reads `> RISCRTE`, avoiding
 its mock operating-system version. Small RGB565 quantization/raster differences
@@ -43,7 +64,10 @@ the hold slop permanently cancels that hold, even if the finger returns. A tap,
 preheld contact on entry, dropped sample, multitouch, contact ID replacement and
 the opening release cannot launch or select accidentally.
 
-Swipe horizontally to browse. An off-center card tap centers that card; a center
+Swipe vertically to change category and horizontally to browse within it.
+Each contact locks to its first clear axis; diagonal changes cannot trigger both
+a category change and a face selection. Category edges stop without wrapping.
+The currently selected stable face ID opens in its matching category. An off-center card tap centers that card; a center
 card tap saves it and immediately returns to the selected full-screen face after
 readback succeeds. Failed saves stay in the picker with SAVE FAILED. Short crown
 also dismisses the picker. Long crown
@@ -62,12 +86,15 @@ so a later side-card tap during an in-flight frame cannot change what gets saved
 Crown close/sleep cancels queued selections.
 
 `storage.key-value@1`, existing explicit instance 1, stores a four-byte versioned
-`watch_face` record (magic0x46, schema1, index0..7, xor checksum). This does not
+`watch_face` record (magic0x46, schema1, index0..23, xor checksum). This does not
 change `sleep_mode` or any other app data. Missing/corrupt/unavailable records
 choose NOVA. Writes are skipped if already identical and confirmed by readback;
 failed save leaves the prior in-memory selection and visibly reports SAVE FAILED.
 No persistence is promised across erase/reflash. Picker scratch allocation failure
-keeps the clock available; its single bounded three-slot cache exists only while browsing.
+keeps the clock available; its single bounded three-slot cache exists only while browsing. The pinned Arduino 2.0.17
+qio_opi configuration prefers PSRAM for ordinary allocations over 4096 bytes;
+the app reuses Runtime's tracked malloc/free path and adds no hardware imports.
+Actual memory placement/device performance are not claimed from host tests.
 
 ## Focused performance correction after device feedback
 

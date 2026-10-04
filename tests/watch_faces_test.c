@@ -10,8 +10,8 @@ static int32_t putv(void*c,const char*k,const void*b,uint32_t n){(void)c;assert(
 int main(int argc,char**argv) {
     risc_key_value_v1 kv={1,sizeof(kv),NULL,get,putv};unsigned v;
     assert(watch_face_load(&kv,&v)==-1&&v==0);
-    for(unsigned i=0;i<8;i++){assert(watch_face_save(&kv,i));assert(watch_face_load(&kv,&v)==0&&v==i);unsigned n=puts_count;assert(watch_face_save(&kv,i)&&puts_count==n);}
-    stored[2]=8;assert(watch_face_load(&kv,&v)==-3&&v==0);assert(!watch_face_save(&kv,8));failure=1;assert(!watch_face_save(&kv,4));failure=2;assert(!watch_face_save(&kv,4));failure=0;
+    for(unsigned i=0;i<WATCH_FACE_COUNT;i++){assert(watch_face_save(&kv,i));assert(watch_face_load(&kv,&v)==0&&v==i);unsigned n=puts_count;assert(watch_face_save(&kv,i)&&puts_count==n);}
+    stored[2]=WATCH_FACE_COUNT;assert(watch_face_load(&kv,&v)==-3&&v==0);assert(!watch_face_save(&kv,WATCH_FACE_COUNT));failure=1;assert(!watch_face_save(&kv,4));failure=2;assert(!watch_face_save(&kv,4));failure=0;
     watch_face_picker p={0};assert(!watch_face_input(&p,0,true,1,1,120,120));assert(!p.down);
     watch_face_input(&p,1,true,0,0,0,0);watch_face_input(&p,10,true,1,1,120,120);
     assert(watch_face_input(&p,609,true,1,1,120,120)==0);
@@ -30,11 +30,11 @@ int main(int argc,char**argv) {
     watch_face_input(&p,8010,true,0,0,0,0);watch_face_input(&p,0xffffff00u,true,1,3,120,120);assert(watch_face_input(&p,344,true,1,3,120,120)==WATCH_FACE_OPEN);
     /* Exact source-equation trajectory, independent of presentation cadence. */
     for(unsigned edge=0;edge<2;edge++) {
-        watch_face_picker expected={.open=true,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
+        watch_face_picker expected={.open=true,.category=1,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
         for(unsigned t=1;t<=2000;t++)watch_face_animate(&expected,t);
         const unsigned intervals[]={8,20,50,95};
         for(unsigned n=0;n<4;n++) {
-            watch_face_picker q={.open=true,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
+            watch_face_picker q={.open=true,.category=1,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
             unsigned t=0;while(t<2000){t+=intervals[n];if(t>2000)t=2000;watch_face_animate(&q,t);}
             assert(q.position==expected.position&&q.velocity==expected.velocity&&q.target==expected.target&&q.phase==expected.phase);
         }
@@ -45,12 +45,13 @@ int main(int argc,char**argv) {
     uint8_t pixels[240*488+32];nova_watch_picker_cache scratch={0};memset(pixels,0xa5,sizeof(pixels));
     risc_display_surface_v1 s={0,pixels+16,240,240,488,240*488,5};
     nova_watch_state state={.time={.year=2026,.month=10,.day=4,.weekday=0,.hour=10,.minute=42,.second=18},.time_valid=true,.battery_valid=true,.battery_percent=84,.subsecond_ms=250,.animation_ms=42000};
-    for(unsigned i=0;i<8;i++) {
+    for(unsigned i=0;i<WATCH_FACE_COUNT;i++) {
         assert(nova_watch_face_render(&s,&state,i));
         for(unsigned n=0;n<16;n++)assert(pixels[n]==0xa5&&pixels[sizeof(pixels)-n-1]==0xa5);
         for(unsigned y=0;y<240;y++)for(unsigned n=480;n<488;n++)assert(pixels[16+y*488+n]==0xa5);
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/face-%u.rgb565",argv[1],i);FILE*f=fopen(path,"wb");assert(f);for(unsigned y=0;y<240;y++)assert(fwrite(pixels+16+y*488,1,480,f)==480);fclose(f);}
-        assert(nova_watch_picker_render(&s,&state,i,-(int)i*WATCH_FACE_PITCH,NULL,8,256,&scratch));
+        unsigned category=watch_face_category_for(i),index=watch_face_index_for(category,i);
+        assert(nova_watch_picker_render(&s,&state,i,-(int)index*WATCH_FACE_PITCH,watch_face_page_for(category),NULL,WATCH_FACE_COUNT,256,&scratch));
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/picker-%u.rgb565",argv[1],i);FILE*f=fopen(path,"wb");assert(f);for(unsigned y=0;y<240;y++)assert(fwrite(pixels+16+y*488,1,480,f)==480);fclose(f);}
         state.time_valid=false;state.battery_valid=false;assert(nova_watch_face_render(&s,&state,i));state.time_valid=true;state.battery_valid=true;
     }
@@ -60,5 +61,5 @@ int main(int argc,char**argv) {
     state.time.second=35;assert(nova_watch_face_render(&s,&state,2));uint16_t old=pixels[16+blip]|pixels[17+blip]<<8;
     assert(((recent>>5)&63)>((old>>5)&63));
     s.size_bytes--;assert(!nova_watch_face_render(&s,&state,0));
-    puts("Eight native faces: guarded stride/invalid telemetry; gestures: hold/swipe/jitter/drag/gaps/id/rollover; persistence: all IDs, corruption and failed read/write passed");
+    puts("24 native faces: guarded stride/invalid telemetry; gestures: hold/swipe/jitter/drag/gaps/id/rollover; persistence: all IDs, corruption and failed read/write passed");
 }
