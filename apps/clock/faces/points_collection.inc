@@ -339,7 +339,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         const nova_point_event*then=NULL;
         if(active)then=upcoming;
         else if(upcoming)then=ps_upcoming_start(p,upcoming->at_rtc,true);
-        if(then){ps_event_clock(clock,then,s->hour_24,true);fc_join(label,sizeof(label),"THEN ",ps_event_name(then,false)," ");fc_join(label,sizeof(label),label,clock,"");ftext(c,&ff_r9,label,120,164,384,ps_fit(&ff_r9,label,384,188),PS_CAP,0);}
+        if(then){char prefix[48];ps_event_clock(clock,then,s->hour_24,true);fc_join(prefix,sizeof(prefix),"THEN ",ps_event_name(then,false)," ");fc_join(label,sizeof(label),prefix,clock,"");ftext(c,&ff_r9,label,120,164,384,ps_fit(&ff_r9,label,384,188),PS_CAP,0);}
         else ftext(c,&ff_r9,"THEN --",120,164,384,0,PS_CAP,0);
         for(unsigned i=0;i<10;i++)frect(c,81+(int)i*8,176,6,4,l->battery_valid&&i<s->battery_percent/10?FGREEN:FC(10,32,20));
     }
