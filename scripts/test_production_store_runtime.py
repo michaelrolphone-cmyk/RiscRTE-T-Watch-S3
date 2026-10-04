@@ -22,8 +22,8 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def run(command):
-    subprocess.run(list(map(str, command)), check=True, timeout=180)
+def run(command, env=None):
+    subprocess.run(list(map(str, command)), check=True, timeout=180, env=env)
 
 
 def source_state(path):
@@ -39,19 +39,29 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('runtime', 'system-apps', 'utilities'):
         parser.add_argument('--' + name, required=True, type=Path)
+    parser.add_argument('--watch-source', type=Path, default=ROOT,
+                        help='Exact Watch source for the supplied store (including historical Alarm stores)')
+    parser.add_argument('--registry-support', type=Path,
+                        help='Test adapter for compiling the actual target loader registry')
     parser.add_argument('--store', type=Path, action='append', default=[],
                         help='Exact production deployment store; repeat to check several stores')
     parser.add_argument('--archive', type=Path, nargs='+', action='extend', default=[])
     parser.add_argument('--image', type=Path, nargs='+', action='extend', default=[])
     parser.add_argument('--mkspiffs', type=Path)
+    parser.add_argument('--read-only-spiffs', action='store_true')
     parser.add_argument('--output', type=Path, help='Keep host modules, copied stores and provenance here')
     parser.add_argument('--expect-prepare-error', help='Verify the old Runtime fails before any module is mapped')
+    parser.add_argument('--expect-runtime-error', help='Verify a target-registry startup failure before Clock runs')
     args = parser.parse_args()
     if not (args.store or args.archive or args.image):
         parser.error('At least one exact --store, --archive or --image is required')
-    if args.image and not args.mkspiffs:
-        parser.error('--mkspiffs is required to extract production images')
+    if args.image and not (args.mkspiffs or args.read_only_spiffs):
+        parser.error('--mkspiffs or --read-only-spiffs is required to extract images')
     runtime, system, utilities = (getattr(args, name).resolve() for name in ('runtime', 'system_apps', 'utilities'))
+    watch = args.watch_source.resolve()
+    registry = (args.registry_support or runtime/'test/support/native_registry').resolve()
+    if args.expect_prepare_error and args.expect_runtime_error:
+        parser.error('Select one expected failure stage')
     stores = [path.resolve() for path in args.store]
     temporary = None
     if args.output:
@@ -60,9 +70,10 @@ def main():
     else:
         temporary = tempfile.TemporaryDirectory(prefix='watch-production-runtime-')
         build = Path(temporary.name)
-    sources = {'watch': ROOT, 'runtime': runtime, 'system-apps': system, 'utilities': utilities}
+    sources = {'watch': watch, 'runtime': runtime, 'system-apps': system, 'utilities': utilities}
     provenance = {'sources': {name: source_state(path) for name, path in sources.items()},
-                  'architecture': 'native host shared modules; no Xtensa execution', 'stores': [], 'inputs': []}
+                  'architecture': 'production target module registry with native host relocation; no Xtensa execution',
+                  'stores': [], 'inputs': []}
     for index, path in enumerate([*args.archive, *args.image]):
         path = path.resolve()
         raw = path.read_bytes()
@@ -80,22 +91,26 @@ def main():
         stores.append(original)
         provenance['inputs'].append({'path': str(path), 'sha256': sha(path), 'store_sha256': store_digest(content)})
     flags = ['-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-misleading-indentation']
-    if os.environ.get('SANITIZE', '1') != '0':
-        flags += ['-fsanitize=undefined', '-fno-sanitize-recover=all']
-    if os.environ.get('ADDRESS_SANITIZE') == '1':
-        flags += ['-fsanitize=address', '-fno-omit-frame-pointer']
-    provenance['sanitizers'] = {'undefined': os.environ.get('SANITIZE', '1') != '0',
-        'address': os.environ.get('ADDRESS_SANITIZE') == '1',
+    sanitized = os.environ.get('SANITIZE', '0') == '1' or os.environ.get('ADDRESS_SANITIZE') == '1'
+    if sanitized:
+        flags += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all', '-fno-omit-frame-pointer']
+    execution_env = dict(os.environ)
+    if sanitized:
+        execution_env['UBSAN_OPTIONS'] = execution_env.get('UBSAN_OPTIONS', '') + ':halt_on_error=1'
+    provenance['sanitizers'] = {'undefined': sanitized, 'address': sanitized,
         'asan_options': os.environ.get('ASAN_OPTIONS', '')}
     cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')
-    includes = ['-I' + str(path) for path in (ROOT/'sdk/app', ROOT/'sdk/driver', ROOT/'include', ROOT)]
+    includes = ['-I' + str(path) for path in (watch/'sdk/app', watch/'sdk/driver', watch/'include', watch)]
     clock_includes = ['-I' + str(path) for path in (system/'lib/PortableApps/include',
                        utilities/'lib/Alarm/include')] + includes
     modules = build/'modules'
     modules.mkdir(exist_ok=True)
     selections = {}
     compiled_sources = []
-    source_manifests = {json.loads(path.read_text())['id']: path for path in (ROOT/'drivers').glob('*/manifest.json')}
+    source_manifests = {json.loads(path.read_text())['id']: path for path in (watch/'drivers').glob('*/manifest.json')}
+    variants = {(source/'points_in_time.json').exists() for source in stores}
+    assert len(variants) == 1, 'Run Alarm and Points/Wi-Fi stores separately with their exact source pins'
+    points = variants.pop()
     for index, source in enumerate(stores):
         original_files = {str(path.relative_to(source)): path.read_bytes() for path in source.rglob('*') if path.is_file()}
         validate_paths(original_files)
@@ -103,11 +118,11 @@ def main():
         assert boot['default_app'] == 'default.elf', source
         # This regression must exercise the production multi-namespace policy,
         # not a stripped-down fixture that accidentally removes the failure.
-        for name in ('default.json', 'clock.json', 'points_in_time.json'):
+        for name in ('default.json', 'clock.json', *(('points_in_time.json',) if points else ())):
             policy = next(item for item in boot['app_capabilities'] if item['manifest'] == name)
             assert sorted(grant['instance_id'] for grant in policy['grants']
-                          if grant['capability'] == 'storage.key-value') == [1, 5]
-        assert len(boot['app_capabilities']) >= 10, source
+                          if grant['capability'] == 'storage.key-value') == ([1, 5] if points else [1])
+        assert len(boot['app_capabilities']) >= (10 if points else 9), source
         original_json = {str(path.relative_to(source)): sha(path) for path in source.rglob('*.json')}
         destination = build/('store-' + str(index))
         shutil.copytree(source, destination, dirs_exist_ok=True)
@@ -128,8 +143,9 @@ def main():
         extra = []
         if name == 'alarm-service':
             source = utilities/'Services/alarm_service/service.c'
-            assert json.loads((utilities/'Services/alarm_service/points-manifest.json').read_text()) == selection['manifest']
-            extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']
+            manifest = 'points-manifest.json' if points else 'manifest.json'
+            assert json.loads((utilities/'Services/alarm_service'/manifest).read_text()) == selection['manifest']
+            extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER'] if points else []
             module_includes = ['-I' + str(path) for path in (utilities/'lib/Alarm/include',
                                runtime/'sdk/driver', system/'lib/PortableApps/include')]
         else:
@@ -144,39 +160,61 @@ def main():
             shutil.copy2(output, target)
     # Same translation units and feature flags as build_clock_app.py's current
     # Points/Wi-Fi default, compiled for host dlopen instead of Xtensa.
-    clock_flags = ['-DWATCH_CLOCK_LAUNCHER', '-DWATCH_CLOCK_ALARMS', '-DWATCH_CLOCK_POINTS',
-                   '-DPORTABLE_RTC_UTC8_DENVER']
+    clock_flags = ['-DWATCH_CLOCK_LAUNCHER', '-DWATCH_CLOCK_ALARMS', '-DPORTABLE_RTC_UTC8_DENVER']
+    if points:
+        clock_flags += ['-DWATCH_CLOCK_POINTS']
     objects = []
-    for name in ('crown.c', 'nova/nova.c', 'points_projection.c', 'effects/divdi3.c'):
+    for name in ('crown.c', 'nova/nova.c', *(('points_projection.c',) if points else ()), 'effects/divdi3.c'):
         output = modules/(Path(name).stem + '.o')
         run([cc, '-std=c11', *flags, '-fPIC', '-fvisibility=hidden', *clock_includes, *clock_flags,
-             '-c', ROOT/'apps/clock'/name, '-o', output])
-        compiled_sources.append(ROOT/'apps/clock'/name)
+             '-c', watch/'apps/clock'/name, '-o', output])
+        compiled_sources.append(watch/'apps/clock'/name)
         objects.append(output)
     clock = modules/'default.elf'
     run([cxx, '-std=c++11', *flags, '-fPIC', '-shared', '-fvisibility=hidden', *includes,
-         ROOT/'apps/clock/effects/boot.cpp', *objects, '-o', clock])
+         watch/'apps/clock/effects/boot.cpp', *objects, '-o', clock])
     for record in provenance['stores']:
         destination = Path(record['host_store'])
         shutil.copy2(clock, destination/'default.elf')
         assert record['json_sha256'] == {str(path.relative_to(destination)): sha(path) for path in destination.rglob('*.json')}
-    host_includes = ['-I' + str(path) for path in (HERE, runtime/'src', runtime/'sdk/app',
-                     runtime/'sdk/driver', runtime/'sdk/hardware', ROOT/'sdk/driver',
-                     ROOT/'include', runtime/'lib/ArduinoJson/src')]
+    registry_build = build/'native-registry'
+    run(['bash', registry/'build.sh', registry_build, runtime],
+        env={**os.environ, 'SANITIZE': '1' if sanitized else '0'})
+    registry_objects = [registry_build/name for name in
+                        ('target-dlfcn.o', 'target-dlmod.o', 'host-elf-backend.o')]
+    host_includes = ['-I' + str(path) for path in (registry/'stubs', runtime/'lib/elf_loader/include',
+                     registry, HERE, runtime/'src', runtime/'sdk/app',
+                     runtime/'sdk/driver', runtime/'sdk/hardware', watch/'sdk/driver',
+                     watch/'include', runtime/'lib/ArduinoJson/src')]
     runtime_sources = [runtime/path for path in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp',
         'src/bootstrap/Runtime.cpp', 'src/ports/esp32s3/CpuPort.cpp',
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp')]
     executable = build/'production-store-test'
+    host_features = ['-DPRODUCTION_POINTS_READS=' + ('1' if points else '0')]
+    if 'radioJoin' in (runtime/'src/ports/esp32s3/CpuPort.h').read_text():
+        host_features += ['-DPRODUCTION_HAS_RADIO']
+    if 'providerStorageSafe' in (runtime/'src/bootstrap/Runtime.h').read_text():
+        host_features += ['-DPRODUCTION_STORAGE_SAFE']
     run([cxx, '-std=c++17', *flags, '-O0', '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
-         *host_includes, *runtime_sources, HERE/'host.cpp', '-ldl', '-o', executable])
+         *host_features, '-include', registry/'redirect.h',
+         *host_includes, *runtime_sources, HERE/'host.cpp', *registry_objects, '-pthread', '-ldl', '-o', executable])
+    registry_sources = [runtime/'lib/elf_loader/src/dlso'/name for name in ('dlfcn.c', 'dlmod.c')]
     provenance['compiled_source_sha256'] = {str(path): sha(path) for path in [*runtime_sources,
-        *compiled_sources, HERE/'host.cpp', HERE/'esp_dlfcn.h', ROOT/'apps/clock/effects/boot.cpp']}
+        *compiled_sources, *registry_sources, registry/'backend.c', registry/'redirect.h',
+        HERE/'host.cpp', watch/'apps/clock/effects/boot.cpp']}
+    provenance['target_registry'] = {'runtime_source': source_state(runtime)['commit'],
+        'production_sources': {str(path.relative_to(runtime)): sha(path) for path in registry_sources},
+        'adapter': str(registry), 'adapter_source': source_state(registry.parents[2]),
+        'ordinary_dlopen_is_target_registry': True}
     for record in provenance['stores']:
         print('Unchanged production JSON:', record['source'], flush=True)
         command = [executable, record['host_store']]
         if args.expect_prepare_error:
-            command.append(args.expect_prepare_error)
-        result = subprocess.run(list(map(str, command)), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=60)
+            command += ['prepare', args.expect_prepare_error]
+        if args.expect_runtime_error:
+            command += ['runtime', args.expect_runtime_error]
+        result = subprocess.run(list(map(str, command)), text=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, timeout=60, env=execution_env)
         record['returncode'], record['output'] = result.returncode, result.stdout
         print(result.stdout, end='', flush=True)
         # Recheck the input and host copy after execution: the harness never
@@ -191,7 +229,8 @@ def main():
         (build/'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
         if result.returncode:
             raise SystemExit(result.returncode)
-    print('All production-store Clock checks passed; JSON hashes unchanged.', flush=True)
+    outcome = 'expected startup rejection' if args.expect_prepare_error or args.expect_runtime_error else 'Clock execution'
+    print('All production-store ' + outcome + ' checks passed; JSON hashes unchanged.', flush=True)
     if temporary:
         temporary.cleanup()
 

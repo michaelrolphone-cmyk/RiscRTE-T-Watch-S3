@@ -1,24 +1,24 @@
 {
-  "artifact_id": 11303128669,
-  "artifact_name": "riscrte-esp32s3-16mb-paired-76212b70e02e10a88e300af6bafe363c11364a05",
-  "artifact_sha256": "3d2ca0ed3d651c09ed96559812669e5e7d23020a4db7fbb2216858ffb3c0c7f6",
-  "artifact_size_bytes": 7030843,
+  "artifact_id": 11308292602,
+  "artifact_name": "riscrte-esp32s3-16mb-paired-47576084c8f25b1648b79205f8d68f5e5d3feaea",
+  "artifact_sha256": "6aa27bc386bb1ccd3041ef24bb06c75f4d159b89b1a0a60e23d47c12c5b97601",
+  "artifact_size_bytes": 7031643,
   "components": {
     "bootloader.bin": {
       "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
       "size_bytes": 15104
     },
     "candidate.json": {
-      "sha256": "a6c1af9c065254f3c1fc49b74c915d92a4fa2f6f3e21db653edd66b7187fd9f2",
+      "sha256": "c29c1a70acef14aecfaea800c9e9391acf8d58824db2705e57d401b5afc23143",
       "size_bytes": 2621
     },
     "firmware.bin": {
-      "sha256": "b9798fd8d18b047917d9ece510a9fb9061ed413b05738fe9ebbf4360b4eb451f",
-      "size_bytes": 1069104
+      "sha256": "b0dc25ee1e3b46cd7e500afba1a88bc5c4f0994f5ab9c930385e9579a12a9392",
+      "size_bytes": 1069488
     },
     "firmware.elf": {
-      "sha256": "f2dae1fc9954cd65b648222477315769d33c068365cfa75c33e27e46b8066cec",
-      "size_bytes": 17042832
+      "sha256": "70f812eb46610bc1fcad44b02601c67f511ed8d648e9cdef832832c2b112e2b1",
+      "size_bytes": 17043824
     },
     "partitions-paired.csv": {
       "sha256": "7fab614dd067a339e0daa278ba5a79e3f5fa84b33ff0dee5a6092e4d696f7969",
@@ -29,7 +29,7 @@
       "size_bytes": 3072
     },
     "platformio.ini": {
-      "sha256": "1ed9fe575852a5c562ad569dfd9d9543e19ae74be1eca87be41d0bff4acc4cd9",
+      "sha256": "aa91351bf2ae47a0a45d94162ae31eba23de7894c39b3b0c450a74227f56ab32",
       "size_bytes": 3697
     },
     "requirements-ci.txt": {
@@ -38,10 +38,10 @@
     }
   },
   "conclusion": "success",
-  "firmware_version": "0.1.11",
+  "firmware_version": "0.1.15",
   "repository": "michaelrolphone-cmyk/RiscRTE",
-  "run_id": 37202528313,
+  "run_id": 37216258671,
   "schema": 1,
-  "source_sha": "76212b70e02e10a88e300af6bafe363c11364a05",
+  "source_sha": "47576084c8f25b1648b79205f8d68f5e5d3feaea",
   "target": "esp32s3-16mb-paired"
 }

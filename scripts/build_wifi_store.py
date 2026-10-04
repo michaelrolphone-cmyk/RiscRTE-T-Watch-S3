@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+from read_only_spiffs import read_image
 
 from build_wifi_common import ROOT, PROFILE, read_zip, require, sha, verify
 
@@ -19,6 +20,10 @@ def check_tool(tool):
 
 
 def check_image(image, expected, tool):
+    if tool is None:
+        require(read_image(Path(image).read_bytes()) == expected,
+                'Read-only SPIFFS extraction differs from exact deployment store')
+        return
     check_tool(tool)
     require(Path(image).stat().st_size == SIZE, 'Incorrect SPIFFS partition size')
     with tempfile.TemporaryDirectory() as temporary:

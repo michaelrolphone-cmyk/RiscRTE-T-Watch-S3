@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "abef681d6c9c2b58729909a9961118ea20feee5e",
-  "firmware_version": "0.1.10",
+  "source_sha": "af1845330ebb8828f76472b6137dcfedaca03846",
+  "firmware_version": "0.1.13",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -21,8 +21,10 @@
     "bounded_asynchronous_radio_scan": true,
     "radio_cleanup_sleep_barrier": true,
     "explicit_multiple_key_value_namespaces": true,
-    "ambiguous_key_value_instance_zero_denied": true
+    "ambiguous_key_value_instance_zero_denied": true,
+    "graph_owned_provider_instances": true,
+    "ordinary_dlopen_duplicate_rejection": true
   },
   "abi_changed": false,
-  "reason": "Runtime-only repair: admit multiple distinct explicit key-value namespace grants for a declared storage capability; retain the eight-grant bound and deny ambiguous instance-zero acquisition."
+  "reason": "Every provider graph node owns an independent ELF mapping, preventing software-provider basename collisions while preserving singleton references and native cleanup."
 }

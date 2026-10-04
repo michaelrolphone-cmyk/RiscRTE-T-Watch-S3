@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Update-only admission and real defaultClock startup against exact stores.
 
-The preserved delivered Runtime 0.1.10 lane is intentionally unchanged. This
-lane requires Runtime 0.1.11 and the paired Clock, including optional boot health.
+The delivered provider-registry correction remains in the baseline. This
+lane uses the pinned paired Runtime and real target registry with host relocation.
 """
 import argparse
 import contextlib
@@ -69,14 +69,26 @@ def _flags():
 
 
 def _host(runtime, build):
-    includes = [ROOT / 'tests/production_store_runtime', runtime / 'src', runtime / 'sdk/app',
+    registry = runtime / 'test/support/native_registry'
+    require((registry / 'build.sh').is_file(), 'Production target registry support is required')
+    registry_build = build / 'native-registry'
+    env = dict(os.environ)
+    env['SANITIZE'] = '1' if os.environ.get('ADDRESS_SANITIZE') == '1' else '0'
+    command(['bash', registry / 'build.sh', registry_build, runtime], env=env)
+    objects = [registry_build / name for name in
+               ('target-dlfcn.o', 'target-dlmod.o', 'host-elf-backend.o')]
+    includes = [registry / 'stubs', runtime / 'lib/elf_loader/include', registry,
+        ROOT / 'tests/production_store_runtime', runtime / 'src', runtime / 'sdk/app',
         runtime / 'sdk/driver', runtime / 'sdk/hardware', ROOT / 'sdk/driver',
         ROOT / 'include', runtime / 'lib/ArduinoJson/src']
     executable = build / 'update-store-test'
     sources = [runtime / name for name in RUNTIME_SOURCES]
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
-        *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', '-ldl', '-o', executable])
+        '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
+        '-include', registry / 'redirect.h',
+        *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
+        '-pthread', '-ldl', '-o', executable])
     return executable
 
 
@@ -126,8 +138,8 @@ def _policies(content):
 
 
 def _base_record(runtime):
-    return {'schema': 1, 'runtime_source': source_state(runtime), 'runtime_version': '0.1.11',
-            'architecture': 'native source execution, no Xtensa execution', 'policy_substitutions': 0,
+    return {'schema': 1, 'runtime_source': source_state(runtime), 'runtime_version': json.loads((ROOT / 'apps/update-runtime-requirements.json').read_text())['firmware_version'],
+            'architecture': 'production target registry with native host relocation, no Xtensa execution', 'policy_substitutions': 0,
             'physical_verification': 'pending', 'sanitizers': {'undefined': os.environ.get('SANITIZE', '1') != '0',
                 'address': os.environ.get('ADDRESS_SANITIZE') == '1',
                 'asan_options': os.environ.get('ASAN_OPTIONS', '')}, 'results': []}
@@ -164,7 +176,9 @@ def _source_hashes(runtime, system=None, utilities=None):
         files += [p for p in base.rglob('*') if p.is_file() and p.suffix in ('.c', '.cpp', '.h', '.inc', '.json')]
     files += [Path(__file__), ROOT / 'apps/update-sources.json', runtime / 'src/bootstrap/Runtime.h', runtime / 'src/ports/esp32s3/CpuPort.h',
               runtime / 'test/run_update_runtime_test.sh', runtime / 'test/update_runtime_test.cpp',
-              runtime / 'test/fixtures/update_health_app.c']
+              runtime / 'test/fixtures/update_health_app.c',
+              runtime / 'lib/elf_loader/src/dlso/dlfcn.c', runtime / 'lib/elf_loader/src/dlso/dlmod.c']
+    files += [p for p in (runtime / 'test/support/native_registry').rglob('*') if p.is_file()]
     if system:
         for base in (system / 'lib/PortableApps', system / 'Services/update', system / 'lib/NativeApps/include'):
             files += [p for p in base.rglob('*') if p.is_file() and p.suffix in ('.c', '.cpp', '.h', '.inc', '.json')]
