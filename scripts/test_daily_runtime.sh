@@ -5,7 +5,7 @@ runtime="$(cd "${1:?Pass exact paired Runtime source}" && pwd)"
 # Use the exact host-mapped deployment compiled by test_launcher_runtime.sh.
 # It contains all seven physical drivers plus the seven production app ELFs.
 store="$(cd "${2:?Pass prepared host deployment store}" && pwd)"
-[[ "$(git -C "$runtime" rev-parse HEAD)" == fe9d3c877ac98e52670d458f45b59fda8011a4fd ]]
+[[ "$(git -C "$runtime" rev-parse HEAD)" == 8609fb92ee56ad1c6fb0417051c3fc9796c0edca ]]
 [[ -z "$(git -C "$runtime" status --porcelain --untracked-files=no)" ]]
 for app in default clock springboard battery settings calculator stopwatch; do
   [[ -f "$store/$app.elf" && -f "$store/$app.json" ]]

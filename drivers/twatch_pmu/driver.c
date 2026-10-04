@@ -108,7 +108,12 @@ static bool resume_sleep(void *context) {
     for (unsigned i=0;i<3;i++) {
         if (!write_reg((uint8_t)(0x40+i),sleep_irq[i])) ok=false;
     }
-    if (ok) {sleep_changed=sleep_prepared=false;key_released=false;}
+    if (ok) {
+        sleep_changed=sleep_prepared=false;
+        /* Mask restoration is not a new key observation. Preserve the last
+         * released/held latch so a clean refusal can retry without inventing
+         * a crown edge. key_events still processes any actual wake edge. */
+    }
     return ok;
 }
 static bool prepare_sleep(void *context) {
@@ -137,6 +142,20 @@ static int32_t light_sleep(void *context,risc_light_sleep_result_v1 *result) {
     if (!started || !sleep_prepared || !result || result->struct_size<sizeof(*result)) return RISC_LIGHT_SLEEP_INVALID;
     if (gpio_api->struct_size<RISC_GPIO_BANK_LIGHT_SLEEP_V1_SIZE || !gpio_api->light_sleep) return RISC_LIGHT_SLEEP_UNSUPPORTED;
     return gpio_api->light_sleep(gpio_api->context,irq_claim,false,result);
+}
+static int32_t light_sleep_for(void *context,uint32_t duration,risc_light_sleep_result_v1 *result) {
+    (void)context;
+    if (!started || !sleep_prepared || !result || result->struct_size<sizeof(*result) || !duration || duration>RISC_TIMED_SLEEP_MAX_MS) return RISC_LIGHT_SLEEP_INVALID;
+    if (gpio_api->struct_size<RISC_GPIO_BANK_LIGHT_SLEEP_FOR_V1_SIZE || !gpio_api->light_sleep_for) return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    return gpio_api->light_sleep_for(gpio_api->context,irq_claim,false,duration,result);
+}
+static bool sleep_wake_pending(void *context,bool *pending) {
+    (void)context;
+    if (!started || !sleep_prepared || !pending) return false;
+    uint8_t status=0;bool high=false;
+    if (!read_reg(0x49,&status,1) || !gpio_api->read(gpio_api->context,irq_claim,&high)) return false;
+    *pending=(status&0x0fu)!=0 || !high;
+    return true;
 }
 static int32_t deep_sleep(void *context) {
     (void)context;
@@ -264,7 +283,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
-                                      key_events, prepare_sleep, resume_sleep, light_sleep, deep_sleep};
+                                      key_events, prepare_sleep, resume_sleep, light_sleep, deep_sleep, light_sleep_for, sleep_wake_pending};
 static const risc_driver_diagnostics_v2 driver = {
     {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
      RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},

@@ -41,6 +41,8 @@ static bool prepare_pmu(void*c){(void)c;prepared_invariants();++pmu_prepares;ret
 static bool resume_pmu(void*c){(void)c;assert(!retained);++pmu_resumes;return true;}
 static bool key(void*c,uint32_t*events){(void)c;*events=ready && scenario!=8 && now-ready_at>=300 && now-ready_at<325?2:0;return true;}
 static int32_t light(void*c,risc_light_sleep_result_v1*r){(void)c;(void)r;prepared_invariants();++light_calls;return scenario==12?RISC_LIGHT_SLEEP_RETAINED:RISC_LIGHT_SLEEP_ACTIVE_WAKE;}
+static int32_t timed(void*c,uint32_t ms,risc_light_sleep_result_v1*r){assert(ms==300000);return light(c,r);}
+static bool wake_pending(void*c,bool*p){(void)c;*p=false;return true;}
 static int32_t deep(void*c){(void)c;prepared_invariants();++deep_calls;
  if(terminal_mode){assert(boot_frames&&mode_diag&&panel_prepares==1&&pmu_prepares==1&&!panel_resumes&&!pmu_resumes);_exit(77);}
  if(scenario==5)return RISC_DEEP_SLEEP_RETAINED;
@@ -61,7 +63,7 @@ static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(vo
 static int32_t kv_put(void*c,const char*k,const void*b,uint32_t size){(void)c;(void)k;(void)b;(void)size;assert(!"Clock never writes settings");return -1;}
 static const risc_key_value_v1 kv={1,sizeof(kv),NULL,kv_get,kv_put};
 static twatch_panel_power_v1 dp={{1,sizeof(dp),NULL,get_info,frame_acquire,frame_release,frame_submit,frame_status,NULL,brightness},prepare_panel,resume_panel,prepare_deep};
-static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep};
+static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep,timed,wake_pending};
 static twatch_rtc_api_v1 rp={2,sizeof(rp),NULL,read_clock,NULL,NULL,NULL};
 static risc_touch_api_v1 tp={1,sizeof(tp),NULL,sub,unsub,touch_poll,next,snapshot};
 static bool acquire_cap(const char*k,uint32_t version,uint64_t id,risc_runtime_capability_v1*g){(void)version;

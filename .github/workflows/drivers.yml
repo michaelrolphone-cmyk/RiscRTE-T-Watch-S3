@@ -41,6 +41,7 @@ jobs:
         run: |
           python scripts/test_clock.py
           python scripts/test_deep_sleep.py
+          python scripts/test_hybrid_sleep.py
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
           python apps/clock/nova/tests/run.py
@@ -76,21 +77,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 1589b54aeaf23d3cd82c9ab74c3c5de715e4abf8
+          ref: b28428505c9e067bb6ea8a84d12f13ec0bcc4992
           path: .dependencies/system-apps
           persist-credentials: false
       - name: Pinned shared Battery source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: 75cdc530db9afc5b016c898edcf154978862c77c
+          ref: 9d08cb3224a86bb6a5c27bad11b3c70516c6f614
           path: .dependencies/utilities
           persist-credentials: false
       - name: Exact paired runtime source
         uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: fe9d3c877ac98e52670d458f45b59fda8011a4fd
+          ref: 8609fb92ee56ad1c6fb0417051c3fc9796c0edca
           path: .dependencies/runtime
           persist-credentials: false
       - name: Shared apps and launcher deployments
@@ -116,10 +117,10 @@ jobs:
           for bundle in dist/launcher-common/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      - name: Delivered GUI/sleep baseline and bounded daily-app inventory
+      - name: Delivered GUI/app baseline and bounded Hybrid polish inventory
         run: |
-          python scripts/verify_daily_increment.py dist/launcher-common/*-launcher-common.zip
-          python -m unittest discover -s tests -p test_daily_increment.py -v
+          python scripts/verify_hybrid_increment.py dist/launcher-common/*-launcher-common.zip
+          python -m unittest discover -s tests -p test_hybrid_increment.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-launcher-deployments

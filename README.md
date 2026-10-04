@@ -3,8 +3,8 @@
 External driver/application packages for the **non-Plus LILYGO T-Watch-S3**.
 The owner physically accepted the 0.4.5 GUI increment. The delivered 0.5.0 sleep
 increment adds saved Light/Deep selection and remains pending physical
-sleep/wake/current validation. The current 0.5.1 increment adds shared Calculator
-and persistent Stopwatch; see [daily tools](docs/DAILY_TOOLS.md) and the
+sleep/wake/current validation. The delivered 0.5.1 added shared Calculator and persistent Stopwatch. Current
+0.5.2 adds Hybrid Light-to-Deep sleep, app idle retention and Springboard polish; see [daily tools](docs/DAILY_TOOLS.md) and the
 [deep-sleep contract](docs/DEEP_SLEEP.md).
 Generic firmware mechanism stays in the separately pinned RiscRTE runtime.
 

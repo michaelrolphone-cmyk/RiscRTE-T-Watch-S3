@@ -5,7 +5,7 @@ runtime="$(cd "${1:?Pass exact paired Runtime source}" && pwd)"
 system="$(cd "${2:?Pass exact shared System Apps source}" && pwd)"
 utilities="$(cd "${3:?Pass exact shared Utilities source}" && pwd)"
 # The runtime pairing is part of the deployment contract, not a moving checkout.
-[[ "$(git -C "$runtime" rev-parse HEAD)" == fe9d3c877ac98e52670d458f45b59fda8011a4fd ]]
+[[ "$(git -C "$runtime" rev-parse HEAD)" == 8609fb92ee56ad1c6fb0417051c3fc9796c0edca ]]
 [[ -z "$(git -C "$runtime" status --porcelain --untracked-files=no)" ]]
 python3 - "$watch" "$system" "$utilities" <<'PYPINS'
 import json,pathlib,subprocess,sys
@@ -34,14 +34,14 @@ cc -std=c11 "${flags[@]}" -DWATCH_CLOCK_LAUNCHER -DWATCH_CLOCK_RETURN -fPIC -fvi
 c++ -std=c++11 "${flags[@]}" -fPIC -shared -fvisibility=hidden "${watchincs[@]}" "$watch/apps/clock/effects/boot.cpp" "$build/crown-return.o" "$build/nova.o" -o "$build/clock.elf"
 portable=(-I"$system/lib/PortableApps/include" -I"$system/lib/NativeApps/include")
 for name in springboard battery settings calculator stopwatch; do
- source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER -DPORTABLE_FORCE_FULL_FRAMES -DPORTABLE_INPUT_NAVIGATION -DPORTABLE_INPUT_NAVIGATION_LOCAL)
+ source="$system/Apps/$name.c";flags_app=(-DPORTABLE_TOUCH_ROTATION=0 -DPORTABLE_RTC_UTC8_DENVER -DPORTABLE_FORCE_FULL_FRAMES -DPORTABLE_INPUT_NAVIGATION -DPORTABLE_INPUT_NAVIGATION_LOCAL -DPORTABLE_APP_SLEEP_LOCAL)
  if [[ "$name" == battery || "$name" == calculator || "$name" == stopwatch ]]; then source="$utilities/Apps/$name.c"; fi
  if [[ "$name" == settings ]]; then flags_app+=(-DPORTABLE_SETTINGS_APP -DPORTABLE_SLEEP_SETTINGS); fi
  if [[ "$name" == springboard ]]; then flags_app+=(-DPORTABLE_RETAINED_RGB565_HANDOFF -DPORTABLE_HANDOFF_EAGER_MS=60); fi
  if [[ "$name" == springboard ]]; then flags_app+=('-DPORTABLE_RETURN_APP="clock.elf"'); else flags_app+=('-DPORTABLE_RETURN_APP="springboard.elf"'); fi
  catalog="$watch/dist/launcher/catalog.c"
  if [[ "$name" == springboard ]]; then catalog="$watch/dist/launcher/daily_catalog.c"; fi
- cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "${watchincs[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$catalog" "$watch/apps/clock/portable_navigation.c" -o "$build/$name.elf"
+ cc -std=c11 "${flags[@]}" "${flags_app[@]}" -fPIC -shared -fvisibility=hidden "${portable[@]}" "${watchincs[@]}" "$source" "$system/lib/PortableApps/src/adapter.c" "$catalog" "$watch/apps/clock/portable_navigation.c" "$watch/apps/clock/portable_sleep.c" -o "$build/$name.elf"
 done
 c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${incs[@]}" \
  "$runtime/src/bootstrap/Board.cpp" "$runtime/src/bootstrap/Json.cpp" "$runtime/src/bootstrap/Runtime.cpp" \
@@ -55,3 +55,9 @@ c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${in
 "$build/deep-test" "$build"
 
 bash "$watch/scripts/test_daily_runtime.sh" "$runtime" "$build"
+
+c++ -std=c++17 "${flags[@]}" -O0 -Wno-missing-field-initializers -rdynamic "${incs[@]}" \
+ "$runtime/src/bootstrap/Board.cpp" "$runtime/src/bootstrap/Json.cpp" "$runtime/src/bootstrap/Runtime.cpp" \
+ "$runtime/src/ports/esp32s3/CpuPort.cpp" "$runtime/src/runtime/drivers/ProviderModuleV2.cpp" "$runtime/src/runtime/drivers/ProviderGraphV2.cpp" \
+ "$watch/tests/hybrid_runtime_test.cpp" -ldl -o "$build/hybrid-test"
+"$build/hybrid-test" "$build"

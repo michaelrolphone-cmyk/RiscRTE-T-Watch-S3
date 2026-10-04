@@ -4,6 +4,7 @@
 #include "effects/effects.h"
 #include "twatch_power.h"
 #include "twatch_caps.h"
+#include "watch_sleep.h"
 #include "transitions/PortableTransition.h"
 #include <stdlib.h>
 #include <string.h>
@@ -228,46 +229,15 @@ static bool sleep_cycle(void) {
     if (!present()) return false;
     /* Every preparation attempt is paired with resume, including partial
      * preparation and platform refusal. No framebuffer lease survives here. */
-    bool deep=false;
+    unsigned mode=PORTABLE_SLEEP_LIGHT;
 #ifdef WATCH_CLOCK_LAUNCHER
-    deep=sleep_mode==PORTABLE_SLEEP_DEEP;
+    mode=sleep_mode;
 #endif
-    bool panel_ok=false;
-    int32_t rc=RISC_LIGHT_SLEEP_INVALID;
-    if(deep) {
-        if(panel->base.struct_size<TWATCH_PANEL_DEEP_SLEEP_SIZE || !panel->prepare_deep_sleep ||
-           pmu->base.struct_size<TWATCH_PMU_DEEP_SLEEP_SIZE || !pmu->deep_sleep) {
-            rc=RISC_DEEP_SLEEP_UNSUPPORTED;
-        } else {
-            rc=panel->prepare_deep_sleep(display->context);
-            if(rc==RISC_DEEP_SLEEP_RETAINED) {
-                rt->diagnostic("WATCH_CLOCK error=deep-prepare-retained");return false;
-            }
-            panel_ok=rc==0;
-        }
-    } else panel_ok=panel->prepare_sleep(display->context);
-    bool pmu_ok=panel_ok && pmu->prepare_sleep(pmu->base.context);
-    risc_light_sleep_result_v1 result={.struct_size=sizeof(result)};
-    if (pmu_ok) {
-        if(deep) {
-            rt->diagnostic("WATCH_CLOCK sleep=deep");
-            rc=pmu->deep_sleep(pmu->base.context); /* Success never returns. */
-            if(rc==RISC_DEEP_SLEEP_RETAINED || rc>=0) {
-                rt->diagnostic("WATCH_CLOCK error=deep-entry-retained");return false;
-            }
-        } else rc=pmu->light_sleep(pmu->base.context,&result);
-    }
-    /* No normal provider I/O may follow retained native sleep state. */
-    if (rc==RISC_LIGHT_SLEEP_RETAINED) {rt->diagnostic("WATCH_CLOCK error=sleep-retained");return false;}
-    bool restored_pmu=pmu->resume(pmu->base.context);
-    bool restored_panel=panel->resume(display->context);
-    if (!restored_pmu || !restored_panel) {
-        rt->diagnostic("WATCH_CLOCK error=sleep-restore");return false;
-    }
+    int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
+    if(rc<0)return false;
     uint32_t discard;
-    if (!pmu->key_events(pmu->base.context,&discard)) return false;
     reset_telemetry();
-    if (!deep && rc==RISC_LIGHT_SLEEP_OK) {
+    if (rc==WATCH_SLEEP_WOKE) {
         rt->diagnostic("WATCH_CLOCK woke");
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
     } else {
@@ -329,15 +299,15 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_LAUNCHER
     /* Read once per fresh Clock invocation, release the grant before sleep.
      * Settings returns through a fresh Clock, and deep wake boots default. */
-    sleep_mode=PORTABLE_SLEEP_LIGHT;
+    sleep_mode=PORTABLE_SLEEP_HYBRID;
     risc_runtime_capability_v1 sg={.struct_size=sizeof(sg)};
     if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,RISC_KEY_VALUE_API_V1,PORTABLE_SLEEP_STORE_INSTANCE,&sg)) {
         int loaded=portable_sleep_load(sg.api,&sleep_mode);
         if(!rt->release(&sg))goto done;
         if(loaded==PORTABLE_SLEEP_INVALID || loaded==PORTABLE_SLEEP_UNAVAILABLE)
-            rt->diagnostic("WATCH_CLOCK settings=unreadable default=light");
-    } else rt->diagnostic("WATCH_CLOCK settings=unavailable default=light");
-    rt->diagnostic(sleep_mode==PORTABLE_SLEEP_DEEP?"WATCH_CLOCK mode=deep":"WATCH_CLOCK mode=light");
+            rt->diagnostic("WATCH_CLOCK settings=unreadable default=hybrid");
+    } else rt->diagnostic("WATCH_CLOCK settings=unavailable default=hybrid");
+    rt->diagnostic(sleep_mode==PORTABLE_SLEEP_DEEP?"WATCH_CLOCK mode=deep":sleep_mode==PORTABLE_SLEEP_LIGHT?"WATCH_CLOCK mode=light":"WATCH_CLOCK mode=hybrid");
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
