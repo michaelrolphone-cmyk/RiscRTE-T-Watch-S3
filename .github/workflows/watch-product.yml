@@ -1,0 +1,88 @@
+name: Publish accepted Watch product
+on:
+  pull_request:
+    paths:
+      - 'release/**'
+      - 'scripts/publish_watch_product.py'
+      - 'scripts/watch_release_index.py'
+      - 'tests/test_watch_product.py'
+      - '.github/workflows/watch-product.yml'
+  workflow_run:
+    workflows: ['Publish versioned drivers']
+    types: [completed]
+    branches: [main, master]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+# Shared with existing driver publication: component releases finish before index.
+concurrency:
+  group: twatch-driver-publication
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install validation dependencies
+        run: python -m pip install -r scripts/requirements.txt
+      - name: Publication and index safety tests
+        run: python -m unittest discover -s tests -p test_watch_product.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+          ref: ae819bb23bf7a047a7b31c3b91609b05be8731d3
+          path: .dependencies/accepted-watch
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 8609fb92ee56ad1c6fb0417051c3fc9796c0edca
+          path: .dependencies/accepted-runtime
+          persist-credentials: false
+      - name: Download and hash exact accepted CI inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_watch_product.py download
+      - name: Promote accepted bytes and validate every component
+        run: |
+          python scripts/publish_watch_product.py stage --accepted-watch .dependencies/accepted-watch --runtime-source .dependencies/accepted-runtime
+          python scripts/publish_watch_product.py verify
+          WATCH_PRODUCT_STAGE="$PWD/dist/watch-product" python -m unittest discover -s tests -p test_watch_product.py -v
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-watch-product-${{ github.event.workflow_run.head_sha || github.event.pull_request.head.sha || github.sha }}
+          path: dist/watch-product/
+          if-no-files-found: error
+  publish:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-watch-product-${{ github.event.workflow_run.head_sha || github.sha }}
+          path: dist/watch-product
+      - name: Reverify, publish immutable releases, then publish branch index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_watch_product.py publish

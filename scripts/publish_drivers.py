@@ -23,7 +23,7 @@ def version(value):
 
 
 def gh(*args):
-    return subprocess.check_output(['gh', *args], cwd=ROOT, text=True)
+    return subprocess.check_output(['gh', *map(str, args)], cwd=ROOT)
 
 
 def releases(repo):
@@ -166,35 +166,44 @@ def publish_one(repo, record):
             '--method', 'PATCH', '-f', f'target_commitish={record["source_sha"]}',
             '-f', f'body=Recovered empty draft. Source {record["source_sha"]}. '
             'Software validated; physical verification and runtime backfill remain pending.'))
+    if existing.get('prerelease', False):
+        raise ValueError('Stable driver publication cannot resume a prerelease')
     with tempfile.TemporaryDirectory() as tmp:
         record_path = Path(tmp) / 'release-record.json'
         record_path.write_text(json.dumps(record, indent=2, sort_keys=True) + '\n')
         expected = {record['archive']: ROOT / 'dist' / record['archive'],
                     'release-record.json': record_path}
-        assets = existing['assets']
+        release_id = existing['id']
+        current = json.loads(gh('api', f'repos/{repo}/releases/{release_id}'))
+        assets = current['assets']
         if len({a['name'] for a in assets}) != len(assets) or set(a['name'] for a in assets) - expected.keys():
             raise ValueError(f'{tag}: unexpected release assets')
         for name, path in expected.items():
-            if any(a['name'] == name for a in assets):
-                destination = Path(tmp) / 'download'
-                destination.mkdir(exist_ok=True)
-                gh('release', 'download', tag, '--repo', repo, '--pattern', name,
-                   '--dir', str(destination))
-                if (destination / name).read_bytes() != path.read_bytes():
+            asset = next((a for a in assets if a['name'] == name), None)
+            if asset:
+                payload = gh('api', f'repos/{repo}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream')
+                if payload != path.read_bytes():
                     raise ValueError(f'{tag}: existing {name} differs; refusing overwrite')
-            elif existing['draft']:
-                gh('release', 'upload', tag, str(path), '--repo', repo)
+            elif current['draft']:
+                # Use the stable release ID. gh release upload first resolves the
+                # draft by tag and can fail even immediately after draft creation.
+                gh('api', f'https://uploads.github.com/repos/{repo}/releases/{release_id}/assets?name={name}',
+                   '--method', 'POST', '--input', str(path), '-H', 'Content-Type: application/octet-stream')
             else:
                 raise ValueError(f'{tag}: published release has a missing asset')
-        # Download newly uploaded assets too before making the release public.
-        verify = Path(tmp) / 'verify'
-        verify.mkdir()
-        gh('release', 'download', tag, '--repo', repo, '--dir', str(verify))
-        if any((verify / name).read_bytes() != path.read_bytes() for name, path in expected.items()):
-            raise ValueError('Uploaded bytes do not match')
-    if existing['draft']:
-        gh('release', 'edit', tag, '--repo', repo, '--draft=false', '--latest=false')
-    # GitHub creates the lightweight tag when publishing the draft.
+        current = json.loads(gh('api', f'repos/{repo}/releases/{release_id}'))
+        if len(current['assets']) != len(expected) or {a['name'] for a in current['assets']} != set(expected):
+            raise ValueError('Uploaded release inventory differs')
+        for asset in current['assets']:
+            payload = gh('api', f'repos/{repo}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream')
+            if payload != expected[asset['name']].read_bytes():
+                raise ValueError('Uploaded bytes do not match')
+    if current['draft']:
+        gh('api', f'repos/{repo}/releases/{release_id}', '--method', 'PATCH',
+           '-F', 'draft=false', '-f', 'make_latest=false')
+    published = json.loads(gh('api', f'repos/{repo}/releases/{release_id}'))
+    if published['draft']:
+        raise ValueError('Driver publication was not confirmed')
     actual = json.loads(gh('api', f'repos/{repo}/commits/{tag}'))['sha']
     if actual != record['source_sha']:
         raise ValueError(f'{tag}: tag does not resolve to the planned source')
@@ -210,9 +219,11 @@ def verify_board_version(repo, existing, root=ROOT):
     # existing byte and its source commit before completing that draft.
     if prior['draft'] and not any(a['name'] == 'release-record.json' for a in prior['assets']):
         return
-    with tempfile.TemporaryDirectory() as tmp:
-        gh('release', 'download', tag, '--repo', repo, '--pattern', 'release-record.json', '--dir', tmp)
-        record = json.loads((Path(tmp) / 'release-record.json').read_text())
+    matches = [a for a in prior['assets'] if a['name'] == 'release-record.json']
+    if len(matches) != 1:
+        raise ValueError('Board release must have exactly one custody record')
+    record = json.loads(gh('api', f'repos/{repo}/releases/assets/{matches[0]["id"]}',
+                           '-H', 'Accept: application/octet-stream'))
     board.verify_record(record, manifest, source_digest)
 
 
