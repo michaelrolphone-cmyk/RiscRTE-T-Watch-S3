@@ -1,7 +1,7 @@
 # Points in Time companion faces
 
-Stable IDs 24–31 are NEXT, RING, LADDER, DAYLINE, TRIPLE, STATUS, BOARD,
-and WORKDAY, in the fifth SCHEDULE picker category. IDs 0–23 keep their
+Stable IDs 24–32 are NEXT, RING, LADDER, DAYLINE, TRIPLE, STATUS, BOARD,
+WORKDAY and UP NEXT, in the fifth SCHEDULE picker category. IDs 0–23 keep their
 original meaning and pixels. The existing cyclic picker mechanics are unchanged.
 
 ## Render data contract
@@ -46,7 +46,7 @@ at most six visible cards are cached, including a vertical category transition.
 
 ## Deliberate source adaptations
 
-The HTML's fixed example schedule, meetings/GYM and example battery percentage
+The supplied NOVA-7 UP NEXT mockup contributes the perimeter minute ticks, second sweep, point arcs/dots, NOW/NEXT state, countdown, progress bar, THEN line and segmented battery treatment. The existing eight-face HTML's fixed example schedule, meetings/GYM and example battery percentage
 are never included in firmware data. Every displayed point comes from the
 snapshot. Battery bars use the existing valid PMU sample, including real zero;
 unknown battery also displays BATT --%.
@@ -79,7 +79,7 @@ From the Watch repository root:
     python3 scripts/render_points_reference.py /path/to/watchfaces-schedule.html
 
 The Points suite compiles the actual production C with ASan/UBSan. It covers
-18 scenarios × eight faces, tight/padded stride equivalence, surface rejection,
+18 scenarios × nine faces, tight/padded stride equivalence, surface rejection,
 untouched guards, zero/full-uint32 and >24-hour durations, day offsets, noon/
 midnight, DST-derived repeated-hour input, bounded counts, invalid input,
 unavailable/empty/error/no-pair states, in-place picker invalidation, overlapping
