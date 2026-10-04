@@ -59,7 +59,7 @@ static int32_t light_sleep(void*c,risc_light_sleep_result_v1*r){(void)c;(void)r;
 static bool read_rtc(void*c,twatch_rtc_time_v1*t){(void)c;*t=(twatch_rtc_time_v1){2026,10,4,0,0,40,0};return true;}
 static bool read_battery(void*c,risc_battery_sample_v1*b){(void)c;*b=(risc_battery_sample_v1){3900,55,0};return true;}
 static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit_frame,present_frame,NULL,brightness},prepare,resume,NULL};
-static twatch_pmu_api_v1 pa={{1,TWATCH_PMU_LIGHT_SLEEP_SIZE,NULL,read_battery},key,prepare,resume,light_sleep,NULL};
+static twatch_pmu_api_v1 pa={{1,TWATCH_PMU_LIGHT_SLEEP_SIZE,NULL,read_battery},key,prepare,resume,light_sleep,NULL,NULL,NULL};
 static twatch_rtc_api_v1 ra={2,sizeof(ra),NULL,read_rtc,NULL,NULL,NULL};
 static bool acquire_cap(const char*n,uint32_t version,uint64_t id,risc_runtime_capability_v1*g){(void)version;assert(!id);grants++;if(!strcmp(n,"display.output"))g->api=&da;else if(!strcmp(n,"board.battery"))g->api=&pa;else{assert(!strcmp(n,"rtc.clock"));g->api=&ra;}return true;}
 static bool release_cap(risc_runtime_capability_v1*g){assert(g->api&&!owned&&!pending);g->api=NULL;ungrants++;return true;}

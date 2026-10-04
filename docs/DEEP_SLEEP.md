@@ -1,24 +1,37 @@
-# Selectable Watch sleep 0.5.0
+# Watch Hybrid sleep 0.5.2
 
-This increment preserves the physically accepted 0.4.5 Clock/launcher interface
-and adds **Settings → Sleep Mode → Light Sleep / Deep Sleep → Save**.
-Light is the safe initial default. Cancel changes nothing. The mode is saved in
-internal NVS through a bounded generic runtime capability, separately from the
-read-only SPIFFS application/driver store. No SD card is required.
+Fresh Clock and all application idle sleep now enter Light for five asleep minutes,
+then enter Deep without a visible wake frame. Apps sleep after one minute idle.
+Light wake resumes the same app stack and RAM, including Calculator expressions,
+Settings editor drafts and live Stopwatch precision. Deep wake restarts the
+normal default Clock. Crown sleeps Clock with the same progression; crown Back
+in other apps remains unchanged.
 
-Both modes retain the existing completed short crown press and 60-second Clock
-idle policy. In Deep, the crown wakes the ESP32-S3 by reset: a fresh runtime,
-driver graph and default Clock ELF boot, showing the normal startup animation.
-It is not continuation of the old app stack or RAM. RTC time is read again from
-the PCF8563; this operation does not rewrite the RTC.
+Settings labels its three choices **Clock Sleep Mode**: Light, Deep, and Light
+5 min then Deep. Previously saved valid manual Light/Deep records remain valid;
+missing/corrupt records default Hybrid without a write. Other apps always use
+Hybrid and receive no Settings namespace. Stopwatch retains only namespace 2.
+
+Runtime 0.1.6 supplies owned bounded timer wake. App-side policy accepts only a
+successful timer wake for progression, checks both non-acknowledged PMU latched
+key bits and physical IRQ before and after dark panel hold, and lets a crown
+edge win. Refusals restore the app and restart the one-minute interval; clean
+PMU mask restoration preserves the last actually observed released/held latch,
+so retry does not require an invented crown event. Unsafe retained cleanup
+stops normal I/O and the Runtime barrier pins app/dependencies before fini/unload.
+
+The panel, rails, full-frame transport and touch driver remain unchanged. No
+alarm service, provider storage, ULP program or device qualification is included.
+
+## Preserved physical Deep contract from 0.5.0
 
 ## Exact mechanism and limits
 
 The reusable B1 mechanism is an owned RTC-capable input with ESP-IDF EXT1 wake
 and `esp_deep_sleep_start`. It is **not an ESP32 ULP-coprocessor program**. The
 reviewed T5 reference used RTC-retained data plus timer/button deep sleep, not a
-ULP program. This Watch increment implements crown wake only. RTC alarm/timer
-wake, scheduled apps and vibration/sound policies remain separate application
+ULP program. Deep remains crown-woken; Hybrid adds only the bounded Light timer. RTC alarms,
+scheduled apps and vibration/sound policies remain separate application
 work. Double-tap wake is deferred; the touch controller's irreversible sleep
 register is not written. No promised current draw or battery-life multiplier
 is inferred from host tests or API names.
@@ -56,16 +69,16 @@ suffixes refuse Deep cleanly while preserving the old Light prefix contract.
 
 ## Persistence and failure behavior
 
-Clock and Settings explicitly declare storage.key-value@1 with namespace instance
+Clock and Settings still explicitly declare storage.key-value@1 with namespace instance
 1. Other bundled apps receive no such grant. The app-owned key `sleep_mode` has a
 four-byte versioned record; missing, unknown, malformed or unavailable values
-select Light. Runtime stores opaque bounded bytes and knows no Watch mode/key.
+select Hybrid. Runtime stores opaque bounded bytes and knows no Watch mode/key.
 Clock only reads; Settings writes only after explicit Save, avoids unchanged
 writes and verifies the result. Failed saves display an unconfirmed-save message
 and re-read actual storage because an error does not guarantee the old value.
 
 The NVS SDK can hide discarded corruption or some internal errors as NOT_FOUND;
-this has the same safe Light fallback. No automatic erase-all/retry, bootfs
+this has the same safe Hybrid fallback. No automatic erase-all/retry, bootfs
 writes or storage formatting is introduced. SDK internal recovery metadata may
 still change on initialization. Flash power-cut durability is not hardware-tested.
 Settings persist across app switches and normal reset/deep wake. The supplied

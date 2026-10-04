@@ -71,19 +71,20 @@ def build(profile_path, root=ROOT, launcher=False):
                 {'capability': 'rtc.clock', 'api': 2, 'instance_id': 8},
                 {'capability': 'board.battery', 'api': 1, 'instance_id': 4}]}]}
     if launcher:
-        for name in ('clock','springboard','battery','settings'):
+        for name in ('clock','springboard','battery','settings','calculator','stopwatch'):
             files['store/'+name+'.elf']=(root/'dist/launcher'/(name+'.elf')).read_bytes()
             files['store/'+name+'.json']=(root/'dist/launcher'/(name+'.json')).read_bytes()
         for name in ('catalog.json','font-sources.json','time-sources.json','LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
             files['shared/'+name]=(root/'dist/launcher'/name).read_bytes()
         files['settings-time-policy.json']=encoded({'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0})
         files['shared-app-build.json']=(root/'dist/launcher/build-record.json').read_bytes()
-        for name in ('default','clock','springboard','battery','settings'):
+        for name in ('default','clock','springboard','battery','settings','calculator','stopwatch'):
             grants=[{'capability':'display.output','api':1,'instance_id':5},
                     {'capability':'input.touch.raw','api':1,'instance_id':6}]
-            grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings') else None
+            grants.append({'capability':'rtc.clock','api':2,'instance_id':8}) if name in ('default','clock','springboard','settings','stopwatch') else None
             grants.append({'capability':'board.battery','api':1,'instance_id':4})
             if name in ('default','clock','settings'):grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
+            if name=='stopwatch':grants.append({'capability':'storage.key-value','api':1,'instance_id':2})
             policy={'manifest':name+'.json','grants':grants}
             if name=='default':boot['app_capabilities'][0]=policy
             else:boot['app_capabilities'].append(policy)

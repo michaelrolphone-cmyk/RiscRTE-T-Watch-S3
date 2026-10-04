@@ -41,26 +41,32 @@
   },
   "GardenPlatformV1.h": {
     "repository": "RiscRTE",
-    "commit": "3475193c27476c6ec0364e055de64cfb052cec58",
+    "commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
     "path": "sdk/driver/GardenPlatformV1.h",
-    "sha256": "ee004b835976f9ea2dedcfd2ebe34d0ebf7bde9a376c1961caa3fff047e8dd57"
+    "sha256": "d60f559deae831ed7ff4e7335e59127f92886e2cbdc62feecc63c51a6c33a456"
   },
   "RiscGpioBankV1.h": {
     "repository": "RiscRTE",
-    "commit": "3475193c27476c6ec0364e055de64cfb052cec58",
+    "commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
     "path": "sdk/driver/RiscGpioBankV1.h",
-    "sha256": "63d9c8bf64f748989926a7368deebbadb44dce1541491f68076dfff8cba7f848"
+    "sha256": "147f0dc029041e473f0d0f9034583be881d935c9aa77ddc52cbbc4c2b198a71b"
   },
   "RiscLightSleepV1.h": {
     "repository": "RiscRTE",
-    "commit": "dd7993308cf170feeb4a5883eba8857dc6243c8e",
+    "commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
     "path": "sdk/driver/RiscLightSleepV1.h",
-    "sha256": "2b7ce8d3cbda1e56ec63204374bd81d897754dccfa36c54ecbea8b020afbe599"
+    "sha256": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94"
   },
   "RiscDeepSleepV1.h": {
     "repository": "RiscRTE",
     "commit": "3475193c27476c6ec0364e055de64cfb052cec58",
     "path": "sdk/driver/RiscDeepSleepV1.h",
     "sha256": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161"
+  },
+  "RiscTimedSleepV1.h": {
+    "repository": "RiscRTE",
+    "commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
+    "path": "sdk/driver/RiscTimedSleepV1.h",
+    "sha256": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34"
   }
 }

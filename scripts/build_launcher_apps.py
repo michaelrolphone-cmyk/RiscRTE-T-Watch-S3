@@ -28,20 +28,24 @@ def build(system,utilities):
              {'display_name':'Battery','file_name':'battery.elf','icon':'solid:f240'},
              {'display_name':'Settings','file_name':'settings.elf','icon':'solid:f013'}]
     (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=3;\n')
+    catalog += [{'display_name':'Calculator','file_name':'calculator.elf','icon':'solid:f00a'},
+                {'display_name':'Stopwatch','file_name':'stopwatch.elf','icon':'solid:f2f2'}]
+    (out/'daily_catalog.c').write_text('#include \"PortableApps.h\"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=5;\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
-    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'}}
-    record['sleep_policy']={'default':'light','choice':'storage.key-value@1','instance_id':1,'key':'sleep_mode','deep_wake':'fresh-default','ulp_program':False}
+    record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf','calculator':'springboard.elf','stopwatch':'springboard.elf'}}
+    record['daily_apps']={'stopwatch':{'storage_instance':2,'key':'stopwatch','awake_clock':'monotonic-ms','restored_clock':'raw-RTC-seconds','precision':'approximate-after-recovery'},'calculator':{'arithmetic':'fixed-decimal','fractional_digits':6}}
+    record['sleep_policy']={'default':'hybrid','application_idle_ms':60000,'light_ms':300000,'scope':'saved Clock mode; other apps always hybrid','choice':'storage.key-value@1','instance_id':1,'key':'sleep_mode','deep_wake':'fresh-default','ulp_program':False}
     build_clock(launcher=True)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
     build_clock(launcher=True,returning=True)
     record['apps']['clock']={**json.loads((out/'build-record.json').read_text()),'repository_sha':record['apps']['default']['repository_sha']}
-    for name,repo,source in [('springboard',system,system/'Apps/springboard.c'),('battery',utilities,utilities/'Apps/battery.c'),('settings',system,system/'Apps/settings.c')]:
+    for name,repo,source in [('springboard',system,system/'Apps/springboard.c'),('battery',utilities,utilities/'Apps/battery.c'),('settings',system,system/'Apps/settings.c'),('calculator',utilities,utilities/'Apps/calculator.c'),('stopwatch',utilities,utilities/'Apps/stopwatch.c')]:
         exports=['app_main','app_module_init','app_module_fini']
         mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(exports)+'; local: *; };\n')
-        sources=[source,system/'lib/PortableApps/src/adapter.c',out/'catalog.c',ROOT/'apps/clock/portable_navigation.c']
+        sources=[source,system/'lib/PortableApps/src/adapter.c',out/('daily_catalog.c' if name=='springboard' else 'catalog.c'),ROOT/'apps/clock/portable_navigation.c',ROOT/'apps/clock/portable_sleep.c']
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
-        flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL']
+        flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL']
         if name=='settings':flags.extend(['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_SETTINGS_VERSION=\"'+json.loads((system/'Apps/settings.json').read_text())['version']+'\"'])
         if name=='springboard':flags.extend(['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60'])
         flags.append('-DPORTABLE_RETURN_APP="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"')
@@ -56,15 +60,15 @@ def build(system,utilities):
         data=elf.read_bytes();assert data[:7]==b'\x7fELF\x01\x01\x01' and data[16:20]==b'\x03\x00\x5e\x00'
         original=json.loads((ROOT/'apps/clock/manifest.json' if name=='default' else repo/'Apps'/(name+'.json')).read_text())
         requires=[{'capability':'display.output','api':1},{'capability':'input.touch.raw','api':1}]
-        if name in ('springboard','settings'):requires.append({'capability':'rtc.clock','api':2})
+        if name in ('springboard','settings','stopwatch'):requires.append({'capability':'rtc.clock','api':2})
         requires.append({'capability':'board.battery','api':1})
-        if name=='settings':requires.append({'capability':'storage.key-value','api':1})
+        if name in ('settings','stopwatch'):requires.append({'capability':'storage.key-value','api':1})
         manifest={'type':'application','id':'twatch-clock' if name=='default' else name,'version':original['version'],'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':requires}
         (out/(name+'.json')).write_text(json.dumps(manifest,indent=2)+'\n')
         record['apps'][name]={'version':manifest['version'],'sha256':hashlib.sha256(data).hexdigest(),'imports':sorted(imports),'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()}
     validator=out/'validate-elf'
     subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-I'+str(system/'test/native_apps/stubs'),'-I'+str(system/'lib/elf_loader/include'),str(system/'lib/elf_loader/src/esp_elf_validate.c'),str(system/'test/native_apps/validate_test.c'),'-o',str(validator)],check=True)
-    for name in ('default','clock','springboard','battery','settings'):
+    for name in ('default','clock','springboard','battery','settings','calculator','stopwatch'):
         subprocess.run([str(validator),str(out/(name+'.elf'))],check=True)
     for path in (system/'lib/PortableApps/fonts').glob('*.txt'):
         (out/path.name).write_bytes(path.read_bytes())
@@ -75,6 +79,6 @@ def build(system,utilities):
         target.write_bytes((system/'lib/PortableApps/settings_fonts'/name).read_bytes())
     (out/'RTC_PROVENANCE.json').write_bytes((system/'lib/PortableApps/RTC_PROVENANCE.json').read_bytes())
     (out/'build-record.json').write_text(json.dumps(record,indent=2)+'\n')
-    print('Five real Xtensa applications: ABI/import/export checks passed')
+    print('Seven real Xtensa applications: ABI/import/export checks passed')
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--system-apps',required=True,type=Path);p.add_argument('--utilities',required=True,type=Path);a=p.parse_args();build(a.system_apps.resolve(),a.utilities.resolve())

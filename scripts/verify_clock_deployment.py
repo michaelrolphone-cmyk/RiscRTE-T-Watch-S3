@@ -54,14 +54,15 @@ def verify(path):
             {'capability':'board.battery','api':1,'instance_id':4}]}]
         if launcher:
             expected=[]
-            for name in ('default','clock','springboard','battery','settings'):
+            for name in ('default','clock','springboard','battery','settings','calculator','stopwatch'):
                 grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
-                if name in ('default','clock','springboard','settings'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
+                if name in ('default','clock','springboard','settings','stopwatch'):grants.append({'capability':'rtc.clock','api':2,'instance_id':8})
                 grants.append({'capability':'board.battery','api':1,'instance_id':4})
                 if name in ('default','clock','settings'):grants.append({'capability':'storage.key-value','api':1,'instance_id':1})
+                if name=='stopwatch':grants.append({'capability':'storage.key-value','api':1,'instance_id':2})
                 expected.append({'manifest':name+'.json','grants':grants})
                 child=json.loads(z.read('store/'+name+'.json'))
-                if child['file_name']!=name+'.elf' or child['entry']!='app_main' or child['requires']!=[{'capability':g['capability'],'api':g['api']} for g in grants]:
+                if child.get('type')!='application' or child.get('architecture')!='xtensa-esp32s3' or child['file_name']!=name+'.elf' or child['entry']!='app_main' or child['requires']!=[{'capability':g['capability'],'api':g['api']} for g in grants]:
                     raise ValueError('Launcher app identity or declared capabilities mismatch')
                 elf=z.read('store/'+name+'.elf')
                 if elf[:7]!=b'\x7fELF\x01\x01\x01' or struct.unpack_from('<HH',elf,16)!=(3,94):raise ValueError('Launcher app is not target Xtensa ELF')
@@ -69,13 +70,13 @@ def verify(path):
             sources=json.loads(z.read('shared-app-build.json'))
             if sources.get('touch_rotation')!=0 or sources.get('rtc_policy')!='fixed-UTC+08-to-America/Denver':
                 raise ValueError('Missing launcher transform/time policy')
-            if sources.get('return_targets')!={'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf'} or sources.get('handoff_ms')!=60:
+            if sources.get('return_targets')!={'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf','calculator':'springboard.elf','stopwatch':'springboard.elf'} or sources.get('handoff_ms')!=60:
                 raise ValueError('Missing explicit return targets or fast handoff policy')
             policy=json.loads(z.read('settings-time-policy.json'))
             if policy!={'rtc_basis_offset_minutes':480,'display_zone':'America/Denver','write_policy':'inverse-roundtrip','gap':'reject','fold':'explicit-MDT-or-MST','touch_rotation':0}:
                 raise ValueError('Invalid Settings inverse time policy')
             catalog=json.loads(z.read('shared/catalog.json'))
-            if [e['file_name'] for e in catalog]!=['clock.elf','battery.elf','settings.elf']:
+            if [e['file_name'] for e in catalog]!=['clock.elf','battery.elf','settings.elf','calculator.elf','stopwatch.elf']:
                 raise ValueError('Invalid launcher catalog')
             for notice in ('LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','font-sources.json','time-sources.json','RTC_PROVENANCE.json','settings_fonts/LICENSE-Orbitron.txt','settings_fonts/LICENSE-Rajdhani.txt','settings_fonts/SOURCES.json'):
                 if not z.read('shared/'+notice):raise ValueError('Missing shared font/time provenance')
