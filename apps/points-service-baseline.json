@@ -1,0 +1,19 @@
+{
+  "elf_sha256": "f70d5b42fb2dc255538970c3240083b21e714913c0e589f913731cf63abadeec",
+  "size_bytes": 28396,
+  "service_version": "0.2.1",
+  "system_apps_sha": "911be9e8042f1bcc46038fb70189eebe4ca106c5",
+  "runtime_sha": "8688f92069b99547f0d25ecbd12cfcad3bb52c53",
+  "defines": [
+    "-DPOINTS_IN_TIME_SERVICE",
+    "-DPORTABLE_RTC_UTC8_DENVER"
+  ],
+  "source_sha256": "5da342031c32beb17ad119a3f66db23c5ca461186e3370f54b3ffc025ccb4f7f",
+  "sources": {
+    "Services/alarm_service/service.c": "5da342031c32beb17ad119a3f66db23c5ca461186e3370f54b3ffc025ccb4f7f",
+    "lib/Alarm/include/PointsRecords.h": "41686924f5d9cc94d0f14ee05c8b02593681f3e93d029f29290ff3b3dd87b088",
+    "lib/Alarm/include/PointsSchedule.h": "7162dd36fa7f6cb0ee7ba2f6f57533bcc649520301796e64ef6f954c2f6d42c5",
+    "lib/Alarm/include/AlarmServiceV1.h": "3f5546fadf7131cdae82ed5316d4ff49157fac881af34fba4663d00c54e2a6fb",
+    "lib/Alarm/include/AlarmRecords.h": "d9b2a7c32df502c30b723499b61d3d0e5c4e763304dc71dd408ded06a015790d"
+  }
+}

@@ -5,7 +5,7 @@
 #include "nova.h"
 static uint8_t pixels[240*240*2];
 int main(int argc,char **argv) {
-    nova_watch_state state={{2026,10,3,6,10,42,18},true,true,84,250,15000};
+    nova_watch_state state={{2026,10,3,6,10,42,18},true,true,84,250,15000,false,NULL};
     if (argc>1) {
         if (!strcmp(argv[1],"unset")) state.time_valid=false;
         else if (!strcmp(argv[1],"zero")) state.battery_percent=0;

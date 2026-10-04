@@ -13,6 +13,10 @@ typedef struct {
      * resume/normal I/O. Successful preparation holds the inactive backlight
      * through CPU reset. Ordinary refusal is undone by the existing resume. */
     int32_t (*prepare_deep_sleep)(void *context);
+    /* Typed restore distinguishes an unsafe native unhold from an ordinary
+     * display-command failure after hold removal. Existing bool prefix stays. */
+    int32_t (*resume_status)(void *context);
 } twatch_panel_power_v1;
 #define TWATCH_PANEL_LIGHT_SLEEP_SIZE offsetof(twatch_panel_power_v1, prepare_deep_sleep)
-#define TWATCH_PANEL_DEEP_SLEEP_SIZE sizeof(twatch_panel_power_v1)
+#define TWATCH_PANEL_DEEP_SLEEP_SIZE offsetof(twatch_panel_power_v1, resume_status)
+#define TWATCH_PANEL_RESUME_STATUS_SIZE sizeof(twatch_panel_power_v1)

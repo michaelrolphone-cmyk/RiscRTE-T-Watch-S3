@@ -191,3 +191,9 @@ static int32_t panel_prepare_deep_sleep(void *context) {
     }
     leave();return rc;
 }
+
+static int32_t panel_resume_status(void *context) {
+    if(deep_retained)return RISC_DEEP_SLEEP_RETAINED;
+    if(panel_resume(context))return RISC_LIGHT_SLEEP_OK;
+    return deep_retained?RISC_DEEP_SLEEP_RETAINED:RISC_LIGHT_SLEEP_PLATFORM;
+}

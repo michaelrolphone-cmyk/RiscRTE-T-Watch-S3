@@ -1,3 +1,6 @@
+#if defined(WATCH_PAIRED_BOOT_CONFIRM) && !defined(WATCH_CLOCK_RETURN)
+#include "runtime_boot_confirm.h"
+#endif
 #include "RiscRuntimeV1.h"
 #include "nova/nova.h"
 #include "display_time.h"
@@ -10,21 +13,41 @@
 #include <string.h>
 
 static const risc_runtime_api_v1 *rt;
+#ifdef WATCH_CLOCK_ALARMS
+#ifndef WATCH_CLOCK_LAUNCHER
+#error Alarm Clock requires its normal touch launcher deployment
+#endif
+static bool clock_alarm_modal,clock_display_settled;
+static bool clock_alarm_foreground(void);
+static bool clock_alarm_failure(void);
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
+#include "faces/picker.h"
 #include "launcher_touch.h"
 #include "PortableSleepPolicy.h"
+#include "PortableTimeFormat.h"
 static unsigned sleep_mode;
+static watch_face_picker picker;
+static nova_watch_picker_cache *picker_scratch;
+static bool picker_open_pending,picker_select_pending,picker_save_failed;
+static unsigned picker_selection_pending;
 static watch_launcher_touch touch;
 static bool launcher_swipe_pending, launcher_activity_pending;
 static uint32_t launcher_sampled_at;
 /* Sampling must not wait for a whole 240-row presentation. Latch the first
  * qualified swipe, but let the accepted frame finish before handing it off. */
 static void sample_launcher_touch(uint32_t now, bool force) {
+#ifdef WATCH_CLOCK_ALARMS
+    if(clock_alarm_modal)return;
+#endif
     if (!touch.subscription || launcher_swipe_pending ||
         (!force && (uint32_t)(now-launcher_sampled_at)<8u)) return;
     bool activity=false;
     launcher_sampled_at=now;
-    if (launcher_touch_swipe(&touch,&activity)) launcher_swipe_pending=true;
+    unsigned action=launcher_touch_sample(&touch,&picker,now,&activity);
+    if(action==WATCH_FACE_LAUNCHER)launcher_swipe_pending=true;
+    if(action==WATCH_FACE_OPEN)picker_open_pending=true;
+    if(action==WATCH_FACE_SELECT){picker_selection_pending=watch_face_page_for(picker.category)->ids[picker.target];picker_select_pending=true;}
     if (activity) launcher_activity_pending=true;
 }
 #endif
@@ -34,11 +57,49 @@ static const twatch_pmu_api_v1 *pmu;
 static const twatch_panel_power_v1 *panel;
 static risc_display_frame_v1 held;
 static nova_watch_state face;
+#ifdef WATCH_CLOCK_POINTS
+#include "points_projection.h"
+static points_config clock_points_config;
+static nova_points_state clock_points_view;
+static bool clock_points_available;
+static uint32_t clock_points_second;
+static bool clock_points_sampled;
+static bool clock_points_load(void) {
+    risc_runtime_capability_v1 grant={.struct_size=sizeof(grant)};
+    clock_points_config=(points_config){0};clock_points_sampled=false;
+    clock_points_view=(nova_points_state){.status=NOVA_POINTS_UNAVAILABLE};clock_points_available=false;
+    if(!rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,5,&grant))return true;
+    const risc_key_value_v1 *kv=grant.api;
+    if(kv&&kv->api_version==1&&kv->struct_size>=sizeof(*kv)&&kv->get) {
+        uint8_t bytes[POINTS_RECORD_SIZE];uint32_t n=0;
+        int32_t result=kv->get(kv->context,POINTS_CONFIG_KEY,bytes,sizeof(bytes),&n);
+        clock_points_available=result==RISC_KEY_VALUE_NOT_FOUND||
+            (result==RISC_KEY_VALUE_OK&&points_config_decode(&clock_points_config,bytes,n));
+        clock_points_view.status=clock_points_available?NOVA_POINTS_EMPTY:NOVA_POINTS_ERROR;
+    }
+    return rt->release(&grant);
+}
+#endif
 static uint32_t rtc_sampled_at, rtc_second_at, battery_sampled_at;
 static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
+#ifdef WATCH_CLOCK_POINTS
+    clock_points_sampled=false;face.points=&clock_points_view;
+#endif
 }
+#ifdef WATCH_CLOCK_LAUNCHER
+static bool reload_time_format(void) {
+    unsigned mode=PORTABLE_TIME_FORMAT_12;
+    risc_runtime_capability_v1 grant={.struct_size=sizeof(grant)};
+    if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,PORTABLE_TIME_FORMAT_STORE_INSTANCE,&grant)) {
+        (void)portable_time_format_load(grant.api,&mode);
+        if(!rt->release(&grant))return false;
+    }
+    face.hour_24=mode==PORTABLE_TIME_FORMAT_24;
+    return true;
+}
+#endif
 static bool same_second(const twatch_rtc_time_v1 *a,const twatch_rtc_time_v1 *b) {
     return a->year==b->year && a->month==b->month && a->day==b->day &&
         a->hour==b->hour && a->minute==b->minute && a->second==b->second;
@@ -54,12 +115,20 @@ static bool present(void) {
     if (!alive(&start)) return false;
     bool healthy=true;
     const risc_display_present_options_v1 opts={0,0,0};
+#ifdef WATCH_CLOCK_ALARMS
+    clock_display_settled=false;
+#endif
     if (!display->submit(display->context,held,NULL,0,&opts,&token)) return false;
     held=0;
     for(unsigned n=0;n<=10000;n++) {
         risc_display_present_status_v1 s={0};
         if (!display->present_status(display->context,token,&s)) return false;
-        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) return healthy;
+        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) {
+#ifdef WATCH_CLOCK_ALARMS
+            clock_display_settled=true;
+#endif
+            return healthy;
+        }
         if (s.state==RISC_DISPLAY_PRESENT_FAILED || s.state==RISC_DISPLAY_PRESENT_SUPERSEDED) return false;
         if (alive(&now)) {
             if ((uint32_t)(now-start)>=10000) return false;
@@ -83,7 +152,18 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
      * edge anchors the fractional hand within one 100ms sampling interval. */
     if (!sampled_rtc || (uint32_t)(now-rtc_sampled_at)>=100u) {
         twatch_rtc_time_v1 date={0};
-        bool valid=rtc && rtc->read(rtc->context,&date) && watch_display_time(&date,&date);
+        bool valid=rtc && rtc->read(rtc->context,&date);
+#ifdef WATCH_CLOCK_POINTS
+        uint32_t raw_seconds=0;
+        bool raw_valid=valid&&alarm_calendar_seconds(date.year,date.month,date.day,date.hour,date.minute,date.second,&raw_seconds);
+        if(!raw_valid)clock_points_view.status=NOVA_POINTS_ERROR;
+        else if(clock_points_available&&(!clock_points_sampled||clock_points_second!=raw_seconds||clock_points_view.status==NOVA_POINTS_ERROR)) {
+            (void)watch_points_projection(&clock_points_config,raw_seconds,&clock_points_view);
+            clock_points_second=raw_seconds;clock_points_sampled=true;
+        }
+        face.points=&clock_points_view;
+#endif
+        valid=valid&&watch_display_time(&date,&date);
         if (valid && (!face.time_valid || !same_second(&date,&face.time))) rtc_second_at=now;
         face.time=date; face.time_valid=valid;
         rtc_sampled_at=now; sampled_rtc=true;
@@ -98,7 +178,16 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     uint32_t phase=now-rtc_second_at;
     face.subsecond_ms=face.time_valid ? (phase>999u?999u:(uint16_t)phase) : 0;
     face.animation_ms=now;
+    #ifdef WATCH_CLOCK_LAUNCHER
+    if(picker.open&&picker_scratch) {
+        watch_face_animate(&picker,now);
+        picker.category_positions[picker.category]=picker.position;
+        return nova_watch_picker_collections_render(surface,&face,picker.selected,picker.category_position,picker.category_positions,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
+    }
+    return nova_watch_face_render(surface,&face,picker.selected);
+#else
     return nova_watch_render(surface,&face);
+#endif
 }
 static bool pace_frame(uint32_t began) {
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -214,7 +303,10 @@ static bool startup(void) {
     }
     return false;
 }
-static bool sleep_cycle(void) {
+#ifdef WATCH_CLOCK_ALARMS
+#include "clock_alarm.inc"
+#endif
+static int sleep_cycle(void) {
     /* Clear retained panel RAM before sleep, not merely its PWM. If the
      * platform briefly restores the backlight before the panel resume hook,
      * the exposed completed image is black rather than the old Clock. */
@@ -233,10 +325,25 @@ static bool sleep_cycle(void) {
 #ifdef WATCH_CLOCK_LAUNCHER
     mode=sleep_mode;
 #endif
+#ifdef WATCH_CLOCK_ALARMS
+    (void)watch_sleep_prepared;
+    int rc=watch_alarm_sleep_prepared(panel,pmu,mode,clock_alarm.api,rt->diagnostic);
+#else
     int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
+#endif
+#ifdef WATCH_CLOCK_ALARMS
+    if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
+#endif
     if(rc<0)return false;
     uint32_t discard;
     reset_telemetry();
+#ifdef WATCH_CLOCK_LAUNCHER
+    if(!reload_time_format())return false;
+#endif
+#ifdef WATCH_CLOCK_ALARMS
+    /* Due work is handled before wake intro; short/crown and touch are fresh. */
+    if(!launcher_touch_open(&touch) || !clock_alarm_foreground() || !launcher_touch_close(&touch))return false;
+#endif
     if (rc==WATCH_SLEEP_WOKE) {
         rt->diagnostic("WATCH_CLOCK woke");
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
@@ -253,10 +360,17 @@ static bool sleep_cycle(void) {
 }
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
+#ifdef WATCH_CLOCK_ALARMS
+    clock_alarm=(portable_alarm_client){0};clock_display_settled=true;
+    clock_alarm_modal=clock_alarm_failed_cleaned=clock_alarm_error_seen=false;
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
     touch=(watch_launcher_touch){0};
     launcher_swipe_pending=launcher_activity_pending=false;
     launcher_sampled_at=0;
+    picker=(watch_face_picker){0};picker_scratch=NULL;
+    picker_open_pending=picker_select_pending=picker_save_failed=false;
+    picker_selection_pending=0;
 #endif
     held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
     reset_telemetry();
@@ -284,6 +398,26 @@ __attribute__((visibility("default"))) void app_main(void) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
+    #ifdef WATCH_CLOCK_LAUNCHER
+    /* Load before the first sharp Clock frame on fresh boot and normal return.
+     * This is the existing shared app-settings namespace, never a driver write. */
+    risc_runtime_capability_v1 face_grant={.struct_size=sizeof(face_grant)};
+    if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,WATCH_FACE_STORE_INSTANCE,&face_grant)) {
+        unsigned selected=0;int rc=watch_face_load(face_grant.api,&selected);
+        picker.selected=(uint8_t)selected;
+        unsigned format=PORTABLE_TIME_FORMAT_12;(void)portable_time_format_load(face_grant.api,&format);
+        face.hour_24=format==PORTABLE_TIME_FORMAT_24;
+        if(!rt->release(&face_grant))goto done;
+        if(rc!=RISC_KEY_VALUE_OK&&rc!=RISC_KEY_VALUE_NOT_FOUND)rt->diagnostic("WATCH_CLOCK face=unreadable default=nova");
+    }
+#endif
+#ifdef WATCH_CLOCK_ALARMS
+#ifdef WATCH_CLOCK_POINTS
+    if(!clock_points_load())goto done;
+#endif
+    /* Deep reset and normal return both reconcile before any boot intro. */
+    if(!portable_alarm_open(&clock_alarm,rt) || !launcher_touch_open(&touch) || !clock_alarm_foreground())goto done;
+#endif
     uint32_t discarded,now,armed_at=0,last_activity=0;
     if (!pmu->key_events(pmu->base.context,&discarded) ||
 #ifdef WATCH_CLOCK_RETURN
@@ -293,7 +427,11 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
 #ifdef WATCH_CLOCK_LAUNCHER
+#ifdef WATCH_CLOCK_ALARMS
+    if(!rt->request_launch)goto done;
+#else
     if(!rt->request_launch || !launcher_touch_open(&touch)) goto done;
+#endif
 #endif
     last_activity=armed_at;
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -309,8 +447,19 @@ __attribute__((visibility("default"))) void app_main(void) {
     } else rt->diagnostic("WATCH_CLOCK settings=unavailable default=hybrid");
     rt->diagnostic(sleep_mode==PORTABLE_SLEEP_DEEP?"WATCH_CLOCK mode=deep":sleep_mode==PORTABLE_SLEEP_LIGHT?"WATCH_CLOCK mode=light":"WATCH_CLOCK mode=hybrid");
 #endif
+#if defined(WATCH_PAIRED_BOOT_CONFIRM) && !defined(WATCH_CLOCK_RETURN)
+    /* Startup has presented a complete frame and admitted all startup services.
+     * A pending native/store pair must remain unconfirmed on every earlier
+     * failure, intentional exit, queued handoff or native-retained path. */
+    if(!watch_confirm_paired_boot(rt)) {
+        rt->diagnostic("WATCH_CLOCK error=paired-boot-confirm");goto done;
+    }
+#endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
+#ifdef WATCH_CLOCK_ALARMS
+        if(!clock_alarm_foreground() || !alive(&now))break;
+#endif
         uint32_t events=0;
         if (!pmu->key_events(pmu->base.context,&events)) break;
         /* The clock closure currently exposes only PMU short/long key events.
@@ -320,6 +469,32 @@ __attribute__((visibility("default"))) void app_main(void) {
         sample_launcher_touch(now,true);
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
+        if(picker_open_pending) {
+            picker_open_pending=false;
+            if(!picker_scratch){picker_scratch=malloc(sizeof(*picker_scratch));if(picker_scratch)picker_scratch->valid_mask=0;}
+            if(!picker_scratch){watch_face_close(&picker);rt->diagnostic("WATCH_CLOCK picker=out-of-memory");}
+        }
+        /* Crown close/sleep supersedes any contact action sampled while an
+         * accepted display transfer was draining. */
+        if(events&3u)picker_select_pending=false;
+        if(picker_select_pending) {
+            picker_select_pending=false;
+            risc_runtime_capability_v1 setting={.struct_size=sizeof(setting)};bool saved=false;
+            if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,WATCH_FACE_STORE_INSTANCE,&setting)) {
+                saved=watch_face_save(setting.api,picker_selection_pending);
+                if(!rt->release(&setting))break;
+            }
+            if(saved) {
+                picker.selected=(uint8_t)picker_selection_pending;
+                watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
+                picker_open_pending=launcher_swipe_pending=false;
+            }
+            picker_save_failed=!saved;
+            rt->diagnostic(saved?"WATCH_CLOCK face=saved":"WATCH_CLOCK face=save-failed");
+        }
+        /* A short crown press dismisses the picker without changing selection;
+         * the existing long-press sleep path remains untouched. */
+        if(picker.open&&(events&1u)){watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;picker_save_failed=false;}
         if(launcher_swipe_pending) {
             launcher_swipe_pending=false;
             /* The completed sharp Clock remains in provider-owned storage.
@@ -338,8 +513,14 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_LAUNCHER
             /* Retained input subscriptions must not veto platform sleep. */
             if(!launcher_touch_close(&touch)) break;
+            watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
+            picker_open_pending=picker_select_pending=picker_save_failed=false;
 #endif
-            if (!sleep_cycle() || !alive(&armed_at)) break;
+            int sleep_result=sleep_cycle();
+#ifdef WATCH_CLOCK_ALARMS
+            if(sleep_result==WATCH_SLEEP_RETAINED)return; /* Runtime retains before fini. */
+#endif
+            if (!sleep_result || !alive(&armed_at)) break;
             /* A refused/held-key attempt also starts a new bounded interval;
              * it must not turn an expired timeout into a busy retry loop. */
             last_activity=armed_at;
@@ -352,7 +533,11 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
     }
 done:
+#ifdef WATCH_CLOCK_ALARMS
+    clock_alarm_finish();
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
+    free(picker_scratch);picker_scratch=NULL;
     if(!launcher_touch_close(&touch)) rt->diagnostic("WATCH_CLOCK error=touch-release");
 #endif
     if (held && display && display->release) display->release(display->context,held);

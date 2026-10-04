@@ -1,0 +1,1064 @@
+{
+  "label": "Clock0.6.0-face-picker-development",
+  "accepted_product": "1.0.0",
+  "source": "f07f33e8e1726fbe1ae49e01bf5a23d0a72c038a",
+  "accepted_archive_sha256": "6f782adb9756838d3d265d6ce8899c86cba85dac778d6edf28fb331dfd3240bf",
+  "store_sha256": {
+    "battery.elf": "26460e787607cdb8335196ae28ff5f67c39a55cf46fa6fcb6fd44871ac4c2c6d",
+    "battery.json": "41cea05ff190eb6f0e9317fa8e78072d085acae3e479407bd7b697b4e87b5088",
+    "board.json": "224339f27cf0782473fc418c5d8e21fbe3dd36d2b23741241f2970b2c2137859",
+    "boot.json": "65b9a32589afeb8d6b5fc23f316752b9c2da99af07936220fe5a3519daf0c248",
+    "calculator.elf": "494e496eaa0b7ef7dff4138deded5d6b342ef5943203403c1010f2905c29da85",
+    "calculator.json": "f6b17826f57a1298cddd647cc02a8865b390ff71f0ec67b040a631991de0600a",
+    "clock.elf": "cb1a57b38934e149d4a1f2dd5161fcedf9f3250c567655e613373bf6a806c6a2",
+    "clock.json": "73829829160f3fb2c243fd3e3f6ef8968770dd5a76b7f93a708ddbd59c7154c0",
+    "default.elf": "92284e1a1d06455c3613fe851aaf5329e1c4bda410795baa0d7d492a027044b6",
+    "default.json": "43a8c4d9e756648915abcf61ffe74379bf4707114fbf52920051939ca999ee07",
+    "gpio/driver.elf": "453d3ec036ab89c3fbe7610f6192bd1abd4905fce47aaef6766396c1d11a5e73",
+    "gpio/manifest.json": "c00ee6e442f9e23ea0c9c2d8b79990f7c597d790b27e22e8e140ce4fcacd665b",
+    "i2c/driver.elf": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+    "i2c/manifest.json": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+    "panel/driver.elf": "bb079b7680c716539402140c160849311a583c312be14e91804b515a76e24f14",
+    "panel/manifest.json": "1ac044cfd80bab291e8d6c2ecbdf5c413dabecbc5402d849e7a1649a9088ff63",
+    "pmu/driver.elf": "475c5103576f0a42b540e976c6d7448c867f58790da8229d157f06abea404978",
+    "pmu/manifest.json": "e1b86fde4ac805b20427afc7a8dd4e4a0ca5de6834d3606e8df8caaafadc4d91",
+    "rtc/driver.elf": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+    "rtc/manifest.json": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+    "settings.elf": "c41788f928a36f92a69ae3f38b8139d057a96a99350a8f41bc69cfb53a91e4d1",
+    "settings.json": "f1bbf0f61122a50ce75e909d848f5650535e1fc0b8f5445d36e6defa45903946",
+    "springboard.elf": "d34b876d0db4f94c55dac72808c48ed24d76a4bc7d5f7ec2c215961fda9984fb",
+    "springboard.json": "dc34b4972a679c88ec07abaec4b9bfef5a90a88bce82a9143c1199877a12b4c0",
+    "stopwatch.elf": "1d7e5a03d3b2b58edd8e72a268c96a84aba294fc224641bb46b9a74c403a0688",
+    "stopwatch.json": "2f938bfc9fbf0d9a78a6420872420f2ebe8d5ca06184905f10efc4493cce1a58",
+    "touch/driver.elf": "f15b964c77433f49414fc591e1960a614d617daecc7a8ae8b4b3952109841ddc",
+    "touch/manifest.json": "aff7b544d1298a6e4a3c9318c7f208567ca09cde8513bdbe1a24706097d496ec"
+  },
+  "manifests": {
+    "battery.json": {
+      "type": "application",
+      "id": "battery",
+      "version": "1.0.6",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "battery.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        }
+      ]
+    },
+    "board.json": {
+      "board_id": "lilygo-t-watch-s3",
+      "buses": [
+        {
+          "controller": 0,
+          "controller_namespace": "esp32.peripheral",
+          "frequency_hz": 100000,
+          "instance_id": 101,
+          "kind": "i2c",
+          "mode": 0,
+          "physical_controller": 0,
+          "pins": {
+            "miso": -1,
+            "mosi": -1,
+            "scl": 11,
+            "sclk": -1,
+            "sda": 10
+          }
+        },
+        {
+          "controller": 1,
+          "controller_namespace": "esp32.peripheral",
+          "frequency_hz": 100000,
+          "instance_id": 102,
+          "kind": "i2c",
+          "mode": 0,
+          "physical_controller": 1,
+          "pins": {
+            "miso": -1,
+            "mosi": -1,
+            "scl": 40,
+            "sclk": -1,
+            "sda": 39
+          }
+        },
+        {
+          "controller": 0,
+          "controller_namespace": "riscrte.logical",
+          "frequency_hz": 40000000,
+          "instance_id": 103,
+          "kind": "spi",
+          "mode": 0,
+          "physical_controller": 2,
+          "pins": {
+            "miso": -1,
+            "mosi": 13,
+            "scl": -1,
+            "sclk": 18,
+            "sda": -1
+          }
+        }
+      ],
+      "devices": [
+        {
+          "bindings": {},
+          "chip": {
+            "model": "esp32s3-gpio",
+            "revision": "unspecified",
+            "vendor": "espressif"
+          },
+          "compatible": "espressif,esp32s3-gpio",
+          "config": {
+            "features": 0,
+            "unit": 0
+          },
+          "config_type": "controller.gpio",
+          "config_version": 1,
+          "instance_id": 1
+        },
+        {
+          "bindings": {},
+          "chip": {
+            "model": "esp32s3-i2c",
+            "revision": "unspecified",
+            "vendor": "espressif"
+          },
+          "compatible": "espressif,esp32s3-i2c",
+          "config": {
+            "bus_instance_id": 101
+          },
+          "config_type": "controller.i2c",
+          "config_version": 1,
+          "instance_id": 2
+        },
+        {
+          "bindings": {},
+          "chip": {
+            "model": "esp32s3-i2c",
+            "revision": "unspecified",
+            "vendor": "espressif"
+          },
+          "compatible": "espressif,esp32s3-i2c",
+          "config": {
+            "bus_instance_id": 102
+          },
+          "config_type": "controller.i2c",
+          "config_version": 1,
+          "instance_id": 3
+        },
+        {
+          "bindings": {
+            "gpio.bank": 1,
+            "i2c.bus": 2
+          },
+          "chip": {
+            "model": "axp2101",
+            "revision": "unspecified",
+            "vendor": "x-powers"
+          },
+          "compatible": "x-powers,axp2101",
+          "config": {
+            "charge_ma": 100,
+            "device": {
+              "address": 52,
+              "bus_instance_id": 101,
+              "chip_id": 74,
+              "irq": 21,
+              "irq_active_high": false,
+              "irq_pull_up": true
+            },
+            "rails": [
+              {
+                "id": 1,
+                "millivolts": 3300
+              },
+              {
+                "id": 2,
+                "millivolts": 3300
+              }
+            ]
+          },
+          "config_type": "power.axp2101",
+          "config_version": 1,
+          "instance_id": 4
+        },
+        {
+          "bindings": {
+            "board.battery": 4
+          },
+          "chip": {
+            "model": "st7789v3",
+            "revision": "unspecified",
+            "vendor": "sitronix"
+          },
+          "compatible": "sitronix,st7789v3",
+          "config": {
+            "backlight": 45,
+            "backlight_active_high": true,
+            "bus_instance_id": 103,
+            "busy": -1,
+            "busy_active_high": false,
+            "cs": 12,
+            "dc": 38,
+            "height": 240,
+            "offset_x": 0,
+            "offset_y": 0,
+            "power_active_high": [],
+            "power_pins": [],
+            "reset": -1,
+            "reset_active_high": false,
+            "reset_assert_ms": 0,
+            "reset_recovery_ms": 0,
+            "rotation": 2,
+            "width": 240
+          },
+          "config_type": "display.spi",
+          "config_version": 1,
+          "instance_id": 5
+        },
+        {
+          "bindings": {
+            "board.battery": 4,
+            "gpio.bank": 1,
+            "i2c.bus": 3
+          },
+          "chip": {
+            "model": "ft6336u",
+            "revision": "unspecified",
+            "vendor": "focaltech"
+          },
+          "compatible": "focaltech,ft6336u",
+          "config": {
+            "address": 56,
+            "bus_instance_id": 102,
+            "height": 240,
+            "irq": 16,
+            "irq_active_high": false,
+            "irq_pull_up": true,
+            "reset": -1,
+            "reset_active_high": false,
+            "reset_assert_ms": 0,
+            "reset_recovery_ms": 0,
+            "width": 240
+          },
+          "config_type": "touch.i2c",
+          "config_version": 1,
+          "instance_id": 6
+        },
+        {
+          "bindings": {
+            "gpio.bank": 1,
+            "i2c.bus": 2
+          },
+          "chip": {
+            "model": "pcf8563",
+            "revision": "unspecified",
+            "vendor": "nxp"
+          },
+          "compatible": "nxp,pcf8563",
+          "config": {
+            "address": 81,
+            "bus_instance_id": 101,
+            "chip_id": 0,
+            "irq": 17,
+            "irq_active_high": false,
+            "irq_pull_up": true
+          },
+          "config_type": "peripheral.i2c",
+          "config_version": 1,
+          "instance_id": 8
+        }
+      ],
+      "revision": "launcher-common",
+      "schema": "riscrte.board-hardware",
+      "schema_version": 1
+    },
+    "boot.json": {
+      "app_capabilities": [
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 2,
+              "capability": "rtc.clock",
+              "instance_id": 8
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            },
+            {
+              "api": 1,
+              "capability": "storage.key-value",
+              "instance_id": 1
+            }
+          ],
+          "manifest": "default.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 2,
+              "capability": "rtc.clock",
+              "instance_id": 8
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            },
+            {
+              "api": 1,
+              "capability": "storage.key-value",
+              "instance_id": 1
+            }
+          ],
+          "manifest": "clock.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 2,
+              "capability": "rtc.clock",
+              "instance_id": 8
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            }
+          ],
+          "manifest": "springboard.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            }
+          ],
+          "manifest": "battery.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 2,
+              "capability": "rtc.clock",
+              "instance_id": 8
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            },
+            {
+              "api": 1,
+              "capability": "storage.key-value",
+              "instance_id": 1
+            }
+          ],
+          "manifest": "settings.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            }
+          ],
+          "manifest": "calculator.json"
+        },
+        {
+          "grants": [
+            {
+              "api": 1,
+              "capability": "display.output",
+              "instance_id": 5
+            },
+            {
+              "api": 1,
+              "capability": "input.touch.raw",
+              "instance_id": 6
+            },
+            {
+              "api": 2,
+              "capability": "rtc.clock",
+              "instance_id": 8
+            },
+            {
+              "api": 1,
+              "capability": "board.battery",
+              "instance_id": 4
+            },
+            {
+              "api": 1,
+              "capability": "storage.key-value",
+              "instance_id": 2
+            }
+          ],
+          "manifest": "stopwatch.json"
+        }
+      ],
+      "board": "board.json",
+      "default_app": "default.elf",
+      "drivers": [
+        {
+          "instance_id": 1,
+          "manifest": "gpio/manifest.json"
+        },
+        {
+          "instance_id": 2,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 3,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 4,
+          "manifest": "pmu/manifest.json"
+        },
+        {
+          "instance_id": 5,
+          "manifest": "panel/manifest.json"
+        },
+        {
+          "instance_id": 6,
+          "manifest": "touch/manifest.json"
+        },
+        {
+          "instance_id": 8,
+          "manifest": "rtc/manifest.json"
+        }
+      ]
+    },
+    "calculator.json": {
+      "type": "application",
+      "id": "calculator",
+      "version": "0.1.1",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "calculator.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        }
+      ]
+    },
+    "clock.json": {
+      "type": "application",
+      "id": "twatch-clock-return",
+      "version": "0.5.2",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "clock.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "rtc.clock",
+          "api": 2
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        },
+        {
+          "capability": "storage.key-value",
+          "api": 1
+        }
+      ]
+    },
+    "default.json": {
+      "type": "application",
+      "id": "twatch-clock",
+      "version": "0.5.2",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "default.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "rtc.clock",
+          "api": 2
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        },
+        {
+          "capability": "storage.key-value",
+          "api": 1
+        }
+      ]
+    },
+    "gpio/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "espressif,esp32s3-gpio",
+          "config_type": "controller.gpio",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-gpio",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 1,
+          "capability": "gpio.bank"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "platform.gpio"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.4.1"
+    },
+    "i2c/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "espressif,esp32s3-i2c",
+          "config_type": "controller.i2c",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-i2c",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 1,
+          "capability": "i2c.bus"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "platform.i2c.controller"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.2.0"
+    },
+    "panel/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "sitronix,st7789v3",
+          "config_type": "display.spi",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-panel",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 1,
+          "capability": "display.output"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "platform.gpio"
+        },
+        {
+          "api": 1,
+          "capability": "spi.bus"
+        },
+        {
+          "api": 1,
+          "capability": "platform.clock"
+        },
+        {
+          "api": 1,
+          "capability": "board.battery"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.4.0"
+    },
+    "pmu/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "x-powers,axp2101",
+          "config_type": "power.axp2101",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-pmu",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 1,
+          "capability": "board.battery"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "i2c.bus"
+        },
+        {
+          "api": 1,
+          "capability": "gpio.bank"
+        },
+        {
+          "api": 1,
+          "capability": "platform.clock"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.5.1"
+    },
+    "rtc/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "nxp,pcf8563",
+          "config_type": "peripheral.i2c",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-rtc",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 2,
+          "capability": "rtc.clock"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "i2c.bus"
+        },
+        {
+          "api": 1,
+          "capability": "gpio.bank"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.2.0"
+    },
+    "settings.json": {
+      "type": "application",
+      "id": "settings",
+      "version": "1.1.1",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "settings.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "rtc.clock",
+          "api": 2
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        },
+        {
+          "capability": "storage.key-value",
+          "api": 1
+        }
+      ]
+    },
+    "springboard.json": {
+      "type": "application",
+      "id": "springboard",
+      "version": "1.3.9",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "springboard.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "rtc.clock",
+          "api": 2
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        }
+      ]
+    },
+    "stopwatch.json": {
+      "type": "application",
+      "id": "stopwatch",
+      "version": "0.1.1",
+      "architecture": "xtensa-esp32s3",
+      "file_name": "stopwatch.elf",
+      "entry": "app_main",
+      "requires": [
+        {
+          "capability": "display.output",
+          "api": 1
+        },
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        },
+        {
+          "capability": "rtc.clock",
+          "api": 2
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        },
+        {
+          "capability": "storage.key-value",
+          "api": 1
+        }
+      ]
+    },
+    "touch/manifest.json": {
+      "architecture": "xtensa-esp32s3",
+      "driver_abi": 2,
+      "file_name": "driver.elf",
+      "hardware_compatibility": [
+        {
+          "compatible": "focaltech,ft6336u",
+          "config_type": "touch.i2c",
+          "config_version": 1,
+          "revisions": [
+            "unspecified"
+          ]
+        }
+      ],
+      "id": "twatch-touch",
+      "physical_verification": "pending",
+      "provides": [
+        {
+          "api": 1,
+          "capability": "input.touch.raw"
+        }
+      ],
+      "requires": [
+        {
+          "api": 1,
+          "capability": "hardware.device"
+        },
+        {
+          "api": 1,
+          "capability": "i2c.bus"
+        },
+        {
+          "api": 1,
+          "capability": "gpio.bank"
+        },
+        {
+          "api": 1,
+          "capability": "platform.clock"
+        },
+        {
+          "api": 1,
+          "capability": "board.battery"
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "type": "driver",
+      "version": "0.2.0"
+    }
+  },
+  "shared_metadata": {
+    "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+    "shared_sources": {
+      "system-apps": {
+        "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+        "commit": "b28428505c9e067bb6ea8a84d12f13ec0bcc4992"
+      },
+      "utilities": {
+        "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+        "commit": "9d08cb3224a86bb6a5c27bad11b3c70516c6f614"
+      }
+    },
+    "touch_rotation": 0,
+    "rtc_policy": "fixed-UTC+08-to-America/Denver",
+    "full_frames": true,
+    "crown_navigation": "app-local-original-pmu",
+    "retained_handoff": true,
+    "handoff_ms": 60,
+    "return_targets": {
+      "springboard": "clock.elf",
+      "battery": "springboard.elf",
+      "settings": "springboard.elf",
+      "calculator": "springboard.elf",
+      "stopwatch": "springboard.elf"
+    },
+    "daily_apps": {
+      "stopwatch": {
+        "storage_instance": 2,
+        "key": "stopwatch",
+        "awake_clock": "monotonic-ms",
+        "restored_clock": "raw-RTC-seconds",
+        "precision": "approximate-after-recovery"
+      },
+      "calculator": {
+        "arithmetic": "fixed-decimal",
+        "fractional_digits": 6
+      }
+    },
+    "sleep_policy": {
+      "default": "hybrid",
+      "application_idle_ms": 60000,
+      "light_ms": 300000,
+      "scope": "saved Clock mode; other apps always hybrid",
+      "choice": "storage.key-value@1",
+      "instance_id": 1,
+      "key": "sleep_mode",
+      "deep_wake": "fresh-default",
+      "ulp_program": false
+    }
+  },
+  "source_sha256": {
+    "apps/clock/PortableSleepPolicy.h": "a543173afd4ceec4707fcda3b63c75108546b95813abed550edf05383dbc0532",
+    "apps/clock/portable_navigation.c": "b0d1729346d4b808395766c1c7f1800866d02a54a9e3e39baa8dd425854da84e",
+    "apps/clock/portable_sleep.c": "6de43f592b580d632f33569333053fd6009dc3417d7e1cccf6cbd5c36f07ff26",
+    "apps/clock/watch_sleep.h": "437db1919d34385b9b0bc1f24c39b81477b0a5bd1737e391e87bc98f61c0b0b1",
+    "apps/shared-sources.json": "eb5674cd765ee0c9b63ebc2fbfd1f0e6a4d02147f36f3f044460ac35d140810b",
+    "board.json": "d116fbee832c8d9627269affe1ae19c9cf3d318b5f511d52566b1849a9ae96df",
+    "drivers/twatch_ble/driver.c": "a7ce6ca81cb3ec7f1a04f532d18fd402394c898edb43e081577020cee1dab767",
+    "drivers/twatch_ble/manifest.json": "2b2f411af636ecd2198465159e4fefeb143010e82267f91173df8b864b67f2a5",
+    "drivers/twatch_board/driver.c": "456c6d814f404e9c1ee94988a82db4fff282d8413ec712eaddff3d6dc1780af0",
+    "drivers/twatch_board/manifest.json": "931fc2cdf00f53e262c0eb1c09d4e095eb171b3ac4463f85f8618202e07d8404",
+    "drivers/twatch_button/driver.c": "ca26a8d2a90852c18776d31bc107c86f8fe2cb9069c71d7f5a724228a6f41b25",
+    "drivers/twatch_button/manifest.json": "cfb3c2260eddc768378cac0b96a98215dd347a71148be1bc0aa5e8aa7d56c187",
+    "drivers/twatch_gpio/driver.c": "6026654cf1cad232037ae54e309d3fab1fe8328296419623df112188267ed5ae",
+    "drivers/twatch_gpio/manifest.json": "a5c0a8490378711801db6943169d55ad0d8384fbfc197a7adf3342f39d81c97d",
+    "drivers/twatch_haptic/driver.c": "6a8bfc139d3670e0515b68385de2743e88a00686a0975c1869ab9a491257251b",
+    "drivers/twatch_haptic/manifest.json": "e634f95c9e44625c6ff523d3ed1eee9127123e698177d1fa35377ca99a834627",
+    "drivers/twatch_i2c/i2c_main.c": "f837410c20d86ec0b497a4c9648bc7c994278b34e3b5214836dd25cd1beba060",
+    "drivers/twatch_i2c/manifest.json": "2b689de3c8219cbafaeb3420903470f7a04542604c5803341217345d580ff5c8",
+    "drivers/twatch_i2c_touch/i2c_main.c": "e7e9703521eb2a6608a588665d68cbb1f2ca8602caca255f1fd01b9b0177ede9",
+    "drivers/twatch_i2c_touch/manifest.json": "42679824c06e6345a162782610b90decef2af341909157a21ba5484e20b8e0ba",
+    "drivers/twatch_imu/driver.c": "acb3a7bea4634d4fd5c741a080a846a0689c35c1dbfb09c0e91fdcab803d68e9",
+    "drivers/twatch_imu/manifest.json": "37b943488a4bddc78bce678f83045fda5dc08ef50887a6084eeb2d3da9a00043",
+    "drivers/twatch_ir/driver.c": "1ab30acbf8cc94451b4b5fbde51a12a94d74cdfe8ec4bb56a7425ad8002c3907",
+    "drivers/twatch_ir/manifest.json": "219d15c54533275310dec47e20e9abea588c1f1d66750778374613c0aa0e9909",
+    "drivers/twatch_lora/driver.c": "cf181ea7a010078683cb44e90ddad0689243289b7e29668bb265f6dcc6466295",
+    "drivers/twatch_lora/manifest.json": "e229e0685536b8b257ab53e32dcc6d21406050b25cfe62742f361b23fea1a123",
+    "drivers/twatch_mic/driver.c": "96e53a057602294692836ca37d73ae293bdf4048e663e95c088e40c721963499",
+    "drivers/twatch_mic/manifest.json": "1b07cfc8e21924fc704bd7a074faae3a6ab0d1cb1f6972ed42270c5419603ed5",
+    "drivers/twatch_panel/driver.c": "19fa1a1437722654158c99df8add3bd6fc85802fbf04d5761da1226343ef8518",
+    "drivers/twatch_panel/manifest.json": "e13f2dcdf3afd591856374aa1abeea8c8dca4f47e031adda685fb3d72b3b48b7",
+    "drivers/twatch_pmu/driver.c": "4e7844b2076a5f065c33505f5198538dd91747a941151e0b4658d4d6a3fd675f",
+    "drivers/twatch_pmu/manifest.json": "1bd3d8cbedd6a618d52bc610d092d811a95b9a2aeb54750db1d352359a80903c",
+    "drivers/twatch_rtc/driver.c": "b8d91acc9ae532eb9aea688ee347bc42db5ae7353a4c4b392e9dc6710c8b0eec",
+    "drivers/twatch_rtc/manifest.json": "77163b08966f8d2c11d7699ed662b7fb6a12d69eb9f39e1530e16bc37b7aa310",
+    "drivers/twatch_speaker/driver.c": "5535d520d9f2c02919c321a158b9381672ff8b88fb8e0eca99cf0cf0f676076a",
+    "drivers/twatch_speaker/manifest.json": "5e45b9b821689692ba1feb30c737c82a41f6bb68d7543fc4767f7550ebd7d45d",
+    "drivers/twatch_touch/driver.c": "0d976c03897d7afd5d405b811436b1ec7d65e8a817c16c527397fb2bc9f47e07",
+    "drivers/twatch_touch/manifest.json": "7ed8fd18ea919cfef693b7903f4e303b38225bcb4109c17bd50a3813d9f53ba9",
+    "drivers/twatch_wifi/WifiApi.h": "fb50963245ed934f658bd71e595de63502e8c3cfbb0d5c0075307240b9e409d1",
+    "drivers/twatch_wifi/driver.c": "dd404039995294bbcbed2e9d06c0288579dabe5cd90b64e400304beaa65e1d27",
+    "drivers/twatch_wifi/manifest.json": "8b3af9f20cc0db4ebf6aa074e2d490db7fe1b9ec8da5d8b4fc71272ac32bccd0",
+    "hardware/sx1262-433-bma423.json": "3765377e233ececab78528ff38ec16f438b91be90a04e3646d400ee5040c45de",
+    "hardware/sx1262-433-bma456h.json": "154024ba6f40b51ffdcb424dbf28f3b4d7d07799106bd507024d30c35cb2bd44",
+    "hardware/sx1262-868-bma423.json": "ccaefee9e268a467601d26570b2626407d142ca63dfd3145be73ea0f3382d600",
+    "hardware/sx1262-868-bma456h.json": "5dc6fd5cbeec34903b97cfbe16a0174674c2c1c604bba8f381a2fef3cb3f3b06",
+    "hardware/sx1262-915-bma423.json": "75368f819ef70cd859403c18d14e5291614759303135389405a7d4eedc1553ee",
+    "hardware/sx1262-915-bma456h.json": "aad85a43849650526ea358de6cc90e874d8f7c14ac1c3f20fb592e833f4928d7",
+    "hardware/sx1280-2400-bma423.json": "a066b7969eb741912d7832b3e87c4a63b0e0e19b94d152ea8c63875c9a0da546",
+    "hardware/sx1280-2400-bma456h.json": "b6968739858c9399a94d67f37c827fa9a1f27a2e3a4f17d8cc4efb000827c6d4",
+    "include/common/dependency.h": "438ecdaaefe7610366cbba5bb38f01ad6c15220f9e6cb409c6f1853c5583ed13",
+    "include/common/display.h": "bae537fa0273cfec3b930badfdc44915cf7b24dcade1e5d8d80452b786eb5e5b",
+    "include/common/gpio.h": "4a9d80486570d58a6a24c6d3c637da9fd8e72e4c52836592ee36aaba9597df40",
+    "include/common/spi.h": "028131ce826cd652e5b41f3c511aeb12cd82bdc4119ec9b9ff27962eba15e469",
+    "include/twatch_calendar.h": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
+    "include/twatch_caps.h": "d520324fe3f93fcf196a17bd0ed883aadd5564e4d46c7665161af7a480e46357",
+    "include/twatch_hardware.h": "c9ad89d7cce9c32093a38a67dd60827cab8073f511c88427c831050b4dd38147",
+    "include/twatch_i2c_impl.h": "8031ea683faf48e4026f5c39310908b7b0b39266e21fb3b6c42f53ced3945292",
+    "include/twatch_power.h": "0d672ede655d037f837d75fde4a193a1ec5f186dc33c3304270a471f263624fc",
+    "include/twatch_support.h": "2be79a3e294f53dc22231eafd45e33aad5901f9c6670ea2a91d3f909fa53c91d",
+    "include/twatch_util.h": "8303bef501c6638953c66318bb6df84e416aaa38b2718079609b2e167765cc04",
+    "load-order.json": "c118575b9aec9a5b6cd55fc761aa3c8eabc61beb6c03eab7aff09d59c2f076da",
+    "platform-resources.json": "fdd6f49134ed0f74321b8c590d3b59bf3115e44e0d3009a716a37478ea617c94",
+    "release/product.json": "8d8ef39a3331585ed5d43e32773425387d25c53a5191bee79a1b27f1a9bce826",
+    "sdk/SOURCES.json": "2559aa825ddca70c7ac04ff78d0693a31237d29e567125d56e788fe8d91a3c92",
+    "sdk/app/APP_CAPABILITIES.md": "a59d26f09377680ba82be1f6cf17c66e452c5a910bc4952f39b49d6cd234d257",
+    "sdk/app/RiscKeyValueV1.h": "5d5524ffd27b164f31505c5f538f528b39b35e356922e03e2eb59a9c68677b56",
+    "sdk/app/RiscRuntimeV1.h": "6fbfacaa46d532bfef083e8c7dd3bbe36613e557279fdda887d814d53915526b",
+    "sdk/app/SOURCES.json": "0a64df09b112e9b37858b0f1d4717bdaa39a9ddfe9424ae0d0204e06907ec324",
+    "sdk/driver/GardenPlatformV1.h": "d60f559deae831ed7ff4e7335e59127f92886e2cbdc62feecc63c51a6c33a456",
+    "sdk/driver/RiscBatteryGaugeV1.h": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86",
+    "sdk/driver/RiscBluetoothHciV1.h": "191a5d8509cd6122bed4eccd510fac8037b8fbb03bf9801633dd2e0ca155b9a7",
+    "sdk/driver/RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "sdk/driver/RiscDisplayOutputV1.h": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+    "sdk/driver/RiscGpioBankV1.h": "147f0dc029041e473f0d0f9034583be881d935c9aa77ddc52cbbc4c2b198a71b",
+    "sdk/driver/RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+    "sdk/driver/RiscI2cBusV1.h": "a6b769efbbf7f3837a6a348689b0aee84bf687ae8e18a31d0296f3bfa6ac2004",
+    "sdk/driver/RiscInputNavigationV1.h": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26",
+    "sdk/driver/RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "sdk/driver/RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+    "sdk/driver/RiscProviderV2.h": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+    "sdk/driver/RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+    "sdk/driver/RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+    "sdk/driver/RiscTouchV1.h": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+    "sdk/driver/TWatchHardwareV1.h": "19fdcd6999dd63b5aeede0ed22c699af5d63231760acb15e2a113c3605cc7128",
+    "sdk/driver/TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd"
+  }
+}

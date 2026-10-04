@@ -8,7 +8,7 @@
 static const risc_i2c_bus_api_v1 *bus;
 static uint64_t claim, irq_claim;
 static const risc_gpio_bank_api_v1 *gpio_api;
-static bool started;
+static bool started, identified;
 static const tw_hw_i2c_device_v1 *config;
 static bool write_reg(uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
@@ -18,7 +18,7 @@ static bool effect(void *context, uint8_t effect_id) {
     (void)context;
     if (!started || !effect_id || effect_id > 123)
         return false;
-    return write_reg(0x01u, 0x00u) && write_reg(0x03u, 0x01u) && write_reg(0x04u, effect_id) &&
+    return write_reg(0x0Cu, 0x00u) && write_reg(0x01u, 0x00u) && write_reg(0x03u, 0x01u) && write_reg(0x04u, effect_id) &&
            write_reg(0x05u, 0) && write_reg(0x0Cu, 0x01u);
 }
 static bool stop_effect(void *context) {
@@ -26,7 +26,9 @@ static bool stop_effect(void *context) {
     return started && write_reg(0x0Cu, 0x00u);
 }
 static bool quiesce(void) {
-    if (started && claim && !write_reg(0x0Cu, 0))
+    /* A partial start can already have inherited an active GO bit from a
+     * previous boot. Keep the identified device claimed until stop succeeds. */
+    if (identified && claim && !write_reg(0x0Cu, 0))
         return false;
     bool ok = !claim || (bus && bus->release_device(bus->context, claim));
     if (!ok)
@@ -39,7 +41,7 @@ static bool quiesce(void) {
     }
     claim = 0;
     bus = NULL;
-    started = false;
+    started = identified = false;
     return ok;
 }
 static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
@@ -67,7 +69,8 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         (void)quiesce();
         return false;
     }
-    if (!write_reg(0x01u, 0x00u) || !write_reg(0x03u, 1) ||
+    identified = true;
+    if (!write_reg(0x0Cu, 0x00u) || !write_reg(0x01u, 0x00u) || !write_reg(0x03u, 1) ||
         !write_reg(0x05u, 0)) { /* Library 1, internal trigger, terminated sequence; preserve
                                    factory motor calibration. */
         (void)quiesce();
