@@ -55,10 +55,11 @@ class BoardReleases(unittest.TestCase):
             self.assertIn('platform-resources.json', z.namelist())
 
     def test_unchanged_and_modified_without_bump(self):
-        existing = [{'tag_name': self.tag, 'draft': False}]
+        existing = [{'tag_name': self.tag, 'draft': False, 'assets': [{'name': 'release-record.json', 'id': 99}]}]
         self.assertEqual(p.candidates({board.IDENTITY: self.value}, existing), [])
         def download(*args):
-            (Path(args[args.index('--dir') + 1]) / 'release-record.json').write_text(json.dumps(self.record))
+            self.assertEqual(args[:2], ('api', 'repos/owner/repo/releases/assets/99'))
+            return json.dumps(self.record).encode()
         with patch.object(p, 'gh', side_effect=download):
             p.verify_board_version('owner/repo', existing, self.root)
             for name in ('hardware/sx1262-433-bma423.json', 'docs/twatch-board-v1.schema.json',
@@ -70,6 +71,12 @@ class BoardReleases(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         p.verify_board_version('owner/repo', existing, self.root)
                     path.write_bytes(original)
+
+    def test_partial_board_draft_record_uses_asset_id(self):
+        existing = [{'tag_name': self.tag, 'draft': True, 'assets': [{'name': 'release-record.json', 'id': 99}]}]
+        with patch.object(p, 'gh', return_value=json.dumps(self.record).encode()) as gh:
+            p.verify_board_version('owner/repo', existing, self.root)
+            gh.assert_called_once_with('api', 'repos/owner/repo/releases/assets/99', '-H', 'Accept: application/octet-stream')
 
     def test_optional_reset_rules_in_both_schemas(self):
         original = json.loads((self.root / 'hardware/sx1262-433-bma423.json').read_text())
@@ -145,29 +152,33 @@ class BoardReleases(unittest.TestCase):
         corrupt_download = False
         def fake_gh(*args):
             nonlocal fail_record
-            if args[0] == 'api' and '--method' in args:
-                remote.append({'tag_name': self.tag, 'target_commitish': self.sha,
-                               'draft': True, 'assets': []})
-                return json.dumps(remote[0])
-            elif args[:2] == ('release', 'upload'):
-                file = Path(args[3])
+            self.assertEqual(args[0], 'api')
+            endpoint = args[1]
+            method = args[args.index('--method') + 1] if '--method' in args else 'GET'
+            if method == 'POST' and '/assets?name=' in endpoint:
+                file = Path(args[args.index('--input') + 1])
                 if file.name == 'release-record.json' and fail_record:
                     fail_record = False
                     raise RuntimeError('simulated interrupted upload')
-                self.assertNotIn(file.name, stored)  # no overwrite, even on retry
+                self.assertNotIn(file.name, stored)
                 stored[file.name] = file.read_bytes()
-                remote[0]['assets'].append({'name': file.name})
-            elif args[:2] == ('release', 'download'):
-                names = [args[args.index('--pattern') + 1]] if '--pattern' in args else stored
-                for name in names:
-                    value = b'corrupt' if corrupt_download else stored[name]
-                    (Path(args[args.index('--dir') + 1]) / name).write_bytes(value)
-            elif args[:2] == ('release', 'edit'):
+                remote[0]['assets'].append({'id': len(stored), 'name': file.name})
+                return json.dumps(remote[0]['assets'][-1]).encode()
+            if method == 'POST':
+                remote.append({'id': 42, 'tag_name': self.tag, 'target_commitish': self.sha,
+                               'draft': True, 'assets': []})
+                return json.dumps(remote[0]).encode()
+            if method == 'PATCH':
                 self.assertEqual(set(stored), {self.record['archive'], 'release-record.json'})
                 remote[0]['draft'] = False
-            elif args[0] == 'api':
-                return json.dumps({'sha': self.sha})
-            return ''
+                return json.dumps(remote[0]).encode()
+            if '/releases/assets/' in endpoint:
+                identity = int(endpoint.rsplit('/', 1)[1])
+                name = next(a['name'] for a in remote[0]['assets'] if a['id'] == identity)
+                return b'corrupt' if corrupt_download else stored[name]
+            if endpoint.endswith('/releases/42'):
+                return json.dumps(remote[0]).encode()
+            return json.dumps({'sha': self.sha}).encode()
         with patch.object(p, 'ROOT', self.root), patch.object(p, 'verify_existing_tag'), \
              patch.object(p, 'releases', side_effect=lambda repo: remote), \
              patch.object(p, 'gh', side_effect=fake_gh):

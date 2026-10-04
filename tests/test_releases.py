@@ -92,65 +92,58 @@ class Custody(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.stage(self.plan, self.root)
 
-    def test_empty_draft_retarget_resume_and_immutable_retries(self):
+    def exercise_publication(self, first):
         record = p.stage(self.plan, self.root)['packages'][0]
-        remote = {'id': 42, 'tag_name': record['tag'], 'target_commitish': 'b' * 40, 'draft': True, 'assets': []}
-        stored = {}
-        calls = []
+        remote = {'id': 42, 'tag_name': record['tag'], 'target_commitish': 'b' * 40 if not first else 'a' * 40,
+                  'draft': True, 'prerelease': False, 'assets': []}
+        stored, calls = {}, []
         def fake_gh(*args):
             calls.append(args)
-            if args[0] == 'api' and '--method' in args:
-                self.assertIn('PATCH', args)
-                remote['target_commitish'] = 'a' * 40
-                return json.dumps(remote)
-            if args[:2] == ('release', 'upload'):
-                file = Path(args[3]); stored[file.name] = file.read_bytes()
-                remote['assets'].append({'name': file.name})
-            elif args[:2] == ('release', 'download'):
-                dest = Path(args[args.index('--dir') + 1])
-                names = [args[args.index('--pattern') + 1]] if '--pattern' in args else stored
-                for name in names:
-                    (dest / name).write_bytes(stored[name])
-            elif args[:2] == ('release', 'edit'):
-                remote['draft'] = False
-            elif args[0] == 'api':
-                return json.dumps({'sha': 'a' * 40})
-            return ''
+            self.assertEqual(args[0], 'api', 'No tag-based draft CLI operation is allowed')
+            endpoint = args[1]
+            method = args[args.index('--method') + 1] if '--method' in args else 'GET'
+            if method == 'POST' and '/assets?name=' in endpoint:
+                name = endpoint.split('?name=')[1]
+                self.assertIn('/releases/42/assets', endpoint)
+                stored[name] = Path(args[args.index('--input') + 1]).read_bytes()
+                remote['assets'].append({'id': len(stored), 'name': name})
+                return json.dumps(remote['assets'][-1]).encode()
+            if method == 'POST':
+                self.assertIn('draft=true', args)
+                return json.dumps(remote).encode()
+            if method == 'PATCH':
+                if 'draft=false' in args:
+                    self.assertEqual(set(stored), {self.name, 'release-record.json'})
+                    remote['draft'] = False
+                else:
+                    remote['target_commitish'] = 'a' * 40
+                return json.dumps(remote).encode()
+            if '/releases/assets/' in endpoint:
+                identity = int(endpoint.rsplit('/', 1)[1])
+                name = next(a['name'] for a in remote['assets'] if a['id'] == identity)
+                return stored[name]
+            if '/commits/' in endpoint:
+                return json.dumps({'sha': 'a' * 40}).encode()
+            if endpoint.endswith('/releases/42'):
+                return json.dumps(remote).encode()
+            self.fail('Unexpected endpoint: ' + endpoint)
+        snapshots = [[], [remote], [remote]] if first else [[remote], [remote], [remote]]
         with patch.object(p, 'ROOT', self.root), patch.object(p, 'verify_existing_tag'), \
-             patch.object(p, 'releases', return_value=[remote]), patch.object(p, 'gh', side_effect=fake_gh):
+             patch.object(p, 'releases', side_effect=snapshots), patch.object(p, 'gh', side_effect=fake_gh):
             p.publish_one('owner/repo', record)
             self.assertFalse(remote['draft'])
-            uploads = len([c for c in calls if c[:2] == ('release', 'upload')])
+            uploads = len([c for c in calls if '/assets?name=' in c[1]])
             p.publish_one('owner/repo', record)
-            self.assertEqual(uploads, len([c for c in calls if c[:2] == ('release', 'upload')]))
+            self.assertEqual(uploads, len([c for c in calls if '/assets?name=' in c[1]]))
             stored[self.name] = b'tamper'
             with self.assertRaises(ValueError):
                 p.publish_one('owner/repo', record)
 
+    def test_empty_draft_retarget_resume_and_immutable_retries(self):
+        self.exercise_publication(False)
+
     def test_first_publication_creates_draft(self):
-        record = p.stage(self.plan, self.root)['packages'][0]
-        remote = {'tag_name': record['tag'], 'target_commitish': 'a' * 40, 'draft': True, 'assets': []}
-        stored = {}
-        def fake_gh(*args):
-            if args[0] == 'api' and '--method' in args:
-                self.assertIn('draft=true', args)
-                self.assertIn('target_commitish=' + 'a' * 40, args)
-                return json.dumps(remote)
-            elif args[:2] == ('release', 'upload'):
-                file = Path(args[3]); stored[file.name] = file.read_bytes()
-            elif args[:2] == ('release', 'download'):
-                for name, data in stored.items():
-                    (Path(args[args.index('--dir') + 1]) / name).write_bytes(data)
-            elif args[:2] == ('release', 'edit'):
-                self.assertEqual(set(stored), {self.name, 'release-record.json'})
-            elif args[0] == 'api':
-                return json.dumps({'sha': 'a' * 40})
-            return ''
-        with patch.object(p, 'ROOT', self.root), patch.object(p, 'verify_existing_tag'), \
-             patch.object(p, 'releases', side_effect=[[], [remote]]), \
-             patch.object(p, 'gh', side_effect=fake_gh) as gh:
-            p.publish_one('owner/repo', record)
-            self.assertIn('POST', gh.call_args_list[0].args)
+        self.exercise_publication(True)
 
     def test_draft_from_different_commit(self):
         record = p.stage(self.plan, self.root)['packages'][0]

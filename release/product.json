@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "product": "Original/non-Plus LILYGO T-Watch-S3",
+  "version": "1.0.0",
+  "tag": "firmware-v1.0.0",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "accepted_build": "0.5.2",
+  "accepted_on": "2026-10-04",
+  "accepted_bin_sha256": "6f0cba6da17fce769d03807aefce44b0e5fc445d349b8b7dc0f6782d376d80c5",
+  "accepted_bundle_sha256": "be4236cdb643f54b3954df8be8bb594fdcb961a40e1c94ec8d559eb6ff276e30",
+  "bin_size": 8388608,
+  "flash_offset": "0x0",
+  "flash_capacity": 16777216,
+  "sources": {
+    "watch": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "accepted_sha": "ae819bb23bf7a047a7b31c3b91609b05be8731d3",
+      "consolidated_main_sha": "dbc375d25b6ce69693ab270b72ab43e29f281e18"
+    },
+    "runtime": {
+      "repository": "michaelrolphone-cmyk/RiscRTE",
+      "accepted_sha": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
+      "consolidated_main_sha": "be74e9408577b9a58d86bfae4e6050c8a7fb88ab"
+    },
+    "system-apps": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+      "accepted_sha": "b28428505c9e067bb6ea8a84d12f13ec0bcc4992",
+      "consolidated_main_sha": "7b5ea45f6324202d0f705642ce4f60183ecbac77"
+    },
+    "utilities": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+      "accepted_sha": "9d08cb3224a86bb6a5c27bad11b3c70516c6f614",
+      "consolidated_main_sha": "3d762eb53b26f36d2e61e1fd3aacf79ce4095a1f"
+    }
+  },
+  "artifacts": {
+    "runtime": {
+      "repository": "michaelrolphone-cmyk/RiscRTE",
+      "run_id": 37166821556,
+      "artifact_id": 11289494756,
+      "sha256": "760d5403203a71dd5aba8a28101e377b26b94f8d22402eea4d89bc6138845022"
+    },
+    "launcher": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "run_id": 37170160147,
+      "artifact_id": 11291041404,
+      "sha256": "6de56e4051d6948c6bb894991e9baa1b9f310a7c67160cc67300cd17cb18d5f9"
+    },
+    "drivers": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "run_id": 37170160147,
+      "artifact_id": 11291280969,
+      "sha256": "b265b43ba0941187431201aabb6c2c40093be9d3d8c19a6cc6eebf5e7243a30d"
+    }
+  },
+  "component_versions": {
+    "runtime": "0.1.6",
+    "default": "0.5.2",
+    "clock": "0.5.2",
+    "springboard": "1.3.9",
+    "settings": "1.1.1",
+    "battery": "1.0.6",
+    "calculator": "0.1.1",
+    "stopwatch": "0.1.1"
+  },
+  "contributing_pull_requests": {
+    "RiscRTE": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "RiscRTE-System-Apps": [
+      21,
+      23
+    ],
+    "RiscRTE-Utilities": [
+      9,
+      10
+    ],
+    "RiscRTE-T-Watch-S3": [
+      3,
+      4,
+      5,
+      8
+    ]
+  }
+}
