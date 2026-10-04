@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "reader_repository": "michaelrolphone-cmyk/T5S3-Reader",
+  "reader_commit": "d066f6c7373178986f98e02d885f572a3f4949ed",
+  "runtime_repository": "michaelrolphone-cmyk/RiscRTE",
+  "runtime_commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
+  "modules": [
+    {"source": "usb_host_v2"},
+    {"source": "usb_hid"},
+    {"source": "usb_hid_keyboard"},
+    {"source": "usb_hid_gamepad"},
+    {"source": "usb_xinput_gamepad"},
+    {"source": "usb_hid_text_input"},
+    {"source": "usb_ui_navigation"}
+  ]
+}

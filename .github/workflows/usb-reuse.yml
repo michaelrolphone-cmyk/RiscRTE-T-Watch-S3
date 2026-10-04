@@ -1,0 +1,43 @@
+name: Watch USB reuse compatibility
+on:
+  pull_request:
+    branches: [main, master]
+permissions:
+  contents: read
+jobs:
+  pinned-reuse:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/T5S3-Reader
+          ref: d066f6c7373178986f98e02d885f572a3f4949ed
+          path: .dependencies/reader
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 8609fb92ee56ad1c6fb0417051c3fc9796c0edca
+          path: .dependencies/runtime
+          persist-credentials: false
+      - name: Pinned ESP32-S3 compiler
+        shell: bash
+        run: |
+          curl --fail --location --retry 2 --max-time 180 https://github.com/espressif/crosstool-NG/releases/download/esp-2021r2-patch5/xtensa-esp32s3-elf-gcc8_4_0-esp-2021r2-patch5-linux-amd64.tar.gz -o "$RUNNER_TEMP/toolchain.tar.gz"
+          echo "8aa17a6adf01efa5b1628c8ac578063a44d26ae9581d39486b92223a41ef262f  $RUNNER_TEMP/toolchain.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/toolchain"
+          tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
+          echo "REUSE_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+      - name: Source-custody rejection tests
+        run: python3 -m unittest discover -s tests -p test_usb_reuse.py -v
+      - name: Unchanged Reader providers with actual minimal graph and loader checks
+        run: python3 scripts/build_reader_usb_reuse.py --reader .dependencies/reader --runtime .dependencies/runtime --output dist/usb-reuse --cc "$REUSE_CC"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: watch-usb-reuse-evidence
+          path: dist/usb-reuse/reuse-report.json
+          if-no-files-found: error
