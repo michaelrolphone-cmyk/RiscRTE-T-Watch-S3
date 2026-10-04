@@ -19,10 +19,41 @@ static bool connect(void *c, const char *ssid, const char *password) {
     return running && (hardware.features & 1) && ssid && ssid[0] && bounded(ssid, 32) &&
            bounded(password, 63) && radio->join(radio->context, claim, ssid, password);
 }
-static void disconnect(void *c) {
+static bool scan_available(void) {
+    return radio && radio->struct_size >= GARDEN_RADIO_SCAN_V1_SIZE &&
+           radio->scan_start && radio->scan_poll && radio->scan_cancel;
+}
+static bool scan_cancel(void *c) {
     (void)c;
-    if (running)
-        (void)radio->leave(radio->context, claim);
+    return running && scan_available() && radio->scan_cancel(radio->context, claim);
+}
+static bool disconnect_checked(void *c) {
+    (void)c;
+    if (!running) return false;
+    /* Call leave even if cancel failed: independent cleanup attempts must not
+     * be skipped. False keeps the token and app cleanup obligation alive. */
+    bool cancelled = !scan_available() || radio->scan_cancel(radio->context, claim);
+    bool left = radio->leave(radio->context, claim);
+    return cancelled && left;
+}
+static void disconnect(void *c) { (void)disconnect_checked(c); }
+static bool scan_start(void *c) {
+    (void)c;
+    return running && (hardware.features & 1) && scan_available() &&
+           radio->scan_start(radio->context, claim);
+}
+static bool scan_poll(void *c, garden_radio_scan_result_v1 *result) {
+    (void)c;
+    if (!running || !result || result->struct_size < sizeof(*result) || !scan_available()) return false;
+    garden_radio_scan_result_v1 next = {.struct_size = sizeof(next)};
+    if (!radio->scan_poll(radio->context, claim, &next) ||
+        next.struct_size != sizeof(next) || next.count > GARDEN_RADIO_SCAN_MAX ||
+        next.state > GARDEN_RADIO_SCAN_FAILED || next.reserved) return false;
+    for (unsigned i=0; i<next.count; ++i)
+        if (!bounded(next.entries[i].ssid,32) || next.entries[i].reserved ||
+            next.entries[i].channel > 14) return false;
+    *result=next;
+    return true;
 }
 static wifi_link_t status(void *c) {
     (void)c;
@@ -60,8 +91,12 @@ static bool addresses(void *c, wifi_ipv4_v1 *station, wifi_ipv4_v1 *ap) {
     return running && station && ap &&
            radio->addresses(radio->context, claim, (uint8_t *)station, (uint8_t *)ap);
 }
-static const wifi_api_v1 api = {1,      sizeof(api), NULL,     connect, disconnect,
-                                status, rssi,        start_ap, stop_ap, addresses};
+static const wifi_api_v1 api = {
+    .api_version=1, .struct_size=sizeof(api), .context=NULL, .connect=connect,
+    .disconnect=disconnect, .status=status, .rssi=rssi, .start_ap=start_ap,
+    .stop_ap=stop_ap, .addresses=addresses, .scan_start=scan_start,
+    .scan_poll=scan_poll, .scan_cancel=scan_cancel, .disconnect_checked=disconnect_checked
+};
 static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (claim || running)
         return false;
@@ -70,7 +105,7 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!next || next->unit > 3 || !next->features || (next->features & ~3u))
         return false;
     hardware = *next;
-    radio = garden_dependency(d, n, "platform.radio", sizeof(*radio));
+    radio = garden_dependency(d, n, "platform.radio", GARDEN_RADIO_PREFIX_V1_SIZE);
     if (!radio || !radio->claim || !radio->join || !radio->state || !radio->leave ||
         !radio->release || !radio->start_ap || !radio->stop_ap || !radio->addresses)
         return false;
@@ -81,9 +116,10 @@ static bool quiesce(void) {
     running = false;
     if (!claim)
         return true;
-    if (!radio->stop_ap(radio->context, claim) || !radio->leave(radio->context, claim) ||
-        !radio->release(radio->context, claim))
-        return false;
+    bool cancelled = !scan_available() || radio->scan_cancel(radio->context, claim);
+    bool stopped = radio->stop_ap(radio->context, claim);
+    bool left = radio->leave(radio->context, claim);
+    if (!cancelled || !stopped || !left || !radio->release(radio->context, claim)) return false;
     claim = 0;
     return true;
 }
