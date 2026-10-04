@@ -1,5 +1,7 @@
 name: T-Watch driver contracts
 on:
+  push:
+    branches: [feat/watch-alarm-lifecycle]
   pull_request:
 permissions:
   contents: read
@@ -67,7 +69,7 @@ jobs:
       - name: Common crown clock deployment and verified SPIFFS image
         env:
           PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
-          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python -m unittest discover -s tests -p test_clock_common.py -v
           python scripts/build_clock_common.py --pr-head-sha "$TWATCH_PR_HEAD_SHA"
@@ -108,7 +110,7 @@ jobs:
       - name: Common launcher and verified SPIFFS images
         env:
           PLATFORMIO_CORE_DIR: ${{ runner.temp }}/pio-clock
-          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python -m unittest discover -s tests -p test_launcher_common.py -v
           python scripts/build_launcher_common.py --pr-head-sha "$TWATCH_PR_HEAD_SHA"
