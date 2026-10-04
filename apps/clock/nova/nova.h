@@ -29,15 +29,20 @@ bool nova_watch_render(risc_display_surface_v1 *surface, const nova_watch_state 
 const char *nova_watch_face_name(unsigned id);
 bool nova_watch_face_render(risc_display_surface_v1 *surface, const nova_watch_state *state, unsigned face_id);
 unsigned nova_watch_picker_pulse(uint32_t elapsed_ms);
-/* Caller-owned, picker-lifetime cache. Only visible cards occupy these slots;
+/* Caller-owned, picker-lifetime cache. Two translated rows need at most six
+ * visible cards; exactly one focused face is live across both collections.
+ * Only visible cards occupy these slots;
  * focused pixels are live, neighbors freeze between meaningful data changes. */
 typedef struct {
-    uint8_t valid_mask,face_ids[3];
+    uint8_t valid_mask,face_ids[6];
     nova_watch_state stamp;
-    uint16_t pixels[3][240*240];
+    uint16_t pixels[6][240*240];
 } nova_watch_picker_cache;
 bool nova_watch_picker_render(risc_display_surface_v1 *surface, const nova_watch_state *state,
     unsigned selected, int position_q8, const watch_face_page *page, const char *status, unsigned pulse_face, unsigned pulse_scale_q8, nova_watch_picker_cache *cache);
+bool nova_watch_picker_collections_render(risc_display_surface_v1 *surface, const nova_watch_state *state,
+    unsigned selected, int category_position_q8, const int positions_q8[WATCH_FACE_CATEGORY_COUNT],
+    const char *status, unsigned pulse_face, unsigned pulse_scale_q8, nova_watch_picker_cache *cache);
 #ifdef __cplusplus
 }
 #endif

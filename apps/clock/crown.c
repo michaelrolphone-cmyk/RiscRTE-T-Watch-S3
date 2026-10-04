@@ -122,7 +122,8 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     #ifdef WATCH_CLOCK_LAUNCHER
     if(picker.open&&picker_scratch) {
         watch_face_animate(&picker,now);
-        return nova_watch_picker_render(surface,&face,picker.selected,picker.position,watch_face_page_for(picker.category),picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
+        picker.category_positions[picker.category]=picker.position;
+        return nova_watch_picker_collections_render(surface,&face,picker.selected,picker.category_position,picker.category_positions,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
     }
     return nova_watch_face_render(surface,&face,picker.selected);
 #else

@@ -36,12 +36,12 @@ static bool submit_frame(void*c,uint64_t f,const risc_display_rect_v1*d,size_t n
   assert(nova_watch_face_render(&expected,&face,picker.selected)&&!memcmp(pixels,expected_pixels,sizeof(pixels)));
  }
  owned=false;pending=true;frame_started=clock_ms;*t=++submitted;return true;}
-static bool status(void*c,uint64_t t,risc_display_present_status_v1*s){(void)c;assert(t==submitted&&pending);if(scenario==14&&clock_ms-frame_started<95){s->state=RISC_DISPLAY_PRESENT_ACTIVE;return true;}pending=false;s->state=scenario==5 && touch_step>=2?RISC_DISPLAY_PRESENT_FAILED:RISC_DISPLAY_PRESENT_COMPLETE;
+static bool status(void*c,uint64_t t,risc_display_present_status_v1*s){(void)c;assert(t==submitted&&pending);if((scenario==14||scenario==19)&&clock_ms-frame_started<95){s->state=RISC_DISPLAY_PRESENT_ACTIVE;return true;}pending=false;s->state=scenario==5 && touch_step>=2?RISC_DISPLAY_PRESENT_FAILED:RISC_DISPLAY_PRESENT_COMPLETE;
  if(s->state==RISC_DISPLAY_PRESENT_COMPLETE){memcpy(completed_pixels,pixels,sizeof(pixels));last_complete=submitted;}return true;}
 static bool brightness(void*c,uint16_t a,uint16_t b){(void)c;assert((a==0||a==40)&&b==100);if(a)assert(submitted&&!pending);return true;}
 static bool prepare(void*c){(void)c;assert(!owned&&!pending&&!touch.subscription);return true;}
 static bool resume(void*c){(void)c;return true;}
-static bool key(void*c,uint32_t*e){(void)c;*e=scenario==7&&ready&&!sleeps&&clock_ms>2400?2:scenario==10&&ready&&clock_ms-ready_time==2000?1:0;return true;}
+static bool key(void*c,uint32_t*e){(void)c;*e=scenario==7&&ready&&!sleeps&&clock_ms>2400?2:((scenario==10&&clock_ms-ready_time==2000)||(scenario==20&&clock_ms-ready_time>=960&&clock_ms-ready_time<1000))&&ready?1:0;return true;}
 static int32_t sleep_now(void*c,risc_light_sleep_result_v1*r){(void)c;(void)r;assert(!touch.subscription);sleeps++;return RISC_LIGHT_SLEEP_ACTIVE_WAKE;}
 static int32_t sleep_timed(void*c,uint32_t ms,risc_light_sleep_result_v1*r){assert(ms==300000);return sleep_now(c,r);}
 static bool wake_pending(void*c,bool*p){(void)c;*p=false;return true;}
@@ -66,6 +66,11 @@ static bool snapshot(void*c,risc_touch_snapshot_v1*s){
   if(scenario==9||scenario==10||scenario==11||scenario==15){
    if(age>=720&&age<940){down=true;x=age<820?120:12;}
    if(age>=1800&&age<1840){down=true;x=120;}
+  }
+  if(scenario==19||scenario==20){
+   if(age>=720&&age<940){down=true;y=age<820?200:40;}
+   if(age>=950&&age<980){down=true;y=92;}
+   if(scenario==19&&age>=2400&&age<2440){down=true;y=92;}
   }
   if(down){s->contact_count=1;s->contacts[0]=(risc_touch_contact_v1){1,0,(uint16_t)x,(uint16_t)y};}
   return true;
@@ -96,8 +101,8 @@ static bool launch(const char*p){assert(!strcmp(p,"springboard.elf")&&!owned&&!p
 static const risc_runtime_api_v1 runtime={1,sizeof(runtime),health,yield,diagnostic,launch,acquire_cap,release_cap};
 const risc_runtime_api_v1*risc_runtime_get_api(uint32_t v){assert(v==1);return &runtime;}
 int main(void){
- for(unsigned run=0;run<18;run++){
-  scenario=run==10?12:run==11?10:run==12?11:run==13?14:run==14?15:run==15?16:run==16?17:run==17?18:run;
+ for(unsigned run=0;run<20;run++){
+  scenario=run==10?12:run==11?10:run==12?11:run==13?14:run==14?15:run==15?16:run==16?17:run==17?18:run==18?19:run==19?20:run;
   face_writes=face_reads=ready_time=cache_allocations=0;assert(!allocations);
   if(scenario!=12)saved_face=false;
   clock_ms=submitted=released=grants=ungrants=subscribed=unsubscribed=polls=launches=sleeps=touch_step=0;
@@ -112,6 +117,8 @@ int main(void){
   if(scenario==10)assert(!picker.open&&face_writes==1&&saved_face&&!picker_scratch);
   if(scenario==11)assert(picker.open&&face_writes==1&&!saved_face&&picker.selected==0&&picker_save_failed);
   if(scenario==12)assert(face_reads>=1&&picker.selected>0&&!face_writes&&saved_face);
+  if(scenario==19)assert(!picker.open&&!picker_scratch&&face_writes==1&&saved_blob[2]==2&&picker.selected==2);
+  if(scenario==20)assert(!picker.open&&!picker_scratch&&!face_writes&&picker.selected==0);
   if(scenario==17||scenario==18)assert(face.hour_24==(scenario==17));
   if(scenario==16)assert(cache_allocations==1&&!picker.open&&!picker_scratch&&!face_writes);
   if(scenario==15)assert(picker.open&&face_writes==1&&saved_face&&picker.selected==0&&picker_save_failed);

@@ -30,11 +30,11 @@ int main(int argc,char**argv) {
     watch_face_input(&p,8010,true,0,0,0,0);watch_face_input(&p,0xffffff00u,true,1,3,120,120);assert(watch_face_input(&p,344,true,1,3,120,120)==WATCH_FACE_OPEN);
     /* Exact source-equation trajectory, independent of presentation cadence. */
     for(unsigned edge=0;edge<2;edge++) {
-        watch_face_picker expected={.open=true,.category=1,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
+        watch_face_picker expected={.open=true,.category=1,.category_position=-WATCH_CATEGORY_PITCH,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
         for(unsigned t=1;t<=2000;t++)watch_face_animate(&expected,t);
         const unsigned intervals[]={8,20,50,95};
         for(unsigned n=0;n<4;n++) {
-            watch_face_picker q={.open=true,.category=1,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
+            watch_face_picker q={.open=true,.category=1,.category_position=-WATCH_CATEGORY_PITCH,.position=edge?-7*WATCH_FACE_PITCH-20*256:20*256,.velocity=edge?-6*256:6*256};
             unsigned t=0;while(t<2000){t+=intervals[n];if(t>2000)t=2000;watch_face_animate(&q,t);}
             assert(q.position==expected.position&&q.velocity==expected.velocity&&q.target==expected.target&&q.phase==expected.phase);
         }

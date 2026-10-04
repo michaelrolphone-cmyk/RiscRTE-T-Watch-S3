@@ -35,3 +35,15 @@ subprocess.run([str(out/'category-test')],check=True)
 
 subprocess.run([cc,*flags,'-fsanitize=undefined','-fno-sanitize-recover=all',str(ROOT/'tests/watch_face_division_test.c'),str(ROOT/'apps/clock/effects/divdi3.c'),'-o',str(out/'division-test')],check=True)
 subprocess.run([str(out/'division-test')],check=True)
+
+# Translated production rows are byte-exact crops of the individual pages.
+subprocess.run([cc,*flags,'-fsanitize=undefined','-fno-sanitize-recover=all',str(ROOT/'tests/watch_face_vertical_render_test.c'),'-o',str(out/'vertical-test')],check=True)
+subprocess.run([str(out/'vertical-test'),str(out)],check=True)
+vertical=Image.new('RGB',(1020,1350),'black')
+offsets=[48,0,-1,-24,-60,-90,-120,-150,-180,-216,-239,-240,-264,-720,-768,-840,-900,-959,-960,-1008]
+for i,offset in enumerate(offsets):
+ b=(out/f'vertical-{i:02}.rgb565').read_bytes();rgb=[]
+ for j in range(0,len(b),2):
+  v=b[j]|b[j+1]<<8;rgb.extend(((v>>11)*255//31,((v>>5)&63)*255//63,(v&31)*255//31))
+ im=Image.frombytes('RGB',(240,240),bytes(rgb));im.save(out/f'vertical-{i:02}.png');vertical.paste(im,(i%4*255,i//4*270));ImageDraw.Draw(vertical).text((i%4*255+70,i//4*270+250),f'Offset {offset}px',fill='white')
+vertical.save(out/'vertical-motion.png')

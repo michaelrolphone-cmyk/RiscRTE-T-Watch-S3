@@ -1,4 +1,4 @@
-# Clock 0.6.2: 24 faces and categorized picker (development)
+# Clock 0.6.4: 24 faces and categorized picker (development)
 
 This is an app-only increment based on accepted Watch product 1.0.0 source
 `f07f33e8e1726fbe1ae49e01bf5a23d0a72c038a`. It does not modify or republish that
@@ -64,9 +64,14 @@ the hold slop permanently cancels that hold, even if the finger returns. A tap,
 preheld contact on entry, dropped sample, multitouch, contact ID replacement and
 the opening release cannot launch or select accidentally.
 
-Swipe vertically to change category and horizontally to browse within it.
+Swipe vertically to slide between collections and horizontally to browse within one.
+The whole current and adjacent collection follows the finger with a 240px pitch;
+release momentum and spring settling use the same fixed-step
+physics as horizontal browsing. A caught transition can be reversed, and taps
+before a collection settles cannot select a face. Invalid contacts settle to
+the nearest collection; crown close cancels and releases the cache.
 Each contact locks to its first clear axis; diagonal changes cannot trigger both
-a category change and a face selection. Category edges stop without wrapping.
+a category change and a face selection. Categories wrap continuously in both directions, from Calendar to Analog and back.
 The currently selected stable face ID opens in its matching category. An off-center card tap centers that card; a center
 card tap saves it and immediately returns to the selected full-screen face after
 readback succeeds. Failed saves stay in the picker with SAVE FAILED. Short crown
@@ -91,7 +96,7 @@ change `sleep_mode` or any other app data. Missing/corrupt/unavailable records
 choose NOVA. Writes are skipped if already identical and confirmed by readback;
 failed save leaves the prior in-memory selection and visibly reports SAVE FAILED.
 No persistence is promised across erase/reflash. Picker scratch allocation failure
-keeps the clock available; its single bounded three-slot cache exists only while browsing. The pinned Arduino 2.0.17
+keeps the clock available; its single bounded six-slot cache exists only while browsing. The pinned Arduino 2.0.17
 qio_opi configuration prefers PSRAM for ordinary allocations over 4096 bytes;
 the app reuses Runtime's tracked malloc/free path and adds no hardware imports.
 Actual memory placement/device performance are not claimed from host tests.
@@ -102,32 +107,35 @@ The owner accepted 0.6.0's appearance but reported slow scrolling/animation.
 The picker previously drew one full face and erased it, then rendered up to five
 candidates including wholly offscreen cards. 0.6.2 validates without rendering
 and culls exact post-pulse card bounds first. Only the focused card animates;
-one or two visible neighbors reuse frozen full-resolution pixels. Neighbor caches
+visible neighbors reuse frozen full-resolution pixels. Neighbor caches
 refresh on first visibility or changed minute/date/battery/telemetry validity.
 Second, subsecond and monotonic animation changes do not invalidate them.
-One checked allocation owns all three slots (345,600 pixel bytes plus metadata),
+One checked allocation owns six slots (691,200 pixel bytes; 691,232 bytes total),
+allowing two partially visible collections without rendering hidden cards,
 with balanced cleanup and a Clock-preserving failure path. The standalone clock always rendered only its active face.
 
 Long diagonal strokes previously tested their whole rectangular bounds. The
 same four coverage samples now run only within conservative per-row capsule
 bounds. This preserves exact anti-aliasing/endcaps, while a representative
 216px diagonal checks over 15 times fewer pixels. No geometry, animation clock,
-physics, frame pacing, LCD transport or PMU changes are involved.
+frame pacing, LCD transport or PMU changes are involved.
 
 A focused host timing comparison showed roughly 1.6–6.7 times faster picker
 rasterization and 2–3.6 times faster ANALOG/RADAR/HEX/CHRONO rasterization; simple
 text faces were essentially unchanged. These are host CPU results, not measured
 watch frame rates. 96 full-frame goldens from delivered 0.6.0 remain byte-identical;
 tests also compare 2085 strokes against the original rasterizer and enforce one
-active-face render, one live focused card in steady browsing, at most three
-initial/invalidated visible renders, and exact neighbor freezing/focus activation.
+active-face render, one live focused card in steady browsing, at most six
+initial/invalidated visible renders across two collections, and exact neighbor freezing/focus activation.
 
 ## Verification
 
-- `python scripts/test_watch_faces.py`: all eight production RGB565 renders,
+- `python scripts/test_watch_faces.py`: all 24 production RGB565 renders,
   canary/stride/short-buffer checks, unknown telemetry, hold/swipe/jitter/drag,
-  event gaps, ID replacement, timer wrap, resistance and identical 8/20/50/95ms
-  frame trajectories; every stored ID, corruption and failed I/O
+  event gaps, ID replacement, timer wrap, resistance, cyclic seams/reversal and identical 1/8/20/50/95ms
+  frame trajectories; every stored ID, corruption and failed I/O. Translated
+  collection crops are compared byte-for-byte, including both wrap seams, with
+  stride guards and one-live-face/cache identity assertions.
 - `python scripts/test_launcher_clock.py`: production application lifecycle,
   opening-release suppression, carousel save/failure, crown dismissal, restored
   selection in a fresh invocation, existing retained handoff and 8ms touch polls
@@ -138,4 +146,6 @@ initial/invalidated visible renders, and exact neighbor freezing/focus activatio
 
 `dist/watch-faces` contains authentic host-rendered RGB565 previews, not device
 photographs. The owner accepted the physical appearance of 0.6.0; improved 0.6.2 device
-responsiveness and power draw still require physical confirmation.
+responsiveness and power draw still require physical confirmation. The owner
+reported that 0.6.2 switched categories abruptly; 0.6.4 adds the finger-tracked,
+cyclic vertical transition. Its physical feel remains to be confirmed.

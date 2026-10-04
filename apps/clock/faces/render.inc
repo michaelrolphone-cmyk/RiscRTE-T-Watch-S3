@@ -213,9 +213,14 @@ unsigned nova_watch_picker_pulse(uint32_t age_ms) {
     if(age_ms>=334u)return 256u;
     return 256u+(unsigned)(sine(age_ms*180u*256u/334u)*5243/(32767*256));
 }
-bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const watch_face_page*page,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
-    if(!cache||!page||!page->ids||!page->count||page->count>WATCH_FACE_COUNT||!face_surface_valid(s))return false;
-    for(unsigned i=0;i<page->count;i++)if(page->ids[i]>=WATCH_FACE_COUNT)return false;
+typedef struct { const watch_face_page*page; int position,y,near; } picker_layer;
+static bool picker_layers_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,picker_layer*layers,unsigned layer_count,unsigned live_face,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
+    if(!cache||!layer_count||layer_count>2||!face_surface_valid(s))return false;
+    for(unsigned l=0;l<layer_count;l++) {
+        const watch_face_page*page=layers[l].page;
+        if(!page||!page->ids||!page->count||page->count>WATCH_FACE_COUNT)return false;
+        for(unsigned i=0;i<page->count;i++)if(page->ids[i]>=WATCH_FACE_COUNT)return false;
+    }
     nova_watch_state empty={0};if(!state)state=&empty;
     /* Neighbor seconds and subsecond animation freeze while out of focus.
      * Refresh visible caches on minute/date or telemetry changes, never merely
@@ -228,16 +233,22 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
     cache->stamp=*state;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
 
-    int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>=(int)page->count)near=(int)page->count-1;
     struct card { int size,x,y,scale; bool visible; } cards[WATCH_FACE_COUNT]={0};
-    for(unsigned index=0;index<page->count;index++) {
-        unsigned id=page->ids[index];
-        int offset=(int)index*108*256+position,abs=offset<0?-offset:offset;
-        int scale=256-(abs<135*256?abs:135*256)*102/(108*256);
-        if(id==pulse_face&&pulse_scale>=256&&pulse_scale<=277)scale=scale*(int)pulse_scale/256;
-        int size=132*scale/256,x=120+offset/256-size/2,y=92-size/2;
-        cards[id]=(struct card){size,x,y,scale,x<240&&x+size>0&&y<240&&y+size>0};
+    for(unsigned l=0;l<layer_count;l++) {
+        const watch_face_page*page=layers[l].page;int position=layers[l].position;
+        int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>=(int)page->count)near=(int)page->count-1;
+        layers[l].near=near;
+        for(unsigned index=0;index<page->count;index++) {
+            unsigned id=page->ids[index];
+            int offset=(int)index*108*256+position,abs=offset<0?-offset:offset;
+            int scale=256-(abs<135*256?abs:135*256)*102/(108*256);
+            if(id==pulse_face&&pulse_scale>=256&&pulse_scale<=277)scale=scale*(int)pulse_scale/256;
+            int size=132*scale/256,x=120+offset/256-size/2,y=92-size/2+layers[l].y;
+            cards[id]=(struct card){size,x,y,scale,x<240&&x+size>0&&y<240&&y+size>0};
+        }
     }
+    for(unsigned l=0;l<layer_count;l++) {
+    const watch_face_page*page=layers[l].page;int position=layers[l].position,near=layers[l].near,dy=layers[l].y;
     /* Far cards first, center card last, as in the source z-index. */
     for(int pass=(int)page->count-1;pass>=0;pass--)for(unsigned index=0;index<page->count;index++) {
         unsigned id=page->ids[index];
@@ -246,13 +257,13 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
         if(!pass&&index!=(unsigned)near)continue;
         if(!cards[id].visible)continue;
         int scale=cards[id].scale,size=cards[id].size,x0=cards[id].x,y0=cards[id].y;
-        unsigned slot=3;
-        for(unsigned k=0;k<3;k++)if((cache->valid_mask&(1u<<k))&&cache->face_ids[k]==id){slot=k;break;}
-        bool cached=slot<3;
-        if(!cached)for(unsigned k=0;k<3;k++)if(!(cache->valid_mask&(1u<<k))||!cards[cache->face_ids[k]].visible){slot=k;break;}
-        if(slot==3)return false; /* Geometry guarantees at most three visible. */
+        unsigned slot=6;
+        for(unsigned k=0;k<6;k++)if((cache->valid_mask&(1u<<k))&&cache->face_ids[k]==id){slot=k;break;}
+        bool cached=slot<6;
+        if(!cached)for(unsigned k=0;k<6;k++)if(!(cache->valid_mask&(1u<<k))||!cards[cache->face_ids[k]].visible){slot=k;break;}
+        if(slot==6)return false; /* At most three cards per visible collection. */
         uint16_t*scratch=cache->pixels[slot];
-        if(!cached||index==(unsigned)near) {
+        if(!cached||id==live_face) {
             risc_display_surface_v1 tmp={0,scratch,240,240,480,240*240*2,5};
             if(!nova_watch_face_render(&tmp,state,id))return false;
             cache->face_ids[slot]=(uint8_t)id;cache->valid_mask|=(uint8_t)(1u<<slot);
@@ -267,9 +278,35 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
             if(x<border||x>=size-border||y<border||y>=size-border||(edge&&ey&&edge*edge+ey*ey>=(radius-border)*(radius-border)))blend(at(&c,x+x0,y+y0),id==selected?FCYAN:FC(34,48,52),opacity*mask/255);
         }
     }
-    ftext(&c,&ff_o13,face_names[page->ids[near]],120,183,532,0,FWHITE,0);
-    ftext(&c,&ff_rp11,status?status:(page->ids[near]==selected?"CURRENT":"TAP TO SET"),120,201,563,0,status?FORANGE:page->ids[near]==selected?FGREEN:FC(107,130,136),0);
-    for(unsigned i=0;i<page->count;i++)fcirc(&c,(240-(int)(page->count-1)*11+(int)i*22)*8,222*16+8,40,0,(int)i==near?FCYAN:FC(31,42,45));
-    if(page->name){ftext(&c,&ff_rp11,page->name,120,15,384,0,FMUTED,0);fline(&c,36*16,12*16,39*16,9*16,16,FMUTED);fline(&c,39*16,9*16,42*16,12*16,16,FMUTED);fline(&c,198*16,9*16,201*16,12*16,16,FMUTED);fline(&c,201*16,12*16,204*16,9*16,16,FMUTED);}
+    ftext(&c,&ff_o13,face_names[page->ids[near]],120,183+dy,532,0,FWHITE,0);
+    ftext(&c,&ff_rp11,status?status:(page->ids[near]==selected?"CURRENT":"TAP TO SET"),120,201+dy,563,0,status?FORANGE:page->ids[near]==selected?FGREEN:FC(107,130,136),0);
+    for(unsigned i=0;i<page->count;i++)fcirc(&c,(240-(int)(page->count-1)*11+(int)i*22)*8,(222+dy)*16+8,40,0,(int)i==near?FCYAN:FC(31,42,45));
+    if(page->name){ftext(&c,&ff_rp11,page->name,120,15+dy,384,0,FMUTED,0);fline(&c,36*16,(12+dy)*16,39*16,(9+dy)*16,16,FMUTED);fline(&c,39*16,(9+dy)*16,42*16,(12+dy)*16,16,FMUTED);fline(&c,198*16,(9+dy)*16,201*16,(12+dy)*16,16,FMUTED);fline(&c,201*16,(12+dy)*16,204*16,(9+dy)*16,16,FMUTED);}
+    }
     return true;
+}
+
+bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const watch_face_page*page,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
+    if(!page||!page->ids||!page->count||page->count>WATCH_FACE_COUNT)return false;
+    int near=(-position+54*256)/(108*256);if(near<0)near=0;if(near>=(int)page->count)near=(int)page->count-1;
+    picker_layer layer={page,position,0,near};
+    return picker_layers_render(s,state,selected,&layer,1,page->ids[near],status,pulse_face,pulse_scale,cache);
+}
+bool nova_watch_picker_collections_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int category_position,const int positions[WATCH_FACE_CATEGORY_COUNT],const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
+    if(!positions)return false;
+    picker_layer layers[2];unsigned count=0;
+    const int period=(int)WATCH_FACE_CATEGORY_COUNT*240;
+    category_position%=period*256;if(category_position>0)category_position-=period*256;
+    unsigned focus=(unsigned)((-category_position+120*256)/(240*256))%WATCH_FACE_CATEGORY_COUNT;
+    const watch_face_page*focused=watch_face_page_for((unsigned)focus);
+    int near=(-positions[focus]+54*256)/(108*256);if(near<0)near=0;if(near>=(int)focused->count)near=(int)focused->count-1;
+    for(unsigned c=0;c<WATCH_FACE_CATEGORY_COUNT;c++) {
+        int y=(category_position<0?(category_position-255)/256:category_position/256)+(int)c*240;
+        if(y>period/2)y-=period;
+        if(y<-period/2)y+=period;
+        if(y<=-240||y>=240)continue;
+        if(count==2)return false;
+        layers[count++]=(picker_layer){watch_face_page_for(c),positions[c],y,0};
+    }
+    return picker_layers_render(s,state,selected,layers,count,focused->ids[near],status,pulse_face,pulse_scale,cache);
 }
