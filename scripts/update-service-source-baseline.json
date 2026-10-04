@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "system_apps_source_sha": "e3f8a0317854370d6242b2f5f98787b0f32fef04",
+  "system_apps_source_sha": "36f7fc52524ec02d009d6455c4365993b40f5d44",
   "source_sha256": {
     "Apps/update_portable.inc": "ff8fff46607d0d1a82ae77a30f4507fa7e11dce58f034b87eb36123901f36396",
     "Services/update/Catalog.h": "eaa756582b2ff8a2bc2e04480072b6bc2cb987fc14f80ef441475f0e9057d3b2",
@@ -16,8 +16,8 @@
     "lib/PortableApps/fonts/LICENSE-FontAwesome.txt": "b2a1cf9b4d876a266020de7ff41ce6f58e814f8efd07d4cdb7695a86e875c17c",
     "lib/PortableApps/fonts/LICENSE-Orbitron.txt": "ab609b0e110d622435ff337cdf233288556e011bbf9bd0550be98846c0630819",
     "lib/PortableApps/fonts/LICENSE-Rajdhani.txt": "f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f",
-    "lib/PortableApps/fonts/SOURCES.json": "e91e31ee267b1b2e80fe1c987e0ca071ddb43c7312965559d923d997598f83ff",
-    "lib/PortableApps/fonts/icons.inc": "008094438569f709131d5ee4e263a190151599cb1f306c56aa3fcaa6a7113ab8",
+    "lib/PortableApps/fonts/SOURCES.json": "fc2f7e6b53e92e4f843b8320415cd3e5823bc67e0bc911452da99a24423c1004",
+    "lib/PortableApps/fonts/icons.inc": "4aa87b9e5ff35e145eecda69306b9f219f62424b9a5b34eef47b20c71101afa3",
     "lib/PortableApps/fonts/text.inc": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
     "lib/PortableApps/include/AlarmServiceV1.h": "3f5546fadf7131cdae82ed5316d4ff49157fac881af34fba4663d00c54e2a6fb",
     "lib/PortableApps/include/PortableAlarmClient.h": "dcd6fb18d1edec9c2ecc2898aeafb240679db34b4eecd2bf49f4fda0e1c83b84",
@@ -64,17 +64,18 @@
     "lib/PortableApps/time/denver/display_time.h": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03",
     "lib/PortableApps/time/denver/twatch_calendar.h": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
     "lib/PortableApps/time/denver/twatch_caps.h": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e",
-    "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029"
+    "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029",
+    "lib/PortableApps/catalog-icons.json": "c4928d91f5a4d9a3b36abf612b0248ee6f0c57ef35bfd9eb0afd1478db5284da"
   },
   "application_versions": {
-    "springboard": "1.4.3",
+    "springboard": "1.4.4",
     "settings": "1.2.3",
     "wifi_settings": "1.1.0",
     "ota_update": "1.0.2",
     "app_store": "1.0.8"
   },
   "application_manifest_sha256": {
-    "springboard": "b05bfb6a816b0a373a117fff89abde7c327b1679a3d572b8f75ef6ae6ad4a5d1",
+    "springboard": "a964259a3b40b252515d620b5a04507b59dfd1839ea63e3d05e68feec92cce6d",
     "settings": "8ae0411c1c3e9d4c33d8cd63842b7a4ecda58c37c4046b3723c71feef25566dc",
     "wifi_settings": "32d4f23986ae23f48a00f6cefe34da4a0eb423bde5d59f3f179033680e78c2d5",
     "ota_update": "6361bffc6620c8ee7b26d7f525475c17b74b378c8e1db8a0cc0586c3e0f4e413",

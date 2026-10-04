@@ -32,12 +32,15 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
              {'display_name':'Battery','file_name':'battery.elf','icon':'solid:f240'},
              {'display_name':'Settings','file_name':'settings.elf','icon':'solid:f013'}]
     (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count=3;\n')
-    catalog += [{'display_name':'Calculator','file_name':'calculator.elf','icon':'solid:f00a'},
+    catalog += [{'display_name':'Calculator','file_name':'calculator.elf','icon':'solid:f1ec' if updates is not None else 'solid:f00a'},
                 {'display_name':'Stopwatch','file_name':'stopwatch.elf','icon':'solid:f2f2'}]
     if alarms:catalog += [{'display_name':'Alarms','file_name':'alarms.elf','icon':'solid:f0f3'},{'display_name':'Countdown','file_name':'countdown.elf','icon':'solid:f254'}]
     if wifi:catalog += [{'display_name':'Wi-Fi','file_name':'wifi_settings.elf','icon':'solid:f1eb'}]
     if updates is not None:catalog += [{'display_name':'Firmware Update' if n=='ota_update' else 'App Store','file_name':n+'.elf','icon':'solid:f021' if n=='ota_update' else 'solid:f019'} for n in updates]
-    if productivity:catalog += [{'display_name':'Points in Time','file_name':'points_in_time.elf','icon':'solid:f017'}]
+    if productivity:catalog += [{'display_name':'Points in Time','file_name':'points_in_time.elf','icon':'solid:f783' if updates is not None else 'solid:f017'}]
+    if updates is not None:
+        if len({entry['icon'] for entry in catalog}) != len(catalog):raise ValueError('Every current delivered Watch launcher app requires a distinct icon')
+        if not {'solid:f0f3','solid:f254'} <= {entry['icon'] for entry in catalog}:raise ValueError('Alarm bell/hourglass icons missing from current delivered catalog')
     (out/'daily_catalog.c').write_text('#include \"PortableApps.h\"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in e.items())+',.compatible=true}' for e in catalog)+'};\nconst unsigned portable_catalog_count='+(str(len(catalog)))+';\n')
     (out/'catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
     record={'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0],'shared_sources':pins,'apps':{},'touch_rotation':0,'rtc_policy':'fixed-UTC+08-to-America/Denver','full_frames':True,'crown_navigation':'app-local-original-pmu','retained_handoff':True,'handoff_ms':60,'return_targets':{'springboard':'clock.elf','battery':'springboard.elf','settings':'springboard.elf','calculator':'springboard.elf','stopwatch':'springboard.elf'}}

@@ -125,10 +125,10 @@ class UpdateDeployment(unittest.TestCase):
 
     def test_unchanged_executable_cannot_be_rehashed_away(self):
         def mutate(files):
-            data = files['store/battery.elf']+b'changed'
-            files['store/battery.elf'] = data
+            data = files['store/clock.elf']+b'changed'
+            files['store/clock.elf'] = data
             self.edit_json(files, 'shared-app-build.json',
-                           lambda record: record['apps']['battery'].update(sha256=sha(data)))
+                           lambda record: record['apps']['clock'].update(sha256=sha(data)))
         self.mutation_rejected(mutate)
         self.mutation_rejected(lambda files: files.pop('store/wifi/driver.elf'))
         self.mutation_rejected(lambda files: files.update({'store/new-app.elf': b'unapproved'}))
