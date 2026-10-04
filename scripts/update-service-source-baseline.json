@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "system_apps_source_sha": "36f7fc52524ec02d009d6455c4365993b40f5d44",
+  "system_apps_source_sha": "7723df25aacbf299f1e24551eddd35afc58e059f",
   "source_sha256": {
     "Apps/update_portable.inc": "ff8fff46607d0d1a82ae77a30f4507fa7e11dce58f034b87eb36123901f36396",
     "Services/update/Catalog.h": "eaa756582b2ff8a2bc2e04480072b6bc2cb987fc14f80ef441475f0e9057d3b2",
@@ -16,8 +16,8 @@
     "lib/PortableApps/fonts/LICENSE-FontAwesome.txt": "b2a1cf9b4d876a266020de7ff41ce6f58e814f8efd07d4cdb7695a86e875c17c",
     "lib/PortableApps/fonts/LICENSE-Orbitron.txt": "ab609b0e110d622435ff337cdf233288556e011bbf9bd0550be98846c0630819",
     "lib/PortableApps/fonts/LICENSE-Rajdhani.txt": "f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f",
-    "lib/PortableApps/fonts/SOURCES.json": "fc2f7e6b53e92e4f843b8320415cd3e5823bc67e0bc911452da99a24423c1004",
-    "lib/PortableApps/fonts/icons.inc": "4aa87b9e5ff35e145eecda69306b9f219f62424b9a5b34eef47b20c71101afa3",
+    "lib/PortableApps/fonts/SOURCES.json": "05b7212c6d2995711a00b6cfbf339223d38285b98ffbe337326633b4386f78e2",
+    "lib/PortableApps/fonts/icons.inc": "a9866dea61587265cd7746f5cd03e75c162d5fe4e19f90574c40f438d9fdd1da",
     "lib/PortableApps/fonts/text.inc": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
     "lib/PortableApps/include/AlarmServiceV1.h": "3f5546fadf7131cdae82ed5316d4ff49157fac881af34fba4663d00c54e2a6fb",
     "lib/PortableApps/include/PortableAlarmClient.h": "dcd6fb18d1edec9c2ecc2898aeafb240679db34b4eecd2bf49f4fda0e1c83b84",
@@ -54,8 +54,8 @@
     "lib/PortableApps/settings_fonts/LICENSE-Rajdhani.txt": "f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f",
     "lib/PortableApps/settings_fonts/SOURCES.json": "fbc5d9b6707e8b1ad57375dfcca937bfcf14d283722314f5d0cc958abf8d3b30",
     "lib/PortableApps/settings_fonts/text.inc": "9ceb9985eccb6eb70d47c4c434668422eb129c049b1aedbba9d4265fd5e9a825",
-    "lib/PortableApps/src/adapter.c": "b3ec425ec4c035e7af5afa727cae9037ecd51dce12971d5d6cff72ee3a2d559d",
-    "lib/PortableApps/src/alarm.inc": "e718abb4851c8154da3695c6f70bd820cf900491bcfef848886d9b9fba8d7e03",
+    "lib/PortableApps/src/adapter.c": "6fdb0df6d38eccc145771b71e76aeb501e0609aab2c59367c591e526ed3efcc8",
+    "lib/PortableApps/src/alarm.inc": "1a052ff372063c58a9e3f4d49b878a4e40625056d85fd7b5efc515a6c5b5a8b7",
     "lib/PortableApps/src/nova.inc": "7da58adebcf0400d1f57900da2ac4dcfc43d9305bef466892bde9c0441ac1580",
     "lib/PortableApps/src/settings.inc": "1ecc7d7746143e824e25c2aead15ad49e3271a3c8172ad4cf11fa0701317b069",
     "lib/PortableApps/src/settings_view.inc": "d4ecebd7a53267b19e0c98f06694953bc4a237e3bc1b384cbace87af071ab396",
@@ -65,17 +65,18 @@
     "lib/PortableApps/time/denver/twatch_calendar.h": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
     "lib/PortableApps/time/denver/twatch_caps.h": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e",
     "scripts/build_portable_updates.py": "39b8067df702793292c0b3072de703137e292d7ccb2fe6175ebd5fe5447ad029",
-    "lib/PortableApps/catalog-icons.json": "c4928d91f5a4d9a3b36abf612b0248ee6f0c57ef35bfd9eb0afd1478db5284da"
+    "lib/PortableApps/catalog-icons.json": "2055702f8c3c2735dae0e6a348b2cb72611d266058e8479957f816f54de2e9c7",
+    "lib/PortableApps/include/PortableAudioSession.h": "bc27b5a6ec45e2d4a30dfba8a0ef0bcb53070d31c19aab5acbb721d7577d852f"
   },
   "application_versions": {
-    "springboard": "1.4.4",
+    "springboard": "1.4.5",
     "settings": "1.2.3",
     "wifi_settings": "1.1.0",
     "ota_update": "1.0.2",
     "app_store": "1.0.8"
   },
   "application_manifest_sha256": {
-    "springboard": "a964259a3b40b252515d620b5a04507b59dfd1839ea63e3d05e68feec92cce6d",
+    "springboard": "2258ea5ea80660c25d9932159b042ac69fd3a9b2521f25ef923994b598e3a9ec",
     "settings": "8ae0411c1c3e9d4c33d8cd63842b7a4ecda58c37c4046b3723c71feef25566dc",
     "wifi_settings": "32d4f23986ae23f48a00f6cefe34da4a0eb423bde5d59f3f179033680e78c2d5",
     "ota_update": "6361bffc6620c8ee7b26d7f525475c17b74b378c8e1db8a0cc0586c3e0f4e413",
