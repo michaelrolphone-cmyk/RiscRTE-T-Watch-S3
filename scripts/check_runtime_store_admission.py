@@ -14,6 +14,7 @@ from pathlib import Path, PurePosixPath
 import subprocess
 import tempfile
 import zipfile
+from read_only_spiffs import read_image
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTFS_OFFSET = 0x310000
@@ -84,7 +85,11 @@ def validate_paths(store):
             raise ValueError('Unsafe store member: ' + name)
 
 
-def unpack_image(raw, tool):
+def unpack_image(raw, tool=None):
+    if tool is None:
+        files = read_image(raw)
+        validate_paths(files)
+        return files
     tool = Path(tool).resolve()
     if sha(tool.read_bytes()) != MKSPIFFS_SHA256:
         raise ValueError('SPIFFS tool differs from pinned Arduino ESP32 binary')
@@ -146,6 +151,8 @@ def main():
     parser.add_argument('--image', nargs='+', type=Path, default=[])
     parser.add_argument('--bin', nargs='+', type=Path, default=[])
     parser.add_argument('--mkspiffs', type=Path)
+    parser.add_argument('--read-only-spiffs', action='store_true',
+                        help='Decode the pinned SPIFFS format without running a packer')
     parser.add_argument('--expect-error')
     parser.add_argument('--expect-count', type=int)
     parser.add_argument('--preserved-store', type=Path)
@@ -153,8 +160,8 @@ def main():
     args = parser.parse_args()
     if not (args.archive or args.image or args.bin):
         parser.error('At least one actual archive, image or BIN is required')
-    if (args.image or args.bin) and not args.mkspiffs:
-        parser.error('--mkspiffs is required for actual image/BIN extraction')
+    if (args.image or args.bin) and not (args.mkspiffs or args.read_only_spiffs):
+        parser.error('--mkspiffs or --read-only-spiffs is required for image/BIN extraction')
     if args.expect_count is not None and len(args.archive) + len(args.image) + len(args.bin) != args.expect_count:
         parser.error('Actual store input count differs from --expect-count')
     inputs, stores = [], []

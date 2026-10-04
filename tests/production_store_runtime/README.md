@@ -9,11 +9,12 @@ The original complete-store digest and JSON hashes are recorded in
 `provenance.json` when `--output DIRECTORY` is supplied.
 
 The test compiles and runs real `Runtime`, `CpuPort`, provider graph, all selected
-Watch drivers, the real Points-enabled alarm service, and the current default
-Clock with exactly the Launcher/Alarms/Points feature flags used by the delivered
-build. Every other app manifest remains in the policy, including return Clock
-and Points grants for namespaces 1 and 5. No app, provider, policy or display
-substitute is used. Host `dlopen` provides independent driver data/BSS mappings.
+Watch drivers, the real alarm service, and the exact supplied default Clock
+source with the Launcher/Alarms and optional Points feature flags. Every other
+app manifest remains in the policy. The production target `dlfcn.c`/`dlmod.c`
+registry owns module names, handles and admission; only ELF relocation uses
+native host mappings. This preserves the target basename collision behavior
+that the previous operating-system-only loader fixture missed.
 
 Example (paths to sibling repositories and artifacts are supplied explicitly):
 
@@ -27,11 +28,16 @@ python3 scripts/test_production_store_runtime.py \
 ```
 
 `--store DIRECTORY`, `--archive` and `--image` can be repeated. SPIFFS extraction
-uses the same hash-pinned tool and extraction helper as the admission gate.
+uses the hash-pinned tool, or the bounded decoder with `--read-only-spiffs`.
 Add `--expect-prepare-error 'app requirement not uniquely authorized'` to prove
 the old Runtime rejects the untouched policy before mapping any module or
-performing hardware I/O. UBSan is enabled by default (`SANITIZE=0` disables it);
-`ADDRESS_SANITIZE=1` adds ASan. Compiles and test processes have bounded timeouts.
+performing hardware I/O. Add `--expect-runtime-error
+'alarm-service: elf-open-failed rc=0 (0x0)'` to prove the target registry blocks
+service startup before Clock. `SANITIZE=1` enables ASan and UBSan for the registry,
+Runtime and modules; the default is a normal build. Compiles and test processes
+have bounded timeouts. `--watch-source` selects historical Alarm source, and
+`--registry-support` supplies the test adapter when testing an older Runtime;
+the target registry source always comes from `--runtime`.
 
 The native fixture models only raw GPIO, two I2C controllers and their register
 transfers, and the panel's SPI bytes. I2S and radio entry points are present for
@@ -41,9 +47,9 @@ valid fixture date. All behavior above these lowest boundaries is production.
 
 Assertions require:
 
-- Admission of the complete production graph, with both Clock/Points namespaces.
+- Admission of the complete production graph, including its actual namespaces.
 - Exactly two actual Clock namespace-1 reads (`watch_face`, `time_format`) and
-  one namespace-5 read (`points_cfg`) before its first yield. The alarm service
+  one namespace-5 read (`points_cfg`) for Points builds before its first yield. The alarm service
   has already started, so its later polled reads cannot satisfy this assertion.
 - The `WATCH_CLOCK ready` diagnostic, complete nonzero RGB565 Clock output,
   full panel rows before nonzero brightness, and actual touch polling.

@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   push:
-    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission]
+    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission, fix/watch-provider-startup]
   pull_request:
 permissions:
   contents: read
@@ -368,7 +368,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          ref: af1845330ebb8828f76472b6137dcfedaca03846
           path: .wifi-dependencies/runtime
           persist-credentials: false
       - name: Production Wi-Fi, saved-profile reuse and radio sleep lifecycle
@@ -406,6 +406,7 @@ jobs:
           for bundle in dist/wifi-common/*.zip; do
             python scripts/build_wifi_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
           done
+          python -m unittest discover -s tests -p test_read_only_spiffs.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-wifi-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -434,7 +435,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          ref: af1845330ebb8828f76472b6137dcfedaca03846
           path: .admission-dependencies/runtime
           persist-credentials: false
       - uses: actions/checkout@v4
@@ -442,6 +443,12 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE
           ref: e972f0ff951ca96ca0999ee728dbad3a92434c4f
           path: .admission-dependencies/baseline-runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          path: .admission-dependencies/native-loader-baseline
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
@@ -477,6 +484,7 @@ jobs:
           python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --output dist/production-admission/preserved.json
       - name: Actual default Clock and providers on unchanged production policies
         run: |
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline
           SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san
       - uses: actions/upload-artifact@v4
@@ -486,4 +494,5 @@ jobs:
             dist/production-admission/*.json
             dist/production-admission/execution/provenance.json
             dist/production-admission/execution-san/provenance.json
+            dist/production-admission/native-loader-baseline/provenance.json
           if-no-files-found: error

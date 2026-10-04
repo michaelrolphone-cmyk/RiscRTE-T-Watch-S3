@@ -173,7 +173,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
         image_path.write_bytes(image)
         store = {n[6:]: b for n, b in files.items() if n.startswith('store/')}
         require(image_record['payload_bytes'] == sum(map(len, store.values())), 'Incorrect store byte count')
-        check_image(image_path, store, Path(tool).resolve())
+        check_image(image_path, store, Path(tool).resolve() if tool is not None else None)
         preserve_store(store, root / 'apps/wifi-store-baseline.json')
         admission_stores.append(('common-deployment', store))
         admission_stores.append(('hosted-spiffs', unpack_image(image, tool)))
@@ -203,6 +203,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
                 'overwrite_bytes': MERGED_SIZE, 'flash_capacity_bytes': 0x1000000,
                 'components': parts, 'source_pins': json.loads(files['shared/alarm-sources.json']),
                 'runtime_admission': admission,
+                'local_spiffs_verification': 'pinned-mkspiffs' if tool is not None else 'read-only-parser',
                 'store': [{'path': n, 'size_bytes': len(b), 'sha256': sha(b)}
                           for n, b in sorted(store.items())], 'physical_verification': 'pending',
                 'flash_warning': 'Full lower8MiB replacement resets NVS/settings, saved Stopwatch, alarm/countdown state, Points in Time records and saved Wi-Fi profile; upper8MiB untouched'}
@@ -242,7 +243,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
     binary = out / name
     archive = out / (Path(name).stem + '-flashing.zip')
     report_path = out / (Path(name).stem + '.json')
-    inputs = {Path(p).resolve() for p in (runtime, artifact, receipt_path, tool)}
+    inputs = {Path(p).resolve() for p in (runtime, artifact, receipt_path, tool) if p is not None}
     require(not inputs.intersection(p.resolve() for p in (binary, archive, report_path)),
             'Output aliases an input')
     out.mkdir(parents=True, exist_ok=True)
@@ -262,8 +263,11 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('runtime', 'artifact', 'receipt', 'runtime-source', 'mkspiffs', 'output'):
+    for name in ('runtime', 'artifact', 'receipt', 'runtime-source', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
+    reader = parser.add_mutually_exclusive_group(required=True)
+    reader.add_argument('--mkspiffs', type=Path)
+    reader.add_argument('--read-only-spiffs', action='store_true')
     parser.add_argument('--pr-head', required=True)
     parser.add_argument('--source-tree', required=True)
     args = parser.parse_args()
