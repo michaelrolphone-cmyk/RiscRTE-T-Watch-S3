@@ -23,6 +23,11 @@ void nova_watch_format(const nova_watch_state *state, nova_watch_labels *labels)
  * globals, floating point, trig, framebuffer cache, or runtime SVG/font engine.
  * Writes only active pixels. Stride padding and caller guards are preserved. */
 bool nova_watch_render(risc_display_surface_v1 *surface, const nova_watch_state *state);
+const char *nova_watch_face_name(unsigned id);
+bool nova_watch_face_render(risc_display_surface_v1 *surface, const nova_watch_state *state, unsigned face_id);
+unsigned nova_watch_picker_pulse(uint32_t elapsed_ms);
+bool nova_watch_picker_render(risc_display_surface_v1 *surface, const nova_watch_state *state,
+    unsigned selected, int position_q8, const char *status, unsigned pulse_face, unsigned pulse_scale_q8, uint16_t *scratch);
 #ifdef __cplusplus
 }
 #endif

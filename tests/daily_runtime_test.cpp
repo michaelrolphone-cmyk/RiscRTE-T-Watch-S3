@@ -96,6 +96,7 @@ bool dailyI2c(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_t r
 int32_t dailyGet(void*,uint32_t ns,const char*key,void*data,uint32_t capacity,uint32_t*size) {
  *size=0;
  if(ns==1) {
+  if(!strcmp(key,"watch_face"))return RISC_KEY_VALUE_NOT_FOUND;
   assert(!strcmp(key,"sleep_mode")&&(m.app=="default.elf"||m.app=="clock.elf"));
   if(d.scenario==StartSleep){assert(capacity>=4);memcpy(data,"\x53\x01\x01\xa4",4);*size=4;return 0;}
   return RISC_KEY_VALUE_NOT_FOUND;

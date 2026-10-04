@@ -48,7 +48,7 @@ bool i2cHybrid(uint8_t p,uint8_t a,const uint8_t*tx,size_t tn,uint8_t*rx,size_t 
  return result;
 }
 int32_t getHybrid(void*,uint32_t ns,const char*key,void*out,uint32_t cap,uint32_t*size){*size=0;
- if(ns==1){assert(!strcmp(key,"sleep_mode")&&(m.app=="default.elf"||m.app=="clock.elf"||m.app=="settings.elf"));return RISC_KEY_VALUE_NOT_FOUND;}
+ if(ns==1){if(!strcmp(key,"watch_face"))return RISC_KEY_VALUE_NOT_FOUND;assert(!strcmp(key,"sleep_mode")&&(m.app=="default.elf"||m.app=="clock.elf"||m.app=="settings.elf"));return RISC_KEY_VALUE_NOT_FOUND;}
  assert(ns==2&&m.app=="stopwatch.elf"&&!strcmp(key,"stopwatch"));
  if(!h.recordSize)return RISC_KEY_VALUE_NOT_FOUND;
  assert(cap>=h.recordSize);memcpy(out,h.record,h.recordSize);*size=h.recordSize;return 0;

@@ -177,3 +177,5 @@ bool nova_watch_render(risc_display_surface_v1 *s,const nova_watch_state *state)
     }
     return true;
 }
+
+#include "../faces/render.inc"

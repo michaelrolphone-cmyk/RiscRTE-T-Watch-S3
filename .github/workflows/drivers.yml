@@ -44,6 +44,7 @@ jobs:
           python scripts/test_hybrid_sleep.py
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
+          python scripts/test_watch_faces.py
           python apps/clock/nova/tests/run.py
       - name: Actual Xtensa default application
         run: python scripts/build_clock_app.py
@@ -117,10 +118,10 @@ jobs:
           for bundle in dist/launcher-common/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      - name: Delivered GUI/app baseline and bounded Hybrid polish inventory
+      - name: Accepted Watch1.0 custody and Clock-only face picker increment
         run: |
-          python scripts/verify_hybrid_increment.py dist/launcher-common/*-launcher-common.zip
-          python -m unittest discover -s tests -p test_hybrid_increment.py -v
+          python scripts/verify_face_picker_increment.py dist/launcher-common/*-launcher-common.zip
+          python -m unittest discover -s tests -p test_face_picker_increment.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-launcher-deployments
@@ -147,6 +148,7 @@ jobs:
             dist/clock-deployments/*.zip
             dist/clock-deployments/catalog.json
             dist/clock-frames/*.png
+            dist/watch-faces/*.png
             dist/clock-frames/*.rgb565
             dist/clock-frames/expected.json
             dist/clock-images/*.bin

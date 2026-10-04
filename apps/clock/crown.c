@@ -11,9 +11,14 @@
 
 static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_CLOCK_LAUNCHER
+#include "faces/picker.h"
 #include "launcher_touch.h"
 #include "PortableSleepPolicy.h"
 static unsigned sleep_mode;
+static watch_face_picker picker;
+static uint16_t *picker_scratch;
+static bool picker_open_pending,picker_select_pending,picker_save_failed;
+static unsigned picker_selection_pending;
 static watch_launcher_touch touch;
 static bool launcher_swipe_pending, launcher_activity_pending;
 static uint32_t launcher_sampled_at;
@@ -24,7 +29,10 @@ static void sample_launcher_touch(uint32_t now, bool force) {
         (!force && (uint32_t)(now-launcher_sampled_at)<8u)) return;
     bool activity=false;
     launcher_sampled_at=now;
-    if (launcher_touch_swipe(&touch,&activity)) launcher_swipe_pending=true;
+    unsigned action=launcher_touch_sample(&touch,&picker,now,&activity);
+    if(action==WATCH_FACE_LAUNCHER)launcher_swipe_pending=true;
+    if(action==WATCH_FACE_OPEN)picker_open_pending=true;
+    if(action==WATCH_FACE_SELECT){picker_selection_pending=picker.target;picker_select_pending=true;}
     if (activity) launcher_activity_pending=true;
 }
 #endif
@@ -98,7 +106,15 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
     uint32_t phase=now-rtc_second_at;
     face.subsecond_ms=face.time_valid ? (phase>999u?999u:(uint16_t)phase) : 0;
     face.animation_ms=now;
+    #ifdef WATCH_CLOCK_LAUNCHER
+    if(picker.open&&picker_scratch) {
+        watch_face_animate(&picker,now);
+        return nova_watch_picker_render(surface,&face,picker.selected,picker.position,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
+    }
+    return nova_watch_face_render(surface,&face,picker.selected);
+#else
     return nova_watch_render(surface,&face);
+#endif
 }
 static bool pace_frame(uint32_t began) {
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -257,6 +273,9 @@ __attribute__((visibility("default"))) void app_main(void) {
     touch=(watch_launcher_touch){0};
     launcher_swipe_pending=launcher_activity_pending=false;
     launcher_sampled_at=0;
+    picker=(watch_face_picker){0};picker_scratch=NULL;
+    picker_open_pending=picker_select_pending=picker_save_failed=false;
+    picker_selection_pending=0;
 #endif
     held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
     reset_telemetry();
@@ -284,6 +303,17 @@ __attribute__((visibility("default"))) void app_main(void) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
+    #ifdef WATCH_CLOCK_LAUNCHER
+    /* Load before the first sharp Clock frame on fresh boot and normal return.
+     * This is the existing shared app-settings namespace, never a driver write. */
+    risc_runtime_capability_v1 face_grant={.struct_size=sizeof(face_grant)};
+    if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,WATCH_FACE_STORE_INSTANCE,&face_grant)) {
+        unsigned selected=0;int rc=watch_face_load(face_grant.api,&selected);
+        picker.selected=(uint8_t)selected;
+        if(!rt->release(&face_grant))goto done;
+        if(rc!=RISC_KEY_VALUE_OK&&rc!=RISC_KEY_VALUE_NOT_FOUND)rt->diagnostic("WATCH_CLOCK face=unreadable default=nova");
+    }
+#endif
     uint32_t discarded,now,armed_at=0,last_activity=0;
     if (!pmu->key_events(pmu->base.context,&discarded) ||
 #ifdef WATCH_CLOCK_RETURN
@@ -320,6 +350,28 @@ __attribute__((visibility("default"))) void app_main(void) {
         sample_launcher_touch(now,true);
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
+        if(picker_open_pending) {
+            picker_open_pending=false;
+            if(!picker_scratch)picker_scratch=malloc(240u*240u*sizeof(uint16_t));
+            if(!picker_scratch){watch_face_close(&picker);rt->diagnostic("WATCH_CLOCK picker=out-of-memory");}
+        }
+        /* Crown close/sleep supersedes any contact action sampled while an
+         * accepted display transfer was draining. */
+        if(events&3u)picker_select_pending=false;
+        if(picker_select_pending) {
+            picker_select_pending=false;
+            risc_runtime_capability_v1 setting={.struct_size=sizeof(setting)};bool saved=false;
+            if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,WATCH_FACE_STORE_INSTANCE,&setting)) {
+                saved=watch_face_save(setting.api,picker_selection_pending);
+                if(!rt->release(&setting))break;
+            }
+            if(saved)picker.selected=(uint8_t)picker_selection_pending;
+            picker_save_failed=!saved;
+            rt->diagnostic(saved?"WATCH_CLOCK face=saved":"WATCH_CLOCK face=save-failed");
+        }
+        /* A short crown press dismisses the picker without changing selection;
+         * the existing long-press sleep path remains untouched. */
+        if(picker.open&&(events&1u)){watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;picker_save_failed=false;}
         if(launcher_swipe_pending) {
             launcher_swipe_pending=false;
             /* The completed sharp Clock remains in provider-owned storage.
@@ -338,6 +390,8 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_LAUNCHER
             /* Retained input subscriptions must not veto platform sleep. */
             if(!launcher_touch_close(&touch)) break;
+            watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
+            picker_open_pending=picker_select_pending=picker_save_failed=false;
 #endif
             if (!sleep_cycle() || !alive(&armed_at)) break;
             /* A refused/held-key attempt also starts a new bounded interval;
@@ -353,6 +407,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     }
 done:
 #ifdef WATCH_CLOCK_LAUNCHER
+    free(picker_scratch);picker_scratch=NULL;
     if(!launcher_touch_close(&touch)) rt->diagnostic("WATCH_CLOCK error=touch-release");
 #endif
     if (held && display && display->release) display->release(display->context,held);

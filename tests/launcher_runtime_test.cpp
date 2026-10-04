@@ -91,7 +91,7 @@ bool spiTransfer(uint8_t p,const uint8_t*tx,uint8_t*,size_t n,uint32_t ms){
 }
 bool spiEnd(uint8_t p,uint8_t cs,uint32_t){assert(p==2&&cs==12&&m.held);m.held=false;m.levels[cs]=true;return true;}
 bool spiClose(uint8_t p){assert(p==2&&!m.held);m.spi=false;return true;}
-int32_t kvGet(void*,uint32_t ns,const char*key,void*data,uint32_t capacity,uint32_t*size){assert(ns==1&&!strcmp(key,"sleep_mode"));*size=0;if(m.sleep_test){assert(capacity>=4);memcpy(data,"\x53\x01\x01\xa4",4);*size=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}
+int32_t kvGet(void*,uint32_t ns,const char*key,void*data,uint32_t capacity,uint32_t*size){if(ns==1&&!strcmp(key,"watch_face")){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}assert(ns==1&&!strcmp(key,"sleep_mode"));*size=0;if(m.sleep_test){assert(capacity>=4);memcpy(data,"\x53\x01\x01\xa4",4);*size=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}
 int32_t kvPut(void*,uint32_t,const char*,const void*,uint32_t){assert(!"Existing GUI flows never save sleep mode");return RISC_KEY_VALUE_IO;}
 const RiscBoot::KeyValueBackend kv={nullptr,kvGet,kvPut};
 bool bind(RiscBoot::Runtime&r){return cpu->bind(r);}
