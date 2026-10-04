@@ -1,11 +1,11 @@
 import hashlib,json,sys,tempfile,unittest,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts'))
-from verify_alarm_deployment import verify
-class AlarmAuthority(unittest.TestCase):
+from verify_points_deployment import verify
+class PointsAuthority(unittest.TestCase):
  def setUp(self):
   version=json.loads((ROOT/'apps/clock/manifest.json').read_text())['version']
-  paths=list((ROOT/'dist/alarm-launcher-deployments').glob('twatch-alarm-launcher-'+version+'-sx1262-915-bma423.zip'));self.assertEqual(len(paths),1)
+  paths=list((ROOT/'dist/points-launcher-deployments').glob('twatch-points-launcher-'+version+'-sx1262-915-bma423.zip'));self.assertEqual(len(paths),1)
   self.path=paths[0]
   with zipfile.ZipFile(self.path) as z:self.files={n:z.read(n) for n in z.namelist()}
  def reject(self,name,edit):
@@ -21,7 +21,7 @@ class AlarmAuthority(unittest.TestCase):
    with zipfile.ZipFile(path,'w') as z:
     for n,data in files.items():z.writestr(n,data)
    with self.assertRaises((AssertionError,ValueError,KeyError,StopIteration)):verify(path)
- def test_exact_nine_app_five_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.7.0')
+ def test_exact_ten_app_seven_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.7.0')
  def test_app_authority_is_exact(self):
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'].append({'capability':'audio.output','api':1,'instance_id':12}))
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'][-2].update(instance_id=4))
@@ -35,3 +35,10 @@ class AlarmAuthority(unittest.TestCase):
   self.reject('store/pmu/manifest.json',lambda d:d.update(version='0.5.1'))
   self.reject('runtime-requirements.json',lambda d:d.update(source_sha='0'*40))
   self.reject('store/board.json',lambda d:next(x for x in d['devices'] if x['instance_id']==4)['config']['rails'].append({'id':3,'millivolts':3300}))
+
+ def test_app_and_service_identity_are_exact(self):
+  for name in ('default','clock','points_in_time'):
+   for field,value in [('type','driver'),('id','wrong'),('architecture','arm'),('entry','wrong'),('file_name','wrong.elf')]:
+    with self.subTest(name=name,field=field):self.reject('store/'+name+'.json',lambda d,field=field,value=value:d.update({field:value}))
+  for field,value in [('type','application'),('id','wrong'),('driver_abi',999),('architecture','arm'),('file_name','wrong.elf')]:
+   with self.subTest(service_field=field):self.reject('store/alarm-service/manifest.json',lambda d,field=field,value=value:d.update({field:value}))

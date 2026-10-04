@@ -1,6 +1,9 @@
 #include "ports/esp32s3/CpuPort.h"
 #include "fixture.h"
 #include "AlarmRecords.h"
+#ifdef POINTS_CROSS_LAYER
+#include "PointsRecords.h"
+#endif
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -21,6 +24,13 @@ extern "C" void probe_delay(unsigned ms){assert(!nativeRetained);ticks+=ms;}
 extern "C" void probe_service(const char*s){if(held||nativeRetained)serviceWhileHeld++;assert(!held&&!nativeRetained);if(!strcmp(s,"step"))steps++;probe_event(s);}
 extern "C" void probe_result(int rc){result=rc;}
 static uint32_t rtcSeconds(){uint32_t s=0;assert(alarm_calendar_seconds(2026,10,4,0,0,0,&s));return s;}
+extern "C" uint32_t probe_expected_deadline(){
+#ifdef POINTS_CROSS_LAYER
+ return rtcSeconds()+600;
+#else
+ return rtcSeconds()+1000;
+#endif
+}
 extern "C" bool probe_rtc(twatch_rtc_time_v1*t){assert(!held&&!nativeRetained);rtcReads++;uint32_t s=ticks/1000;*t={2026,10,4,0,uint8_t(s/3600),uint8_t(s/60%60),uint8_t(s%60)};return true;}
 static bool owner(){return true;}
 static bool health(risc_runtime_health_v1*h){h->uptime_ms=ticks;return true;}
@@ -52,7 +62,16 @@ static bool timerClear(){return true;}
 static bool lightSleep(uint32_t*cause){lightCalls++;assert(!held&&timer==300000);ticks+=timer;*cause=RISC_LIGHT_SLEEP_WAKE_TIMER;return true;}
 static bool bind(RiscBoot::Runtime&r){return cpu->bind(r);}
 static bool exitSafe(){return cpu->appExitSafe();}
-static int32_t get(void*,uint32_t ns,const char*key,void*data,uint32_t cap,uint32_t*size){assert(!held&&!nativeRetained);reads++;*size=0;if(ns==3&&!strcmp(key,"alarm_cfg")){alarm_config config={1,rtcSeconds()+1000,rtcSeconds(),0,ALARM_KIND_ALARM,1};uint8_t b[32];alarm_config_encode(&config,b);assert(cap>=32);memcpy(data,b,32);*size=32;return RISC_KEY_VALUE_OK;}return RISC_KEY_VALUE_NOT_FOUND;}
+static int32_t get(void*,uint32_t ns,const char*key,void*data,uint32_t cap,uint32_t*size){assert(!held&&!nativeRetained);reads++;*size=0;
+#ifdef POINTS_CROSS_LAYER
+ if(ns==5&&!strcmp(key,"points_cfg")){
+  points_config c{};c.revision=1;c.created=rtcSeconds();
+  for(unsigned i=0;i<POINTS_MAX;i++)c.points[i].kind=POINTS_BREAK;
+  c.points[0]={POINTS_LUNCH,1,0,127,10,10,30};uint8_t b[64];points_config_encode(&c,b);
+  assert(cap>=64);memcpy(data,b,64);*size=64;return RISC_KEY_VALUE_OK;
+ }
+#endif
+ if(ns==3&&!strcmp(key,"alarm_cfg")){alarm_config config={1,rtcSeconds()+1000,rtcSeconds(),0,ALARM_KIND_ALARM,1};uint8_t b[32];alarm_config_encode(&config,b);assert(cap>=32);memcpy(data,b,32);*size=32;return RISC_KEY_VALUE_OK;}return RISC_KEY_VALUE_NOT_FOUND;}
 static int32_t put(void*,uint32_t,const char*,const void*,uint32_t){assert(!"Future alarm writes no occurrence");return RISC_KEY_VALUE_IO;}
 static const RiscBoot::KeyValueBackend kv={nullptr,get,put};
 int main(int argc,char**argv){assert(argc==3);mode=argv[2];RiscCpu::Hardware h{};h.owner=owner;h.now=now;h.sleep=delay;h.gpioOpen=gpioOpen;h.gpioWrite=gpioWrite;h.gpioRead=gpioRead;h.gpioPwm=gpioPwm;h.gpioClose=gpioClose;h.i2cOpen=i2cOpen;h.i2cTransfer=i2cTransfer;h.i2cClose=busClose;h.spiOpen=spiOpen;h.spiBegin=spiBegin;h.spiTransfer=spiTransfer;h.spiEnd=spiEnd;h.spiClose=busClose;h.deepWakeValid=valid;h.deepReady=ready;h.deepWakeArm=deepArm;h.deepWakeClear=deepClear;h.deepSleep=deepSleep;h.deepHold=deepHold;h.wakeValid=valid;h.wakeArm=lightArm;h.wakeClear=lightClear;h.lightSleep=lightSleep;h.timerArm=timerArm;h.timerClear=timerClear;

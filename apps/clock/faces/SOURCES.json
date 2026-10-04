@@ -10,6 +10,11 @@
       "file": "RiscRTE Watch Face Picker (240\u00d7240).html",
       "sha256": "21ae4f32c226fa42ca55ba4c76d879af71249833ed6a03895974145496e88d2e",
       "size_bytes": 12912
+    },
+    {
+      "file": "Points in Time \u2014 8 \u00d7 240\u00d7240.html",
+      "sha256": "dbea229fdfae4edf7711b14d7c02af0200d5f0b933195efe7e89f494a39ba83e",
+      "size_bytes": 14774
     }
   ],
   "renderer": "Integer RGB565 adaptation of supplied SVG geometry; shared NOVA canvas and glyph model",

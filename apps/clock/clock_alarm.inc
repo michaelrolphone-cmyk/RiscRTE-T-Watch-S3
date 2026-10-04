@@ -47,7 +47,7 @@ static bool clock_alarm_foreground(void) {
     for(;;) {
         if(redraw) {
             risc_display_surface_v1 s={0};
-            if(!frame(&s) || !nova_watch_alarm_render(&s,clock_alarm.status.occurrence.kind==ALARM_KIND_COUNTDOWN,
+            if(!frame(&s) || !nova_watch_alarm_label_render(&s,clock_alarm.status.label,clock_alarm.status.occurrence.kind==ALARM_KIND_COUNTDOWN,
                clock_alarm.status.state==ALARM_STATE_BLOCKED,clock_alarm.status.error==ALARM_RTC,
                clock_alarm.status.state==ALARM_STATE_DISMISSING,clock_alarm.status.output_uncertain,
                clock_alarm.status.occurrence.generation!=0) || !present() ||

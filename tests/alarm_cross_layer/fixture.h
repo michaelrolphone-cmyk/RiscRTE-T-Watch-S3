@@ -10,6 +10,7 @@ void probe_event(const char *);
 void probe_delay(unsigned);
 void probe_service(const char *);
 void probe_result(int);
+uint32_t probe_expected_deadline(void);
 bool probe_rtc(twatch_rtc_time_v1 *);
 #ifdef __cplusplus
 }

@@ -54,10 +54,36 @@ static const twatch_pmu_api_v1 *pmu;
 static const twatch_panel_power_v1 *panel;
 static risc_display_frame_v1 held;
 static nova_watch_state face;
+#ifdef WATCH_CLOCK_POINTS
+#include "points_projection.h"
+static points_config clock_points_config;
+static nova_points_state clock_points_view;
+static bool clock_points_available;
+static uint32_t clock_points_second;
+static bool clock_points_sampled;
+static bool clock_points_load(void) {
+    risc_runtime_capability_v1 grant={.struct_size=sizeof(grant)};
+    clock_points_config=(points_config){0};clock_points_sampled=false;
+    clock_points_view=(nova_points_state){.status=NOVA_POINTS_UNAVAILABLE};clock_points_available=false;
+    if(!rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,5,&grant))return true;
+    const risc_key_value_v1 *kv=grant.api;
+    if(kv&&kv->api_version==1&&kv->struct_size>=sizeof(*kv)&&kv->get) {
+        uint8_t bytes[POINTS_RECORD_SIZE];uint32_t n=0;
+        int32_t result=kv->get(kv->context,POINTS_CONFIG_KEY,bytes,sizeof(bytes),&n);
+        clock_points_available=result==RISC_KEY_VALUE_NOT_FOUND||
+            (result==RISC_KEY_VALUE_OK&&points_config_decode(&clock_points_config,bytes,n));
+        clock_points_view.status=clock_points_available?NOVA_POINTS_EMPTY:NOVA_POINTS_ERROR;
+    }
+    return rt->release(&grant);
+}
+#endif
 static uint32_t rtc_sampled_at, rtc_second_at, battery_sampled_at;
 static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
+#ifdef WATCH_CLOCK_POINTS
+    clock_points_sampled=false;face.points=&clock_points_view;
+#endif
 }
 #ifdef WATCH_CLOCK_LAUNCHER
 static bool reload_time_format(void) {
@@ -123,7 +149,18 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
      * edge anchors the fractional hand within one 100ms sampling interval. */
     if (!sampled_rtc || (uint32_t)(now-rtc_sampled_at)>=100u) {
         twatch_rtc_time_v1 date={0};
-        bool valid=rtc && rtc->read(rtc->context,&date) && watch_display_time(&date,&date);
+        bool valid=rtc && rtc->read(rtc->context,&date);
+#ifdef WATCH_CLOCK_POINTS
+        uint32_t raw_seconds=0;
+        bool raw_valid=valid&&alarm_calendar_seconds(date.year,date.month,date.day,date.hour,date.minute,date.second,&raw_seconds);
+        if(!raw_valid)clock_points_view.status=NOVA_POINTS_ERROR;
+        else if(clock_points_available&&(!clock_points_sampled||clock_points_second!=raw_seconds||clock_points_view.status==NOVA_POINTS_ERROR)) {
+            (void)watch_points_projection(&clock_points_config,raw_seconds,&clock_points_view);
+            clock_points_second=raw_seconds;clock_points_sampled=true;
+        }
+        face.points=&clock_points_view;
+#endif
+        valid=valid&&watch_display_time(&date,&date);
         if (valid && (!face.time_valid || !same_second(&date,&face.time))) rtc_second_at=now;
         face.time=date; face.time_valid=valid;
         rtc_sampled_at=now; sampled_rtc=true;
@@ -372,6 +409,9 @@ __attribute__((visibility("default"))) void app_main(void) {
     }
 #endif
 #ifdef WATCH_CLOCK_ALARMS
+#ifdef WATCH_CLOCK_POINTS
+    if(!clock_points_load())goto done;
+#endif
     /* Deep reset and normal return both reconcile before any boot intro. */
     if(!portable_alarm_open(&clock_alarm,rt) || !launcher_touch_open(&touch) || !clock_alarm_foreground())goto done;
 #endif

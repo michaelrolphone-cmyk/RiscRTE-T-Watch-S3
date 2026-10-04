@@ -12,4 +12,6 @@ cc -std=gnu11 -O1 -g -I"$utilities/test/alarm-loader-stubs" -I"$runtime/lib/elf_
  "$utilities/test/alarm_target_loader.c" "$runtime/lib/elf_loader/src/esp_elf.c" \
  "$runtime/lib/elf_loader/src/arch/esp_elf_xtensa.c" "$runtime/lib/elf_loader/src/esp_elf_validate.c" \
  -o "$build/target-loader"
-"$build/target-loader" "$watch"/dist/alarm-launcher/*.elf
+folder="${3:-alarm-launcher}"
+[[ "$folder" == "alarm-launcher" || "$folder" == "points-launcher" ]]
+"$build/target-loader" "$watch"/dist/"$folder"/*.elf

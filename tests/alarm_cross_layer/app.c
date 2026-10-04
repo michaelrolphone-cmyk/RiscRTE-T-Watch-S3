@@ -7,7 +7,7 @@ static const alarm_service_v1 *actual;
 static int32_t status(void*c,alarm_status_v1*s){(void)c;probe_service("status");return actual->status(actual->context,s);}
 static int32_t step(void*c){(void)c;probe_service("step");return actual->step(actual->context);}
 static int32_t refresh(void*c){(void)c;probe_service("refresh");return actual->refresh(actual->context);}
-static int32_t prep(void*c,alarm_sleep_v1*s){(void)c;probe_service("prepare");return actual->prepare_sleep(actual->context,s);}
+static int32_t prep(void*c,alarm_sleep_v1*s){(void)c;probe_service("prepare");int32_t result=actual->prepare_sleep(actual->context,s);if(result==ALARM_OK)assert(s->deadline==probe_expected_deadline());return result;}
 static alarm_service_v1 observed;
 __attribute__((visibility("default"))) int app_module_init(void){probe_event("app-init");return 0;}
 __attribute__((visibility("default"))) void app_module_fini(void){probe_event("app-fini");}

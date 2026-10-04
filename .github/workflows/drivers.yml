@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   push:
-    branches: [feat/watch-alarm-lifecycle]
+    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time]
   pull_request:
 permissions:
   contents: read
@@ -251,4 +251,87 @@ jobs:
             dist/alarm-common/*.zip
             dist/alarm-common/*.bin
             dist/alarm-common/*.json
+          if-no-files-found: error
+
+  points-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 911be9e8042f1bcc46038fb70189eebe4ca106c5
+          path: .points-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 06104e746c6b83542c260250b91dab5ed5386eaf
+          path: .points-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: 43c23fee899cd2af8b6b5339b80e778018fb6295
+          path: .points-dependencies/productivity
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 8688f92069b99547f0d25ecbd12cfcad3bb52c53
+          path: .points-dependencies/runtime
+          persist-credentials: false
+      - name: Points projections, eight faces and foreground lifecycle
+        run: |
+          python scripts/test_points_watch_faces.py
+          python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
+          python .points-dependencies/productivity/scripts/test_points_in_time.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
+          SANITIZE=1 python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
+      - name: Pinned target tools
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+          echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
+      - name: Ten native apps, service, seven keys and all profile closures
+        run: |
+          python scripts/build_twatch_drivers.py
+          python scripts/board_baseline.py
+          python scripts/check_twatch_drivers.py
+          python scripts/build_points_apps.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities --runtime .points-dependencies/runtime --productivity .points-dependencies/productivity
+          bash scripts/test_alarm_target_loader.sh .points-dependencies/runtime .points-dependencies/utilities points-launcher
+          python scripts/build_clock_deployment.py --profile all --launcher --alarms --points
+          python scripts/verify_points_deployment.py dist/points-launcher-deployments/*.zip
+          python -m unittest discover -s tests -p test_points_deployment.py -v
+      - name: Exact common store, semantic custody and SPIFFS round trip
+        env:
+          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m unittest discover -s tests -p test_points_bundle.py -v
+          python scripts/build_points_common.py dist/points-launcher-deployments/*.zip --pr-head-sha "$TWATCH_PR_HEAD_SHA"
+          for bundle in dist/points-common/*.zip; do
+            python scripts/build_points_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/points-launcher/*.elf
+            dist/points-launcher/*.json
+            dist/points-launcher-deployments/*.zip
+            dist/points-launcher-deployments/catalog.json
+            dist/points-common/*.zip
+            dist/points-common/*.bin
+            dist/points-common/*.json
+            dist/points-native/*.png
           if-no-files-found: error

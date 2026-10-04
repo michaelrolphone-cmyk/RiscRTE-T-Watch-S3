@@ -5,7 +5,7 @@
 #include "nova.h"
 static uint8_t guarded[240*484+32], saved[240*484], tight[240*480];
 static risc_display_surface_v1 frame={1,guarded+16,240,240,484,240*484,RISC_DISPLAY_FORMAT_RGB565};
-static nova_watch_state input={{2026,10,3,6,10,42,18},true,true,84,250,15000,false};
+static nova_watch_state input={{2026,10,3,6,10,42,18},true,true,84,250,15000,false,NULL};
 static unsigned assertions;
 #define CHECK(x) do { assert(x);assertions++; } while (0)
 static uint32_t hash_region(int lo,int hi) {

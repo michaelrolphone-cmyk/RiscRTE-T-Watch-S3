@@ -12,7 +12,7 @@ typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
 #define FAMBER FC(255,176,32)
 #define FORANGE FC(255,122,26)
 #define FMUTED FC(125,140,144)
-static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS"};
+static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY"};
 const char *nova_watch_face_name(unsigned id) {return id<WATCH_FACE_COUNT?face_names[id]:face_names[0];}
 static const face_glyph *fglyph(const face_font *font,char ch) {
     for(unsigned i=0;i<font->count;i++)if(font->glyphs[i].ch==(uint8_t)ch)return font->glyphs+i;
@@ -125,6 +125,7 @@ static void fbattery(canvas*c,const nova_watch_state*s,const nova_watch_labels*l
 }
 #include "collection_two.inc"
 #include "calendar_collection.inc"
+#include "points_collection.inc"
 static bool face_surface_valid(const risc_display_surface_v1*s) {
     return s&&s->pixels&&s->pixel_format==5&&s->width==240&&s->height==240&&s->stride_bytes>=480&&s->stride_bytes<=UINT32_MAX/240&&s->size_bytes>=s->stride_bytes*240;
 }
@@ -146,7 +147,8 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
     int hour=l.time_valid?(int)(state->time.hour%12)*7680+min/12:0;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
     char hms[9];memcpy(hms,l.hour_minute,5);hms[5]=':';memcpy(hms+6,l.seconds,3);
-    if(id>=16)fcalendar_collection(&c,state,&l,id-16,sec,min,hour,sub);
+    if(id>=24)fpoints_collection(&c,state,&l,id-24);
+    else if(id>=16)fcalendar_collection(&c,state,&l,id-16,sec,min,hour,sub);
     else if(id>=8)fcollection_two(&c,state,&l,id-8,sec,min,hour,sub);
     else if(id==0) {
         for(int i=0;i<60;i++)frad(&c,i*1536,i%5?111:105,116,120,120,i%5?16:32,i%5?FC(14,79,92):FCYAN);
@@ -203,7 +205,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
         for(unsigned i=0;i<8;i++)if(hms[i]!=':'){for(unsigned j=0;j<4;j++)fcirc(&c,xs[k]*16,(76+(int)j*26)*16,128,0,l.time_valid&&((hms[i]-'0')>>(3-j)&1)?FAMBER:FC(36,26,5));k++;}
         ftext(&c,&ff_o10,"B C D",120,50,1536,0,FAMBER,0);ftext(&c,&ff_o9,"HH",62,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"MM",122,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"SS",182,178,0,0,FMUTED,0);ftext(&c,&ff_o14,hms,120,198,0,0,FWHITE,0);char bat[10]="BAT ";unsigned i=0;while(l.battery[i]){bat[4+i]=l.battery[i];i++;}bat[4+i]=0;ftext(&c,&ff_o9,bat,120,216,512,0,FGREEN,0);
     }
-    if(l.time_valid&&!state->hour_24)ftext(&c,&ff_r9,l.meridiem,217,233,128,0,FMUTED,0);
+    if(id<24&&l.time_valid&&!state->hour_24)ftext(&c,&ff_r9,l.meridiem,217,233,128,0,FMUTED,0);
     return true;
 }
 /* Rendered previews are the exact same production face function. Scratch is
@@ -230,6 +232,16 @@ static bool picker_layers_render(risc_display_surface_v1*s,const nova_watch_stat
         old->battery_percent!=state->battery_percent||old->time.year!=state->time.year||
         old->time.month!=state->time.month||old->time.day!=state->time.day||
         old->time.hour!=state->time.hour||old->time.minute!=state->time.minute))cache->valid_mask=0;
+    /* Capture schedule keys by value: state->points may refer to the same
+     * mutable caller object as the previous frame. Countdown seconds remain
+     * focused-only; semantic changes refresh only schedule cards. */
+    const nova_points_state*points=state->points;
+    uint32_t revision=points?points->revision:0;
+    uint32_t next_rtc=points&&points->next_count?points->next[0].at_rtc:0;
+    uint8_t points_status=points?(uint8_t)points->status:0,phase=points?(uint8_t)points->phase:0;
+    if(cache->points_revision!=revision||cache->points_next_rtc!=next_rtc||cache->points_status!=points_status||cache->points_phase!=phase)
+        for(unsigned k=0;k<6;k++)if(cache->face_ids[k]>=24)cache->valid_mask&=(uint8_t)~(1u<<k);
+    cache->points_revision=revision;cache->points_next_rtc=next_rtc;cache->points_status=points_status;cache->points_phase=phase;
     cache->stamp=*state;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
 
@@ -312,17 +324,26 @@ bool nova_watch_picker_collections_render(risc_display_surface_v1*s,const nova_w
 }
 
 /* Pure alert view reuses the picker fonts and canvas; no service calls here. */
-bool nova_watch_alarm_render(risc_display_surface_v1*s,bool countdown,bool blocked,
+bool nova_watch_alarm_label_render(risc_display_surface_v1*s,const char*label,bool countdown,bool blocked,
         bool rtc_error,bool dismissing,bool uncertain,bool occurrence) {
     if(!s || !s->pixels || s->width!=240 || s->height!=240 || s->pixel_format!=RISC_DISPLAY_FORMAT_RGB565 ||
        s->stride_bytes<480 || s->stride_bytes>UINT32_MAX/240 || s->size_bytes<s->stride_bytes*240)return false;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};
     for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
-    ftext(&c,&ff_o13,countdown?"COUNTDOWN":"ALARM",120,52,256,0,FCYAN,0);
+    char title[24];unsigned title_length=0;
+    if(label)while(title_length<23&&label[title_length]){char ch=label[title_length];title[title_length++]=ch>='a'&&ch<='z'?(char)(ch-'a'+'A'):ch;}
+    title[title_length]=0;
+    if(title_length)ftext(&c,&ff_r12,title,120,52,384,title_length>18?196:0,FCYAN,0);
+    else ftext(&c,&ff_o13,countdown?"COUNTDOWN":"ALARM",120,52,256,0,FCYAN,0);
     ftext(&c,&ff_r12,blocked?(rtc_error?"RTC ERROR":"SERVICE ERROR"):dismissing?"STOPPING / SAVING":"TIME IS UP",120,94,0,0,blocked?FORANGE:FWHITE,0);
     if(uncertain)ftext(&c,&ff_r10,"OUTPUT STOP UNCONFIRMED",120,121,0,0,FORANGE,0);
     frect(&c,24,154,192,1,FCYAN);frect(&c,24,193,192,1,FCYAN);
     ftext(&c,&ff_o13,occurrence?"DISMISS":"BACK",120,179,256,0,FWHITE,0);
     if(blocked)ftext(&c,&ff_r12,"RETRY",120,220,256,0,FCYAN,0);
     return true;
+}
+
+bool nova_watch_alarm_render(risc_display_surface_v1*s,bool countdown,bool blocked,
+        bool rtc_error,bool dismissing,bool uncertain,bool occurrence) {
+    return nova_watch_alarm_label_render(s,NULL,countdown,blocked,rtc_error,dismissing,uncertain,occurrence);
 }
