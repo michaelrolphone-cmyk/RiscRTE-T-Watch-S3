@@ -48,7 +48,7 @@ def build(system, utilities, runtime, productivity, updates=('ota_update', 'app_
                 != (runtime/'sdk/driver'/header).read_bytes()):
             raise ValueError('Native provider API differs from exact Runtime: ' + header)
     build_apps(system, utilities, alarms=True, runtime=runtime,
-               productivity=productivity, wifi=True, updates=updates)
+               productivity=productivity, wifi=True, updates=updates, audio=True)
     build_service(system, utilities, runtime, points=True, wifi=True, updates=True)
     out = ROOT/'dist/update-launcher'
     providers = {}
