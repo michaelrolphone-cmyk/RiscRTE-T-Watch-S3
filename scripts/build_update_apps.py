@@ -75,6 +75,7 @@ def build(system, utilities, runtime, productivity, updates=('ota_update', 'app_
                               'manifest_sha256': sha((out/(short+'.json')).read_bytes())}
     baseline = json.loads((ROOT/'scripts/update-preservation-baseline.json').read_text())
     preserved = {}
+    mismatches = {}
     for path, expected in baseline['files'].items():
         if not path.endswith('.elf') or path == 'default.elf' or path in ICON_REFRESH_ELFS:
             continue
@@ -82,9 +83,13 @@ def build(system, utilities, runtime, productivity, updates=('ota_update', 'app_
         if '/' in artifact:  # Physical drivers are independently pinned at deployment verification.
             continue
         data = (out/artifact).read_bytes()
-        if len(data) != expected['size_bytes'] or sha(data) != expected['sha256']:
-            raise ValueError('Update changed an unrelated delivered executable: '+path)
-        preserved[path] = expected
+        actual = {'size_bytes': len(data), 'sha256': sha(data)}
+        if actual != expected:
+            mismatches[path] = actual
+        else:
+            preserved[path] = expected
+    if mismatches:
+        raise ValueError('Update changed unrelated delivered executables: '+json.dumps(mismatches,sort_keys=True))
     runtime_requirements = json.loads((ROOT/'apps/update-runtime-requirements.json').read_text())
     record = {'schema': 1, 'apps': list(updates), 'source_pins': pins,
               'runtime_candidate_status': runtime_requirements['deployment']['candidate_artifact']['status'],
