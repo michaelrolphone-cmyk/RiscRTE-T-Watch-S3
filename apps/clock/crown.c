@@ -10,6 +10,14 @@
 #include <string.h>
 
 static const risc_runtime_api_v1 *rt;
+#ifdef WATCH_CLOCK_ALARMS
+#ifndef WATCH_CLOCK_LAUNCHER
+#error Alarm Clock requires its normal touch launcher deployment
+#endif
+static bool clock_alarm_modal,clock_display_settled;
+static bool clock_alarm_foreground(void);
+static bool clock_alarm_failure(void);
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
 #include "faces/picker.h"
 #include "launcher_touch.h"
@@ -25,6 +33,9 @@ static uint32_t launcher_sampled_at;
 /* Sampling must not wait for a whole 240-row presentation. Latch the first
  * qualified swipe, but let the accepted frame finish before handing it off. */
 static void sample_launcher_touch(uint32_t now, bool force) {
+#ifdef WATCH_CLOCK_ALARMS
+    if(clock_alarm_modal)return;
+#endif
     if (!touch.subscription || launcher_swipe_pending ||
         (!force && (uint32_t)(now-launcher_sampled_at)<8u)) return;
     bool activity=false;
@@ -62,12 +73,20 @@ static bool present(void) {
     if (!alive(&start)) return false;
     bool healthy=true;
     const risc_display_present_options_v1 opts={0,0,0};
+#ifdef WATCH_CLOCK_ALARMS
+    clock_display_settled=false;
+#endif
     if (!display->submit(display->context,held,NULL,0,&opts,&token)) return false;
     held=0;
     for(unsigned n=0;n<=10000;n++) {
         risc_display_present_status_v1 s={0};
         if (!display->present_status(display->context,token,&s)) return false;
-        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) return healthy;
+        if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) {
+#ifdef WATCH_CLOCK_ALARMS
+            clock_display_settled=true;
+#endif
+            return healthy;
+        }
         if (s.state==RISC_DISPLAY_PRESENT_FAILED || s.state==RISC_DISPLAY_PRESENT_SUPERSEDED) return false;
         if (alive(&now)) {
             if ((uint32_t)(now-start)>=10000) return false;
@@ -230,7 +249,10 @@ static bool startup(void) {
     }
     return false;
 }
-static bool sleep_cycle(void) {
+#ifdef WATCH_CLOCK_ALARMS
+#include "clock_alarm.inc"
+#endif
+static int sleep_cycle(void) {
     /* Clear retained panel RAM before sleep, not merely its PWM. If the
      * platform briefly restores the backlight before the panel resume hook,
      * the exposed completed image is black rather than the old Clock. */
@@ -249,10 +271,22 @@ static bool sleep_cycle(void) {
 #ifdef WATCH_CLOCK_LAUNCHER
     mode=sleep_mode;
 #endif
+#ifdef WATCH_CLOCK_ALARMS
+    (void)watch_sleep_prepared;
+    int rc=watch_alarm_sleep_prepared(panel,pmu,mode,clock_alarm.api,rt->diagnostic);
+#else
     int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
+#endif
+#ifdef WATCH_CLOCK_ALARMS
+    if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
+#endif
     if(rc<0)return false;
     uint32_t discard;
     reset_telemetry();
+#ifdef WATCH_CLOCK_ALARMS
+    /* Due work is handled before wake intro; short/crown and touch are fresh. */
+    if(!launcher_touch_open(&touch) || !clock_alarm_foreground() || !launcher_touch_close(&touch))return false;
+#endif
     if (rc==WATCH_SLEEP_WOKE) {
         rt->diagnostic("WATCH_CLOCK woke");
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
@@ -269,6 +303,10 @@ static bool sleep_cycle(void) {
 }
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
+#ifdef WATCH_CLOCK_ALARMS
+    clock_alarm=(portable_alarm_client){0};clock_display_settled=true;
+    clock_alarm_modal=clock_alarm_failed_cleaned=clock_alarm_error_seen=false;
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
     touch=(watch_launcher_touch){0};
     launcher_swipe_pending=launcher_activity_pending=false;
@@ -314,6 +352,10 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(rc!=RISC_KEY_VALUE_OK&&rc!=RISC_KEY_VALUE_NOT_FOUND)rt->diagnostic("WATCH_CLOCK face=unreadable default=nova");
     }
 #endif
+#ifdef WATCH_CLOCK_ALARMS
+    /* Deep reset and normal return both reconcile before any boot intro. */
+    if(!portable_alarm_open(&clock_alarm,rt) || !launcher_touch_open(&touch) || !clock_alarm_foreground())goto done;
+#endif
     uint32_t discarded,now,armed_at=0,last_activity=0;
     if (!pmu->key_events(pmu->base.context,&discarded) ||
 #ifdef WATCH_CLOCK_RETURN
@@ -323,7 +365,11 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
 #ifdef WATCH_CLOCK_LAUNCHER
+#ifdef WATCH_CLOCK_ALARMS
+    if(!rt->request_launch)goto done;
+#else
     if(!rt->request_launch || !launcher_touch_open(&touch)) goto done;
+#endif
 #endif
     last_activity=armed_at;
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -341,6 +387,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
+#ifdef WATCH_CLOCK_ALARMS
+        if(!clock_alarm_foreground() || !alive(&now))break;
+#endif
         uint32_t events=0;
         if (!pmu->key_events(pmu->base.context,&events)) break;
         /* The clock closure currently exposes only PMU short/long key events.
@@ -393,7 +442,11 @@ __attribute__((visibility("default"))) void app_main(void) {
             watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
             picker_open_pending=picker_select_pending=picker_save_failed=false;
 #endif
-            if (!sleep_cycle() || !alive(&armed_at)) break;
+            int sleep_result=sleep_cycle();
+#ifdef WATCH_CLOCK_ALARMS
+            if(sleep_result==WATCH_SLEEP_RETAINED)return; /* Runtime retains before fini. */
+#endif
+            if (!sleep_result || !alive(&armed_at)) break;
             /* A refused/held-key attempt also starts a new bounded interval;
              * it must not turn an expired timeout into a busy retry loop. */
             last_activity=armed_at;
@@ -406,6 +459,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
     }
 done:
+#ifdef WATCH_CLOCK_ALARMS
+    clock_alarm_finish();
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
     free(picker_scratch);picker_scratch=NULL;
     if(!launcher_touch_close(&touch)) rt->diagnostic("WATCH_CLOCK error=touch-release");

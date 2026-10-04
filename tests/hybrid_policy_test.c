@@ -25,8 +25,8 @@ static int32_t deep(void*c){(void)c;assert(!resumes);deep_calls++;
  if(terminal){assert(elapsed==300000&&timed_calls==1&&observations==2&&deep_prepares==1);_exit(77);}
  return scenario==13?0:scenario==14?RISC_DEEP_SLEEP_RETAINED:RISC_DEEP_SLEEP_ACTIVE_WAKE;
 }
-static twatch_panel_power_v1 panel={{.api_version=1,.struct_size=sizeof(panel)},panel_prepare,resume,panel_deep};
-static twatch_pmu_api_v1 pmu={{1,sizeof(pmu),NULL,NULL},keys,pmu_prepare,resume,light,deep,timed,pending};
+static twatch_panel_power_v1 panel={{.api_version=1,.struct_size=sizeof(panel)},panel_prepare,resume,panel_deep,NULL};
+static twatch_pmu_api_v1 pmu={{1,sizeof(pmu),NULL,NULL},keys,pmu_prepare,resume,light,deep,timed,pending,NULL};
 static void reset(unsigned n){scenario=n;light_calls=timed_calls=deep_calls=panel_prepares=deep_prepares=pmu_prepares=resumes=observations=diagnostics=elapsed=0;terminal=false;panel.base.struct_size=sizeof(panel);pmu.base.struct_size=sizeof(pmu);}
 int main(void){
  for(unsigned n=0;n<15;n++) {

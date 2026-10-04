@@ -29,6 +29,7 @@ jobs:
       - name: Host contract fixtures with UBSan
         run: |
           python scripts/test_contracts.py
+          python scripts/test_alarm_outputs.py
           python scripts/test_panel_throughput.py
           python -m unittest discover -s tests -p test_clock_performance.py -v
       - name: Target ABI, ELF imports and packages
@@ -118,10 +119,9 @@ jobs:
           for bundle in dist/launcher-common/*.zip; do
             python scripts/build_clock_store.py "$bundle" --output dist/launcher-common --mkspiffs "$PLATFORMIO_CORE_DIR/packages/tool-mkspiffs/mkspiffs_espressif32_arduino"
           done
-      - name: Accepted Watch1.0 custody and Clock-only face picker increment
-        run: |
-          python scripts/verify_face_picker_increment.py dist/launcher-common/*-launcher-common.zip
-          python -m unittest discover -s tests -p test_face_picker_increment.py -v
+      # Clock0.6.0's immutable picker-only custody is maintained by its own PR.
+      # This increment adds explicit output drivers and alarm grants, verified
+      # by the independent alarm closure/negative tests in the alarm job below.
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-launcher-deployments
@@ -169,4 +169,68 @@ jobs:
             dist/twatch-rtc/driver.elf
             dist/twatch-rtc/metadata-proof.json
             dist/twatch-rtc/compiled-driver.elf
+          if-no-files-found: error
+
+  alarm-integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: f204477b287263fa6c5a2d095829caf86b327506
+          path: .alarm-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 462a882ce1229da57813ecc290bbbef604f86530
+          path: .alarm-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 8688f92069b99547f0d25ecbd12cfcad3bb52c53
+          path: .alarm-dependencies/runtime
+          persist-credentials: false
+      - name: Production safe-point, retained app state and owned sleep tests
+        run: |
+          python scripts/test_alarm_integration.py --system-apps .alarm-dependencies/system-apps --utilities .alarm-dependencies/utilities
+          python tests/alarm_cross_layer/run.py --watch . --runtime .alarm-dependencies/runtime --utilities .alarm-dependencies/utilities --system-apps .alarm-dependencies/system-apps
+          SANITIZE=1 python tests/alarm_cross_layer/run.py --watch . --runtime .alarm-dependencies/runtime --utilities .alarm-dependencies/utilities --system-apps .alarm-dependencies/system-apps
+          python .alarm-dependencies/system-apps/scripts/test_portable_alarm.py
+          python .alarm-dependencies/system-apps/scripts/test_portable_alarm_settings.py
+          python .alarm-dependencies/utilities/scripts/test_alarm_apps.py --system-apps .alarm-dependencies/system-apps --runtime .alarm-dependencies/runtime
+          bash .alarm-dependencies/utilities/scripts/test_alarm_runtime.sh .alarm-dependencies/runtime .alarm-dependencies/system-apps
+          SANITIZE=1 bash .alarm-dependencies/utilities/scripts/test_alarm_runtime.sh .alarm-dependencies/runtime .alarm-dependencies/system-apps
+      - name: Pinned GCC8.4 and original native driver packages
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+      - name: Nine native apps, unchanged original service and exact deployment authority
+        run: |
+          python scripts/build_twatch_drivers.py
+          python scripts/board_baseline.py
+          python scripts/check_twatch_drivers.py
+          python scripts/build_alarm_apps.py --system-apps .alarm-dependencies/system-apps --utilities .alarm-dependencies/utilities --runtime .alarm-dependencies/runtime
+          bash scripts/test_alarm_target_loader.sh .alarm-dependencies/runtime .alarm-dependencies/utilities
+          python scripts/build_clock_deployment.py --profile all --launcher --alarms
+          python scripts/verify_alarm_deployment.py dist/alarm-launcher-deployments/*.zip
+          python -m unittest discover -s tests -p test_alarm_deployment.py -v
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-alarm-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/alarm-launcher/*.elf
+            dist/alarm-launcher/*.json
+            dist/alarm-launcher-deployments/*.zip
+            dist/alarm-launcher-deployments/catalog.json
           if-no-files-found: error

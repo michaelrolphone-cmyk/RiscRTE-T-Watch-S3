@@ -10,7 +10,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(launcher=False, returning=False):
+def build(launcher=False, returning=False, alarm_system=None):
+    if alarm_system and not launcher:raise ValueError("Alarm Clock requires launcher input")
     cc = os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
     fallback = Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc'
     if not cc and fallback.exists():
@@ -21,7 +22,7 @@ def build(launcher=False, returning=False):
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Canonical app SDK hash mismatch')
-    out = ROOT/('dist/launcher' if launcher else 'dist/clock')
+    out = ROOT/('dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
     elf = out/('clock.elf' if returning else 'default.elf')
     exports_map=out/'exports.map'
@@ -35,6 +36,7 @@ def build(launcher=False, returning=False):
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
+                    *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
                     str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
@@ -46,7 +48,7 @@ def build(launcher=False, returning=False):
     imports = {line.split()[-1] for line in symbols.splitlines() if ' U ' in ' '+line}
     exports = {line.split()[-1] for line in symbols.splitlines()
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
-    assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'}, imports
+    assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
     manifest = json.loads((ROOT/'apps/clock/manifest.json').read_text())
     if returning:
@@ -54,6 +56,7 @@ def build(launcher=False, returning=False):
     if launcher:
         manifest['requires'].insert(1,{'capability':'input.touch.raw','api':1})
         manifest['requires'].append({'capability':'storage.key-value','api':1})
+    if alarm_system:manifest['requires'].append({'capability':'alarm.service','api':1})
     (out/('clock.json' if returning else 'default.json')).write_text(json.dumps(manifest,indent=2)+'\n')
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,

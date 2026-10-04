@@ -28,6 +28,8 @@ bool nova_watch_face_render(risc_display_surface_v1 *surface, const nova_watch_s
 unsigned nova_watch_picker_pulse(uint32_t elapsed_ms);
 bool nova_watch_picker_render(risc_display_surface_v1 *surface, const nova_watch_state *state,
     unsigned selected, int position_q8, const char *status, unsigned pulse_face, unsigned pulse_scale_q8, uint16_t *scratch);
+bool nova_watch_alarm_render(risc_display_surface_v1 *surface,bool countdown,bool blocked,
+    bool rtc_error,bool dismissing,bool uncertain,bool occurrence);
 #ifdef __cplusplus
 }
 #endif

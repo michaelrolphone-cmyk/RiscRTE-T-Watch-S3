@@ -200,3 +200,19 @@ bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*s
     for(int i=0;i<8;i++)fcirc(&c,(81+i*11)*16+8,222*16+8,40,0,i==near?FCYAN:FC(31,42,45));
     return true;
 }
+
+/* Pure alert view reuses the picker fonts and canvas; no service calls here. */
+bool nova_watch_alarm_render(risc_display_surface_v1*s,bool countdown,bool blocked,
+        bool rtc_error,bool dismissing,bool uncertain,bool occurrence) {
+    if(!s || !s->pixels || s->width!=240 || s->height!=240 || s->pixel_format!=RISC_DISPLAY_FORMAT_RGB565 ||
+       s->stride_bytes<480 || s->stride_bytes>UINT32_MAX/240 || s->size_bytes<s->stride_bytes*240)return false;
+    canvas c={(uint8_t*)s->pixels,s->stride_bytes};
+    for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
+    ftext(&c,&ff_o13,countdown?"COUNTDOWN":"ALARM",120,52,256,0,FCYAN,0);
+    ftext(&c,&ff_r12,blocked?(rtc_error?"RTC ERROR":"SERVICE ERROR"):dismissing?"STOPPING / SAVING":"TIME IS UP",120,94,0,0,blocked?FORANGE:FWHITE,0);
+    if(uncertain)ftext(&c,&ff_r10,"OUTPUT STOP UNCONFIRMED",120,121,0,0,FORANGE,0);
+    frect(&c,24,154,192,1,FCYAN);frect(&c,24,193,192,1,FCYAN);
+    ftext(&c,&ff_o13,occurrence?"DISMISS":"BACK",120,179,256,0,FWHITE,0);
+    if(blocked)ftext(&c,&ff_r12,"RETRY",120,220,256,0,FCYAN,0);
+    return true;
+}

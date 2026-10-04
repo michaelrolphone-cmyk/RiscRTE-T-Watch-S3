@@ -3,6 +3,9 @@
  * Deep wake is the runtime's ordinary fresh default Clock boot. */
 #include "PortableAppSleep.h"
 #include "watch_sleep.h"
+#ifdef PORTABLE_ALARM_CLIENT
+#include "watch_alarm_sleep.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 static bool transfer(const risc_runtime_api_v1 *rt,const risc_display_output_api_v1 *d,
@@ -32,8 +35,13 @@ static bool transfer(const risc_runtime_api_v1 *rt,const risc_display_output_api
     }
     return false;
 }
+#ifdef PORTABLE_ALARM_CLIENT
+int portable_app_alarm_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_api_v1 *d,
+                       const risc_battery_gauge_api_v1 *gauge,const alarm_service_v1 *alarms) {
+#else
 int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_api_v1 *d,
                        const risc_battery_gauge_api_v1 *gauge) {
+#endif
     const twatch_panel_power_v1 *panel=(const twatch_panel_power_v1 *)d;
     const twatch_pmu_api_v1 *pmu=(const twatch_pmu_api_v1 *)gauge;
     if(!d || d->struct_size<TWATCH_PANEL_LIGHT_SLEEP_SIZE || !d->set_brightness ||
@@ -52,7 +60,15 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
     if(!valid){free(saved);return -1;}
     int rc=-1;
     if(d->set_brightness(d->context,0,100) && transfer(rt,d,NULL)) {
+#ifdef PORTABLE_ALARM_CLIENT
+        (void)watch_sleep_prepared; /* old deployment path remains compiled/tested */
+        rc=watch_alarm_sleep_prepared(panel,pmu,PORTABLE_SLEEP_HYBRID,alarms,rt->diagnostic);
+        /* Preserve this image and the original app's grants. No yield (which
+           polls providers), free, restore or stop-only after native retention. */
+        if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
+#else
         rc=watch_sleep_prepared(panel,pmu,PORTABLE_SLEEP_HYBRID,rt->diagnostic);
+#endif
         if(rc>=0) {
             /* Resume stays dark until a complete previous-app frame arrives.
              * The caller then continues in its original stack and app state. */

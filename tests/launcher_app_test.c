@@ -60,8 +60,8 @@ static bool snapshot(void*c,risc_touch_snapshot_v1*s){
  s->contacts[0]=(risc_touch_contact_v1){1,0,step<3?120:80,120};return true;
 }
 static risc_touch_api_v1 ta={1,sizeof(ta),NULL,subscribe,unsubscribe,poll,next,snapshot};
-static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit_frame,status,NULL,brightness},prepare,resume,NULL};
-static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending};
+static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit_frame,status,NULL,brightness},prepare,resume,NULL,NULL};
+static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending,NULL};
 static twatch_rtc_api_v1 ra={2,sizeof(ra),NULL,rtc_read,NULL,NULL,NULL};
 static int32_t face_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){(void)c;*z=0;if(strcmp(k,WATCH_FACE_KEY))return RISC_KEY_VALUE_NOT_FOUND;face_reads++;if(!saved_face)return RISC_KEY_VALUE_NOT_FOUND;assert(n==4);memcpy(b,saved_blob,4);*z=4;return 0;}
 static int32_t face_put(void*c,const char*k,const void*b,uint32_t n){(void)c;assert(!strcmp(k,WATCH_FACE_KEY)&&n==4);face_writes++;if(scenario==11)return RISC_KEY_VALUE_IO;memcpy(saved_blob,b,4);saved_face=true;return 0;}
