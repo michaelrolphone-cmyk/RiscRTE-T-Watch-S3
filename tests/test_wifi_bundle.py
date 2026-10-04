@@ -188,11 +188,17 @@ class WifiFlashCustody(unittest.TestCase):
         receipt = {'repository': 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3', 'head': head,
                    'tree': tree, 'conclusion': 'success', 'expired': False,
                    'artifact_name': 'twatch-wifi-integration-' + head,
-                   'artifact_sha256': common.sha(raw), 'run_id': 123, 'artifact_id': 456}
+                   'artifact_sha256': common.sha(raw), 'run_id': 123, 'artifact_id': 456,
+                   'jobs': [{'name': name, 'conclusion': 'success'} for name in
+                            ('software-checks', 'alarm-integration', 'points-integration',
+                             'wifi-integration', 'production-store-admission')]}
         flash.verify_receipt(receipt, raw, head, tree)
         for key, value in (('head', '3' * 40), ('tree', '3' * 40), ('expired', True),
                            ('conclusion', 'failure'), ('artifact_sha256', '0' * 64),
-                           ('run_id', True), ('artifact_name', 'twatch-launcher-deployments')):
+                           ('run_id', True), ('artifact_name', 'twatch-launcher-deployments'),
+                           ('jobs', receipt['jobs'][:-1]),
+                           ('jobs', [*receipt['jobs'][:-1],
+                                     {'name': 'production-store-admission', 'conclusion': 'failure'}])):
             with self.subTest(field=key), self.assertRaises(ValueError):
                 flash.verify_receipt({**receipt, key: value}, raw, head, tree)
 

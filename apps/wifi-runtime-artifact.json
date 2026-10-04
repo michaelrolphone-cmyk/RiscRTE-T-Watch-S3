@@ -1,8 +1,8 @@
 {
-  "source_sha": "e972f0ff951ca96ca0999ee728dbad3a92434c4f",
-  "artifact_sha256": "29ccd7b1accececdb64857859bae2ba1ada2b2764974bad5629ce794429305b3",
-  "run_id": 37193572745,
-  "artifact_id": 11300241841,
+  "source_sha": "abef681d6c9c2b58729909a9961118ea20feee5e",
+  "artifact_sha256": "c4fb0dc6826d04654adbc56c1b7fea76cb975cefada0a2c614f50c7c8e68c997",
+  "run_id": 37197492618,
+  "artifact_id": 11301895269,
   "components": {
     "bootloader.bin": {
       "size_bytes": 15104,
@@ -13,8 +13,8 @@
       "sha256": "80709764d8fc263606d5b9b06cfa4d4254884c3748bd0392bb2600b46d761e43"
     },
     "firmware.bin": {
-      "size_bytes": 844512,
-      "sha256": "725ea7b0213d8724f81e1b8b9377ebb5ac316c287bc378f4f2beee5c8fe3db0b"
+      "size_bytes": 844688,
+      "sha256": "f8bd710089a998bf263de9f496c1018c07c062e9bbecb7d6c35e9d00126f9b17"
     }
   }
 }

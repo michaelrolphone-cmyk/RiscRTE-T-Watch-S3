@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble an exact-head Wi-Fi CI store and pinned Runtime0.1.9; never flash.
+"""Assemble an exact-head Wi-Fi CI store and pinned Runtime; never flash.
 
 This produces a development artifact, not a product promotion. The source tree,
 external CI receipt, every original profile ZIP, the unpacked SPIFFS contents,
@@ -17,9 +17,11 @@ import zipfile
 
 from build_wifi_common import ROOT, PROFILE, encoded, exact_sha, read_zip, require, sha, verify
 from build_wifi_store import SIZE, OFFSET, TOOL_SHA256, check_image
+from check_runtime_store_admission import archive_store, unpack_image, preserve_store, admit_many
 
 _RUNTIME = json.loads((ROOT/'apps/wifi-runtime-artifact.json').read_text())
 RUNTIME_SHA = _RUNTIME['source_sha']
+RUNTIME_VERSION = json.loads((ROOT/'apps/wifi-runtime-requirements.json').read_text())['firmware_version']
 RUNTIME_ZIP_SHA256 = _RUNTIME['artifact_sha256']
 RUNTIME_ASSETS = {name: (value['size_bytes'], value['sha256'])
                   for name,value in _RUNTIME['components'].items()}
@@ -52,7 +54,7 @@ def verify_runtime(files):
                            'partitions.csv', 'requirements-ci.txt', *RUNTIME_ASSETS},
             'Unexpected runtime artifact members')
     candidate = json.loads(files['candidate.json'])
-    expected = {'schema': 1, 'source_sha': RUNTIME_SHA, 'firmware_version': '0.1.9',
+    expected = {'schema': 1, 'source_sha': RUNTIME_SHA, 'firmware_version': RUNTIME_VERSION,
                 'target': 'esp32s3-16mb-usb', 'flash_bytes': 0x1000000,
                 'layout_used_bytes': MERGED_SIZE, 'app_offset': 0x10000,
                 'bootfs_offset': OFFSET, 'bootfs_bytes': SIZE, 'usb_cdc_on_boot': True,
@@ -97,6 +99,13 @@ def verify_receipt(receipt, raw, head, tree):
             'External exact-head CI receipt mismatch')
     require(all(type(receipt.get(k)) is int and receipt[k] > 0 for k in ('run_id', 'artifact_id')),
             'External CI run/artifact identity missing')
+    jobs = receipt.get('jobs')
+    names = {'software-checks', 'alarm-integration', 'points-integration',
+             'wifi-integration', 'production-store-admission'}
+    require(isinstance(jobs, list) and len(jobs) == len(names) and
+            all(isinstance(job, dict) and job.get('conclusion') == 'success' for job in jobs) and
+            {job.get('name') for job in jobs} == names,
+            'All five exact-head CI jobs, including production store admission, must pass')
 
 
 def assemble_components(components):
@@ -149,6 +158,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
                 'partition_offset': OFFSET, 'page_size': 256, 'block_size': 4096,
                 'tool_sha256': TOOL_SHA256, 'files': 44, 'round_trip_verified': True}
     require(all(image_record.get(k) == v for k, v in expected.items()), 'SPIFFS image record mismatch')
+    admission_stores = []
     with tempfile.TemporaryDirectory() as temporary:
         common_path = Path(temporary) / 'common.zip'
         common_path.write_bytes(common)
@@ -158,11 +168,15 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
             original = artifact_files[one(item['archive'])]
             require(sha(original) == item['sha256'] and len(original) == item['size_bytes'],
                     'Common source archive differs from exact CI artifact')
+            admission_stores.append((item['archive'], archive_store(original)))
         image_path = Path(temporary) / 'bootfs.bin'
         image_path.write_bytes(image)
         store = {n[6:]: b for n, b in files.items() if n.startswith('store/')}
         require(image_record['payload_bytes'] == sum(map(len, store.values())), 'Incorrect store byte count')
         check_image(image_path, store, Path(tool).resolve())
+        preserve_store(store, root / 'apps/wifi-store-baseline.json')
+        admission_stores.append(('common-deployment', store))
+        admission_stores.append(('hosted-spiffs', unpack_image(image, tool)))
     require(record['runtime_requirements']['source_sha'] == candidate['source_sha'] and
             record['runtime_requirements']['firmware_version'] == candidate['firmware_version'],
             'Deployment and runtime are not the same pinned pair')
@@ -172,16 +186,23 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
     components = {n: runtime_files[n] for n in RUNTIME_ASSETS}
     components['bootfs.bin'] = image
     merged, parts = assemble_components(components)
+    # Exercise the bytes extracted from the final candidate before writing any
+    # deliverable. Matching manifests/hashes never replaces Runtime admission.
+    final_store = unpack_image(merged[OFFSET:OFFSET + SIZE], tool)
+    require(final_store == store, 'Final BIN store differs from exact hosted store')
+    admission_stores.append(('final-bin-extraction', final_store))
+    admission = admit_many(runtime_source, admission_stores)
     name = 'twatch-s3-wifi-settings-' + version + '-' + head[:8] + '.bin'
     manifest = {'schema': 1, 'kind': 'development-hardware-test',
                 'target': 'Original/non-Plus LILYGO T-Watch-S3,16MiB flash/8MiB OPI PSRAM',
                 'watch_source': head, 'watch_tree': tree, 'clock_version': clock_version, 'wifi_version': version,
-                'runtime_source': RUNTIME_SHA, 'runtime_version': '0.1.9',
+                'runtime_source': RUNTIME_SHA, 'runtime_version': RUNTIME_VERSION,
                 'runtime_artifact_sha256': RUNTIME_ZIP_SHA256, 'ci_receipt': receipt,
                 'common_sha256': sha(common), 'bootfs_sha256': sha(image), 'bin_sha256': sha(merged),
                 'size_bytes': len(merged), 'file': name, 'flash_offset': '0x0',
                 'overwrite_bytes': MERGED_SIZE, 'flash_capacity_bytes': 0x1000000,
                 'components': parts, 'source_pins': json.loads(files['shared/alarm-sources.json']),
+                'runtime_admission': admission,
                 'store': [{'path': n, 'size_bytes': len(b), 'sha256': sha(b)}
                           for n, b in sorted(store.items())], 'physical_verification': 'pending',
                 'flash_warning': 'Full lower8MiB replacement resets NVS/settings, saved Stopwatch, alarm/countdown state, Points in Time records and saved Wi-Fi profile; upper8MiB untouched'}
@@ -209,7 +230,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
         'Keep the accepted Watch1.0 image for\n'
         'recovery. No device operation was performed.\n\n'
         'Includes the combined Clock picker, eleven app policies, shared alarm service,\n'
-        'bounded outputs and Runtime0.1.9. Host/target checks do not establish\n'
+        'bounded outputs and Runtime' + RUNTIME_VERSION + '. Host/target checks do not establish\n'
         'physical wake reliability, sound/haptic levels, power loss or current draw.\n\n'
         'After choosing to flash, close serial monitors and replace PORT:\n'
         'python -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 ' + name + '\n\n'

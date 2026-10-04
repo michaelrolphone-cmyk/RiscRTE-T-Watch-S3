@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "e972f0ff951ca96ca0999ee728dbad3a92434c4f",
-  "firmware_version": "0.1.9",
+  "source_sha": "abef681d6c9c2b58729909a9961118ea20feee5e",
+  "firmware_version": "0.1.10",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -19,8 +19,10 @@
     "native_i2s_tx_cleanup": true,
     "native_station_radio": true,
     "bounded_asynchronous_radio_scan": true,
-    "radio_cleanup_sleep_barrier": true
+    "radio_cleanup_sleep_barrier": true,
+    "explicit_multiple_key_value_namespaces": true,
+    "ambiguous_key_value_instance_zero_denied": true
   },
   "abi_changed": false,
-  "reason": "Explicit Wi-Fi Settings station capability, RAM-only native credentials and bounded scans; radio is drained before app exit or Light/Deep sleep."
+  "reason": "Runtime-only repair: admit multiple distinct explicit key-value namespace grants for a declared storage capability; retain the eight-grant bound and deny ambiguous instance-zero acquisition."
 }
