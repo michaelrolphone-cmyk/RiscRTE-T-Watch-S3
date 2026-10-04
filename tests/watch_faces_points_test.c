@@ -70,23 +70,23 @@ int main(int argc,char**argv) {
     e.hour=12;ps_event_clock(text,&e,false,true);assert(!strcmp(text,"12:00 PM"));
     e.hour=23;e.minute=59;e.day_offset=7;ps_event_clock(text,&e,false,true);assert(!strcmp(text,"11:59 PM +7D"));ps_event_clock(text,&e,true,true);assert(!strcmp(text,"23:59 +7D"));
     e.is_end=true;assert(!ps_event_valid(&e));e.kind=NOVA_POINT_LUNCH;assert(!strcmp(ps_event_name(&e,false),"BACK"));
-    assert(WATCH_FACE_COUNT==32&&WATCH_FACE_CATEGORY_COUNT==5);
+    assert(WATCH_FACE_COUNT==33&&WATCH_FACE_CATEGORY_COUNT==5);
     for(unsigned i=0;i<8;i++){assert(watch_face_pages[4].ids[i]==24+i);assert(watch_face_category_for(24+i)==4);}
     nova_watch_state s;nova_points_state p;
-    for(unsigned scenario=0;scenario<18;scenario++)for(unsigned face=24;face<32;face++) {
+    for(unsigned scenario=0;scenario<18;scenario++)for(unsigned face=24;face<WATCH_FACE_COUNT;face++) {
         fixture(&s,&p,scenario);guarded_render(&s,face);
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/case-%02u-face-%u.rgb565",argv[1],scenario,face);FILE*f=fopen(path,"wb");assert(f);assert(fwrite(tight,1,sizeof(tight),f)==sizeof(tight));fclose(f);}
     }
     /* Unknown time suppresses stale schedule content as well as stale RTC. */
-    for(unsigned face=24;face<32;face++) {
+    for(unsigned face=24;face<WATCH_FACE_COUNT;face++) {
         fixture(&s,&p,4);guarded_render(&s,face);memcpy(compare,tight,sizeof(tight));
         s.time=(twatch_rtc_time_v1){2048,8,30,0,23,57,59};memset(&p,0xff,sizeof(p));guarded_render(&s,face);assert(!memcmp(compare,tight,sizeof(tight)));
     }
     /* All original 24 faces ignore the new projection and preserve pixels. */
     for(unsigned face=0;face<24;face++){fixture(&s,&p,0);s.points=NULL;guarded_render(&s,face);memcpy(compare,tight,sizeof(tight));s.points=&p;guarded_render(&s,face);assert(!memcmp(compare,tight,sizeof(tight)));}
     fixture(&s,&p,0);nova_watch_labels l;nova_watch_format(&s,&l);
-    for(unsigned count=0;count<5;count++){p.next_count=(uint8_t)count;for(unsigned face=24;face<32;face++)guarded_render(&s,face);}
-    fixture(&s,&p,0);p.next_count=255;assert(!strcmp(ps_problem(&s,&l),"SCHEDULE ERROR"));for(unsigned face=24;face<32;face++)guarded_render(&s,face);
+    for(unsigned count=0;count<5;count++){p.next_count=(uint8_t)count;for(unsigned face=24;face<WATCH_FACE_COUNT;face++)guarded_render(&s,face);}
+    fixture(&s,&p,0);p.next_count=255;assert(!strcmp(ps_problem(&s,&l),"SCHEDULE ERROR"));for(unsigned face=24;face<WATCH_FACE_COUNT;face++)guarded_render(&s,face);
     fixture(&s,&p,0);p.today_count=255;assert(ps_problem(&s,&l));p.today_count=7;p.today[0].hour=255;assert(ps_problem(&s,&l));
     fixture(&s,&p,0);p.previous.at_rtc=p.now_rtc+1;assert(ps_problem(&s,&l));
     fixture(&s,&p,0);p.next[0].at_rtc=p.now_rtc;assert(!ps_problem(&s,&l));guarded_render(&s,24);
@@ -112,13 +112,13 @@ int main(int argc,char**argv) {
     p.now_rtc++;s.time.second++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==1);
     p.revision++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==3);
     p.next[0].at_rtc++;face_test_calls=0;assert(nova_watch_picker_render(&surf,&s,24,-108*256,page,NULL,32,256,&cache));assert(face_test_calls==3);
-    for(unsigned slot=0;slot<6;slot++)assert(!(cache.valid_mask&(1u<<slot))||cache.face_ids[slot]<32);
+    for(unsigned slot=0;slot<6;slot++)assert(!(cache.valid_mask&(1u<<slot))||cache.face_ids[slot]<WATCH_FACE_COUNT);
     int positions[WATCH_FACE_CATEGORY_COUNT]={0,0,0,0,-108*256};
     for(int pos=40;pos>=-1240;pos-=11){face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,32,256,&cache));assert(face_test_calls<=6);face_test_calls=0;assert(nova_watch_picker_collections_render(&surf,&s,24,pos*256,positions,NULL,32,256,&cache));assert(face_test_calls==1);}
     assert(sizeof(cache.pixels)==6*240*240*2);
     assert(nova_watch_alarm_render(&surf,false,false,false,false,false,true));memcpy(compare,tight,sizeof(tight));assert(nova_watch_alarm_label_render(&surf,NULL,false,false,false,false,false,true));assert(!memcmp(compare,tight,sizeof(tight)));
     assert(nova_watch_alarm_label_render(&surf,"WORK START",false,false,false,false,false,true));assert(memcmp(compare,tight,sizeof(tight)));
     char nonterminated[23];memset(nonterminated,'A',sizeof(nonterminated));assert(nova_watch_alarm_label_render(&surf,nonterminated,false,false,false,false,false,true));
-    puts("Points renderer:18 production scenarios x8 faces; padded/tight guards; original24 unchanged; duration/day/DST/empty/error/no-pair; bounded6-slot picker with in-place invalidation; alarm labels passed");
+    puts("Points renderer:18 production scenarios x9 faces; padded/tight guards; original24 unchanged; duration/day/DST/empty/error/no-pair; bounded6-slot picker with in-place invalidation; alarm labels passed");
     return 0;
 }
