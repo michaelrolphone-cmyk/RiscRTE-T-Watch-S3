@@ -108,8 +108,8 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         store[name] = points_store[name]
     points_manifest = json.loads(store['points_in_time.json'])
     alarm_manifest = json.loads(store['alarm-service/manifest.json'])
-    require(points_manifest['id'] == 'points_in_time' and points_manifest['version'] == '0.3.0',
-            'Installable image does not contain Points in Time 0.3.0')
+    require(points_manifest['id'] == 'points_in_time' and points_manifest['version'] == '0.4.0',
+            'Installable image does not contain Points in Time 0.4.0')
     require(alarm_manifest['id'] == 'alarm-service' and alarm_manifest['version'] == '0.3.0',
             'Installable image does not contain Points cue service 0.3.0')
     require(b'UP NEXT' in store['default.elf'] and b'UP NEXT' in store['clock.elf'],
