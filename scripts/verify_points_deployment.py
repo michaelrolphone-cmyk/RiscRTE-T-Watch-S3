@@ -24,7 +24,7 @@ def verify(path):
   assert len(physical)==9 and {d['instance_id'] for d in physical}==DEVICES
   assert services==[{'manifest':'alarm-service/manifest.json','key_value':KV}]
   assert [p['manifest'] for p in boot['app_capabilities']]==[a+'.json' for a in APPS]
-  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.2.0'}
+  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.3.0'}
   metadata=json.loads(z.read('shared-app-build.json'))
   for name,policy in zip(APPS,boot['app_capabilities']):
    grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
@@ -50,7 +50,7 @@ def verify(path):
    elf=z.read('store/'+str(PurePosixPath(d['manifest']).parent/manifest['file_name']));assert elf[:7]==b'\x7fELF\x01\x01\x01' and struct.unpack_from('<HH',elf,16)==(3,94)
   check_board(board,manifests[:-1]);service=manifests[-1]
   for identity,version in {'twatch-panel':'0.4.1','twatch-gpio':'0.4.2','twatch-pmu':'0.5.2','twatch-speaker':'0.2.1','twatch-haptic':'0.2.1'}.items():assert next(m for m in manifests if m['id']==identity)['version']==version
-  assert service=={'type':'driver','id':'alarm-service','version':'0.2.1','driver_abi':2,'architecture':'xtensa-esp32s3','file_name':'driver.elf','requires':[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]],'provides':[{'capability':'alarm.service','api':1}],'physical_verification':'pending','status':'development-only-recurring-points'}
+  assert service=={'type':'driver','id':'alarm-service','version':'0.3.0','driver_abi':2,'architecture':'xtensa-esp32s3','file_name':'driver.elf','requires':[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]],'provides':[{'capability':'alarm.service','api':1}],'physical_verification':'pending','status':'development-only-recurring-points-cues'}
   assert service['requires']==[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]]
   assert next(d for d in board['devices'] if d['instance_id']==4)['config']['rails']==[{'id':1,'millivolts':3300},{'id':2,'millivolts':3300},{'id':5,'millivolts':3300}]
   runtime=json.loads(z.read('runtime-requirements.json'));assert runtime==json.loads((ROOT/'apps/alarm-runtime-requirements.json').read_text()) and runtime['source_sha']=='8688f92069b99547f0d25ecbd12cfcad3bb52c53'
