@@ -174,7 +174,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
         store = {n[6:]: b for n, b in files.items() if n.startswith('store/')}
         require(image_record['payload_bytes'] == sum(map(len, store.values())), 'Incorrect store byte count')
         check_image(image_path, store, Path(tool).resolve() if tool is not None else None)
-        preserve_store(store, root / 'apps/wifi-store-baseline.json')
+        preserve_store(store, root / 'apps/wifi-store-baseline.json', current_pmu=True, root=root)
         admission_stores.append(('common-deployment', store))
         admission_stores.append(('hosted-spiffs', unpack_image(image, tool)))
     require(record['runtime_requirements']['source_sha'] == candidate['source_sha'] and

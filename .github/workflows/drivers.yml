@@ -39,11 +39,14 @@ jobs:
       - name: Versioned board baseline
         run: python scripts/board_baseline.py
       - name: Physical manifests, negative mappings and package hashes
-        run: python scripts/check_twatch_drivers.py
+        run: |
+          python scripts/check_twatch_drivers.py
+          python -m unittest discover -s tests -p test_pmu_sleep_custody.py -v
       - name: Clock app behavior with UBSan
         run: |
           python scripts/test_clock.py
           python scripts/test_deep_sleep.py
+          python scripts/test_pmu_cold_boot_sleep.py
           python scripts/test_hybrid_sleep.py
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
@@ -310,6 +313,7 @@ jobs:
           python scripts/test_points_label_pixels.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python scripts/test_points_stored_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities --productivity .points-dependencies/productivity --legacy-utilities .points-dependencies/legacy-utilities
           python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python scripts/test_points_cold_boot_idle.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
           python .points-dependencies/productivity/scripts/test_points_in_time.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/productivity/scripts/test_points_gui.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
@@ -609,7 +613,7 @@ jobs:
       - name: Repaired Runtime admits every exact production store
         run: |
           python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --archive .admission-input/points/points-launcher-deployments/*.zip .admission-input/wifi/wifi-launcher-deployments/*.zip --image .admission-input/points/points-common/*-bootfs.bin .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 18 --output dist/production-admission/repaired.json
-          python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --output dist/production-admission/preserved.json
+          python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --current-pmu-sleep-repair --output dist/production-admission/preserved.json
       - name: Actual default Clock and providers on unchanged production policies
         run: |
           # Points and Wi-Fi intentionally carry different reviewed alarm-service

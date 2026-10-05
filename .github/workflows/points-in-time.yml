@@ -81,6 +81,9 @@ jobs:
       - name: Recurrence projection and Clock lifecycle
         run: python scripts/test_points_integration.py --system-apps .deps/system-apps --utilities .deps/utilities
 
+      - name: Actual PMU cold-boot Points idle countdown
+        run: python scripts/test_points_cold_boot_idle.py --system-apps .deps/system-apps --utilities .deps/utilities
+
       - name: NOVA renderer regression suite
         run: python apps/clock/nova/tests/run.py
 

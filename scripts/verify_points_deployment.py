@@ -49,7 +49,7 @@ def verify(path):
    if manifest not in manifests:manifests.append(manifest)
    elf=z.read('store/'+str(PurePosixPath(d['manifest']).parent/manifest['file_name']));assert elf[:7]==b'\x7fELF\x01\x01\x01' and struct.unpack_from('<HH',elf,16)==(3,94)
   check_board(board,manifests[:-1]);service=manifests[-1]
-  for identity,version in {'twatch-panel':'0.4.1','twatch-gpio':'0.4.2','twatch-pmu':'0.5.2','twatch-speaker':'0.2.1','twatch-haptic':'0.2.1'}.items():assert next(m for m in manifests if m['id']==identity)['version']==version
+  for identity,version in {'twatch-panel':'0.4.1','twatch-gpio':'0.4.2','twatch-pmu':'0.5.3','twatch-speaker':'0.2.1','twatch-haptic':'0.2.1'}.items():assert next(m for m in manifests if m['id']==identity)['version']==version
   assert service=={'type':'driver','id':'alarm-service','version':'0.3.1','driver_abi':2,'architecture':'xtensa-esp32s3','file_name':'driver.elf','requires':[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]],'provides':[{'capability':'alarm.service','api':1}],'physical_verification':'pending','status':'development-only-recurring-points-cues'}
   assert service['requires']==[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]]
   assert next(d for d in board['devices'] if d['instance_id']==4)['config']['rails']==[{'id':1,'millivolts':3300},{'id':2,'millivolts':3300},{'id':5,'millivolts':3300}]

@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import zipfile
 from read_only_spiffs import read_image
+from pmu_sleep_custody import PMU_FILES, current_pmu_custody
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTFS_OFFSET = 0x310000
@@ -33,9 +34,15 @@ def store_digest(store):
     return sha(json.dumps(entries, sort_keys=True, separators=(',', ':')).encode())
 
 
-def preserve_store(store, baseline):
-    """A runtime-only repair must preserve every previously delivered store byte."""
+def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
+    """Strict historical custody by default; optionally the exact named PMU repair."""
     expected = json.loads(Path(baseline).read_text())['files']
+    if current_pmu:
+        if not PMU_FILES <= set(expected):
+            raise ValueError('PMU repair requires an existing complete PMU baseline')
+        # Change only the expected hashes, never the input store or history.
+        # Source-bound custody permits this one driver generation, no fallback.
+        expected = {**expected, **current_pmu_custody(root)['files']}
     actual = {name: {'size_bytes': len(data), 'sha256': sha(data)}
               for name, data in store.items()}
     if actual != expected:
@@ -161,8 +168,12 @@ def main():
     parser.add_argument('--expect-error')
     parser.add_argument('--expect-count', type=int)
     parser.add_argument('--preserved-store', type=Path)
+    parser.add_argument('--current-pmu-sleep-repair', action='store_true',
+                        help='Require exact PMU 0.5.3 custody; preserve all other baseline bytes')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.current_pmu_sleep_repair and not args.preserved_store:
+        parser.error('--current-pmu-sleep-repair requires --preserved-store')
     if not (args.archive or args.image or args.bin):
         parser.error('At least one actual archive, image or BIN is required')
     if (args.image or args.bin) and not (args.mkspiffs or args.read_only_spiffs):
@@ -184,13 +195,14 @@ def main():
             store = unpack_image(image, args.mkspiffs)
         inputs.append({'file': path.name, 'sha256': sha(raw), 'size_bytes': len(raw)})
         if args.preserved_store:
-            preserve_store(store, args.preserved_store)
+            preserve_store(store, args.preserved_store, current_pmu=args.current_pmu_sleep_repair)
         stores.append((path.name, store))
     results = admit_many(args.runtime, stores, args.expect_error)
     record = {'schema': 1, 'runtime_source': subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=args.runtime, text=True).strip(),
         'expected_error': args.expect_error, 'inputs': inputs, 'results': results,
-        'policy_substitutions': 0, 'physical_verification': 'pending'}
+        'policy_substitutions': 0, 'physical_verification': 'pending',
+        'preservation_overlays': ['pmu-sleep-0.5.3'] if args.current_pmu_sleep_repair else []}
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(record, indent=2) + '\n')

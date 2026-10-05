@@ -1,0 +1,29 @@
+{
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "files": {
+    "pmu/driver.elf": {
+      "sha256": "e7e22e219427762ae1ac4e47c01177e64fe6261e8f1244233d2a4724b9e1f6c6",
+      "size_bytes": 8372
+    },
+    "pmu/manifest.json": {
+      "sha256": "8592809460d7c33e5752a2510d599743f0af6f3c5ecbcf7710e5648d78d3ef02",
+      "size_bytes": 805
+    }
+  },
+  "package": {
+    "architecture": "xtensa-esp32s3",
+    "archive": "driver-twatch-pmu-0.5.3-xtensa-esp32s3.rte.zip",
+    "id": "twatch-pmu",
+    "instance_id": 4,
+    "kind": "driver",
+    "sha256": "ea536f0532e001bd4a3d36e50d2f2fcbe1db5bfab218def6ad28b536f578fbfb",
+    "size_bytes": 10964,
+    "version": "0.5.3"
+  },
+  "purpose": "PMU 0.5.3 cold-boot autosleep increment; immutable historical baselines remain unchanged",
+  "schema": 1,
+  "source_sha256": {
+    "drivers/twatch_pmu/driver.c": "fb6730fbc1bdd553b46848815646775842f9adaab56331b2797073de7e9d7e8e",
+    "drivers/twatch_pmu/manifest.json": "a0288ad7d18f1c9988e33ace8aaa018f5f5a33883944563373527edd2ee53dff"
+  }
+}

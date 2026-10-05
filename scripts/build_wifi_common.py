@@ -28,12 +28,13 @@ STORE_PATHS = {'store/board.json', 'store/boot.json'} | {
 } | {'store/' + driver + '/' + name for driver in DRIVERS
      for name in ('driver.elf', 'manifest.json')}
 # Exact output/lifecycle prerequisites, already reviewed and target-built at
-# Watch f5b1418. A new transport generation needs an explicit custody update.
+# Watch f5b1418, except the explicit PMU 0.5.3 sleep repair recorded in
+# pmu-sleep-custody.json. New transport generations require a custody update.
 DRIVER_PACKAGES = {
     'wifi': '080dffddf65757d93013a341434619347da9cf17fc95183f85741e82c595f817',
     'twatch-gpio': '0f079b1d8957725ef38c037252eb8cf25e42f2dfff10157bd71cedf4aec78549',
     'twatch-i2c': 'ec6c7e5919c9eec4cfddf23936e44d9ec2afa2a01c875063b1f332427c269f05',
-    'twatch-pmu': 'bad863125be0bcc56f3478f86ebc6a0dca7ef1ff232bfb7b7612f30be487c476',
+    'twatch-pmu': 'ea536f0532e001bd4a3d36e50d2f2fcbe1db5bfab218def6ad28b536f578fbfb',
     'twatch-panel': '6b59a6c443becc77ca8240cbc7624bca0865e408e45f46973cf0639f8fd6b90d',
     'twatch-touch': 'ae61e587bf83d57c5c1b8d9ed40b66b87026629eb70ded60c7fd550e1c7a80b5',
     'twatch-rtc': '982527a90259f3149376f4198b8b8689499504be946e8af84903874a5a2cb56f',

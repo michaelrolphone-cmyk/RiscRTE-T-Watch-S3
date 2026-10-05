@@ -53,7 +53,10 @@ static const tw_hw_axp2101_v1 *power;
 static uint8_t saved_enable, saved_voltage[4], saved_irq;
 static bool changed;
 static uint8_t sleep_irq[3];
-static bool sleep_changed, sleep_prepared, key_released;
+static bool sleep_changed, sleep_prepared;
+/* IRQ status is an event history, not the PWRON pin level. In particular, no
+ * event since boot is unknown, not evidence that the crown is held down. */
+static enum { KEY_UNKNOWN, KEY_HELD, KEY_RELEASED } key_state;
 static bool rails(void) {
     if (!read_reg(0x03, &saved_enable, 1) || saved_enable != 0x4a)
         return false;
@@ -88,10 +91,12 @@ static bool key_events(void *context, uint32_t *events) {
     uint8_t v = 0;
     if (!read_reg(0x49, &v, 1))
         return false;
-    /* Rising edge/short press is released; falling alone is held. Wake and
-     * startup events are drained by the app before it arms sleep requests. */
-    if (v & 0x09) key_released = true;
-    else if (v & 0x02) key_released = false;
+    /* Rising edge/short press is released; falling or long press without a
+     * release is held. Long IRQs are enabled at PMIC reset, unlike edge IRQs,
+     * so a crown held over startup may supply only the long-press event.
+     * Zero status never changes the last observation. */
+    if (v & 0x09) key_state = KEY_RELEASED;
+    else if (v & 0x06) key_state = KEY_HELD;
     /* Return the PMIC's latched key events; ACK only the key bits. */
     if (!write_reg(0x49, v & 0x0f))
         return false;
@@ -111,22 +116,31 @@ static bool resume_sleep(void *context) {
     if (ok) {
         sleep_changed=sleep_prepared=false;
         /* Mask restoration is not a new key observation. Preserve the last
-         * released/held latch so a clean refusal can retry without inventing
+         * unknown/released/held state so a clean refusal can retry without inventing
          * a crown edge. key_events still processes any actual wake edge. */
     }
     return ok;
 }
 static bool prepare_sleep(void *context) {
     (void)context;
-    if (!started || !key_released) return false;
+    if (!started) return false;
     if (sleep_changed) return sleep_prepared;
+    /* Sample before admission: a held crown may have just been released, or
+     * an untouched cold boot may never have generated a release event at all.
+     * Unknown can proceed only through the same quiet IRQ/status guard below;
+     * it is never promoted to released simply because preparation succeeds. */
+    uint32_t ignored;
+    if (!key_events(NULL,&ignored) || key_state == KEY_HELD) return false;
     if (!read_reg(0x40,sleep_irq,3)) return false;
     sleep_changed=true;
-    if (!write_reg(0x40,0) || !write_reg(0x41,0x08) || !write_reg(0x42,0)) return false;
-    /* This sole PMU IRQ owner clears latched status as in vendor lightSleep. */
-    uint32_t ignored;
-    if (!key_events(NULL,&ignored) || !key_released) return false;
-    for(unsigned i=0;i<3;i++)if(!write_reg((uint8_t)(0x48+i),0xff))return false;
+    /* Keep every key event enabled while proving quiet; masking edge IRQs
+     * first can hide a new hold during this guard. Only short press remains
+     * enabled for the actual sleep, preserving the existing wake behavior. */
+    if (!write_reg(0x40,0) || !write_reg(0x41,0x0f) || !write_reg(0x42,0)) return false;
+    if (!key_events(NULL,&ignored) || key_state == KEY_HELD) return false;
+    /* Clear non-key IRQs only. Re-clearing key bits after key_events can erase
+     * a new edge that arrived between that observation and these writes. */
+    if (!write_reg(0x48,0xff) || !write_reg(0x49,0xf0) || !write_reg(0x4a,0xff)) return false;
     for(unsigned i=0;i<5;i++) {
         bool high=false;
         if (!gpio_api->read(gpio_api->context,irq_claim,&high) || !high) return false;
@@ -134,6 +148,10 @@ static bool prepare_sleep(void *context) {
         uint8_t status;
         if (!read_reg(0x49,&status,1) || (status&0x0f)) return false;
     }
+    if (!write_reg(0x41,0x08)) return false;
+    uint8_t status=0;bool high=false;
+    if (!read_reg(0x49,&status,1) || (status&0x0f) ||
+        !gpio_api->read(gpio_api->context,irq_claim,&high) || !high) return false;
     sleep_prepared=true;
     return true;
 }
@@ -281,7 +299,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     }
     if (clock_api->sleep_ms)
         clock_api->sleep_ms(clock_api->context, 5);
-    key_released = false;
+    key_state = KEY_UNKNOWN;
     started = true;
     return true;
 }
