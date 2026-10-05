@@ -76,6 +76,7 @@ static bool clock_points_load(void) {
         int32_t result=kv->get(kv->context,POINTS_CONFIG_KEY,bytes,sizeof(bytes),&n);
         clock_points_available=result==RISC_KEY_VALUE_NOT_FOUND||
             (result==RISC_KEY_VALUE_OK&&points_config_decode(&clock_points_config,bytes,n));
+#if WATCH_POINTS_EXTENDED
         n=0;result=kv->get(kv->context,POINTS_META_KEY,bytes,sizeof(bytes),&n);
         if(result==RISC_KEY_VALUE_OK&&!points_meta_decode(&clock_points_meta,bytes,n)) {
             clock_points_meta=(points_meta){0};
@@ -84,6 +85,7 @@ static bool clock_points_load(void) {
             clock_points_meta=(points_meta){0};
             rt->diagnostic("WATCH_CLOCK points-meta=unavailable fallback=generic");
         }
+#endif
         clock_points_view.status=clock_points_available?NOVA_POINTS_EMPTY:NOVA_POINTS_ERROR;
     }
     return rt->release(&grant);
