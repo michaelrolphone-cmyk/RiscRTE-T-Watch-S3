@@ -21,7 +21,7 @@ class PointsAuthority(unittest.TestCase):
    with zipfile.ZipFile(path,'w') as z:
     for n,data in files.items():z.writestr(n,data)
    with self.assertRaises((AssertionError,ValueError,KeyError,StopIteration)):verify(path)
- def test_exact_ten_app_seven_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.7.0')
+ def test_exact_ten_app_seven_key_candidate(self):self.assertEqual(verify(self.path)['app_version'],'0.8.0')
  def test_app_authority_is_exact(self):
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'].append({'capability':'audio.output','api':1,'instance_id':12}))
   self.reject('store/boot.json',lambda d:d['app_capabilities'][0]['grants'][-2].update(instance_id=4))
