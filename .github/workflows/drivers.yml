@@ -735,6 +735,7 @@ jobs:
         run: |
           python .audio-dependencies/utilities/scripts/test_frequency_generator.py --system-apps .audio-dependencies/system-apps
           python .audio-dependencies/utilities/scripts/test_audio_spectrum.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_spectrum_renderer.py --system-apps .audio-dependencies/system-apps
           python .audio-dependencies/utilities/scripts/test_audio_service_lifecycle.py --system-apps .audio-dependencies/system-apps --runtime .update-dependencies/runtime
           python scripts/build_audio_apps.py --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline dist/update-common/*-update-launcher-common.zip
           python scripts/audio_overlay.py dist/update-common/*-update-launcher-common.zip --compiled dist/audio-tools --head "$WATCH_HEAD" --output dist/audio-common/audio-tools-common.zip

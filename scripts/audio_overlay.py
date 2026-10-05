@@ -29,6 +29,7 @@ def app_grants(name):
     base.append({'capability':'audio.output' if name=='frequency_generator' else 'audio.input','api':1,
                  'instance_id':12 if name=='frequency_generator' else 13})
     base.append({'capability':'alarm.service','api':1,'instance_id':0})
+    if name=='audio_spectrum': base.append({'capability':'storage.key-value','api':1,'instance_id':7})
     return base
 
 def app_manifest(name,version):
@@ -42,6 +43,7 @@ def compile_defs(name):
            '-DPORTABLE_ALARM_CLIENT',
            '-DPORTABLE_RETURN_APP="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
     if name in APPS: flags.append('-DPORTABLE_AUDIO_SESSION')
+    if name=='audio_spectrum': flags += ['-DPORTABLE_NOVA_UI','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
     if name=='springboard': flags += ['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60']
     return flags
 

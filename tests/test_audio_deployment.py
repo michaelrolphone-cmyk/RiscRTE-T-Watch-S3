@@ -26,6 +26,8 @@ class AudioOverlayTests(unittest.TestCase):
         policies={p['manifest']:p['grants'] for p in boot['app_capabilities']}
         self.assertIn({'capability':'audio.output','api':1,'instance_id':12},policies['frequency_generator.json'])
         self.assertIn({'capability':'audio.input','api':1,'instance_id':13},policies['audio_spectrum.json'])
+        self.assertEqual([g['instance_id'] for g in policies['audio_spectrum.json'] if g['capability']=='storage.key-value'],[7])
+        self.assertFalse(any(g['capability']=='storage.key-value' for g in policies['frequency_generator.json']))
     def test_preserves_unrelated_payload(self):
         baseline=audio.read_zip(io.BytesIO(self.files['baseline.zip']))
         for name,data in baseline.items():

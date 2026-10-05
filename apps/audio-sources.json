@@ -5,11 +5,11 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "7723df25aacbf299f1e24551eddd35afc58e059f"
+      "commit": "ec5249eb4a5818fbe3f0ea81c9a3b6eb1ed694e8"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "a04911ce643415248dfe6e14a48f61dfd1d960ff"
+      "commit": "494ac8c58462d7a7f100838b90cf2ec218c4c31e"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
@@ -26,7 +26,7 @@
       }
     },
     "audio_spectrum": {
-      "version": "0.1.1",
+      "version": "0.2.1",
       "catalog": {
         "display_name": "Audio Spectrum",
         "file_name": "audio_spectrum.elf",
