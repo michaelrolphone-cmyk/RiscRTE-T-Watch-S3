@@ -52,10 +52,10 @@ def source_state(path):
             'tracked_changes': git('status', '--porcelain', '--untracked-files=no')}
 
 
-def _runtime(runtime):
+def _runtime(runtime, current_profile=False):
     runtime = Path(runtime).resolve()
     state = source_state(runtime)
-    require(state['commit'] == RUNTIME_COMMIT and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
+    require(state['commit'] == (json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['source_sha'] if current_profile else RUNTIME_COMMIT) and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
     return runtime
 
 
@@ -141,8 +141,9 @@ def _policies(content, current_profile=False):
         expected = {('display.output', 1, 5), ('input.touch.raw', 1, 6), ('rtc.clock', 2, 8),
                     ('board.battery', 1, 4), ('storage.key-value', 1, 6), ('net.wifi', 1, 15),
                     ('software.update.' + kind, 1, 0), ('alarm.service', 1, 0)}
+        if current_profile:expected.add(('storage.key-value',1,1))
         actual = {(g['capability'], g['api'], g.get('instance_id', 0)) for g in policy['grants']}
-        require(len(policy['grants']) == 8 and actual == expected, 'Update app requires exactly its eight bounded grants')
+        require(len(policy['grants']) == (9 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
     return boot
 
 
@@ -232,7 +233,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     productivity is recorded for the enclosing product's source custody; its
     applications are admitted but aren't substituted or executed by this lane.
     """
-    runtime, system, utilities = _runtime(runtime_source), Path(system_apps).resolve(), Path(utilities).resolve()
+    runtime, system, utilities = _runtime(runtime_source,current_profile), Path(system_apps).resolve(), Path(utilities).resolve()
     stores = list(stores)
     require(stores, 'At least one actual production store is required')
     require(len({label for label, _ in stores}) == len(stores), 'Duplicate store label')
@@ -243,12 +244,14 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         record['sources']['productivity'] = source_state(productivity)
     pins = (json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources'] if current_profile else json.loads((ROOT / 'apps/update-sources.json').read_text()))
     record['current_apps_profile']=bool(current_profile)
+    if current_profile:record['runtime_version']=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['firmware_version']
     for name, state in record['sources'].items():
         if name != 'watch':
             require(state['commit'] == pins[name]['commit'] and not state['tracked_changes'], 'Wrong or modified pinned production source: ' + name)
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
+    if current_profile:record['clock_defines'].append('WATCH_QUICK_ACTIONS')
     with _build(output) as build:
         host = _host(runtime, build, utilities if current_profile else None)
         modules = build / 'modules'
@@ -308,6 +311,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             command([cc, '-std=c11', *_flags(), '-fPIC', '-fvisibility=hidden', *clock_includes,
                      *['-D' + flag for flag in record['clock_defines']], '-c', ROOT / 'apps/clock' / name, '-o', obj])
             objects.append(obj)
+        if current_profile:
+            for name in ('quick_actions.c','quick_render.c','quick_session.c'):
+                obj=modules/(Path(name).stem+'.o')
+                command([cc,'-std=c11',*_flags(),'-fPIC','-fvisibility=hidden',*clock_includes,'-c',system/'lib/PortableApps/src'/name,'-o',obj]);objects.append(obj)
         clock = modules / 'default.elf'
         command([cxx, '-std=c++11', *_flags(), '-fPIC', '-shared', '-fvisibility=hidden', *includes,
                  ROOT / 'apps/clock/effects/boot.cpp', *objects, '-o', clock])

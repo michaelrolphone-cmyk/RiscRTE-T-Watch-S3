@@ -64,7 +64,8 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     require(git(ROOT, 'rev-parse', 'HEAD') == head, 'Watch checkout differs from requested main head')
     require(not git(ROOT, 'status', '--porcelain', '--untracked-files=no'), 'Watch checkout has tracked modifications')
 
-    requirements = json.loads((ROOT / 'apps/update-runtime-requirements.json').read_text())
+    historical_requirements = json.loads((ROOT / 'apps/update-runtime-requirements.json').read_text())
+    requirements = json.loads((ROOT / ('apps/current-runtime-requirements.json' if current_apps_artifact_dir else 'apps/update-runtime-requirements.json')).read_text())
     runtime_head = git(runtime_source, 'rev-parse', 'HEAD')
     require(runtime_head == requirements['source_sha'], 'Runtime checkout differs from Watch runtime requirement')
     require(not git(runtime_source, 'status', '--porcelain', '--untracked-files=no'), 'Runtime checkout has tracked modifications')
@@ -93,7 +94,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     record = verify_audio(common, root=ROOT, expected_head=head)
     points_record = verify_points(points_common, root=ROOT, expected_head=head)
     common_files = read_zip(common)
-    require(json.loads(common_files['runtime-requirements.json']) == requirements,
+    require(json.loads(common_files['runtime-requirements.json']) == historical_requirements,
             'Audio deployment Runtime requirement differs from main')
     points_files = read_zip(points_common)
     store = {name[6:]: data for name, data in common_files.items() if name.startswith('store/')}

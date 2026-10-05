@@ -834,7 +834,7 @@ jobs:
         run: |
           python - <<'PY'
           import json, os
-          value=json.load(open('apps/update-runtime-requirements.json'))
+          value=json.load(open('apps/current-runtime-requirements.json'))
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
               out.write('sha='+value['source_sha']+'\n')
               out.write('version='+value['firmware_version']+'\n')
@@ -852,7 +852,7 @@ jobs:
           python - <<'PY_CURRENT'
           import json, os
           pins=json.load(open('apps/current-apps-sources.json'))['sources']
-          runtime=json.load(open('apps/update-runtime-requirements.json'))['source_sha']
+          runtime=json.load(open('apps/current-runtime-requirements.json'))['source_sha']
           if pins['runtime']['commit'] != runtime:
               raise ValueError('Final current-app Runtime differs from paired native source')
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
@@ -914,6 +914,8 @@ jobs:
             --output dist/current-apps
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
+          python scripts/test_quick_clock.py --system-apps .latest/current-system
+          python .latest/current-system/scripts/test_quick_actions.py
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities

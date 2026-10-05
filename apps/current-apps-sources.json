@@ -4,37 +4,37 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "13f32d3e5fee262a960f5fe0add63db835381893"
+      "commit": "944b0d33b797019b9e05ca3ff9874db176ef0480"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "9f2e60221198f53646f05050720d92dc19895f3b"
+      "commit": "91f97a3ee9d6e41e7c2e3df418ba9b8f40ff003a"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
-      "commit": "edd754abc5f83fcebe9cb42ce36bf68cff857b70"
+      "commit": "2fa164e313a4d27d5de9a471b65f0a9a7aab3981"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "0fa8c576f547817b8124ed10686d80a6351bb634"
+      "commit": "6b75e5aa01e848e73782b18d925810e014dbc7ba"
     }
   },
   "app_versions": {
-    "springboard": "1.4.6",
-    "settings": "1.2.4",
-    "wifi_settings": "1.1.2",
-    "ota_update": "1.1.1",
-    "app_store": "1.1.1",
-    "battery": "1.0.9",
-    "calculator": "0.1.4",
-    "stopwatch": "0.1.4",
-    "alarms": "0.2.0",
-    "countdown": "0.1.3",
-    "frequency_generator": "0.1.2",
-    "audio_spectrum": "0.2.2",
-    "points_in_time": "0.4.2",
-    "default": "0.8.1",
-    "clock": "0.8.1"
+    "springboard": "1.4.7",
+    "settings": "1.2.5",
+    "wifi_settings": "1.1.3",
+    "ota_update": "1.1.2",
+    "app_store": "1.1.2",
+    "battery": "1.0.10",
+    "calculator": "0.1.5",
+    "stopwatch": "0.1.5",
+    "alarms": "0.2.1",
+    "countdown": "0.1.4",
+    "frequency_generator": "0.1.3",
+    "audio_spectrum": "0.2.3",
+    "points_in_time": "0.4.3",
+    "default": "0.9.0",
+    "clock": "0.9.0"
   },
   "service_version": "0.4.0"
 }

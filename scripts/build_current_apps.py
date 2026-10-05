@@ -12,9 +12,9 @@ def clean(path,expected):
  require(git(path,'rev-parse','HEAD')==expected,'Current source pin differs: '+str(path))
  require(not git(path,'status','--porcelain','--untracked-files=no'),'Current source is dirty: '+str(path))
 def definitions(name,version):
- if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
+ if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
  flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES',
-        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT']
+        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS']
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
@@ -64,10 +64,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
    native=repo/'Apps/native'/(name+'.json');require(native.is_file(),'Current native updater manifest missing: '+name)
    require(json.loads(native.read_text())['version']==version,'Portable Nova updater manifest differs')
   sources=[source,repos['system-apps']/'lib/PortableApps/src/adapter.c',out/('catalog.c' if name=='springboard' else 'empty_catalog.c'),root/'apps/clock/portable_navigation.c',root/'apps/clock/portable_sleep.c']
+  sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c')]
   if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},{'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'})
   m=json.loads(store[name+'.json']);m['version']=version
+  for cap,api in [('storage.key-value',1),('rtc.clock',2)]:
+   if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   (files_dir/(name+'.elf')).write_bytes(b);(files_dir/(name+'.json')).write_bytes(encoded(m))
   record['apps'][name]={**meta,'version':version,'repository':repo_name,'repository_sha':c['sources'][repo_name]['commit'],'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
  service_flags=['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL']

@@ -17,7 +17,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   for n in current.PAYLOADS:
    p=self.art/'files'/n;p.parent.mkdir(exist_ok=True)
    if '/' not in n and n.endswith('.json'):
-    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1}]};b=current.encoded(v)
+    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2}]};b=current.encoded(v)
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.0'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)

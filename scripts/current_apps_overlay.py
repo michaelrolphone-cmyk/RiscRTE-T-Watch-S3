@@ -31,7 +31,7 @@ def config(root=ROOT):
  return c
 
 def configure_boot(original):
- """Exactly two narrow policy additions; all other declarations are preserved."""
+ """Add shared settings/RTC grants explicitly; preserve each existing grant."""
  b=copy.deepcopy(original)
  rows=[x for x in b['app_capabilities'] if x['manifest']=='alarms.json'];require(len(rows)==1,'Missing/duplicate Alarms policy')
  grants=rows[0]['grants'];kv=[x for x in grants if x['capability']=='storage.key-value']
@@ -43,7 +43,10 @@ def configure_boot(original):
  require({x['key']:(x['namespace'],x['access']) for x in keys}==expected,'Legacy service bindings differ')
  keys.append(copy.deepcopy(ALARM_VOLUME))
  for row in b['app_capabilities']:
-  require(len(row['grants'])<=8,'Current application exceeds Runtime grant bound')
+  if row['manifest'] in {n+'.json' for n in APPS}:
+   for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8}):
+    if grant not in row['grants']:row['grants'].append(copy.deepcopy(grant))
+  require(len(row['grants'])<=9,'Current application exceeds Runtime grant bound')
  return b
 
 def verify(artifact,head,root=ROOT):

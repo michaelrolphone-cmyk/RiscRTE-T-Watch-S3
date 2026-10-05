@@ -39,5 +39,13 @@ static unsigned launcher_touch_sample(watch_launcher_touch *t,watch_face_picker 
     risc_touch_snapshot_v1 s={0};
     bool valid=t->api->snapshot(t->api->context,&s)&&ok&&s.width==240&&s.height==240;
     if(s.contact_count)*activity=true;
+#ifdef WATCH_QUICK_ACTIONS
+    bool consumed=pqa_input(&clock_quick.ui,now,valid,s.contact_count,s.contacts[0].id,s.contacts[0].x,s.contacts[0].y,!picker->open);
+    if(consumed){watch_face_reset_contact(picker);return WATCH_FACE_NONE;}
+    if(clock_quick.ui.route==PQA_REPLAY) {
+        (void)watch_face_input(picker,clock_quick.ui.start_ms,true,0,0,0,0);
+        (void)watch_face_input(picker,clock_quick.ui.start_ms,true,1,clock_quick.ui.start_id,(unsigned)clock_quick.ui.start_x,(unsigned)clock_quick.ui.start_y);
+    }
+#endif
     return watch_face_input(picker,now,valid,s.contact_count,s.contacts[0].id,s.contacts[0].x,s.contacts[0].y);
 }

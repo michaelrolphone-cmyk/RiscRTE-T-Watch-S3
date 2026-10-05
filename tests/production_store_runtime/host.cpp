@@ -19,7 +19,7 @@ struct Model {
   uint64_t milliseconds=0;
   unsigned healthCalls=0,moduleLoads=0,moduleUnloads=0,appLoads=0,appUnloads=0;
   unsigned rows=0,frameRows=0,frames=0,brightness=0,touchReads=0,rtcWrites=0;
-  unsigned appSettingsReads=0,appPointsReads=0,radioActivity=0,storageWrites=0;
+  unsigned appSettingsReads=0,appPointsReads=0,quickSettingsReads=0,radioActivity=0,storageWrites=0;
   uint8_t pointsLedger[64]{};bool pointsLedgerPresent=false;unsigned pointsLedgerReads=0;
   unsigned command=0,row=0;
   void* application=nullptr;
@@ -98,6 +98,7 @@ int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_
   if(m.appLoaded&&!m.firstAppDelay){
     if(ns==1&&(!strcmp(key,"watch_face")||!strcmp(key,"time_format")))++m.appSettingsReads;
     if(ns==5&&!strcmp(key,"points_cfg"))++m.appPointsReads;
+    if(ns==1&&(!strcmp(key,"brightness")||!strcmp(key,"alarm_volume")||!strcmp(key,"quick_volume")))++m.quickSettingsReads;
   }
 #ifdef PRODUCTION_POINTS_DEFAULTS
   if(ns==4&&!strcmp(key,"points_occ")&&m.pointsLedgerPresent){

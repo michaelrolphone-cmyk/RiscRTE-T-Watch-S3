@@ -36,7 +36,11 @@ bool confirm(){
   // the real graph/providers and actual Clock have completed their startup.
   assert(current&&current->active()&&!current->retained()&&!m.ready);
   assert(m.appLoaded&&m.frames>0&&m.frameRows==240&&m.brightness>0&&m.touchReads>0);
+#ifdef CURRENT_APPS_PROFILE
+  assert(m.appSettingsReads==3&&m.quickSettingsReads==3&&m.appPointsReads==1&&nativeSafe);
+#else
   assert(m.appSettingsReads==2&&m.appPointsReads==1&&nativeSafe);
+#endif
   bool nonzero=false;for(auto pixel:m.frame)nonzero|=pixel!=0;assert(nonzero);
   risc_runtime_capability_v1 grant{};grant.struct_size=sizeof(grant);
   assert(!current->acquire(RISC_HTTP_CLIENT_CAPABILITY,1,0,&grant));

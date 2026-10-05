@@ -6,6 +6,10 @@
 #ifdef PORTABLE_ALARM_CLIENT
 #include "watch_alarm_sleep.h"
 #endif
+#ifdef PORTABLE_QUICK_ACTIONS
+/* Same invocation-local confirmed preference as the shared controls overlay. */
+extern unsigned portable_quick_brightness(void);
+#endif
 #include <stdlib.h>
 #include <string.h>
 static bool transfer(const risc_runtime_api_v1 *rt,const risc_display_output_api_v1 *d,
@@ -73,7 +77,13 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
             /* Resume stays dark until a complete previous-app frame arrives.
              * The caller then continues in its original stack and app state. */
             if(!d->set_brightness(d->context,0,100) || !transfer(rt,d,saved) ||
-               !d->set_brightness(d->context,40,100))rc=-1;
+               !d->set_brightness(d->context,
+#ifdef PORTABLE_QUICK_ACTIONS
+                 (uint16_t)portable_quick_brightness(),
+#else
+                 40,
+#endif
+                 100))rc=-1;
         }
     }
     free(saved);

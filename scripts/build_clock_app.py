@@ -52,10 +52,12 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
+                    *(['-DWATCH_QUICK_ACTIONS'] if current else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
-                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
+                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),
+                    *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c')] if current else []),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
     readelf = cc.removesuffix('gcc')+'readelf'
     nm = cc.removesuffix('gcc')+'nm'

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quick Actions — NOVA-7</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--c:#19e3ff;--cd:#0e4f5c;--ln:#12262b;--cap:#6b8288;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:#000}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 12px;font-family:'Rajdhani','Segoe UI',sans-serif;color:#fff}
+h1{margin:0;font:700 13px 'Orbitron','Segoe UI',sans-serif;letter-spacing:.3em;color:var(--c);text-align:center}
+.case{padding:12px;border-radius:34px;background:linear-gradient(145deg,#2a2d30,#0a0b0c);box-shadow:0 0 0 2px #1b1d1f,0 14px 30px #000}
+#scr{position:relative;width:240px;height:240px;border-radius:22px;background:#000;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+#lay{position:absolute;inset:0}
+#face{position:absolute;inset:0;display:block}
+.f{fill:none}
+.o{font-family:'Orbitron','Rajdhani','Segoe UI',sans-serif}
+.r2{font-family:'Rajdhani','Segoe UI',sans-serif}
+/* control panel: taller than the screen so a little overshoot never exposes a gap; bottom edge fades to the face */
+#pn{position:absolute;left:0;top:0;width:240px;height:280px;background:#000;transform:translateY(-280px);will-change:transform;
+ -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 22px),transparent 100%)}
+.hd{position:absolute;top:58px;left:20px;right:20px;height:16px;display:flex;align-items:center;justify-content:space-between}
+.hd b{font:700 13px 'Orbitron',sans-serif;letter-spacing:.06em;color:#fff}
+.bt{display:flex;align-items:center;gap:6px;font:700 10px 'Orbitron',sans-serif;color:#3dff9a}
+.bt s{display:flex;gap:2px;text-decoration:none}
+.bt s i{width:5px;height:4px;border-radius:1px;background:#3dff9a}
+.bt s i.d{opacity:.16}
+.row{position:absolute;left:20px;right:20px;height:14px;display:flex;align-items:center;gap:8px}
+.row svg{flex:none;width:16px;height:16px;stroke:var(--c);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sl{flex:1;display:flex;gap:3px;height:14px;touch-action:none;cursor:pointer}
+.sl i{flex:1;border-radius:3px;background:var(--c);opacity:.16;pointer-events:none}
+.sl i.on{opacity:1}
+.pc{flex:none;width:30px;text-align:right;font:700 10px 'Orbitron',sans-serif;color:#cfe9ee}
+.row.mute{opacity:.45}
+.hl{position:absolute;left:20px;right:20px;top:148px;height:1px;background:var(--ln)}
+.tile{position:absolute;width:62px;height:42px;border-radius:12px;background:#0c1013;box-shadow:inset 0 0 0 1px var(--ln);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#8aa4aa}
+.tile svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tile span{font:600 9px/9px 'Rajdhani',sans-serif;letter-spacing:.08em}
+.tile.on{background:var(--c);color:#001418;box-shadow:none}
+.grab{position:absolute;left:90px;top:248px;width:60px;height:22px;cursor:pointer}
+.grab::after{content:'';position:absolute;left:14px;top:8px;width:32px;height:4px;border-radius:2px;background:var(--c);opacity:.5}
+#tl{position:absolute;inset:0;display:none;align-items:flex-end;justify-content:center;padding-bottom:30px;box-sizing:border-box;background:#fff3d6;cursor:pointer;
+ --fx:linear-gradient(to right,transparent 0,rgba(0,0,0,.4) 14px,#000 46px,#000 calc(100% - 46px),rgba(0,0,0,.4) calc(100% - 14px),transparent 100%);
+ --fy:linear-gradient(to bottom,transparent 0,rgba(0,0,0,.4) 14px,#000 46px,#000 calc(100% - 46px),rgba(0,0,0,.4) calc(100% - 14px),transparent 100%);
+ -webkit-mask-image:var(--fx),var(--fy);-webkit-mask-composite:source-in;mask-image:var(--fx),var(--fy);mask-composite:intersect}
+#tl span{font:600 11px 'Rajdhani',sans-serif;letter-spacing:.2em;color:#6a5a30}
+.ctl{display:flex;gap:10px;align-items:center}
+.ctl button{padding:5px 14px;border:0;border-radius:12px;background:#000;box-shadow:inset 0 0 0 1px var(--cd);color:var(--c);font:600 12px 'Rajdhani',sans-serif;letter-spacing:.18em;cursor:pointer}
+p{margin:0;max-width:440px;text-align:center;font:500 13px 'Rajdhani',sans-serif;letter-spacing:.06em;color:var(--cap)}
+</style>
+</head>
+<body>
+<h1>QUICK ACTIONS · NOVA-7</h1>
+<div class="case"><div id="scr">
+ <div id="lay"><svg id="face" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="NOVA-7 watch face"></svg>
+  <div id="pn"></div></div>
+ <div id="tl"><span>TAP TO TURN OFF</span></div>
+</div></div>
+<div class="ctl"><button id="tgl">QUICK ACTIONS ▾</button></div>
+<p>Pull down from the very top edge of the screen (or use the button). Drag across the block bars to set brightness and volume. Swipe up on the panel, or tap the handle, to close.</p>
+<script>
+const GL={
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>',
+ spk:'<path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/>',waves:'<path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/>',x:'<path d="M16 9l5 6M21 9l-5 6"/>',
+ silent:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0M4 4l16 16"/>',
+ dnd:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+ air:'<path d="M21 15.5l-8-4.5V5.5a1.5 1.5 0 0 0-3 0V11l-8 4.5V18l8-2.2V19l-2.2 1.5V22l3.7-1 3.7 1v-1.5L13 19v-3.2l8 2.2z"/>',
+ wifi:'<path d="M3 9.5a13 13 0 0 1 18 0M6 13a8.5 8.5 0 0 1 12 0M9 16.4a4 4 0 0 1 6 0"/><circle cx="12" cy="19.5" r=".6"/>',
+ bt:'<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
+ torch:'<path d="M9 3h6l-1 6h-4zM10 9h4v12h-4z"/>'};
+const TILES=[['silent','SILENT',18,158],['dnd','DND',89,158],['air','AIRPLANE',160,158],['wifi','WI-FI',18,206],['bt','BLUETOOTH',89,206],['torch','TORCH',160,206]];
+const ST={silent:0,dnd:0,air:0,wifi:1,bt:1,torch:0},LV={b:7,v:4};
+const svg=g=>`<svg viewBox="0 0 24 24">${g}</svg>`;
+const blk=()=>'<i></i>'.repeat(10);
+const pn=document.getElementById('pn');
+pn.innerHTML=`<div class="hd"><b id="tm"></b><div class="bt">84%<s>${'<i></i>'.repeat(8)+'<i class="d"></i><i class="d"></i>'}</s></div></div>
+<div class="row" style="top:95px">${svg(GL.sun)}<div class="sl" data-k="b">${blk()}</div><span class="pc" id="bp"></span></div>
+<div class="row" id="vr" style="top:125px"><span id="vi" style="display:contents"></span><div class="sl" data-k="v">${blk()}</div><span class="pc" id="vp"></span></div>
+<div class="hl"></div>
+${TILES.map(([k,l,x,y])=>`<div class="tile" data-k="${k}" style="left:${x+2}px;top:${y}px">${svg(GL[k])}<span>${l}</span></div>`).join('')}
+<div class="grab"></div>`;
+const scr=document.getElementById('scr'),lay=document.getElementById('lay'),face=document.getElementById('face'),tl=document.getElementById('tl');
+const bi=[...pn.querySelectorAll('.sl[data-k=b] i')],vi=[...pn.querySelectorAll('.sl[data-k=v] i')],bp=document.getElementById('bp'),vp=document.getElementById('vp'),vr=document.getElementById('vr'),vic=document.getElementById('vi');
+function sync(){
+ bi.forEach((e,i)=>e.classList.toggle('on',i<LV.b));vi.forEach((e,i)=>e.classList.toggle('on',i<LV.v));
+ bp.textContent=LV.b*10+'%';vp.textContent=LV.v*10+'%';
+ pn.querySelectorAll('.tile').forEach(t=>t.classList.toggle('on',!!ST[t.dataset.k]));
+ vr.classList.toggle('mute',!!ST.silent);vic.innerHTML=svg(GL.spk+(ST.silent?GL.x:GL.waves));
+ lay.style.filter=`brightness(${(.3+.7*LV.b/10).toFixed(2)})`;
+ tl.style.display=ST.torch?'flex':'none';
+}
+sync();
+
+/* sliders: tap or drag across the block bar */
+let ac=null;
+function beep(){if(ST.silent||!LV.v)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=500+LV.v*70;g.gain.value=LV.v/10*.06;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.06)}catch(e){}}
+function setLv(s,x){const k=s.dataset.k,r=s.getBoundingClientRect();let n=Math.round((x-r.left)/r.width*10);n=Math.max(k=='b'?1:0,Math.min(10,n));if(n!==LV[k]){LV[k]=n;if(k=='v')beep();sync()}}
+let sd=null;
+pn.addEventListener('pointerdown',e=>{const s=e.target.closest('.sl');if(!s)return;sd=s;s.setPointerCapture(e.pointerId);setLv(s,e.clientX)});
+pn.addEventListener('pointermove',e=>{if(sd)setLv(sd,e.clientX)});
+pn.addEventListener('pointerup',()=>{sd=null});
+
+/* tiles */
+let mv=0;
+pn.addEventListener('click',e=>{if(mv)return;
+ const t=e.target.closest('.tile');
+ if(t){const k=t.dataset.k;ST[k]^=1;if(k=='air'&&ST.air){ST.wifi=0;ST.bt=0}if((k=='wifi'||k=='bt')&&ST[k])ST.air=0;if(k=='torch'&&ST.torch)tgt=0;sync()}
+ else if(e.target.closest('.grab'))tgt=0});
+tl.addEventListener('click',()=>{ST.torch=0;sync()});
+
+/* pull-down physics: spring with a small bounce at both ends, rubber band while dragging past the bounds */
+let o=0,v=0,tgt=0,dr=null,lt=0;
+scr.addEventListener('pointerdown',e=>{mv=0;if(e.target.closest('.sl'))return;
+ const y=e.clientY-scr.getBoundingClientRect().top;if(o<20&&y>36)return;
+ dr={y:e.clientY,o0:o,ly:e.clientY,lt:performance.now(),vy:0,on:0,id:e.pointerId}});
+scr.addEventListener('pointermove',e=>{if(!dr)return;const dy=e.clientY-dr.y;
+ if(!dr.on&&Math.abs(dy)>6){dr.on=1;mv=1;scr.setPointerCapture(dr.id)}if(!dr.on)return;
+ let r=dr.o0+dy;if(r>240)r=240+(r-240)*.3;if(r<0)r*=.3;o=r;
+ const n=performance.now();dr.vy=(e.clientY-dr.ly)/Math.max(1,n-dr.lt)*16.667;dr.ly=e.clientY;dr.lt=n});
+const up=()=>{if(!dr)return;if(dr.on){const open=o>120?dr.vy>-3:dr.vy>4;tgt=open?240:0;v=dr.vy*.5}dr=null};
+scr.addEventListener('pointerup',up);scr.addEventListener('pointercancel',up);
+document.getElementById('tgl').addEventListener('click',()=>{tgt=tgt?0:240;v=0});
+addEventListener('keydown',e=>{if(e.key=='Escape')tgt=0;if(e.key=='ArrowDown'&&!ST.torch)tgt=240});
+(function frame(ts){
+ const dt=Math.min(2.5,lt&&ts?(ts-lt)/16.667:1)||1;lt=ts;
+ if(!dr||!dr.on){v+=(tgt-o)*.08*dt;v*=Math.pow(.66,dt);o+=v*dt;if(Math.abs(tgt-o)<.3&&Math.abs(v)<.3){o=tgt;v=0}}
+ pn.style.transform=`translateY(${(o-280).toFixed(1)}px)`;
+ face.style.opacity=Math.max(0,1-o/190).toFixed(2);
+ requestAnimationFrame(frame)})();
+
+/* ---------- watch face: NOVA-7 ---------- */
+const R=Math.PI/180,p2=n=>('0'+n).slice(-2);
+const P=(r,a)=>[(120+r*Math.sin(a*R)).toFixed(1),(120-r*Math.cos(a*R)).toFixed(1)];
+const A=(r,a,b)=>{b=Math.min(b,a+359.9);return `M${P(r,a)} A${r} ${r} 0 ${b-a>180?1:0} 1 ${P(r,b)}`};
+const L=(a,r1,r2,c,w)=>{const u=P(r1,a),v=P(r2,a);return `<line x1="${u[0]}" y1="${u[1]}" x2="${v[0]}" y2="${v[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`};
+const X=(x,y,s,z,c,k='o',e='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${z}" fill="${c}" class="${k}" ${e}>${s}</text>`;
+const IC={silent:['#ffb020'],dnd:['#8b7bff'],air:['#ff7a1a'],torch:['#fff3d6']};
+function drawFace(){
+ const d=new Date(),ms=d.getMilliseconds(),sf=d.getSeconds()+ms/1000;let s='<defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+ for(let i=0;i<60;i++)s+=L(i*6,116,i%5?111:105,i%5?'#0e4f5c':'#19e3ff',i%5?1:2);
+ s+='<circle cx="120" cy="120" r="98" class="f" stroke="#0b1719" stroke-width="2.5"/>'+`<path d="${A(98,0,Math.max(sf*6,.5))}" class="f" stroke="#19e3ff" stroke-width="2.5" stroke-linecap="round" filter="url(#g)"/>`;
+ const wd=d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),mo=d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+ s+=X(120,62,`${wd} ${p2(d.getDate())} ${mo}`,12,'#19e3ff','r2','letter-spacing="2.5" fill-opacity=".85"');
+ const on=Object.keys(IC).filter(k=>ST[k]);
+ on.forEach((k,i)=>{const x=120+(i-(on.length-1)/2)*20-6;s+=`<g transform="translate(${x},72) scale(.5)" stroke="${IC[k][0]}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">${GL[k]}</g>`});
+ s+=X(120,128,`${p2(d.getHours())}<tspan fill="#19e3ff" fill-opacity="${ms<500?1:.25}">:</tspan>${p2(d.getMinutes())}`,40,'#fff','o','font-weight="700" textLength="132" lengthAdjust="spacingAndGlyphs"')
+  +X(120,150,p2(d.getSeconds()),10,'#19e3ff','o')+'<line x1="46" y1="158" x2="194" y2="158" stroke="#0e4f5c"/>'+X(120,175,'BATTERY 84%',9,'#7d8c90','r2','letter-spacing="2"');
+ for(let i=0;i<10;i++)s+=`<rect x="${81+i*8}" y="182" width="6" height="4" rx="1" fill="#3dff9a" fill-opacity="${i<8?1:.16}"/>`;
+ s+='<rect x="108" y="7" width="24" height="3" rx="1.5" fill="#19e3ff" fill-opacity=".35"/>';
+ face.innerHTML=s;
+ document.getElementById('tm').textContent=p2(d.getHours())+':'+p2(d.getMinutes());
+}
+setInterval(drawFace,50);drawFace();
+</script>
+</body>
+</html>
