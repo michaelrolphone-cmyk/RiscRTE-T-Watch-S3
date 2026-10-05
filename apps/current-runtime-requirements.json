@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "e027d10016b1133dfa9165e6a765ea94dd8f0b96",
+  "source_sha": "511f08d4a0a20c3a1e8672e99296dc525a1cd8af",
   "firmware_version": "0.1.26",
   "required_behavior": {
     "spi_max_hz": 40000000,
@@ -43,7 +43,7 @@
     "provider_bound_key_capacity": 9
   },
   "abi_changed": false,
-  "reason": "Ninth explicit provider key for persisted DND-all policy; local user-test candidate.",
+  "reason": "Canonical review Runtime with nine exact provider keys, bounded HCI and PSRAM metadata for the generic USB target. Delivered local test BIN identity is separately preserved.",
   "deployment": {
     "target": "esp32s3-16mb-paired",
     "layout": "riscrte-paired-16m-v1",
