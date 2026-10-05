@@ -1,8 +1,8 @@
 // Admit the complete supplied production store through the real Runtime and
 // CpuPort. Nothing rewrites its board, driver manifests, app manifests or policy.
 // The lowest hardware boundary is inert; prepare must not invoke native I/O.
-#include "bootstrap/Runtime.h"
 #define private public
+#include "bootstrap/Runtime.h"
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
@@ -67,6 +67,23 @@ int main(int argc, char** argv) {
                             [](uint32_t) { ++hardwareCalls; },
                             [](const char*) { return true; }, bind, &kv});
   const bool prepared = runtime.prepare(argv[1]);
+  if (!prepared) {
+    fprintf(stderr, "ADMISSION platforms=%zu drivers=%zu\n", runtime.platformCount_, runtime.driverCount_);
+    for (size_t i=0;i<runtime.platformCount_;++i) {
+      const auto& p=runtime.platforms_[i];
+      fprintf(stderr, "PLAT %zu cap=%s api=%u scope=%u id=%llu\n", i,p.capability,p.api,
+              unsigned(p.scope),(unsigned long long)p.id);
+    }
+    for (size_t i=0;i<runtime.driverCount_;++i) {
+      const auto& d=runtime.drivers_[i];
+      fprintf(stderr, "DRV %zu id=%s inst=%llu reqs=%zu\n", i,d.id,(unsigned long long)d.instance,d.count);
+      for (size_t r=0;r<d.count;++r) {
+        const auto& q=d.requirements[r];
+        fprintf(stderr, "  REQ cap=%s api=%u trusted=%p providerInst=%llu\n", q.capability,q.api,q.trustedApi,
+                (unsigned long long)q.providerInstance);
+      }
+    }
+  }
   // Runtime errors are constant diagnostics, with no input text or credentials.
   printf("{\"prepared\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"i2s_tables\":%zu}\n",
          prepared ? "true" : "false", runtime.error(), hardwareCalls, storageCalls, port.i2sCount_);
