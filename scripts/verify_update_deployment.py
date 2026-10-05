@@ -256,10 +256,10 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
         data = files['packages/'+package['archive']]
         require(sha(data) == package['sha256'] and len(data) == package['size_bytes'], 'Physical package changed')
     alarm = json.loads(files['shared/alarm-service-build.json'])
-    alarm_baseline = json.loads((root/'apps/points-service-baseline.json').read_text())
+    alarm_baseline = json.loads((root/'apps/update-alarm-service-baseline.json').read_text())
     require(alarm['source_sha256'] == alarm_baseline['source_sha256'] and
             alarm['size_bytes'] == len(files['store/alarm-service/driver.elf']), 'Alarm provenance changed')
-    require(alarm['source_pins'] == pins and alarm['service_version'] == '0.2.1' and
+    require(alarm['source_pins'] == pins and alarm['service_version'] == alarm_baseline['service_version'] and
             alarm['elf_sha256'] == sha(files['store/alarm-service/driver.elf']), 'Alarm source/ELF changed')
     return record
 
