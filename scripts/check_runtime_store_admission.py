@@ -56,8 +56,13 @@ def compile_harness(runtime, output):
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
-    if 'radioJoin' in (runtime / 'src/ports/esp32s3/CpuPort.h').read_text():
+    cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
+    if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
+    if 'i2sOpenRx' in cpu_header:
+        command += ['-DSTORE_ADMISSION_I2S_RX']
+    if (runtime/'sdk/driver/RiscHttpClientV1.h').is_file() and (runtime/'sdk/driver/RiscBankStoreV1.h').is_file():
+        command += ['-DSTORE_ADMISSION_UPDATE_PLATFORMS']
     command += ['-I' + str(p) for p in includes]
     command += [str(p) for p in sources]
     command += [str(ROOT / 'tests/runtime_store_admission.cpp'), '-ldl', '-o', str(output)]
@@ -130,7 +135,7 @@ def admit(harness, store, expected_error=None):
         raise ValueError('Boot admission invoked native I/O')
     if expected_error is None:
         if not outcome['prepared']:
-            raise ValueError('Production store admission failed: ' + outcome['error'])
+            raise ValueError('Production store admission failed: ' + str(outcome))
     elif outcome['prepared'] or outcome['error'] != expected_error:
         raise ValueError('Baseline did not fail with the expected admission error: ' + str(outcome))
     return dict(outcome, store_files=len(store), store_sha256=before)
