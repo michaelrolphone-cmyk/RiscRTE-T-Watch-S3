@@ -14,7 +14,8 @@ import sys
 import tempfile
 import zipfile
 
-from build_update_common import PROFILE, ROOT, read_zip, require, verify
+from build_update_common import ROOT, read_zip, require
+from audio_overlay import PROFILE, verify
 from build_update_flash_bundle import FLASH_BYTES, LAYOUT, assemble
 from build_wifi_store import OFFSET, SIZE, check_image
 from check_runtime_store_admission import unpack_image
@@ -79,7 +80,7 @@ def build(artifact_dir, runtime_source, runtime_candidate, mkspiffs, head, outpu
     require(image_record_path.is_file(), 'Missing update store image record')
 
     record = verify(common, root=ROOT, expected_head=head)
-    require(record['runtime_requirements'] == requirements, 'Update deployment Runtime requirement differs from main')
+    require(json.loads(common_files['runtime-requirements.json']) == requirements, 'Audio deployment Runtime requirement differs from main')
     common_files = read_zip(common)
     store = {name[6:]: data for name, data in common_files.items() if name.startswith('store/')}
     image_bytes = image.read_bytes()
