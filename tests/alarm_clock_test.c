@@ -77,7 +77,7 @@ static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(vo
  if(!strcmp(k,POINTS_CONFIG_KEY)) {
   points_config c={.revision=1,.created=800000000};
   for(unsigned j=0;j<POINTS_MAX;j++)c.points[j].kind=POINTS_BREAK;
-  c.points[0]=(points_item){POINTS_LUNCH,1,0,127,12,0,30};assert(cap==64);
+  c.points[0]=(points_item){.kind=POINTS_LUNCH,.enabled=1,.mode=0,.weekdays=127,.hour=12,.minute=0,.duration_minutes=30};assert(cap==64);
   points_config_encode(&c,b);*size=64;return RISC_KEY_VALUE_OK;
  }
 #endif
