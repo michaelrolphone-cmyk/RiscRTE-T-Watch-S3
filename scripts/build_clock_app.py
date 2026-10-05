@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+from build_legacy_sleep import legacy_inputs, legacy_clock
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -38,13 +39,15 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
             raise ValueError('Canonical app SDK hash mismatch')
     out = ROOT/('dist/update-launcher' if paired else 'dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
+    clock_source = ROOT/'apps/clock' if current else legacy_clock(ROOT)
+    driver_source = ROOT if current else legacy_inputs(ROOT)
     elf = out/('clock.elf' if returning else 'default.elf')
     exports_map=out/'exports.map'
     exports_map.write_text('{ global: app_main; local: *; };\n')
     effect_obj=out/'boot-effect.o'
     subprocess.run([cc.removesuffix('gcc')+'g++','-std=c++11','-Os','-fPIC','-mtext-section-literals','-mlongcalls',
         '-fvisibility=hidden','-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-ffreestanding','-fno-builtin',
-        '-Wall','-Wextra','-Werror','-I'+str(ROOT/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
+        '-Wall','-Wextra','-Werror','-I'+str(driver_source/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
     subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
@@ -55,8 +58,8 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE'] if current else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
-                    '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
-                    str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),
+                    '-I'+str(ROOT/'sdk/app'),'-I'+str(driver_source/'sdk/driver'),'-I'+str(driver_source/'include'),
+                    str(clock_source/'crown.c'),str(ROOT/'apps/clock/nova/nova.c'),
                     *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')] if current else []),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
     compaction_proof=None

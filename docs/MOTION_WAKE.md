@@ -63,8 +63,9 @@ Software gates cover both chip profiles, complete feature writes/readback,
 stale/held IRQs, every preparation and rollback transfer fault, retry, registration
 ownership, legacy ABI prefixes, source coexistence, native cleanup, alarm boundary
 priority, retained apps, current-store admission/execution and target links.
-Historical GPIO 0.4.2/PMU 0.5.3 packages are rebuilt from frozen exact source inputs
-and must match their original hashes. The current overlay alone replaces them
+Historical GPIO 0.4.2/PMU 0.5.3 packages and the historical Clock/sleep adapters
+are rebuilt from frozen exact source inputs and must match their original hashes.
+Their test lanes use the matching original SDK headers. The current overlay replaces them
 with GPIO 0.5.0/PMU 0.6.0 and adds IMU 0.3.0.
 
 Hardware checks need no serial connection:

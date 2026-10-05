@@ -46,6 +46,10 @@
     "hardware/sx1262-915-bma456h.json": "aad85a43849650526ea358de6cc90e874d8f7c14ac1c3f20fb592e833f4928d7",
     "hardware/sx1280-2400-bma423.json": "a066b7969eb741912d7832b3e87c4a63b0e0e19b94d152ea8c63875c9a0da546",
     "hardware/sx1280-2400-bma456h.json": "b6968739858c9399a94d67f37c827fa9a1f27a2e3a4f17d8cc4efb000827c6d4",
-    "releases/board-baseline.json": "92756323a9d824c835459bb407e0245fabb9a9170845871ac1da171a8607d7f4"
+    "releases/board-baseline.json": "92756323a9d824c835459bb407e0245fabb9a9170845871ac1da171a8607d7f4",
+    "apps/clock/crown.c": "230742ed60949366bd566607a8cc7b0fb820c30f6bb6dd31dbeb5fa326d98958",
+    "apps/clock/portable_sleep.c": "be241d67da4e03ed6433a03616b833664582e66257a489d396de218329bb7f75",
+    "apps/clock/watch_sleep.h": "437db1919d34385b9b0bc1f24c39b81477b0a5bd1737e391e87bc98f61c0b0b1",
+    "apps/clock/watch_alarm_sleep.h": "8ab72d6532e9bf2876391d0614a88d6052fa686c02715e3d1f522412053e3783"
   }
 }

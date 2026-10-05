@@ -3,6 +3,7 @@
 import argparse,json,os,shutil,subprocess,hashlib
 from pathlib import Path
 from build_clock_app import build as build_clock
+from build_legacy_sleep import legacy_inputs,legacy_clock
 ROOT=Path(__file__).resolve().parents[1]
 def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=False,updates=None):
     if updates is not None and (not wifi or any(n not in ('ota_update','app_store') for n in updates)):raise ValueError("Updates require explicit Wi-Fi baseline and known app names")
@@ -50,6 +51,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     if productivity:record['return_targets']['points_in_time']='springboard.elf'
     record['daily_apps']={'stopwatch':{'storage_instance':2,'key':'stopwatch','awake_clock':'monotonic-ms','restored_clock':'raw-RTC-seconds','precision':'approximate-after-recovery'},'calculator':{'arithmetic':'fixed-decimal','fractional_digits':6}}
     record['sleep_policy']={'default':'hybrid','application_idle_ms':60000,'light_ms':300000,'scope':'saved Clock mode; other apps always hybrid','choice':'storage.key-value@1','instance_id':1,'key':'sleep_mode','deep_wake':'fresh-default','ulp_program':False}
+    sleep_source=legacy_clock(ROOT);driver_source=legacy_inputs(ROOT)
     build_clock(launcher=True,alarm_system=system if alarms else None,points_utilities=utilities if productivity else None,wifi=wifi,paired=updates is not None)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}
@@ -58,7 +60,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     for name,repo,source in [('springboard',system,system/'Apps/springboard.c'),('battery',utilities,utilities/'Apps/battery.c'),('settings',system,system/'Apps/settings.c'),('calculator',utilities,utilities/'Apps/calculator.c'),('stopwatch',utilities,utilities/'Apps/stopwatch.c')]+([('alarms',utilities,utilities/'Apps/alarms.c'),('countdown',utilities,utilities/'Apps/countdown.c')] if alarms else [])+([('wifi_settings',system,system/'Apps/wifi_settings.c')] if wifi else [])+([('points_in_time',productivity,productivity/'Apps/points_in_time.c')] if productivity else [])+([(n,system,system/'Apps'/(n+'.c')) for n in updates] if updates is not None else []):
         exports=['app_main','app_module_init','app_module_fini']
         mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(exports)+'; local: *; };\n')
-        sources=[source,system/'lib/PortableApps/src/adapter.c',out/('daily_catalog.c' if name=='springboard' else 'catalog.c'),ROOT/'apps/clock/portable_navigation.c',ROOT/'apps/clock/portable_sleep.c']
+        sources=[source,system/'lib/PortableApps/src/adapter.c',out/('daily_catalog.c' if name=='springboard' else 'catalog.c'),ROOT/'apps/clock/portable_navigation.c',sleep_source/'portable_sleep.c']
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
         flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL']
         if alarms:flags.append('-DPORTABLE_ALARM_CLIENT')
@@ -70,7 +72,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
         if name=='points_in_time' and 'points_nova7.inc' in source.read_text():flags.append('-DPORTABLE_NOVA_UI')
         flags.append(('-DPOINTS_RETURN_APP=' if name=='points_in_time' else '-DWIFI_RETURN_APP=' if name=='wifi_settings' else '-DUPDATE_RETURN_APP=' if updates is not None and name in updates else '-DPORTABLE_RETURN_APP=')+'"'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"')
         elf=out/(name+'.elf')
-        subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',system/'Apps',utilities/'lib/Alarm/include',ROOT/'sdk/app',ROOT/'sdk/driver',ROOT/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
+        subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',system/'Apps',utilities/'lib/Alarm/include',ROOT/'sdk/app',driver_source/'sdk/driver',driver_source/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
         symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True)
         imports={line.split()[-1] for line in symbols.splitlines() if ' U ' in ' '+line}
         allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','free','strcpy'}
