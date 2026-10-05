@@ -13,7 +13,8 @@ static void watch_points_style(const points_meta *meta,unsigned kind,nova_point_
     if(meta&&index<POINTS_CUSTOM_COUNT&&meta->custom[index].name[0]) {
         out->color_index=meta->custom[index].color<POINTS_COLOR_COUNT?meta->custom[index].color:6;
         unsigned n=0;while(n<NOVA_POINT_LABEL_MAX&&meta->custom[index].name[n])n++;
-        if(n)memcpy(out->label,meta->custom[index].name,n);out->label[n]=0;
+        if(n)memcpy(out->label,meta->custom[index].name,n);
+        out->label[n]=0;
     } else {
         const char *fallback=index?"CUSTOM 2":"CUSTOM 1";unsigned n=0;
         while(n<NOVA_POINT_LABEL_MAX&&fallback[n]){out->label[n]=fallback[n];n++;}out->label[n]=0;
