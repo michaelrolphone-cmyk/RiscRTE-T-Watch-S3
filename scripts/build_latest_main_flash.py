@@ -27,6 +27,13 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def installed_clock_version(store):
+    default = json.loads(store['default.json'])['version']
+    returning = json.loads(store['clock.json'])['version']
+    require(default == returning, 'Final Clock pair version differs')
+    return default
+
+
 def git(root, *args):
     return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
 
@@ -183,7 +190,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     require(unpack_image(merged[OFFSET:OFFSET + SIZE], mkspiffs) == store,
             'Final full-flash store differs after assembly')
 
-    version = json.loads((ROOT / 'apps/clock/paired-manifest.json').read_text())['version']
+    version = installed_clock_version(store)
     name = f'twatch-s3-main-{version}-{head[:8]}.bin'
     manifest = {
         'schema': 1,
