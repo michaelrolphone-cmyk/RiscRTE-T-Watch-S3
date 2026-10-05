@@ -311,6 +311,9 @@ jobs:
           python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
           python .points-dependencies/productivity/scripts/test_points_in_time.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_gui.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_picker.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_touch.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
           SANITIZE=1 python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
       - name: Pinned target tools
