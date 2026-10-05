@@ -80,6 +80,9 @@ static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(vo
   c.points[0]=(points_item){.kind=POINTS_LUNCH,.enabled=1,.mode=0,.weekdays=127,.hour=12,.minute=0,.duration_minutes=30};assert(cap==64);
   points_config_encode(&c,b);*size=64;return RISC_KEY_VALUE_OK;
  }
+#if WATCH_POINTS_EXTENDED
+ if(!strcmp(k,POINTS_META_KEY)){assert(cap==64);*size=0;return RISC_KEY_VALUE_NOT_FOUND;}
+#endif
 #endif
 if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}if(!strcmp(k,WATCH_FACE_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}assert(!strcmp(k,PORTABLE_SLEEP_KEY)&&cap==4);++kv_reads;*size=0;
  if(scenario==9||scenario==12)return RISC_KEY_VALUE_NOT_FOUND;
