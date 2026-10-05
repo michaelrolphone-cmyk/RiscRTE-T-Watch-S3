@@ -13,7 +13,7 @@ def verify(path):
  with zipfile.ZipFile(path) as z:
   names=z.namelist();assert len(names)==len(set(names)) and all(not n.startswith('/') and '..' not in PurePosixPath(n).parts for n in names)
   record=json.loads(z.read('deployment-record.json'));entries=record['entries']
-  assert record['schema']=='riscrte.watch-points-launcher-deployment' and record['app_version']=='0.7.0'
+  assert record['schema']=='riscrte.watch-points-launcher-deployment' and record['app_version']=='0.8.0'
   assert len(entries)==len({e['path'] for e in entries}) and set(names)=={e['path'] for e in entries}|{'deployment-record.json'}
   for e in entries:
    data=z.read(e['path']);assert e['size_bytes']==len(data) and e['sha256']==sha(data),e['path']
@@ -24,7 +24,7 @@ def verify(path):
   assert len(physical)==9 and {d['instance_id'] for d in physical}==DEVICES
   assert services==[{'manifest':'alarm-service/manifest.json','key_value':KV}]
   assert [p['manifest'] for p in boot['app_capabilities']]==[a+'.json' for a in APPS]
-  expected_versions={'default':'0.7.0','clock':'0.7.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.1.0'}
+  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.2.0'}
   metadata=json.loads(z.read('shared-app-build.json'))
   for name,policy in zip(APPS,boot['app_capabilities']):
    grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
