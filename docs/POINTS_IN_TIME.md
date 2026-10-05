@@ -97,3 +97,30 @@ Historical Wi-Fi/update custody builds explicitly select the original
 shared-defaults schema. Their original binary hashes remain unchanged. The
 current Points lane and both final paired Clocks use the new 13-character/Work
 presentation; final assembly still replaces both historical Clock payloads.
+
+## Complete label glyphs and bounded word fitting
+
+The reported `Drive to Work` → `D  W` rendering was caused by missing lowercase
+glyphs, not missing saved characters. Earlier text atlases stopped at ASCII 90;
+some Points subsets also omitted uppercase letters and digits. Current faces
+use the same shipped OFL fonts with complete printable ASCII coverage for their
+text styles. Stored/projected names keep their exact case and content.
+
+A full name is displayed when its native font/spacing fits the allocated field.
+For a multi-word custom name that exceeds that field, the display may use its
+first complete word (`Drive`), as authorized; it never constructs initials.
+Built-in labels use their complete names (`WORK END`) rather than old brief
+aliases. Existing size fitting remains available for long single words.
+
+Generate current text atlases with `generate_assets.py --full-text` and
+`generate_points_assets.py --full-text`. Retained legacy atlases and the exact
+historical Points renderer remain selected only by historical custody builds;
+their original executable hashes are still verified unchanged.
+
+`test_points_label_pixels.py` reproduces the original pixel-for-pixel glyph
+omission using retained atlases, then tests 1,045 printable glyphs in 11 text
+styles at native and fitted widths. It encodes/decodes the real default records,
+projects three actual schedule times, and exports all 33 production face frames
+at native 240×240. Text-call and pixel evidence cover full/first-word fitting,
+complete Wakeup/Drive to Work/WORK END labels, and untouched stored/projected
+names. These are native host renderer screenshots, not physical-device captures.

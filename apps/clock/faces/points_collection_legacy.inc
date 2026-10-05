@@ -1,11 +1,7 @@
 /* Points in Time: integer RGB565 adaptation of the owner's eight layouts.
  * Render only the caller's bounded snapshot. No calendar service, fabricated
  * meeting, local/absolute time conversion, storage access or allocation. */
-#ifdef WATCH_POINTS_LEGACY_PRESENTATION
 #include "points_assets.inc"
-#else
-#include "points_text_assets.inc"
-#endif
 #define PS_TEXT(c,font,s,x,y,spacing,fit,color) ftext_alpha(c,&ps_f_##font,s,x,y,spacing,fit,color,0,points_alpha)
 #define PS_CAL(c,font,s,x,y,spacing,fit,color) ftext_alpha(c,&fc_f_##font,s,x,y,spacing,fit,color,0,calendar_alpha)
 #define PS_CAP FC(107,130,136)
@@ -48,25 +44,6 @@ static const char*ps_event_name(const nova_point_event*e,bool brief) {
         case NOVA_POINT_BREAK:return "BREAK";
         default:return brief?"BED":"BEDTIME";
     }
-}
-/* Fit by complete words, never by losing unsupported glyphs or initials.
- * The stored/projected label remains untouched; this buffer is frame-local. */
-static unsigned ps_text_width(const face_font*font,const char*s,int spacing) {
-    unsigned width=0;for(;*s;s++){const face_glyph*g=fglyph(font,*s);if(g)width+=g->advance+(unsigned)spacing;}
-    if(width)width-=(unsigned)spacing;
-    return (width+255u)/256u;
-}
-static const char*ps_label(char out[NOVA_POINT_LABEL_MAX+1],const nova_point_event*e,bool brief,
-                          const face_font*font,int spacing,int maximum) {
-    /* Current faces prefer complete built-in names too (WORK END, BEDTIME).
-     * Historical abbreviations remain isolated in the legacy presentation. */
-    (void)brief;const char*name=ps_event_name(e,false);unsigned n=0;
-    while(n<NOVA_POINT_LABEL_MAX&&name[n]){out[n]=name[n];n++;}out[n]=0;
-    if(ps_custom_kind(e->kind)&&ps_text_width(font,out,spacing)>(unsigned)(maximum>0?maximum:0)) {
-        unsigned first=0;while(out[first]&&out[first]!=' ')first++;
-        if(first&&out[first]==' ')out[first]=0;
-    }
-    return out;
 }
 static uint16_t ps_color(const nova_point_event*e) {
     if(ps_custom_kind(e->kind))return ps_custom_colors[e->color_index<8?e->color_index:6];
@@ -228,10 +205,10 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
     uint16_t color=nx?ps_color(nx):PS_CAP;
     uint32_t remain=nx?nx->at_rtc-p->now_rtc:0;
     unsigned progress=nx&&p->previous_valid?ps_fraction(p->now_rtc,p->previous.at_rtc,nx->at_rtc):0;
-    char timer[16],clock[24],label[64],event_label[NOVA_POINT_LABEL_MAX+1];ps_duration(timer,remain,false);
+    char timer[16],clock[24],label[64];ps_duration(timer,remain,false);
     if(id==0) { /* NEXT */
         ps_clock(c,l,40,14,PS_CAP);
-        PS_TEXT(c,r14,nx?ps_label(event_label,nx,false,&ps_f_r14,1024,196):"NO UPCOMING",120,76,1024,0,color);
+        PS_TEXT(c,r14,nx?ps_event_name(nx,false):"NO UPCOMING",120,76,1024,0,color);
         if(ps_length(timer)>5)PS_CAL(c,o40,nx?timer:"--:--",120,134,0,186,FWHITE);
         else PS_CAL(c,o52,nx?timer:"--:--",120,134,0,136,FWHITE);
         fc_round_rect(c,30*16,150*16,180*16,4*16,2*16,FC(26,32,36));
@@ -242,7 +219,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
     } else if(id==1) { /* RING */
         fcirc(c,1920,1920,98*16,8*16,PS_BG);
         if(nx&&p->previous_valid)ps_arc(c,120,120,98,1024-progress,8,color);
-        PS_TEXT(c,r14,nx?ps_label(event_label,nx,false,&ps_f_r14,768,180):"NO UPCOMING",120,78,768,0,color);
+        PS_TEXT(c,r14,nx?ps_event_name(nx,false):"NO UPCOMING",120,78,768,0,color);
         PS_CAL(c,o40,nx?timer:"--:--",120,126,0,ps_length(timer)>5?150:104,FWHITE);
         if(nx){ps_event_clock(clock,nx,s->hour_24,true);fc_join(label,sizeof(label),"AT ",clock,"");ftext(c,&ff_r10,label,120,146,384,0,FC(154,165,168),0);}
         ps_clock(c,l,166,14,PS_CAP);ps_battery(c,s,l,178,color);
@@ -254,8 +231,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
             const nova_point_event*e=p->next+i;uint16_t col=ps_color(e);
             if(!i)fc_round_rect(c,22*16,(y-18)*16,196*16,36*16,10*16,fc_dim(col,46));
             frect(c,22,y-18,3,36,col);
-            const char*name=ps_label(event_label,e,false,&ps_f_r15,256,84);
-            PS_TEXT(c,r15,name,79,y+5,256,ps_fit(&ps_f_r15,name,256,84),i?FC(154,165,168):FWHITE);
+            PS_TEXT(c,r15,ps_event_name(e,false),79,y+5,256,ps_fit(&ps_f_r15,ps_event_name(e,false),256,84),i?FC(154,165,168):FWHITE);
             ps_event_clock(clock,e,s->hour_24,true);ftext(c,&ff_r11,clock,166,y-1,0,0,col,0);
             ps_relative(clock,e->at_rtc-p->now_rtc);fc_join(label,sizeof(label),"IN ",clock,"");ftext(c,&ff_r9,label,174,y+13,256,ps_fit(&ff_r9,label,256,82),PS_CAP,0);
         }
@@ -281,11 +257,11 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
             if(e->is_end){fline(c,x*16,126*16,x*16,134*16,16,fc_dim(col,128));continue;}
             unsigned j=0;while(j<named&&names[j]!=i)j++;unsigned row=j%2;
             fline(c,x*16,130*16,x*16,(row?143:117)*16,32,col);
-            if(j<named){int lx=label_x[j];fline(c,x*16,(row?143:117)*16,lx*16,(row?152:110)*16,12,fc_dim(col,135));const char*name=ps_label(event_label,e,true,&ff_r9,0,44);ftext(c,&ff_r9,name,lx,row?163:105,0,ps_fit(&ff_r9,name,0,44),col,0);}
+            if(j<named){int lx=label_x[j];fline(c,x*16,(row?143:117)*16,lx*16,(row?152:110)*16,12,fc_dim(col,135));const char*name=ps_event_name(e,true);ftext(c,&ff_r9,name,lx,row?163:105,0,ps_fit(&ff_r9,name,0,44),col,0);}
         }
         fcirc(c,now_x*16,130*16+8,5*16,0,FWHITE);
         if(!p->today_count)ftext(c,&ff_r11,"NO POINTS TODAY",120,109,512,0,PS_CAP,0);
-        if(nx){ps_duration(timer,remain,false);char suffix[24];fc_join(suffix,sizeof(suffix)," IN ",timer,"");fc_join(label,sizeof(label),ps_label(event_label,nx,false,&ff_r11,384,190-(int)ps_text_width(&ff_r11,suffix,384)-2),suffix,"");}else memcpy(label,"NO UPCOMING",12);
+        if(nx){ps_duration(timer,remain,false);fc_join(label,sizeof(label),ps_event_name(nx,false)," IN ",timer);}else memcpy(label,"NO UPCOMING",12);
         ftext(c,&ff_r11,label,120,188,384,ps_fit(&ff_r11,label,384,190),color,0);ps_battery(c,s,l,204,color);
     } else if(id==4) { /* TRIPLE */
         ps_clock(c,l,54,34,FWHITE);
@@ -296,8 +272,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
             const nova_point_event*e=p->next+i;uint32_t r=e->at_rtc-p->now_rtc;uint16_t col=ps_color(e);
             ps_arc(c,x,122,26,r>=14400?1024:r*1024u/14400u,5,col);
             ps_duration(timer,r,true);PS_CAL(c,o11,timer,x,126,0,ps_length(timer)>5?48:0,FWHITE);
-            const char*name=ps_label(event_label,e,true,&ff_r9,128,58);
-            ftext(c,&ff_r9,name,x,164,128,ps_fit(&ff_r9,name,128,58),col,0);
+            ftext(c,&ff_r9,ps_event_name(e,true),x,164,128,ps_fit(&ff_r9,ps_event_name(e,true),128,58),col,0);
             ps_event_clock(clock,e,s->hour_24,false);ftext(c,&ff_r7,clock,x,178,0,0,PS_CAP,0);
         }
         if(!nx)ftext(c,&ff_r10,"NO UPCOMING",120,84,256,0,PS_CAP,0);
@@ -307,7 +282,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         ps_clock(c,l,44,14,PS_CAP);
         const char*phase=ps_phase_name(p->phase);PS_TEXT(c,o34,phase,120,98,0,(int)(ps_length(phase)*21u<196?ps_length(phase)*21u:196),phase_color);
         frect(c,50,112,140,3,FC(26,32,36));if(p->previous_valid&&nx)frect(c,50,112,(int)(140*progress/1024),3,phase_color);
-        if(nx)fc_join(label,sizeof(label),ps_label(event_label,nx,false,&ff_r11,768,196-(int)ps_text_width(&ff_r11," IN",768)-3)," IN","");else memcpy(label,"NO UPCOMING",12);
+        if(nx)fc_join(label,sizeof(label),ps_event_name(nx,false)," IN","");else memcpy(label,"NO UPCOMING",12);
         ftext(c,&ff_r11,label,120,140,768,0,FC(154,165,168),0);
         PS_CAL(c,o38,nx?timer:"--:--",120,176,0,ps_length(timer)>5?150:116,FWHITE);ps_battery(c,s,l,200,phase_color);
     } else if(id==6) { /* BOARD */
@@ -320,8 +295,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
             if(i>=p->next_count){ftext(c,&ff_m10,i?"--":"NO UPCOMING",120,y+16,0,0,PS_CAP,0);continue;}
             const nova_point_event*e=p->next+i;
             ps_event_clock(clock,e,s->hour_24,false);ftext(c,&ff_m10,clock,49,y+15,0,ps_fit(&ff_m10,clock,0,44),col,0);
-            const char*name=ps_label(event_label,e,false,&ff_m11,0,74);
-            ftext(c,&ff_m11,name,117,y+15,0,ps_fit(&ff_m11,name,0,74),col,0);
+            ftext(c,&ff_m11,ps_event_name(e,false),117,y+15,0,ps_fit(&ff_m11,ps_event_name(e,false),0,74),col,0);
             ps_duration(timer,e->at_rtc-p->now_rtc,true);ftext(c,&ff_m11,timer,190,y+15,0,ps_fit(&ff_m11,timer,0,46),col,0);
             if(e->day_offset){fc_number(clock,(unsigned)e->day_offset);fc_join(label,sizeof(label),"+",clock,"D");ftext(c,&ff_r7,label,49,y+23,0,0,PS_CAP,0);}
         }
@@ -372,7 +346,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         for(unsigned i=0;i<p->today_count;i++)if(!p->today[i].is_end)ps_up_next_marker(c,p,p->today+i);
         for(unsigned i=0;i<p->next_count;i++)if(!p->next[i].is_end&&p->next[i].day_offset>0)ps_up_next_marker(c,p,p->next+i);
         ftext(c,&ff_r10,l->date,120,58,768,0,FCYAN,0);
-        if(primary){const char*prefix=active?"NOW - ":"NEXT - ";fc_join(label,sizeof(label),prefix,ps_label(event_label,primary,false,&ff_r10,512,186-(int)ps_text_width(&ff_r10,prefix,512)-2),"");}
+        if(primary){fc_join(label,sizeof(label),active?"NOW - ":"NEXT - ",ps_event_name(primary,false),"");}
         else memcpy(label,"NO POINTS",10);
         ftext(c,&ff_r10,label,120,76,512,ps_fit(&ff_r10,label,512,186),accent,0);
         ps_clock(c,l,118,34,FWHITE);
@@ -383,7 +357,7 @@ static void fpoints_collection(canvas*c,const nova_watch_state*s,const nova_watc
         const nova_point_event*then=NULL;
         if(active)then=upcoming;
         else if(upcoming)then=ps_upcoming_start(p,upcoming->at_rtc,true);
-        if(then){char prefix[48];ps_event_clock(clock,then,s->hour_24,true);fc_join(prefix,sizeof(prefix),"THEN ",ps_label(event_label,then,false,&ff_r9,384,188-(int)ps_text_width(&ff_r9,"THEN  ",384)-(int)ps_text_width(&ff_r9,clock,384)-4)," ");fc_join(label,sizeof(label),prefix,clock,"");ftext(c,&ff_r9,label,120,164,384,ps_fit(&ff_r9,label,384,188),PS_CAP,0);}
+        if(then){char prefix[48];ps_event_clock(clock,then,s->hour_24,true);fc_join(prefix,sizeof(prefix),"THEN ",ps_event_name(then,false)," ");fc_join(label,sizeof(label),prefix,clock,"");ftext(c,&ff_r9,label,120,164,384,ps_fit(&ff_r9,label,384,188),PS_CAP,0);}
         else ftext(c,&ff_r9,"THEN --",120,164,384,0,PS_CAP,0);
         for(unsigned i=0;i<10;i++)frect(c,81+(int)i*8,176,6,4,l->battery_valid&&i<s->battery_percent/10?FGREEN:FC(10,32,20));
     }

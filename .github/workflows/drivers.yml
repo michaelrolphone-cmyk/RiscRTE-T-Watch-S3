@@ -307,6 +307,7 @@ jobs:
       - name: Points projections, nine faces and foreground lifecycle
         run: |
           python scripts/test_points_watch_faces.py
+          python scripts/test_points_label_pixels.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python scripts/test_points_stored_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities --productivity .points-dependencies/productivity --legacy-utilities .points-dependencies/legacy-utilities
           python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
@@ -358,6 +359,9 @@ jobs:
             dist/points-common/*.bin
             dist/points-common/*.json
             dist/points-native/*.png
+            dist/points-label-pixels/*.png
+            dist/points-label-pixels/*.json
+            dist/points-label-pixels/*.tsv
             dist/points-paired-clock/*
           if-no-files-found: error
 
