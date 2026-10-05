@@ -10,6 +10,15 @@
 #define PS_PINK FC(255,61,113)
 #define PS_BED FC(109,123,255)
 #define PS_BG FC(20,25,28)
+static const uint16_t ps_custom_colors[8]={FC(255,210,74),FC(255,122,26),FC(255,61,113),FC(178,77,255),FC(109,123,255),FC(61,155,255),FC(25,227,255),FC(61,255,154)};
+static bool ps_custom_kind(unsigned kind){return kind==NOVA_POINT_CUSTOM_1||kind==NOVA_POINT_CUSTOM_2;}
+static bool ps_duration_kind(unsigned kind){return kind==NOVA_POINT_LUNCH||kind==NOVA_POINT_BREAK||ps_custom_kind(kind);}
+static bool ps_custom_label_valid(const nova_point_event*e){
+    if(!ps_custom_kind(e->kind))return true;
+    if(e->color_index>=8||!e->label[0])return false;
+    for(unsigned i=0;i<=NOVA_POINT_LABEL_MAX;i++)if(!e->label[i])return true;
+    return false;
+}
 static unsigned ps_length(const char*s){unsigned n=0;while(n<64&&s[n])n++;return n;}
 static int ps_fit(const face_font*font,const char*s,int spacing,int maximum) {
     unsigned width=0;for(const char*p=s;*p;p++){const face_glyph*g=fglyph(font,*p);if(g)width+=g->advance+(unsigned)spacing;}
@@ -17,12 +26,13 @@ static int ps_fit(const face_font*font,const char*s,int spacing,int maximum) {
     return width>(unsigned)maximum*256u?maximum:0;
 }
 static bool ps_event_valid(const nova_point_event*e) {
-    return e->hour<24&&e->minute<60&&e->source_slot<8&&e->kind>=NOVA_POINT_WORK_START&&e->kind<=NOVA_POINT_BEDTIME&&
-        (!e->is_end||e->kind==NOVA_POINT_LUNCH||e->kind==NOVA_POINT_BREAK);
+    return e->hour<24&&e->minute<60&&e->source_slot<8&&e->kind>=NOVA_POINT_WORK_START&&e->kind<=NOVA_POINT_CUSTOM_2&&
+        (!e->is_end||ps_duration_kind(e->kind))&&ps_custom_label_valid(e);
 }
 static const char*ps_event_name(const nova_point_event*e,bool brief) {
     if(!ps_event_valid(e))return "POINT ERROR";
     if(e->is_end)return "BACK";
+    if(ps_custom_kind(e->kind))return e->label;
     switch(e->kind) {
         case NOVA_POINT_WORK_START:return brief?"START":"WORK START";
         case NOVA_POINT_WORK_END:return brief?"END":"WORK END";
@@ -32,6 +42,7 @@ static const char*ps_event_name(const nova_point_event*e,bool brief) {
     }
 }
 static uint16_t ps_color(const nova_point_event*e) {
+    if(ps_custom_kind(e->kind))return ps_custom_colors[e->color_index<8?e->color_index:6];
     if(e->is_end||e->kind==NOVA_POINT_WORK_START)return PS_BLUE;
     return e->kind==NOVA_POINT_WORK_END?PS_PINK:e->kind==NOVA_POINT_LUNCH?FAMBER:e->kind==NOVA_POINT_BREAK?FGREEN:PS_BED;
 }
@@ -111,7 +122,7 @@ static const char*ps_problem(const nova_watch_state*s,const nova_watch_labels*l)
     return NULL;
 }
 static const nova_point_event*ps_matching_end(const nova_points_state*p,const nova_point_event*start) {
-    if(!start||start->is_end||(start->kind!=NOVA_POINT_LUNCH&&start->kind!=NOVA_POINT_BREAK))return NULL;
+    if(!start||start->is_end||!ps_duration_kind(start->kind))return NULL;
     const nova_point_event*best=NULL;
     for(unsigned pass=0;pass<2;pass++) {
         const nova_point_event*events=pass?p->next:p->today;unsigned count=pass?p->next_count:p->today_count;
@@ -125,14 +136,13 @@ static const nova_point_event*ps_matching_end(const nova_points_state*p,const no
 }
 static bool ps_active_interval(const nova_points_state*p,const nova_point_event**start,const nova_point_event**end) {
     const nova_point_event*a=NULL,*b=NULL;
-    if(p->previous_valid&&!p->previous.is_end&&
-       (p->previous.kind==NOVA_POINT_LUNCH||p->previous.kind==NOVA_POINT_BREAK)) {
+    if(p->previous_valid&&!p->previous.is_end&&ps_duration_kind(p->previous.kind)) {
         b=ps_matching_end(p,&p->previous);
         if(b&&p->previous.at_rtc<=p->now_rtc&&p->now_rtc<b->at_rtc)a=&p->previous;
     }
     for(unsigned i=0;!a&&i<p->today_count;i++) {
         const nova_point_event*e=p->today+i;
-        if(e->is_end||(e->kind!=NOVA_POINT_LUNCH&&e->kind!=NOVA_POINT_BREAK)||e->at_rtc>p->now_rtc)continue;
+        if(e->is_end||!ps_duration_kind(e->kind)||e->at_rtc>p->now_rtc)continue;
         const nova_point_event*q=ps_matching_end(p,e);
         if(q&&p->now_rtc<q->at_rtc){a=e;b=q;}
     }
