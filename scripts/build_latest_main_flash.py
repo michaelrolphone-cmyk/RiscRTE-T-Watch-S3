@@ -14,7 +14,8 @@ import sys
 import tempfile
 import zipfile
 
-from build_update_common import PROFILE, ROOT, read_zip, require, verify
+from build_update_common import ROOT, read_zip, require
+from audio_overlay import PROFILE as AUDIO_PROFILE, verify as verify_audio
 from build_points_common import PROFILE as POINTS_PROFILE, verify as verify_points
 from build_update_flash_bundle import FLASH_BYTES, LAYOUT, assemble
 from build_wifi_store import OFFSET, SIZE, check_image
@@ -75,16 +76,17 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         require(len(data) == meta['bytes'] and sha(data) == meta['sha256'],
                 'Runtime candidate component differs: ' + name)
 
-    common = exact_one(artifact_dir, '-' + PROFILE + '.zip')
+    common = exact_one(artifact_dir, AUDIO_PROFILE + '.zip')
     points_common = exact_one(points_artifact_dir, '-' + POINTS_PROFILE + '.zip')
-    image = exact_one(artifact_dir, '-' + PROFILE + '-bootfs.bin')
+    image = exact_one(artifact_dir, AUDIO_PROFILE + '-bootfs.bin')
     image_record_path = image.with_suffix('.json')
     require(image_record_path.is_file(), 'Missing update store image record')
 
-    record = verify(common, root=ROOT, expected_head=head)
+    record = verify_audio(common, root=ROOT, expected_head=head)
     points_record = verify_points(points_common, root=ROOT, expected_head=head)
-    require(record['runtime_requirements'] == requirements, 'Update deployment Runtime requirement differs from main')
     common_files = read_zip(common)
+    require(json.loads(common_files['runtime-requirements.json']) == requirements,
+            'Audio deployment Runtime requirement differs from main')
     points_files = read_zip(points_common)
     store = {name[6:]: data for name, data in common_files.items() if name.startswith('store/')}
     points_store = {name[6:]: data for name, data in points_files.items() if name.startswith('store/')}
@@ -115,7 +117,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     image_bytes = image.read_bytes()
     image_record = json.loads(image_record_path.read_text())
     expected_image = {
-        'profile': PROFILE,
+        'profile': AUDIO_PROFILE,
         'watch_source_sha': head,
         'deployment_sha256': sha(common.read_bytes()),
         'sha256': sha(image_bytes),
@@ -180,7 +182,12 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         'overwrite_bytes': FLASH_BYTES,
         'flash_capacity_bytes': FLASH_BYTES,
         'components': parts,
-        'common_sha256': sha(common.read_bytes()),
+        'audio_common_sha256': sha(common.read_bytes()),
+        'audio_tools': {
+            'apps': record['apps'],
+            'minimum_runtime': record['minimum_runtime'],
+            'sources': record['sources'],
+        },
         'points_common_sha256': sha(points_common.read_bytes()),
         'points_overlay': {
             'app_version': points_manifest['version'],
