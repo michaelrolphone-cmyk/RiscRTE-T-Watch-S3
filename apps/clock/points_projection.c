@@ -1,13 +1,18 @@
 /* Watch presentation of the Utilities-owned recurrence model. No I/O, output or
  * scheduling authority here. Called with copied catalog/metadata and actual RTC time. */
+#include "points_projection.h"
 #include "PointsSchedule.h"
-#include "faces/points_state.h"
 #include <string.h>
 static bool watch_points_custom(unsigned kind) {
+#if WATCH_POINTS_EXTENDED
     return kind==POINTS_CUSTOM_1||kind==POINTS_CUSTOM_2;
+#else
+    (void)kind;return false;
+#endif
 }
 static void watch_points_style(const points_meta *meta,unsigned kind,nova_point_event *out) {
     out->color_index=6;out->label[0]=0;
+#if WATCH_POINTS_EXTENDED
     if(!watch_points_custom(kind))return;
     unsigned index=kind-POINTS_CUSTOM_1;
     if(meta&&index<POINTS_CUSTOM_COUNT&&meta->custom[index].name[0]) {
@@ -19,13 +24,16 @@ static void watch_points_style(const points_meta *meta,unsigned kind,nova_point_
         const char *fallback=index?"CUSTOM 2":"CUSTOM 1";unsigned n=0;
         while(n<NOVA_POINT_LABEL_MAX&&fallback[n]){out->label[n]=fallback[n];n++;}out->label[n]=0;
     }
+#else
+    (void)meta;(void)kind;
+#endif
 }
 static bool watch_points_event(const points_event *e,const points_meta *meta,uint32_t today,nova_point_event *out) {
     twatch_rtc_time_v1 raw,local;uint32_t day;
     if(!points_calendar(e->deadline,&raw)||!portable_time_forward(&raw,&local)||
        !points_local_day(e->deadline,&day))return false;
     *out=(nova_point_event){.at_rtc=e->deadline,.hour=local.hour,.minute=local.minute,.kind=e->kind,
-        .source_slot=e->slot,.is_end=e->edge==POINTS_EDGE_END,.day_offset=(int16_t)((int32_t)day-(int32_t)today)};
+        .source_slot=e->slot,.is_end=e->edge!=0,.day_offset=(int16_t)((int32_t)day-(int32_t)today)};
     watch_points_style(meta,e->kind,out);return true;
 }
 bool watch_points_projection(const points_config *config,const points_meta *meta,uint32_t now,nova_points_state *out) {
@@ -110,7 +118,13 @@ bool watch_points_projection(const points_config *config,const points_meta *meta
     if(!v.next_count&&!v.previous_valid&&!v.today_count)v.status=NOVA_POINTS_EMPTY;
     /* Include metadata revision in the presentation stamp so custom label/color
      * edits invalidate schedule cards without changing recurrence. */
-    v.revision=config->revision ^ ((meta?meta->revision:0u)*2166136261u) ^ (today*16777619u) ^
+    uint32_t meta_revision=0;
+#if WATCH_POINTS_EXTENDED
+    if(meta)meta_revision=meta->revision;
+#else
+    (void)meta;
+#endif
+    v.revision=config->revision ^ (meta_revision*2166136261u) ^ (today*16777619u) ^
         (v.previous_valid?v.previous.at_rtc:0) ^ (v.next_count?v.next[0].at_rtc:0) ^ (uint32_t)v.status;
     *out=v;return true;
 invalid:
