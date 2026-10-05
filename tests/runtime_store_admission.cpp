@@ -6,6 +6,9 @@
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
+#ifdef STORE_ADMISSION_APP_DATA
+#include "app_data_admission_backend.h"
+#endif
 #ifdef STORE_ADMISSION_UPDATE_PLATFORMS
 #include <RiscHttpClientV1.h>
 #include <RiscBankStoreV1.h>
@@ -102,12 +105,23 @@ int main(int argc, char** argv) {
     },
     [](void*, uint32_t, const char*, const void*, uint32_t) -> int32_t {
       ++storageCalls; return RISC_KEY_VALUE_IO;
-    }};
+    }
+#ifdef STORE_ADMISSION_KV_V2
+    ,RISC_KEY_VALUE_V2_BLOB_MAX
+#endif
+  };
   RiscCpu::Port port(hardware());
   cpu = &port;
+#ifdef STORE_ADMISSION_APP_DATA
+  const auto appData=admissionAppData(&storageCalls);
+#endif
   RiscBoot::Runtime runtime({owner, [](risc_runtime_health_v1*) { return true; },
                             [](uint32_t) { ++hardwareCalls; },
-                            [](const char*) { return true; }, bind, &kv});
+                            [](const char*) { return true; }, bind, &kv
+#ifdef STORE_ADMISSION_APP_DATA
+                            ,nullptr,nullptr,nullptr,&appData
+#endif
+                            });
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {
     fprintf(stderr, "ADMISSION platforms=%zu drivers=%zu\n", runtime.platformCount_, runtime.driverCount_);

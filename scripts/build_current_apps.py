@@ -3,7 +3,7 @@
 import argparse,hashlib,json,os,shutil,subprocess,sys
 from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,NEW_APPS,
-                                 config,configure_boot,configure_board,metadata,encoded,require,verify)
+                                 RADIO_MODELS,config,configure_boot,configure_board,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
 from compact_current_elf import compact
 from build_wifi_common import read_zip,zip_bytes
@@ -18,18 +18,22 @@ def definitions(name,version):
         '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS','-DPORTABLE_MOTION_WAKE']
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
+ if name in ('lora_messages','ble_scanner'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
+ if name=='timecard':flags+=['-DTIMECARD_APP_DATA','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='file_browser':flags+=['-DPORTABLE_FILE_BROWSER_APP','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='settings':flags+=['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_ALARM_SETTINGS','-DPORTABLE_SETTINGS_VERSION="'+version+'"']
  if name=='wifi_settings':flags+=['-DPORTABLE_WIFI_SETTINGS_APP','-DPORTABLE_WIFI_STORAGE_INSTANCE=6','-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_WIFI_VERSION="'+version+'"']
  if name in ('ota_update','app_store'):flags+=['-Wno-misleading-indentation','-DPORTABLE_UPDATE_APP','-DPORTABLE_UPDATE_FIRMWARE='+str(int(name=='ota_update')),'-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_UPDATE_RTC_UTC_OFFSET_SECONDS=28800']
  if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60']
- owner=('FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
+ owner=('LORA_RETURN_APP' if name=='lora_messages' else 'FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
+ if name=='timecard':return flags
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
 
-def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None):
+def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None,radio_model=None):
  require(motion_model in ('bma423','bma456h'),'Explicit --motion-model required; do not infer from earlier boots')
+ require(radio_model in RADIO_MODELS,'Explicit --radio-model required; do not infer RF band')
  root=Path(root);out=Path(out);repos={'system-apps':Path(system),'utilities':Path(utilities),'productivity':Path(productivity),'runtime':Path(runtime)};c=config(root)
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  require(not out.exists() or not any(out.iterdir()),'Current output must be empty to reject stale files')
@@ -48,9 +52,12 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS if n not in NEW_APPS}-{'springboard.elf'})|{'clock.elf'},'Baseline catalog inventory differs')
  require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Baseline launcher icons collide')
  for name,entry in NEW_APPS.items():catalog.append({**entry,'file_name':name+'.elf'})
- require(len(catalog)==len(APPS)-2 and len(catalog)<=16 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
+ require(len(catalog)==len(APPS)-2 and len(catalog)<=17 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
  registry=json.loads((repos['system-apps']/'lib/PortableApps/catalog-icons.json').read_text())['apps']
- for name,entry in NEW_APPS.items():require(registry.get(name,{}).get('icon')==entry['icon'],'New app icon is not in the reviewed registry: '+name)
+ additional=json.loads((repos['system-apps']/'lib/PortableApps/additional-icons.json').read_text())
+ for name,entry in NEW_APPS.items():
+  if name=='timecard':require(entry['icon']=='solid:f274' and additional.get(entry['icon'])=='calendar-check','Timecard glyph is not in the reviewed subset')
+  else:require(registry.get(name,{}).get('icon')==entry['icon'],'New app icon is not in the reviewed registry: '+name)
  for app_name,entry in registry.items():
   if app_name not in APPS:continue
   delivered=[x for x in catalog if x['file_name']==app_name+'.elf'];require(len(delivered)==1 and delivered[0]['icon']==entry['icon'],'Current icon registry mismatch: '+app_name)
@@ -70,17 +77,17 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
   return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof}
  record={'schema':1,'profile':PROFILE,'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
- record['motion_model']=motion_model
- record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root,motion_model=motion_model)
+ record['motion_model']=motion_model;record['radio_model']=radio_model
+ record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root,motion_model=motion_model,radio_model=radio_model)
  (files_dir/'board.json').write_bytes(encoded(record['board']))
- for driver,folder in [('twatch-ble','ble'),('twatch-imu','imu'),('twatch-gpio','gpio'),('twatch-pmu','pmu')]:
+ for driver,folder in [('twatch-ble','ble'),('twatch-imu','imu'),('twatch-gpio','gpio'),('twatch-pmu','pmu'),('twatch-lora','lora')]:
   dest=files_dir/folder;dest.mkdir()
   (dest/'driver.elf').write_bytes((root/'dist'/driver/'driver.elf').read_bytes())
   (dest/'manifest.json').write_bytes(encoded(json.loads((root/'drivers'/driver.replace('-','_')/'manifest.json').read_text())))
   subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
  for name in NON_CLOCK_APPS:
-  repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/(name+'.c');version=c['app_versions'][name]
-  original=json.loads((repo/'Apps'/('native' if name=='file_browser' else '')/(name+'.json')).read_text())
+  repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/('timecard_portable.c' if name=='timecard' else name+'.c');version=c['app_versions'][name]
+  original=json.loads((repo/'Apps'/('native' if name in ('file_browser','timecard') else '')/(name+'.json')).read_text())
   if name not in ('ota_update','app_store'):require(original['version']==version,'App source version differs: '+name)
   else:
    native=repo/'Apps/native'/(name+'.json');require(native.is_file(),'Current native updater manifest missing: '+name)
@@ -89,10 +96,23 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]
   if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
+  if name=='timecard':includes+=[repos['productivity']/'lib/PortableTimecard/include',repos['productivity']/'lib/NativeApps/include']
+  if name=='ble_scanner':includes+=[repos['utilities']/'lib/Bluetooth/include']
   allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
   if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},allowed)
-  m=json.loads(encoded(original) if name in NEW_APPS else store[name+'.json']);m['version']=version
+  if name in ('lora_messages','ble_scanner'):
+   require(all(isinstance(q['api'],str) and q['api'].startswith('>=') and q['api'][2:].isdigit() for q in original['requires']),'Unsupported new app API range')
+   m={'type':'application','id':name,'version':version,'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':[{'capability':q['capability'],'api':int(q['api'][2:])} for q in original['requires']]}
+  else:m=json.loads(encoded(original) if name in NEW_APPS else store[name+'.json'])
+  m['version']=version
+  if name=='audio_spectrum':
+   storage=[q for q in m['requires'] if q['capability']=='storage.key-value'];require(storage==[{'capability':'storage.key-value','api':1}],'Unexpected original Spectrum API')
+   storage[0]['api']=2
+   m['requires'].append({'capability':'storage.app-data','api':1})
+  if name=='timecard':
+   navigation=[q for q in m['requires'] if q['capability']=='input.navigation'];require(navigation==[{'capability':'input.navigation','api':1}],'Unexpected Timecard navigation contract')
+   m['requires'].remove(navigation[0])
   if name in NEW_APPS:
    for cap,api in [('board.battery',1),('alarm.service',1)]:
     if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
@@ -100,6 +120,10 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
    if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   (files_dir/(name+'.elf')).write_bytes(b);(files_dir/(name+'.json')).write_bytes(encoded(m))
   record['apps'][name]={**meta,'version':version,'repository':repo_name,'repository_sha':c['sources'][repo_name]['commit'],'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
+  if name=='timecard':
+   model_manifest=repo/'Apps/timecard.json';model_source=repo/'Apps/timecard.c'
+   model=json.loads(model_manifest.read_text());require(model['version']=='1.0.4','Unexpected authoritative Timecard model version')
+   record['apps'][name]['model']={'version':model['version'],'manifest':metadata(model_manifest.read_bytes()),'source':metadata(model_source.read_bytes())}
  service_flags=['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL']
  b,meta=compile_target('alarm-service',[repos['utilities']/'Services/alarm_service/service.c'],service_flags,[repos['utilities']/'lib/Alarm/include',repos['runtime']/'sdk/driver',repos['system-apps']/'lib/PortableApps/include'],{'t5_driver_get'},{'memcpy','memset','memcmp','strcmp','strlen'})
  service_manifest=json.loads((repos['utilities']/'Services/alarm_service/points-manifest.json').read_text());require(service_manifest['version']==c['service_version'],'Wrong current service source version')
@@ -137,6 +161,15 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for src in (root/'vendor/SensorLib').rglob('*'):
   if src.is_file() and (src.name in ('LICENSE','PROVENANCE.json') or src.name.startswith('NOTICE')):
    target=licenses/'motion'/src.relative_to(root/'vendor/SensorLib');target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(src.read_bytes())
+ # The explicit app-data image and native backend also distribute LittleFS.
+ notices=root/'vendor/app-data-notices';notice_record=json.loads((notices/'SOURCES.json').read_text())
+ for item in notice_record['licenses']:
+  source=notices/item['file'];require(hashlib.sha256(source.read_bytes()).hexdigest()==item['distributed_sha256'],'App-data license custody differs')
+  target=licenses/'app-data'/item['file'];target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(source.read_bytes())
+ (licenses/'app-data/SOURCES.json').write_bytes((notices/'SOURCES.json').read_bytes())
+ for source in (root/'licenses').rglob('*'):
+  if source.is_file():
+   target=licenses/'watch'/source.relative_to(root/'licenses');target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(source.read_bytes())
  for name in ('LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','SOURCES.json'):
   p=repos['system-apps']/'lib/PortableApps/fonts'/name
   if p.is_file():(licenses/name).write_bytes(p.read_bytes())
@@ -152,4 +185,5 @@ if __name__=='__main__':
  for n in ('system-apps','utilities','productivity','runtime','baseline','output'):p.add_argument('--'+n,type=Path,required=True)
  p.add_argument('--baseline-root',type=Path)
  p.add_argument('--motion-model',choices=['bma423','bma456h'],required=True)
- a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model)
+ p.add_argument('--radio-model',choices=RADIO_MODELS,default='selectable')
+ a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model,radio_model=a.radio_model)

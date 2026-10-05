@@ -1,14 +1,17 @@
 #pragma once
 #include "TWatchHardwareV1.h"
-static inline const void *tw_config(const risc_provider_dependency_v1 *d, size_t n,
-                                    const char *compatible, const char *type, size_t size) {
+static inline const void *tw_config_version(const risc_provider_dependency_v1 *d, size_t n,
+                                    const char *compatible, const char *type, size_t size, uint32_t version) {
     const risc_hardware_device_v1 *e = tw_dep(d, n, "hardware.device", sizeof(*e));
     if (!e || !e->instance_id || !twatch_equal(e->compatible, compatible) ||
         !twatch_equal(e->revision, "unspecified") || !twatch_equal(e->config_type, type) ||
-        e->config_version != 1 || e->config_size < size || !e->config ||
+        e->config_version != version || e->config_size < size || !e->config ||
         *(const uint32_t *)e->config < size)
         return NULL;
     return e->config;
+}
+static inline const void *tw_config(const risc_provider_dependency_v1 *d,size_t n,const char *compatible,const char *type,size_t size) {
+    return tw_config_version(d,n,compatible,type,size,1);
 }
 static inline bool tw_pin(int p) {
     return p >= 0 && p <= 48;

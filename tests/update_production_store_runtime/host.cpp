@@ -10,6 +10,9 @@
 #undef log
 #include <RiscBankStoreV1.h>
 #include <RiscHttpClientV1.h>
+#ifdef STORE_ADMISSION_APP_DATA
+#include "../app_data_admission_backend.h"
+#endif
 namespace {
 std::string scenario;
 unsigned confirms=0,rawCalls=0,hardwareCalls=0,storageCalls=0;
@@ -120,8 +123,19 @@ int main(int argc,char** argv){
   RiscCpu::Port port(hardware);cpu=&port;
   const RiscBoot::KeyValueBackend kv={nullptr,
     [](void* c,uint32_t ns,const char* key,void* out,uint32_t cap,uint32_t* size){++storageCalls;return kvGet(c,ns,key,out,cap,size);},
-    [](void* c,uint32_t ns,const char* key,const void* data,uint32_t size){++storageCalls;return kvPut(c,ns,key,data,size);}};
-  RiscBoot::Runtime runtime({owner,updateHealth,nativeDelay,updateLog,updateBind,&kv,safe,storageSafe,confirm});current=&runtime;
+    [](void* c,uint32_t ns,const char* key,const void* data,uint32_t size){++storageCalls;return kvPut(c,ns,key,data,size);}
+#ifdef CURRENT_APPS_PROFILE
+    ,RISC_KEY_VALUE_V2_BLOB_MAX
+#endif
+  };
+#ifdef STORE_ADMISSION_APP_DATA
+  const auto appData=admissionAppData(&storageCalls);
+#endif
+  RiscBoot::Runtime runtime({owner,updateHealth,nativeDelay,updateLog,updateBind,&kv,safe,storageSafe,confirm
+#ifdef STORE_ADMISSION_APP_DATA
+    ,&appData
+#endif
+  });current=&runtime;
   assert(!runtime.confirmBoot()&&!confirms);
   const bool prepared=runtime.prepare(argv[1]);
   if(scenario=="admit"||scenario=="missing-bank"){

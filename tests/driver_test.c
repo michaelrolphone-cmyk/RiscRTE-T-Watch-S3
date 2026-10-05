@@ -536,6 +536,34 @@ int main(void) {
     uint8_t packet[1028], type;
     size_t count;
     assert(a->next(NULL, &type, packet, sizeof(packet), &count) == 1 && type == 4 && count == 3);
+    const portable_bluetooth_host_v1 *host=d->capability;
+    assert(a->struct_size>=sizeof(*host));
+    uint64_t first=0,second=0;
+    assert(host->claim(NULL,&first)&&first);
+    assert(!host->claim(NULL,&second)&&!second);
+    assert(!a->set_enabled(NULL,false)&&!a->set_enabled(NULL,true));
+    assert(!a->send(NULL,1,reset,3)&&a->next(NULL,&type,packet,sizeof(packet),&count)==-1&&!count);
+    assert(!host->send_owned(NULL,first+1,1,reset,3));
+    assert(host->send_owned(NULL,first,1,reset,3));
+    assert(host->next_owned(NULL,first,&type,packet,sizeof(packet),&count)==1);
+    assert(!d->quiesce());
+    m_fail_release=true;assert(host->release(NULL,first)==-1);
+    assert(!host->claim(NULL,&second)&&!second&&!a->set_enabled(NULL,false));
+    m_fail_release=false;assert(host->release(NULL,first)==1);
+    assert(a->status(NULL,&state)&&state==PORTABLE_BLUETOOTH_ON);
+    assert(host->release(NULL,first)==-1);
+    assert(a->set_enabled(NULL,false));
+    assert(host->claim(NULL,&second)&&second!=first);
+    assert(host->release(NULL,second)==1);
+    assert(a->status(NULL,&state)&&state==PORTABLE_BLUETOOTH_OFF);
+    assert(a->set_enabled(NULL,true));
+    assert(host->claim(NULL,&first));m_fail_at=m_attempts+1;
+    assert(host->release(NULL,first)==0);m_fail_at=0;
+    assert(a->status(NULL,&state)&&state==PORTABLE_BLUETOOTH_OFF);
+    m_fail_at=m_attempts+1;assert(!host->claim(NULL,&first)&&first);m_fail_at=0;
+    assert(host->release(NULL,first)==1);
+    assert(a->set_enabled(NULL,true));
+
 #endif
     unsigned live = m_live;
     m_fail_release = true;

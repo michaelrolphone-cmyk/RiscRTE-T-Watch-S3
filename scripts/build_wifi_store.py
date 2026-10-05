@@ -19,18 +19,19 @@ def check_tool(tool):
             'SPIFFS tool must be pinned tool-mkspiffs2.230.0 Arduino ESP32 binary')
 
 
-def check_image(image, expected, tool):
+def check_image(image, expected, tool, expected_size=SIZE):
+    require(expected_size in (SIZE, 0x510000), 'Unknown SPIFFS geometry')
     if tool is None:
-        require(read_image(Path(image).read_bytes()) == expected,
+        require(read_image(Path(image).read_bytes(), expected_size) == expected,
                 'Read-only SPIFFS extraction differs from exact deployment store')
         return
     check_tool(tool)
-    require(Path(image).stat().st_size == SIZE, 'Incorrect SPIFFS partition size')
+    require(Path(image).stat().st_size == expected_size, 'Incorrect SPIFFS partition size')
     with tempfile.TemporaryDirectory() as temporary:
         unpacked = Path(temporary) / 'unpacked'
         unpacked.mkdir()
         subprocess.run([str(tool), '-u', str(unpacked), '-p', '256', '-b', '4096',
-                        '-s', str(SIZE), str(image)], check=True, timeout=60,
+                        '-s', str(expected_size), str(image)], check=True, timeout=60,
                        stdout=subprocess.DEVNULL)
         actual = {p.relative_to(unpacked).as_posix(): p.read_bytes()
                   for p in unpacked.rglob('*') if p.is_file()}

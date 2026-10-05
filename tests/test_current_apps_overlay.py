@@ -13,15 +13,24 @@ class CurrentAppsOverlay(unittest.TestCase):
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
   self.boot={'drivers':[{'manifest':'alarm-service/manifest.json','key_value':[{'key':k,'namespace':n,'access':a} for k,(n,a) in bindings.items()]}],'app_capabilities':[{'manifest':n+'.json','grants':copy.deepcopy(grants)} for n in current.APPS if n not in current.NEW_APPS]}
-  self.store={n:b'baseline' for n in current.PAYLOADS-current.ADDED_PAYLOADS};self.store.update({'board.json':current.encoded({'devices':[]}),'pmu/driver.elf':b'original-PMU','default.elf':b'paired-clock-default','clock.elf':b'paired-clock-return','boot.json':current.encoded(self.boot)})
-  (self.root/'hardware').mkdir();(self.root/'hardware/sx1262-915-bma423.json').write_bytes((ROOT/'hardware/sx1262-915-bma423.json').read_bytes());(self.root/'hardware/sx1262-915-bma456h.json').write_bytes((ROOT/'hardware/sx1262-915-bma456h.json').read_bytes())
+  next(x for x in self.boot['app_capabilities'] if x['manifest']=='audio_spectrum.json')['grants'][0]['instance_id']=7
+  self.store={n:b'baseline' for n in current.PAYLOADS-current.ADDED_PAYLOADS};self.store.update({'board.json':current.encoded({'devices':[],'buses':[]}),'pmu/driver.elf':b'original-PMU','default.elf':b'paired-clock-default','clock.elf':b'paired-clock-return','boot.json':current.encoded(self.boot)})
+  (self.root/'hardware').mkdir();
+  (self.root/'hardware/current').mkdir()
+  for profile in (ROOT/'hardware/current').glob('*.json'):(self.root/'hardware/current'/profile.name).write_bytes(profile.read_bytes())
+  for hardware in (ROOT/'hardware').glob('*.json'):(self.root/'hardware'/hardware.name).write_bytes(hardware.read_bytes())
+  (self.root/'hardware/sx1262-915-bma423.json').write_bytes((ROOT/'hardware/sx1262-915-bma423.json').read_bytes());(self.root/'hardware/sx1262-915-bma456h.json').write_bytes((ROOT/'hardware/sx1262-915-bma456h.json').read_bytes())
   r={'schema':1,'profile':current.PROFILE,'watch_source':self.head,'configuration':self.cfg,'compiler':'GCC8.4.0','target_validation':True,'baseline_boot':self.boot,'boot':current.configure_boot(self.boot),'catalog':[],'apps':{},'service':{'defines':['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL']},'files':{}}
-  r['baseline_board']={'devices':[]};r['board']=current.configure_board(r['baseline_board'],self.root,motion_model='bma423');r['motion_model']='bma423'
+  r['baseline_board']={'devices':[],'buses':[]};r['board']=current.configure_board(r['baseline_board'],self.root,motion_model='bma423',radio_model='sx1262-915');r['motion_model']='bma423';r['radio_model']='sx1262-915'
   for n in current.PAYLOADS:
    p=self.art/'files'/n;p.parent.mkdir(exist_ok=True)
    if n=='board.json':b=current.encoded(r['board'])
    elif '/' not in n and n.endswith('.json'):
     name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2},{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1},{'capability':'motion.accel','api':1}]}
+    if name=='audio_spectrum':v['requires'] += [{'capability':'storage.key-value','api':2},{'capability':'storage.app-data','api':1}]
+    if name=='timecard':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.app-data')]
+    if name=='ble_scanner':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]
+    if name=='lora_messages':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]+[{'capability':'radio.lora','api':2}]
     if name=='file_browser':v['requires']+=[{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.installed-files')]
     b=current.encoded(v)
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.1'})
@@ -49,7 +58,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.assertEqual(out['pmu/driver.elf'],b'current-pmu/driver.elf')
   self.assertEqual(out['gpio/driver.elf'],b'current-gpio/driver.elf')
   self.assertEqual(out['imu/driver.elf'],b'current-imu/driver.elf')
-  self.assertEqual(json.loads(out['board.json']),current.configure_board(json.loads(original['board.json']),self.root,motion_model='bma423'))
+  self.assertEqual(json.loads(out['board.json']),current.configure_board(json.loads(original['board.json']),self.root,motion_model='bma423',radio_model='sx1262-915'))
   b=json.loads(out['boot.json']);a=next(x for x in b['app_capabilities'] if x['manifest']=='alarms.json');self.assertEqual([x['instance_id'] for x in a['grants'] if x['capability']=='storage.key-value'],[3,1])
   self.assertEqual(b['drivers'][0]['key_value'][-1],current.ALARM_DND)
   browser=next(x for x in b['app_capabilities'] if x['manifest']=='file_browser.json')
@@ -67,7 +76,56 @@ class CurrentAppsOverlay(unittest.TestCase):
   with self.assertRaises(ValueError):current.apply(self.store,self.art,self.head,self.root)
  def test_bluetooth_projection_cannot_replace_existing_device(self):
   b={'devices':[{'instance_id':16}]}
-  with self.assertRaises(ValueError):current.configure_board(b,self.root,motion_model='bma423')
+  with self.assertRaises(ValueError):current.configure_board(b,self.root,motion_model='bma423',radio_model='sx1262-915')
+ def test_explicit_radio_profile_and_no_replacement(self):
+  for radio in current.RADIO_MODELS:
+   for sensor in ('bma423','bma456h'):
+    source=json.loads((ROOT/('hardware/current' if radio=='selectable' else 'hardware')/(radio+'-'+sensor+'.json')).read_text())
+    board=current.configure_board({'devices':[],'buses':[]},self.root,motion_model=sensor,radio_model=radio)
+    selected=next(x for x in board['devices'] if x['instance_id']==11)
+    self.assertEqual(selected,next(x for x in source['devices'] if x['instance_id']==11))
+    self.assertEqual(board['buses'],[next(x for x in source['buses'] if x['instance_id']==selected['config']['bus_instance_id'])])
+    self.assertEqual(len(board['devices']),3)
+  for radio in (None,'915','auto','sx1262-unknown'):
+   with self.assertRaises(ValueError):current.configure_board({'devices':[],'buses':[]},self.root,motion_model='bma423',radio_model=radio)
+  for board in ({'devices':[{'instance_id':11}],'buses':[]},{'devices':[],'buses':[{'instance_id':104}]}):
+   with self.assertRaises(ValueError):current.configure_board(board,self.root,motion_model='bma423',radio_model='sx1262-915')
+ def test_lora_authority_and_nested_back(self):
+  boot=current.configure_boot(self.boot)
+  app=next(x for x in boot['app_capabilities'] if x['manifest']=='lora_messages.json')
+  self.assertEqual(len(app['grants']),11)
+  self.assertEqual([g['instance_id'] for g in app['grants'] if g['capability']=='storage.key-value'],[9,1])
+  self.assertEqual([g for g in app['grants'] if g['capability']=='radio.lora'],[{'capability':'radio.lora','api':2,'instance_id':11}])
+  self.assertFalse(any(g['capability']=='radio.lora' for row in boot['app_capabilities'] if row!=app for g in row['grants']))
+  flags=definitions('lora_messages','0.1.0')
+  for flag in ('-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DLORA_RETURN_APP="springboard.elf"'):self.assertIn(flag,flags)
+  self.assertFalse(any(x.startswith('-DPORTABLE_RETURN_APP=') for x in flags))
+ def test_ble_exact_authority_and_owned_chrome(self):
+  boot=current.configure_boot(self.boot);self.assertEqual(len(boot['app_capabilities']),19)
+  scanner=next(x for x in boot['app_capabilities'] if x['manifest']=='ble_scanner.json')
+  self.assertEqual(len(scanner['grants']),9)
+  self.assertEqual([g for g in scanner['grants'] if g['capability']=='bluetooth.hci'],[{'capability':'bluetooth.hci','api':1,'instance_id':16}])
+  self.assertEqual([g for g in scanner['grants'] if g['capability'].startswith('storage.')],[current.ALARM_PREFERENCES])
+  self.assertFalse(any(g['capability']=='radio.lora' for g in scanner['grants']))
+  flags=definitions('ble_scanner','0.1.0')
+  for flag in ('-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_RETURN_APP="springboard.elf"'):self.assertIn(flag,flags)
+ def test_spectrum_profile_storage_v2_is_scoped(self):
+  boot=current.configure_boot(self.boot)
+  spectrum=next(x for x in boot['app_capabilities'] if x['manifest']=='audio_spectrum.json')
+  self.assertEqual([g for g in spectrum['grants'] if g['capability']=='storage.key-value'],[{'capability':'storage.key-value','api':2,'instance_id':7},current.ALARM_PREFERENCES])
+  self.assertFalse(any(g['capability']=='storage.key-value' and g['api']==2 for row in boot['app_capabilities'] if row!=spectrum for g in row['grants']))
+  bad=copy.deepcopy(self.boot);next(x for x in bad['app_capabilities'] if x['manifest']=='audio_spectrum.json')['grants'][0]['instance_id']=9
+  with self.assertRaises(ValueError):current.configure_boot(bad)
+ def test_app_data_authority_is_distinct_and_bounded(self):
+  boot=current.configure_boot(self.boot)
+  owners={row['manifest']:[g['instance_id'] for g in row['grants'] if g['capability']=='storage.app-data'] for row in boot['app_capabilities']}
+  self.assertEqual({name:ids for name,ids in owners.items() if ids},{'timecard.json':[1],'audio_spectrum.json':[2]})
+  timecard=next(row for row in boot['app_capabilities'] if row['manifest']=='timecard.json')
+  self.assertIn({'capability':'board.battery','api':1,'instance_id':4},timecard['grants'])
+  self.assertFalse(any(g['capability']=='input.navigation' for g in timecard['grants']))
+  flags=definitions('timecard','0.1.0')
+  for flag in ('-DTIMECARD_APP_DATA','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_OWNS_TOUCH_CHROME'):self.assertIn(flag,flags)
+  self.assertFalse(any(x.startswith('-DPORTABLE_RETURN_APP=') for x in flags))
  def test_wrong_head_and_configuration(self):
   with self.assertRaises(ValueError):current.verify(self.art,'3'*40,self.root)
   self.record['configuration']['service_version']='0.5.0';self.write_record()

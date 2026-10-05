@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "3392ad7f2e165ba2f1f2f666596cd946d14252a4",
-  "firmware_version": "0.1.28",
+  "source_sha": "1d9bcb204a0b12ac6483511f32ba56da47699404",
+  "firmware_version": "0.1.30",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -15,7 +15,7 @@
     "owned_timed_light_sleep": true,
     "owned_timed_deep_sleep": true,
     "provider_bound_key_value": true,
-    "app_policy_capacity": 18,
+    "app_policy_capacity": 19,
     "native_i2s_tx_cleanup": true,
     "native_station_radio": true,
     "bounded_asynchronous_radio_scan": true,
@@ -29,47 +29,53 @@
     "exact_app_authority_preservation": true,
     "default_app_health_confirmation": true,
     "rollback_until_health_confirmation": true,
-    "store_abi": 1,
+    "store_abi": 2,
     "paired_metadata_psram_only": true,
     "independent_graph_provider_registry": true,
     "explicit_key_value_v2": true,
     "native_i2s_pdm_rx": true,
     "audio_input_cleanup_barrier": true,
     "app_grant_capacity": 12,
-    "app_requirement_capacity": 11,
+    "app_requirement_capacity": 12,
     "native_bounded_hci": true,
     "nonconsuming_hci_status": true,
     "hci_cleanup_sleep_barrier": true,
     "provider_bound_key_capacity": 9,
     "owned_wake_sets": true,
     "mixed_polarity_rtc_wake": true,
-    "read_only_installed_files": true
+    "read_only_installed_files": true,
+    "scoped_native_radio_spi_gpio": true,
+    "selected_provider_capacity": 17,
+    "selectable_radio_config_v2": true,
+    "explicit_app_data_namespaces": true,
+    "atomic_app_data_replacement": true,
+    "app_data_retention_barrier": true
   },
-  "abi_changed": false,
-  "reason": "Explicitly granted installed-file browsing reuses the volume table with a read-only admitted-file allowlist. Policy capacity is 18 apps, 12 grant slots and 11 distinct requirements; existing motion wake and radio cleanup remain required.",
+  "abi_changed": true,
+  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged.",
   "deployment": {
-    "target": "esp32s3-16mb-paired",
-    "layout": "riscrte-paired-16m-v1",
+    "target": "esp32s3-16mb-appdata",
+    "layout": "riscrte-paired-appdata-v2",
     "flash_bytes": 16777216,
-    "store_abi": 1,
-    "migration": "explicit-user-controlled-full-16MiB-reflash-only",
+    "store_abi": 2,
+    "migration": "explicit-initial-full-16MiB-reflash-overwrites-appdata; no data-preserving migration implemented",
     "existing_8MiB_ota_compatible": false,
     "partitions": {
       "app0": {
         "offset": 65536,
-        "size": 3145728
+        "size": 2490368
       },
       "bootfs0": {
-        "offset": 3211264,
-        "size": 5177344
+        "offset": 3080192,
+        "size": 5308416
       },
       "app1": {
         "offset": 8388608,
-        "size": 3145728
+        "size": 2490368
       },
       "bootfs1": {
-        "offset": 11534336,
-        "size": 5177344
+        "offset": 11403264,
+        "size": 5308416
       },
       "otadata": {
         "offset": 16711680,
@@ -78,7 +84,13 @@
       "bank_state": {
         "offset": 16719872,
         "size": 8192
+      },
+      "appdata": {
+        "offset": 2555904,
+        "size": 524288
       }
-    }
-  }
+    },
+    "ordinary_ota_includes_appdata": false
+  },
+  "public_runtime_api_prefix_changed": false
 }

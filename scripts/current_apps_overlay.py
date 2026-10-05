@@ -6,14 +6,15 @@ from compact_current_elf import PROFILE as COMPACTION_PROFILE, OPTIONS as COMPAC
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE='watch-current-apps-v1'
 SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store','file_browser')
-UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum')
-PRODUCTIVITY_APPS=('points_in_time',)
+UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum','lora_messages','ble_scanner')
+PRODUCTIVITY_APPS=('points_in_time','timecard')
 CLOCK_APPS=('default','clock')
 NON_CLOCK_APPS=SYSTEM_APPS+UTILITY_APPS+PRODUCTIVITY_APPS
 APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
-NEW_APPS={'file_browser':{'display_name':'Files','icon':'solid:f07c'}}
-ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
+NEW_APPS={'file_browser':{'display_name':'Files','icon':'solid:f07c'},'lora_messages':{'display_name':'LoRa Messages','icon':'solid:f27a'},'ble_scanner':{'display_name':'BLE Scanner','icon':'solid:f7c0'},'timecard':{'display_name':'Timecard','icon':'solid:f274'}}
+RADIO_MODELS=('sx1262-433','sx1262-868','sx1262-915','sx1280-2400','selectable')
+ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
@@ -34,10 +35,12 @@ def config(root=ROOT):
  require(c['service_version']=='0.4.1','Expected reviewed CUE/volume service0.4.1')
  return c
 
-def configure_board(original,root=ROOT,*,motion_model):
+def configure_board(original,root=ROOT,*,motion_model,radio_model):
  b=copy.deepcopy(original)
  require(motion_model in ('bma423','bma456h'),'Explicit supported motion model required')
- source=json.loads((Path(root)/('hardware/sx1262-915-'+motion_model+'.json')).read_text())
+ require(radio_model in RADIO_MODELS,'Explicit supported radio model/band required')
+ folder='hardware/current/' if radio_model=='selectable' else 'hardware/'
+ source=json.loads((Path(root)/(folder+radio_model+'-'+motion_model+'.json')).read_text())
  candidates=[d for d in source['devices'] if d['instance_id']==16 and d['compatible']=='espressif,esp32s3-ble']
  require(len(candidates)==1,'Missing canonical Bluetooth hardware')
  require(not any(d['instance_id']==16 for d in b['devices']),'Unexpected prior Bluetooth hardware')
@@ -45,7 +48,12 @@ def configure_board(original,root=ROOT,*,motion_model):
  motion=[d for d in source['devices'] if d['instance_id']==7 and d['compatible']=='bosch,bma4xx']
  require(len(motion)==1 and not any(d['instance_id']==7 for d in b['devices']),'Unexpected prior motion hardware')
  require(motion[0]['config']['irq_active_high'] is True and motion[0]['config']['irq_pull_up'] is False,'Motion polarity must match fitted pulldown')
- b['devices'].append(copy.deepcopy(motion[0]));return b
+ b['devices'].append(copy.deepcopy(motion[0]))
+ radio=[d for d in source['devices'] if d['instance_id']==11 and d['config_type']=='radio.lora']
+ require(len(radio)==1 and not any(d['instance_id']==11 for d in b['devices']),'Unexpected prior radio hardware')
+ bus=[x for x in source['buses'] if x['instance_id']==radio[0]['config']['bus_instance_id']]
+ require(len(bus)==1 and not any(x['instance_id']==bus[0]['instance_id'] for x in b['buses']),'Unexpected prior radio bus')
+ b['devices'].append(copy.deepcopy(radio[0]));b['buses'].append(copy.deepcopy(bus[0]));return b
 
 def configure_boot(original):
  """Add shared settings/RTC grants explicitly; preserve each existing grant."""
@@ -57,6 +65,29 @@ def configure_boot(original):
   {'capability':'board.battery','api':1,'instance_id':4},
   {'capability':'storage.installed-files','api':1,'instance_id':0},
   {'capability':'alarm.service','api':1,'instance_id':0}]})
+ b['app_capabilities'].append({'manifest':'lora_messages.json','grants':[
+  {'capability':'display.output','api':1,'instance_id':5},
+  {'capability':'input.touch.raw','api':1,'instance_id':6},
+  {'capability':'board.battery','api':1,'instance_id':4},
+  {'capability':'radio.lora','api':2,'instance_id':11},
+  {'capability':'storage.key-value','api':1,'instance_id':9},
+  {'capability':'alarm.service','api':1,'instance_id':0}]})
+ b['app_capabilities'].append({'manifest':'ble_scanner.json','grants':[
+  {'capability':'display.output','api':1,'instance_id':5},
+  {'capability':'input.touch.raw','api':1,'instance_id':6},
+  {'capability':'board.battery','api':1,'instance_id':4},
+  {'capability':'alarm.service','api':1,'instance_id':0}]})
+ b['app_capabilities'].append({'manifest':'timecard.json','grants':[
+  {'capability':'display.output','api':1,'instance_id':5},
+  {'capability':'input.touch.raw','api':1,'instance_id':6},
+  {'capability':'board.battery','api':1,'instance_id':4},
+  {'capability':'storage.app-data','api':1,'instance_id':1},
+  {'capability':'alarm.service','api':1,'instance_id':0}]})
+ spectrum=next(x for x in b['app_capabilities'] if x['manifest']=='audio_spectrum.json')
+ storage=[g for g in spectrum['grants'] if g['capability']=='storage.key-value']
+ require(storage==[{'capability':'storage.key-value','api':1,'instance_id':7}],'Unexpected prior Spectrum namespace')
+ storage[0]['api']=2
+ spectrum['grants'].append({'capability':'storage.app-data','api':1,'instance_id':2})
  rows=[x for x in b['app_capabilities'] if x['manifest']=='alarms.json'];require(len(rows)==1,'Missing/duplicate Alarms policy')
  grants=rows[0]['grants'];kv=[x for x in grants if x['capability']=='storage.key-value']
  require(kv==[{'capability':'storage.key-value','api':1,'instance_id':3}],'Unexpected prior Alarms storage policy')
@@ -70,6 +101,8 @@ def configure_boot(original):
  b['drivers'].append({'manifest':'ble/manifest.json','instance_id':16})
  require(not any(x.get('instance_id')==7 for x in b['drivers']),'Unexpected prior motion provider')
  b['drivers'].append({'manifest':'imu/manifest.json','instance_id':7})
+ require(not any(x.get('instance_id')==11 for x in b['drivers']),'Unexpected prior radio provider')
+ b['drivers'].append({'manifest':'lora/manifest.json','instance_id':11})
  for row in b['app_capabilities']:
   if row['manifest'] in {n+'.json' for n in APPS}:
    for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16},{'capability':'motion.accel','api':1,'instance_id':7}):
@@ -125,7 +158,7 @@ def apply(store,artifact,head,root=ROOT):
  require(set(PAYLOADS)-ADDED_PAYLOADS<=set(before),'Current overlay existing file set differs')
  require(not (ADDED_PAYLOADS&set(before)),'Current overlay added files unexpectedly preexist')
  require(json.loads(before['board.json'])==r['baseline_board'],'Current overlay original board differs')
- require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root,motion_model=r.get('motion_model')),'Current Bluetooth board projection differs')
+ require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root,motion_model=r.get('motion_model'),radio_model=r.get('radio_model')),'Current Bluetooth board projection differs')
  require(json.loads(before['boot.json'])==r['baseline_boot'],'Unexpected policy change before current overlay')
  after=dict(before);after.update(files);after['boot.json']=encoded(configure_boot(r['baseline_boot']))
  require(set(before)|ADDED_PAYLOADS==set(after),'Current overlay added/removed unexpected store members')

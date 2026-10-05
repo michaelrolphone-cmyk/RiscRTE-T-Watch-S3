@@ -59,5 +59,8 @@ def main():
     executable=ROOT/'dist/test-multi-instance'
     subprocess.run(common+[str(ROOT/'tests/multi_instance.c'),*objects,'-o',str(executable)],check=True)
     subprocess.run([str(executable)],check=True);total+=1
+    picker=ROOT/'dist/test-lora-profiles'
+    subprocess.run(common+['-I'+str(ROOT),str(ROOT/'tests/lora_profile_test.c'),'-o',str(picker)],check=True)
+    subprocess.run([str(picker)],check=True);total+=1
     print(total,'production contract fixtures passed (UBSan)')
 if __name__=='__main__':main()

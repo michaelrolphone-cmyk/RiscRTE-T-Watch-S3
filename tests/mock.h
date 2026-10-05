@@ -53,6 +53,9 @@ static bool m_free(void *c, uint64_t t) {
 }
 static bool m_gclaim(void *c, uint8_t p, bool output, bool initial, bool pull, uint64_t *t) {
     (void)c;
+#if TEST_KIND == 11
+    assert(!pull); /* The real radio.lora scope has no pull-up authority. */
+#endif
     (void)pull;
     if (m_fail_io || !m_admit())
         return false;

@@ -26,9 +26,9 @@ class MotionSources(unittest.TestCase):
    self.assertEqual(json.loads(p.read_text()),expected,p.name)
  def test_explicit_chip_model_and_no_replacement(self):
   for name,chip in [('bma423',0x13),('bma456h',0x16)]:
-   board=configure_board({'devices':[]},ROOT,motion_model=name);motion=next(d for d in board['devices'] if d['instance_id']==7)
+   board=configure_board({'devices':[],'buses':[]},ROOT,motion_model=name,radio_model='sx1262-915');motion=next(d for d in board['devices'] if d['instance_id']==7)
    self.assertEqual(motion['chip']['model'],name);self.assertEqual(motion['config']['chip_id'],chip)
    self.assertTrue(motion['config']['irq_active_high']);self.assertFalse(motion['config']['irq_pull_up'])
   for name in (None,'bma456','automatic','unknown'):
-   with self.assertRaises(ValueError):configure_board({'devices':[]},ROOT,motion_model=name)
-  with self.assertRaises(ValueError):configure_board({'devices':[{'instance_id':7}]},ROOT,motion_model='bma423')
+   with self.assertRaises(ValueError):configure_board({'devices':[],'buses':[]},ROOT,motion_model=name,radio_model='sx1262-915')
+  with self.assertRaises(ValueError):configure_board({'devices':[{'instance_id':7}]},ROOT,motion_model='bma423',radio_model='sx1262-915')

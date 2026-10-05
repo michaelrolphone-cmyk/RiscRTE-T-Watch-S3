@@ -68,7 +68,7 @@ def _flags():
     return flags
 
 
-def _host(runtime, build, current_utilities=None):
+def _host(runtime, build, current_utilities=None, app_data=False):
     registry = runtime / 'test/support/native_registry'
     require((registry / 'build.sh').is_file(), 'Production target registry support is required')
     registry_build = build / 'native-registry'
@@ -93,6 +93,7 @@ def _host(runtime, build, current_utilities=None):
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
+        *(['-DSTORE_ADMISSION_APP_DATA'] if app_data else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
@@ -227,7 +228,7 @@ def verify_clock_abi(runtime_source, output=None, compiler=None, current_profile
     return record
 
 
-def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False):
+def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False, app_data=False):
     """Run paired defaultClock against exact profile/common/extracted stores.
 
     productivity is recorded for the enclosing product's source custody; its
@@ -253,7 +254,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
     if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE']
     with _build(output) as build:
-        host = _host(runtime, build, utilities if current_profile else None)
+        host = _host(runtime, build, utilities if current_profile else None, app_data)
         modules = build / 'modules'
         modules.mkdir(exist_ok=True)
         cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')

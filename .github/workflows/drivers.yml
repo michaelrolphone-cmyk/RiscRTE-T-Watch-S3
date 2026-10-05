@@ -885,7 +885,14 @@ jobs:
           python -m pip install platformio==6.1.19
           python -m pip install -r .latest/runtime/requirements-ci.txt
           pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
-      - name: Rebuild exact latest paired Runtime
+      - uses: actions/checkout@v4
+        with:
+          repository: joltwallet/esp_littlefs
+          ref: 41873c20fb5cdbcf28d7d6cc04e4bcb4a1305317
+          submodules: recursive
+          path: .latest/littlefs-source
+          persist-credentials: false
+      - name: Rebuild exact legacy and explicit app-data Runtime
         working-directory: .latest/runtime
         env:
           RUNTIME_SHA: ${{ steps.runtime.outputs.sha }}
@@ -893,6 +900,11 @@ jobs:
           pio run -e esp32s3-16mb-paired -j 1
           BOOTLOADER_FILE=.pio/build/esp32s3-16mb-paired/bootloader.bin bash test/run_native_bank_test.sh
           python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
+          python scripts/app_data_image.py --littlefs-source ../littlefs-source/src/littlefs --output build/current-initial-appdata
+          APP_DATA_INITIAL_IMAGE=build/current-initial-appdata bash test/run_app_data_layout_test.sh
+          pio run -e esp32s3-16mb-appdata -j 1
+          APP_DATA_TEST=1 BOOTLOADER_FILE=.pio/build/esp32s3-16mb-appdata/bootloader.bin bash test/run_native_bank_test.sh
+          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA" --app-data --app-data-image build/current-initial-appdata
       - uses: actions/download-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -907,14 +919,14 @@ jobs:
         run: |
           export TWATCH_CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
           echo "TWATCH_CC=$TWATCH_CC" >> "$GITHUB_ENV"
-          python scripts/build_current_apps.py --motion-model bma423 \
+          python scripts/build_current_apps.py --motion-model bma423 --radio-model selectable \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --runtime .latest/runtime \
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
             --output dist/current-apps
-          python scripts/build_current_apps.py --motion-model bma456h \
+          python scripts/build_current_apps.py --motion-model bma456h --radio-model selectable \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
@@ -923,6 +935,7 @@ jobs:
             --output dist/current-apps-bma456h
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
+          python -m unittest discover -s tests -p test_current_flash_layout.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
@@ -930,28 +943,32 @@ jobs:
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities
-      - name: Assemble installable latest-main Watch image
+      - name: Assemble explicit initial app-data Watch candidates
         env:
           TWATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          python scripts/build_latest_main_flash.py \
+          python scripts/build_latest_main_flash.py --initialize-app-data \
             --artifact-dir .latest/watch-artifact \
             --points-artifact-dir .latest/points-artifact \
             --current-apps-artifact-dir dist/current-apps \
             --runtime-source .latest/runtime \
-            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main
-          python scripts/build_latest_main_flash.py \
+          python scripts/build_latest_main_flash.py --initialize-app-data \
             --artifact-dir .latest/watch-artifact \
             --points-artifact-dir .latest/points-artifact \
             --current-apps-artifact-dir dist/current-apps-bma456h \
             --runtime-source .latest/runtime \
-            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main-bma456h
+      - name: Verify actual final target loader mapping and memory
+        run: |
+          python scripts/check_current_loader_memory.py --runtime .latest/runtime --utilities .latest/current-utilities --bin dist/latest-main/twatch-s3-main-*.bin --output dist/current-loader-proof
+          python scripts/check_current_loader_memory.py --runtime .latest/runtime --utilities .latest/current-utilities --bin dist/latest-main-bma456h/twatch-s3-main-*.bin --output dist/current-loader-proof-bma456h
       - name: Execute the actual final current-app store through Runtime
         run: |
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
@@ -989,7 +1006,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-current-runtime-${{ github.event.pull_request.head.sha || github.sha }}
-          path: dist/current-runtime/
+          path: |
+            dist/current-runtime/
+            dist/current-loader-proof/
           if-no-files-found: error
           retention-days: 30
       - uses: actions/upload-artifact@v4
@@ -1023,5 +1042,6 @@ jobs:
           path: |
             dist/current-apps-bma456h/
             dist/current-runtime-bma456h/
+            dist/current-loader-proof-bma456h/
             dist/latest-main-bma456h/
           if-no-files-found: error
