@@ -120,7 +120,7 @@ def _write_store(destination, content):
 def _policies(content):
     boot = json.loads(content['boot.json'])
     require(boot['default_app'] == 'default.elf', 'Not a defaultClock store')
-    require(json.loads(content['default.json'])['version'] == '0.7.1', 'Paired Clock manifest required')
+    require(json.loads(content['default.json'])['version'] == '0.8.0', 'Paired Clock manifest required')
     for name in ('default.json', 'clock.json', 'points_in_time.json'):
         policy = next(item for item in boot['app_capabilities'] if item['manifest'] == name)
         require(sorted(g['instance_id'] for g in policy['grants'] if g['capability'] == 'storage.key-value') == [1, 5], 'Clock/Points authority changed')
