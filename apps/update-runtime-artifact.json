@@ -1,0 +1,47 @@
+{
+  "artifact_id": 11316395523,
+  "artifact_name": "riscrte-esp32s3-16mb-paired-899ad7c0d01a5e1a1299a1bd1644724c6504c939",
+  "artifact_sha256": "39e5e654b070f37fa6a8e20cd0fd4e05b0309e15c508c3bce427f1fc8ff9933b",
+  "artifact_size_bytes": 7031643,
+  "components": {
+    "bootloader.bin": {
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
+      "size_bytes": 15104
+    },
+    "candidate.json": {
+      "sha256": "49e79f32fe2f49d66c0251e7fa3d5809b420df6543ed223d260e92fb76762f20",
+      "size_bytes": 2621
+    },
+    "firmware.bin": {
+      "sha256": "7bd619ace5859d6bc31b5b26e5948cfd5fea52d60107f2aee45994f0c0f0171d",
+      "size_bytes": 1069488
+    },
+    "firmware.elf": {
+      "sha256": "50f02953aed1344197fc00bdbf894a6a2f2b2f99991057773f8417360c13f925",
+      "size_bytes": 17043824
+    },
+    "partitions-paired.csv": {
+      "sha256": "7fab614dd067a339e0daa278ba5a79e3f5fa84b33ff0dee5a6092e4d696f7969",
+      "size_bytes": 432
+    },
+    "partitions.bin": {
+      "sha256": "8b7ba0b058c79477fcd53fc10a595b06e6b0b378dd1a25dd041849f9f8219275",
+      "size_bytes": 3072
+    },
+    "platformio.ini": {
+      "sha256": "aa91351bf2ae47a0a45d94162ae31eba23de7894c39b3b0c450a74227f56ab32",
+      "size_bytes": 3697
+    },
+    "requirements-ci.txt": {
+      "sha256": "1b5f9a84f4862cb05fc918850fc8ab2516d5c39fb3087747e7df1aba2c7a7600",
+      "size_bytes": 52
+    }
+  },
+  "conclusion": "success",
+  "firmware_version": "0.1.15",
+  "repository": "michaelrolphone-cmyk/RiscRTE",
+  "run_id": 37236426591,
+  "schema": 1,
+  "source_sha": "899ad7c0d01a5e1a1299a1bd1644724c6504c939",
+  "target": "esp32s3-16mb-paired"
+}

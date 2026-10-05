@@ -49,16 +49,12 @@ def verify_source(root, tree, runtime_source):
             'Runtime source has tracked modifications')
 
 
-def verify_runtime(files, runtime_pin=None, runtime_version=None):
-    pin = runtime_pin if runtime_pin is not None else _RUNTIME
-    runtime_sha = pin["source_sha"]
-    assets = {name:(v["size_bytes"],v["sha256"]) for name,v in pin["components"].items()}
-    version = runtime_version if runtime_version is not None else RUNTIME_VERSION
+def verify_runtime(files):
     require(set(files) == {'SHA256SUMS', 'candidate.json', 'firmware.elf', 'platformio.ini',
-                           'partitions.csv', 'requirements-ci.txt', *assets},
+                           'partitions.csv', 'requirements-ci.txt', *RUNTIME_ASSETS},
             'Unexpected runtime artifact members')
     candidate = json.loads(files['candidate.json'])
-    expected = {'schema': 1, 'source_sha': runtime_sha, 'firmware_version': version,
+    expected = {'schema': 1, 'source_sha': RUNTIME_SHA, 'firmware_version': RUNTIME_VERSION,
                 'target': 'esp32s3-16mb-usb', 'flash_bytes': 0x1000000,
                 'layout_used_bytes': MERGED_SIZE, 'app_offset': 0x10000,
                 'bootfs_offset': OFFSET, 'bootfs_bytes': SIZE, 'usb_cdc_on_boot': True,
@@ -70,7 +66,7 @@ def verify_runtime(files, runtime_pin=None, runtime_version=None):
     for name, info in candidate['assets'].items():
         require(len(files[name]) == info['bytes'] and sha(files[name]) == info['sha256'],
                 'Runtime candidate checksum mismatch: ' + name)
-    for name, (size, digest) in assets.items():
+    for name, (size, digest) in RUNTIME_ASSETS.items():
         require(len(files[name]) == size and sha(files[name]) == digest,
                 'Wrong pinned runtime component: ' + name)
     for name in ('bootloader.bin', 'firmware.bin'):
@@ -78,7 +74,7 @@ def verify_runtime(files, runtime_pin=None, runtime_version=None):
         require(data[0] == 0xe9 and data[3] >> 4 == 4 and
                 struct.unpack_from('<H', data, 12)[0] == 9,
                 'Runtime component is not ESP32-S3 with 16MiB flash header')
-    require(runtime_sha.encode() in files['firmware.bin'], 'Runtime source marker missing')
+    require(RUNTIME_SHA.encode() in files['firmware.bin'], 'Runtime source marker missing')
     partitions = []
     for index in range(0, len(files['partitions.bin']), 32):
         raw = files['partitions.bin'][index:index + 32]
@@ -93,10 +89,10 @@ def verify_runtime(files, runtime_pin=None, runtime_version=None):
     return candidate
 
 
-def verify_receipt(receipt, raw, head, tree, required_jobs=None, artifact_prefix="twatch-wifi-integration-"):
+def verify_receipt(receipt, raw, head, tree):
     expected = {'repository': 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3',
                 'head': head, 'tree': tree, 'conclusion': 'success', 'expired': False,
-                'artifact_name': artifact_prefix + head,
+                'artifact_name': 'twatch-wifi-integration-' + head,
                 'artifact_sha256': sha(raw)}
     require(exact_sha(head) and exact_sha(tree) and
             all(receipt.get(k) == v for k, v in expected.items()),
@@ -104,12 +100,12 @@ def verify_receipt(receipt, raw, head, tree, required_jobs=None, artifact_prefix
     require(all(type(receipt.get(k)) is int and receipt[k] > 0 for k in ('run_id', 'artifact_id')),
             'External CI run/artifact identity missing')
     jobs = receipt.get('jobs')
-    names = required_jobs if required_jobs is not None else {'software-checks', 'alarm-integration', 'points-integration',
+    names = {'software-checks', 'alarm-integration', 'points-integration',
              'wifi-integration', 'production-store-admission'}
     require(isinstance(jobs, list) and len(jobs) == len(names) and
             all(isinstance(job, dict) and job.get('conclusion') == 'success' for job in jobs) and
             {job.get('name') for job in jobs} == names,
-            'All exact-head CI jobs, including production store admission, must pass')
+            'All five exact-head CI jobs, including production store admission, must pass')
 
 
 def assemble_components(components):
@@ -177,7 +173,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
         image_path.write_bytes(image)
         store = {n[6:]: b for n, b in files.items() if n.startswith('store/')}
         require(image_record['payload_bytes'] == sum(map(len, store.values())), 'Incorrect store byte count')
-        check_image(image_path, store, Path(tool).resolve())
+        check_image(image_path, store, Path(tool).resolve() if tool is not None else None)
         preserve_store(store, root / 'apps/wifi-store-baseline.json')
         admission_stores.append(('common-deployment', store))
         admission_stores.append(('hosted-spiffs', unpack_image(image, tool)))
@@ -207,6 +203,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
                 'overwrite_bytes': MERGED_SIZE, 'flash_capacity_bytes': 0x1000000,
                 'components': parts, 'source_pins': json.loads(files['shared/alarm-sources.json']),
                 'runtime_admission': admission,
+                'local_spiffs_verification': 'pinned-mkspiffs' if tool is not None else 'read-only-parser',
                 'store': [{'path': n, 'size_bytes': len(b), 'sha256': sha(b)}
                           for n, b in sorted(store.items())], 'physical_verification': 'pending',
                 'flash_warning': 'Full lower8MiB replacement resets NVS/settings, saved Stopwatch, alarm/countdown state, Points in Time records and saved Wi-Fi profile; upper8MiB untouched'}
@@ -246,7 +243,7 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
     binary = out / name
     archive = out / (Path(name).stem + '-flashing.zip')
     report_path = out / (Path(name).stem + '.json')
-    inputs = {Path(p).resolve() for p in (runtime, artifact, receipt_path, tool)}
+    inputs = {Path(p).resolve() for p in (runtime, artifact, receipt_path, tool) if p is not None}
     require(not inputs.intersection(p.resolve() for p in (binary, archive, report_path)),
             'Output aliases an input')
     out.mkdir(parents=True, exist_ok=True)
@@ -266,8 +263,11 @@ def build(runtime, artifact, head, tree, receipt_path, runtime_source, tool, out
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('runtime', 'artifact', 'receipt', 'runtime-source', 'mkspiffs', 'output'):
+    for name in ('runtime', 'artifact', 'receipt', 'runtime-source', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
+    reader = parser.add_mutually_exclusive_group(required=True)
+    reader.add_argument('--mkspiffs', type=Path)
+    reader.add_argument('--read-only-spiffs', action='store_true')
     parser.add_argument('--pr-head', required=True)
     parser.add_argument('--source-tree', required=True)
     args = parser.parse_args()

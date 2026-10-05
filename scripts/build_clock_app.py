@@ -10,7 +10,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False):
     if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
     if alarm_system and not launcher:raise ValueError("Alarm Clock requires launcher input")
     cc = os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
@@ -23,7 +23,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Canonical app SDK hash mismatch')
-    out = ROOT/('dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
+    out = ROOT/('dist/update-launcher' if paired else 'dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
     elf = out/('clock.elf' if returning else 'default.elf')
     exports_map=out/'exports.map'
@@ -37,6 +37,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
+                    *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
@@ -52,7 +53,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = json.loads((ROOT/'apps/clock/manifest.json').read_text())
+    manifest = json.loads((ROOT/('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')).read_text())
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:

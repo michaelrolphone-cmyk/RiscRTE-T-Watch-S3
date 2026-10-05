@@ -1,7 +1,7 @@
 name: T-Watch driver contracts
 on:
   push:
-    branches: [feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission, feat/watch-frequency-generator]
+    branches: [main, master, feat/watch-alarm-lifecycle, feat/watch-points-in-time, feat/watch-wifi-settings, fix/watch-runtime-admission, fix/watch-provider-startup]
   pull_request:
 permissions:
   contents: read
@@ -368,7 +368,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          ref: af1845330ebb8828f76472b6137dcfedaca03846
           path: .wifi-dependencies/runtime
           persist-credentials: false
       - name: Production Wi-Fi, saved-profile reuse and radio sleep lifecycle
@@ -406,6 +406,7 @@ jobs:
           for bundle in dist/wifi-common/*.zip; do
             python scripts/build_wifi_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
           done
+          python -m unittest discover -s tests -p test_read_only_spiffs.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-wifi-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -434,7 +435,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          ref: af1845330ebb8828f76472b6137dcfedaca03846
           path: .admission-dependencies/runtime
           persist-credentials: false
       - uses: actions/checkout@v4
@@ -442,6 +443,12 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE
           ref: e972f0ff951ca96ca0999ee728dbad3a92434c4f
           path: .admission-dependencies/baseline-runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: abef681d6c9c2b58729909a9961118ea20feee5e
+          path: .admission-dependencies/native-loader-baseline
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
@@ -477,6 +484,7 @@ jobs:
           python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --output dist/production-admission/preserved.json
       - name: Actual default Clock and providers on unchanged production policies
         run: |
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline
           SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san
       - uses: actions/upload-artifact@v4
@@ -486,10 +494,10 @@ jobs:
             dist/production-admission/*.json
             dist/production-admission/execution/provenance.json
             dist/production-admission/execution-san/provenance.json
+            dist/production-admission/native-loader-baseline/provenance.json
           if-no-files-found: error
 
-  audio-integration:
-    needs: wifi-integration
+  update-integration:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     steps:
@@ -500,84 +508,198 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install -r scripts/requirements.txt
-      - name: Read reviewed exact audio source pins
-        id: audio-pins
+      - name: Read exact update source pins
+        id: pins
         run: |
           python - <<'PY'
-          import os, sys
-          sys.path.insert(0, 'scripts')
-          from audio_deployment import configuration
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
-              for name, pin in configuration()['sources'].items():
-                  output.write(name.replace('-', '_')+'='+pin['commit']+'\n')
+          import json,os
+          pins=json.load(open('apps/update-sources.json'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            for name,value in pins.items():out.write(name+'='+value['commit']+'\n')
+            out.write('mode='+json.load(open('apps/update-lane.json'))['mode']+'\n')
           PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: ${{ steps.audio-pins.outputs.system_apps }}
-          path: .audio-dependencies/system-apps
+          ref: ${{ steps.pins.outputs['system-apps'] }}
+          path: .update-dependencies/system-apps
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: ${{ steps.audio-pins.outputs.utilities }}
-          path: .audio-dependencies/utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .update-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .update-dependencies/productivity
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: ${{ steps.audio-pins.outputs.runtime }}
-          path: .audio-dependencies/runtime
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .update-dependencies/runtime
           persist-credentials: false
-      - uses: actions/checkout@v4
-        with:
-          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 83167b245149b1114a0497ab09bf2b410cd715ff
-          path: .audio-dependencies/baseline-system-apps
-          persist-credentials: false
-      - uses: actions/download-artifact@v4
-        with:
-          name: twatch-wifi-integration-${{ github.event.pull_request.head.sha || github.sha }}
-          path: .audio-baseline
-      - name: Pinned target and SPIFFS tools
+      - name: Pinned target compiler and SPIFFS tool
         run: |
           python -m pip install platformio==6.1.19
           pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
           pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
           echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
           echo "TWATCH_MKSPIFFS=$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" >> "$GITHUB_ENV"
-      - name: Add audio app, independently rebuild target bytes and preserve baseline
+      - name: Original drivers and exact selected updater apps/providers
         env:
-          TWATCH_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          AUDIO_SYSTEM_APPS: .audio-dependencies/system-apps
-          AUDIO_UTILITIES: .audio-dependencies/utilities
-          AUDIO_BASELINE_SYSTEM_APPS: .audio-dependencies/baseline-system-apps
+          UPDATE_MODE: ${{ steps.pins.outputs.mode }}
         run: |
-          python scripts/build_audio_apps.py --system-apps "$AUDIO_SYSTEM_APPS" --utilities "$AUDIO_UTILITIES" --baseline-system-apps "$AUDIO_BASELINE_SYSTEM_APPS" --baseline .audio-baseline/wifi-common/*-common.zip
-          bash scripts/test_alarm_target_loader.sh .audio-dependencies/runtime "$AUDIO_UTILITIES" audio-tools
-          python scripts/build_audio_deployment.py .audio-baseline/wifi-launcher-deployments/*.zip .audio-baseline/wifi-common/*-common.zip --pr-head-sha "$TWATCH_PR_HEAD_SHA"
-          python scripts/build_audio_store.py dist/audio-deployments/*-audio-tools-common.zip --mkspiffs "$TWATCH_MKSPIFFS"
-          python -m unittest discover -s tests -p test_audio_deployment.py -v
-      - name: Actual Runtime admits every full production profile and extracted SPIFFS
+          python scripts/build_twatch_drivers.py
+          python scripts/board_baseline.py
+          python scripts/check_twatch_drivers.py
+          python scripts/build_update_apps.py --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --runtime .update-dependencies/runtime --productivity .update-dependencies/productivity --mode "$UPDATE_MODE"
+          python scripts/build_update_deployment.py --mode "$UPDATE_MODE"
+          python scripts/verify_update_deployment.py dist/update-launcher-deployments/*.zip
+          python -m unittest discover -s tests -p 'test_update_*.py' -v
+          python tests/update_store_inputs_test.py
+      - name: Eight original archives, common store and SPIFFS custody
+        env:
+          WATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          python scripts/check_runtime_store_admission.py --runtime .audio-dependencies/runtime --archive dist/audio-deployments/*.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 10 --output dist/audio-admission/all-stores.json
-          SANITIZE=1 python scripts/check_runtime_store_admission.py --runtime .audio-dependencies/runtime --archive dist/audio-deployments/*.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 10 --output dist/audio-admission/all-stores-san.json
-      - name: Actual Clock and audio application on unchanged complete stores
+          python scripts/build_update_common.py dist/update-launcher-deployments/*.zip --pr-head-sha "$WATCH_HEAD"
+          for bundle in dist/update-common/*.zip; do
+            python scripts/build_update_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
+          done
+      - name: Actual production-store admission and real default Clock health
         run: |
-          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/clock
-          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/clock-san
-          SANITIZE=0 python scripts/test_production_store_runtime.py --audio --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline-system-apps .audio-dependencies/baseline-system-apps --audio-catalog dist/audio-tools/catalog.json --archive dist/audio-deployments/*-audio-tools-common.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/apps
-          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --audio --runtime .audio-dependencies/runtime --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline-system-apps .audio-dependencies/baseline-system-apps --audio-catalog dist/audio-tools/catalog.json --archive dist/audio-deployments/*-audio-tools-common.zip --image dist/audio-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-execution/apps-san
+          python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/normal
+          ADDRESS_SANITIZE=1 SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/sanitized
       - uses: actions/upload-artifact@v4
         with:
-          name: twatch-audio-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
-            dist/audio-tools/*.elf
-            dist/audio-tools/*.json
-            dist/audio-deployments/*.zip
-            dist/audio-deployments/catalog.json
-            dist/audio-common/*.bin
-            dist/audio-common/*.json
-            dist/audio-admission/*.json
-            dist/audio-execution/*/provenance.json
+            dist/update-launcher/*.elf
+            dist/update-launcher/*.json
+            dist/update-launcher-deployments/*.zip
+            dist/update-launcher-deployments/catalog.json
+            dist/update-common/*.zip
+            dist/update-common/*.bin
+            dist/update-common/*.json
+            dist/update-validation/**/admission-provenance.json
+            dist/update-validation/**/execution-provenance.json
+            dist/update-validation/**/abi-provenance.json
           if-no-files-found: error
+          retention-days: 14
+
+  update-cross-layer:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read exact backend pins
+        id: pins
+        run: |
+          python - <<'PY'
+          import json,os
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            for name,value in json.load(open('apps/update-sources.json')).items():
+              out.write(name+'='+value['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs['system-apps'] }}
+          path: .update-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .update-dependencies/runtime
+          persist-credentials: false
+      - name: Source-wired transport, update, rollback and isolation faults
+        run: |
+          mkdir -p dist/update-cross-layer
+          python tests/update_cross_layer/decode_bootloader.py dist/update-cross-layer/bootloader-corpus.bin
+          BUILD_DIR="$PWD/dist/update-cross-layer/normal" JOBS=2 bash tests/update_cross_layer/run.sh .update-dependencies/runtime .update-dependencies/system-apps "$PWD/dist/update-cross-layer/bootloader-corpus.bin" | tee dist/update-cross-layer/normal.log
+          SANITIZE=1 BUILD_DIR="$PWD/dist/update-cross-layer/sanitized" JOBS=2 bash tests/update_cross_layer/run.sh .update-dependencies/runtime .update-dependencies/system-apps "$PWD/dist/update-cross-layer/bootloader-corpus.bin" | tee dist/update-cross-layer/sanitized.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-update-faults-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/update-cross-layer/*.log
+            dist/update-cross-layer/**/power-flash.bin.gz
+          if-no-files-found: error
+          retention-days: 14
+
+
+  latest-main-image:
+    needs: [software-checks, alarm-integration, points-integration, wifi-integration, production-store-admission, update-integration, update-cross-layer]
+    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read exact latest Runtime source
+        id: runtime
+        run: |
+          python - <<'PY'
+          import json, os
+          value=json.load(open('apps/update-runtime-requirements.json'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('sha='+value['source_sha']+'\n')
+              out.write('version='+value['firmware_version']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.runtime.outputs.sha }}
+          path: .latest/runtime
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install pinned build tools
+        run: |
+          python -m pip install -r scripts/requirements.txt
+          python -m pip install platformio==6.1.19
+          python -m pip install -r .latest/runtime/requirements-ci.txt
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+      - name: Rebuild exact latest paired Runtime
+        working-directory: .latest/runtime
+        env:
+          RUNTIME_SHA: ${{ steps.runtime.outputs.sha }}
+        run: |
+          pio run -e esp32s3-16mb-paired -j 1
+          BOOTLOADER_FILE=.pio/build/esp32s3-16mb-paired/bootloader.bin bash test/run_native_bank_test.sh
+          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-update-integration-${{ github.sha }}
+          path: .latest/watch-artifact
+      - name: Assemble installable latest-main Watch image
+        env:
+          TWATCH_HEAD: ${{ github.sha }}
+        run: |
+          python scripts/build_latest_main_flash.py \
+            --artifact-dir .latest/watch-artifact \
+            --runtime-source .latest/runtime \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
+            --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
+            --watch-head "$TWATCH_HEAD" \
+            --output dist/latest-main
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-main-install-${{ github.sha }}
+          path: dist/latest-main/
+          if-no-files-found: error
+          retention-days: 30

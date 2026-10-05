@@ -1,3 +1,6 @@
+#if defined(WATCH_PAIRED_BOOT_CONFIRM) && !defined(WATCH_CLOCK_RETURN)
+#include "runtime_boot_confirm.h"
+#endif
 #include "RiscRuntimeV1.h"
 #include "nova/nova.h"
 #include "display_time.h"
@@ -443,6 +446,14 @@ __attribute__((visibility("default"))) void app_main(void) {
             rt->diagnostic("WATCH_CLOCK settings=unreadable default=hybrid");
     } else rt->diagnostic("WATCH_CLOCK settings=unavailable default=hybrid");
     rt->diagnostic(sleep_mode==PORTABLE_SLEEP_DEEP?"WATCH_CLOCK mode=deep":sleep_mode==PORTABLE_SLEEP_LIGHT?"WATCH_CLOCK mode=light":"WATCH_CLOCK mode=hybrid");
+#endif
+#if defined(WATCH_PAIRED_BOOT_CONFIRM) && !defined(WATCH_CLOCK_RETURN)
+    /* Startup has presented a complete frame and admitted all startup services.
+     * A pending native/store pair must remain unconfirmed on every earlier
+     * failure, intentional exit, queued handoff or native-retained path. */
+    if(!watch_confirm_paired_boot(rt)) {
+        rt->diagnostic("WATCH_CLOCK error=paired-boot-confirm");goto done;
+    }
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
