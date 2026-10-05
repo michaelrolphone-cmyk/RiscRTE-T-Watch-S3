@@ -460,6 +460,16 @@ jobs:
           ref: abef681d6c9c2b58729909a9961118ea20feee5e
           path: .admission-dependencies/native-loader-baseline
           persist-credentials: false
+      - id: admission-points-pins
+        name: Read exact Points execution source pins
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          p=json.load(open('apps/points-sources.json'))
+          print('system_apps='+p['system-apps']['commit'])
+          print('utilities='+p['utilities']['commit'])
+          PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
@@ -471,6 +481,18 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
           ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
           path: .admission-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.admission-points-pins.outputs.system_apps }}
+          path: .admission-dependencies/points-system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.admission-points-pins.outputs.utilities }}
+          path: .admission-dependencies/points-utilities
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
@@ -494,17 +516,23 @@ jobs:
           python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --output dist/production-admission/preserved.json
       - name: Actual default Clock and providers on unchanged production policies
         run: |
-          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline
-          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution
-          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san
+          # Points and Wi-Fi intentionally carry different reviewed alarm-service
+          # generations now. Exercise each store with its own exact service/time
+          # source pins instead of substituting one provider source for both.
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline-points
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline-wifi
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-points
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-wifi
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san-points
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san-wifi
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-production-admission-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/production-admission/*.json
-            dist/production-admission/execution/provenance.json
-            dist/production-admission/execution-san/provenance.json
-            dist/production-admission/native-loader-baseline/provenance.json
+            dist/production-admission/execution-*/provenance.json
+            dist/production-admission/execution-san-*/provenance.json
+            dist/production-admission/native-loader-baseline-*/provenance.json
           if-no-files-found: error
 
   update-integration:
