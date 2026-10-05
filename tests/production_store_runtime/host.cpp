@@ -8,6 +8,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#ifdef PRODUCTION_POINTS_DEFAULTS
+extern "C" bool production_points_expiration_valid(const void*,uint32_t);
+#endif
 namespace {
 struct Model {
   bool pins[49]{},levels[49]{},buses[2]{},spi=false,held=false,ready=false;
@@ -17,6 +20,7 @@ struct Model {
   unsigned healthCalls=0,moduleLoads=0,moduleUnloads=0,appLoads=0,appUnloads=0;
   unsigned rows=0,frameRows=0,frames=0,brightness=0,touchReads=0,rtcWrites=0;
   unsigned appSettingsReads=0,appPointsReads=0,radioActivity=0,storageWrites=0;
+  uint8_t pointsLedger[64]{};bool pointsLedgerPresent=false;unsigned pointsLedgerReads=0;
   unsigned command=0,row=0;
   void* application=nullptr;
 } m;
@@ -59,6 +63,7 @@ bool i2cTransfer(uint8_t p,uint8_t address,const uint8_t* tx,size_t tn,uint8_t* 
   unsigned reg=tx[0];assert(reg+rn<=256&&reg+tn-1<=256);
   if(tn>1){assert(!rn);for(size_t i=1;i<tn;++i){
     if(address==0x51&&reg>=2&&reg<=8)++m.rtcWrites;
+    if(address==0x5a&&reg==12)assert(tx[i]==0); // No haptic GO during empty startup.
     if(address==0x34&&reg>=0x48&&reg<=0x4a)registers[reg]&=(uint8_t)~tx[i];
     else registers[reg]=tx[i];++reg;
   }}
@@ -86,7 +91,7 @@ bool spiTransfer(uint8_t p,const uint8_t* tx,uint8_t*,size_t n,uint32_t ms){
 }
 bool spiEnd(uint8_t p,uint8_t cs,uint32_t){assert(p==2&&cs==12&&m.held);m.held=false;m.levels[cs]=true;return true;}
 bool spiClose(uint8_t p){assert(p==2&&!m.held&&m.spi);m.spi=false;return true;}
-int32_t kvGet(void*,uint32_t ns,const char* key,void*,uint32_t,uint32_t* size){
+int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_t* size){
   assert(ns>=1&&ns<=5&&key&&size);*size=0;
   // Before Clock's first yield no provider poll has run. These are direct
   // namespace reads by production crown.c, after all providers started.
@@ -94,10 +99,36 @@ int32_t kvGet(void*,uint32_t ns,const char* key,void*,uint32_t,uint32_t* size){
     if(ns==1&&(!strcmp(key,"watch_face")||!strcmp(key,"time_format")))++m.appSettingsReads;
     if(ns==5&&!strcmp(key,"points_cfg"))++m.appPointsReads;
   }
+#ifdef PRODUCTION_POINTS_DEFAULTS
+  if(ns==4&&!strcmp(key,"points_occ")&&m.pointsLedgerPresent){
+    *size=sizeof(m.pointsLedger);if(cap<*size)return RISC_KEY_VALUE_BUFFER_SMALL;
+    assert(bytes);memcpy(bytes,m.pointsLedger,*size);++m.pointsLedgerReads;
+    return RISC_KEY_VALUE_OK;
+  }
+#else
+  (void)bytes;(void)cap;
+#endif
   return RISC_KEY_VALUE_NOT_FOUND;
 }
-int32_t kvPut(void*,uint32_t,const char*,const void*,uint32_t){
+int32_t kvPut(void*,uint32_t ns,const char* key,const void* bytes,uint32_t size){
+#ifdef PRODUCTION_POINTS_DEFAULTS
+  // Defaults are virtual. Only the ordinary provider's expired-edge highwater
+  // may be committed; app settings/config/meta and active cue records fail.
+  assert(ns==4&&key&&!strcmp(key,"points_occ")&&bytes&&size==sizeof(m.pointsLedger));
+  assert(!m.pointsLedgerPresent&&production_points_expiration_valid(bytes,size));
+  memcpy(m.pointsLedger,bytes,size);m.pointsLedgerPresent=true;++m.storageWrites;
+  return RISC_KEY_VALUE_OK;
+#else
+  (void)ns;(void)key;(void)bytes;(void)size;
   ++m.storageWrites;assert(!"Empty startup must not write persistent records");return RISC_KEY_VALUE_IO;
+#endif
+}
+[[maybe_unused]] bool startupStorageOk(){
+#ifdef PRODUCTION_POINTS_DEFAULTS
+  return m.storageWrites==1&&m.pointsLedgerPresent&&m.pointsLedgerReads>=1;
+#else
+  return m.storageWrites==0;
+#endif
 }
 bool bind(RiscBoot::Runtime& runtime){return cpu->bind(runtime);}
 }
@@ -170,10 +201,11 @@ int main(int argc,char** argv){
   assert(m.ready&&m.appLoads==1&&m.appUnloads==1&&m.moduleLoads==m.moduleUnloads);
   assert(m.appSettingsReads==2&&m.appPointsReads==PRODUCTION_POINTS_READS&&m.frames>0&&m.frameRows==240&&m.brightness>0);
   bool nonzero=false;for(uint8_t pixel:m.frame)nonzero|=pixel!=0;assert(nonzero);
-  assert(m.touchReads>0&&!m.rtcWrites&&!m.storageWrites&&!m.radioActivity);
+  assert(m.touchReads>0&&!m.rtcWrites&&startupStorageOk()&&!m.radioActivity);
   assert(!memcmp(m.registers[1]+2,date,sizeof(date)));
   assert(!m.buses[0]&&!m.buses[1]&&!m.spi&&!m.held&&port.quiescent());for(bool pin:m.pins)assert(!pin);
   assert(!risc_test_native_mapping_count());
+  printf("Startup storage: writes=%u namespace4_points_occ=%u verified_readbacks=%u namespace5_writes=0\n",m.storageWrites,m.pointsLedgerPresent,m.pointsLedgerReads);
   printf("Production default Clock PASS: target registry, frames=%u, settings_reads=%u, points_reads=%u, modules=%u/%u, all resources quiescent, no RF\n",
     m.frames,m.appSettingsReads,m.appPointsReads,m.moduleLoads,m.moduleUnloads);
   return 0;

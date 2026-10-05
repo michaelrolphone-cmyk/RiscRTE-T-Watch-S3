@@ -96,6 +96,7 @@ static void check_snapshot(){
 }
 '''
     host=replace(host,'namespace {\nstruct Model',extra+'\nnamespace {\nstruct Model')
+    host=replace(host,'if(address==0x5a&&reg==12)assert(tx[i]==0); // No haptic GO during empty startup.','')
     host=replace(host,'if(address==0x51&&reg>=2&&reg<=8)++m.rtcWrites;','if(address==0x51&&reg>=2&&reg<=8)++m.rtcWrites;if(address==0x5a&&reg==12&&tx[i]==1)++hapticStarts;')
     host=replace(host,'m.milliseconds+=ms;assert(m.milliseconds<30000);','m.milliseconds+=ms;assert(m.milliseconds<30000);if(written&&(points_test_case()==4||points_test_case()==5)&&m.milliseconds>1000&&!m.ready)m.registers[0][0x49]|=8;')
     host=replace(host,'if(!strncmp(line,"WATCH_CLOCK ready",17))m.ready=true;', 'if(!strncmp(line,"WATCH_CLOCK ready",17)){check_snapshot();m.ready=true;}')
@@ -126,7 +127,7 @@ int32_t kvPut(void*,uint32_t ns,const char* key,const void* bytes,uint32_t size)
     host=replace(host,'if(m.appLoaded&&!m.application)m.application=module;', 'if(m.appLoaded){m.application=module;snapshot=(void(*)(unsigned*))dlsym(module,"points_test_snapshot");}')
     host=replace(host,'m.appLoaded=false;', 'm.appLoaded=false;m.application=nullptr;')
     host=replace(host,'m.appLoads==1&&m.appUnloads==1','m.appLoads==3&&m.appUnloads==3')
-    host=replace(host,'!m.rtcWrites&&!m.storageWrites&&!m.radioActivity','!m.rtcWrites&&!m.radioActivity')
+    host=replace(host,'!m.rtcWrites&&startupStorageOk()&&!m.radioActivity','!m.rtcWrites&&!m.radioActivity')
     host=replace(host,'setvbuf(stdout,nullptr,_IONBF,0);',r'''setvbuf(stdout,nullptr,_IONBF,0);
  unsigned f=option("POINTS_FACE",24),fmt=points_test_case()==14?points_test_format():1-points_test_format();
  if(points_test_case()!=8||f!=0)records["1:watch_face"]={0x46,1,(uint8_t)f,(uint8_t)(f^0xa5)};
@@ -134,6 +135,7 @@ int32_t kvPut(void*,uint32_t ns,const char* key,const void* bytes,uint32_t size)
  if(points_test_case()!=8&&points_test_case()!=14){std::vector<uint8_t>b(64);memcpy(b.data(),"PTC1",4);b[4]=1;
    if(points_test_case()==9){b[12]=43;b[13]=127;b[14]=12;b[16]=30;}checksum(b);records["5:points_cfg"]=b;}
  if(option("POINTS_RESTART",0))persisted_records(false);originalRecords=records;''')
+    host=replace(host,'  printf("Startup storage: writes=%u namespace4_points_occ=%u verified_readbacks=%u namespace5_writes=0\\n",m.storageWrites,m.pointsLedgerPresent,m.pointsLedgerReads);\n','')
     host=replace(host,'assert(!risc_test_native_mapping_count());\n  printf("Production default Clock PASS:', 'assert(!risc_test_native_mapping_count());assert(snapshots==1&&cfgServiceReads&&cfgClockReads==1);if(points_test_case()==8||points_test_case()==14)assert(!scheduleWrites&&!records.count("5:points_cfg")&&!records.count("5:points_meta"));if(points_test_case()==0||points_test_case()==9)assert(records["5:points_cfg"]==originalRecords["5:points_cfg"]);if(points_test_case()==14){bool expect=option("POINTS_EXPECT_CUE",option("POINTS_DAY",5)<=8)&&!option("POINTS_RESTART",0);assert(audioOpens==(expect?1u:0u)&&audioCloses==audioOpens&&!audioOpen&&hapticStarts==audioOpens);if(expect)assert(audioWrites>0);if(option("POINTS_RESTART",0))assert(records==originalRecords);persisted_records(true);}printf("POINTS_STORAGE total=%u schedule_meta=%u audio=%u/%u haptic=%u restart=%d\\n",m.storageWrites,scheduleWrites,audioOpens,audioCloses,hapticStarts,option("POINTS_RESTART",0));\n  printf("Production default Clock PASS:')
     host=replace(host,'const uint8_t date[]={0,0x40,0,4,0,0x10,0x26};',r'''unsigned day=option("POINTS_DAY",5),hour=option("POINTS_HOUR",4)+14,minute=option("POINTS_MINUTE",0);day+=hour/24;hour%=24;
  auto bcd=[](unsigned v){return (uint8_t)((v/10)*16+v%10);};
