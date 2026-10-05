@@ -74,8 +74,8 @@ def build(artifact_dir, runtime_source, runtime_candidate, mkspiffs, head, outpu
         require(len(data) == meta['bytes'] and sha(data) == meta['sha256'],
                 'Runtime candidate component differs: ' + name)
 
-    common = exact_one(artifact_dir, '-' + PROFILE + '.zip')
-    image = exact_one(artifact_dir, '-' + PROFILE + '-bootfs.bin')
+    common = exact_one(artifact_dir, PROFILE + '.zip')
+    image = exact_one(artifact_dir, PROFILE + '-bootfs.bin')
     image_record_path = image.with_suffix('.json')
     require(image_record_path.is_file(), 'Missing update store image record')
 
