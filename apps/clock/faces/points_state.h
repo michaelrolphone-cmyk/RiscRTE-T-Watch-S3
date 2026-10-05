@@ -10,13 +10,15 @@
  * Durations, including BACK events, are already resolved by the scheduler. */
 #define NOVA_POINTS_NEXT_MAX 4u
 #define NOVA_POINTS_TODAY_MAX 16u
+#define NOVA_POINT_LABEL_MAX 12u
 typedef enum {
     NOVA_POINTS_UNAVAILABLE=0, NOVA_POINTS_READY=1,
     NOVA_POINTS_EMPTY=2, NOVA_POINTS_ERROR=3
 } nova_points_status;
 typedef enum {
     NOVA_POINT_WORK_START=1, NOVA_POINT_WORK_END=2, NOVA_POINT_LUNCH=3,
-    NOVA_POINT_BREAK=4, NOVA_POINT_BEDTIME=5
+    NOVA_POINT_BREAK=4, NOVA_POINT_BEDTIME=5, NOVA_POINT_CUSTOM_1=6,
+    NOVA_POINT_CUSTOM_2=7
 } nova_point_kind;
 typedef enum {
     NOVA_PHASE_UNKNOWN=0, NOVA_PHASE_WORKING=1, NOVA_PHASE_OFF_WORK=2,
@@ -27,8 +29,10 @@ typedef struct {
     uint8_t hour, minute, kind;
     uint8_t source_slot;    /* Persisted record identity, 0..7. Required to
                             * match an interruption with its own BACK edge. */
-    bool is_end;            /* Only Lunch/Break ends display BACK. */
+    uint8_t color_index;    /* Custom-type palette index, 0..7. Built-ins ignore. */
+    bool is_end;            /* Duration end; warning cues are never projected. */
     int16_t day_offset;     /* Local civil days from today; next events >=0. */
+    char label[NOVA_POINT_LABEL_MAX+1]; /* Custom label or empty for built-ins. */
 } nova_point_event;
 typedef struct {
     uint32_t revision;     /* Change on edit/reload, timezone/selection change,
