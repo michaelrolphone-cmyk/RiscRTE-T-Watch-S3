@@ -44,12 +44,12 @@
       "sha256": "bb2c16ad597f79d4c35defde85c4c257d837cc504101631ffcb09a39a750408a"
     },
     "clock.elf": {
-      "size_bytes": 829156,
-      "sha256": "8721e108c89c4faeb0a47695ea24ea0cbc2e1f8386733302181f5a83f02431ab"
+      "size_bytes": 832736,
+      "sha256": "51a6370952d0823e224976b9b59628f0a76f4bd10c8cdf8b531aa636e49bc72a"
     },
     "clock.json": {
       "size_bytes": 581,
-      "sha256": "859c016d8292a42092094a25635371bfd07d3ec1889842efdc0c70aea630de2d"
+      "sha256": "a5c906d05b1949d09f9847ac571b6b5e5b76f1685f84cff32d050549de2ad2fc"
     },
     "countdown.elf": {
       "size_bytes": 67760,
@@ -60,12 +60,12 @@
       "sha256": "d0917f6b6de9cc4c0e65780846899d3cda1650add5a98961252ba637491978b2"
     },
     "default.elf": {
-      "size_bytes": 828276,
-      "sha256": "561c95c65a2d8bd3a9f1e8b0beb1590dda626d41dfd19c40a6745a8b3a01064f"
+      "size_bytes": 832352,
+      "sha256": "b02820f75f0381ee14eb919630ecdd0a0b1649f6ec671941a80a5df97b018909"
     },
     "default.json": {
       "size_bytes": 576,
-      "sha256": "3cc814263468a631d4210cc6c6af7e9656db5a1982c8d336eea3feb7312a152c"
+      "sha256": "7cb160a2844fb11d6d185978e9df5316e0b23aa82d97d0bf7b6141b37a585f72"
     },
     "gpio/driver.elf": {
       "size_bytes": 5284,
