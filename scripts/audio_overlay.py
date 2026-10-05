@@ -8,7 +8,7 @@ from build_wifi_common import read_zip,require,zip_bytes
 
 PROFILE='audio-tools-common'
 APPS=('frequency_generator','audio_spectrum')
-CHANGED={'store/board.json','store/boot.json','store/springboard.elf','store/springboard.json','shared/catalog.json'}
+CHANGED={'store/board.json','store/boot.json','store/springboard.elf','store/springboard.json'}
 ADDED={'store/frequency_generator.elf','store/frequency_generator.json','store/audio_spectrum.elf','store/audio_spectrum.json',
        'store/mic/driver.elf','store/mic/manifest.json','shared/audio-build.json','shared/audio-sources.json'}
 
