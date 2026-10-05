@@ -59,6 +59,11 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     str(ROOT/'apps/clock/crown.c'),str(ROOT/'apps/clock/nova/nova.c'),
                     *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c')] if current else []),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)],check=True)
+    compaction_proof=None
+    if current:
+        from compact_current_elf import compact
+        (out/(elf.stem+'.uncompacted.elf')).write_bytes(elf.read_bytes())
+        compaction_proof=compact(elf,cc)
     readelf = cc.removesuffix('gcc')+'readelf'
     nm = cc.removesuffix('gcc')+'nm'
     header = subprocess.check_output([readelf,'-h',str(elf)],text=True)
@@ -80,7 +85,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,
         'size_bytes':elf.stat().st_size,'sha256':hashlib.sha256(elf.read_bytes()).hexdigest(),
-        'sdk':sources,'imports':sorted(imports)},indent=2)+'\n')
+        'sdk':sources,'imports':sorted(imports),'compaction':compaction_proof},indent=2)+'\n')
     print(f"{elf.name} {manifest['version']}: target ABI, entry and import checks passed")
 
 

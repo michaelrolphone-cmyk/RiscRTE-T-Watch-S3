@@ -62,6 +62,8 @@ def verify(artifact,head,root=ROOT):
   m=json.loads(files[name+'.json']);a=r['apps'][name]
   require(m['version']==c['app_versions'][name] and a['version']==m['version'],'Current app version mismatch: '+name)
   require(m['file_name']==name+'.elf' and m['entry']=='app_main' and m['architecture']=='xtensa-esp32s3','Current app ABI mismatch')
+  compact=a.get('compaction',{})
+  require(compact.get('retained_sections_symbols_relocations_unchanged') is True and compact.get('removed_sections')==['.xt.lit','.xt.prop'] and compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('before_bytes',0)>=compact['after_bytes'],'Missing current ELF compaction proof: '+name)
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
   if name not in ('frequency_generator',*CLOCK_APPS):require('-DPORTABLE_NOVA_UI' in a['defines'],'Current Nova profile missing: '+name)

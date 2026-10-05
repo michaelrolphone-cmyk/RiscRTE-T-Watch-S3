@@ -21,7 +21,7 @@ class CurrentAppsOverlay(unittest.TestCase):
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.0'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
-  for n in current.APPS:r['apps'][n]={**r['files'][n+'.elf'],'version':'1.0.1','defines':definitions(n,'1.0.1')}
+  for n in current.APPS:r['apps'][n]={**r['files'][n+'.elf'],'version':'1.0.1','defines':definitions(n,'1.0.1'),'compaction':{'retained_sections_symbols_relocations_unchanged':True,'removed_sections':['.xt.lit','.xt.prop'],'before_bytes':r['files'][n+'.elf']['size_bytes'],'after_bytes':r['files'][n+'.elf']['size_bytes']}}
   r['service']['points_headers']={'PointsRecords.h':'schema','PointsSchedule.h':'schema2'}
   r['clock']={'watch_source':self.head,'sources':self.cfg['sources'],'paired_boot_confirmation':True,'headers':r['service']['points_headers'],'files':{n+e:r['files'][n+e] for n in current.CLOCK_APPS for e in ('.elf','.json')}}
   (self.root/'clock-test.c').write_bytes(b'clock');r['clock']['source_sha256']={'clock-test.c':current.sha(b'clock')}

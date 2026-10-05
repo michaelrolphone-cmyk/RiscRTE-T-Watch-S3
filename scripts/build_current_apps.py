@@ -5,6 +5,7 @@ from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,
                                  config,configure_boot,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
+from compact_current_elf import compact
 from build_wifi_common import read_zip,zip_bytes
 
 def git(path,*args):return subprocess.check_output(['git','-C',str(path),*args],text=True).strip()
@@ -51,10 +52,12 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
  def compile_target(name,sources,flags,includes,exports,allowed):
   mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(sorted(exports))+'; local: *; };\n');elf=out/(name+'.elf')
   subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(p) for p in includes],*map(str,sources),'-lgcc','-o',str(elf)],check=True)
+  if name in APPS:subprocess.run([str(validator),str(elf)],check=True)
+  compact_proof=compact(elf,cc) if name in APPS else None
   symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True);imports={l.split()[-1] for l in symbols.splitlines() if ' U ' in ' '+l};actual={l.split()[-1] for l in symbols.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')}
   require(imports<=allowed and actual==exports,'Current ABI imports/exports differ: '+name+' '+str(sorted(imports-allowed)))
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
-  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags}
+  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof}
  record={'schema':1,'profile':PROFILE,'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/(name+'.c');version=c['app_versions'][name]
@@ -91,7 +94,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
  require(json.loads((root/'apps/clock/current-manifest.json').read_text())['version']==c['app_versions']['default']==c['app_versions']['clock'],'Current paired Clock version differs')
  for name in CLOCK_APPS:
   build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True)
-  built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
+  built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.uncompacted.elf'))],check=True);subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
   for ext in ('.elf','.json'):
    b=(built/(name+ext)).read_bytes();(files_dir/(name+ext)).write_bytes(b);clock_record['files'][name+ext]=metadata(b)
   meta=json.loads((built/'build-record.json').read_text());record['apps'][name]={**meta,'defines':definitions(name,c['app_versions'][name]),'repository':'watch','repository_sha':record['watch_source']}
