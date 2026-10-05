@@ -63,9 +63,11 @@ def package_mic(root=ROOT):
     return elf,encoded(source)
 
 def common_store(base,root=ROOT):
-    record=verify_base(base,root=root)
+    raw=base.read_bytes(); stream=io.BytesIO(raw);stream.name='update-common.zip'
+    record=verify_base(stream,root=root)
     require(record['profile']==BASE_PROFILE,'Audio overlay requires paired update common baseline')
-    files=read_zip(base); store={n:b for n,b in files.items() if n.startswith('store/')}
+    stream=io.BytesIO(raw);stream.name='update-common.zip';files=read_zip(stream)
+    store={n:b for n,b in files.items() if n.startswith('store/')}
     return files,record,store
 
 def build(base,compiled,head,root=ROOT):
