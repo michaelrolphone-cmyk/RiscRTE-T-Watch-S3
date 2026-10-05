@@ -30,6 +30,8 @@ RiscCpu::Hardware hardware() {
   h.spiClose = [](uint8_t) { ++hardwareCalls; return false; };
   h.i2sOpen = [](uint8_t, uint8_t, uint8_t, uint8_t, uint32_t) { ++hardwareCalls; return false; };
   h.i2sWrite = [](uint8_t, const int16_t*, size_t, size_t*, uint32_t) { ++hardwareCalls; return false; };
+  h.i2sOpenRx = [](uint8_t, uint8_t, uint8_t, uint32_t) { ++hardwareCalls; return false; };
+  h.i2sRead = [](uint8_t, int16_t*, size_t, size_t*, uint32_t) { ++hardwareCalls; return false; };
   h.i2sClose = [](uint8_t) { ++hardwareCalls; return false; };
 #ifdef STORE_ADMISSION_RADIO
   h.radioJoin = [](const char*, const char*) { ++hardwareCalls; return false; };
