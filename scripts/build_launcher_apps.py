@@ -101,7 +101,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
         target.write_bytes((system/'lib/PortableApps/settings_fonts'/name).read_bytes())
     (out/'RTC_PROVENANCE.json').write_bytes((system/'lib/PortableApps/RTC_PROVENANCE.json').read_bytes())
     if alarms:
-        record['alarm_service']={'version':'0.2.1' if productivity else '0.1.0','capability':'alarm.service@1','scope':'explicit-singleton','runtime':pins['runtime']}
+        record['alarm_service']={'version':'0.3.0' if productivity else '0.1.0','capability':'alarm.service@1','scope':'explicit-singleton','runtime':pins['runtime']}
     (out/'build-record.json').write_text(json.dumps(record,indent=2)+'\n')
     print((str(11+len(updates)) if updates is not None else 'Eleven' if wifi else 'Ten' if productivity else 'Nine' if alarms else 'Seven')+' real Xtensa applications: ABI/import/export checks passed')
 if __name__=='__main__':
