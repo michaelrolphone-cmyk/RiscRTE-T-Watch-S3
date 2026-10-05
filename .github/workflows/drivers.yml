@@ -361,6 +361,77 @@ jobs:
             dist/points-paired-clock/*
           if-no-files-found: error
 
+  points-store-faces:
+    needs: points-integration
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read final image and Points source pins
+        id: pins
+        run: |
+          python - <<'PYCODE' >> "$GITHUB_OUTPUT"
+          import json
+          p=json.load(open('apps/points-sources.json'))
+          for name in ('system-apps','utilities','productivity'):
+              print(name.replace('-','_')+'='+p[name]['commit'])
+          print('runtime='+json.load(open('apps/update-runtime-requirements.json'))['source_sha'])
+          PYCODE
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .face-store/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs.system_apps }}
+          path: .face-store/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .face-store/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          path: .face-store/legacy-utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .face-store/productivity
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .face-store/artifact
+      - name: Real Runtime app save, bound service and all persisted Clock IDs
+        run: |
+          ARCHIVE=$(find .face-store/artifact -name '*-points-launcher-common.zip')
+          test -f "$ARCHIVE"
+          python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/normal
+          SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/sanitized
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-points-store-faces-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/points-store-faces/**/points-results.json
+            dist/points-store-faces/**/provenance.json
+            dist/points-store-faces/**/points-provenance.json
+          if-no-files-found: error
+          retention-days: 14
+
   wifi-integration:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
@@ -730,7 +801,7 @@ jobs:
 
 
   latest-main-image:
-    needs: [software-checks, alarm-integration, points-integration, wifi-integration, production-store-admission, update-integration, update-cross-layer]
+    needs: [software-checks, alarm-integration, points-integration, points-store-faces, wifi-integration, production-store-admission, update-integration, update-cross-layer]
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-22.04
     timeout-minutes: 45
