@@ -408,6 +408,12 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: f89fed5816e2ae8ebad4e8332de0d0309c1b8281
+          path: .face-store/metadata-legacy-utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
           repository: michaelrolphone-cmyk/RiscRTE-Productivity
           ref: ${{ steps.pins.outputs.productivity }}
           path: .face-store/productivity
@@ -420,8 +426,8 @@ jobs:
         run: |
           ARCHIVE=$(find .face-store/artifact -name '*-points-launcher-common.zip')
           test -f "$ARCHIVE"
-          python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/normal
-          SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/sanitized
+          python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --metadata-legacy-utilities .face-store/metadata-legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/normal
+          SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --metadata-legacy-utilities .face-store/metadata-legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/sanitized
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-points-store-faces-${{ github.event.pull_request.head.sha || github.sha }}

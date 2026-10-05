@@ -72,3 +72,22 @@ future-day labels, and elapsed durations independent of clock format.
 No data migration or reset is required by this correction. The full-flash
 migration artifact still has its existing destructive 16MiB flashing contract;
 software compatibility tests are not permission to flash or erase a device.
+
+## Requested temporary Monday–Thursday defaults
+
+When `points_cfg` is absent, Clock uses the same virtual factory catalog as the
+Points app and service. This does not write storage. A present valid catalog,
+including a deliberately saved empty catalog, wins; malformed records and I/O
+errors retain their error handling. Default custom labels/colors are used only
+when both catalog and metadata are missing. Existing metadata wins otherwise.
+
+The shared schedule is Wakeup 04:30, Drive to Work 05:30–05:45, Work 06:00,
+Break 09:00–09:15, Lunch 12:00–12:30, Break 14:15–14:30, and Work End 16:30,
+Monday through Thursday only. The three break/lunch periods have their
+three-minute warnings enabled. The service owns sound/vibration and warning
+semantics; Clock shows actual start/end edges, never warning cues as events.
+
+The approved Work/Work End labels retain their stored kind IDs. Custom face
+labels now allow the complete 13-character `Drive to Work`. The shared metadata
+codec retains PTM1 compatibility and uses PTM2 only for 13-character metadata;
+both remain 64-byte records. Existing face IDs and selection records are intact.

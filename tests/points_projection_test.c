@@ -54,5 +54,23 @@ int main(void) {
  assert(watch_points_projection(&c,&m,civil(2026,10,4,13,1),&a)&&v.revision==a.revision);
  m.revision++;m.custom[0].color=7;assert(watch_points_projection(&c,&m,civil(2026,10,4,13,1),&a)&&v.revision!=a.revision&&a.next[0].color_index==7);
 #endif
+#ifdef POINTS_DEFAULTS_AVAILABLE
+ c=points_default_config();m=points_default_meta();
+ assert(points_config_valid(&c)&&points_meta_valid(&m));
+ assert(!strcmp(m.custom[0].name,"Drive to Work")&&strlen(m.custom[0].name)==13);
+ for(unsigned day=5;day<=8;day++) {
+  assert(watch_points_projection(&c,&m,civil(2026,10,day,4,45),&v));
+  assert(v.status==NOVA_POINTS_READY&&v.today_count==11&&v.work_valid);
+  assert(v.next[0].kind==NOVA_POINT_CUSTOM_1&&!strcmp(v.next[0].label,"Drive to Work"));
+  assert(v.next[0].color_index==6&&v.next[0].hour==5&&v.next[0].minute==30);
+  assert(v.next[1].is_end&&v.next[1].at_rtc-v.next[0].at_rtc==900);
+  assert(v.work_start.hour==6&&v.work_end.hour==16&&v.work_end.minute==30);
+  assert(v.today[0].kind==NOVA_POINT_CUSTOM_2&&!strcmp(v.today[0].label,"Wakeup"));
+ }
+ for(unsigned day=9;day<=11;day++) {
+  assert(watch_points_projection(&c,&m,civil(2026,10,day,4,45),&v));
+  assert(v.status==NOVA_POINTS_READY&&!v.today_count&&v.next[0].day_offset==(int)(12-day));
+ }
+#endif
  puts("Points projection: live/custom schedule, stable cache, midnight parent day, empty/error and real DST work bounds passed");
 }

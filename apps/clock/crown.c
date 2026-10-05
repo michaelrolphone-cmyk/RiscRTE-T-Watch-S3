@@ -76,8 +76,17 @@ static bool clock_points_load(void) {
         int32_t result=kv->get(kv->context,POINTS_CONFIG_KEY,bytes,sizeof(bytes),&n);
         clock_points_available=result==RISC_KEY_VALUE_NOT_FOUND||
             (result==RISC_KEY_VALUE_OK&&points_config_decode(&clock_points_config,bytes,n));
+#ifdef POINTS_DEFAULTS_AVAILABLE
+        /* A missing catalog exposes the shared virtual defaults. Never replace
+         * a present empty, malformed or unavailable saved catalog. */
+        bool defaults=result==RISC_KEY_VALUE_NOT_FOUND;
+        if(defaults)clock_points_config=points_default_config();
+#endif
 #if WATCH_POINTS_EXTENDED
         n=0;result=kv->get(kv->context,POINTS_META_KEY,bytes,sizeof(bytes),&n);
+#ifdef POINTS_DEFAULTS_AVAILABLE
+        if(defaults&&result==RISC_KEY_VALUE_NOT_FOUND)clock_points_meta=points_default_meta();
+#endif
         if(result==RISC_KEY_VALUE_OK&&!points_meta_decode(&clock_points_meta,bytes,n)) {
             clock_points_meta=(points_meta){0};
             rt->diagnostic("WATCH_CLOCK points-meta=invalid fallback=generic");

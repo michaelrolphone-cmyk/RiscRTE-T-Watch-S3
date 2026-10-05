@@ -133,7 +133,7 @@ def verify_provenance(files, record, root):
                     app['size_bytes'] == len(files['store/' + name + '.elf']),
                     'Clock payload provenance mismatch')
     service = json.loads(files['shared/alarm-service-build.json'])
-    require(service['source_pins'] == pins and service['service_version'] == '0.3.0' and
+    require(service['source_pins'] == pins and service['service_version'] == _SERVICE_BASELINE['service_version'] and
             service['source_sha256'] == SERVICE_SOURCE_SHA256 and service['size_bytes'] == SERVICE_SIZE and
             service['elf_sha256'] == sha(files['store/alarm-service/driver.elf']) == SERVICE_SHA256,
             'Canonical alarm service changed')

@@ -119,10 +119,10 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     overlay += tuple(clock_files)
     points_manifest = json.loads(store['points_in_time.json'])
     alarm_manifest = json.loads(store['alarm-service/manifest.json'])
-    require(points_manifest['id'] == 'points_in_time' and points_manifest['version'] == '0.4.1',
-            'Installable image does not contain Points in Time 0.4.1')
-    require(alarm_manifest['id'] == 'alarm-service' and alarm_manifest['version'] == '0.3.0',
-            'Installable image does not contain Points cue service 0.3.0')
+    require(points_manifest['id'] == 'points_in_time' and points_manifest['version'] == '0.4.2',
+            'Installable image does not contain Points in Time 0.4.2')
+    require(alarm_manifest['id'] == 'alarm-service' and alarm_manifest['version'] == '0.3.1',
+            'Installable image does not contain Points cue service 0.3.1')
     require(b'UP NEXT' in store['default.elf'] and b'UP NEXT' in store['clock.elf'],
             'Installable Clock payload does not contain the UP NEXT watch face')
     image_bytes = image.read_bytes()

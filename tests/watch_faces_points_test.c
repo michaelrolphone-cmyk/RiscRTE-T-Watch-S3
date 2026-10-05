@@ -75,6 +75,11 @@ int main(int argc,char**argv) {
     assert(WATCH_FACE_COUNT==33&&WATCH_FACE_CATEGORY_COUNT==5);
     assert(watch_face_pages[4].count==9);
     for(unsigned i=0;i<9;i++){assert(watch_face_pages[4].ids[i]==24+i);assert(watch_face_category_for(24+i)==4);}
+    nova_point_event commute=event(0,5,30,NOVA_POINT_CUSTOM_1,false);
+    memcpy(commute.label,"Drive to Work",14);commute.color_index=6;
+    assert(ps_event_valid(&commute)&&!strcmp(ps_event_name(&commute,false),"Drive to Work"));
+    nova_point_event work=event(0,6,0,NOVA_POINT_WORK_START,false);
+    assert(!strcmp(ps_event_name(&work,false),"WORK"));
     nova_watch_state s;nova_points_state p;
     for(unsigned scenario=0;scenario<18;scenario++)for(unsigned face=24;face<WATCH_FACE_COUNT;face++) {
         fixture(&s,&p,scenario);guarded_render(&s,face);

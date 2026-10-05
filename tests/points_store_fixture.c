@@ -15,12 +15,12 @@ static int32_t put(void *c,const char *key,const void *buffer,uint32_t size) {
 int main(int argc,char **argv) {
     assert(argc==3);directory=argv[1];const risc_key_value_v1 kv={1,sizeof(kv),NULL,get,put};
     points_writer writer={0};assert(points_writer_load(&writer,&kv)==ALARM_OK);
-    points_config config={.revision=1};assert(alarm_calendar_seconds(2026,10,4,8,0,0,&config.created));
+    points_config config={.revision=writer.saved.revision+1};assert(alarm_calendar_seconds(2026,10,4,8,0,0,&config.created));
     config.points[0]=(points_item){.kind=POINTS_LUNCH,.enabled=1,.weekdays=127,.hour=13,.duration_minutes=30};
     if(!strcmp(argv[2],"flags"))config.points[0].notify_end=config.points[0].warn3=1;
     if(!strcmp(argv[2],"custom")) {
         config.points[0].kind=POINTS_CUSTOM_1;config.points[0].notify_end=config.points[0].warn3=1;
-        points_meta meta={.revision=1};meta.custom[0].color=3;memcpy(meta.custom[0].name,"STUDY",6);
+        points_meta meta={.revision=writer.meta.revision+1};meta.custom[0].color=3;memcpy(meta.custom[0].name,"STUDY",6);
         assert(points_writer_save_meta(&writer,&kv,&meta)==ALARM_OK);
     }
     assert(points_writer_save(&writer,&kv,&config)==ALARM_OK);

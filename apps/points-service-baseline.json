@@ -1,19 +1,19 @@
 {
-  "elf_sha256": "57ad02a104cdb7a92c3cf668968e879d95599329ddc8059fa6f5c9e05655f953",
-  "size_bytes": 29836,
-  "service_version": "0.3.0",
+  "elf_sha256": "ba7c4d581e63568162e462bef00ba087f572d14dd7c1dce6a65165a77a32f81b",
+  "size_bytes": 30204,
+  "service_version": "0.3.1",
   "system_apps_sha": "911be9e8042f1bcc46038fb70189eebe4ca106c5",
   "runtime_sha": "8688f92069b99547f0d25ecbd12cfcad3bb52c53",
   "defines": [
     "-DPOINTS_IN_TIME_SERVICE",
     "-DPORTABLE_RTC_UTC8_DENVER"
   ],
-  "source_sha256": "512e2bbbc42f6210848cacab8e5b72449363741bc9aa2e1a51c90bcaaee88516",
   "sources": {
-    "Services/alarm_service/service.c": "5da342031c32beb17ad119a3f66db23c5ca461186e3370f54b3ffc025ccb4f7f",
-    "lib/Alarm/include/PointsRecords.h": "41686924f5d9cc94d0f14ee05c8b02593681f3e93d029f29290ff3b3dd87b088",
-    "lib/Alarm/include/PointsSchedule.h": "7162dd36fa7f6cb0ee7ba2f6f57533bcc649520301796e64ef6f954c2f6d42c5",
+    "Services/alarm_service/service.c": "0277fbe6e81c52c28c9964768ef286fb3ba12e542cc40a0afd531e3929bae197",
+    "lib/Alarm/include/PointsRecords.h": "2bb0787030b9120eacc9d4cd226ab5d840ddb977fc57e2813ebc31a9776dbd00",
+    "lib/Alarm/include/PointsSchedule.h": "9e34d32dbf989ee28f287813744748ab2d3193857a71bcab66e1f9b41749306c",
     "lib/Alarm/include/AlarmServiceV1.h": "3f5546fadf7131cdae82ed5316d4ff49157fac881af34fba4663d00c54e2a6fb",
     "lib/Alarm/include/AlarmRecords.h": "d9b2a7c32df502c30b723499b61d3d0e5c4e763304dc71dd408ded06a015790d"
-  }
+  },
+  "source_sha256": "0277fbe6e81c52c28c9964768ef286fb3ba12e542cc40a0afd531e3929bae197"
 }
