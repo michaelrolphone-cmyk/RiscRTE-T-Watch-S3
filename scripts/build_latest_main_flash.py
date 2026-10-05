@@ -46,7 +46,7 @@ def load_runtime_metadata(runtime_source):
     return module
 
 
-def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, mkspiffs, head, output):
+def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, mkspiffs, head, output, current_apps_artifact_dir=None):
     artifact_dir = Path(artifact_dir).resolve()
     points_artifact_dir = Path(points_artifact_dir).resolve()
     runtime_source = Path(runtime_source).resolve()
@@ -125,6 +125,16 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'Installable image does not contain Points cue service 0.3.1')
     require(b'UP NEXT' in store['default.elf'] and b'UP NEXT' in store['clock.elf'],
             'Installable Clock payload does not contain the UP NEXT watch face')
+    # Historical Points/Clock custody remains separately recorded. The explicit
+    # current cohort owns the final installable applications and narrow policy
+    # additions, never edits its baseline archives or physical driver payloads.
+    historical_points_files = {name: {'size_bytes': len(store[name]), 'sha256': sha(store[name])}
+                               for name in overlay}
+    current_apps_record = None
+    if current_apps_artifact_dir is not None:
+        from current_apps_overlay import apply as apply_current_apps
+        store, current_apps_record = apply_current_apps(store, current_apps_artifact_dir, head, root=ROOT)
+
     image_bytes = image.read_bytes()
     image_record = json.loads(image_record_path.read_text())
     expected_image = {
@@ -205,8 +215,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'service_version': alarm_manifest['version'],
             'points_source_sha': points_record['source_sha'],
             'paired_clock': clock_record,
-            'files': {name: {'size_bytes': len(store[name]), 'sha256': sha(store[name])}
-                      for name in overlay},
+            'files': historical_points_files,
             'watch_face_count': 33,
             'required_face': 'UP NEXT',
         },
@@ -221,6 +230,9 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             for n, b in sorted(store.items())
         ],
     }
+
+    if current_apps_record is not None:
+        manifest['current_apps_overlay'] = current_apps_record
 
     require(not output.exists(), 'Output directory already exists')
     output.mkdir(parents=True)
@@ -266,6 +278,7 @@ if __name__ == '__main__':
     parser.add_argument('--mkspiffs', required=True, type=Path)
     parser.add_argument('--watch-head', required=True)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--current-apps-artifact-dir', type=Path)
     args = parser.parse_args()
     build(args.artifact_dir, args.points_artifact_dir, args.runtime_source, args.runtime_candidate,
-          args.mkspiffs, args.watch_head, args.output)
+          args.mkspiffs, args.watch_head, args.output, args.current_apps_artifact_dir)

@@ -62,7 +62,8 @@ class IndexTests(unittest.TestCase):
 
 class ArtifactTests(unittest.TestCase):
     def test_product_pins(self):
-        p = pub.read_config()
+        with patch.object(pub, 'CONFIG', ROOT / 'release/history/product-1.0.0.json'):
+            p = pub.read_config()
         self.assertEqual(p['accepted_bin_sha256'], '6f0cba6da17fce769d03807aefce44b0e5fc445d349b8b7dc0f6782d376d80c5')
         self.assertEqual(p['version'], '1.0.0')
         self.assertEqual(p['component_versions']['default'], '0.5.2')

@@ -5,7 +5,9 @@ on:
       - 'release/**'
       - 'scripts/publish_watch_product.py'
       - 'scripts/watch_release_index.py'
-      - 'tests/test_watch_product.py'
+      - 'scripts/watch_main_product.py'
+      - 'scripts/read_only_spiffs.py'
+      - 'tests/test_watch*product.py'
       - '.github/workflows/watch-product.yml'
   workflow_run:
     workflows: ['Publish versioned drivers']
@@ -35,17 +37,29 @@ jobs:
       - name: Install validation dependencies
         run: python -m pip install -r scripts/requirements.txt
       - name: Publication and index safety tests
-        run: python -m unittest discover -s tests -p test_watch_product.py -v
+        run: python -m unittest discover -s tests -p 'test_watch*product.py' -v
+      - name: Read reviewed frozen product source pins
+        id: product
+        run: |
+          python - <<'PY'
+          import os, sys
+          sys.path.insert(0, 'scripts')
+          from publish_watch_product import read_config
+          product = read_config()
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              for key in ('watch', 'runtime'):
+                  out.write(key + '=' + product['sources'][key]['accepted_sha'] + '\n')
+          PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
-          ref: ae819bb23bf7a047a7b31c3b91609b05be8731d3
+          ref: ${{ steps.product.outputs.watch }}
           path: .dependencies/accepted-watch
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: 8609fb92ee56ad1c6fb0417051c3fc9796c0edca
+          ref: ${{ steps.product.outputs.runtime }}
           path: .dependencies/accepted-runtime
           persist-credentials: false
       - name: Download and hash exact accepted CI inputs
@@ -56,7 +70,7 @@ jobs:
         run: |
           python scripts/publish_watch_product.py stage --accepted-watch .dependencies/accepted-watch --runtime-source .dependencies/accepted-runtime
           python scripts/publish_watch_product.py verify
-          WATCH_PRODUCT_STAGE="$PWD/dist/watch-product" python -m unittest discover -s tests -p test_watch_product.py -v
+          WATCH_PRODUCT_STAGE="$PWD/dist/watch-product" python -m unittest discover -s tests -p 'test_watch*product.py' -v
       - uses: actions/upload-artifact@v4
         with:
           name: verified-watch-product-${{ github.event.workflow_run.head_sha || github.event.pull_request.head.sha || github.sha }}

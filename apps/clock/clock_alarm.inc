@@ -30,11 +30,26 @@ static bool clock_alarm_foreground(void) {
     (void)portable_touch_open;(void)portable_touch_close;
     if(!clock_display_settled || held)return clock_alarm_failure();
     if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+#ifdef ALARM_STATUS_CUE_SUPPORTED
+    bool cue_seen=false;
+    for(unsigned n=0;clock_alarm.status.state==ALARM_STATE_LOADING || portable_alarm_cue(&clock_alarm);n++) {
+        if(n>=64)return clock_alarm_failure();
+        if(portable_alarm_cue(&clock_alarm))cue_seen=true;
+        rt->yield_ms(portable_alarm_cue(&clock_alarm)?20:1);
+        if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+        if(cue_seen && !portable_alarm_cue(&clock_alarm)) {
+            clock_alarm_cancel_input();
+            if(clock_alarm.status.state!=ALARM_STATE_BLOCKED)return true;
+            break;
+        }
+    }
+#else
     for(unsigned n=0;clock_alarm.status.state==ALARM_STATE_LOADING;n++) {
         if(n>=64)return clock_alarm_failure();
         rt->yield_ms(1);
         if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
     }
+#endif
     bool error=clock_alarm.status.state==ALARM_STATE_BLOCKED;
     if(!portable_alarm_owned(&clock_alarm) && (!error || (clock_alarm_error_seen &&
        clock_alarm_seen_error==clock_alarm.status.error && clock_alarm_seen_snapshot==clock_alarm.status.snapshot)))return true;
