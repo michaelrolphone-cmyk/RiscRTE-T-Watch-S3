@@ -10,7 +10,16 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False):
+def clock_manifest(paired=False, current=False):
+    if current and not paired:
+        raise ValueError('Current Clock requires the paired final profile')
+    path = 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
+    return json.loads((ROOT/path).read_text())
+
+
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False):
+    if current and not (paired and launcher and alarm_system and points_utilities):
+        raise ValueError('Current Clock requires the complete paired CUE cohort')
     if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
     if alarm_system and not launcher:raise ValueError("Alarm Clock requires launcher input")
     cc = os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
@@ -58,7 +67,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = json.loads((ROOT/('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')).read_text())
+    manifest = clock_manifest(paired=paired, current=current)
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:

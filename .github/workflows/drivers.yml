@@ -913,6 +913,7 @@ jobs:
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
             --output dist/current-apps
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
+          python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities

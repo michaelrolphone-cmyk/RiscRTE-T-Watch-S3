@@ -56,3 +56,5 @@ The final manifest's `current_apps_overlay` records its exact archive and build
 record hashes, the full record, and changed/preserved file partitions. The
 Clock source map uses Watch-relative paths and SHA256 digests. Historical
 `points_overlay` evidence continues to describe the historical input bytes.
+
+The final Clock pair uses `apps/clock/current-manifest.json` (0.8.1) through the explicit `current=True` build profile. The ordinary and historical paired manifest files remain at 0.8.0 so historical custody validators are unchanged. Current mode refuses incomplete/non-paired CUE dependencies. This is a packaging identity split, not a widened acceptance rule.
