@@ -2,7 +2,9 @@
 // CpuPort. Nothing rewrites its board, driver manifests, app manifests or policy.
 // The lowest hardware boundary is inert; prepare must not invoke native I/O.
 #include "bootstrap/Runtime.h"
+#define private public
 #include "ports/esp32s3/CpuPort.h"
+#undef private
 #include <cstdio>
 
 namespace {
@@ -66,7 +68,7 @@ int main(int argc, char** argv) {
                             [](const char*) { return true; }, bind, &kv});
   const bool prepared = runtime.prepare(argv[1]);
   // Runtime errors are constant diagnostics, with no input text or credentials.
-  printf("{\"prepared\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u}\n",
-         prepared ? "true" : "false", runtime.error(), hardwareCalls, storageCalls);
+  printf("{\"prepared\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"i2s_tables\":%zu}\n",
+         prepared ? "true" : "false", runtime.error(), hardwareCalls, storageCalls, port.i2sCount_);
   return hardwareCalls || storageCalls ? 3 : 0;
 }
