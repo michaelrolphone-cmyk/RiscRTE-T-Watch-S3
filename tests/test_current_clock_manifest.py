@@ -25,6 +25,12 @@ class CurrentClockManifest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Final Clock pair version differs"):
             installed_clock_version(store)
 
+    def test_current_builder_checks_the_same_manifest_it_builds(self):
+        source = (Path(__file__).resolve().parents[1]/"scripts/build_current_apps.py").read_text()
+        self.assertIn("apps/clock/current-manifest.json", source)
+        self.assertNotIn("apps/clock/paired-manifest.json", source)
+        self.assertIn("paired=True,current=True", source)
+
     def test_current_profile_cannot_omit_its_cue_dependencies(self):
         with self.assertRaisesRegex(ValueError, "paired final profile"):
             clock_manifest(current=True)

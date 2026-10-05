@@ -85,7 +85,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
   record['providers'][short]=json.loads((src/'build-record.json').read_text())
  from build_clock_app import build as build_clock
  clock_record={'watch_source':record['watch_source'],'sources':c['sources'],'files':{},'paired_boot_confirmation':True,'headers':record['service']['points_headers'],'source_sha256':{p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for base in ('apps/clock','sdk/app','sdk/driver','include') for p in (root/base).rglob('*') if p.is_file()}}
- require(json.loads((root/'apps/clock/paired-manifest.json').read_text())['version']==c['app_versions']['default']==c['app_versions']['clock'],'Current paired Clock version differs')
+ require(json.loads((root/'apps/clock/current-manifest.json').read_text())['version']==c['app_versions']['default']==c['app_versions']['clock'],'Current paired Clock version differs')
  for name in CLOCK_APPS:
   build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True)
   built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
