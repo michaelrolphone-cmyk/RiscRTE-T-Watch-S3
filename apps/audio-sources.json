@@ -9,7 +9,7 @@
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "2d359c785ecc19b88ffdbdcc8bab8d1d12ae397d"
+      "commit": "5d9dfc3f68b624ccf9c9ec4b64da968d6de4fea5"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
