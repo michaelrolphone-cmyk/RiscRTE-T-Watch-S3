@@ -9,7 +9,7 @@
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "facc8fdea233f7830efe64eb69728d5b618598cb"
+      "commit": "2d359c785ecc19b88ffdbdcc8bab8d1d12ae397d"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
@@ -18,7 +18,7 @@
   },
   "apps": {
     "frequency_generator": {
-      "version": "0.1.1",
+      "version": "0.1.2",
       "catalog": {
         "display_name": "Frequency Generator",
         "file_name": "frequency_generator.elf",
