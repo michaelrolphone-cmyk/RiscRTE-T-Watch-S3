@@ -56,8 +56,11 @@ def compile_harness(runtime, output):
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
-    if 'radioJoin' in (runtime / 'src/ports/esp32s3/CpuPort.h').read_text():
+    cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
+    if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
+    if 'i2sOpenRx' in cpu_header:
+        command += ['-DSTORE_ADMISSION_I2S_RX']
     command += ['-I' + str(p) for p in includes]
     command += [str(p) for p in sources]
     command += [str(ROOT / 'tests/runtime_store_admission.cpp'), '-ldl', '-o', str(output)]
