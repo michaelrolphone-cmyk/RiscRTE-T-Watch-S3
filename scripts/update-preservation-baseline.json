@@ -99,8 +99,8 @@
       "sha256": "bb2c16ad597f79d4c35defde85c4c257d837cc504101631ffcb09a39a750408a"
     },
     "clock.elf": {
-      "size_bytes": 829156,
-      "sha256": "8721e108c89c4faeb0a47695ea24ea0cbc2e1f8386733302181f5a83f02431ab"
+      "size_bytes": 832408,
+      "sha256": "5b669a423a3904cc5075efaa178b1d23b47e0ef55b65a0ac041572ebab856e08"
     },
     "clock.json": {
       "size_bytes": 581,
@@ -115,8 +115,8 @@
       "sha256": "d0917f6b6de9cc4c0e65780846899d3cda1650add5a98961252ba637491978b2"
     },
     "default.elf": {
-      "size_bytes": 828276,
-      "sha256": "561c95c65a2d8bd3a9f1e8b0beb1590dda626d41dfd19c40a6745a8b3a01064f"
+      "size_bytes": 832040,
+      "sha256": "cf90a2d975beefbf217fc1274fdf7b22e4f535e6de7338854a39b8e2b0d2e244"
     },
     "default.json": {
       "size_bytes": 576,
