@@ -133,7 +133,7 @@ def admit(harness, store, expected_error=None):
         raise ValueError('Boot admission invoked native I/O')
     if expected_error is None:
         if not outcome['prepared']:
-            raise ValueError('Production store admission failed: ' + outcome['error'])
+            raise ValueError('Production store admission failed: ' + str(outcome))
     elif outcome['prepared'] or outcome['error'] != expected_error:
         raise ValueError('Baseline did not fail with the expected admission error: ' + str(outcome))
     return dict(outcome, store_files=len(store), store_sha256=before)
