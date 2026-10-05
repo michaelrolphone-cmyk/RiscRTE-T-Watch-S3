@@ -1,10 +1,53 @@
-# Watch 1.0.0 stable product
+# Watch 1.0.1 stable product
+
+Watch **1.0.1** promotes the exact complete 16 MiB image from accepted source
+`3e703ab7e8ef506394fb24c6862dc8bfafddc475`, successful CI run
+[37276394351](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/37276394351).
+All nine image prerequisite/final jobs passed, including execution of the actual
+final store through Runtime in normal and ASan/UBSan configurations. Every one
+of its 58 stored files, all six flash components, and the complete install ZIP
+are hash-verified. Acceptance is on software CI; no new hardware qualification
+or device operation is claimed.
+
+The final current cohort contains 15 applications, the volume-aware alarm/CUE
+service and two update providers. It includes the confirmed crown-state repair,
+Spectrum 0.2.2 corrections and all eight Utilities PRs. Owning source commits are
+integrated in their respective default branches and independently tagged:
+System Apps `13f32d3e`, Utilities `9f2e6022`, Productivity `edd754ab`, and existing
+Runtime `0fa8c576` / 0.1.16. Current Clock/default 0.8.1 use the explicit
+`apps/clock/current-manifest.json`; historical custody lanes keep their original
+0.8.0 manifests and source pins.
+
+The seven firmware asset types from 1.0.0 are retained: the directly flashable
+`twatch-s3-launcher-1.0.1.bin`, original updated install ZIP, `FLASHING.md`,
+`SHA256SUMS`, `product-provenance.json`, `release-record.json`, and
+`release-index.json`. All 15 configured app ELFs/manifests are also published as
+independent Watch-configuration releases, and the index references 17 verified
+physical-driver packages. Existing immutable records are reused only when the
+complete package bytes/manifests match exactly.
+
+BIN SHA256: `c9acc4bf2a4070a97fb1a8090d584e68e6ad8fe411d9cef7d4c4135ce672e7c1`.
+The original frozen ZIP is `twatch-s3-main-0.8.1-3e703ab7-install.zip`.
+
+**Flashing replaces all 16 MiB, including both banks, settings, credentials,
+alarms, Stopwatch and Points records. Back up first.** This is a full migration
+image. Publication never flashes a device.
+
+Known limitation: the observed five-minute Hybrid wake issue remains deferred
+to the next increment. Its isolated recovery implementation is excluded from
+this release. Physical microphone response, audio loudness, touch behavior and
+power consumption remain separately unqualified.
+
+The canonical frozen source/artifact/version manifest is [product.json](product.json).
+The original 1.0.0 manifest remains byte-for-byte preserved below.
+
+# Historical Watch 1.0.0 baseline
 
 The owner accepted the exact integrated 0.5.2 build on 2026-10-04 and authorized
 contributing merges, publication, and a separate Reader-style release index.
 Product version **1.0.0** promotes those same bytes. It does not renumber Clock
 0.5.2, Runtime 0.1.6, or shared packages. The source-controlled product identity
-and accepted artifact/source pins are in [product.json](product.json).
+and accepted artifact/source pins are in [historical product manifest](history/product-1.0.0.json).
 
 The release is `firmware-v1.0.0`, with directly flashable
 `twatch-s3-launcher-1.0.0.bin`. Its SHA-256 remains
