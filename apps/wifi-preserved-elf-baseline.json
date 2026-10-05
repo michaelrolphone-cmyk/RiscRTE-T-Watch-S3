@@ -20,16 +20,16 @@
       "sha256": "185cda843b5cf101c4e53e9594b4f6ef76a451de8e7f77b04ba8f8e338e0ef22"
     },
     "clock.elf": {
-      "size_bytes": 832408,
-      "sha256": "5b669a423a3904cc5075efaa178b1d23b47e0ef55b65a0ac041572ebab856e08"
+      "size_bytes": 832736,
+      "sha256": "51a6370952d0823e224976b9b59628f0a76f4bd10c8cdf8b531aa636e49bc72a"
     },
     "countdown.elf": {
       "size_bytes": 67760,
       "sha256": "d85e1d9d2591e1daa6a462792aa7ec7278bc3d1d983a25b4af737ab1522074f6"
     },
     "default.elf": {
-      "size_bytes": 832040,
-      "sha256": "cf90a2d975beefbf217fc1274fdf7b22e4f535e6de7338854a39b8e2b0d2e244"
+      "size_bytes": 832352,
+      "sha256": "b02820f75f0381ee14eb919630ecdd0a0b1649f6ec671941a80a5df97b018909"
     },
     "points_in_time.elf": {
       "size_bytes": 74076,
