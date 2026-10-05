@@ -80,8 +80,8 @@ def build(artifact_dir, runtime_source, runtime_candidate, mkspiffs, head, outpu
     require(image_record_path.is_file(), 'Missing update store image record')
 
     record = verify(common, root=ROOT, expected_head=head)
-    require(json.loads(common_files['runtime-requirements.json']) == requirements, 'Audio deployment Runtime requirement differs from main')
     common_files = read_zip(common)
+    require(json.loads(common_files['runtime-requirements.json']) == requirements, 'Audio deployment Runtime requirement differs from main')
     store = {name[6:]: data for name, data in common_files.items() if name.startswith('store/')}
     image_bytes = image.read_bytes()
     image_record = json.loads(image_record_path.read_text())
