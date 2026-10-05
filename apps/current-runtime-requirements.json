@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9",
-  "firmware_version": "0.1.27",
+  "source_sha": "3392ad7f2e165ba2f1f2f666596cd946d14252a4",
+  "firmware_version": "0.1.28",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -15,7 +15,7 @@
     "owned_timed_light_sleep": true,
     "owned_timed_deep_sleep": true,
     "provider_bound_key_value": true,
-    "app_policy_capacity": 16,
+    "app_policy_capacity": 18,
     "native_i2s_tx_cleanup": true,
     "native_station_radio": true,
     "bounded_asynchronous_radio_scan": true,
@@ -36,16 +36,17 @@
     "native_i2s_pdm_rx": true,
     "audio_input_cleanup_barrier": true,
     "app_grant_capacity": 12,
-    "app_requirement_capacity": 10,
+    "app_requirement_capacity": 11,
     "native_bounded_hci": true,
     "nonconsuming_hci_status": true,
     "hci_cleanup_sleep_barrier": true,
     "provider_bound_key_capacity": 9,
     "owned_wake_sets": true,
-    "mixed_polarity_rtc_wake": true
+    "mixed_polarity_rtc_wake": true,
+    "read_only_installed_files": true
   },
   "abi_changed": false,
-  "reason": "Generic owned wake sets retain legacy ABI prefixes and support independent peripheral sources with mixed RTC polarity. Explicit motion grants use bounded12-slot policies and10 declaration types.",
+  "reason": "Explicitly granted installed-file browsing reuses the volume table with a read-only admitted-file allowlist. Policy capacity is 18 apps, 12 grant slots and 11 distinct requirements; existing motion wake and radio cleanup remain required.",
   "deployment": {
     "target": "esp32s3-16mb-paired",
     "layout": "riscrte-paired-16m-v1",

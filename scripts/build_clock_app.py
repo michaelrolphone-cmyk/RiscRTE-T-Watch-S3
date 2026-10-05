@@ -18,7 +18,7 @@ def clock_manifest(paired=False, current=False):
     return json.loads((ROOT/path).read_text())
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None):
     if current and not (paired and launcher and alarm_system and points_utilities):
         raise ValueError('Current Clock requires the complete paired CUE cohort')
     if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
@@ -66,7 +66,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     if current:
         from compact_current_elf import compact
         (out/(elf.stem+'.uncompacted.elf')).write_bytes(elf.read_bytes())
-        compaction_proof=compact(elf,cc)
+        compaction_proof=compact(elf,cc,debug_path=debug_path)
     readelf = cc.removesuffix('gcc')+'readelf'
     nm = cc.removesuffix('gcc')+'nm'
     header = subprocess.check_output([readelf,'-h',str(elf)],text=True)

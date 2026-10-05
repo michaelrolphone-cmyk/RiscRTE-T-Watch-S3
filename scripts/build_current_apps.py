@@ -2,7 +2,7 @@
 """Build the explicit final current-app cohort, separate from frozen custody lanes."""
 import argparse,hashlib,json,os,shutil,subprocess,sys
 from pathlib import Path
-from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,
+from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,NEW_APPS,
                                  config,configure_boot,configure_board,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
 from compact_current_elf import compact
@@ -19,11 +19,12 @@ def definitions(name,version):
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
+ if name=='file_browser':flags+=['-DPORTABLE_FILE_BROWSER_APP','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='settings':flags+=['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_ALARM_SETTINGS','-DPORTABLE_SETTINGS_VERSION="'+version+'"']
  if name=='wifi_settings':flags+=['-DPORTABLE_WIFI_SETTINGS_APP','-DPORTABLE_WIFI_STORAGE_INSTANCE=6','-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_WIFI_VERSION="'+version+'"']
  if name in ('ota_update','app_store'):flags+=['-Wno-misleading-indentation','-DPORTABLE_UPDATE_APP','-DPORTABLE_UPDATE_FIRMWARE='+str(int(name=='ota_update')),'-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_UPDATE_RTC_UTC_OFFSET_SECONDS=28800']
  if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60']
- owner=('POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
+ owner=('FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
 
@@ -32,7 +33,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  root=Path(root);out=Path(out);repos={'system-apps':Path(system),'utilities':Path(utilities),'productivity':Path(productivity),'runtime':Path(runtime)};c=config(root)
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  require(not out.exists() or not any(out.iterdir()),'Current output must be empty to reject stale files')
- out.mkdir(parents=True,exist_ok=True);files_dir=out/'files';files_dir.mkdir()
+ out.mkdir(parents=True,exist_ok=True);files_dir=out/'files';files_dir.mkdir();debug_dir=out/'debug';debug_dir.mkdir()
  # Decode a separately verified immutable baseline only to reuse exact catalog,
  # app identities and existing boot authority. Never modify that archive.
  baseline=Path(baseline)
@@ -44,10 +45,14 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  raw=read_zip(baseline);store={n[6:]:b for n,b in raw.items() if n.startswith('store/')}
  require(len([n for n in store if n.endswith('.elf') and '/' not in n])==15,'Unexpected baseline app inventory')
  boot=json.loads(store['boot.json']);new_boot=configure_boot(boot);catalog=json.loads(raw['shared/catalog.json'])
- require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS}-{'springboard.elf'})|{'clock.elf'},'Visible catalog inventory differs')
- require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Current launcher icons collide')
+ require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS if n not in NEW_APPS}-{'springboard.elf'})|{'clock.elf'},'Baseline catalog inventory differs')
+ require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Baseline launcher icons collide')
+ for name,entry in NEW_APPS.items():catalog.append({**entry,'file_name':name+'.elf'})
+ require(len(catalog)==len(APPS)-2 and len(catalog)<=16 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
  registry=json.loads((repos['system-apps']/'lib/PortableApps/catalog-icons.json').read_text())['apps']
+ for name,entry in NEW_APPS.items():require(registry.get(name,{}).get('icon')==entry['icon'],'New app icon is not in the reviewed registry: '+name)
  for app_name,entry in registry.items():
+  if app_name not in APPS:continue
   delivered=[x for x in catalog if x['file_name']==app_name+'.elf'];require(len(delivered)==1 and delivered[0]['icon']==entry['icon'],'Current icon registry mismatch: '+app_name)
  (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in x.items())+',.compatible=true}' for x in catalog)+'};\nconst unsigned portable_catalog_count='+str(len(catalog))+';\n')
  (out/'empty_catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[1]={{.compatible=false}};\nconst unsigned portable_catalog_count=0;\n')
@@ -59,7 +64,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(sorted(exports))+'; local: *; };\n');elf=out/(name+'.elf')
   subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(p) for p in includes],*map(str,sources),'-lgcc','-o',str(elf)],check=True)
   if name in APPS:subprocess.run([str(validator),str(elf)],check=True)
-  compact_proof=compact(elf,cc) if name in APPS else None
+  compact_proof=compact(elf,cc,debug_path=debug_dir/(name+'.elf')) if name in APPS else None
   symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True);imports={l.split()[-1] for l in symbols.splitlines() if ' U ' in ' '+l};actual={l.split()[-1] for l in symbols.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')}
   require(imports<=allowed and actual==exports,'Current ABI imports/exports differ: '+name+' '+str(sorted(imports-allowed)))
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
@@ -75,7 +80,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/(name+'.c');version=c['app_versions'][name]
-  original=json.loads((repo/'Apps'/(name+'.json')).read_text())
+  original=json.loads((repo/'Apps'/('native' if name=='file_browser' else '')/(name+'.json')).read_text())
   if name not in ('ota_update','app_store'):require(original['version']==version,'App source version differs: '+name)
   else:
    native=repo/'Apps/native'/(name+'.json');require(native.is_file(),'Current native updater manifest missing: '+name)
@@ -84,8 +89,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]
   if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
-  b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},{'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'})
-  m=json.loads(store[name+'.json']);m['version']=version
+  allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
+  if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
+  b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},allowed)
+  m=json.loads(encoded(original) if name in NEW_APPS else store[name+'.json']);m['version']=version
+  if name in NEW_APPS:
+   for cap,api in [('board.battery',1),('alarm.service',1)]:
+    if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   for cap,api in [('storage.key-value',1),('rtc.clock',2),('net.wifi',1),('bluetooth.hci',1),('motion.accel',1)]:
    if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   (files_dir/(name+'.elf')).write_bytes(b);(files_dir/(name+'.json')).write_bytes(encoded(m))
@@ -107,7 +117,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  clock_record={'watch_source':record['watch_source'],'sources':c['sources'],'files':{},'paired_boot_confirmation':True,'headers':record['service']['points_headers'],'source_sha256':{p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for base in ('apps/clock','sdk/app','sdk/driver','include') for p in (root/base).rglob('*') if p.is_file()}}
  require(json.loads((root/'apps/clock/current-manifest.json').read_text())['version']==c['app_versions']['default']==c['app_versions']['clock'],'Current paired Clock version differs')
  for name in CLOCK_APPS:
-  build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True)
+  build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True,debug_path=debug_dir/(name+'.elf'))
   built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.uncompacted.elf'))],check=True);subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
   for ext in ('.elf','.json'):
    b=(built/(name+ext)).read_bytes();(files_dir/(name+ext)).write_bytes(b);clock_record['files'][name+ext]=metadata(b)
@@ -115,6 +125,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  record['clock']=clock_record
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  record['files']={n:metadata((files_dir/n).read_bytes()) for n in sorted(PAYLOADS)}
+ record['debug']={n+'.elf':metadata((debug_dir/(n+'.elf')).read_bytes()) for n in APPS}
  (out/'current-apps-build.json').write_bytes(encoded(record));(out/'source-profile.json').write_bytes(encoded(c))
  licenses=out/'licenses';licenses.mkdir()
  for name,path in repos.items():
@@ -130,11 +141,11 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   p=repos['system-apps']/'lib/PortableApps/fonts'/name
   if p.is_file():(licenses/name).write_bytes(p.read_bytes())
  for p in (repos['system-apps']/'lib/PortableApps/settings_fonts').glob('LICENSE-*'):(licenses/('settings-'+p.name)).write_bytes(p.read_bytes())
- members={p.relative_to(out).as_posix():p.read_bytes() for folder in (files_dir,licenses) for p in folder.rglob('*') if p.is_file()}
+ members={p.relative_to(out).as_posix():p.read_bytes() for folder in (files_dir,debug_dir,licenses) for p in folder.rglob('*') if p.is_file()}
  for name in ('current-apps-build.json','source-profile.json'):members[name]=(out/name).read_bytes()
  (out/'current-apps.zip').write_bytes(zip_bytes(members))
  verify(out,record['watch_source'],root)
- print('Current final cohort:15 rebuilt apps + alarm service +2 update providers; exact pins and strict targets verified')
+ print(f'Current final cohort:{len(APPS)} rebuilt apps + alarm service +2 update providers; exact pins and strict targets verified')
  return record
 if __name__=='__main__':
  p=argparse.ArgumentParser()

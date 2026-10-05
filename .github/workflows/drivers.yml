@@ -924,6 +924,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
+          python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
           python .latest/current-system/scripts/test_quick_actions.py
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
@@ -993,12 +994,19 @@ jobs:
           retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
+          name: twatch-compaction-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: dist/compaction-runtime-proof.json
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
           name: twatch-current-apps-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/current-apps/current-apps.zip
             dist/current-apps/current-apps-build.json
             dist/current-apps/source-profile.json
             dist/current-apps/files/
+            dist/current-apps/debug/
             dist/current-apps/licenses/
           if-no-files-found: error
           retention-days: 30

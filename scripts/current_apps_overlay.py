@@ -2,16 +2,18 @@
 """Verified current-app overlay; historical custody stores are never rewritten."""
 import copy,hashlib,json,re,zipfile
 from pathlib import Path
+from compact_current_elf import PROFILE as COMPACTION_PROFILE, OPTIONS as COMPACTION_OPTIONS
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE='watch-current-apps-v1'
-SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store')
+SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store','file_browser')
 UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum')
 PRODUCTIVITY_APPS=('points_in_time',)
 CLOCK_APPS=('default','clock')
 NON_CLOCK_APPS=SYSTEM_APPS+UTILITY_APPS+PRODUCTIVITY_APPS
 APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
-ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu') for name in ('driver.elf','manifest.json')}
+NEW_APPS={'file_browser':{'display_name':'Files','icon':'solid:f07c'}}
+ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
@@ -48,6 +50,13 @@ def configure_board(original,root=ROOT,*,motion_model):
 def configure_boot(original):
  """Add shared settings/RTC grants explicitly; preserve each existing grant."""
  b=copy.deepcopy(original)
+ require(not any(x['manifest'] in {n+'.json' for n in NEW_APPS} for x in b['app_capabilities']),'New application policy unexpectedly preexists')
+ b['app_capabilities'].append({'manifest':'file_browser.json','grants':[
+  {'capability':'display.output','api':1,'instance_id':5},
+  {'capability':'input.touch.raw','api':1,'instance_id':6},
+  {'capability':'board.battery','api':1,'instance_id':4},
+  {'capability':'storage.installed-files','api':1,'instance_id':0},
+  {'capability':'alarm.service','api':1,'instance_id':0}]})
  rows=[x for x in b['app_capabilities'] if x['manifest']=='alarms.json'];require(len(rows)==1,'Missing/duplicate Alarms policy')
  grants=rows[0]['grants'];kv=[x for x in grants if x['capability']=='storage.key-value']
  require(kv==[{'capability':'storage.key-value','api':1,'instance_id':3}],'Unexpected prior Alarms storage policy')
@@ -74,6 +83,7 @@ def verify(artifact,head,root=ROOT):
  require(r.get('configuration')==c,'Current overlay source/version configuration differs')
  require(set(r['files'])==PAYLOADS and set(r['apps'])==set(APPS),'Current payload inventory differs')
  require(r.get('target_validation') is True,'Current target validation missing')
+ require(set(r.get('debug',{}))=={n+'.elf' for n in APPS},'Original app ELF inventory differs')
  files={}
  for name,meta in r['files'].items():
   b=(artifact/'files'/name).read_bytes();require(metadata(b)==meta,'Current payload hash/size differs: '+name);files[name]=b
@@ -82,7 +92,10 @@ def verify(artifact,head,root=ROOT):
   require(m['version']==c['app_versions'][name] and a['version']==m['version'],'Current app version mismatch: '+name)
   require(m['file_name']==name+'.elf' and m['entry']=='app_main' and m['architecture']=='xtensa-esp32s3','Current app ABI mismatch')
   compact=a.get('compaction',{})
-  require(compact.get('retained_sections_symbols_relocations_unchanged') is True and compact.get('removed_sections')==['.xt.lit','.xt.prop'] and compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('before_bytes',0)>=compact['after_bytes'],'Missing current ELF compaction proof: '+name)
+  require(compact.get('profile')==COMPACTION_PROFILE and compact.get('retained_loader_sections_symbols_relocations_unchanged') is True and compact.get('original_elf_retained') is True and compact.get('options')==list(COMPACTION_OPTIONS) and bool(compact.get('tool')),'Missing current ELF compaction contract: '+name)
+  debug=(artifact/'debug'/(name+'.elf')).read_bytes()
+  require(metadata(debug)==r['debug'][name+'.elf'] and len(debug)==compact.get('before_bytes') and sha(debug)==compact.get('before_sha256'),'Original app ELF differs: '+name)
+  require(compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('after_sha256')==sha(files[name+'.elf']) and len(debug)>=compact['after_bytes'],'Current ELF compaction hashes differ: '+name)
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
   require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
@@ -100,7 +113,7 @@ def verify(artifact,head,root=ROOT):
  archive=artifact/'current-apps.zip';require(archive.is_file(),'Current archive missing')
  with zipfile.ZipFile(archive) as z:
   names=z.namelist();require(len(names)==len(set(names)),'Duplicate current archive members')
-  expected={'current-apps-build.json','source-profile.json'}|{'files/'+n for n in PAYLOADS}|{p.relative_to(artifact).as_posix() for p in (artifact/'licenses').rglob('*') if p.is_file()}
+  expected={'current-apps-build.json','source-profile.json'}|{'files/'+n for n in PAYLOADS}|{'debug/'+n+'.elf' for n in APPS}|{p.relative_to(artifact).as_posix() for p in (artifact/'licenses').rglob('*') if p.is_file()}
   require(set(names)==expected,'Current archive inventory differs')
   for name in names:require(z.read(name)==(artifact/name).read_bytes(),'Current archive/member differs: '+name)
  require(json.loads((artifact/'source-profile.json').read_text())==c,'Current source profile differs')
@@ -110,7 +123,7 @@ def apply(store,artifact,head,root=ROOT):
  """Input has already passed historical archive and paired Clock verification."""
  files,r=verify(artifact,head,root);before=dict(store)
  require(set(PAYLOADS)-ADDED_PAYLOADS<=set(before),'Current overlay existing file set differs')
- require(not (ADDED_PAYLOADS&set(before)),'Current overlay Bluetooth files unexpectedly preexist')
+ require(not (ADDED_PAYLOADS&set(before)),'Current overlay added files unexpectedly preexist')
  require(json.loads(before['board.json'])==r['baseline_board'],'Current overlay original board differs')
  require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root,motion_model=r.get('motion_model')),'Current Bluetooth board projection differs')
  require(json.loads(before['boot.json'])==r['baseline_boot'],'Unexpected policy change before current overlay')

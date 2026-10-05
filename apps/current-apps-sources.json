@@ -4,7 +4,7 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "1b4f4f8c437c418576356ec8604a9b6253d8b1c6"
+      "commit": "33bb5640219c2989fd004ef551c9534ace57c989"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
@@ -16,11 +16,11 @@
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9"
+      "commit": "3392ad7f2e165ba2f1f2f666596cd946d14252a4"
     }
   },
   "app_versions": {
-    "springboard": "1.4.7",
+    "springboard": "1.4.8",
     "settings": "1.2.5",
     "wifi_settings": "1.1.3",
     "ota_update": "1.1.2",
@@ -34,7 +34,8 @@
     "audio_spectrum": "0.2.3",
     "points_in_time": "0.4.3",
     "default": "0.10.0",
-    "clock": "0.10.0"
+    "clock": "0.10.0",
+    "file_browser": "1.4.0"
   },
   "service_version": "0.4.1"
 }
