@@ -18,23 +18,23 @@ bool owner() { return true; }
 #ifdef STORE_ADMISSION_UPDATE_PLATFORMS
 risc_http_client_v1 httpApi{
   1,sizeof(httpApi),nullptr,
-  [](void*,const risc_http_request_v1*,uint64_t*){return RISC_HTTP_CLOSED;},
-  [](void*,uint64_t,void*,uint32_t,uint32_t*){return RISC_HTTP_CLOSED;},
-  [](void*,uint64_t,risc_http_response_v1*){return RISC_HTTP_CLOSED;},
-  [](void*,uint64_t){return RISC_HTTP_CLOSED;}
+  [](void*,const risc_http_request_v1*,uint64_t*)->int32_t{return RISC_HTTP_CLOSED;},
+  [](void*,uint64_t,void*,uint32_t,uint32_t*)->int32_t{return RISC_HTTP_CLOSED;},
+  [](void*,uint64_t,risc_http_response_v1*)->int32_t{return RISC_HTTP_CLOSED;},
+  [](void*,uint64_t)->int32_t{return RISC_HTTP_CLOSED;}
 };
 risc_bank_store_v1 bankApi{
   1,sizeof(bankApi),nullptr,
   [](void*,risc_bank_status_v1*){return false;},
-  [](void*,const risc_bank_image_v1*,uint64_t*){return RISC_BANK_UNAVAILABLE;},
-  [](void*,const char*,const void*,uint32_t,const risc_bank_image_v1*,uint64_t*){return RISC_BANK_UNAVAILABLE;},
-  [](void*,uint64_t,risc_bank_status_v1*){return RISC_BANK_UNAVAILABLE;},
-  [](void*,uint64_t,const void*,uint32_t){return RISC_BANK_UNAVAILABLE;},
-  [](void*,uint64_t){return RISC_BANK_UNAVAILABLE;},
-  [](void*,uint64_t){return RISC_BANK_UNAVAILABLE;},
-  [](void*,uint64_t){return RISC_BANK_UNAVAILABLE;},
+  [](void*,const risc_bank_image_v1*,uint64_t*)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,const char*,const void*,uint32_t,const risc_bank_image_v1*,uint64_t*)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,uint64_t,risc_bank_status_v1*)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,uint64_t,const void*,uint32_t)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,uint64_t)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,uint64_t)->int32_t{return RISC_BANK_UNAVAILABLE;},
+  [](void*,uint64_t)->int32_t{return RISC_BANK_UNAVAILABLE;},
   [](void*,uint64_t){return false;},
-  [](void*,uint32_t,void*,uint32_t,uint32_t*){return RISC_BANK_UNAVAILABLE;}
+  [](void*,uint32_t,void*,uint32_t,uint32_t*)->int32_t{return RISC_BANK_UNAVAILABLE;}
 };
 #endif
 bool bind(RiscBoot::Runtime& runtime) {
