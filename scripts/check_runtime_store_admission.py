@@ -66,6 +66,8 @@ def compile_harness(runtime, output):
     cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
     if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
+    if 'hciOpen' in cpu_header:
+        command += ['-DSTORE_ADMISSION_HCI']
     if 'i2sOpenRx' in cpu_header:
         command += ['-DSTORE_ADMISSION_I2S_RX']
     if (runtime/'sdk/driver/RiscHttpClientV1.h').is_file() and (runtime/'sdk/driver/RiscBankStoreV1.h').is_file():

@@ -37,7 +37,7 @@ bool confirm(){
   assert(current&&current->active()&&!current->retained()&&!m.ready);
   assert(m.appLoaded&&m.frames>0&&m.frameRows==240&&m.brightness>0&&m.touchReads>0);
 #ifdef CURRENT_APPS_PROFILE
-  assert(m.appSettingsReads==3&&m.quickSettingsReads==3&&m.appPointsReads==1&&nativeSafe);
+  assert(m.appSettingsReads==3&&m.quickSettingsReads==4&&m.appPointsReads==1&&nativeSafe);
 #else
   assert(m.appSettingsReads==2&&m.appPointsReads==1&&nativeSafe);
 #endif
@@ -92,6 +92,13 @@ int main(int argc,char** argv){
   hardware.i2sWrite=[](uint8_t,const int16_t*,size_t,size_t*,uint32_t){raw();return false;};
   hardware.i2sClose=[](uint8_t){raw();return false;};
 #ifdef CURRENT_APPS_PROFILE
+  // Bluetooth defaults to Off. Startup may query the native controller but
+  // must never initialize or send packets without an explicit saved choice.
+  hardware.hciOpen=[](){raw();return false;};
+  hardware.hciSend=[](uint8_t,const uint8_t*,size_t,uint32_t){raw();return false;};
+  hardware.hciReceive=[](uint8_t*,uint8_t*,size_t,size_t*,uint32_t){raw();return false;};
+  hardware.hciClose=[](){raw();return false;};
+  hardware.hciIdle=[](){return true;};hardware.hciSafe=[](){return true;};
   hardware.i2sOpenRx=[](uint8_t,uint8_t,uint8_t,uint32_t){raw();return false;};
   hardware.i2sRead=[](uint8_t,int16_t*,size_t,size_t*,uint32_t){raw();return false;};
 #endif

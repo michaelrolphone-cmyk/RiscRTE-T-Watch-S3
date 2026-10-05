@@ -3,6 +3,7 @@
 #include "twatch_caps.h"
 #include "RiscDisplayOutputV1.h"
 #include "RiscTouchV1.h"
+#include "RiscHciControllerStatusV1.h"
 #include <assert.h>
 #include <stdio.h>
 static uint64_t m_now, m_serial;
@@ -389,9 +390,11 @@ static bool m_addresses(void *c, uint64_t t, uint8_t *s, uint8_t *a) {
 }
 static garden_radio_v1 m_radio = {1,       sizeof(m_radio), NULL, m_rclaim, m_join,     m_state,
                                   m_leave, m_free,          m_ap, m_leave,  m_addresses};
+static uint64_t m_hci_token;
+static bool m_hci_retained;
 static bool m_hopen(void *c, uint32_t unit, uint64_t *t) {
     assert(!unit);
-    return m_rclaim(c, t);
+    bool ok=m_rclaim(c,t);if(ok)m_hci_token=*t;return ok;
 }
 static bool m_hsend(void *c, uint64_t t, uint8_t type, const uint8_t *p, size_t n, uint32_t ms) {
     (void)c;
@@ -412,5 +415,6 @@ static bool m_hreceive(void *c, uint64_t t, uint8_t *type, uint8_t *p, size_t ca
     *n = 3;
     return true;
 }
-static twatch_hci_controller_v1 m_hci = {1,       sizeof(m_hci), NULL,  m_hopen,
-                                         m_hsend, m_hreceive,    m_free};
+static bool m_hclose(void*c,uint64_t t){bool ok=m_free(c,t);m_hci_retained=!ok;if(ok)m_hci_token=0;return ok;}
+static bool m_hstatus(void*c,uint64_t t,uint8_t*out){(void)c;*out=2;if(t!=m_hci_token)return false;*out=!t?0:m_hci_retained?2:1;return true;}
+static risc_hci_controller_status_v1 m_hci={{1,sizeof(m_hci),NULL,m_hopen,m_hsend,m_hreceive,m_hclose},m_hstatus};

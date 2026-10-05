@@ -7,18 +7,21 @@ from build_wifi_common import zip_bytes
 class CurrentAppsOverlay(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);(self.root/'apps').mkdir();self.art=self.root/'artifact';(self.art/'files').mkdir(parents=True);(self.art/'licenses').mkdir()
-  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.0'}
+  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.1'}
   (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
   self.boot={'drivers':[{'manifest':'alarm-service/manifest.json','key_value':[{'key':k,'namespace':n,'access':a} for k,(n,a) in bindings.items()]}],'app_capabilities':[{'manifest':n+'.json','grants':copy.deepcopy(grants)} for n in current.APPS]}
-  self.store={n:b'baseline' for n in current.PAYLOADS};self.store.update({'board.json':b'original-board','pmu/driver.elf':b'original-PMU','default.elf':b'paired-clock-default','clock.elf':b'paired-clock-return','boot.json':current.encoded(self.boot)})
-  r={'schema':1,'profile':current.PROFILE,'watch_source':self.head,'configuration':self.cfg,'compiler':'GCC8.4.0','target_validation':True,'baseline_boot':self.boot,'boot':current.configure_boot(self.boot),'catalog':[],'apps':{},'service':{'defines':['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL']},'files':{}}
+  self.store={n:b'baseline' for n in current.PAYLOADS-current.ADDED_PAYLOADS};self.store.update({'board.json':current.encoded({'devices':[]}),'pmu/driver.elf':b'original-PMU','default.elf':b'paired-clock-default','clock.elf':b'paired-clock-return','boot.json':current.encoded(self.boot)})
+  (self.root/'hardware').mkdir();(self.root/'hardware/sx1262-915-bma423.json').write_bytes((ROOT/'hardware/sx1262-915-bma423.json').read_bytes())
+  r={'schema':1,'profile':current.PROFILE,'watch_source':self.head,'configuration':self.cfg,'compiler':'GCC8.4.0','target_validation':True,'baseline_boot':self.boot,'boot':current.configure_boot(self.boot),'catalog':[],'apps':{},'service':{'defines':['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL']},'files':{}}
+  r['baseline_board']={'devices':[]};r['board']=current.configure_board(r['baseline_board'],self.root)
   for n in current.PAYLOADS:
    p=self.art/'files'/n;p.parent.mkdir(exist_ok=True)
-   if '/' not in n and n.endswith('.json'):
-    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2}]};b=current.encoded(v)
-   elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.0'})
+   if n=='board.json':b=current.encoded(r['board'])
+   elif '/' not in n and n.endswith('.json'):
+    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2},{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1}]};b=current.encoded(v)
+   elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.1'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
   for n in current.APPS:r['apps'][n]={**r['files'][n+'.elf'],'version':'1.0.1','defines':definitions(n,'1.0.1'),'compaction':{'retained_sections_symbols_relocations_unchanged':True,'removed_sections':['.xt.lit','.xt.prop'],'before_bytes':r['files'][n+'.elf']['size_bytes'],'after_bytes':r['files'][n+'.elf']['size_bytes']}}
@@ -34,12 +37,16 @@ class CurrentAppsOverlay(unittest.TestCase):
   (self.art/'current-apps.zip').write_bytes(zip_bytes({n:(self.art/n).read_bytes() for n in names}))
  def test_exact_allowlist_and_grants(self):
   original=copy.deepcopy(self.store);out,proof=current.apply(self.store,self.art,self.head,self.root)
-  self.assertEqual(self.store,original);self.assertEqual(set(out),set(original))
+  self.assertEqual(self.store,original);self.assertEqual(set(out),set(original)|current.ADDED_PAYLOADS)
   self.assertEqual(set(proof['files'])|set(proof['preserved_files']),set(out))
   self.assertFalse(set(proof['files'])&set(proof['preserved_files']))
-  for n in ('board.json','pmu/driver.elf'):self.assertEqual(out[n],original[n])
+  self.assertEqual(out['pmu/driver.elf'],original['pmu/driver.elf'])
+  self.assertEqual(json.loads(out['board.json']),current.configure_board(json.loads(original['board.json']),self.root))
   b=json.loads(out['boot.json']);a=next(x for x in b['app_capabilities'] if x['manifest']=='alarms.json');self.assertEqual([x['instance_id'] for x in a['grants'] if x['capability']=='storage.key-value'],[3,1])
-  self.assertEqual(b['drivers'][0]['key_value'][-1],current.ALARM_VOLUME)
+  self.assertEqual(b['drivers'][0]['key_value'][-1],current.ALARM_DND)
+ def test_bluetooth_projection_cannot_replace_existing_device(self):
+  b={'devices':[{'instance_id':16}]}
+  with self.assertRaises(ValueError):current.configure_board(b,self.root)
  def test_wrong_head_and_configuration(self):
   with self.assertRaises(ValueError):current.verify(self.art,'3'*40,self.root)
   self.record['configuration']['service_version']='0.5.0';self.write_record()

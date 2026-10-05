@@ -141,9 +141,9 @@ def _policies(content, current_profile=False):
         expected = {('display.output', 1, 5), ('input.touch.raw', 1, 6), ('rtc.clock', 2, 8),
                     ('board.battery', 1, 4), ('storage.key-value', 1, 6), ('net.wifi', 1, 15),
                     ('software.update.' + kind, 1, 0), ('alarm.service', 1, 0)}
-        if current_profile:expected.add(('storage.key-value',1,1))
+        if current_profile:expected.update({('storage.key-value',1,1),('bluetooth.hci',1,16)})
         actual = {(g['capability'], g['api'], g.get('instance_id', 0)) for g in policy['grants']}
-        require(len(policy['grants']) == (9 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
+        require(len(policy['grants']) == (10 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
     return boot
 
 
@@ -251,7 +251,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
-    if current_profile:record['clock_defines'].append('WATCH_QUICK_ACTIONS')
+    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS']
     with _build(output) as build:
         host = _host(runtime, build, utilities if current_profile else None)
         modules = build / 'modules'
@@ -290,7 +290,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             extra, compiler, language = [], cc, '-std=c11'
             if name == 'alarm-service':
                 source = utilities / 'Services/alarm_service/service.c'
-                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL'] if current_profile else [])
+                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'] if current_profile else [])
                 module_includes = ['-I' + str(p) for p in (utilities / 'lib/Alarm/include', runtime / 'sdk/driver', system / 'lib/PortableApps/include')]
             elif name.startswith('software-update-'):
                 source = system / 'Services/update/service.cpp'
@@ -312,7 +312,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                      *['-D' + flag for flag in record['clock_defines']], '-c', ROOT / 'apps/clock' / name, '-o', obj])
             objects.append(obj)
         if current_profile:
-            for name in ('quick_actions.c','quick_render.c','quick_session.c'):
+            for name in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c'):
                 obj=modules/(Path(name).stem+'.o')
                 command([cc,'-std=c11',*_flags(),'-fPIC','-fvisibility=hidden',*clock_includes,'-c',system/'lib/PortableApps/src'/name,'-o',obj]);objects.append(obj)
         clock = modules / 'default.elf'

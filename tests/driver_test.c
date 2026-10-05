@@ -502,7 +502,9 @@ int main(void) {
     a->disconnect(NULL);
     assert(a->status(NULL) == WIFI_LINK_DOWN);
 #elif TEST_KIND == 16
-    const risc_bluetooth_hci_v1 *a = d->capability;
+    const portable_bluetooth_control_v1 *a = d->capability;
+    uint8_t state=99;assert(a->status(NULL,&state)&&state==PORTABLE_BLUETOOTH_OFF&&!m_hci_token);
+    assert(a->set_enabled(NULL,true)&&a->status(NULL,&state)&&state==PORTABLE_BLUETOOTH_ON);
     uint8_t reset[] = {3, 12, 0};
     assert(a->send(NULL, 1, reset, 3));
     assert(!a->send(NULL, 1, reset, 2));

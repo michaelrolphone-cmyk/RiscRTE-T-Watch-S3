@@ -98,7 +98,7 @@ int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_
   if(m.appLoaded&&!m.firstAppDelay){
     if(ns==1&&(!strcmp(key,"watch_face")||!strcmp(key,"time_format")))++m.appSettingsReads;
     if(ns==5&&!strcmp(key,"points_cfg"))++m.appPointsReads;
-    if(ns==1&&(!strcmp(key,"brightness")||!strcmp(key,"alarm_volume")||!strcmp(key,"quick_volume")))++m.quickSettingsReads;
+    if(ns==1&&(!strcmp(key,"brightness")||!strcmp(key,"alarm_volume")||!strcmp(key,"quick_volume")||!strcmp(key,"quick_radio")))++m.quickSettingsReads;
   }
 #ifdef PRODUCTION_POINTS_DEFAULTS
   if(ns==4&&!strcmp(key,"points_occ")&&m.pointsLedgerPresent){

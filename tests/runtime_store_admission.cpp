@@ -49,6 +49,13 @@ bool bind(RiscBoot::Runtime& runtime) {
 }
 RiscCpu::Hardware hardware() {
   RiscCpu::Hardware h{};
+#ifdef STORE_ADMISSION_HCI
+  h.hciOpen=[](){++hardwareCalls;return false;};
+  h.hciSend=[](uint8_t,const uint8_t*,size_t,uint32_t){++hardwareCalls;return false;};
+  h.hciReceive=[](uint8_t*,uint8_t*,size_t,size_t*,uint32_t){++hardwareCalls;return false;};
+  h.hciClose=[](){++hardwareCalls;return false;};
+  h.hciIdle=[](){++hardwareCalls;return false;};h.hciSafe=[](){++hardwareCalls;return false;};
+#endif
   h.owner = owner;
   h.now = []() -> uint64_t { ++hardwareCalls; return 0; };
   h.sleep = [](uint32_t) { ++hardwareCalls; };

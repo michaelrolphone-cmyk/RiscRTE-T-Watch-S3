@@ -7,8 +7,8 @@ panel, segmented controls, fonts and tile arrangement are retained, with Font
 Awesome equivalents.
 
 Current candidate: saved brightness, notification volume (default 50%), Silent,
-Torch and clearly labeled Wi-Fi Settings navigation. DND, Airplane and Bluetooth
-are visibly unavailable pending their cross-app semantics/provider integration.
+Torch, shared Wi-Fi enable policy, real Bluetooth controller control and Airplane
+restoration. DND remains unavailable pending the owner’s exception policy.
 This is not a claim that the full six-toggle assignment is complete.
 
 Brightness is restored after Light/Deep wake, refused sleep, notification

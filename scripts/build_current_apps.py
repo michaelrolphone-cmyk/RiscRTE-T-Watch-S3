@@ -3,7 +3,7 @@
 import argparse,hashlib,json,os,shutil,subprocess,sys
 from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,
-                                 config,configure_boot,metadata,encoded,require,verify)
+                                 config,configure_boot,configure_board,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
 from compact_current_elf import compact
 from build_wifi_common import read_zip,zip_bytes
@@ -13,9 +13,9 @@ def clean(path,expected):
  require(git(path,'rev-parse','HEAD')==expected,'Current source pin differs: '+str(path))
  require(not git(path,'status','--porcelain','--untracked-files=no'),'Current source is dirty: '+str(path))
 def definitions(name,version):
- if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
+ if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
  flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES',
-        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS']
+        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS']
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
@@ -59,6 +59,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
   return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof}
  record={'schema':1,'profile':PROFILE,'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
+ record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root)
+ (files_dir/'board.json').write_bytes(encoded(record['board']))
+ ble=files_dir/'ble';ble.mkdir()
+ for ext in ('driver.elf','manifest.json'):
+  src=root/('dist/twatch-ble/driver.elf' if ext=='driver.elf' else 'drivers/twatch_ble/manifest.json')
+  (ble/ext).write_bytes(src.read_bytes())
+ subprocess.run([str(validator),str(ble/'driver.elf')],check=True)
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/(name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/(name+'.json')).read_text())
@@ -67,16 +74,16 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
    native=repo/'Apps/native'/(name+'.json');require(native.is_file(),'Current native updater manifest missing: '+name)
    require(json.loads(native.read_text())['version']==version,'Portable Nova updater manifest differs')
   sources=[source,repos['system-apps']/'lib/PortableApps/src/adapter.c',out/('catalog.c' if name=='springboard' else 'empty_catalog.c'),root/'apps/clock/portable_navigation.c',root/'apps/clock/portable_sleep.c']
-  sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c')]
+  sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]
   if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},{'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'})
   m=json.loads(store[name+'.json']);m['version']=version
-  for cap,api in [('storage.key-value',1),('rtc.clock',2)]:
+  for cap,api in [('storage.key-value',1),('rtc.clock',2),('net.wifi',1),('bluetooth.hci',1)]:
    if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   (files_dir/(name+'.elf')).write_bytes(b);(files_dir/(name+'.json')).write_bytes(encoded(m))
   record['apps'][name]={**meta,'version':version,'repository':repo_name,'repository_sha':c['sources'][repo_name]['commit'],'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
- service_flags=['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL']
+ service_flags=['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL']
  b,meta=compile_target('alarm-service',[repos['utilities']/'Services/alarm_service/service.c'],service_flags,[repos['utilities']/'lib/Alarm/include',repos['runtime']/'sdk/driver',repos['system-apps']/'lib/PortableApps/include'],{'t5_driver_get'},{'memcpy','memset','memcmp','strcmp','strlen'})
  service_manifest=json.loads((repos['utilities']/'Services/alarm_service/points-manifest.json').read_text());require(service_manifest['version']==c['service_version'],'Wrong current service source version')
  policy=json.loads((repos['utilities']/'Services/alarm_service/points-storage-policy.example.json').read_text())

@@ -11,9 +11,11 @@ CLOCK_APPS=('default','clock')
 NON_CLOCK_APPS=SYSTEM_APPS+UTILITY_APPS+PRODUCTIVITY_APPS
 APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
-PAYLOADS={n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
+ADDED_PAYLOADS={'ble/driver.elf','ble/manifest.json'}
+PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
+ALARM_DND={'key':'alert_dnd','namespace':1,'access':'read'}
 ALARM_PREFERENCES={'capability':'storage.key-value','api':1,'instance_id':1}
 def sha(b):return hashlib.sha256(b).hexdigest()
 def encoded(v):return (json.dumps(v,indent=2,sort_keys=True)+'\n').encode()
@@ -27,8 +29,16 @@ def config(root=ROOT):
  for p in c['sources'].values():require(re.fullmatch('[0-9a-f]{40}',p.get('commit','')) is not None,'Unpinned current source')
  require(set(c['app_versions'])==set(APPS),'Current app versions incomplete')
  for v in list(c['app_versions'].values())+[c['service_version']]:require(re.fullmatch(r'\d+\.\d+\.\d+',v) is not None,'Bad current version')
- require(c['service_version']=='0.4.0','Expected reviewed CUE/volume service0.4.0')
+ require(c['service_version']=='0.4.1','Expected reviewed CUE/volume service0.4.1')
  return c
+
+def configure_board(original,root=ROOT):
+ b=copy.deepcopy(original)
+ source=json.loads((Path(root)/'hardware/sx1262-915-bma423.json').read_text())
+ candidates=[d for d in source['devices'] if d['instance_id']==16 and d['compatible']=='espressif,esp32s3-ble']
+ require(len(candidates)==1,'Missing canonical Bluetooth hardware')
+ require(not any(d['instance_id']==16 for d in b['devices']),'Unexpected prior Bluetooth hardware')
+ b['devices'].append(copy.deepcopy(candidates[0]));return b
 
 def configure_boot(original):
  """Add shared settings/RTC grants explicitly; preserve each existing grant."""
@@ -41,12 +51,14 @@ def configure_boot(original):
  keys=rows[0]['key_value'];require(len(keys)==7 and not any(x['key']=='alarm_volume' for x in keys),'Unexpected prior bound service policy')
  expected={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
  require({x['key']:(x['namespace'],x['access']) for x in keys}==expected,'Legacy service bindings differ')
- keys.append(copy.deepcopy(ALARM_VOLUME))
+ keys.append(copy.deepcopy(ALARM_VOLUME));keys.append(copy.deepcopy(ALARM_DND))
+ require(not any(x.get('instance_id')==16 for x in b['drivers']),'Unexpected prior Bluetooth provider')
+ b['drivers'].append({'manifest':'ble/manifest.json','instance_id':16})
  for row in b['app_capabilities']:
   if row['manifest'] in {n+'.json' for n in APPS}:
-   for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8}):
+   for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16}):
     if grant not in row['grants']:row['grants'].append(copy.deepcopy(grant))
-  require(len(row['grants'])<=9,'Current application exceeds Runtime grant bound')
+  require(len(row['grants'])<=10,'Current application exceeds Runtime grant bound')
  return b
 
 def verify(artifact,head,root=ROOT):
@@ -76,7 +88,7 @@ def verify(artifact,head,root=ROOT):
   require(not Path(name).is_absolute() and '..' not in Path(name).parts and re.fullmatch('[0-9a-f]{64}',digest) is not None,'Unsafe Clock source hash entry')
   require((Path(root)/name).is_file() and sha((Path(root)/name).read_bytes())==digest,'Current Clock source bytes differ: '+name)
  require(json.loads(files['alarm-service/manifest.json'])['version']==c['service_version'],'Current alarm version mismatch')
- require(r['service']['defines']==['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL'],'Wrong current service profile')
+ require(r['service']['defines']==['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'],'Wrong current service profile')
  archive=artifact/'current-apps.zip';require(archive.is_file(),'Current archive missing')
  with zipfile.ZipFile(archive) as z:
   names=z.namelist();require(len(names)==len(set(names)),'Duplicate current archive members')
@@ -89,10 +101,13 @@ def verify(artifact,head,root=ROOT):
 def apply(store,artifact,head,root=ROOT):
  """Input has already passed historical archive and paired Clock verification."""
  files,r=verify(artifact,head,root);before=dict(store)
- require(set(PAYLOADS)<=set(before),'Current overlay may replace only installed files')
+ require(set(PAYLOADS)-ADDED_PAYLOADS<=set(before),'Current overlay existing file set differs')
+ require(not (ADDED_PAYLOADS&set(before)),'Current overlay Bluetooth files unexpectedly preexist')
+ require(json.loads(before['board.json'])==r['baseline_board'],'Current overlay original board differs')
+ require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root),'Current Bluetooth board projection differs')
  require(json.loads(before['boot.json'])==r['baseline_boot'],'Unexpected policy change before current overlay')
  after=dict(before);after.update(files);after['boot.json']=encoded(configure_boot(r['baseline_boot']))
- require(set(before)==set(after),'Current overlay added/removed store members')
+ require(set(before)|ADDED_PAYLOADS==set(after),'Current overlay added/removed unexpected store members')
  for name,b in before.items():
   if name not in ALLOWED:require(after[name]==b,'Current overlay changed unrelated payload: '+name)
  require(json.loads(after['boot.json'])==r['boot'],'Current overlay boot proof mismatch')

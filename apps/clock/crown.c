@@ -27,6 +27,10 @@ static bool clock_alarm_failure(void);
 #include "PortableQuickSession.h"
 #include "PortableQuickRender.h"
 static pqa_session clock_quick;
+#ifdef WATCH_QUICK_RADIOS
+#include "PortableQuickRadios.h"
+static pqa_radios clock_radios;
+#endif
 #endif
 #include "launcher_touch.h"
 #include "PortableSleepPolicy.h"
@@ -347,6 +351,9 @@ static bool startup(void) {
 #include "clock_alarm.inc"
 #endif
 static int sleep_cycle(void) {
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_suspend(rt)){rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");return false;}
+#endif
     /* Clear retained panel RAM before sleep, not merely its PWM. If the
      * platform briefly restores the backlight before the panel resume hook,
      * the exposed completed image is black rather than the old Clock. */
@@ -375,6 +382,9 @@ static int sleep_cycle(void) {
     if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
 #endif
     if(rc<0)return false;
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_resume(&clock_radios,&clock_quick.ui,rt))return false;
+#endif
     uint32_t discard;
     reset_telemetry();
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -456,6 +466,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_QUICK_ACTIONS
     if(!pqa_session_load(&clock_quick,rt))goto done;
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_load(&clock_radios,&clock_quick.ui,rt))goto done;
+#endif
 #endif
 #ifdef WATCH_CLOCK_ALARMS
 #ifdef WATCH_CLOCK_POINTS
@@ -519,10 +532,13 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(events&3u)pqa_close(&clock_quick.ui);
         uint32_t quick_actions=pqa_take_action(&clock_quick.ui);bool volume_changed=false;
         if(!pqa_session_apply(&clock_quick,rt,display,quick_actions,&volume_changed))break;
+#ifdef WATCH_QUICK_RADIOS
+        if(!pqa_radios_apply(&clock_radios,&clock_quick.ui,rt,quick_actions))break;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
         if(volume_changed && clock_alarm.api)(void)clock_alarm.api->refresh(clock_alarm.api->context);
 #endif
-        if(quick_actions&PQA_WIFI) {
+        if(!clock_quick.ui.radio_controls && (quick_actions&PQA_WIFI)) {
             pqa_cancel(&clock_quick.ui);
             if(!pqa_session_restore(&clock_quick,display) || !launcher_touch_close(&touch))break;
             if(rt->request_launch("wifi_settings.elf"))break;
