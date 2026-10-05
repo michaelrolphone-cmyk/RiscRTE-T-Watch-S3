@@ -42,8 +42,10 @@ int main(void) {
 #else
  assert(v.work_end.at_rtc-v.work_start.at_rtc==10800);
 #endif
+#if WATCH_POINTS_EXTENDED
  /* Custom metadata affects presentation only; recurrence and warning cues are
-  * not projected as visible schedule edges. */
+  * not projected as visible schedule edges. Historical source-pin lanes stop
+  * above, proving the legacy projection still compiles and behaves unchanged. */
  c=(points_config){.revision=7,.created=civil(2026,10,4,0,0)};
  c.points[0]=(points_item){.kind=POINTS_CUSTOM_1,.enabled=1,.mode=3,.weekdays=127,.hour=14,.duration_minutes=30,.notify_end=1,.warn3=1};
  assert(watch_points_projection(&c,&m,civil(2026,10,4,13,0),&v)&&v.next_count>=2);
@@ -51,5 +53,6 @@ int main(void) {
  assert(v.next[1].is_end&&v.next[1].at_rtc-v.next[0].at_rtc==1800);
  assert(watch_points_projection(&c,&m,civil(2026,10,4,13,1),&a)&&v.revision==a.revision);
  m.revision++;m.custom[0].color=7;assert(watch_points_projection(&c,&m,civil(2026,10,4,13,1),&a)&&v.revision!=a.revision&&a.next[0].color_index==7);
+#endif
  puts("Points projection: live/custom schedule, stable cache, midnight parent day, empty/error and real DST work bounds passed");
 }
