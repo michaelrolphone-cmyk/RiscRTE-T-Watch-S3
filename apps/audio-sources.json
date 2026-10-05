@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "minimum_runtime": "0.1.16",
+  "springboard_version": "1.4.5",
+  "sources": {
+    "system-apps": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+      "commit": "7723df25aacbf299f1e24551eddd35afc58e059f"
+    },
+    "utilities": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+      "commit": "a04911ce643415248dfe6e14a48f61dfd1d960ff"
+    },
+    "runtime": {
+      "repository": "michaelrolphone-cmyk/RiscRTE",
+      "commit": "0fa8c576f547817b8124ed10686d80a6351bb634"
+    }
+  },
+  "apps": {
+    "frequency_generator": {
+      "version": "0.1.2",
+      "catalog": {
+        "display_name": "Frequency Generator",
+        "file_name": "frequency_generator.elf",
+        "icon": "solid:f028"
+      }
+    },
+    "audio_spectrum": {
+      "version": "0.1.1",
+      "catalog": {
+        "display_name": "Audio Spectrum",
+        "file_name": "audio_spectrum.elf",
+        "icon": "solid:f130"
+      }
+    }
+  }
+}
