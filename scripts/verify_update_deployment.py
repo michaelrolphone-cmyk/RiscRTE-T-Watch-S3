@@ -87,7 +87,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
     record = json.loads(files['deployment-record.json'])
     entries(files, record)
     require(record['schema'] == 'riscrte.watch-update-launcher-deployment' and
-            record['schema_version'] == 1 and record['app_version'] == '0.7.1' and
+            record['schema_version'] == 1 and record['app_version'] == '0.8.0' and
             record['physical_verification'] == 'pending', 'Wrong paired deployment identity')
     require(exact_sha(record['source_sha']) and
             (expected_head is None or expected_head == record['source_sha']), 'Unexpected Watch source')
@@ -165,7 +165,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
         if name in APPS:
             expected = copy.deepcopy(baseline['app_manifests'][name])
             if name in ('default', 'clock'):
-                expected['version'] = '0.7.1'
+                expected['version'] = '0.8.0'
             elif name == 'springboard':
                 expected['version'] = service_sources['application_versions'][name]
         else:
