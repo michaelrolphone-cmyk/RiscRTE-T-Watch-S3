@@ -24,7 +24,7 @@ def verify(path):
   assert len(physical)==9 and {d['instance_id'] for d in physical}==DEVICES
   assert services==[{'manifest':'alarm-service/manifest.json','key_value':KV}]
   assert [p['manifest'] for p in boot['app_capabilities']]==[a+'.json' for a in APPS]
-  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.4.0'}
+  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.5','settings':'1.2.4','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.4.0'}
   metadata=json.loads(z.read('shared-app-build.json'))
   for name,policy in zip(APPS,boot['app_capabilities']):
    grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
