@@ -957,7 +957,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-current-apps-${{ github.event.pull_request.head.sha || github.sha }}
-          path: dist/current-apps/
+          path: |
+            dist/current-apps/current-apps.zip
+            dist/current-apps/current-apps-build.json
+            dist/current-apps/source-profile.json
+            dist/current-apps/files/
+            dist/current-apps/licenses/
           if-no-files-found: error
           retention-days: 30
       - uses: actions/upload-artifact@v4

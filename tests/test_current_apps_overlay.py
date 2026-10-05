@@ -71,4 +71,9 @@ class CurrentAppsOverlay(unittest.TestCase):
  def test_volume_policy_not_broadened(self):
   b=copy.deepcopy(self.boot);b['drivers'][0]['key_value'][0]['namespace']=9
   with self.assertRaises(ValueError):current.configure_boot(b)
+ def test_ci_upload_has_exact_canonical_envelope(self):
+  workflow=(ROOT/'.github/workflows/drivers.yml').read_text()
+  block=workflow.split('name: twatch-current-apps-',1)[1].split('if-no-files-found:',1)[0]
+  paths={line.strip() for line in block.split('path: |',1)[1].splitlines() if line.strip()}
+  self.assertEqual(paths,{'dist/current-apps/current-apps.zip','dist/current-apps/current-apps-build.json','dist/current-apps/source-profile.json','dist/current-apps/files/','dist/current-apps/licenses/'})
 if __name__=='__main__':unittest.main()

@@ -49,7 +49,7 @@ only the existing validated namespace4 Points expiration ledger write; no
 configuration writes, radio/audio I/O, bank I/O, or unexpected RTC writes pass.
 These are software checks, not physical hardware qualification.
 
-Upload the exact output as `twatch-current-apps-<Watch SHA>` in the same run
+Upload only the canonical ZIP, build record, source profile, `files/` and `licenses/` as `twatch-current-apps-<Watch SHA>` in the same run
 attempt as the final main BIN. The inner `current-apps.zip` contains only
 `current-apps-build.json`, `source-profile.json`, `files/**`, and `licenses/**`.
 The final manifest's `current_apps_overlay` records its exact archive and build
@@ -58,3 +58,5 @@ Clock source map uses Watch-relative paths and SHA256 digests. Historical
 `points_overlay` evidence continues to describe the historical input bytes.
 
 The final Clock pair uses `apps/clock/current-manifest.json` (0.8.1) through the explicit `current=True` build profile. The ordinary and historical paired manifest files remain at 0.8.0 so historical custody validators are unchanged. Current mode refuses incomplete/non-paired CUE dependencies. This is a packaging identity split, not a widened acceptance rule.
+
+Compiler scratch targets, linker maps, host validators and provider build intermediates stay outside the accepted current-app artifact. CI and publisher both require the exact canonical envelope.
