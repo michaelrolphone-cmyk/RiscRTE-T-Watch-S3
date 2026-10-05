@@ -298,9 +298,16 @@ jobs:
           ref: ${{ steps.points-pins.outputs.runtime }}
           path: .points-dependencies/runtime
           persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          path: .points-dependencies/legacy-utilities
+          persist-credentials: false
       - name: Points projections, nine faces and foreground lifecycle
         run: |
           python scripts/test_points_watch_faces.py
+          python scripts/test_points_stored_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities --productivity .points-dependencies/productivity --legacy-utilities .points-dependencies/legacy-utilities
           python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
           python .points-dependencies/productivity/scripts/test_points_in_time.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
@@ -332,6 +339,10 @@ jobs:
           for bundle in dist/points-common/*.zip; do
             python scripts/build_points_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
           done
+      - name: Current-schema paired Clock payload
+        run: |
+          python scripts/build_points_paired_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python -m unittest discover -s tests -p test_points_paired_clock.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -344,6 +355,7 @@ jobs:
             dist/points-common/*.bin
             dist/points-common/*.json
             dist/points-native/*.png
+            dist/points-paired-clock/*
           if-no-files-found: error
 
   wifi-integration:

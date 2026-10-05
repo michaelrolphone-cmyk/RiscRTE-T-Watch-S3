@@ -24,6 +24,8 @@ def build_service(system,utilities,runtime,points=False,wifi=False,updates=False
     subprocess.run([str(out/'validate-elf'),str(elf)],check=True)
     manifest=(utilities/('Services/alarm_service/points-manifest.json' if points else 'Services/alarm_service/manifest.json')).read_bytes();(out/'alarm-service.json').write_bytes(manifest)
     evidence={'source_pins':pins,'service_version':json.loads(manifest)['version'],'source_sha256':hashlib.sha256((utilities/'Services/alarm_service/service.c').read_bytes()).hexdigest(),'elf_sha256':hashlib.sha256(data).hexdigest(),'size_bytes':len(data),'imports':sorted(imports),'exports':sorted(exports),'compiler':subprocess.check_output([cc,'--version'],text=True).splitlines()[0]}
+    if points and not wifi and not updates:
+        evidence['points_headers']={name:hashlib.sha256((utilities/'lib/Alarm/include'/name).read_bytes()).hexdigest() for name in ('PointsRecords.h','PointsSchedule.h')}
     (out/'alarm-service-build.json').write_text(json.dumps(evidence,indent=2)+'\n')
     print('Original alarm-service ELF: exact source, target ABI/import/export passed')
 if __name__=='__main__':

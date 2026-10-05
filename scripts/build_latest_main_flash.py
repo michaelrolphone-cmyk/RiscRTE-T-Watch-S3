@@ -17,6 +17,7 @@ import zipfile
 from build_update_common import ROOT, read_zip, require
 from audio_overlay import PROFILE as AUDIO_PROFILE, verify as verify_audio
 from build_points_common import PROFILE as POINTS_PROFILE, verify as verify_points
+from build_points_paired_clock import verify as verify_points_clock
 from build_update_flash_bundle import FLASH_BYTES, LAYOUT, assemble
 from build_wifi_store import OFFSET, SIZE, check_image
 from check_runtime_store_admission import unpack_image
@@ -106,6 +107,16 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     for name in overlay:
         require(name in points_store and name in store, 'Missing Points overlay member: ' + name)
         store[name] = points_store[name]
+    # Rebuild with the current Points schema, retaining paired boot confirmation.
+    # Merely finding an UP NEXT string does not establish decoder compatibility.
+    clock_record_path = exact_one(points_artifact_dir, 'points-paired-clock.json')
+    clock_files, clock_record = verify_points_clock(clock_record_path.parent, head,
+        json.loads(points_files['shared/alarm-service-build.json']))
+    for name in ('default.json', 'clock.json'):
+        require(json.loads(clock_files[name]) == json.loads(store[name]),
+                'Paired Points Clock manifest/grants changed: ' + name)
+    store.update(clock_files)
+    overlay += tuple(clock_files)
     points_manifest = json.loads(store['points_in_time.json'])
     alarm_manifest = json.loads(store['alarm-service/manifest.json'])
     require(points_manifest['id'] == 'points_in_time' and points_manifest['version'] == '0.4.0',
@@ -193,6 +204,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'app_version': points_manifest['version'],
             'service_version': alarm_manifest['version'],
             'points_source_sha': points_record['source_sha'],
+            'paired_clock': clock_record,
             'files': {name: {'size_bytes': len(store[name]), 'sha256': sha(store[name])}
                       for name in overlay},
             'watch_face_count': 33,

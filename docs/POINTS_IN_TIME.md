@@ -42,3 +42,33 @@ The service still binds exactly seven keys: alarm_cfg/timer_cfg (namespace 3 rea
 The source pins in `apps/points-sources.json` identify the exact System Apps, Utilities, Runtime and Productivity inputs. Tests cover the main schedule codec, custom metadata codec, PTO1-to-PTO2 compatibility, independent Start/Warning/End delivery, sleep deadlines, output modes, replay without duplicate cues, app uncertainty handling, custom UI behavior, clock projection, custom labels/colors and the production schedule faces.
 
 Physical haptic feel, speaker loudness, wake reliability, power-loss behavior and current draw still require hardware qualification. No merge, release or device operation is performed by this change.
+
+## Combined-image schedule decoder compatibility
+
+The user-reported working `a7307d820bb516b2473a463646feeb6ea8e606bf`
+image and later `70268b265f0c074457ba2601a3fcff9a78e9a109` retained a
+historical update-custody Clock compiled against Utilities `5418d9d`. The
+combined image overlaid the current Points writer/service, but not its Clock.
+The older decoder accepts original PTC1 records but rejects bits 6/7 (end and
+three-minute notifications) and kinds 6/7 (custom points). Thus an unchanged
+face catalog can show **SCHEDULE ERROR** after a newer app saves those records.
+This is a latent compatibility mismatch; it does not contradict ordinary
+unflagged schedules working on the earlier image.
+
+The Points lane now additionally builds both final paired Clocks using the
+same exact Utilities schema as the writer and service. Final assembly verifies
+source pins, record/schedule header hashes, all four payload hashes, and
+unchanged paired manifests before overlaying them. The default Clock keeps
+paired-bank health confirmation. Historical update-custody artifacts are not
+rewritten. All 33 face IDs and their designs remain unchanged.
+
+`test_points_stored_clock.py` reproduces the old failure with actual app-writer
+persisted bytes and the production Clock loader, then proves current decoding
+of original, notification-flagged, and custom records under ASan/UBSan. Reads
+must preserve every saved byte. It also checks the real Clock loader honors
+both saved 12/24-hour preferences. Renderer tests cover AM/PM at midnight/noon,
+future-day labels, and elapsed durations independent of clock format.
+
+No data migration or reset is required by this correction. The full-flash
+migration artifact still has its existing destructive 16MiB flashing contract;
+software compatibility tests are not permission to flash or erase a device.

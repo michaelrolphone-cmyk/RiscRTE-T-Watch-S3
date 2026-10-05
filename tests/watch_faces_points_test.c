@@ -58,6 +58,8 @@ void points_render_frame(void*out,unsigned face,unsigned scenario) {
 }
 int main(int argc,char**argv) {
     char text[24];
+    /* A 12-hour preference must never turn an elapsed duration into wall time. */
+    ps_duration(text,13*3600+5*60,false);assert(!strcmp(text,"13:05:00"));
     const uint32_t durations[]={0,59,60,3599,3600,97200,UINT32_MAX};
     const char*full[]={"00:00","00:59","01:00","59:59","1:00:00","27:00:00","1193046:28:15"};
     const char*compact[]={"0:00","0:00","0:01","0:59","1:00","27:00","1193046:28"};
