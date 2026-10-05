@@ -724,12 +724,17 @@ jobs:
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: .latest/watch-artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .latest/points-artifact
       - name: Assemble installable latest-main Watch image
         env:
           TWATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python scripts/build_latest_main_flash.py \
             --artifact-dir .latest/watch-artifact \
+            --points-artifact-dir .latest/points-artifact \
             --runtime-source .latest/runtime \
             --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
