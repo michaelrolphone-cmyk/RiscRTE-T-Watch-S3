@@ -34,7 +34,11 @@ static const char*ps_event_name(const nova_point_event*e,bool brief) {
     if(e->is_end)return "BACK";
     if(ps_custom_kind(e->kind))return e->label;
     switch(e->kind) {
+#ifdef WATCH_POINTS_LEGACY_PRESENTATION
+        case NOVA_POINT_WORK_START:return brief?"START":"WORK START";
+#else
         case NOVA_POINT_WORK_START:return "WORK";
+#endif
         case NOVA_POINT_WORK_END:return brief?"END":"WORK END";
         case NOVA_POINT_LUNCH:return "LUNCH";
         case NOVA_POINT_BREAK:return "BREAK";

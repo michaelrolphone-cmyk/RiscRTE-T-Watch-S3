@@ -19,6 +19,10 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
         cc = str(fallback)
     if not cc:
         raise SystemExit('Set TWATCH_CC to the pinned ESP32-S3 compiler')
+    # Older Wi-Fi/update custody lanes intentionally retain the historical
+    # Clock bytes. Only the current shared defaults schema expands labels.
+    current_points = bool(points_utilities and b'#define POINTS_DEFAULTS_AVAILABLE '
+                          in (points_utilities/'lib/Alarm/include/PointsRecords.h').read_bytes())
     sources = json.loads((ROOT/'sdk/app/SOURCES.json').read_text())
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
@@ -35,6 +39,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
+                    *([] if current_points else ['-DWATCH_POINTS_LEGACY_PRESENTATION']),
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),

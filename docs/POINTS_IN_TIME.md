@@ -91,3 +91,9 @@ The approved Work/Work End labels retain their stored kind IDs. Custom face
 labels now allow the complete 13-character `Drive to Work`. The shared metadata
 codec retains PTM1 compatibility and uses PTM2 only for 13-character metadata;
 both remain 64-byte records. Existing face IDs and selection records are intact.
+
+Historical Wi-Fi/update custody builds explicitly select the original
+12-character/Work Start presentation when their pinned Utilities lacks the
+shared-defaults schema. Their original binary hashes remain unchanged. The
+current Points lane and both final paired Clocks use the new 13-character/Work
+presentation; final assembly still replaces both historical Clock payloads.

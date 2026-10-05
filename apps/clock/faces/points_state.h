@@ -10,7 +10,13 @@
  * Durations, including BACK events, are already resolved by the scheduler. */
 #define NOVA_POINTS_NEXT_MAX 4u
 #define NOVA_POINTS_TODAY_MAX 16u
+/* Historical custody builds retain their exact presentation ABI. The current
+ * Points lane supports the owner-requested 13-character default label. */
+#ifdef WATCH_POINTS_LEGACY_PRESENTATION
+#define NOVA_POINT_LABEL_MAX 12u
+#else
 #define NOVA_POINT_LABEL_MAX 13u
+#endif
 typedef enum {
     NOVA_POINTS_UNAVAILABLE=0, NOVA_POINTS_READY=1,
     NOVA_POINTS_EMPTY=2, NOVA_POINTS_ERROR=3
