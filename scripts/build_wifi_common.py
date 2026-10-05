@@ -41,7 +41,7 @@ DRIVER_PACKAGES = {
     'twatch-speaker': '74954eaea49ca49ed7c52305436553b9270da64ce2572febbbbf5a84b4a1c9e6',
 }
 _PRESERVED_BASELINE = json.loads((ROOT/'apps/wifi-preserved-elf-baseline.json').read_text())
-_SERVICE_BASELINE = json.loads((ROOT/'apps/points-service-baseline.json').read_text())
+_SERVICE_BASELINE = json.loads((ROOT/'apps/update-alarm-service-baseline.json').read_text())
 SERVICE_SHA256 = _SERVICE_BASELINE['elf_sha256']
 SERVICE_SOURCE_SHA256 = _SERVICE_BASELINE['source_sha256']
 SERVICE_SIZE = _SERVICE_BASELINE['size_bytes']
@@ -144,7 +144,7 @@ def verify_provenance(files, record, root):
                     app['size_bytes'] == len(files['store/' + name + '.elf']),
                     'Clock payload provenance mismatch')
     service = json.loads(files['shared/alarm-service-build.json'])
-    require(service['source_pins'] == pins and service['service_version'] == '0.2.1' and
+    require(service['source_pins'] == pins and service['service_version'] == _SERVICE_BASELINE['service_version'] and
             service['source_sha256'] == SERVICE_SOURCE_SHA256 and service['size_bytes'] == SERVICE_SIZE and
             service['elf_sha256'] == sha(files['store/alarm-service/driver.elf']) == SERVICE_SHA256,
             'Canonical alarm service changed')
