@@ -34,6 +34,33 @@ static twatch_panel_power_v1 panel={.base={.struct_size=sizeof(panel)},.prepare_
 static twatch_pmu_api_v1 pmu={.base={.struct_size=sizeof(pmu)},.key_events=key,.prepare_sleep=pmu_prepare,.resume=pmu_resume,.light_sleep=light,.deep_sleep=deep,.light_sleep_for=timed_light,.sleep_wake_pending=pending,.deep_sleep_for=deep_timed};
 static void reset(void){now=1000;deadline=1100;steps=prepares=refreshes=light_calls=deep_calls=pmu_resumes=panel_resumes=checks=duration_seen=0;
  service_pending=service_due=crown=retained=deep_short=rtc_bad=fail_resume=retained_resume=false;entry_result=RISC_LIGHT_SLEEP_ACTIVE_WAKE;pmu.base.struct_size=sizeof(pmu);}
+static bool motion_registered,motion_fail_prepare,motion_fail_resume,motion_event,motion_fail_pending;
+static unsigned motion_prepares,motion_resumes,set_calls;
+static bool motion_prepare(void*c){(void)c;motion_prepares++;motion_registered=true;return !motion_fail_prepare;}
+static bool motion_resume(void*c){(void)c;motion_resumes++;if(motion_fail_resume)return false;motion_registered=false;return true;}
+static bool motion_pending(void*c,bool*out){(void)c;assert(motion_registered);*out=motion_event;return !motion_fail_pending;}
+static twatch_motion_api_v1 motion={.api_version=1,.struct_size=sizeof(motion),.prepare_wake=motion_prepare,.resume_wake=motion_resume,.wake_pending=motion_pending};
+static int32_t light_set(void*c,uint32_t ms,risc_light_sleep_result_v1*r){assert(motion_registered);set_calls++;return timed_light(c,ms,r);}
+static int32_t deep_set(void*c,uint32_t ms){assert(motion_registered);set_calls++;return deep_timed(c,ms);}
+static void motion_reset(void){reset();motion_registered=motion_fail_prepare=motion_fail_resume=motion_event=motion_fail_pending=false;motion_prepares=motion_resumes=set_calls=0;pmu.light_sleep_set=light_set;pmu.deep_sleep_set=deep_set;motion.struct_size=sizeof(motion);}
+static void test_motion(void){
+ for(unsigned mode=0;mode<3;mode++)for(int rc=RISC_DEEP_SLEEP_RETAINED;rc<0;rc++){
+  motion_reset();entry_result=rc;int got=watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,mode,&api,diagnostic);
+  assert(set_calls==1&&motion_prepares==1);
+  if(rc==RISC_DEEP_SLEEP_RETAINED)assert(got==WATCH_SLEEP_RETAINED&&motion_registered&&!motion_resumes&&!pmu_resumes&&!panel_resumes);
+  else assert(got==WATCH_SLEEP_REFUSED&&!motion_registered&&motion_resumes==1&&pmu_resumes==1&&panel_resumes==1);
+ }
+ motion_reset();motion_fail_prepare=true;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,0,&api,diagnostic)==0);assert(!set_calls&&!motion_registered&&motion_resumes==1);
+ motion_reset();motion_fail_resume=true;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,0,&api,diagnostic)==WATCH_SLEEP_RETAINED);assert(motion_registered&&!pmu_resumes&&!panel_resumes&&!refreshes);
+ motion_reset();motion.struct_size=TWATCH_MOTION_SAMPLE_SIZE;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,0,&api,diagnostic)==0);assert(!motion_prepares&&!set_calls);
+ motion_reset();entry_result=0;deadline=2000;motion_event=true;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_HYBRID,&api,diagnostic)==1);assert(set_calls==1&&!deep_calls&&!motion_registered);
+ motion_reset();entry_result=0;deadline=2000;motion_fail_pending=true;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_HYBRID,&api,diagnostic)==0);assert(set_calls==1&&!deep_calls&&!motion_registered);
+ motion_reset();motion_event=true;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_DEEP,&api,diagnostic)==0);assert(!set_calls&&!deep_calls&&!motion_registered);
+ motion_reset();entry_result=0;deadline=2000;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_HYBRID,&api,diagnostic)==WATCH_SLEEP_RETAINED);assert(set_calls==2&&duration_seen==700000&&motion_registered&&!motion_resumes);
+ motion_reset();entry_result=0;assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_LIGHT,&api,diagnostic)==1);assert(service_due&&!motion_registered&&refreshes==1);
+ for(unsigned mode=0;mode<3;mode++){motion_reset();entry_result=-4;assert(watch_sleep_motion_prepared(&panel,&pmu,&motion,mode,diagnostic)==0);assert(set_calls==1&&!motion_registered);}
+ puts("Motion sleep adapters: Light/Deep/Hybrid groups, exact alarm deadline, crown/sensor boundary precedence, partial prepare, cleanup retention and short API PASS");
+}
 int main(void){(void)watch_sleep_prepared;
  for(unsigned mode=0;mode<3;mode++)for(int rc=RISC_DEEP_SLEEP_RETAINED;rc<0;rc++){
   reset();entry_result=rc;int got=watch_alarm_sleep_prepared(&panel,&pmu,mode,&api,diagnostic);
@@ -54,5 +81,7 @@ int main(void){(void)watch_sleep_prepared;
  reset();retained_resume=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_RETAINED);assert(!refreshes);
  reset();fail_resume=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_FAILED);assert(!refreshes);
  reset();panel.base.struct_size=TWATCH_PANEL_DEEP_SLEEP_SIZE;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls);panel.base.struct_size=sizeof(panel);
+ test_motion();
  puts("Alarm owned sleep: fresh RTC decisions, Light due, hybrid fresh Deep, crown, invalid/blocked/refusal/retained/short suffix passed");
+ return 0;
 }

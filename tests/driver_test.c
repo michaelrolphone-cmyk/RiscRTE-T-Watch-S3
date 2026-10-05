@@ -109,9 +109,25 @@ int main(void) {
     assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_OK);
     assert(m_sleep_token==m_serial && m_sleep_token!=t && sr.wake_cause==RISC_LIGHT_SLEEP_WAKE_GPIO);
     assert(a->light_sleep(NULL,999,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->wake_source(NULL,t,false,3)==0&&m_sleep_token==m_serial&&m_sleep_token!=t&&m_wake_modes==3);
+    assert(a->wake_source(NULL,999,false,3)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->wake_source(NULL,t,false,4)==RISC_LIGHT_SLEEP_INVALID);
+    for(int rc=RISC_LIGHT_SLEEP_UNSUPPORTED;rc<=0;rc++){
+        m_set_result=rc;assert(a->light_sleep_set(NULL,t,false,123,&sr)==rc&&m_set_duration==123&&m_sleep_token==m_serial);
+        assert(a->deep_sleep_set(NULL,t,false,0)==rc&&m_set_duration==0&&m_sleep_token==m_serial);
+    }
+    m_set_result=0;assert(a->wake_source(NULL,t,false,0)==0&&m_wake_modes==0);
+    m_gpio.struct_size=GARDEN_GPIO_DEEP_SLEEP_FOR_V1_SIZE;
+    assert(a->wake_source(NULL,t,false,3)==RISC_LIGHT_SLEEP_UNSUPPORTED);
+    assert(a->light_sleep_set(NULL,t,false,0,&sr)==RISC_LIGHT_SLEEP_UNSUPPORTED);
+    assert(a->deep_sleep_set(NULL,t,false,0)==RISC_LIGHT_SLEEP_UNSUPPORTED);m_gpio.struct_size=sizeof(m_gpio);
+
     assert(a->release(NULL,t));
     assert(a->claim(NULL,6,RISC_GPIO_OUTPUT,&t));
     assert(a->light_sleep(NULL,t,false,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->wake_source(NULL,t,false,3)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->light_sleep_set(NULL,t,false,0,&sr)==RISC_LIGHT_SLEEP_INVALID);
+    assert(a->deep_sleep_set(NULL,t,false,0)==RISC_LIGHT_SLEEP_INVALID);
     assert(a->release(NULL,t));
 #elif TEST_KIND == 2 || TEST_KIND == 3
     const risc_i2c_bus_api_v1 *a = d->capability;
@@ -208,7 +224,16 @@ int main(void) {
         assert(m_regs[0x40]==0&&m_regs[0x41]==8&&m_regs[0x42]==0);
         risc_light_sleep_result_v1 sr={sizeof(sr),0};
         assert(a->light_sleep(NULL,&sr)==RISC_LIGHT_SLEEP_OK && m_pin[m_sleep_token]==m_config.device.irq);
+        for(int rc=RISC_LIGHT_SLEEP_UNSUPPORTED;rc<=0;rc++){
+            m_set_result=rc;assert(a->light_sleep_set(NULL,123,&sr)==rc&&m_set_duration==123&&m_pin[m_sleep_token]==m_config.device.irq);
+            assert(a->deep_sleep_set(NULL,0)==rc&&m_set_duration==0&&m_pin[m_sleep_token]==m_config.device.irq);
+        }
+        m_set_result=0;
+        assert(a->light_sleep_set(NULL,RISC_TIMED_SLEEP_MAX_MS+1,&sr)==RISC_LIGHT_SLEEP_INVALID);
+        assert(a->deep_sleep_set(NULL,RISC_TIMED_SLEEP_MAX_MS+1)==RISC_DEEP_SLEEP_INVALID);
         assert(a->resume(NULL));assert(a->resume(NULL));
+        assert(a->light_sleep_set(NULL,1,&sr)==RISC_LIGHT_SLEEP_INVALID);
+        assert(a->deep_sleep_set(NULL,0)==RISC_DEEP_SLEEP_INVALID);
         assert(m_regs[0x40]==irq0&&m_regs[0x41]==irq1&&m_regs[0x42]==irq2);
     }
     m_regs[0x49]=0x02;assert(a->key_events(NULL,&events)&&!events);

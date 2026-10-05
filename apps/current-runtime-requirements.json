@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "511f08d4a0a20c3a1e8672e99296dc525a1cd8af",
-  "firmware_version": "0.1.26",
+  "source_sha": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9",
+  "firmware_version": "0.1.27",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -35,15 +35,17 @@
     "explicit_key_value_v2": true,
     "native_i2s_pdm_rx": true,
     "audio_input_cleanup_barrier": true,
-    "app_grant_capacity": 10,
-    "app_requirement_capacity": 9,
+    "app_grant_capacity": 12,
+    "app_requirement_capacity": 10,
     "native_bounded_hci": true,
     "nonconsuming_hci_status": true,
     "hci_cleanup_sleep_barrier": true,
-    "provider_bound_key_capacity": 9
+    "provider_bound_key_capacity": 9,
+    "owned_wake_sets": true,
+    "mixed_polarity_rtc_wake": true
   },
   "abi_changed": false,
-  "reason": "Canonical review Runtime with nine exact provider keys, bounded HCI and PSRAM metadata for the generic USB target. Delivered local test BIN identity is separately preserved.",
+  "reason": "Generic owned wake sets retain legacy ABI prefixes and support independent peripheral sources with mixed RTC polarity. Explicit motion grants use bounded12-slot policies and10 declaration types.",
   "deployment": {
     "target": "esp32s3-16mb-paired",
     "layout": "riscrte-paired-16m-v1",

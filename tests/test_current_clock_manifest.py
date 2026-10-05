@@ -11,14 +11,14 @@ class CurrentClockManifest(unittest.TestCase):
         self.assertEqual(clock_manifest()["version"], "0.8.0")
         self.assertEqual(clock_manifest(paired=True)["version"], "0.8.0")
 
-    def test_current_final_pair_is_090(self):
-        self.assertEqual(clock_manifest(paired=True, current=True)["version"], "0.9.0")
+    def test_current_final_pair_is_0100(self):
+        self.assertEqual(clock_manifest(paired=True, current=True)["version"], "0.10.0")
         m = clock_manifest(paired=True, current=True)
         m["version"] = "invalid"
-        self.assertEqual(clock_manifest(paired=True, current=True)["version"], "0.9.0")
+        self.assertEqual(clock_manifest(paired=True, current=True)["version"], "0.10.0")
 
     def test_final_image_identity_follows_installed_pair(self):
-        for version in ("0.8.0", "0.9.0"):
+        for version in ("0.8.0", "0.10.0"):
             store = {name: json.dumps({"version": version}).encode() for name in ("default.json", "clock.json")}
             self.assertEqual(installed_clock_version(store), version)
         store["default.json"] = b'{"version":"0.8.0"}'

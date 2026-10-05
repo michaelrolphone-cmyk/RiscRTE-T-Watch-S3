@@ -99,6 +99,30 @@ static int32_t deep_sleep_for(void *c,uint64_t token,bool high,uint32_t duration
     }
     return RISC_DEEP_SLEEP_INVALID;
 }
+static int32_t wake_source(void *c,uint64_t token,bool high,uint32_t modes){
+    (void)c;if(!started || !token || modes&~3u)return RISC_LIGHT_SLEEP_INVALID;
+    if(hw->struct_size<GARDEN_GPIO_WAKE_SOURCE_V1_SIZE || !hw->wake_source)return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token){
+        if(!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT))return RISC_LIGHT_SLEEP_INVALID;
+        return hw->wake_source(hw->context,slots[i].raw,high,modes);
+    }return RISC_LIGHT_SLEEP_INVALID;
+}
+static int32_t light_sleep_set(void *c,uint64_t token,bool high,uint32_t ms,risc_light_sleep_result_v1 *out){
+    (void)c;if(!started || !token || !out || out->struct_size<sizeof(*out) || ms>RISC_TIMED_SLEEP_MAX_MS)return RISC_LIGHT_SLEEP_INVALID;
+    if(hw->struct_size<GARDEN_GPIO_LIGHT_SLEEP_SET_V1_SIZE || !hw->light_sleep_set)return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token){
+        if(!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT))return RISC_LIGHT_SLEEP_INVALID;
+        return hw->light_sleep_set(hw->context,slots[i].raw,high,ms,out);
+    }return RISC_LIGHT_SLEEP_INVALID;
+}
+static int32_t deep_sleep_set(void *c,uint64_t token,bool high,uint32_t ms){
+    (void)c;if(!started || !token || ms>RISC_TIMED_SLEEP_MAX_MS)return RISC_DEEP_SLEEP_INVALID;
+    if(hw->struct_size<GARDEN_GPIO_DEEP_SLEEP_SET_V1_SIZE || !hw->deep_sleep_set)return RISC_DEEP_SLEEP_UNSUPPORTED;
+    for(size_t i=0;i<48;i++)if(slots[i].token==token){
+        if(!(slots[i].flags&RISC_GPIO_INPUT) || (slots[i].flags&RISC_GPIO_OUTPUT))return RISC_DEEP_SLEEP_INVALID;
+        return hw->deep_sleep_set(hw->context,slots[i].raw,high,ms);
+    }return RISC_DEEP_SLEEP_INVALID;
+}
 static bool quiesce(void) {
     for (size_t i = 0; i < 48; i++)
         if (slots[i].token)
@@ -121,5 +145,5 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     return true;
 }
 static const risc_gpio_bank_api_v1 api = {1,         sizeof(api), NULL,       claim_pin,
-                                          write_pin, read_pin,    release_pin, light_sleep, deep_sleep, light_sleep_for, deep_sleep_for};
+                                          write_pin, read_pin,    release_pin, light_sleep, deep_sleep, light_sleep_for, deep_sleep_for, wake_source, light_sleep_set, deep_sleep_set};
 TW_DRIVER("twatch-gpio", "gpio.bank", 1, api)

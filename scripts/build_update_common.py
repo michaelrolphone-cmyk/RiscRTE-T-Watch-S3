@@ -4,6 +4,7 @@
 Only board.revision is normalized. Reconstructing every deterministic input ZIP
 proves the common payload still has the recorded input archive hashes.
 """
+from build_legacy_sleep import legacy_inputs
 import argparse
 import copy
 import json
@@ -35,7 +36,7 @@ def store_paths(files, root=ROOT):
 def store(files, profile, root):
     result = {n: b for n, b in files.items() if n.startswith('store/')}
     require(set(result) == store_paths(files, root), 'Paired store membership differs from baseline and selected updates')
-    require(files['source-profile.json'] == (root / 'hardware' / (profile + '.json')).read_bytes(),
+    require(files['source-profile.json'] == (legacy_inputs(root) / 'hardware' / (profile + '.json')).read_bytes(),
             'Source profile differs from reviewed checkout')
     board = json.loads(result['store/board.json'])
     require(board == selected_board(json.loads(files['source-profile.json']), WIFI_DEVICES, True),

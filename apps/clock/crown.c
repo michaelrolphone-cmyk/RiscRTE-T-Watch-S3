@@ -349,6 +349,9 @@ static bool startup(void) {
 }
 #ifdef WATCH_CLOCK_ALARMS
 #include "clock_alarm.inc"
+#ifdef WATCH_MOTION_WAKE
+#include "watch_motion_client.h"
+#endif
 #endif
 static int sleep_cycle(void) {
 #ifdef WATCH_QUICK_RADIOS
@@ -374,7 +377,12 @@ static int sleep_cycle(void) {
 #endif
 #ifdef WATCH_CLOCK_ALARMS
     (void)watch_sleep_prepared;
+#ifdef WATCH_MOTION_WAKE
+    (void)watch_alarm_sleep_prepared;
+    int rc=watch_motion_sleep(rt,panel,pmu,mode,clock_alarm.api);
+#else
     int rc=watch_alarm_sleep_prepared(panel,pmu,mode,clock_alarm.api,rt->diagnostic);
+#endif
 #else
     int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
 #endif

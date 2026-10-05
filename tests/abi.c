@@ -10,7 +10,7 @@ _Static_assert(sizeof(risc_driver_poll_v2) == 48, "poll suffix ABI");
 _Static_assert(sizeof(risc_hardware_device_v1) == 40, "hardware envelope ABI");
 _Static_assert(offsetof(risc_hardware_device_v1, config) == 36, "hardware config pointer ABI");
 _Static_assert(sizeof(risc_hw_bus_v1) == 40, "hardware bus ABI");
-_Static_assert(sizeof(garden_gpio_v1) == 56, "shared GPIO ABI");
+_Static_assert(sizeof(garden_gpio_v1) == 68, "shared GPIO ABI");
 _Static_assert(sizeof(garden_spi_v1) == 36, "shared SPI ABI");
 _Static_assert(sizeof(twatch_i2c_controller_v1) == 24, "raw I2C ABI");
 _Static_assert(sizeof(tw_hw_i2c_device_v1) == 56, "I2C device config ABI");
@@ -36,3 +36,7 @@ _Static_assert(sizeof(garden_radio_scan_entry_v1)==37,"bounded copied AP entry")
 _Static_assert(sizeof(garden_radio_scan_result_v1)==600,"bounded AP scan snapshot");
 _Static_assert(WIFI_PREFIX_V1_SIZE==40,"Wi-Fi legacy prefix unchanged");
 _Static_assert(WIFI_MANAGEMENT_V1_SIZE==56,"Wi-Fi management suffix target size");
+
+_Static_assert(offsetof(garden_gpio_v1,wake_source)==56,"GPIO old prefix");
+_Static_assert(TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE==48,"PMU old timed prefix");
+_Static_assert(TWATCH_MOTION_SAMPLE_SIZE==20,"motion sample prefix");

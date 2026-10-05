@@ -10,7 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from pmu_sleep_custody import (CUSTODY_PATH, SOURCE_PATHS, current_driver_packages,
+from pmu_sleep_custody import (CUSTODY_PATH, SOURCE_PATHS, SOURCE_ROOT, current_driver_packages,
                                current_pmu_custody, verify_current_pmu)
 
 
@@ -53,16 +53,16 @@ class PmuSleepCustody(unittest.TestCase):
     def test_source_and_scope_cannot_be_silently_rehashed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in SOURCE_PATHS | {CUSTODY_PATH}:
+            for name in {SOURCE_ROOT+"/"+n for n in SOURCE_PATHS} | {CUSTODY_PATH}:
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes((ROOT / name).read_bytes())
             current_pmu_custody(root)
-            source = root / 'drivers/twatch_pmu/driver.c'
+            source = root / SOURCE_ROOT / 'drivers/twatch_pmu/driver.c'
             source.write_bytes(source.read_bytes() + b'\n/* unbuilt change */\n')
             with self.assertRaisesRegex(ValueError, 'source differs'):
                 current_pmu_custody(root)
-            source.write_bytes((ROOT / 'drivers/twatch_pmu/driver.c').read_bytes())
+            source.write_bytes((ROOT / SOURCE_ROOT / 'drivers/twatch_pmu/driver.c').read_bytes())
             custody = copy.deepcopy(self.custody)
             custody['files']['rtc/driver.elf'] = custody['files']['pmu/driver.elf']
             (root / CUSTODY_PATH).write_text(json.dumps(custody))

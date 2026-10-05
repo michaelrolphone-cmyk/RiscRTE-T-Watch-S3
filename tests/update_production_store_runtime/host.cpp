@@ -73,6 +73,13 @@ int main(int argc,char** argv){
   assert(argc==3);scenario=argv[2];setvbuf(stdout,nullptr,_IONBF,0);
   m.registers[0][3]=0x4a;m.registers[0][0x34]=0x0f;m.registers[0][0x35]=0xa0;
   m.registers[2][0]=0x60;
+#ifdef CURRENT_APPS_PROFILE
+  JsonDocument motionBoard;
+  assert(RiscBoot::readJson((std::string(argv[1])+"/board.json").c_str(),motionBoard));
+  for(auto d:motionBoard["devices"].as<ArduinoJson::JsonArrayConst>())
+    if(d["instance_id"].as<unsigned>()==7)m.registers[3][0]=d["config"]["chip_id"].as<uint8_t>();
+  assert(m.registers[3][0]==0x13 || m.registers[3][0]==0x16);
+#endif
   const uint8_t date[]={0,0x40,0,4,0,0x10,0x26};memcpy(m.registers[1]+2,date,sizeof(date));
   RiscCpu::Hardware hardware{owner,nativeNow,nativeDelay,
     [](uint8_t p,bool o,bool i,bool u){++hardwareCalls;return gpioOpen(p,o,i,u);},

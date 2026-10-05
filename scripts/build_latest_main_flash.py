@@ -135,7 +135,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'Installable Clock payload does not contain the UP NEXT watch face')
     # Historical Points/Clock custody remains separately recorded. The explicit
     # current cohort owns the final installable applications and narrow policy
-    # additions, never edits its baseline archives or physical driver payloads.
+    # additions and explicitly versioned motion/GPIO/PMU drivers; baseline archives stay exact.
     historical_points_files = {name: {'size_bytes': len(store[name]), 'sha256': sha(store[name])}
                                for name in overlay}
     current_apps_record = None
@@ -192,7 +192,9 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'Final full-flash store differs after assembly')
 
     version = installed_clock_version(store)
-    name = f'twatch-s3-main-{version}-{head[:8]}.bin'
+    motion_model=current_apps_record['build_record']['motion_model'] if current_apps_record is not None else None
+    model_suffix='-'+motion_model if motion_model else ''
+    name = f'twatch-s3-main-{version}{model_suffix}-{head[:8]}.bin'
     manifest = {
         'schema': 1,
         'kind': 'latest-merged-main-full-flash',
@@ -241,6 +243,8 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
 
     if current_apps_record is not None:
         manifest['current_apps_overlay'] = current_apps_record
+        manifest['motion_model'] = motion_model
+        manifest['sensor_selection'] = 'Explicit candidate; confirm the installed IMU before choosing a BIN.'
 
     require(not output.exists(), 'Output directory already exists')
     output.mkdir(parents=True)
@@ -251,6 +255,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         'This image targets the original/non-Plus LILYGO T-Watch-S3 with 16MiB flash and 8MiB OPI PSRAM.\n'
         'It is a full 16MiB migration image at offset 0x0 and erases/replaces saved state. Back up first.\n\n'
         f'Watch source: {head}\nRuntime source: {runtime_head}\n'
+        f'Motion model: {motion_model or "not selected"}. Confirm the installed part before choosing this image.\n'
         f'Watch version: {version}\nRuntime version: {candidate["firmware_version"]}\n'
         f'SHA256: {sha(merged)}\n\n'
         f'Flash: python -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n'

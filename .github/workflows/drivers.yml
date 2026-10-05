@@ -31,6 +31,8 @@ jobs:
       - name: Host contract fixtures with UBSan
         run: |
           python scripts/test_contracts.py
+          python scripts/test_motion_wake.py
+          python -m unittest discover -s tests -p test_motion_source_custody.py -v
           python scripts/test_alarm_outputs.py
           python scripts/test_panel_throughput.py
           python -m unittest discover -s tests -p test_clock_performance.py -v
@@ -905,13 +907,20 @@ jobs:
         run: |
           export TWATCH_CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
           echo "TWATCH_CC=$TWATCH_CC" >> "$GITHUB_ENV"
-          python scripts/build_current_apps.py \
+          python scripts/build_current_apps.py --motion-model bma423 \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --runtime .latest/runtime \
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
             --output dist/current-apps
+          python scripts/build_current_apps.py --motion-model bma456h \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --runtime .latest/runtime \
+            --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
+            --output dist/current-apps-bma456h
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
@@ -933,6 +942,15 @@ jobs:
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main
+          python scripts/build_latest_main_flash.py \
+            --artifact-dir .latest/watch-artifact \
+            --points-artifact-dir .latest/points-artifact \
+            --current-apps-artifact-dir dist/current-apps-bma456h \
+            --runtime-source .latest/runtime \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
+            --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
+            --watch-head "$TWATCH_HEAD" \
+            --output dist/latest-main-bma456h
       - name: Execute the actual final current-app store through Runtime
         run: |
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
@@ -951,6 +969,22 @@ jobs:
             --current-apps-artifact-dir dist/current-apps \
             --bin dist/latest-main/twatch-s3-main-*.bin \
             --output dist/current-runtime/sanitized
+          SANITIZE=0 python scripts/test_current_apps_runtime.py \
+            --runtime .latest/runtime \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --current-apps-artifact-dir dist/current-apps-bma456h \
+            --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
+            --output dist/current-runtime-bma456h/plain
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
+            --runtime .latest/runtime \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --current-apps-artifact-dir dist/current-apps-bma456h \
+            --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
+            --output dist/current-runtime-bma456h/sanitized
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-current-runtime-${{ github.event.pull_request.head.sha || github.sha }}
@@ -974,3 +1008,12 @@ jobs:
           path: dist/latest-main/
           if-no-files-found: error
           retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-motion-bma456h-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/current-apps-bma456h/
+            dist/current-runtime-bma456h/
+            dist/latest-main-bma456h/
+          if-no-files-found: error

@@ -13,8 +13,9 @@
   was found in that repository snapshot; no new third-party license grant is
   asserted. Reuse follows the repository owner's explicit task instruction.
 - LILYGO hardware facts/init sequence were checked against LilyGoLib92f2ac3f.
-  LilyGoLib-MIT.txt preserves its upstream notice. No vendor binary/firmware is
-  redistributed by these packages.
+  LilyGoLib-MIT.txt preserves its upstream notice. The motion driver now redistributes the specifically pinned Bosch feature
+  images and their original notices; see docs/MOTION_WAKE.md and
+  vendor/SensorLib/PROVENANCE.json. Other drivers do not add vendor firmware.
 - LoRa commands were cross-checked against RadioLib
   [b0dd65d489b4c2b4e2fb2ff029d55ae0c3d649c8](https://github.com/jgromes/RadioLib/tree/b0dd65d489b4c2b4e2fb2ff029d55ae0c3d649c8/src/modules),
   especially SX1280 SF correction and SX1262 IQ/PA workaround registers. The

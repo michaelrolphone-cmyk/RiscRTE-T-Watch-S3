@@ -11,8 +11,8 @@ CLOCK_APPS=('default','clock')
 NON_CLOCK_APPS=SYSTEM_APPS+UTILITY_APPS+PRODUCTIVITY_APPS
 APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
-ADDED_PAYLOADS={'ble/driver.elf','ble/manifest.json'}
-PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
+ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu') for name in ('driver.elf','manifest.json')}
+PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
 ALARM_DND={'key':'alert_dnd','namespace':1,'access':'read'}
@@ -32,13 +32,18 @@ def config(root=ROOT):
  require(c['service_version']=='0.4.1','Expected reviewed CUE/volume service0.4.1')
  return c
 
-def configure_board(original,root=ROOT):
+def configure_board(original,root=ROOT,*,motion_model):
  b=copy.deepcopy(original)
- source=json.loads((Path(root)/'hardware/sx1262-915-bma423.json').read_text())
+ require(motion_model in ('bma423','bma456h'),'Explicit supported motion model required')
+ source=json.loads((Path(root)/('hardware/sx1262-915-'+motion_model+'.json')).read_text())
  candidates=[d for d in source['devices'] if d['instance_id']==16 and d['compatible']=='espressif,esp32s3-ble']
  require(len(candidates)==1,'Missing canonical Bluetooth hardware')
  require(not any(d['instance_id']==16 for d in b['devices']),'Unexpected prior Bluetooth hardware')
- b['devices'].append(copy.deepcopy(candidates[0]));return b
+ b['devices'].append(copy.deepcopy(candidates[0]))
+ motion=[d for d in source['devices'] if d['instance_id']==7 and d['compatible']=='bosch,bma4xx']
+ require(len(motion)==1 and not any(d['instance_id']==7 for d in b['devices']),'Unexpected prior motion hardware')
+ require(motion[0]['config']['irq_active_high'] is True and motion[0]['config']['irq_pull_up'] is False,'Motion polarity must match fitted pulldown')
+ b['devices'].append(copy.deepcopy(motion[0]));return b
 
 def configure_boot(original):
  """Add shared settings/RTC grants explicitly; preserve each existing grant."""
@@ -54,11 +59,13 @@ def configure_boot(original):
  keys.append(copy.deepcopy(ALARM_VOLUME));keys.append(copy.deepcopy(ALARM_DND))
  require(not any(x.get('instance_id')==16 for x in b['drivers']),'Unexpected prior Bluetooth provider')
  b['drivers'].append({'manifest':'ble/manifest.json','instance_id':16})
+ require(not any(x.get('instance_id')==7 for x in b['drivers']),'Unexpected prior motion provider')
+ b['drivers'].append({'manifest':'imu/manifest.json','instance_id':7})
  for row in b['app_capabilities']:
   if row['manifest'] in {n+'.json' for n in APPS}:
-   for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16}):
+   for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16},{'capability':'motion.accel','api':1,'instance_id':7}):
     if grant not in row['grants']:row['grants'].append(copy.deepcopy(grant))
-  require(len(row['grants'])<=10,'Current application exceeds Runtime grant bound')
+  require(len(row['grants'])<=12,'Current application exceeds Runtime grant bound')
  return b
 
 def verify(artifact,head,root=ROOT):
@@ -77,6 +84,7 @@ def verify(artifact,head,root=ROOT):
   compact=a.get('compaction',{})
   require(compact.get('retained_sections_symbols_relocations_unchanged') is True and compact.get('removed_sections')==['.xt.lit','.xt.prop'] and compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('before_bytes',0)>=compact['after_bytes'],'Missing current ELF compaction proof: '+name)
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
+  require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
   if name not in ('frequency_generator',*CLOCK_APPS):require('-DPORTABLE_NOVA_UI' in a['defines'],'Current Nova profile missing: '+name)
  clock=r['clock'];require(clock['watch_source']==head and clock['sources']==c['sources'] and clock['paired_boot_confirmation'] is True,'Current Clock source/profile mismatch')
@@ -104,7 +112,7 @@ def apply(store,artifact,head,root=ROOT):
  require(set(PAYLOADS)-ADDED_PAYLOADS<=set(before),'Current overlay existing file set differs')
  require(not (ADDED_PAYLOADS&set(before)),'Current overlay Bluetooth files unexpectedly preexist')
  require(json.loads(before['board.json'])==r['baseline_board'],'Current overlay original board differs')
- require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root),'Current Bluetooth board projection differs')
+ require(json.loads(files['board.json'])==configure_board(r['baseline_board'],root,motion_model=r.get('motion_model')),'Current Bluetooth board projection differs')
  require(json.loads(before['boot.json'])==r['baseline_boot'],'Unexpected policy change before current overlay')
  after=dict(before);after.update(files);after['boot.json']=encoded(configure_boot(r['baseline_boot']))
  require(set(before)|ADDED_PAYLOADS==set(after),'Current overlay added/removed unexpected store members')

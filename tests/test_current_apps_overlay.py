@@ -13,14 +13,14 @@ class CurrentAppsOverlay(unittest.TestCase):
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
   self.boot={'drivers':[{'manifest':'alarm-service/manifest.json','key_value':[{'key':k,'namespace':n,'access':a} for k,(n,a) in bindings.items()]}],'app_capabilities':[{'manifest':n+'.json','grants':copy.deepcopy(grants)} for n in current.APPS]}
   self.store={n:b'baseline' for n in current.PAYLOADS-current.ADDED_PAYLOADS};self.store.update({'board.json':current.encoded({'devices':[]}),'pmu/driver.elf':b'original-PMU','default.elf':b'paired-clock-default','clock.elf':b'paired-clock-return','boot.json':current.encoded(self.boot)})
-  (self.root/'hardware').mkdir();(self.root/'hardware/sx1262-915-bma423.json').write_bytes((ROOT/'hardware/sx1262-915-bma423.json').read_bytes())
+  (self.root/'hardware').mkdir();(self.root/'hardware/sx1262-915-bma423.json').write_bytes((ROOT/'hardware/sx1262-915-bma423.json').read_bytes());(self.root/'hardware/sx1262-915-bma456h.json').write_bytes((ROOT/'hardware/sx1262-915-bma456h.json').read_bytes())
   r={'schema':1,'profile':current.PROFILE,'watch_source':self.head,'configuration':self.cfg,'compiler':'GCC8.4.0','target_validation':True,'baseline_boot':self.boot,'boot':current.configure_boot(self.boot),'catalog':[],'apps':{},'service':{'defines':['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL']},'files':{}}
-  r['baseline_board']={'devices':[]};r['board']=current.configure_board(r['baseline_board'],self.root)
+  r['baseline_board']={'devices':[]};r['board']=current.configure_board(r['baseline_board'],self.root,motion_model='bma423');r['motion_model']='bma423'
   for n in current.PAYLOADS:
    p=self.art/'files'/n;p.parent.mkdir(exist_ok=True)
    if n=='board.json':b=current.encoded(r['board'])
    elif '/' not in n and n.endswith('.json'):
-    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2},{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1}]};b=current.encoded(v)
+    name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2},{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1},{'capability':'motion.accel','api':1}]};b=current.encoded(v)
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.1'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
@@ -40,13 +40,15 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.assertEqual(self.store,original);self.assertEqual(set(out),set(original)|current.ADDED_PAYLOADS)
   self.assertEqual(set(proof['files'])|set(proof['preserved_files']),set(out))
   self.assertFalse(set(proof['files'])&set(proof['preserved_files']))
-  self.assertEqual(out['pmu/driver.elf'],original['pmu/driver.elf'])
-  self.assertEqual(json.loads(out['board.json']),current.configure_board(json.loads(original['board.json']),self.root))
+  self.assertEqual(out['pmu/driver.elf'],b'current-pmu/driver.elf')
+  self.assertEqual(out['gpio/driver.elf'],b'current-gpio/driver.elf')
+  self.assertEqual(out['imu/driver.elf'],b'current-imu/driver.elf')
+  self.assertEqual(json.loads(out['board.json']),current.configure_board(json.loads(original['board.json']),self.root,motion_model='bma423'))
   b=json.loads(out['boot.json']);a=next(x for x in b['app_capabilities'] if x['manifest']=='alarms.json');self.assertEqual([x['instance_id'] for x in a['grants'] if x['capability']=='storage.key-value'],[3,1])
   self.assertEqual(b['drivers'][0]['key_value'][-1],current.ALARM_DND)
  def test_bluetooth_projection_cannot_replace_existing_device(self):
   b={'devices':[{'instance_id':16}]}
-  with self.assertRaises(ValueError):current.configure_board(b,self.root)
+  with self.assertRaises(ValueError):current.configure_board(b,self.root,motion_model='bma423')
  def test_wrong_head_and_configuration(self):
   with self.assertRaises(ValueError):current.verify(self.art,'3'*40,self.root)
   self.record['configuration']['service_version']='0.5.0';self.write_record()

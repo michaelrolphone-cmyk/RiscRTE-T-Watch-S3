@@ -237,8 +237,8 @@
         "bus_instance_id": 101,
         "address": 25,
         "irq": 14,
-        "irq_active_high": false,
-        "irq_pull_up": true,
+        "irq_active_high": true,
+        "irq_pull_up": false,
         "chip_id": 22
       },
       "bindings": {

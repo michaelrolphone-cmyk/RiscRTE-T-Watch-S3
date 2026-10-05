@@ -15,7 +15,7 @@ namespace {
 struct Model {
   bool pins[49]{},levels[49]{},buses[2]{},spi=false,held=false,ready=false;
   bool appLoaded=false,firstAppDelay=false;
-  uint8_t registers[3][256]{},frame[240*240*2]{};
+  uint8_t registers[4][256]{},frame[240*240*2]{};
   uint64_t milliseconds=0;
   unsigned healthCalls=0,moduleLoads=0,moduleUnloads=0,appLoads=0,appUnloads=0;
   unsigned rows=0,frameRows=0,frames=0,brightness=0,touchReads=0,rtcWrites=0;
@@ -58,8 +58,8 @@ bool i2cOpen(uint8_t p,uint8_t sda,uint8_t scl,uint32_t hz){
 bool i2cTransfer(uint8_t p,uint8_t address,const uint8_t* tx,size_t tn,uint8_t* rx,size_t rn,uint32_t ms){
   assert(p<2&&m.buses[p]&&tn&&ms&&ms<=1000);
   if(p){assert(address==0x38&&tn==1&&tx[0]==2&&rn==13);memset(rx,0,rn);++m.touchReads;return true;}
-  assert(address==0x34||address==0x51||address==0x5a);
-  uint8_t* registers=m.registers[address==0x34?0:address==0x51?1:2];
+  assert(address==0x34||address==0x51||address==0x5a||address==0x19);
+  uint8_t* registers=m.registers[address==0x34?0:address==0x51?1:address==0x5a?2:3];
   unsigned reg=tx[0];assert(reg+rn<=256&&reg+tn-1<=256);
   if(tn>1){assert(!rn);for(size_t i=1;i<tn;++i){
     if(address==0x51&&reg>=2&&reg<=8)++m.rtcWrites;

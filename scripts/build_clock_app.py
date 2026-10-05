@@ -52,7 +52,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
-                    *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS'] if current else []),
+                    *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE'] if current else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),
@@ -81,7 +81,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
         manifest['requires'].insert(1,{'capability':'input.touch.raw','api':1})
         manifest['requires'].append({'capability':'storage.key-value','api':1})
     if alarm_system:manifest['requires'].append({'capability':'alarm.service','api':1})
-    if current:manifest['requires']+=[{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1}]
+    if current:manifest['requires']+=[{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1},{'capability':'motion.accel','api':1}]
     (out/('clock.json' if returning else 'default.json')).write_text(json.dumps(manifest,indent=2)+'\n')
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,

@@ -92,7 +92,7 @@ if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;
 static int32_t kv_put(void*c,const char*k,const void*b,uint32_t size){(void)c;(void)k;(void)b;(void)size;assert(!"Clock never writes settings");return -1;}
 static const risc_key_value_v1 kv={1,sizeof(kv),NULL,kv_get,kv_put};
 static twatch_panel_power_v1 dp={{1,sizeof(dp),NULL,get_info,frame_acquire,frame_release,frame_submit,frame_status,NULL,brightness},prepare_panel,resume_panel,prepare_deep,typed_resume};
-static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep,timed,wake_pending,timed_deep};
+static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep,timed,wake_pending,timed_deep,NULL,NULL};
 static twatch_rtc_api_v1 rp={2,sizeof(rp),NULL,read_clock,NULL,NULL,NULL};
 static risc_touch_api_v1 tp={1,sizeof(tp),NULL,sub,unsub,touch_poll,next,snapshot};
 static int32_t alarm_status(void*c,alarm_status_v1*out){(void)c;*out=av;return ALARM_OK;}

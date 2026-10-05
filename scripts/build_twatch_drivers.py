@@ -3,6 +3,7 @@
 import hashlib,json,os,shutil,subprocess,zipfile
 from pathlib import Path
 from generate_board import generate
+from imu_sources import extra_sources
 from rtc_metadata import normalize as normalize_rtc
 ROOT=Path(__file__).resolve().parents[1]
 def digest(b):return hashlib.sha256(b).hexdigest()
@@ -18,7 +19,7 @@ def main():
     for mp in sorted((ROOT/'drivers').glob('*/manifest.json')):
         m=json.loads(mp.read_text());src=list(mp.parent.glob('*.c'));assert len(src)==1,mp
         out=ROOT/'dist'/m['id'];out.mkdir(parents=True,exist_ok=True);elf=out/'driver.elf'
-        args=[cc,'-std=c11','-shared','-fPIC','-fvisibility=hidden','-nostdlib','-mlongcalls','-Os','-ffreestanding','-fno-builtin','-Wall','-Wextra','-Wno-misleading-indentation','-Wno-unused-function','-Werror',f'-I{ROOT}/sdk/driver',f'-I{ROOT}/include',f'-I{ROOT}/dist/generated',f'-Wl,--version-script={ROOT}/exports.map','-Wl,-soname,driver.elf',str(src[0]),'-lgcc','-o',str(elf)]
+        args=[cc,'-std=c11','-shared','-fPIC','-fvisibility=hidden','-nostdlib','-mlongcalls','-Os','-ffreestanding','-fno-builtin','-Wall','-Wextra','-Wno-misleading-indentation','-Wno-unused-function','-Werror',f'-I{ROOT}/sdk/driver',f'-I{ROOT}/include',f'-I{ROOT}/dist/generated',f'-Wl,--version-script={ROOT}/exports.map','-Wl,-soname,driver.elf',str(src[0]),*extra_sources(m['id']),'-lgcc','-o',str(elf)]
         subprocess.run(args,check=True)
         if m['id']=='twatch-rtc' and m['version']=='0.2.0' and '8.4.0' in compiler:
             (out/'compiled-driver.elf').write_bytes(elf.read_bytes())
@@ -37,6 +38,8 @@ def main():
         assert exports=={'t5_driver_get'},(m['id'],exports)
         cap=m['provides'][0]
         files={'driver.elf':elf.read_bytes(),'provider-abi.v1':f"os-cpu-abi=1\nprovides={cap['capability']}\napi={cap['api']}\n".encode(),'source-manifest.json':(json.dumps(m,indent=2)+'\n').encode()}
+        if m['id']=='twatch-imu':
+            files.update({'LICENSE-SensorLib.txt':(ROOT/'vendor/SensorLib/LICENSE').read_bytes(),'LICENSE-Bosch.txt':(ROOT/'vendor/SensorLib/bosch/bma4xx/LICENSE').read_bytes(),'NOTICE-BMA423.txt':(ROOT/'vendor/SensorLib/NOTICE-BMA423.txt').read_bytes(),'motion-provenance.json':(ROOT/'vendor/SensorLib/PROVENANCE.json').read_bytes()})
         if m['id']=='twatch-board':
             files.update({p.name:p.read_bytes() for p in (ROOT/'hardware').glob('*.json')})
             files['platform-resources.json']=(ROOT/'platform-resources.json').read_bytes()
@@ -51,5 +54,7 @@ def main():
         catalog.append(dict(id=m['id'],version=m['version'],kind='driver',architecture=m['architecture'],archive=package.name,size_bytes=package.stat().st_size,sha256=digest(package.read_bytes())))
         print(m['id'],m['version'],'ELF/imports/package OK')
     (ROOT/'dist/catalog.json').write_text(json.dumps(dict(schema=1,packages=catalog),indent=2)+'\n')
+    from build_legacy_sleep import build as build_legacy
+    build_legacy(cc)
     print(f'{len(catalog)} target ELFs and packages built')
 if __name__=='__main__':main()

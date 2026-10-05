@@ -19,11 +19,15 @@ typedef struct {
     bool (*sleep_wake_pending)(void *, bool *pending);
     /* Optional owned timer Deep entry; successful entry remains terminal. */
     int32_t (*deep_sleep_for)(void *, uint32_t duration_ms);
+    /* Explicit inclusion of enrolled wake sources, with optional timer. */
+    int32_t (*light_sleep_set)(void *,uint32_t,risc_light_sleep_result_v1 *);
+    int32_t (*deep_sleep_set)(void *,uint32_t);
 } twatch_pmu_api_v1;
 #define TWATCH_PMU_LIGHT_SLEEP_SIZE offsetof(twatch_pmu_api_v1, deep_sleep)
 #define TWATCH_PMU_DEEP_SLEEP_SIZE offsetof(twatch_pmu_api_v1, light_sleep_for)
 #define TWATCH_PMU_TIMED_SLEEP_SIZE offsetof(twatch_pmu_api_v1, deep_sleep_for)
-#define TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE sizeof(twatch_pmu_api_v1)
+#define TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE offsetof(twatch_pmu_api_v1,light_sleep_set)
+#define TWATCH_PMU_WAKE_SET_SIZE sizeof(twatch_pmu_api_v1)
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -42,7 +46,15 @@ typedef struct {
     void *context;
     bool (*read)(void *context, twatch_accel_sample_v1 *out);
     bool (*chip_id)(void *context, uint8_t *out);
+    /* Autonomous sensor double-knock only. prepare may partially mutate;
+     * pair every attempt with resume unless native sleep returns RETAINED.
+     * pending observes the latched wire without acknowledging it. */
+    bool (*prepare_wake)(void *context);
+    bool (*wake_pending)(void *context,bool *pending);
+    bool (*resume_wake)(void *context);
 } twatch_motion_api_v1;
+#define TWATCH_MOTION_SAMPLE_SIZE offsetof(twatch_motion_api_v1,prepare_wake)
+#define TWATCH_MOTION_WAKE_SIZE sizeof(twatch_motion_api_v1)
 
 #define TWATCH_RTC_API_V1 2u
 #define TWATCH_RTC_CAPABILITY "rtc.clock"

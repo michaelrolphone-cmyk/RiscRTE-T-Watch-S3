@@ -141,9 +141,9 @@ def _policies(content, current_profile=False):
         expected = {('display.output', 1, 5), ('input.touch.raw', 1, 6), ('rtc.clock', 2, 8),
                     ('board.battery', 1, 4), ('storage.key-value', 1, 6), ('net.wifi', 1, 15),
                     ('software.update.' + kind, 1, 0), ('alarm.service', 1, 0)}
-        if current_profile:expected.update({('storage.key-value',1,1),('bluetooth.hci',1,16)})
+        if current_profile:expected.update({('storage.key-value',1,1),('bluetooth.hci',1,16),('motion.accel',1,7)})
         actual = {(g['capability'], g['api'], g.get('instance_id', 0)) for g in policy['grants']}
-        require(len(policy['grants']) == (10 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
+        require(len(policy['grants']) == (11 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
     return boot
 
 
@@ -182,7 +182,7 @@ def admit_many(runtime_source, stores, output=None):
 def _source_hashes(runtime, system=None, utilities=None):
     files = [runtime / name for name in RUNTIME_SOURCES]
     for base in (runtime / 'sdk', runtime / 'src/bootstrap', runtime / 'src/runtime/drivers', ROOT / 'sdk', ROOT / 'include', ROOT / 'drivers', ROOT / 'apps/clock', HERE,
-                 ROOT / 'tests/production_store_runtime'):
+                 ROOT / 'tests/production_store_runtime', ROOT/'vendor',ROOT/'custody'):
         files += [p for p in base.rglob('*') if p.is_file() and p.suffix in ('.c', '.cpp', '.h', '.inc', '.json')]
     files += [Path(__file__), ROOT / 'apps/update-sources.json', runtime / 'src/bootstrap/Runtime.h', runtime / 'src/ports/esp32s3/CpuPort.h',
               runtime / 'test/run_update_runtime_test.sh', runtime / 'test/update_runtime_test.cpp',
@@ -251,7 +251,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
-    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS']
+    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE']
     with _build(output) as build:
         host = _host(runtime, build, utilities if current_profile else None)
         modules = build / 'modules'
@@ -260,6 +260,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         includes = ['-I' + str(p) for p in (ROOT / 'sdk/app', ROOT / 'sdk/driver', ROOT / 'include', ROOT)]
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
+        if not current_profile:
+            from build_legacy_sleep import legacy_inputs
+            legacy=legacy_inputs(ROOT)
+            source_manifests.update({json.loads(p.read_text())['id']:p for p in (legacy/'drivers').glob('*/manifest.json')})
         selections = {}
         prepared = []
         for index, (label, content) in enumerate(stores):
@@ -301,8 +305,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 candidates = list(source_manifests[name].parent.glob('*.c'))
                 require(len(candidates) == 1, 'Driver does not have one production source: ' + name)
                 source, module_includes = candidates[0], includes
+                if not current_profile and name in ('twatch-gpio','twatch-pmu'):
+                    module_includes=['-I'+str(legacy/p) for p in ('sdk/driver','include')]+includes
             command([compiler, language, *_flags(), '-fPIC', '-shared', '-fvisibility=hidden',
-                     *module_includes, *extra, source, '-o', module])
+                     *module_includes, *extra, source, *(__import__('imu_sources').extra_sources(name)), '-o', module])
             for target in targets:
                 shutil.copy2(module, target)
         objects = []

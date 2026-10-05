@@ -92,13 +92,18 @@ static int32_t m_light_sleep(void *c,uint64_t t,bool high,risc_light_sleep_resul
     (void)c; assert(t && m_tokens[t] && !high && out->struct_size==sizeof(*out));
     m_sleep_token=t;out->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return RISC_LIGHT_SLEEP_OK;
 }
+static int32_t m_set_result;
+static uint32_t m_wake_modes,m_set_duration;
+static int32_t m_wake_source(void*c,uint64_t t,bool high,uint32_t modes){(void)c;(void)high;assert(t&&m_tokens[t]);m_sleep_token=t;m_wake_modes=modes;return m_set_result;}
+static int32_t m_light_set(void*c,uint64_t t,bool high,uint32_t ms,risc_light_sleep_result_v1*out){m_set_duration=ms;(void)m_light_sleep(c,t,high,out);return m_set_result;}
+static int32_t m_deep_set(void*c,uint64_t t,bool high,uint32_t ms){(void)c;assert(t&&m_tokens[t]&&!high);m_sleep_token=t;m_set_duration=ms;return m_set_result;}
 static garden_gpio_v1 m_gpio = {1,       sizeof(m_gpio), NULL,   m_gclaim, m_gwrite,
-                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep, NULL, NULL, NULL, NULL};
+                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep, NULL, NULL, NULL, NULL, m_wake_source, m_light_set, m_deep_set};
 static bool m_bank_claim(void *c, uint8_t pin, uint32_t flags, uint64_t *t) {
     return m_gclaim(c, pin, flags & RISC_GPIO_OUTPUT, false, flags & RISC_GPIO_PULLUP, t);
 }
 static risc_gpio_bank_api_v1 m_bank = {1,        sizeof(m_bank), NULL,  m_bank_claim,
-                                       m_gwrite, m_gread,        m_free, m_light_sleep, NULL, NULL, NULL};
+                                       m_gwrite, m_gread,        m_free, m_light_sleep, NULL, NULL, NULL, m_wake_source, m_light_set, m_deep_set};
 static uint64_t m_time(void *c) {
     (void)c;
 #if TEST_KIND == 5

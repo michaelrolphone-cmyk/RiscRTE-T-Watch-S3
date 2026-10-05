@@ -13,9 +13,9 @@ def clean(path,expected):
  require(git(path,'rev-parse','HEAD')==expected,'Current source pin differs: '+str(path))
  require(not git(path,'status','--porcelain','--untracked-files=no'),'Current source is dirty: '+str(path))
 def definitions(name,version):
- if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
+ if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
  flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES',
-        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS']
+        '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS','-DPORTABLE_MOTION_WAKE']
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
@@ -27,14 +27,20 @@ def definitions(name,version):
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
 
-def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
+def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None):
+ require(motion_model in ('bma423','bma456h'),'Explicit --motion-model required; do not infer from earlier boots')
  root=Path(root);out=Path(out);repos={'system-apps':Path(system),'utilities':Path(utilities),'productivity':Path(productivity),'runtime':Path(runtime)};c=config(root)
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  require(not out.exists() or not any(out.iterdir()),'Current output must be empty to reject stale files')
  out.mkdir(parents=True,exist_ok=True);files_dir=out/'files';files_dir.mkdir()
  # Decode a separately verified immutable baseline only to reuse exact catalog,
  # app identities and existing boot authority. Never modify that archive.
- baseline=Path(baseline);verify_audio(baseline,root=root)
+ baseline=Path(baseline)
+ if baseline_root is not None:
+  baseline_root=Path(baseline_root);clean(baseline_root,'2a4fbae8fb2425bf830c302863a5e195106e77c9')
+  subprocess.run([sys.executable,'-c',"import sys;from pathlib import Path;sys.path.insert(0,sys.argv[1]+'/scripts');from audio_overlay import verify;verify(Path(sys.argv[2]),root=Path(sys.argv[1]))",str(baseline_root.resolve()),str(baseline.resolve())],check=True)
+  clean(baseline_root,'2a4fbae8fb2425bf830c302863a5e195106e77c9')
+ else:verify_audio(baseline,root=root)
  raw=read_zip(baseline);store={n[6:]:b for n,b in raw.items() if n.startswith('store/')}
  require(len([n for n in store if n.endswith('.elf') and '/' not in n])==15,'Unexpected baseline app inventory')
  boot=json.loads(store['boot.json']);new_boot=configure_boot(boot);catalog=json.loads(raw['shared/catalog.json'])
@@ -59,13 +65,14 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
   return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof}
  record={'schema':1,'profile':PROFILE,'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
- record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root)
+ record['motion_model']=motion_model
+ record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root,motion_model=motion_model)
  (files_dir/'board.json').write_bytes(encoded(record['board']))
- ble=files_dir/'ble';ble.mkdir()
- for ext in ('driver.elf','manifest.json'):
-  src=root/('dist/twatch-ble/driver.elf' if ext=='driver.elf' else 'drivers/twatch_ble/manifest.json')
-  (ble/ext).write_bytes(src.read_bytes())
- subprocess.run([str(validator),str(ble/'driver.elf')],check=True)
+ for driver,folder in [('twatch-ble','ble'),('twatch-imu','imu'),('twatch-gpio','gpio'),('twatch-pmu','pmu')]:
+  dest=files_dir/folder;dest.mkdir()
+  (dest/'driver.elf').write_bytes((root/'dist'/driver/'driver.elf').read_bytes())
+  (dest/'manifest.json').write_bytes(encoded(json.loads((root/'drivers'/driver.replace('-','_')/'manifest.json').read_text())))
+  subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/(name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/(name+'.json')).read_text())
@@ -79,7 +86,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},{'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'})
   m=json.loads(store[name+'.json']);m['version']=version
-  for cap,api in [('storage.key-value',1),('rtc.clock',2),('net.wifi',1),('bluetooth.hci',1)]:
+  for cap,api in [('storage.key-value',1),('rtc.clock',2),('net.wifi',1),('bluetooth.hci',1),('motion.accel',1)]:
    if not any(x['capability']==cap and x['api']==api for x in m['requires']):m['requires'].append({'capability':cap,'api':api})
   (files_dir/(name+'.elf')).write_bytes(b);(files_dir/(name+'.json')).write_bytes(encoded(m))
   record['apps'][name]={**meta,'version':version,'repository':repo_name,'repository_sha':c['sources'][repo_name]['commit'],'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest()}
@@ -115,6 +122,10 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
    original=path/relative
    if original.is_file() and original.name.upper().startswith(('LICENSE','COPYING','NOTICE')):
     target=licenses/name/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
+ # Sensor vendor notices accompany source and binary current deployments.
+ for src in (root/'vendor/SensorLib').rglob('*'):
+  if src.is_file() and (src.name in ('LICENSE','PROVENANCE.json') or src.name.startswith('NOTICE')):
+   target=licenses/'motion'/src.relative_to(root/'vendor/SensorLib');target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(src.read_bytes())
  for name in ('LICENSE-FontAwesome.txt','LICENSE-Orbitron.txt','LICENSE-Rajdhani.txt','SOURCES.json'):
   p=repos['system-apps']/'lib/PortableApps/fonts'/name
   if p.is_file():(licenses/name).write_bytes(p.read_bytes())
@@ -128,4 +139,6 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT):
 if __name__=='__main__':
  p=argparse.ArgumentParser()
  for n in ('system-apps','utilities','productivity','runtime','baseline','output'):p.add_argument('--'+n,type=Path,required=True)
- a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output)
+ p.add_argument('--baseline-root',type=Path)
+ p.add_argument('--motion-model',choices=['bma423','bma456h'],required=True)
+ a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model)
