@@ -111,7 +111,7 @@ def build(base,compiled,head,root=ROOT):
     shared['shared/audio-build.json']=compiled['audio-build.json']
     shared['shared/audio-sources.json']=(root/'apps/audio-sources.json').read_bytes()
     out={**shared,**store,'baseline.zip':base.read_bytes()}
-    allowed=CHANGED|ADDED
+    allowed=CHANGED|{n for n in ADDED if n.startswith('store/')}
     changed={n for n in set(old)|set(store) if old.get(n)!=store.get(n)}
     require(changed==allowed,'Audio overlay changed unexpected store paths: '+str(sorted(changed^allowed)))
     rec={'schema':'riscrte.watch-audio-tools-deployment','schema_version':1,'source_sha':head,'profile':PROFILE,
