@@ -725,6 +725,8 @@ jobs:
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: .latest/watch-artifact
+      - name: Rebuild exact Watch driver packages for final image verification
+        run: python scripts/build_twatch_drivers.py
       - name: Assemble installable latest-main Watch image
         env:
           TWATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
