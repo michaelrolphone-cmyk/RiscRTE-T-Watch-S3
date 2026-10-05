@@ -40,3 +40,8 @@ _Static_assert(WIFI_MANAGEMENT_V1_SIZE==56,"Wi-Fi management suffix target size"
 _Static_assert(offsetof(garden_gpio_v1,wake_source)==56,"GPIO old prefix");
 _Static_assert(TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE==48,"PMU old timed prefix");
 _Static_assert(TWATCH_MOTION_SAMPLE_SIZE==20,"motion sample prefix");
+
+_Static_assert(offsetof(twatch_radio_api_v2,profile_info)==36,"LoRa v2 prefix unchanged");
+_Static_assert(sizeof(twatch_lora_profile_info_v1)==16,"LoRa profile information ABI");
+_Static_assert(offsetof(tw_hw_lora_v2,base)==0,"LoRa config v1 prefix unchanged");
+_Static_assert(offsetof(tw_hw_lora_v2,allowed_profiles)==sizeof(tw_hw_lora_v1),"LoRa config profile suffix");

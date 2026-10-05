@@ -3,12 +3,22 @@
 #include "twatch_caps.h"
 #include "common/spi.h"
 static const tw_hw_lora_v1 *config;
-static bool started, configured, is1280;
+static bool started, configured, is1280, selectable, initialized, initialization_attempted, cleanup_failed;
+static uint32_t supported_profiles, selected_profile;
+static tw_hw_lora_v1 active_config;
+static bool initialize_hardware(void);
+static bool release_hardware(void);
 static twatch_lora_config_v2 settings;
 static twatch_lora_status_v2 state;
 static uint64_t began;
 static uint32_t timeout;
 static uint8_t received[255];
+/* BUSY/DIO are driven inputs. The typed v1 radio config grants no pull-up. */
+static bool input_no_pull(uint8_t pin) {
+    if (!gpio || pin >= 49 || pins[pin])
+        return false;
+    return gpio->claim(gpio->context, pin, false, false, false, &pins[pin]) && pins[pin];
+}
 static bool ready(void) {
     uint64_t begin = timer->monotonic_ms(timer->context);
     for (unsigned i = 0; i < 21; i++) {
@@ -71,7 +81,7 @@ static bool packet_params(uint8_t length) {
 }
 static bool configure(void *c, const twatch_lora_config_v2 *v) {
     (void)c;
-    if (!started || !v || state.state == TW_LORA_TX || state.state == TW_LORA_RX ||
+    if (!started || cleanup_failed || !v || (selectable && !selected_profile) || state.state == TW_LORA_TX || state.state == TW_LORA_RX ||
         v->reserved[0] || v->reserved[1] || v->reserved[2] ||
         v->frequency_hz < config->minimum_hz || v->frequency_hz > config->maximum_hz || v->sf < 5 ||
         v->sf > 12 || v->coding_rate < 5 || v->coding_rate > 8 || v->preamble < 8 ||
@@ -100,6 +110,8 @@ static bool configure(void *c, const twatch_lora_config_v2 *v) {
             bw = 6;
     }
     if (bw == 0xff)
+        return false;
+    if (!initialized && !initialize_hardware())
         return false;
     configured = false;
     if (!idle())
@@ -197,7 +209,11 @@ static bool receive(void *c, uint32_t ms) {
 }
 static bool cancel(void *c) {
     (void)c;
-    if (!started || !spi_end())
+    if (!started)
+        return false;
+    if (selectable)
+        return release_hardware();
+    if (!spi_end())
         return false;
     io_fault = false;
     if (!idle())
@@ -255,48 +271,32 @@ static bool read_packet(void *c, uint8_t *out, size_t capacity, size_t *got) {
     state.state = TW_LORA_IDLE;
     return true;
 }
-static bool quiesce(void) {
+static bool release_hardware(void) {
     if (config && tw_pin(config->reset) && pins[config->reset]) {
         io_fault = false;
         gpio_write(config->reset, config->reset_active_high);
         if (io_fault)
-            return false;
+            {cleanup_failed=true;return false;}
     }
     if (!spi_release())
-        return false;
+        {cleanup_failed=true;return false;}
     for (uint8_t i = 0; i < 49; i++)
         gpio_release(i);
     if (!gpio_clean())
-        return false;
-    started = configured = false;
+        {cleanup_failed=true;return false;}
+    initialized = initialization_attempted = configured = cleanup_failed = false;
+    state=(twatch_lora_status_v2){.state=TW_LORA_IDLE};
     return true;
 }
-static bool start(const risc_provider_dependency_v1 *d, size_t n) {
-    if (started || spi_claim || !gpio_clean())
-        return false;
-    config = tw_config(d, n, "semtech,sx1262", "radio.lora", sizeof(*config));
-    is1280 = false;
-    if (!config) {
-        config = tw_config(d, n, "semtech,sx1280", "radio.lora", sizeof(*config));
-        is1280 = true;
-    }
-    if (!config || !tw_bus(&config->bus, 1) || config->bus.miso < 0 ||
-        config->minimum_hz > config->maximum_hz || config->tcxo_voltage > 7 ||
-        config->reset_active_high > 1 || config->busy_active_high > 1 ||
-        config->irq_active_high > 1)
-        return false;
-    if (is1280 ? (config->minimum_hz < 2400000000u || config->maximum_hz > 2500000000u)
-               : (config->minimum_hz < 430000000u || config->maximum_hz > 928000000u))
-        return false;
-    int16_t p[] = {config->bus.sclk, config->bus.mosi, config->bus.miso, config->cs,
-                   config->reset,    config->busy,     config->irq};
-    for (size_t i = 0; i < 7; i++)
-        if (!tw_pin(p[i]))
-            return false;
-    if (!tw_unique(p, 7) || !spi_dependencies(d, n))
-        return false;
-    if (!gpio_claim(config->reset, true, config->reset_active_high) || !gpio_input(config->busy) ||
-        !gpio_input(config->irq) ||
+static bool quiesce(void) {
+    if (!release_hardware()) return false;
+    started=false;selected_profile=0;return true;
+}
+static bool initialize_hardware(void) {
+    if (initialized || initialization_attempted || cleanup_failed) return false;
+    initialization_attempted=true;
+    if (!gpio_claim(config->reset, true, config->reset_active_high) || !input_no_pull(config->busy) ||
+        !input_no_pull(config->irq) ||
         !spi->claim(spi->context, config->bus.sclk, config->bus.mosi, config->bus.miso, config->cs,
                     &spi_claim) ||
         !spi_claim)
@@ -320,9 +320,55 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!command(0x8f, base, 2, NULL, 0) || !clear_irq())
         return false;
     state = (twatch_lora_status_v2){0};
-    started = true;
+    initialized = true;
     return true;
 }
+static bool profile_info(void *context,twatch_lora_profile_info_v1 *out) {
+    (void)context;
+    if(!started || !out || out->struct_size<sizeof(*out))return false;
+    *out=(twatch_lora_profile_info_v1){sizeof(*out),supported_profiles,selected_profile,0};return true;
+}
+static bool select_profile(void *context,uint32_t choice) {
+    (void)context;
+    if(!started || choice>4 || (choice && !(supported_profiles&(1u<<(choice-1)))))return false;
+    if(!selectable)return choice==selected_profile;
+    if(choice==selected_profile && !cleanup_failed)return true;
+    if(!release_hardware())return false;
+    selected_profile=choice;is1280=choice==TW_LORA_PROFILE_2400;
+    const uint32_t minimum[]={0,430000000,863000000,902000000,2400000000u};
+    const uint32_t maximum[]={0,440000000,870000000,928000000,2500000000u};
+    active_config.minimum_hz=minimum[choice];active_config.maximum_hz=maximum[choice];
+    return true;
+}
+static bool start(const risc_provider_dependency_v1 *d,size_t n) {
+    if(started || spi_claim || !gpio_clean())return false;
+    const tw_hw_lora_v2 *choice=tw_config_version(d,n,"semtech,sx1262-sx1280-selectable","radio.lora",sizeof(*choice),2);
+    selectable=choice!=NULL;initialized=initialization_attempted=cleanup_failed=false;selected_profile=supported_profiles=0;
+    if(selectable){
+        if(!choice->allowed_profiles || (choice->allowed_profiles&~TW_LORA_PROFILE_MASK))return false;
+        active_config=choice->base;config=&active_config;supported_profiles=choice->allowed_profiles;is1280=false;
+        /* Explicit v2 has the full envelope; each selection applies its exact band. */
+        if(config->minimum_hz!=430000000 || config->maximum_hz!=2500000000u)return false;
+    } else {
+        config=tw_config(d,n,"semtech,sx1262","radio.lora",sizeof(*config));is1280=false;
+        if(!config){config=tw_config(d,n,"semtech,sx1280","radio.lora",sizeof(*config));is1280=true;}
+        if(!config)return false;
+        if(is1280){if(config->minimum_hz<2400000000u || config->maximum_hz>2500000000u)return false;selected_profile=4;}
+        else {
+            if(config->minimum_hz<430000000 || config->maximum_hz>928000000)return false;
+            if(config->minimum_hz>=430000000 && config->maximum_hz<=440000000)selected_profile=1;
+            else if(config->minimum_hz>=863000000 && config->maximum_hz<=870000000)selected_profile=2;
+            else if(config->minimum_hz>=902000000 && config->maximum_hz<=928000000)selected_profile=3;
+        }
+        if(selected_profile)supported_profiles=1u<<(selected_profile-1);
+    }
+    if(!tw_bus(&config->bus,1) || config->bus.miso<0 || config->minimum_hz>config->maximum_hz || config->tcxo_voltage>7 || config->reset_active_high>1 || config->busy_active_high>1 || config->irq_active_high>1)return false;
+    int16_t pins_to_check[]={config->bus.sclk,config->bus.mosi,config->bus.miso,config->cs,config->reset,config->busy,config->irq};
+    for(size_t i=0;i<7;++i)if(!tw_pin(pins_to_check[i]))return false;
+    if(!tw_unique(pins_to_check,7) || !spi_dependencies(d,n))return false;
+    if(!selectable && !initialize_hardware())return false;
+    state=(twatch_lora_status_v2){.state=TW_LORA_IDLE};started=true;return true;
+}
 static const twatch_radio_api_v2 api = {2,       sizeof(api), NULL,        configure, send,
-                                        receive, poll,        read_packet, cancel};
+                                        receive, poll,        read_packet, cancel, profile_info, select_profile};
 TW_DRIVER("twatch-lora", "radio.lora", 2, api)
