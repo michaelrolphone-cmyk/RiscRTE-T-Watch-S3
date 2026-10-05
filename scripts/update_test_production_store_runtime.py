@@ -200,9 +200,9 @@ def _source_hashes(runtime, system=None, utilities=None):
     return {str(p): sha(p) for p in sorted(set(files))}
 
 
-def verify_clock_abi(runtime_source, output=None, compiler=None):
+def verify_clock_abi(runtime_source, output=None, compiler=None, current_profile=False):
     """Guard-page tests using frozen/canonical SDKs, plus optional target compile."""
-    runtime = _runtime(runtime_source)
+    runtime = _runtime(runtime_source,current_profile)
     compiler = compiler or os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
     require(compiler, 'Set TWATCH_CC to the pinned Xtensa compiler for the required target ABI checks')
     record = {'host': [], 'xtensa': [], 'target_executed': False}
@@ -337,8 +337,8 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         # actual Runtime repository's established fixture, not a parallel stack.
         record['runtime_owner_regression'] = command(['bash', runtime / 'test/run_update_runtime_test.sh'])
         record['runtime_owner_regression_sanitized'] = os.environ.get('SANITIZE', '0') == '1'
-        record['clock_abi'] = verify_clock_abi(runtime, build / 'abi')
-        require(_runtime(runtime) == runtime, 'Runtime identity changed during test')
+        record['clock_abi'] = verify_clock_abi(runtime, build / 'abi',current_profile=current_profile)
+        require(_runtime(runtime,current_profile) == runtime, 'Runtime identity changed during test')
         record['compiled_source_sha256'] = _source_hashes(runtime, system, utilities)
         require(record['compiled_source_sha256'] == before_sources, 'Production source changed during execution')
         (build / 'execution-provenance.json').write_text(json.dumps(record, indent=2) + '\n')
