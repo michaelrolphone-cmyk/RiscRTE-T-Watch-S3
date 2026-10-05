@@ -61,6 +61,8 @@ def compile_harness(runtime, output):
         command += ['-DSTORE_ADMISSION_RADIO']
     if 'i2sOpenRx' in cpu_header:
         command += ['-DSTORE_ADMISSION_I2S_RX']
+    if (runtime/'sdk/driver/RiscHttpClientV1.h').is_file() and (runtime/'sdk/driver/RiscBankStoreV1.h').is_file():
+        command += ['-DSTORE_ADMISSION_UPDATE_PLATFORMS']
     command += ['-I' + str(p) for p in includes]
     command += [str(p) for p in sources]
     command += [str(ROOT / 'tests/runtime_store_admission.cpp'), '-ldl', '-o', str(output)]
