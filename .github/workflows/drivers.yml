@@ -499,7 +499,7 @@ jobs:
 
   update-integration:
     runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -542,6 +542,28 @@ jobs:
           ref: ${{ steps.pins.outputs.runtime }}
           path: .update-dependencies/runtime
           persist-credentials: false
+      - name: Read merged Audio Tools source pins
+        id: audio_pins
+        run: |
+          python - <<'PY'
+          import json,os
+          pins=json.load(open('apps/audio-sources.json'))['sources']
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            out.write('system_apps='+pins['system-apps']['commit']+'\n')
+            out.write('utilities='+pins['utilities']['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.audio_pins.outputs.system_apps }}
+          path: .audio-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.audio_pins.outputs.utilities }}
+          path: .audio-dependencies/utilities
+          persist-credentials: false
       - name: Pinned target compiler and SPIFFS tool
         run: |
           python -m pip install platformio==6.1.19
@@ -573,6 +595,18 @@ jobs:
         run: |
           python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/normal
           ADDRESS_SANITIZE=1 SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/sanitized
+      - name: Frequency Generator and Audio Spectrum/Spectrogram integration
+        env:
+          WATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python .audio-dependencies/utilities/scripts/test_frequency_generator.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_audio_spectrum.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_audio_service_lifecycle.py --system-apps .audio-dependencies/system-apps --runtime .update-dependencies/runtime
+          python scripts/build_audio_apps.py --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline dist/update-common/*-update-launcher-common.zip
+          python scripts/audio_overlay.py dist/update-common/*-update-launcher-common.zip --compiled dist/audio-tools --head "$WATCH_HEAD" --output dist/audio-common/audio-tools-common.zip
+          python -m unittest discover -s tests -p test_audio_deployment.py -v
+          python scripts/build_audio_store.py dist/audio-common/audio-tools-common.zip --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-common
+          python scripts/check_runtime_store_admission.py --runtime .update-dependencies/runtime --archive dist/audio-common/audio-tools-common.zip --image dist/audio-common/audio-tools-common-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 2 --output dist/audio-common/admission-provenance.json
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -587,6 +621,11 @@ jobs:
             dist/update-validation/**/admission-provenance.json
             dist/update-validation/**/execution-provenance.json
             dist/update-validation/**/abi-provenance.json
+            dist/audio-tools/*.elf
+            dist/audio-tools/*.json
+            dist/audio-common/*.zip
+            dist/audio-common/*.bin
+            dist/audio-common/*.json
           if-no-files-found: error
           retention-days: 14
 
