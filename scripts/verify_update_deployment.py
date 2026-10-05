@@ -9,6 +9,7 @@ import struct
 
 from build_wifi_common import read_zip, require, exact_sha, sha
 from build_clock_deployment import ROOT, encoded
+from pmu_sleep_custody import PMU_FILES, current_driver_packages, verify_current_pmu
 
 BASELINE_SOURCE = '216e2d73b72cca6c3bcf75ad9ef56466b8861144'
 APPS = ('default', 'clock', 'springboard', 'battery', 'settings', 'calculator',
@@ -87,7 +88,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
     record = json.loads(files['deployment-record.json'])
     entries(files, record)
     require(record['schema'] == 'riscrte.watch-update-launcher-deployment' and
-            record['schema_version'] == 1 and record['app_version'] == '0.7.1' and
+            record['schema_version'] == 1 and record['app_version'] == '0.8.0' and
             record['physical_verification'] == 'pending', 'Wrong paired deployment identity')
     require(exact_sha(record['source_sha']) and
             (expected_head is None or expected_head == record['source_sha']), 'Unexpected Watch source')
@@ -116,11 +117,14 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
     require(all(len(('/'+n[6:]).encode()) < 32 for n in expected_paths), 'SPIFFS path too long')
     require(sum(len(files[n]) for n in expected_paths) < 0x4f0000, 'Paired store capacity exceeded')
     for name, expected in baseline['files'].items():
-        if name in CHANGED:
+        if name in CHANGED or name in PMU_FILES:
             continue
         data = files['store/'+name]
         require(len(data) == expected['size_bytes'] and sha(data) == expected['sha256'],
                 'Unrelated baseline file changed: '+name)
+    # This named increment replaces only PMU bytes; the historical baseline
+    # stays immutable and all other preserved files retain exact checks.
+    verify_current_pmu(files, root)
     board = json.loads(files['store/board.json'])
     require(files['store/board.json'] == encoded(board), 'Noncanonical board encoding')
     if not common:
@@ -165,7 +169,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
         if name in APPS:
             expected = copy.deepcopy(baseline['app_manifests'][name])
             if name in ('default', 'clock'):
-                expected['version'] = '0.7.1'
+                expected['version'] = '0.8.0'
             elif name == 'springboard':
                 expected['version'] = service_sources['application_versions'][name]
         else:
@@ -251,15 +255,15 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
                 'Provider kind build define differs')
         require(update_build['providers'][app] == {'kind': kind, 'path': short, 'sha256': sha(data),
                 'manifest_sha256': sha(files['store/'+short+'/manifest.json'])}, 'Provider delivery hash differs')
-    require(record['drivers'] == baseline['driver_packages'], 'Physical package membership changed')
+    require(record['drivers'] == current_driver_packages(baseline, root), 'Physical package membership changed')
     for package in record['drivers']:
         data = files['packages/'+package['archive']]
         require(sha(data) == package['sha256'] and len(data) == package['size_bytes'], 'Physical package changed')
     alarm = json.loads(files['shared/alarm-service-build.json'])
-    alarm_baseline = json.loads((root/'apps/points-service-baseline.json').read_text())
+    alarm_baseline = json.loads((root/'apps/update-alarm-service-baseline.json').read_text())
     require(alarm['source_sha256'] == alarm_baseline['source_sha256'] and
             alarm['size_bytes'] == len(files['store/alarm-service/driver.elf']), 'Alarm provenance changed')
-    require(alarm['source_pins'] == pins and alarm['service_version'] == '0.2.1' and
+    require(alarm['source_pins'] == pins and alarm['service_version'] == alarm_baseline['service_version'] and
             alarm['elf_sha256'] == sha(files['store/alarm-service/driver.elf']), 'Alarm source/ELF changed')
     return record
 

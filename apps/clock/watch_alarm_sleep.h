@@ -12,7 +12,11 @@ static int32_t watch_alarm_deadline(const alarm_service_v1 *a,alarm_sleep_v1 *de
         (void)a->step(a->context);
         alarm_status_v1 status={.struct_size=sizeof(status)};
         if(a->status(a->context,&status)!=ALARM_OK)return ALARM_INVALID;
-        if(status.state==ALARM_STATE_BLOCKED || status.occurrence.generation || status.output_uncertain)return ALARM_BUSY;
+        if(status.state==ALARM_STATE_BLOCKED || status.occurrence.generation || status.output_uncertain
+#ifdef ALARM_STATUS_CUE_SUPPORTED
+           ||status.state==ALARM_STATE_CUE
+#endif
+           )return ALARM_BUSY;
     }
     return ALARM_BUSY;
 }

@@ -191,13 +191,31 @@ def main():
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp')]
     executable = build/'production-store-test'
     host_features = ['-DPRODUCTION_POINTS_READS=' + ('1' if points else '0')]
+    ledger_objects = []
+    defaults = points and '#define POINTS_DEFAULTS_AVAILABLE 1' in (utilities/'lib/Alarm/include/PointsRecords.h').read_text()
+    provenance['virtual_points_defaults'] = defaults
+    if defaults:
+        host_features += ['-DPRODUCTION_POINTS_DEFAULTS']
+        validator = build/'points-expiration-validator.c'
+        validator.write_text('''#include "PointsRecords.h"
+bool production_points_expiration_valid(const void* bytes,uint32_t size) {
+    points_ledger ledger;
+    return size==POINTS_RECORD_SIZE&&points_ledger_decode(&ledger,bytes,size)&&
+        ledger.revision==points_default_config().revision&&ledger.generation==1&&
+        !ledger.state&&!ledger.slot&&!ledger.edge&&!ledger.mode&&!ledger.deadline&&!ledger.recovery_until;
+}
+''')
+        ledger = build/'points-expiration-validator.o'
+        run([cc, '-std=c11', *flags, '-I'+str(utilities/'lib/Alarm/include'), '-c', validator, '-o', ledger])
+        ledger_objects.append(ledger)
+        compiled_sources.append(validator)
     if 'radioJoin' in (runtime/'src/ports/esp32s3/CpuPort.h').read_text():
         host_features += ['-DPRODUCTION_HAS_RADIO']
     if 'providerStorageSafe' in (runtime/'src/bootstrap/Runtime.h').read_text():
         host_features += ['-DPRODUCTION_STORAGE_SAFE']
     run([cxx, '-std=c++17', *flags, '-O0', '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
          *host_features, '-include', registry/'redirect.h',
-         *host_includes, *runtime_sources, HERE/'host.cpp', *registry_objects, '-pthread', '-ldl', '-o', executable])
+         *host_includes, *runtime_sources, HERE/'host.cpp', *registry_objects, *ledger_objects, '-pthread', '-ldl', '-o', executable])
     registry_sources = [runtime/'lib/elf_loader/src/dlso'/name for name in ('dlfcn.c', 'dlmod.c')]
     provenance['compiled_source_sha256'] = {str(path): sha(path) for path in [*runtime_sources,
         *compiled_sources, *registry_sources, registry/'backend.c', registry/'redirect.h',

@@ -77,9 +77,12 @@ static int32_t kv_get(void*c,const char*k,void*b,uint32_t cap,uint32_t*size){(vo
  if(!strcmp(k,POINTS_CONFIG_KEY)) {
   points_config c={.revision=1,.created=800000000};
   for(unsigned j=0;j<POINTS_MAX;j++)c.points[j].kind=POINTS_BREAK;
-  c.points[0]=(points_item){POINTS_LUNCH,1,0,127,12,0,30};assert(cap==64);
+  c.points[0]=(points_item){.kind=POINTS_LUNCH,.enabled=1,.mode=0,.weekdays=127,.hour=12,.minute=0,.duration_minutes=30};assert(cap==64);
   points_config_encode(&c,b);*size=64;return RISC_KEY_VALUE_OK;
  }
+#if WATCH_POINTS_EXTENDED
+ if(!strcmp(k,POINTS_META_KEY)){assert(cap==64);*size=0;return RISC_KEY_VALUE_NOT_FOUND;}
+#endif
 #endif
 if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}if(!strcmp(k,WATCH_FACE_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;}assert(!strcmp(k,PORTABLE_SLEEP_KEY)&&cap==4);++kv_reads;*size=0;
  if(scenario==9||scenario==12)return RISC_KEY_VALUE_NOT_FOUND;
@@ -94,6 +97,9 @@ static twatch_rtc_api_v1 rp={2,sizeof(rp),NULL,read_clock,NULL,NULL,NULL};
 static risc_touch_api_v1 tp={1,sizeof(tp),NULL,sub,unsub,touch_poll,next,snapshot};
 static int32_t alarm_status(void*c,alarm_status_v1*out){(void)c;*out=av;return ALARM_OK;}
 static int32_t alarm_step(void*c){(void)c;assert(!pending&&!owned&&clock_display_settled);alarm_steps++;
+#ifdef ALARM_STATUS_CUE_SUPPORTED
+ if(av.state==ALARM_STATE_CUE){if(scenario!=202&&++sequence>=6){av.state=ALARM_STATE_LOADING;av.output_uncertain=0;post_ack=true;sequence=0;}return 0;}
+#endif
  if(!activated&&((scenario==0&&!ready)||(scenario==1&&light_calls)||(scenario==99&&ready&&now-ready_at>=20))){av.state=ALARM_STATE_ALERT;av.occurrence=(alarm_token_v1){1,1,1,1};activated=true;}
  else if(av.state==ALARM_STATE_DISMISSING){av.state=ALARM_STATE_LOADING;av.occurrence=(alarm_token_v1){0};post_ack=true;sequence=0;}
  else if(post_ack&&++sequence>=3){av.state=ALARM_STATE_READY;post_ack=false;modal_finished_at=now;}
@@ -175,5 +181,23 @@ int main(void){
   free(picker_scratch);picker_scratch=NULL;cases++;
  }
  printf("Picker interrupt matrix: %u cases, all 32 global IDs, queued opening/horizontal/vertical, both category seams passed\n",cases);
+#ifdef ALARM_STATUS_CUE_SUPPORTED
+ /* A copied CUE reservation holds output custody but never paints an overlay.
+  * Cleanup/ACK ending in LOADING returns to the caller between simultaneous
+  * cues rather than consuming an unbounded loading-loop budget. */
+ for(unsigned test=200;test<=202;test++) {
+  reset(test);rt=&runtime;display=&dp.base;pmu=&pp;rtc=&rp;held=0;
+  clock_alarm=(portable_alarm_client){.api=&alarm_api};clock_display_settled=true;
+  clock_alarm_failed_cleaned=clock_alarm_error_seen=clock_alarm_modal=false;
+  alarm_steps=alarm_acks=alarm_stops=alarm_frames=modal_started=sequence=0;activated=true;post_ack=false;
+  av=(alarm_status_v1){.api_version=1,.struct_size=sizeof(av),.state=ALARM_STATE_CUE,.output_uncertain=1};
+  memset(pixels,0x57,sizeof(pixels));launcher_swipe_pending=picker_select_pending=true;
+  bool ok=clock_alarm_foreground();assert(ok==(test!=202));
+  assert(!alarm_frames&&!alarm_acks&&!clock_alarm_modal);for(unsigned i=0;i<240*240;i++)assert(pixels[i]==0x5757);
+  if(test==202)assert(alarm_stops==1&&clock_alarm_failed_cleaned);
+  else {assert(!alarm_stops&&!launcher_swipe_pending&&!picker_select_pending);assert(now==100&&av.state==ALARM_STATE_LOADING);}
+ }
+ puts("Clock CUE: no overlay/frame replacement, settled one-cue budget, stale input cancellation and timeout cleanup passed");
+#endif
  puts("Clock alarm: boot-before-intro, Light due-before-intro, exact ACK reconciliation, subscription/grant cleanup and queued-opening/both-axis picker custody passed");
 }

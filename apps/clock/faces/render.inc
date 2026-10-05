@@ -1,8 +1,12 @@
-/* Eight attachment-derived faces. Included by nova.c to reuse its validated
+/* Schedule and attachment-derived faces. Included by nova.c to reuse its validated
  * RGB565 canvas, blending, RTC formatter and integer sine table. */
 typedef struct { uint8_t ch; int8_t left,top; uint8_t width,height; uint16_t advance; uint32_t data; } face_glyph;
 typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
+#ifdef WATCH_POINTS_LEGACY_PRESENTATION
 #include "assets.inc"
+#else
+#include "assets_text.inc"
+#endif
 #define FC(r,g,b) ((((r)>>3)<<11)|(((g)>>2)<<5)|((b)>>3))
 #define FWHITE 0xffffu
 #define FCYAN FC(25,227,255)
@@ -12,13 +16,19 @@ typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
 #define FAMBER FC(255,176,32)
 #define FORANGE FC(255,122,26)
 #define FMUTED FC(125,140,144)
-static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY"};
+static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY","UP NEXT"};
 const char *nova_watch_face_name(unsigned id) {return id<WATCH_FACE_COUNT?face_names[id]:face_names[0];}
 static const face_glyph *fglyph(const face_font *font,char ch) {
     for(unsigned i=0;i<font->count;i++)if(font->glyphs[i].ch==(uint8_t)ch)return font->glyphs+i;
     return NULL;
 }
+#ifdef WATCH_FACE_TEXT_TEST
+static void face_text_test(const face_font*,const char*,int,int,int,int,const uint8_t*);
+#endif
 static void ftext_alpha(canvas *c,const face_font *font,const char *s,int cx,int y,int spacing,int fit,uint16_t color,uint16_t colon,const uint8_t*alpha) {
+#ifdef WATCH_FACE_TEXT_TEST
+    face_text_test(font,s,cx,y,spacing,fit,alpha);
+#endif
     int width=0;
     for(const char *p=s;*p;p++){const face_glyph*g=fglyph(font,*p);if(g)width+=g->advance+spacing;}
     if(!width)return;
@@ -48,7 +58,7 @@ static void frect(canvas*c,int x,int y,int w,int h,uint16_t color) {
 }
 /* Q4 round strokes, with four coverage samples per destination pixel. */
 #ifdef WATCH_FACE_RENDER_TEST
-static unsigned face_test_calls,face_test_line_pixels,face_test_mask;
+static unsigned face_test_calls,face_test_line_pixels;static uint64_t face_test_mask;
 #endif
 static void fline(canvas*c,int x1,int y1,int x2,int y2,int width,uint16_t color) {
     int dx=x2-x1,dy=y2-y1,len=dx*dx+dy*dy,r=width/2;
@@ -125,7 +135,11 @@ static void fbattery(canvas*c,const nova_watch_state*s,const nova_watch_labels*l
 }
 #include "collection_two.inc"
 #include "calendar_collection.inc"
+#ifdef WATCH_POINTS_LEGACY_PRESENTATION
+#include "points_collection_legacy.inc"
+#else
 #include "points_collection.inc"
+#endif
 static bool face_surface_valid(const risc_display_surface_v1*s) {
     return s&&s->pixels&&s->pixel_format==5&&s->width==240&&s->height==240&&s->stride_bytes>=480&&s->stride_bytes<=UINT32_MAX/240&&s->size_bytes>=s->stride_bytes*240;
 }
@@ -136,7 +150,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
 #endif
     nova_watch_state empty={0};if(!state)state=&empty;if(id>=WATCH_FACE_COUNT)id=0;
 #ifdef WATCH_FACE_RENDER_TEST
-    face_test_mask|=1u<<id;
+    face_test_mask|=UINT64_C(1)<<id;
 #endif
     nova_watch_labels l;nova_watch_format(state,&l);
     /* Use the shared format policy; analog geometry below still uses civil

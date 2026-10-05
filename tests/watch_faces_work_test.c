@@ -105,7 +105,7 @@ int main(void) {
             assert(nova_watch_picker_render(&surf,&state,23,-(int)index*108*256,watch_face_page_for(category),NULL,24,256,&cache));
             face_test_calls=0;face_test_mask=0;
             assert(nova_watch_picker_render(&surf,&state,23,-(int)index*108*256,watch_face_page_for(category),NULL,24,256,&cache));
-            assert(face_test_calls==1&&face_test_mask==(1u<<id));
+            assert(face_test_calls==1&&face_test_mask==(UINT64_C(1)<<id));
         }
     }
     risc_display_surface_v1 invalid={0,after,240,240,480,115199,5};nova_watch_picker_cache scratch={0};

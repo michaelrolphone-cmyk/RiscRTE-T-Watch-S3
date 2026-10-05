@@ -39,11 +39,14 @@ jobs:
       - name: Versioned board baseline
         run: python scripts/board_baseline.py
       - name: Physical manifests, negative mappings and package hashes
-        run: python scripts/check_twatch_drivers.py
+        run: |
+          python scripts/check_twatch_drivers.py
+          python -m unittest discover -s tests -p test_pmu_sleep_custody.py -v
       - name: Clock app behavior with UBSan
         run: |
           python scripts/test_clock.py
           python scripts/test_deep_sleep.py
+          python scripts/test_pmu_cold_boot_sleep.py
           python scripts/test_hybrid_sleep.py
           python scripts/test_crown.py
           python scripts/test_launcher_clock.py
@@ -264,36 +267,58 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install -r scripts/requirements.txt
+      - id: points-pins
+        name: Read exact Points source pins
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          p=json.load(open('apps/points-sources.json'))
+          for key in ('system-apps','utilities','runtime','productivity'):
+              print(key.replace('-','_')+'='+p[key]['commit'])
+          PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 911be9e8042f1bcc46038fb70189eebe4ca106c5
+          ref: ${{ steps.points-pins.outputs.system_apps }}
           path: .points-dependencies/system-apps
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
-          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          ref: ${{ steps.points-pins.outputs.utilities }}
           path: .points-dependencies/utilities
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-Productivity
-          ref: 43c23fee899cd2af8b6b5339b80e778018fb6295
+          ref: ${{ steps.points-pins.outputs.productivity }}
           path: .points-dependencies/productivity
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
-          ref: 8688f92069b99547f0d25ecbd12cfcad3bb52c53
+          ref: ${{ steps.points-pins.outputs.runtime }}
           path: .points-dependencies/runtime
           persist-credentials: false
-      - name: Points projections, eight faces and foreground lifecycle
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          path: .points-dependencies/legacy-utilities
+          persist-credentials: false
+      - name: Points projections, nine faces and foreground lifecycle
         run: |
           python scripts/test_points_watch_faces.py
+          python scripts/test_points_label_pixels.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python scripts/test_points_stored_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities --productivity .points-dependencies/productivity --legacy-utilities .points-dependencies/legacy-utilities
           python scripts/test_points_integration.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python scripts/test_points_cold_boot_idle.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python .points-dependencies/utilities/scripts/test_points_apps.py --system-apps .points-dependencies/system-apps --runtime .points-dependencies/runtime
           python .points-dependencies/productivity/scripts/test_points_in_time.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_gui.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_picker.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python .points-dependencies/productivity/scripts/test_points_touch.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
           python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
           SANITIZE=1 python tests/alarm_cross_layer/run.py --points --watch . --runtime .points-dependencies/runtime --utilities .points-dependencies/utilities --system-apps .points-dependencies/system-apps
       - name: Pinned target tools
@@ -322,6 +347,10 @@ jobs:
           for bundle in dist/points-common/*.zip; do
             python scripts/build_points_store.py "$bundle" --mkspiffs "$TWATCH_MKSPIFFS"
           done
+      - name: Current-schema paired Clock payload
+        run: |
+          python scripts/build_points_paired_clock.py --system-apps .points-dependencies/system-apps --utilities .points-dependencies/utilities
+          python -m unittest discover -s tests -p test_points_paired_clock.py -v
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -334,7 +363,88 @@ jobs:
             dist/points-common/*.bin
             dist/points-common/*.json
             dist/points-native/*.png
+            dist/points-label-pixels/*.png
+            dist/points-label-pixels/*.json
+            dist/points-label-pixels/*.tsv
+            dist/points-paired-clock/*
           if-no-files-found: error
+
+  points-store-faces:
+    needs: points-integration
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read final image and Points source pins
+        id: pins
+        run: |
+          python - <<'PYCODE' >> "$GITHUB_OUTPUT"
+          import json
+          p=json.load(open('apps/points-sources.json'))
+          for name in ('system-apps','utilities','productivity'):
+              print(name.replace('-','_')+'='+p[name]['commit'])
+          print('runtime='+json.load(open('apps/update-runtime-requirements.json'))['source_sha'])
+          PYCODE
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .face-store/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs.system_apps }}
+          path: .face-store/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .face-store/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
+          path: .face-store/legacy-utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: f89fed5816e2ae8ebad4e8332de0d0309c1b8281
+          path: .face-store/metadata-legacy-utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .face-store/productivity
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .face-store/artifact
+      - name: Real Runtime app save, bound service and all persisted Clock IDs
+        run: |
+          ARCHIVE=$(find .face-store/artifact -name '*-points-launcher-common.zip')
+          test -f "$ARCHIVE"
+          python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --metadata-legacy-utilities .face-store/metadata-legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/normal
+          SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/test_points_store_faces.py --runtime .face-store/runtime --system-apps .face-store/system-apps --utilities .face-store/utilities --legacy-utilities .face-store/legacy-utilities --metadata-legacy-utilities .face-store/metadata-legacy-utilities --productivity .face-store/productivity --archive "$ARCHIVE" --output dist/points-store-faces/sanitized
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-points-store-faces-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/points-store-faces/**/points-results.json
+            dist/points-store-faces/**/provenance.json
+            dist/points-store-faces/**/points-provenance.json
+          if-no-files-found: error
+          retention-days: 14
 
   wifi-integration:
     runs-on: ubuntu-22.04
@@ -450,6 +560,16 @@ jobs:
           ref: abef681d6c9c2b58729909a9961118ea20feee5e
           path: .admission-dependencies/native-loader-baseline
           persist-credentials: false
+      - id: admission-points-pins
+        name: Read exact Points execution source pins
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          p=json.load(open('apps/points-sources.json'))
+          print('system_apps='+p['system-apps']['commit'])
+          print('utilities='+p['utilities']['commit'])
+          PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
@@ -461,6 +581,18 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE-Utilities
           ref: 5418d9dc7f9963d96b5b8b11c40658ee753d9cbd
           path: .admission-dependencies/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.admission-points-pins.outputs.system_apps }}
+          path: .admission-dependencies/points-system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.admission-points-pins.outputs.utilities }}
+          path: .admission-dependencies/points-utilities
           persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
@@ -481,25 +613,31 @@ jobs:
       - name: Repaired Runtime admits every exact production store
         run: |
           python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --archive .admission-input/points/points-launcher-deployments/*.zip .admission-input/wifi/wifi-launcher-deployments/*.zip --image .admission-input/points/points-common/*-bootfs.bin .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 18 --output dist/production-admission/repaired.json
-          python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --output dist/production-admission/preserved.json
+          python scripts/check_runtime_store_admission.py --runtime .admission-dependencies/runtime --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 1 --preserved-store apps/wifi-store-baseline.json --current-pmu-sleep-repair --output dist/production-admission/preserved.json
       - name: Actual default Clock and providers on unchanged production policies
         run: |
-          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline
-          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution
-          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/points/points-common/*-bootfs.bin --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san
+          # Points and Wi-Fi intentionally carry different reviewed alarm-service
+          # generations now. Exercise each store with its own exact service/time
+          # source pins instead of substituting one provider source for both.
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline-points
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/native-loader-baseline --registry-support .admission-dependencies/runtime/test/support/native_registry --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-runtime-error 'alarm-service: elf-open-failed rc=0 (0x0)' --output dist/production-admission/native-loader-baseline-wifi
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-points
+          SANITIZE=0 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-wifi
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/points-system-apps --utilities .admission-dependencies/points-utilities --image .admission-input/points/points-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san-points
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_production_store_runtime.py --runtime .admission-dependencies/runtime --system-apps .admission-dependencies/system-apps --utilities .admission-dependencies/utilities --image .admission-input/wifi/wifi-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/production-admission/execution-san-wifi
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-production-admission-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/production-admission/*.json
-            dist/production-admission/execution/provenance.json
-            dist/production-admission/execution-san/provenance.json
-            dist/production-admission/native-loader-baseline/provenance.json
+            dist/production-admission/execution-*/provenance.json
+            dist/production-admission/execution-san-*/provenance.json
+            dist/production-admission/native-loader-baseline-*/provenance.json
           if-no-files-found: error
 
   update-integration:
     runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -542,6 +680,28 @@ jobs:
           ref: ${{ steps.pins.outputs.runtime }}
           path: .update-dependencies/runtime
           persist-credentials: false
+      - name: Read merged Audio Tools source pins
+        id: audio_pins
+        run: |
+          python - <<'PY'
+          import json,os
+          pins=json.load(open('apps/audio-sources.json'))['sources']
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            out.write('system_apps='+pins['system-apps']['commit']+'\n')
+            out.write('utilities='+pins['utilities']['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.audio_pins.outputs.system_apps }}
+          path: .audio-dependencies/system-apps
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.audio_pins.outputs.utilities }}
+          path: .audio-dependencies/utilities
+          persist-credentials: false
       - name: Pinned target compiler and SPIFFS tool
         run: |
           python -m pip install platformio==6.1.19
@@ -573,6 +733,19 @@ jobs:
         run: |
           python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/normal
           ADDRESS_SANITIZE=1 SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/update_test_production_store_runtime.py --runtime .update-dependencies/runtime --system-apps .update-dependencies/system-apps --utilities .update-dependencies/utilities --productivity .update-dependencies/productivity --archive dist/update-launcher-deployments/*.zip dist/update-common/*.zip --image dist/update-common/*-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --output dist/update-validation/sanitized
+      - name: Frequency Generator and Audio Spectrum/Spectrogram integration
+        env:
+          WATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python .audio-dependencies/utilities/scripts/test_frequency_generator.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_audio_spectrum.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_spectrum_renderer.py --system-apps .audio-dependencies/system-apps
+          python .audio-dependencies/utilities/scripts/test_audio_service_lifecycle.py --system-apps .audio-dependencies/system-apps --runtime .update-dependencies/runtime
+          python scripts/build_audio_apps.py --system-apps .audio-dependencies/system-apps --utilities .audio-dependencies/utilities --baseline dist/update-common/*-update-launcher-common.zip
+          python scripts/audio_overlay.py dist/update-common/*-update-launcher-common.zip --compiled dist/audio-tools --head "$WATCH_HEAD" --output dist/audio-common/audio-tools-common.zip
+          python -m unittest discover -s tests -p test_audio_deployment.py -v
+          python scripts/build_audio_store.py dist/audio-common/audio-tools-common.zip --mkspiffs "$TWATCH_MKSPIFFS" --output dist/audio-common
+          python scripts/check_runtime_store_admission.py --runtime .update-dependencies/runtime --archive dist/audio-common/audio-tools-common.zip --image dist/audio-common/audio-tools-common-bootfs.bin --mkspiffs "$TWATCH_MKSPIFFS" --expect-count 2 --output dist/audio-common/admission-provenance.json
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -587,6 +760,11 @@ jobs:
             dist/update-validation/**/admission-provenance.json
             dist/update-validation/**/execution-provenance.json
             dist/update-validation/**/abi-provenance.json
+            dist/audio-tools/*.elf
+            dist/audio-tools/*.json
+            dist/audio-common/*.zip
+            dist/audio-common/*.bin
+            dist/audio-common/*.json
           if-no-files-found: error
           retention-days: 14
 
@@ -638,14 +816,14 @@ jobs:
 
 
   latest-main-image:
-    needs: [software-checks, alarm-integration, points-integration, wifi-integration, production-store-admission, update-integration, update-cross-layer]
-    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: [software-checks, alarm-integration, points-integration, points-store-faces, wifi-integration, production-store-admission, update-integration, update-cross-layer]
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-22.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -668,6 +846,37 @@ jobs:
           path: .latest/runtime
           fetch-depth: 0
           persist-credentials: false
+      - name: Read exact integrated current-app source pins
+        id: current
+        run: |
+          python - <<'PY_CURRENT'
+          import json, os
+          pins=json.load(open('apps/current-apps-sources.json'))['sources']
+          runtime=json.load(open('apps/update-runtime-requirements.json'))['source_sha']
+          if pins['runtime']['commit'] != runtime:
+              raise ValueError('Final current-app Runtime differs from paired native source')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              for name in ('system-apps','utilities','productivity'):
+                  out.write(name.replace('-','_')+'='+pins[name]['commit']+'\n')
+          PY_CURRENT
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.current.outputs.system_apps }}
+          path: .latest/current-system
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.current.outputs.utilities }}
+          path: .latest/current-utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.current.outputs.productivity }}
+          path: .latest/current-productivity
+          persist-credentials: false
       - name: Install pinned build tools
         run: |
           python -m pip install -r scripts/requirements.txt
@@ -684,22 +893,81 @@ jobs:
           python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
       - uses: actions/download-artifact@v4
         with:
-          name: twatch-update-integration-${{ github.sha }}
+          name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: .latest/watch-artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-points-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .latest/points-artifact
+      - name: Rebuild exact Watch driver packages for final image verification
+        run: python scripts/build_twatch_drivers.py
+      - name: Compile the exact integrated final Watch app cohort
+        run: |
+          export TWATCH_CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
+          echo "TWATCH_CC=$TWATCH_CC" >> "$GITHUB_ENV"
+          python scripts/build_current_apps.py \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --runtime .latest/runtime \
+            --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
+            --output dist/current-apps
+          python -m unittest discover -s tests -p test_current_apps_overlay.py -v
+          python -m unittest discover -s tests -p test_current_clock_manifest.py -v
+          python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
+          python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
+          python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities
       - name: Assemble installable latest-main Watch image
         env:
-          TWATCH_HEAD: ${{ github.sha }}
+          TWATCH_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python scripts/build_latest_main_flash.py \
             --artifact-dir .latest/watch-artifact \
+            --points-artifact-dir .latest/points-artifact \
+            --current-apps-artifact-dir dist/current-apps \
             --runtime-source .latest/runtime \
             --runtime-candidate .latest/runtime/dist/esp32s3-16mb-paired \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main
+      - name: Execute the actual final current-app store through Runtime
+        run: |
+          SANITIZE=0 python scripts/test_current_apps_runtime.py \
+            --runtime .latest/runtime \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --current-apps-artifact-dir dist/current-apps \
+            --bin dist/latest-main/twatch-s3-main-*.bin \
+            --output dist/current-runtime/plain
+          SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
+            --runtime .latest/runtime \
+            --system-apps .latest/current-system \
+            --utilities .latest/current-utilities \
+            --productivity .latest/current-productivity \
+            --current-apps-artifact-dir dist/current-apps \
+            --bin dist/latest-main/twatch-s3-main-*.bin \
+            --output dist/current-runtime/sanitized
       - uses: actions/upload-artifact@v4
         with:
-          name: twatch-main-install-${{ github.sha }}
+          name: twatch-current-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: dist/current-runtime/
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-current-apps-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/current-apps/current-apps.zip
+            dist/current-apps/current-apps-build.json
+            dist/current-apps/source-profile.json
+            dist/current-apps/files/
+            dist/current-apps/licenses/
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-flashable-bin-${{ github.event.pull_request.head.sha || github.sha }}
           path: dist/latest-main/
           if-no-files-found: error
           retention-days: 30

@@ -14,7 +14,7 @@ def verify(path):
  with zipfile.ZipFile(path) as z:
   names=z.namelist();assert len(names)==len(set(names)) and all(not n.startswith('/') and '..' not in PurePosixPath(n).parts for n in names)
   record=json.loads(z.read('deployment-record.json'));entries=record['entries']
-  assert record['schema']=='riscrte.watch-wifi-launcher-deployment' and record['app_version']=='0.7.0'
+  assert record['schema']=='riscrte.watch-wifi-launcher-deployment' and record['app_version']=='0.8.0'
   assert len(entries)==len({e['path'] for e in entries}) and set(names)=={e['path'] for e in entries}|{'deployment-record.json'}
   for e in entries:
    data=z.read(e['path']);assert e['size_bytes']==len(data) and e['sha256']==sha(data),e['path']
@@ -26,7 +26,7 @@ def verify(path):
   assert physical==[{'manifest':name+'/manifest.json','instance_id':instance} for instance,name in PHYSICAL.items()]
   assert services==[{'manifest':'alarm-service/manifest.json','key_value':KV}]
   assert [p['manifest'] for p in boot['app_capabilities']]==[a+'.json' for a in APPS]
-  expected_versions={'default':'0.7.0','clock':'0.7.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.1.0','wifi_settings':'1.1.0'}
+  expected_versions={'default':'0.8.0','clock':'0.8.0','springboard':'1.4.1','settings':'1.2.3','battery':'1.0.8','calculator':'0.1.3','stopwatch':'0.1.3','alarms':'0.1.2','countdown':'0.1.2','points_in_time':'0.1.0','wifi_settings':'1.1.0'}
   metadata=json.loads(z.read('shared-app-build.json'))
   for name,policy in zip(APPS,boot['app_capabilities']):
    grants=[{'capability':'display.output','api':1,'instance_id':5},{'capability':'input.touch.raw','api':1,'instance_id':6}]
@@ -52,7 +52,7 @@ def verify(path):
    if manifest not in manifests:manifests.append(manifest)
    elf=z.read('store/'+str(PurePosixPath(d['manifest']).parent/manifest['file_name']));assert elf[:7]==b'\x7fELF\x01\x01\x01' and struct.unpack_from('<HH',elf,16)==(3,94)
   check_board(board,manifests[:-1]);service=manifests[-1]
-  for identity,version in {'twatch-panel':'0.4.1','twatch-gpio':'0.4.2','twatch-pmu':'0.5.2','twatch-speaker':'0.2.1','twatch-haptic':'0.2.1','wifi':'0.2.0'}.items():assert next(m for m in manifests if m['id']==identity)['version']==version
+  for identity,version in {'twatch-panel':'0.4.1','twatch-gpio':'0.4.2','twatch-pmu':'0.5.3','twatch-speaker':'0.2.1','twatch-haptic':'0.2.1','wifi':'0.2.0'}.items():assert next(m for m in manifests if m['id']==identity)['version']==version
   assert service=={'type':'driver','id':'alarm-service','version':'0.2.1','driver_abi':2,'architecture':'xtensa-esp32s3','file_name':'driver.elf','requires':[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]],'provides':[{'capability':'alarm.service','api':1}],'physical_verification':'pending','status':'development-only-recurring-points'}
   assert service['requires']==[{'capability':c,'api':v} for c,v in [('storage.key-value.bound',1),('platform.clock',1),('rtc.clock',2),('haptic.effect',1),('audio.output',1)]]
   assert next(d for d in board['devices'] if d['instance_id']==4)['config']['rails']==[{'id':1,'millivolts':3300},{'id':2,'millivolts':3300},{'id':5,'millivolts':3300}]

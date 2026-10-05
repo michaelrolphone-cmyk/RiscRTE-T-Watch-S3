@@ -38,5 +38,5 @@ int main(void){
   * px/60Hz rather than pixels per event. A held release removes fling noise. */
  for(unsigned step=8;step<=40;step+=8){p=opened(0);down(&p,700,200);for(unsigned t=step;t<320;t+=step)down(&p,700+t,200-(int)t/2);down(&p,1020,40);assert(p.category_position==-400*256);up(&p,1200);settle(&p,1200);assert(p.category==2);}
  for(unsigned id=0;id<WATCH_FACE_COUNT;id++){p=opened(id);assert(watch_face_page_for(p.category)->ids[p.target]==id&&p.position==-(int)p.target*WATCH_FACE_PITCH&&watch_category_settled(&p));watch_face_close(&p);assert(!p.open&&!p.down);}
- puts("32 stable IDs; continuous vertical drag/reversal, axis lock, cancelled contacts, cyclic seams/reversal, transition tap safety and 1/8/20/50/95ms deterministic settling passed");
+ puts("33 stable IDs; continuous vertical drag/reversal, axis lock, cancelled contacts, cyclic seams/reversal, transition tap safety and 1/8/20/50/95ms deterministic settling passed");
 }

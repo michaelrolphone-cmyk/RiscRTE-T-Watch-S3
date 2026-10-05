@@ -77,7 +77,7 @@ class UpdateInputTests(unittest.TestCase):
         policies.append({'manifest': 'ota_update.json', 'grants': update})
         boot = {'default_app': 'default.elf', 'app_capabilities': policies}
         def content(b):
-            return {'boot.json': json.dumps(b).encode(), 'default.json': b'{"version":"0.7.1"}',
+            return {'boot.json': json.dumps(b).encode(), 'default.json': b'{"version":"0.8.0"}',
                     'ota_update.json': b'{}'}
         gate._policies(content(boot))
         for replacement in (grant('storage.key-value', 1, 1), grant('platform.bank-store', 1, 0),

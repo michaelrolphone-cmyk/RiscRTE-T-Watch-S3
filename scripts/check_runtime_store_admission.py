@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import zipfile
 from read_only_spiffs import read_image
+from pmu_sleep_custody import PMU_FILES, current_pmu_custody
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTFS_OFFSET = 0x310000
@@ -33,9 +34,15 @@ def store_digest(store):
     return sha(json.dumps(entries, sort_keys=True, separators=(',', ':')).encode())
 
 
-def preserve_store(store, baseline):
-    """A runtime-only repair must preserve every previously delivered store byte."""
+def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
+    """Strict historical custody by default; optionally the exact named PMU repair."""
     expected = json.loads(Path(baseline).read_text())['files']
+    if current_pmu:
+        if not PMU_FILES <= set(expected):
+            raise ValueError('PMU repair requires an existing complete PMU baseline')
+        # Change only the expected hashes, never the input store or history.
+        # Source-bound custody permits this one driver generation, no fallback.
+        expected = {**expected, **current_pmu_custody(root)['files']}
     actual = {name: {'size_bytes': len(data), 'sha256': sha(data)}
               for name, data in store.items()}
     if actual != expected:
@@ -56,8 +63,13 @@ def compile_harness(runtime, output):
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
-    if 'radioJoin' in (runtime / 'src/ports/esp32s3/CpuPort.h').read_text():
+    cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
+    if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
+    if 'i2sOpenRx' in cpu_header:
+        command += ['-DSTORE_ADMISSION_I2S_RX']
+    if (runtime/'sdk/driver/RiscHttpClientV1.h').is_file() and (runtime/'sdk/driver/RiscBankStoreV1.h').is_file():
+        command += ['-DSTORE_ADMISSION_UPDATE_PLATFORMS']
     command += ['-I' + str(p) for p in includes]
     command += [str(p) for p in sources]
     command += [str(ROOT / 'tests/runtime_store_admission.cpp'), '-ldl', '-o', str(output)]
@@ -130,7 +142,7 @@ def admit(harness, store, expected_error=None):
         raise ValueError('Boot admission invoked native I/O')
     if expected_error is None:
         if not outcome['prepared']:
-            raise ValueError('Production store admission failed: ' + outcome['error'])
+            raise ValueError('Production store admission failed: ' + str(outcome))
     elif outcome['prepared'] or outcome['error'] != expected_error:
         raise ValueError('Baseline did not fail with the expected admission error: ' + str(outcome))
     return dict(outcome, store_files=len(store), store_sha256=before)
@@ -156,8 +168,12 @@ def main():
     parser.add_argument('--expect-error')
     parser.add_argument('--expect-count', type=int)
     parser.add_argument('--preserved-store', type=Path)
+    parser.add_argument('--current-pmu-sleep-repair', action='store_true',
+                        help='Require exact PMU 0.5.3 custody; preserve all other baseline bytes')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.current_pmu_sleep_repair and not args.preserved_store:
+        parser.error('--current-pmu-sleep-repair requires --preserved-store')
     if not (args.archive or args.image or args.bin):
         parser.error('At least one actual archive, image or BIN is required')
     if (args.image or args.bin) and not (args.mkspiffs or args.read_only_spiffs):
@@ -179,13 +195,14 @@ def main():
             store = unpack_image(image, args.mkspiffs)
         inputs.append({'file': path.name, 'sha256': sha(raw), 'size_bytes': len(raw)})
         if args.preserved_store:
-            preserve_store(store, args.preserved_store)
+            preserve_store(store, args.preserved_store, current_pmu=args.current_pmu_sleep_repair)
         stores.append((path.name, store))
     results = admit_many(args.runtime, stores, args.expect_error)
     record = {'schema': 1, 'runtime_source': subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=args.runtime, text=True).strip(),
         'expected_error': args.expect_error, 'inputs': inputs, 'results': results,
-        'policy_substitutions': 0, 'physical_verification': 'pending'}
+        'policy_substitutions': 0, 'physical_verification': 'pending',
+        'preservation_overlays': ['pmu-sleep-0.5.3'] if args.current_pmu_sleep_repair else []}
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(record, indent=2) + '\n')

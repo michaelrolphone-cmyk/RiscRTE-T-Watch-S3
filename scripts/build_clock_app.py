@@ -10,7 +10,16 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False):
+def clock_manifest(paired=False, current=False):
+    if current and not paired:
+        raise ValueError('Current Clock requires the paired final profile')
+    path = 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
+    return json.loads((ROOT/path).read_text())
+
+
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False):
+    if current and not (paired and launcher and alarm_system and points_utilities):
+        raise ValueError('Current Clock requires the complete paired CUE cohort')
     if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
     if alarm_system and not launcher:raise ValueError("Alarm Clock requires launcher input")
     cc = os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
@@ -19,6 +28,10 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
         cc = str(fallback)
     if not cc:
         raise SystemExit('Set TWATCH_CC to the pinned ESP32-S3 compiler')
+    # Older Wi-Fi/update custody lanes intentionally retain the historical
+    # Clock bytes. Only the current shared defaults schema expands labels.
+    current_points = bool(points_utilities and b'#define POINTS_DEFAULTS_AVAILABLE '
+                          in (points_utilities/'lib/Alarm/include/PointsRecords.h').read_bytes())
     sources = json.loads((ROOT/'sdk/app/SOURCES.json').read_text())
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
@@ -35,6 +48,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
+                    *([] if current_points else ['-DWATCH_POINTS_LEGACY_PRESENTATION']),
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
@@ -53,7 +67,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = json.loads((ROOT/('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')).read_text())
+    manifest = clock_manifest(paired=paired, current=current)
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:

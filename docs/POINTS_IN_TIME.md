@@ -1,90 +1,126 @@
 # Points in Time development integration
 
-Clock 0.7.0 adds a fifth SCHEDULE category with eight companion faces, IDs24–31.
-The original24 IDs retain their identity and original pixels. The separately
-owned Productivity app configures recurring Work Start, Work End, Lunch, Break
-and Bedtime points. It starts with an empty catalog; attachment times and battery
-values are illustrative design data only.
+Clock 0.8.0 keeps the fifth SCHEDULE category and adds the owner-supplied NOVA-7 UP NEXT face as stable ID 32, for nine companion faces across IDs 24-32. IDs 0-31 retain their identity, so existing persisted selections are not renumbered.
 
-## Ownership and limits
+The separately owned Productivity app configures eight recurring Points slots. The built-in set remains Work Start, Work End, Lunch, Break and Bedtime. Points in Time 0.3.0 uses the NOVA-7 black/cyan presentation, chronological scrolling list, edit rows, day presets, drum-style time/duration controls, two reusable custom point types, and the mockup's eight-color custom palette.
 
-- Productivity owns the app and explicit user edits. Utilities owns the compact
-  record codecs, daily recurrence, durable occurrence ledger, output arbitration,
-  recovery, acknowledgement and sleep deadline selection.
-- Eight independently enabled point slots, each with selected weekdays and local
-  hour/minute. More than one Break/Lunch is allowed. Lunch/Break can have an
-  elapsed duration of0–720 minutes; zero means no automatic end notification.
-- A per-point mode selects System default, vibrate, sound or both. The existing
-  Settings alert_mode is the default. Clock-time labels follow Settings12/24h,
-  defaulting to12h with explicit AM/PM.
-- Eight slots fit one64-byte configuration record and one64-byte occurrence
-  ledger within existing Runtime limits. No firmware scheduling, new firmware
-  ABI, Runtime change, background task or timer provider is added.
-- Saving any point creates a new catalog revision. It cancels pending events and
-  duration ends from the previous catalog, and only future starts are eligible.
-  The app discloses this before saving. An unconfirmed save locks edits until
-  the identical bytes are successfully read back or the app is reopened.
-- Recurrence uses the established fixed-UTC+08 RTC / America/Denver conversion.
-  Nonexistent and repeated DST civil times are skipped, never silently mapped
-  to an arbitrary offset. Duration ends add elapsed minutes to a valid start;
-  their selected weekday is the parent's start day, even across midnight/DST.
+## Ownership and records
 
-## Foreground, sleep and rendering
+- Productivity owns explicit point edits and the display-only custom type metadata.
+- Utilities owns the compact record codecs, recurrence, durable cue ledger, output arbitration, recovery and sleep deadline selection.
+- The main `points_cfg` record remains exactly 64 bytes. Each slot now stores independent Notify at End and 3 Minute Warning bits in previously unused flag bits.
+- Two reusable custom kinds occupy the remaining persisted kind values. Their names (up to 12 characters) and palette colors live in a separate 64-byte `points_meta` record. Metadata never controls whether a cue fires.
+- The occurrence ledger remains exactly 64 bytes. PTO2 stores one parent-day cursor plus delivered bits per slot so Start, 3 Minute Warning and End are independently durable. Existing PTO1 ledgers decode forward.
+- Eight independently enabled point slots retain selected weekdays, local hour/minute and per-point System default / Vibrate / Sound / Vibrate + Sound mode.
+- Lunch, Break and custom points may have elapsed durations of 0-720 minutes. Notify at End requires a nonzero duration. 3 Minute Warning requires at least three minutes and remains independent of Notify at End.
+- Saving schedule changes creates a new catalog revision and cancels pending events from the old schedule. Metadata changes alter only custom labels/colors.
 
-The original ordinary alarm.service@1 copied status/token/sleep ABI is unchanged.
-The opt-in0.2.1 service uses existing output and failure-only cleanup phases.
-Named Points alerts use the existing retained foreground modal in all apps;
-Clock retains its picker state, cancels stale input, and starts a fresh60-second
-idle period after dismissal. The Points app owns nested Back navigation; only a
-root-level Back requests Springboard, and uncertain saves cannot trigger a
-queued handoff.
+## Notification behavior
 
-Clock reads the catalog once per fresh invocation, before any frame is acquired,
-and releases the grant before sleep. It projects copied configuration with the
-same Utilities recurrence functions in a separate translation unit. Projection
-and rendering never write storage or schedule work. Invalid RTC clears stale
-schedule displays, including a same-second recovery. Actual active overlapping
-Lunch/Break intervals determine STATUS; no missing work pair is fabricated.
+Points are notifications, not alarms. A due Start, enabled End, or enabled 3-minute warning produces one short self-completing cue: a wrist haptic tap, a brief watch beep, or both according to the point's selected notification mode. System default resolves through the existing Settings alert mode.
 
-Sleep preparation remains a fresh service reconciliation at a settled display
-boundary. Native-retained(-2) results bypass cleanup/provider calls. No storage,
-RTC or service work occurs after the Deep hold. Existing typed panel-resume,
-light-to-deep, refused sleep and fresh-boot paths remain intact.
+Normal Points cues do not publish `ALARM_STATE_ALERT`, do not expose a modal occurrence, and do not invoke the retained Alarm/Countdown overlay. Output cleanup and durable replay still apply if an output or storage operation fails. Alarm and Countdown retain their existing modal behavior and ABI.
 
-## Exact deployment authority
+The 3-minute warning is service-only; it does not become an extra visible schedule edge. Watch faces may show the real point start/end state and countdown naturally.
 
-The new explicit points-launcher profile contains ten app policies and40 store
-files. Clock has namespace1 preferences plus namespace5 Points read access. The
-Points app has namespace5 catalog access and namespace1 preference reads. Other
-apps keep their existing grants. No app receives raw audio/haptic grants.
+## Clock projection and rendering
 
-The ordinary service binds exactly seven keys: existing alarm_cfg/timer_cfg
-(namespace3 read), alarm_occ/timer_occ(namespace4 read-write), alert_mode
-(namespace1 read), plus points_cfg(namespace5 read) and points_occ(namespace4
-read-write). The unchanged Runtime admits16 app policies, at most8 grants per
-app,8 bound keys and64 bytes per value.
+Clock reads `points_cfg` and optional `points_meta` once per fresh invocation and releases the grant before sleep. Invalid or unavailable metadata falls back to generic CUSTOM 1 / CUSTOM 2 labels and cyan without invalidating recurrence. Custom metadata revision participates in the schedule render cache, so label/color edits refresh the schedule faces.
 
-## Source and artifact evidence
+Projection uses the same Utilities recurrence implementation and exposes start/end edges only. Custom labels and colors travel in the read-only render snapshot. No renderer performs storage I/O, capability lookup, scheduling or output.
 
-apps/points-sources.json pins all four shared repositories. The original driver
-package hashes and Runtime0.1.8 pair are unchanged. Points common-store custody
-requires all eight board profiles, reconstructs each original input archive,
-normalizes only board.revision, and verifies exact manifests, grants, service
-bytes and source identities. SPIFFS is packed and unpacked with the pinned tool.
-Final BIN assembly requires an external exact-head hosted CI receipt and the
-reviewed source tree; it does not accept local-only success as hosted evidence.
+The UP NEXT face uses the supplied NOVA-7 geometry: perimeter minute ticks, live seconds sweep, point markers and duration arcs, NOW/NEXT state, countdown, progress bar, THEN line and real battery segments. No notification overlay is added.
 
-Tests cover normal and sanitizer app/service failures, CRC-valid impossible
-ledgers, backward RTC reset/replay, uncertain writes/ACK, output cleanup, weekdays,
-DST, midnight, duration boundaries, overlapping phases and storage limits. A
-worst-case mixed overdue load settles in53 phases, below the64-step foreground
-bound. All192 picker interruption cases and the61-second alert/full60-second
-idle budget remain tested. Real Runtime/CpuPort/service cross-layer tests run
-both normally and with ASan/UBSan; local LeakSanitizer may be disabled only for
-the executor's ptrace restriction, while hosted CI uses normal defaults.
+## Deployment authority
 
-These are software, target-layout and artifact checks. Physical wake reliability,
-audio/haptic levels, touch feel, power loss and current draw remain unqualified.
-No merge, release or device operation is part of this change. Whole-image
-installation replaces the lower8MiB including erased NVS and resets saved
-settings, Stopwatch, alarms, countdown and Points records; upper8MiB is untouched.
+The explicit Points launcher grants Clock namespace 5 read access and the Points app namespace 5 read-write access plus namespace 1 preference reads. No application receives raw audio or haptic capability. The service remains the only output owner.
+
+The service still binds exactly seven keys: alarm_cfg/timer_cfg (namespace 3 read), alarm_occ/timer_occ (namespace 4 read-write), alert_mode (namespace 1 read), points_cfg (namespace 5 read), and points_occ (namespace 4 read-write). `points_meta` is deliberately not service-bound because it is presentation metadata only.
+
+## Verification
+
+The source pins in `apps/points-sources.json` identify the exact System Apps, Utilities, Runtime and Productivity inputs. Tests cover the main schedule codec, custom metadata codec, PTO1-to-PTO2 compatibility, independent Start/Warning/End delivery, sleep deadlines, output modes, replay without duplicate cues, app uncertainty handling, custom UI behavior, clock projection, custom labels/colors and the production schedule faces.
+
+Physical haptic feel, speaker loudness, wake reliability, power-loss behavior and current draw still require hardware qualification. No merge, release or device operation is performed by this change.
+
+## Combined-image schedule decoder compatibility
+
+The user-reported working `a7307d820bb516b2473a463646feeb6ea8e606bf`
+image and later `70268b265f0c074457ba2601a3fcff9a78e9a109` retained a
+historical update-custody Clock compiled against Utilities `5418d9d`. The
+combined image overlaid the current Points writer/service, but not its Clock.
+The older decoder accepts original PTC1 records but rejects bits 6/7 (end and
+three-minute notifications) and kinds 6/7 (custom points). Thus an unchanged
+face catalog can show **SCHEDULE ERROR** after a newer app saves those records.
+This is a latent compatibility mismatch; it does not contradict ordinary
+unflagged schedules working on the earlier image.
+
+The Points lane now additionally builds both final paired Clocks using the
+same exact Utilities schema as the writer and service. Final assembly verifies
+source pins, record/schedule header hashes, all four payload hashes, and
+unchanged paired manifests before overlaying them. The default Clock keeps
+paired-bank health confirmation. Historical update-custody artifacts are not
+rewritten. All 33 face IDs and their designs remain unchanged.
+
+`test_points_stored_clock.py` reproduces the old failure with actual app-writer
+persisted bytes and the production Clock loader, then proves current decoding
+of original, notification-flagged, and custom records under ASan/UBSan. Reads
+must preserve every saved byte. It also checks the real Clock loader honors
+both saved 12/24-hour preferences. Renderer tests cover AM/PM at midnight/noon,
+future-day labels, and elapsed durations independent of clock format.
+
+No data migration or reset is required by this correction. The full-flash
+migration artifact still has its existing destructive 16MiB flashing contract;
+software compatibility tests are not permission to flash or erase a device.
+
+## Requested temporary Monday–Thursday defaults
+
+When `points_cfg` is absent, Clock uses the same virtual factory catalog as the
+Points app and service. This does not write storage. A present valid catalog,
+including a deliberately saved empty catalog, wins; malformed records and I/O
+errors retain their error handling. Default custom labels/colors are used only
+when both catalog and metadata are missing. Existing metadata wins otherwise.
+
+The shared schedule is Wakeup 04:30, Drive to Work 05:30–05:45, Work 06:00,
+Break 09:00–09:15, Lunch 12:00–12:30, Break 14:15–14:30, and Work End 16:30,
+Monday through Thursday only. The three break/lunch periods have their
+three-minute warnings enabled. The service owns sound/vibration and warning
+semantics; Clock shows actual start/end edges, never warning cues as events.
+
+The approved Work/Work End labels retain their stored kind IDs. Custom face
+labels now allow the complete 13-character `Drive to Work`. The shared metadata
+codec retains PTM1 compatibility and uses PTM2 only for 13-character metadata;
+both remain 64-byte records. Existing face IDs and selection records are intact.
+
+Historical Wi-Fi/update custody builds explicitly select the original
+12-character/Work Start presentation when their pinned Utilities lacks the
+shared-defaults schema. Their original binary hashes remain unchanged. The
+current Points lane and both final paired Clocks use the new 13-character/Work
+presentation; final assembly still replaces both historical Clock payloads.
+
+## Complete label glyphs and bounded word fitting
+
+The reported `Drive to Work` → `D  W` rendering was caused by missing lowercase
+glyphs, not missing saved characters. Earlier text atlases stopped at ASCII 90;
+some Points subsets also omitted uppercase letters and digits. Current faces
+use the same shipped OFL fonts with complete printable ASCII coverage for their
+text styles. Stored/projected names keep their exact case and content.
+
+A full name is displayed when its native font/spacing fits the allocated field.
+For a multi-word custom name that exceeds that field, the display may use its
+first complete word (`Drive`), as authorized; it never constructs initials.
+Built-in labels use their complete names (`WORK END`) rather than old brief
+aliases. Existing size fitting remains available for long single words.
+
+Generate current text atlases with `generate_assets.py --full-text` and
+`generate_points_assets.py --full-text`. Retained legacy atlases and the exact
+historical Points renderer remain selected only by historical custody builds;
+their original executable hashes are still verified unchanged.
+
+`test_points_label_pixels.py` reproduces the original pixel-for-pixel glyph
+omission using retained atlases, then tests 1,045 printable glyphs in 11 text
+styles at native and fitted widths. It encodes/decodes the real default records,
+projects three actual schedule times, and exports all 33 production face frames
+at native 240×240. Text-call and pixel evidence cover full/first-word fitting,
+complete Wakeup/Drive to Work/WORK END labels, and untouched stored/projected
+names. These are native host renderer screenshots, not physical-device captures.

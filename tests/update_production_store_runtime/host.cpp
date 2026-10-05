@@ -87,6 +87,10 @@ int main(int argc,char** argv){
   hardware.i2sOpen=[](uint8_t,uint8_t,uint8_t,uint8_t,uint32_t){raw();return false;};
   hardware.i2sWrite=[](uint8_t,const int16_t*,size_t,size_t*,uint32_t){raw();return false;};
   hardware.i2sClose=[](uint8_t){raw();return false;};
+#ifdef CURRENT_APPS_PROFILE
+  hardware.i2sOpenRx=[](uint8_t,uint8_t,uint8_t,uint32_t){raw();return false;};
+  hardware.i2sRead=[](uint8_t,int16_t*,size_t,size_t*,uint32_t){raw();return false;};
+#endif
   hardware.radioJoin=[](const char*,const char*){++m.radioActivity;return false;};
   hardware.radioState=[](uint8_t* state,int8_t* rssi){*state=0;*rssi=-127;return true;};
   hardware.radioLeave=[](){return true;};
@@ -110,7 +114,15 @@ int main(int argc,char** argv){
   if(!prepared){fprintf(stderr,"prepare: %s\n",runtime.error());return 2;}
   const bool ran=runtime.run();
   assert(!runtime.confirmBoot());
+#ifdef CURRENT_APPS_PROFILE
+  // Current virtual defaults may expire one inactive ledger; kvPut still
+  // validates the exact namespace/key/size/content and rejects any config write.
+  assert(m.storageWrites<=1&&(!m.storageWrites||startupStorageOk()));
+  if(scenario=="healthy")assert(startupStorageOk());
+  assert(!m.rtcWrites&&!m.radioActivity&&!rawCalls);
+#else
   assert(!m.rtcWrites&&!m.storageWrites&&!m.radioActivity&&!rawCalls);
+#endif
   assert(!memcmp(m.registers[1]+2,date,sizeof(date)));
   if(scenario=="retained"){
     assert(!ran&&runtime.retained()&&!confirms&&!m.ready&&confirmError);

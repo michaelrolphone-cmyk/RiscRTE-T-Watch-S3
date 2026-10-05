@@ -9,7 +9,7 @@
   },
   "runtime": {
     "repository": "michaelrolphone-cmyk/RiscRTE",
-    "commit": "899ad7c0d01a5e1a1299a1bd1644724c6504c939"
+    "commit": "0fa8c576f547817b8124ed10686d80a6351bb634"
   },
   "productivity": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",

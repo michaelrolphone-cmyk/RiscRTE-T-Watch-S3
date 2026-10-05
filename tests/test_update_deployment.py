@@ -13,6 +13,7 @@ from build_clock_deployment import build as build_deployment, encoded
 from build_update_common import build as build_common, verify as verify_common, zip_bytes
 from build_wifi_common import read_zip, sha
 from verify_update_deployment import grants, verify, verify_files
+from verify_wifi_deployment import verify as verify_current_wifi
 
 
 class UpdateAuthority(unittest.TestCase):
@@ -39,6 +40,11 @@ class UpdateAuthority(unittest.TestCase):
             record = json.loads(files['deployment-record.json'])
             store = {n[6:]: b for n, b in files.items() if n.startswith('store/')}
             self.assertEqual(len(store), 44)
+            if record['source_sha'] != baseline['watch_source_sha']:
+                # Current builds have explicitly versioned Clock/PMU changes.
+                # Their own verifier retains exact preserved executable checks.
+                verify_current_wifi(path)
+                continue
             for name, expected in baseline['files'].items():
                 self.assertEqual(sha(store[name]), expected['sha256'], (path.name, name))
                 self.assertEqual(len(store[name]), expected['size_bytes'], (path.name, name))

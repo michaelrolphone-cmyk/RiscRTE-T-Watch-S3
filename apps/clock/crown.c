@@ -60,13 +60,14 @@ static nova_watch_state face;
 #ifdef WATCH_CLOCK_POINTS
 #include "points_projection.h"
 static points_config clock_points_config;
+static points_meta clock_points_meta;
 static nova_points_state clock_points_view;
 static bool clock_points_available;
 static uint32_t clock_points_second;
 static bool clock_points_sampled;
 static bool clock_points_load(void) {
     risc_runtime_capability_v1 grant={.struct_size=sizeof(grant)};
-    clock_points_config=(points_config){0};clock_points_sampled=false;
+    clock_points_config=(points_config){0};clock_points_meta=(points_meta){0};clock_points_sampled=false;
     clock_points_view=(nova_points_state){.status=NOVA_POINTS_UNAVAILABLE};clock_points_available=false;
     if(!rt->acquire(RISC_KEY_VALUE_CAPABILITY,1,5,&grant))return true;
     const risc_key_value_v1 *kv=grant.api;
@@ -75,6 +76,25 @@ static bool clock_points_load(void) {
         int32_t result=kv->get(kv->context,POINTS_CONFIG_KEY,bytes,sizeof(bytes),&n);
         clock_points_available=result==RISC_KEY_VALUE_NOT_FOUND||
             (result==RISC_KEY_VALUE_OK&&points_config_decode(&clock_points_config,bytes,n));
+#ifdef POINTS_DEFAULTS_AVAILABLE
+        /* A missing catalog exposes the shared virtual defaults. Never replace
+         * a present empty, malformed or unavailable saved catalog. */
+        bool defaults=result==RISC_KEY_VALUE_NOT_FOUND;
+        if(defaults)clock_points_config=points_default_config();
+#endif
+#if WATCH_POINTS_EXTENDED
+        n=0;result=kv->get(kv->context,POINTS_META_KEY,bytes,sizeof(bytes),&n);
+#ifdef POINTS_DEFAULTS_AVAILABLE
+        if(defaults&&result==RISC_KEY_VALUE_NOT_FOUND)clock_points_meta=points_default_meta();
+#endif
+        if(result==RISC_KEY_VALUE_OK&&!points_meta_decode(&clock_points_meta,bytes,n)) {
+            clock_points_meta=(points_meta){0};
+            rt->diagnostic("WATCH_CLOCK points-meta=invalid fallback=generic");
+        } else if(result!=RISC_KEY_VALUE_OK&&result!=RISC_KEY_VALUE_NOT_FOUND) {
+            clock_points_meta=(points_meta){0};
+            rt->diagnostic("WATCH_CLOCK points-meta=unavailable fallback=generic");
+        }
+#endif
         clock_points_view.status=clock_points_available?NOVA_POINTS_EMPTY:NOVA_POINTS_ERROR;
     }
     return rt->release(&grant);
@@ -158,7 +178,7 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
         bool raw_valid=valid&&alarm_calendar_seconds(date.year,date.month,date.day,date.hour,date.minute,date.second,&raw_seconds);
         if(!raw_valid)clock_points_view.status=NOVA_POINTS_ERROR;
         else if(clock_points_available&&(!clock_points_sampled||clock_points_second!=raw_seconds||clock_points_view.status==NOVA_POINTS_ERROR)) {
-            (void)watch_points_projection(&clock_points_config,raw_seconds,&clock_points_view);
+            (void)watch_points_projection(&clock_points_config,&clock_points_meta,raw_seconds,&clock_points_view);
             clock_points_second=raw_seconds;clock_points_sampled=true;
         }
         face.points=&clock_points_view;

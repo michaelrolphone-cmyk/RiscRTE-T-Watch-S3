@@ -216,3 +216,84 @@ write local time; direct Denver wall-time writes into this UTC+08 RTC are unsafe
 Tests compare all 876,600 supported RTC hours against independent IANA ZoneInfo
 conversion, and separately check exact DST transition seconds, the reported
 next-day case, winter offset, leap/year boundaries and untouched RTC input.
+
+## PMU 0.5.3: untouched cold-boot autosleep
+
+The previous PMU initialized `key_released=false`, and `prepare_sleep` rejected
+that value before reading any new status. An untouched cold boot could therefore
+reach every 60-second Clock timeout yet refuse every attempt until a real crown
+release or short-press IRQ had been observed. The idle timeout itself still ran.
+
+PMU 0.5.3 distinguishes **unknown**, **held**, and **released** observations.
+Startup is unknown. A negative-edge or long-press IRQ without a release records
+held; a positive edge or completed short press records released. Empty status
+does not change any observation. Preparation first reads/acknowledges the actual
+key status, then refuses known-held state. Unknown must pass the same inactive
+IRQ and five 10-ms event-free samples as released; passing does not fabricate a
+release event or change unknown into released.
+
+All key-event IRQs remain enabled during the quiet samples, so a new falling
+edge cannot be hidden by early short-only masking. The subsequent non-key status
+clear excludes the key bits already acknowledged: a new edge arriving between
+the key read and status clearing remains pending. Only after the guard does the
+driver select the existing short-press-only sleep wake mask and recheck pending
+key status and IRQ. Resume keeps the last key observation and restores the exact
+original interrupt masks, including after partial preparation or a retryable
+restore failure. Charge settings, rails, provider ABI, and sleep mode selection
+are unchanged. Board baseline 1.1.6 records the changed PMU manifest.
+
+### Hardware evidence and limit
+
+The pinned [X-Powers AXP2101 datasheet V1.4](https://github.com/lewisxhe/XPowersLib/blob/d6997586e68f65afd51baa775903df930db39821/datasheet/AXP2101_Datasheet_V1.4_en.pdf)
+(section 6.12.1, pp. 28–29; register 0x41, p. 42; register 0x49, p. 44)
+describes enabled events and write-one-to-clear status. Register 0x49 contains
+positive-edge, negative-edge, long-press and short-press latches in bits 0..3.
+Long/short IRQs are enabled at PMIC reset; edge IRQs are initially disabled.
+Consequently a crown held across boot can produce only a long-press latch, which
+must also block sleep. Register 0x20 (p. 35) is a historical power-on-source
+record, not a live PWRON level. The [pinned XPowersLib implementation](https://github.com/lewisxhe/XPowersLib/blob/d6997586e68f65afd51baa775903df930db39821/src/XPowersAXP2101.hpp#L2582-L2608)
+also reads and acknowledges the event registers rather than a live key level.
+
+The driver does not claim to measure a physical held key for which the PMIC
+retained no event. The documented board/API has no separate live crown input;
+unknown with a quiet IRQ is an admission policy, not proof of the PWRON level.
+Likewise the event register does not encode ordering of multiple co-latched
+edges. After the final short-only IRQ mask, a new falling edge cannot itself
+latch; that existing short-only wake limitation is unchanged. Physical
+held-at-boot, release and repeated sleep/wake still need device
+verification; no serial access or device operation is required for these host
+checks.
+
+`python scripts/test_pmu_cold_boot_sleep.py` executes the actual production PMU
+with enabled-event and write-one-to-clear transport semantics under UBSan. It
+covers untouched cold boots, repeated no-crown attempts, latched startup
+falling/long-only holds, later holds, release without an extra app poll, every
+key bit during each quiet interval, status-clear/final-mask edge races, every
+preparation I2C operation, each GPIO sample, repeated refusals, partial restores,
+teardown and reactivation. The existing driver, crown, Deep and Hybrid suites
+remain separate regression checks.
+
+The companion `scripts/test_points_cold_boot_idle.py --system-apps PATH
+--utilities PATH` links the actual crown loop, current Points projection,
+RGB565 NEXT renderer and PMU driver. With no key/touch events it renders the
+shared Monday-morning countdown continuously, verifies changing countdown pixels,
+and reaches the first 60-second sleep attempt and real PMU-to-GPIO sleep call.
+Six ASan/UBSan lanes cover 0/7/95-ms asynchronous frame costs and uptime wrap;
+attempts occur 60,000/60,007/60,135 ms after readiness respectively. With the
+unchanged 3ae5ddb PMU source supplied through `--pmu-source`, the same test reaches
+60,000 ms but observes zero hardware sleep calls and fails. Hardware transport,
+RTC/storage/runtime and alarm-service boundaries are host fixtures; the new
+Points rendering activity itself does not reset the idle timer.
+
+### Current package custody
+
+The PMU increment is pinned from the actual GCC 8.4 target package in
+`scripts/pmu-sleep-custody.json`, including source, package, deployed ELF and
+canonical deployed-manifest hashes. Alarm, Points and Wi-Fi common-store
+builders require that exact package. The paired-update verifier applies only
+that PMU replacement to its historical physical-driver expectations and verifies
+the archived current custody record against the reviewed source. The delivered
+216e2d73 preservation baseline remains byte-identical; it is not relabeled with
+new target bytes. `tests/test_pmu_sleep_custody.py` checks the actual package and
+rejects source drift, payload substitution, spoofed archive metadata and broadened
+replacement membership. Other physical drivers retain their previous exact pins.

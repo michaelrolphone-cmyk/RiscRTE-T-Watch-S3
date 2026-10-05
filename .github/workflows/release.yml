@@ -61,13 +61,17 @@ jobs:
       - name: Release automation tests
         run: python -m unittest discover -s tests -p 'test_*releases.py' -v
       - name: Host contract fixtures with UBSan
-        run: python scripts/test_contracts.py
+        run: |
+          python scripts/test_contracts.py
+          python scripts/test_pmu_cold_boot_sleep.py
       - name: Target ABI, ELF imports and packages
         run: python scripts/build_twatch_drivers.py
       - name: Versioned board baseline
         run: python scripts/board_baseline.py
       - name: Physical manifests, negative mappings and package hashes
-        run: python scripts/check_twatch_drivers.py
+        run: |
+          python scripts/check_twatch_drivers.py
+          python -m unittest discover -s tests -p test_pmu_sleep_custody.py -v
       - name: Verify planned package custody
         run: python scripts/publish_drivers.py stage
       - uses: actions/upload-artifact@v4

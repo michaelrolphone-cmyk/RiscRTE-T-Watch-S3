@@ -157,6 +157,7 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
         files['shared/update-build.json'] = (root/app_dir/'update-build.json').read_bytes()
         files['shared/update-service-source-baseline.json'] = (root/'scripts/update-service-source-baseline.json').read_bytes()
         files['shared/update-preservation-baseline.json'] = (root/'scripts/update-preservation-baseline.json').read_bytes()
+        files['shared/pmu-sleep-custody.json'] = (root/'scripts/pmu-sleep-custody.json').read_bytes()
         for app in updates:
             short = 'update-fw' if app == 'ota_update' else 'update-apps'
             files['store/'+short+'/driver.elf'] = (root/app_dir/(short+'.elf')).read_bytes()

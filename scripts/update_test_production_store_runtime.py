@@ -68,7 +68,7 @@ def _flags():
     return flags
 
 
-def _host(runtime, build):
+def _host(runtime, build, current_utilities=None):
     registry = runtime / 'test/support/native_registry'
     require((registry / 'build.sh').is_file(), 'Production target registry support is required')
     registry_build = build / 'native-registry'
@@ -81,11 +81,19 @@ def _host(runtime, build):
         ROOT / 'tests/production_store_runtime', runtime / 'src', runtime / 'sdk/app',
         runtime / 'sdk/driver', runtime / 'sdk/hardware', ROOT / 'sdk/driver',
         ROOT / 'include', runtime / 'lib/ArduinoJson/src']
+    if current_utilities:
+        validator = build / 'points-expiration-validator.c'
+        validator.write_text('#include "PointsRecords.h"\nbool production_points_expiration_valid(const void* bytes,uint32_t size) {\n    points_ledger ledger;\n    return size==POINTS_RECORD_SIZE&&points_ledger_decode(&ledger,bytes,size)&&\n        ledger.revision==points_default_config().revision&&ledger.generation==1&&\n        !ledger.state&&!ledger.slot&&!ledger.edge&&!ledger.mode&&!ledger.deadline&&!ledger.recovery_until;\n}\n')
+        ledger = build / 'points-expiration-validator.o'
+        command([os.environ.get('CC', 'cc'), '-std=c11', *_flags(),
+            '-I'+str(current_utilities/'lib/Alarm/include'), '-c', validator, '-o', ledger])
+        objects.append(ledger)
     executable = build / 'update-store-test'
     sources = [runtime / name for name in RUNTIME_SOURCES]
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
+        *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
         '-pthread', '-ldl', '-o', executable])
@@ -117,10 +125,11 @@ def _write_store(destination, content):
         target.write_bytes(data)
 
 
-def _policies(content):
+def _policies(content, current_profile=False):
     boot = json.loads(content['boot.json'])
     require(boot['default_app'] == 'default.elf', 'Not a defaultClock store')
-    require(json.loads(content['default.json'])['version'] == '0.7.1', 'Paired Clock manifest required')
+    version=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['app_versions']['default'] if current_profile else '0.8.0'
+    require(json.loads(content['default.json'])['version'] == version, 'Paired Clock manifest required')
     for name in ('default.json', 'clock.json', 'points_in_time.json'):
         policy = next(item for item in boot['app_capabilities'] if item['manifest'] == name)
         require(sorted(g['instance_id'] for g in policy['grants'] if g['capability'] == 'storage.key-value') == [1, 5], 'Clock/Points authority changed')
@@ -217,7 +226,7 @@ def verify_clock_abi(runtime_source, output=None, compiler=None):
     return record
 
 
-def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None):
+def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False):
     """Run paired defaultClock against exact profile/common/extracted stores.
 
     productivity is recorded for the enclosing product's source custody; its
@@ -232,7 +241,8 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                          [('watch', ROOT), ('system-apps', system), ('utilities', utilities)]}
     if productivity:
         record['sources']['productivity'] = source_state(productivity)
-    pins = json.loads((ROOT / 'apps/update-sources.json').read_text())
+    pins = (json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources'] if current_profile else json.loads((ROOT / 'apps/update-sources.json').read_text()))
+    record['current_apps_profile']=bool(current_profile)
     for name, state in record['sources'].items():
         if name != 'watch':
             require(state['commit'] == pins[name]['commit'] and not state['tracked_changes'], 'Wrong or modified pinned production source: ' + name)
@@ -240,7 +250,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
     with _build(output) as build:
-        host = _host(runtime, build)
+        host = _host(runtime, build, utilities if current_profile else None)
         modules = build / 'modules'
         modules.mkdir(exist_ok=True)
         cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')
@@ -250,7 +260,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         selections = {}
         prepared = []
         for index, (label, content) in enumerate(stores):
-            boot = _policies(content)
+            boot = _policies(content, current_profile)
             original, destination = build / ('original-' + str(index)), build / ('store-' + str(index))
             _write_store(original, content)
             # Never reuse a stale host store after different inputs.
@@ -277,7 +287,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             extra, compiler, language = [], cc, '-std=c11'
             if name == 'alarm-service':
                 source = utilities / 'Services/alarm_service/service.c'
-                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']
+                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL'] if current_profile else [])
                 module_includes = ['-I' + str(p) for p in (utilities / 'lib/Alarm/include', runtime / 'sdk/driver', system / 'lib/PortableApps/include')]
             elif name.startswith('software-update-'):
                 source = system / 'Services/update/service.cpp'
