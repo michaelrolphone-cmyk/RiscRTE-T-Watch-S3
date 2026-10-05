@@ -3,13 +3,11 @@
 #include "points_projection.h"
 #include "PointsSchedule.h"
 #include <string.h>
-static bool watch_points_custom(unsigned kind) {
 #if WATCH_POINTS_EXTENDED
+static bool watch_points_custom(unsigned kind) {
     return kind==POINTS_CUSTOM_1||kind==POINTS_CUSTOM_2;
-#else
-    (void)kind;return false;
-#endif
 }
+#endif
 static void watch_points_style(const points_meta *meta,unsigned kind,nova_point_event *out) {
     out->color_index=6;out->label[0]=0;
 #if WATCH_POINTS_EXTENDED
