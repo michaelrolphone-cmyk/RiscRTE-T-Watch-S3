@@ -122,5 +122,59 @@ class NextWatchPolicyTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Duplicate JSON'):self.check()
 
 
+class NativeSplitIdentityTest(unittest.TestCase):
+    def test_candidate_requires_both_reviewed_ancestors(self):
+        from unittest.mock import patch
+        import subprocess
+        import build_next_watch_cohort as cohort
+        head = 'f' * 40
+        candidate = {'source_sha': head, 'firmware_version': '0.1.35'}
+        for failures in ((1,), (0, 1)):
+            with patch.object(cohort, 'checked_source', return_value=head), patch.object(
+                    cohort.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], c) for c in failures]):
+                with self.assertRaisesRegex(ValueError, 'required ancestor'):
+                    cohort.native_identity(Path('/unused'), candidate)
+        with patch.object(cohort, 'checked_source', return_value=head), patch.object(
+                cohort.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0)) as run:
+            self.assertEqual(cohort.native_identity(Path('/unused'), candidate), (head, '0.1.35'))
+            self.assertEqual([c.args[0][3] for c in run.call_args_list], [cohort.RUNTIME, cohort.DIAGNOSTICS])
+
+    def test_installed_identity_cannot_be_replaced_by_candidate(self):
+        from unittest.mock import patch
+        import build_next_watch_cohort as cohort
+        head = 'f' * 40
+        with patch.object(cohort, 'checked_source', return_value=head):
+            with self.assertRaisesRegex(ValueError, 'installed Runtime'):
+                cohort.native_identity(Path('/unused'), {'source_sha': head, 'firmware_version': '0.1.35'}, installed=True)
+        with patch.object(cohort, 'checked_source', return_value=cohort.RUNTIME):
+            with self.assertRaisesRegex(ValueError, 'clean checkout'):
+                cohort.native_identity(Path('/unused'), {'source_sha': head, 'firmware_version': '0.1.34'})
+            with self.assertRaisesRegex(ValueError, 'Unsupported'):
+                cohort.native_identity(Path('/unused'), {'source_sha': cohort.RUNTIME, 'firmware_version': '0.1.36'})
+
+    def test_every_native_asset_is_hashed_before_post_link_admission(self):
+        from unittest.mock import patch
+        from tempfile import TemporaryDirectory
+        import build_next_watch_cohort as cohort
+        names = ('firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin', 'appdata.bin',
+                 'appdata-image.json', 'partitions-paired-appdata.csv', 'platformio.ini',
+                 'requirements-ci.txt', 'radio-iq-proof.json')
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            value = {'source_sha': 'f' * 40, 'firmware_version': '0.1.35',
+                     'target': 'esp32s3-16mb-appdata-iq', 'layout': 'riscrte-paired-appdata-v2',
+                     'store_abi': 2, 'flash_bytes': 0x1000000, 'assets': {}}
+            for name in names:
+                data = name.encode();(root / name).write_bytes(data)
+                value['assets'][name] = {'bytes': len(data), 'sha256': cohort.sha(data)}
+            (root / 'candidate.json').write_bytes(encoded(value))
+            with patch.object(cohort, 'native_identity', return_value=('f' * 40, '0.1.35')):
+                for name in names:
+                    (root / name).write_bytes(b'tampered')
+                    with self.assertRaisesRegex(ValueError, 'Native member differs: ' + name):
+                        cohort.read_native(root, Path('/unused'))
+                    (root / name).write_bytes(name.encode())
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -11,6 +11,7 @@ import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import subprocess
+import sys
 
 from build_wifi_common import zip_bytes
 from current_bootfs import build as build_store
@@ -23,6 +24,8 @@ SOURCE = '674729dbade10c15368731745844e6dc2f6ebd0b'
 RUNTIME = '0a4f3d18c5d830d32678092fa99284810334b485'
 VERSION = '1.0.5'
 RUNTIME_VERSION = '0.1.34'
+DIAGNOSTICS = 'a27bf228ecd99f2896638a30b55802560701180d'
+CANDIDATE_VERSION = '0.1.35'
 FULL_SHA = 'd4a1f41035e272adb0ec5d0c64b63835c771cc773a19805463cfe7ab2eb3c67e'
 COHORT_SHA = 'a51c3c2bfc220740afd8a9ae1560e2ce8332e3dcc71736ce182c54f4b257aa83'
 NATIVE_SHA = '00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38'
@@ -77,31 +80,119 @@ def checked_source(root, expected=None):
     return head
 
 
-def read_native(native_dir, runtime):
-    checked_source(runtime, RUNTIME)
+def native_identity(runtime, candidate, installed=False):
+    head = checked_source(runtime)
+    version = candidate['firmware_version']
+    require(candidate['source_sha'] == head, 'Native candidate source differs from clean checkout')
+    if installed or version == RUNTIME_VERSION:
+        require(head == RUNTIME and version == RUNTIME_VERSION, 'Wrong accepted installed Runtime identity')
+    else:
+        require(version == CANDIDATE_VERSION, 'Unsupported candidate Runtime version')
+        for ancestor in (RUNTIME, DIAGNOSTICS):
+            require(subprocess.run(['git', 'merge-base', '--is-ancestor', ancestor, head],
+                                   cwd=runtime, capture_output=True).returncode == 0,
+                    'Candidate Runtime lacks required ancestor: ' + ancestor)
+    return head, version
+
+
+def read_native(native_dir, runtime, *, installed=False):
     root = Path(native_dir)
     candidate = document((root / 'candidate.json').read_bytes())
-    require(candidate['source_sha'] == RUNTIME and candidate['firmware_version'] == RUNTIME_VERSION
-            and candidate['target'] == 'esp32s3-16mb-appdata-iq'
+    head, version = native_identity(runtime, candidate, installed)
+    require(candidate['target'] == 'esp32s3-16mb-appdata-iq'
             and candidate['layout'] == 'riscrte-paired-appdata-v2'
-            and candidate['store_abi'] == 2, 'Wrong accepted native candidate')
-    require({'firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin'} <= set(candidate['assets']),
-            'Native candidate missing required assets')
+            and candidate['store_abi'] == 2 and candidate['flash_bytes'] == 0x1000000,
+            'Wrong native candidate target/layout')
+    expected = {'firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin',
+                'appdata.bin', 'appdata-image.json', 'partitions-paired-appdata.csv',
+                'platformio.ini', 'requirements-ci.txt', 'radio-iq-proof.json'}
+    require(set(candidate['assets']) == expected, 'Native candidate asset inventory differs')
+    require({p.name for p in root.iterdir()} <= expected | {'candidate.json', 'SHA256SUMS'},
+            'Unrecorded native candidate member')
     for name, item in candidate['assets'].items():
         require(PurePosixPath(name).name == name and name not in ('', '.', '..'), 'Unsafe native member')
         data = (root / name).read_bytes()
         require(len(data) == item['bytes'] and sha(data) == item['sha256'], 'Native member differs: ' + name)
+    if (root / 'SHA256SUMS').exists():
+        checksums = ''.join(f'{sha(p.read_bytes())}  {p.name}\n'
+                            for p in sorted(root.iterdir()) if p.name != 'SHA256SUMS')
+        require((root / 'SHA256SUMS').read_text() == checksums, 'Native SHA256SUMS differs')
     firmware, elf = (root / 'firmware.bin').read_bytes(), (root / 'firmware.elf').read_bytes()
-    require(sha(firmware) == NATIVE_SHA and sha(elf) == ELF_SHA, 'Native firmware/ELF differs from accepted 1.0.4')
-    iq = module('next_watch_iq_proof', Path(runtime) / 'scripts/radio_iq_proof.py').prove(elf)
-    require(json.loads(json.dumps(iq)) == candidate['native_proof']['radio_iq'], 'Native SRAM/ROM proof differs')
+    if installed or version == RUNTIME_VERSION:
+        require(sha(firmware) == NATIVE_SHA and sha(elf) == ELF_SHA, 'Native firmware/ELF differs from accepted 1.0.4')
+    # Import selected Runtime helpers in a separate interpreter. Watch's scripts
+    # have similarly named modules; they must not substitute candidate verifiers.
+    validator = r"""
+import json, sys
+from pathlib import Path
+source, root = map(Path, sys.argv[1:])
+sys.path.insert(0, str(source / 'scripts'))
+from paired_candidate import native_proof, partitions, APP_DATA_EXPECTED
+from release_assets import esp_image, elf
+from check_versions import firmware
+from paired_bank_images import BOOTLOADER_SHA256
+from radio_iq_proof import prove
+from app_data_image import verify_initial
+import hashlib
+record = json.loads((root / 'candidate.json').read_text())
+blobs = {n: (root / n).read_bytes() for n in ('firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin')}
+for name in ('firmware.bin', 'bootloader.bin'):
+    esp_image(blobs[name])
+    if blobs[name][3] >> 4 != 4: raise ValueError('Native image lacks 16 MiB flag')
+elf(blobs['firmware.elf'])
+actual = partitions(blobs['partitions.bin'], APP_DATA_EXPECTED)
+if json.loads(json.dumps(actual)) != record['partitions']: raise ValueError('Native partition record differs')
+if hashlib.sha256(blobs['bootloader.bin']).hexdigest() != BOOTLOADER_SHA256: raise ValueError('Unreviewed native bootloader')
+version = firmware((source / 'platformio.ini').read_text())
+if version != record['firmware_version']: raise ValueError('Native source version differs')
+for marker in [('RTE_SOURCE=' + record['source_sha']).encode() + b'\0',
+               ('RISC_RUNTIME_VERSION:' + version).encode() + b'\0', b'RISC_PAIRED_STORE_ABI:2\0']:
+    if not all(marker in blobs[n] for n in ('firmware.bin', 'firmware.elf')): raise ValueError('Native compiled identity differs')
+if record['target'].encode() + b'\0' not in blobs['firmware.bin']: raise ValueError('Native compiled target differs')
+if len(blobs['firmware.bin']) > APP_DATA_EXPECTED['app0'][3] or b'RISC_PAIRED_STORE_ABI:1\0' in blobs['firmware.bin']:
+    raise ValueError('Native paired ABI/bounds differ')
+for name in ('platformio.ini', 'partitions-paired-appdata.csv', 'requirements-ci.txt'):
+    if (root / name).read_bytes() != (source / name).read_bytes(): raise ValueError('Native source member differs: ' + name)
+proof = native_proof(blobs['firmware.elf'])
+proof['radio_iq'] = prove(blobs['firmware.elf'])
+proof = json.loads(json.dumps(proof))
+if proof != record['native_proof']: raise ValueError('Native post-link proof differs')
+if proof['radio_iq'] != json.loads((root / 'radio-iq-proof.json').read_text()): raise ValueError('Native IQ proof file differs')
+if verify_initial(root) != record['initial_appdata']: raise ValueError('Initial app-data custody differs')
+print(json.dumps(proof, sort_keys=True))
+"""
+    subprocess.run([sys.executable, '-c', validator, str(Path(runtime).resolve()), str(root.resolve())],
+                   check=True, stdout=subprocess.DEVNULL)
     return firmware, elf, candidate
+
+
+TRANSACTION_SOURCES = ('src/ports/esp32s3/NativeBankStore.cpp', 'src/ports/esp32s3/NativeBankStore.h',
+    'src/runtime/update/PairedBank.cpp', 'src/runtime/update/PairedBank.h',
+    'src/runtime/update/Version.h', 'src/runtime/update/StoreAudit.cpp',
+    'src/runtime/update/StoreAudit.h', 'src/runtime/update/Cohort.h', 'sdk/driver/RiscBankStoreV1.h')
+GRAPH_SOURCES = ('src/bootstrap/Runtime.cpp', 'src/bootstrap/Runtime.h', 'src/bootstrap/CohortRuntime.inc',
+    'src/runtime/update/CohortMigration.h', 'lib/elf_loader/src/esp_elf_validate.c')
+
+
+def runtime_evidence(previous_runtime, runtime, previous_native, native):
+    files = {}
+    for name in TRANSACTION_SOURCES + GRAPH_SOURCES:
+        old = sha((Path(previous_runtime) / name).read_bytes())
+        new = sha((Path(runtime) / name).read_bytes())
+        files[name] = {'installed_sha256': old, 'candidate_sha256': new, 'identical': old == new}
+    return {'installed_source': previous_native['source_sha'], 'candidate_source': native['source_sha'],
+            'installed_version': previous_native['firmware_version'], 'candidate_version': native['firmware_version'],
+            'candidate_required_ancestors': [RUNTIME, DIAGNOSTICS] if native['firmware_version'] == CANDIDATE_VERSION else [RUNTIME],
+            'compared_sources': files,
+            'listed_transaction_sources_identical': all(files[p]['identical'] for p in TRANSACTION_SOURCES),
+            'installed_graph_uses_installed_native_exports': True,
+            'candidate_self_admission_uses_candidate_native_exports': True}
 
 
 def read_previous(bundle, native_dir, runtime):
     """Bind every source representation to the accepted hosted bytes."""
     bundle = Path(bundle)
-    firmware, elf, native = read_native(native_dir, runtime)
+    firmware, elf, native = read_native(native_dir, runtime, installed=True)
     release = bundle / 'firmware-v1.0.4'
     full = (release / 'twatch-s3-launcher-1.0.4.bin').read_bytes()
     payload = (release / 'twatch-s3-cohort-1.0.4.bin').read_bytes()
@@ -219,7 +310,8 @@ def check_policy(previous, following):
             'new_shared_migration': migration(), 'hardware_board_sha256': sha(previous['board.json'])}
 
 
-def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=ROOT):
+def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=ROOT, *,
+            previous_runtime, previous_native_dir):
     source_root, output = Path(source_root).resolve(), Path(output)
     require(not output.exists(), 'Output must be new')
     head = checked_source(source_root)
@@ -227,14 +319,17 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
     require(c == {'schema': 1, 'product': 'twatch-s3', 'version': VERSION}, 'Final 1.0.5 config is not ready')
     overlay = module('next_watch_overlay', source_root / 'scripts/current_apps_overlay.py')
     configuration = overlay.config(source_root)
-    require(configuration['sources']['runtime']['commit'] == RUNTIME, 'Next cohort must retain accepted Runtime')
+    firmware, elf, native = read_native(native_dir, runtime)
+    require(configuration['sources']['runtime']['commit'] == native['source_sha'],
+            'Watch configuration differs from exact candidate Runtime source')
     files, apps = overlay.verify(Path(apps_dir), head, source_root)
-    full, previous, old_identity, firmware, elf, native = read_previous(previous_bundle, native_dir, runtime)
+    full, previous, old_identity, old_firmware, old_elf, old_native = read_previous(
+        previous_bundle, previous_native_dir, previous_runtime)
     following = {**previous, **files, 'boot.json': encoded(apps['boot'])}
-    identity = create(VERSION, RUNTIME_VERSION, head, firmware)
+    identity = create(VERSION, native['firmware_version'], head, firmware)
     following['cohort.json'] = encode(identity)
     policy = check_policy(previous, following)
-    admission = admit_cohort(runtime, elf, previous, following)
+    admission = admit_cohort(previous_runtime, old_elf, previous, following)
     self_admission = admit_cohort(runtime, elf, following, following)
     store, packing = build_store(following)
     payload, ota = package(identity, firmware, store)
@@ -242,7 +337,9 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
              'source_cohort': old_identity, 'target_cohort': identity,
              'source_initial_image_sha256': sha(full), 'source_cohort_sha256': COHORT_SHA,
              'native_candidate_sha256': sha((Path(native_dir) / 'candidate.json').read_bytes()),
-             'native_elf_sha256': sha(elf), 'ota': ota, 'policy': policy, 'packing': packing,
+             'native_elf_sha256': sha(elf),
+             'runtime_evidence': runtime_evidence(previous_runtime, runtime, old_native, native),
+             'previous_native_sha256': sha(old_firmware), 'previous_native_elf_sha256': sha(old_elf), 'ota': ota, 'policy': policy, 'packing': packing,
              'installed_runtime_admission': admission, 'target_self_admission': self_admission,
              'files': {name: metadata(data) for name, data in sorted(following.items())},
              'payload_members': ['native', 'bootfs'], 'initial_image_is_destructive': True,
@@ -271,11 +368,12 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('previous-bundle', 'apps-dir', 'runtime', 'native-dir', 'output'):
+    for name in ('previous-bundle', 'apps-dir', 'runtime', 'native-dir', 'previous-runtime', 'previous-native-dir', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--source-root', type=Path, default=ROOT)
     args = parser.parse_args()
-    result = prepare(args.previous_bundle, args.apps_dir, args.runtime, args.native_dir, args.output, args.source_root)
+    result = prepare(args.previous_bundle, args.apps_dir, args.runtime, args.native_dir, args.output, args.source_root,
+                     previous_runtime=args.previous_runtime, previous_native_dir=args.previous_native_dir)
     print(json.dumps(result['ota'], sort_keys=True))
 
 

@@ -20,6 +20,9 @@ int main(int argc,char** argv) {
   const unsigned nativeBytes=unsigned(std::stoul(argv[3]));
   active=unsigned(std::stoul(argv[4]));assert(active<2);
   const std::string scenario=argv[5];
+  // The IDF boundary models a previously confirmed app for this restart only.
+  // Actual target/default-app health confirmation is deliberately not claimed.
+  if(scenario=="boot-healthy")otaState=ESP_OTA_IMG_VALID;
   using namespace RiscBankStore;
   const auto old=*reinterpret_cast<const RiscUpdate::Record*>(flash.data()+RiscUpdate::JournalOffset+active*4096);
   assert(RiscUpdate::validRecord(old,active));imageSize=old.firmwareSize;
@@ -41,18 +44,24 @@ int main(int argc,char** argv) {
       <<",\"target_bank\":"<<(1-active)<<",\"native_bytes\":"<<nativeBytes
       <<",\"payload_bytes\":"<<payload.size()<<",\"writes\":"<<writes
       <<",\"graph_callbacks\":"<<graphChecks<<",\"rollback_calls\":"<<rollbacks
+      <<",\"host_idf_valid_state\":"<<(otaState==ESP_OTA_IMG_VALID?"true":"false")
+      <<",\"build_runtime_version\":\""<<RISC_BUILD_VERSION<<"\""
       <<",\"selected\":"<<(selected?"true":"false")
       <<",\"nvs_appdata_preserved\":true,\"previous_pair_preserved\":true,\"target_executed\":false}\n";
     assert(proof.good());
   };
-  if(scenario=="boot" || scenario=="boot-reject") {
+  if(scenario=="boot" || scenario=="boot-reject" || scenario=="boot-healthy") {
     if(scenario=="boot-reject"){rejectBoot();assert(rollbacks==1);}
+    if(scenario=="boot-healthy"){
+      assert(confirmed && !pending);rejectBoot();assert(!rollbacks && !confirms);
+    }
     emit(false);return 0;
   }
   assert(payload.size()==nativeBytes+RiscUpdate::StoreBytes);
   imageSize=nativeBytes;replacingFirmware=false;replacingCohort=true;
   assert(strlen(argv[8])<sizeof(scratch->cohort.runtime_version));
   strcpy(scratch->cohort.runtime_version,argv[8]);
+  if(scenario=="wrong-runtime-request")strcpy(scratch->cohort.runtime_version,"0.1.1");
   struct Admission {const std::vector<uint8_t>* bytes;unsigned native;unsigned* calls;};
   Admission admission{&payload,nativeBytes,&graphChecks};
   RiscUpdate::Backend io{&admission,now,read,erase,write,invalidate,record,hashBegin,hashAdd,hashEnd,
@@ -96,6 +105,11 @@ int main(int argc,char** argv) {
     assert(result==RISC_BANK_INTEGRITY);assert(tx.abort(token)==0);assert(graphChecks==0);emit(false);return 0;
   }
   assert(!result);
+  if(scenario=="wrong-runtime-request") {
+    risc_bank_status_v1 state{};state.struct_size=sizeof(state);int error=0;
+    for(unsigned i=0;i<12000 && !error;++i)error=tx.step(token,&state);
+    assert(error==RISC_BANK_INTEGRITY && !graphChecks);assert(tx.abort(token)==0);emit(false);return 0;
+  }
   if(scenario=="power-verify-native"){assert(status().state==RISC_BANK_VERIFY_FIRMWARE);emit(false);return 0;}
   if(scenario=="power-verify-store"){stepTo(RISC_BANK_VERIFY_STORE);emit(false);return 0;}
   stepTo(RISC_BANK_READY);preserved();assert(graphChecks==1);

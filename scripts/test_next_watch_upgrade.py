@@ -9,13 +9,13 @@ import subprocess
 import tempfile
 
 from build_next_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
-    NEW_APPS, read_previous, require, sha, encoded, document, metadata, check_policy)
+    NEW_APPS, read_previous, read_native, runtime_evidence, require, sha, encoded, document, metadata, check_policy)
 from current_cohort import parse, verify, package
 from check_runtime_store_admission import compile_harness, store_digest
 from read_only_spiffs import read_image
 
 SCENARIOS = ('power-begin', 'power-native', 'power-store', 'cancel', 'corrupt-native',
-             'corrupt-store', 'power-verify-native', 'power-verify-store', 'power-ready',
+             'corrupt-store', 'wrong-runtime-request', 'power-verify-native', 'power-verify-store', 'power-ready',
              'activation-unknown', 'rollback', 'power-selected', 'success')
 
 
@@ -23,10 +23,10 @@ def run(*args, **kwargs):
     return subprocess.run(list(map(str, args)), check=True, **kwargs)
 
 
-def compile_transaction(runtime, build):
+def compile_transaction(runtime, build, version):
     runtime, build = Path(runtime).resolve(), Path(build).resolve()
     build.mkdir(parents=True)
-    (build / 'RiscBuildIdentity.h').write_text('#pragma once\n#define RISC_BUILD_VERSION "' + RUNTIME_VERSION + '"\n')
+    (build / 'RiscBuildIdentity.h').write_text('#pragma once\n#define RISC_BUILD_VERSION "' + version + '"\n')
     includes = [build] + [runtime / p for p in ('test', 'test/native_bank_stubs', 'test/drivers/stubs',
         'lib/elf_loader/include', 'src', 'sdk/app', 'sdk/driver', 'sdk/hardware', 'lib/ArduinoJson/src')]
     flags = ['-fsanitize=address,undefined', '-fno-sanitize-recover=all', '-fno-omit-frame-pointer'] if os.environ.get('SANITIZE') == '1' else []
@@ -126,8 +126,10 @@ def check_preserved(original, image):
                 'Persisted bytes or source rollback pair changed at ' + hex(start))
 
 
-def transactions(runtime, full, payload, firmware, output):
-    executable = compile_transaction(runtime, output / 'native-build')
+def transactions(previous_runtime, runtime, full, payload, firmware, native, output):
+    installed_executable = compile_transaction(previous_runtime, output / 'installed-native-build', RUNTIME_VERSION)
+    candidate_version = native['firmware_version']
+    candidate_executable = compile_transaction(runtime, output / 'candidate-native-build', candidate_version)
     original = bytearray(full)
     # Nonuniform sentinels catch shifts, partial writes and accidental blanking.
     for start, length, salt in ((0x9000, 0x6000, 37), (0x270000, 0x80000, 173)):
@@ -137,28 +139,39 @@ def transactions(runtime, full, payload, firmware, output):
     asset = output / 'tested-cohort.bin';asset.write_bytes(payload)
     def execute(input_path, scenario, label, active=0):
         image, proof = output / (label + '.bin'), output / (label + '.json')
+        executable = candidate_executable if active == 1 else installed_executable
         run(executable, input_path, asset, len(firmware), active, scenario, image, proof,
-            RUNTIME_VERSION, timeout=120, env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
+            candidate_version, timeout=120, env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
         data = image.read_bytes();check_preserved(original, data)
         result = document(proof.read_bytes())
-        result.update(label=label, snapshot_sha256=sha(data),
-                      nvs_sha256=sha(data[0x9000:0xf000]), appdata_sha256=sha(data[0x270000:0x2f0000]))
+        result.update(label=label, executing_runtime_source=native['source_sha'] if active == 1 else RUNTIME,
+                      executing_runtime_version=candidate_version if active == 1 else RUNTIME_VERSION,
+                      snapshot_sha256=sha(data), nvs_sha256=sha(data[0x9000:0xf000]),
+                      appdata_sha256=sha(data[0x270000:0x2f0000]))
         return image, result
     results = []
     for scenario in SCENARIOS:
         image, result = execute(initial, scenario, scenario);results.append(result)
-        # A separate process models reset, discarding all transaction state.
+        # Fresh processes discard in-memory state and compile the native version
+        # actually running in the selected bank. No candidate code handles the
+        # installed transaction or the restored old-bank reboot.
         if result['selected']:
-            image, result = execute(image, 'boot-reject', scenario + '-candidate-rejected', active=1)
-            results.append(result)
-        image, result = execute(image, 'boot', scenario + '-prior-reboot');results.append(result)
+            image, pending_boot = execute(image, 'boot', scenario + '-candidate-pending-boot', active=1)
+            results.append(pending_boot)
+            if scenario != 'success':
+                image, rejection = execute(image, 'boot-reject', scenario + '-candidate-rejected', active=1)
+                results.append(rejection)
         if scenario != 'success':
+            image, result = execute(image, 'boot', scenario + '-prior-reboot');results.append(result)
             image, result = execute(image, 'success', scenario + '-retry');results.append(result)
             candidate = image.read_bytes()
             require(candidate[0x800000:0x800000 + len(firmware)] == firmware
                     and candidate[0xae0000:0xff0000] == payload[len(firmware):], 'Retry pair differs')
-        # Snapshots are consumed by reboot/retry above. Keep bounded disk usage;
-        # the result retains every snapshot digest and persistent-region digest.
+            image, result = execute(image, 'boot', scenario + '-retry-pending-boot', active=1);results.append(result)
+        image, result = execute(image, 'boot-healthy', scenario + '-candidate-valid-restart', active=1)
+        results.append(result)
+        # Every snapshot has been consumed by reboot/retry. Preserve digest and
+        # comparison results while bounding disk use to the current scenario.
         for snapshot in output.glob(scenario + '*.bin'):
             snapshot.unlink()
     initial.unlink()
@@ -166,12 +179,18 @@ def transactions(runtime, full, payload, firmware, output):
     return results
 
 
-def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None):
+def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None, *,
+          previous_runtime, previous_native_dir):
     output = Path(output).resolve()
     require(not output.exists(), 'Output must be new')
-    full, previous, old_identity, firmware, elf, native = read_previous(previous_bundle, native_dir, runtime)
+    full, previous, old_identity, old_firmware, old_elf, old_native = read_previous(
+        previous_bundle, previous_native_dir, previous_runtime)
+    firmware, elf, native = read_native(native_dir, runtime)
+    evidence = runtime_evidence(previous_runtime, runtime, old_native, native)
     if candidate_bundle is None:
         # Explicit harness/custody check only. Never reported as a 1.0.5 acceptance.
+        require(native['source_sha'] == RUNTIME and firmware == old_firmware and elf == old_elf,
+                '--check-installed requires exact accepted native inputs, not a candidate upgrade')
         following = previous
         payload, _ = package(old_identity, firmware, full[0x2f0000:0x800000])
         policy = None
@@ -189,27 +208,36 @@ def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None):
                      for p in (root / 'store').rglob('*') if p.is_file()}
         require(extracted == following, 'Candidate extracted store differs')
         identity = parse(following['cohort.json'])
-        verify(identity, firmware, version=VERSION, runtime_version=RUNTIME_VERSION,
+        verify(identity, firmware, version=VERSION, runtime_version=native['firmware_version'],
                source_revision=proof['watch_source'])
         _, ota = package(identity, firmware, store)
+        require(proof['configuration']['sources']['runtime']['commit'] == native['source_sha'],
+                'Candidate proof configuration names a different Runtime source')
+        require(native['firmware_version'] == RUNTIME_VERSION or proof.get('runtime_evidence') == evidence,
+                'Candidate Runtime provenance evidence missing or different')
         require(proof['ota'] == ota and proof['target_cohort'] == identity
                 and proof['source_cohort'] == old_identity
                 and proof['native_elf_sha256'] == sha(elf)
+                and proof.get('runtime_evidence', evidence) == evidence
                 and proof['files'] == {n: metadata(b) for n, b in following.items()}, 'Candidate proof/bytes differ')
         policy = check_policy(previous, following)
         scope = 'one-stage-accepted-1.0.4-to-1.0.5'
     output.mkdir(parents=True)
     graph_dir = output / 'graph-build';graph_dir.mkdir()
-    harness = compile_harness(runtime, graph_dir / 'admit', True, elf)
+    harness = compile_harness(previous_runtime, graph_dir / 'admit-installed', True, old_elf)
     graph = admission(harness, previous, following)
-    self_graph = admission(harness, following, following)
+    candidate_graph_dir = output / 'candidate-graph-build';candidate_graph_dir.mkdir()
+    candidate_harness = compile_harness(runtime, candidate_graph_dir / 'admit-candidate', True, elf)
+    self_graph = admission(candidate_harness, following, following)
     negatives = []
     if candidate_bundle is not None:
         for label, candidate in negative_stores(previous, following):
             outcome = admission(harness, previous, candidate, False)
             negatives.append({'scenario': label, **outcome})
-    results = transactions(runtime, full, payload, firmware, output)
-    record = {'schema': 1, 'scope': scope, 'installed_runtime': RUNTIME,
+    results = transactions(previous_runtime, runtime, full, payload, firmware, native, output)
+    record = {'schema': 1, 'scope': scope, 'installed_runtime': RUNTIME, 'candidate_runtime': native['source_sha'],
+              'runtime_evidence': evidence, 'previous_native_sha256': sha(old_firmware),
+              'previous_native_elf_sha256': sha(old_elf),
               'source_cohort': old_identity, 'target_cohort': parse(following['cohort.json']),
               'source_initial_image_sha256': sha(full), 'native_sha256': sha(firmware),
               'native_elf_sha256': sha(elf), 'cohort_sha256': sha(payload),
@@ -225,13 +253,14 @@ def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('previous-bundle', 'native-dir', 'runtime', 'output'):
+    for name in ('previous-bundle', 'native-dir', 'runtime', 'previous-native-dir', 'previous-runtime', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--candidate-bundle', type=Path)
     group.add_argument('--check-installed', action='store_true', help='Harness self-test only; not 1.0.5 acceptance')
     args = parser.parse_args()
-    prove(args.previous_bundle, args.native_dir, args.runtime, args.output, args.candidate_bundle)
+    prove(args.previous_bundle, args.native_dir, args.runtime, args.output, args.candidate_bundle,
+          previous_runtime=args.previous_runtime, previous_native_dir=args.previous_native_dir)
 
 
 if __name__ == '__main__':
