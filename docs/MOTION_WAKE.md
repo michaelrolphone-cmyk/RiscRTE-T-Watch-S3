@@ -70,7 +70,33 @@ priority, retained apps, current-store admission/execution and target links.
 Historical GPIO 0.4.2/PMU 0.5.3 packages and the historical Clock/sleep adapters
 are rebuilt from frozen exact source inputs and must match their original hashes.
 Their test lanes use the matching original SDK headers. The current overlay replaces them
-with GPIO 0.5.0/PMU 0.6.0 and adds IMU 0.3.0.
+with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.1.
+
+## IMU 0.3.1 sensitivity mitigation
+
+The owner subsequently reported wakes during pickup and tilt. The interrupt
+map already selects only the double-tap feature, but the previous version left
+its sensitivity at the feature-image default. Version 0.3.1 explicitly selects
+BMA423 sensitivity 7 (the documented least-sensitive setting), and BMA456H
+threshold scale 15 (the top of the recommended 0–15 range; default 9). The
+owner explicitly prefers stronger deliberate taps over accidental wakes. It preserves
+the BMA456H timing, axis and reserved parameter words. Preparation reads back
+the settings, disables and verifies other motion features, and checks both
+interrupt maps, data-IRQ mapping, polarity and latch configuration.
+
+This is a sensitivity mitigation, not a custom near-equal-impact classifier.
+The BMA423 API exposes no pair-magnitude comparator or post-pair quiet setting;
+the BMA456H quiet parameter is between gestures, not proof of silence after the
+second impact. Strict strength matching and post-pair quiet require retained
+sample validation. The current Deep startup resets the IMU, so it cannot inspect
+the original impacts afterward. Physical pickup/tilt rejection with these new
+settings and continued intentional double-tap usability remain unverified.
+
+Sources: the pinned Bosch `bma423.h` sensitivity contract, and Bosch BMA456
+[Hearables feature-set application note](https://www.bosch-sensortec.com/media/boschsensortec/downloads/application_notes_1/bst-bma456-an000.pdf),
+pages 16–17 and 58–59. Tests seed documented tap defaults, preserve untouched
+parameter words, reject silent setting loss and unexpected feature/IRQ bits,
+and exercise every transfer failure with retained cleanup and retry.
 
 Remaining hardware checks need no serial connection:
 1. In Light sleep, try one tap, then a deliberate pair. Check that the pair wakes

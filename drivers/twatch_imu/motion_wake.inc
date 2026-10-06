@@ -4,6 +4,11 @@
 #include "../../vendor/SensorLib/bosch/bma4xx/bma423.h"
 #include "../../vendor/SensorLib/bosch/bma4xx/bma456h.h"
 static struct bma4_dev sensor;
+/* Bosch BMA423: 0 is most sensitive, 7 is least. BMA456H uses a distinct
+ * threshold scaling parameter (documented default 9; recommended 0..15).
+ * These settings reduce sensitivity; they do not implement a custom equal-
+ * magnitude/quiet-window classifier. */
+enum { WAKE_BMA423_SENSITIVITY=7, WAKE_BMA456H_THRESHOLD=15 };
 static bool wake_enrolled,wake_changed,wake_prepared,io_failed;
 static const uint8_t saved_regs[]={BMA4_ACCEL_CONFIG_ADDR,BMA4_ACCEL_RANGE_ADDR,
     BMA4_POWER_CONF_ADDR,BMA4_POWER_CTRL_ADDR,BMA4_INT1_IO_CTRL_ADDR,BMA4_INT2_IO_CTRL_ADDR,
@@ -70,10 +75,20 @@ static bool prepare_wake(void *context){
         if(bma423_write_config_file(&sensor)!=BMA4_OK)return false;
         if(bma423_feature_enable(BMA423_STEP_CNTR|BMA423_ANY_MOTION|BMA423_NO_MOTION|BMA423_ACTIVITY|BMA423_TILT|BMA423_WAKEUP,0,&sensor)!=BMA4_OK ||
            bma423_step_detector_enable(0,&sensor)!=BMA4_OK || bma423_anymotion_enable_axis(BMA423_ALL_AXIS_DIS,&sensor)!=BMA4_OK ||
-           bma423_tap_selection(0,&sensor)!=BMA4_OK)return false; /* 0 is DOUBLE, not single. */
+           bma423_tap_selection(0,&sensor)!=BMA4_OK || /* 0 is DOUBLE, not single. */
+           bma423_wakeup_set_sensitivity(WAKE_BMA423_SENSITIVITY,&sensor)!=BMA4_OK)return false;
     }else{
         if(bma456h_init(&sensor)!=BMA4_OK || bma456h_write_config_file(&sensor)!=BMA4_OK ||
            bma456h_feature_enable(UINT16_MAX,0,&sensor)!=BMA4_OK)return false;
+        struct bma456h_multitap_settings wanted={0},observed={0};
+        if(bma456h_tap_get_parameter(&wanted,&sensor)!=BMA4_OK)return false;
+        wanted.tap_sens_thres=WAKE_BMA456H_THRESHOLD;
+        if(bma456h_tap_set_parameter(&wanted,&sensor)!=BMA4_OK ||
+           bma456h_tap_get_parameter(&observed,&sensor)!=BMA4_OK)return false;
+        /* Preserve and verify the complete vendor parameter object, including
+         * reserved words, axis selection and existing gesture timing. */
+        const uint8_t *a=(const uint8_t *)&wanted,*b=(const uint8_t *)&observed;
+        for(size_t i=0;i<sizeof(wanted);i++)if(a[i]!=b[i])return false;
     }
     /* Manufacturer tap example: >=200 Hz, 2g, AVG2, CIC mode. Keep sensor
      * powered, use APS, and retain this config through terminal CPU Deep. */
@@ -94,7 +109,11 @@ static bool prepare_wake(void *context){
            bma423_map_interrupt(BMA4_INTR1_MAP,BMA423_WAKEUP_INT,1,&sensor)!=BMA4_OK)return false;
         uint8_t feature[BMA423_FEATURE_SIZE];
         if(bma4_read_regs(BMA4_FEATURE_CONFIG_ADDR,feature,sizeof(feature),&sensor)!=BMA4_OK ||
-           (feature[BMA423_WAKEUP_OFFSET]&(BMA423_WAKEUP_EN_MSK|BMA423_TAP_SEL_MSK))!=BMA423_WAKEUP_EN_MSK)return false;
+           (feature[BMA423_WAKEUP_OFFSET]&(BMA423_WAKEUP_EN_MSK|BMA423_TAP_SEL_MSK|BMA423_WAKEUP_SENS_MSK))!=
+               (BMA423_WAKEUP_EN_MSK|(WAKE_BMA423_SENSITIVITY<<BMA423_WAKEUP_SENS_POS)) ||
+           (feature[BMA423_TILT_OFFSET]&BMA423_TILT_EN_MSK) ||
+           (feature[BMA423_STEP_CNTR_OFFSET+1]&(BMA423_STEP_CNTR_EN_MSK|BMA423_ACTIVITY_EN_MSK|BMA423_STEP_DETECTOR_EN_MSK)) ||
+           (feature[BMA423_ANY_NO_MOTION_OFFSET+3]&BMA423_ANY_NO_MOTION_AXIS_EN_MSK))return false;
     }else{
         if(bma456h_feature_enable(BMA456H_DOUBLE_TAP_EN,1,&sensor)!=BMA4_OK ||
            bma456h_map_interrupt(BMA4_INTR1_MAP,BMA456H_TAP_OUT_INT,1,&sensor)!=BMA4_OK)return false;
