@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "6f7432d819a4e76028a33dce476d0b3568e5ac5f",
+  "source_sha": "0a4f3d18c5d830d32678092fa99284810334b485",
   "firmware_version": "0.1.34",
   "required_behavior": {
     "spi_max_hz": 40000000,
