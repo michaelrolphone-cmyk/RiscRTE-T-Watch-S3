@@ -12,7 +12,8 @@ static int32_t watch_alarm_deadline(const alarm_service_v1 *a,alarm_sleep_v1 *de
         (void)a->step(a->context);
         alarm_status_v1 status={.struct_size=sizeof(status)};
         if(a->status(a->context,&status)!=ALARM_OK)return ALARM_INVALID;
-        if(status.state==ALARM_STATE_BLOCKED || status.occurrence.generation || status.output_uncertain
+        if(status.state==ALARM_STATE_BLOCKED)return status.error<0?status.error:ALARM_INVALID;
+        if(status.occurrence.generation || status.output_uncertain
 #ifdef ALARM_STATUS_CUE_SUPPORTED
            ||status.state==ALARM_STATE_CUE
 #endif
@@ -59,7 +60,11 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
     risc_light_sleep_result_v1 result={.struct_size=sizeof(result)};
     alarm_sleep_v1 decision={0};
     int32_t alarm_result=ALARM_INVALID;
-    if(pmu_ok){watch_sleep_stage=4;alarm_result=watch_alarm_deadline(a,&decision);watch_sleep_detail=alarm_result;}
+    bool alarm_failed=false;
+    if(pmu_ok){
+        watch_sleep_stage=4;alarm_result=watch_alarm_deadline(a,&decision);watch_sleep_detail=alarm_result;
+        alarm_failed=alarm_result!=ALARM_OK && alarm_result!=ALARM_BUSY;
+    }
     if(pmu_ok && alarm_result==ALARM_OK) {
         watch_sleep_stage=deep?6:5;
         uint32_t duration=watch_alarm_duration(&decision);
@@ -72,11 +77,20 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
                 (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)) {
                 bool pending=true;
                 if(!pmu->sleep_wake_pending || !watch_wake_pending(pmu,motion,&pending))rc=RISC_LIGHT_SLEEP_PLATFORM;
-                else if(!pending && watch_alarm_deadline(a,&decision)==ALARM_OK) {
-                    /* Fresh RTC-backed decision first; hold and recheck crown
-                       immediately afterward, then owned entry. No post-hold KV. */
-                    duration=watch_alarm_duration(&decision);
-                    rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
+                else if(!pending) {
+                    alarm_result=watch_alarm_deadline(a,&decision);
+                    if(alarm_result==ALARM_OK) {
+                        /* Fresh RTC-backed decision first; hold and recheck crown
+                           immediately afterward, then owned entry. No post-hold KV. */
+                        duration=watch_alarm_duration(&decision);watch_sleep_stage=6;
+                        rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
+                    } else if(alarm_result!=ALARM_BUSY) {
+                        /* A due occurrence wakes normally; a failed service
+                         * reconciliation must not masquerade as a successful
+                         * wake or lose its RTC/storage error to automatic retry. */
+                        watch_sleep_stage=4;watch_sleep_detail=alarm_result;alarm_failed=true;
+                        rc=RISC_LIGHT_SLEEP_PLATFORM;
+                    }
                 }
             }
         } else rc=watch_enter_light(pmu,motion,0,&result);
@@ -91,7 +105,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
     if(!pmu_restored || panel_restore!=0)return WATCH_SLEEP_FAILED;
     uint32_t ignored=0;
     if(!pmu->key_events(pmu->base.context,&ignored))return WATCH_SLEEP_FAILED;
-    (void)a->refresh(a->context);
+    if(!alarm_failed)(void)a->refresh(a->context);
     return rc==RISC_LIGHT_SLEEP_OK && !deep?WATCH_SLEEP_WOKE:WATCH_SLEEP_REFUSED;
 }
 

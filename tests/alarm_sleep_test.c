@@ -6,12 +6,13 @@ static unsigned now=1000,deadline,steps,prepares,refreshes,light_calls,deep_call
 static uint32_t duration_seen;
 static int32_t entry_result=RISC_DEEP_SLEEP_ACTIVE_WAKE;
 static bool service_pending,service_due,crown,retained,deep_short,rtc_bad;
+static int32_t service_blocked,block_after_light;
 static int32_t prepare(void*c,alarm_sleep_v1*s){(void)c;prepares++;if(rtc_bad)return ALARM_RTC;if(service_due)return ALARM_PENDING;
  if(!service_pending){service_pending=true;return ALARM_PENDING;}
  if(steps%3)return ALARM_PENDING;
  *s=(alarm_sleep_v1){sizeof(*s),prepares,now,deadline};service_pending=false;return ALARM_OK;}
 static int32_t step(void*c){(void)c;steps++;return ALARM_OK;}
-static int32_t status(void*c,alarm_status_v1*s){(void)c;*s=(alarm_status_v1){.api_version=1,.struct_size=sizeof(*s),.state=service_due?ALARM_STATE_ALERT:ALARM_STATE_LOADING};if(service_due)s->occurrence.generation=1;return ALARM_OK;}
+static int32_t status(void*c,alarm_status_v1*s){(void)c;*s=(alarm_status_v1){.api_version=1,.struct_size=sizeof(*s),.state=service_blocked?ALARM_STATE_BLOCKED:service_due?ALARM_STATE_ALERT:ALARM_STATE_LOADING,.error=service_blocked};if(service_due)s->occurrence.generation=1;return ALARM_OK;}
 static int32_t refresh(void*c){(void)c;refreshes++;return ALARM_PENDING;}
 static bool diagnostic(const char*s){(void)s;return true;}
 static bool panel_prepare(void*c){(void)c;return true;}
@@ -24,7 +25,7 @@ static bool pmu_resume(void*c){(void)c;assert(!retained);pmu_resumes++;return tr
 static bool key(void*c,uint32_t*e){(void)c;*e=0;return true;}
 static bool pending(void*c,bool*b){(void)c;checks++;*b=crown;return true;}
 static int32_t timed_light(void*c,uint32_t ms,risc_light_sleep_result_v1*r){(void)c;assert(!service_pending);light_calls++;duration_seen=ms;
- if(entry_result==RISC_LIGHT_SLEEP_OK){now+=ms/1000;r->wake_cause=crown?RISC_LIGHT_SLEEP_WAKE_GPIO:RISC_LIGHT_SLEEP_WAKE_TIMER;if(deadline&&now>=deadline)service_due=true;}
+ if(entry_result==RISC_LIGHT_SLEEP_OK){service_blocked=block_after_light;now+=ms/1000;r->wake_cause=crown?RISC_LIGHT_SLEEP_WAKE_GPIO:RISC_LIGHT_SLEEP_WAKE_TIMER;if(deadline&&now>=deadline)service_due=true;}
  return entry_result;}
 static int32_t light(void*c,risc_light_sleep_result_v1*r){return timed_light(c,1,r);}
 static int32_t deep_timed(void*c,uint32_t ms){(void)c;assert(!service_pending);deep_calls++;duration_seen=ms;return entry_result;}
@@ -33,7 +34,7 @@ static const alarm_service_v1 api={.api_version=1,.struct_size=sizeof(api),.stat
 static twatch_panel_power_v1 panel={.base={.struct_size=sizeof(panel)},.prepare_sleep=panel_prepare,.resume=panel_resume,.prepare_deep_sleep=panel_deep,.resume_status=panel_resume_status};
 static twatch_pmu_api_v1 pmu={.base={.struct_size=sizeof(pmu)},.key_events=key,.prepare_sleep=pmu_prepare,.resume=pmu_resume,.light_sleep=light,.deep_sleep=deep,.light_sleep_for=timed_light,.sleep_wake_pending=pending,.deep_sleep_for=deep_timed};
 static void reset(void){now=1000;deadline=1100;steps=prepares=refreshes=light_calls=deep_calls=pmu_resumes=panel_resumes=checks=duration_seen=0;
- service_pending=service_due=crown=retained=deep_short=rtc_bad=fail_resume=retained_resume=false;entry_result=RISC_LIGHT_SLEEP_ACTIVE_WAKE;pmu.base.struct_size=sizeof(pmu);}
+ service_blocked=block_after_light=0;service_pending=service_due=crown=retained=deep_short=rtc_bad=fail_resume=retained_resume=false;entry_result=RISC_LIGHT_SLEEP_ACTIVE_WAKE;pmu.base.struct_size=sizeof(pmu);}
 static bool motion_registered,motion_fail_prepare,motion_fail_resume,motion_event,motion_fail_pending;
 static unsigned motion_prepares,motion_resumes,set_calls;
 static bool motion_prepare(void*c){(void)c;motion_prepares++;motion_registered=true;return !motion_fail_prepare;}
@@ -75,12 +76,20 @@ int main(void){(void)watch_sleep_prepared;
  reset();deadline=200000;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(duration_seen==RISC_TIMED_SLEEP_MAX_MS);
  reset();deadline=0;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(deep_calls==1&&!duration_seen);
  reset();pmu.base.struct_size=TWATCH_PMU_TIMED_SLEEP_SIZE;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls&&refreshes==1);
- reset();rtc_bad=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls&&refreshes==1);
+ reset();rtc_bad=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls&&!refreshes);
  reset();service_due=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls&&refreshes==1);
  reset();retained=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_RETAINED);assert(steps&&!deep_calls&&!pmu_resumes&&!panel_resumes);
  reset();retained_resume=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_RETAINED);assert(!refreshes);
  reset();fail_resume=true;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_FAILED);assert(!refreshes);
  reset();panel.base.struct_size=TWATCH_PANEL_DEEP_SLEEP_SIZE;assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_DEEP,&api,diagnostic)==WATCH_SLEEP_REFUSED);assert(!deep_calls);panel.base.struct_size=sizeof(panel);
+ for(int error=ALARM_STORAGE;error>=ALARM_RTC;error--){
+  reset();service_blocked=error;alarm_sleep_v1 decision={.struct_size=sizeof(decision)};
+  assert(watch_alarm_deadline(&api,&decision)==error);
+  motion_reset();entry_result=RISC_LIGHT_SLEEP_OK;deadline=2000;block_after_light=error;
+  assert(watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,PORTABLE_SLEEP_HYBRID,&api,diagnostic)==WATCH_SLEEP_REFUSED);
+  assert(light_calls==1 && !deep_calls && pmu_resumes==1 && panel_resumes==1 && !refreshes);
+  assert(watch_sleep_stage==4 && watch_sleep_detail==error && !motion_registered);
+ }
  test_motion();
  puts("Alarm owned sleep: fresh RTC decisions, Light due, hybrid fresh Deep, crown, invalid/blocked/refusal/retained/short suffix passed");
  return 0;
