@@ -8,7 +8,7 @@
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "b54f98cdce5e0cfec6430cee5f73336da6978ed7"
+      "commit": "dce8d96a8ceacafb0c4fd25b93403eb327e23a4c"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
@@ -31,7 +31,7 @@
     "alarms": "0.2.1",
     "countdown": "0.1.4",
     "frequency_generator": "0.1.3",
-    "audio_spectrum": "0.4.0",
+    "audio_spectrum": "0.4.1",
     "points_in_time": "0.4.3",
     "default": "0.10.0",
     "clock": "0.10.0",
