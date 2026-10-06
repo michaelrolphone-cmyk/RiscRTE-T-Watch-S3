@@ -125,6 +125,10 @@ static bool prepare_wake(void *context){
        maps[0]!=(chip==BMA423_CHIP_ID?BMA423_WAKEUP_INT:BMA456H_TAP_OUT_INT) || maps[1] || maps[2] ||
        !read_reg(BMA4_INT1_IO_CTRL_ADDR,&control,1) || control!=(uint8_t)(BMA4_OUTPUT_ENABLE<<3 | (config->irq_active_high?1u:0u)<<1) ||
        !read_reg(BMA4_INTR_LATCH_ADDR,&latch,1) || latch!=BMA4_LATCH_MODE)return false;
+    /* Enabling/configuring the feature engine can itself leave a latched
+     * interrupt. Establish the sleep arm boundary only after configuration and
+     * readback are complete. Events after this ACK remain latched for wake. */
+    if(bma4_read_int_status(&status,&sensor)!=BMA4_OK || io_failed)return false;
     bool level=false;
     if(!gpio_api->read(gpio_api->context,irq_claim,&level) || level==config->irq_active_high)return false;
     wake_prepared=true;return true;

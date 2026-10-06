@@ -9,6 +9,7 @@ static unsigned operations,fail_at,uploaded,reset_count,delay_total;
 static unsigned force_feature_index,force_feature_mask,force_reg_index,force_reg_mask;
 static unsigned final_read_index,final_read_xor;
 static bool lose_sensitivity_write,alter_reserved_word;
+static bool initialization_event,initialization_latched;
 static const uint16_t tap_defaults[12]={6,9,130,6,6,8,80,0,0x44c,2,3,0};
 static uint64_t fake_us,last_write_us;static bool write_wait,short_wait,clock_stalled;
 static bool bus_live,pin_live,enrolled,held_line,fail_enroll,fail_withdraw,fail_gpio,wrong_status;
@@ -26,7 +27,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
  const uint8_t*p=write;uint8_t*q=read;unsigned reg=p[0];
  if(rn){assert(wn==1);if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));assert(offset>=6144&&offset-6144+rn<=sizeof(feature));memcpy(q,feature+offset-6144,rn);}else{assert(reg+rn<=256);memcpy(q,regs+reg,rn);
   if(final_read_xor&&regs[0x56]==(silicon==0x13?0x20:1)&&reg<=final_read_index&&final_read_index<reg+rn)q[final_read_index-reg]^=(uint8_t)final_read_xor;
-  if(reg==0x1c){regs[0x1c]=regs[0x1d]=0;}}return true;}
+  if(reg==0x1c){regs[0x1c]=regs[0x1d]=0;initialization_latched=false;}}return true;}
  if(reg==0x7e && wn==2 && p[1]==0xb6){memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;uploaded=0;reset_count++;return true;}
  if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));if(!regs[0x59]){assert(offset==uploaded && wn==33);assert(!memcmp(p+1,(silicon==0x13?bma423_config_file:bma456h_config_file)+offset,wn-1));uploaded+=wn-1;}else{assert(offset>=6144&&offset-6144+wn-1<=sizeof(feature));memcpy(feature+offset-6144,p+1,wn-1);
   if(force_feature_mask)feature[force_feature_index]|=(uint8_t)force_feature_mask;
@@ -34,6 +35,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
   if(alter_reserved_word&&silicon==0x16&&offset-6144<=0x3c&&0x3c<offset-6144+wn-1)feature[0x3c]^=1;
  }return true;}
  assert(reg+wn-1<=256);memcpy(regs+reg,p+1,wn-1);
+ if(reg==0x56 && initialization_event)initialization_latched=true;
  if(force_reg_mask&&reg<=force_reg_index&&force_reg_index<reg+wn-1)regs[force_reg_index]|=(uint8_t)force_reg_mask;
  if(reg==0x59 && p[1]==1){assert(uploaded==6144);regs[0x2a]=wrong_status?0:1;regs[0x5b]=0;regs[0x5c]=0xc0;
   /* Documented feature defaults are not all zero. Seed real tap parameters;
@@ -46,7 +48,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
 static bool claim_pin(void*c,uint8_t pin,uint32_t flags,uint64_t*out){(void)c;assert(pin==14&&!pin_live&&flags==RISC_GPIO_INPUT);pin_live=true;*out=23;return true;}
 static bool release_pin(void*c,uint64_t t){(void)c;assert(t==23);if(enrolled)return false;pin_live=false;return true;}
 static bool gpio_write(void*c,uint64_t t,bool high){(void)c;(void)t;(void)high;return false;}
-static bool gpio_read(void*c,uint64_t t,bool*out){(void)c;assert(t==23&&pin_live);*out=held_line;return !fail_gpio;}
+static bool gpio_read(void*c,uint64_t t,bool*out){(void)c;assert(t==23&&pin_live);*out=held_line||initialization_latched;return !fail_gpio;}
 static int32_t enroll(void*c,uint64_t t,bool high,uint32_t mode){(void)c;assert(t==23&&high);if(mode){assert(mode==3);if(fail_enroll)return -7;enrolled=true;}else{if(fail_withdraw)return -5;enrolled=false;}return 0;}
 static uint64_t now(void*c){(void)c;return fake_us/1000;}
 static void sleep_ms(void*c,uint32_t ms){(void)c;assert(ms<1000);delay_total+=ms;if(!clock_stalled){fake_us+=(uint64_t)ms*1000-(short_wait?999:0);short_wait=false;}}
@@ -58,6 +60,7 @@ static void begin(uint8_t id){
  silicon=id;write_wait=short_wait=clock_stalled=false;fake_us=last_write_us=0;memset(regs,0,sizeof(regs));regs[0]=id;operations=fail_at=uploaded=reset_count=delay_total=0;held_line=fail_enroll=fail_withdraw=fail_gpio=wrong_status=false;
  force_feature_index=force_feature_mask=force_reg_index=force_reg_mask=0;lose_sensitivity_write=alter_reserved_word=false;
  final_read_index=final_read_xor=0;
+ initialization_event=initialization_latched=false;
  config_fixture=(tw_hw_i2c_device_v1){.struct_size=sizeof(config_fixture),.bus={.struct_size=sizeof(risc_hw_bus_v1),.instance_id=101,.kind=RISC_HW_BUS_I2C,.controller=0,.frequency_hz=100000,.sclk=-1,.mosi=-1,.miso=-1,.sda=10,.scl=11},.address=25,.irq=14,.irq_active_high=1,.irq_pull_up=0,.chip_id=id};
  const risc_hardware_device_v1 h={1,sizeof(h),7,"bosch,bma4xx","unspecified","peripheral.i2c",1,sizeof(config_fixture),&config_fixture};
  risc_provider_dependency_v1 deps[]={{"hardware.device",1,&h},{"i2c.bus",1,&bus_api},{"gpio.bank",1,&gpio},{"platform.clock",1,&clock_port}};
@@ -71,6 +74,10 @@ int main(void){
   else assert((feature[0x38]&0x1f)==0x0f&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
   unsigned before=operations;assert(prepare_wake(NULL)&&operations==before);bool pending=true;assert(wake_pending(NULL,&pending)&&!pending);held_line=true;assert(wake_pending(NULL,&pending)&&pending&&operations==before);held_line=false;
   assert(resume_wake(NULL));restored();before=operations;assert(resume_wake(NULL)&&operations==before);assert(quiesce());
+  begin(id);initialization_event=true;assert(prepare_wake(NULL));assert(!initialization_latched);
+  initialization_latched=true;bool actual=false;before=operations;
+  assert(wake_pending(NULL,&actual)&&actual&&initialization_latched&&operations==before);
+  assert(resume_wake(NULL));restored();assert(quiesce());
   /* Every physical transfer can fail; bulk firmware loops must not hide one. */
   for(unsigned failure=1;failure<=count;failure++){begin(id);fail_at=failure;assert(!prepare_wake(NULL));assert(operations==failure);fail_at=0;assert(resume_wake(NULL));restored();assert(prepare_wake(NULL));assert(resume_wake(NULL));restored();assert(quiesce());}
   begin(id);assert(prepare_wake(NULL));operations=0;assert(resume_wake(NULL));unsigned cleanup_count=operations;assert(quiesce());
