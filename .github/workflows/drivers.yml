@@ -27,7 +27,9 @@ jobs:
           tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
           echo "TWATCH_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
       - name: Release automation tests
-        run: python -m unittest discover -s tests -p 'test_*releases.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_*releases.py' -v
+          python -m unittest discover -s tests -p test_sdr_publication.py -v
       - name: Host contract fixtures with UBSan
         run: |
           python scripts/test_contracts.py

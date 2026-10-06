@@ -401,7 +401,7 @@ def verify_downloads(release, expected, destination):
         require(len(data) == meta['size'] and sha(data) == meta['sha256'], 'Downloaded release bytes differ')
 
 
-def publish_one(release, output):
+def publish_one(release, output, *, title=None, notes=None, prerelease=False):
     tag = release['tag']
     target = release['source_sha']
     existing = release_by_tag(tag)
@@ -410,6 +410,7 @@ def publish_one(release, output):
         require(api(f'repos/{REPOSITORY}/commits/{tag}')['sha'] == target, 'Existing tag source collision')
     else:
         require(b'HTTP 404' in tag_lookup.stderr, 'Tag lookup failed')
+    supplied_notes = notes
     if existing is None:
         p = read_config()
         notes = ('Watch 1.0.0 stable baseline. Exact owner-accepted 0.5.2 bytes; component versions retained. '
@@ -427,12 +428,15 @@ def publish_one(release, output):
                      'Component version is retained. See release-record.json and LICENSES.zip. ' + SCOPE)
             if release['latest'] and p.get('known_limitations'):
                 notes += '\n\n' + known_limitations_text(p)
+        if supplied_notes is not None:
+            notes = supplied_notes
         existing = json.loads(gh('api', f'repos/{REPOSITORY}/releases', '--method', 'POST',
                                  '-f', 'tag_name=' + tag, '-f', 'target_commitish=' + target,
-                                 '-f', 'name=' + ('Watch ' + p['version'] if release['latest'] else tag),
-                                 '-f', 'body=' + notes, '-F', 'draft=true'))
+                                 '-f', 'name=' + (title or ('Watch ' + p['version'] if release['latest'] else tag)),
+                                 '-f', 'body=' + notes, '-F', 'draft=true',
+                                 '-F', 'prerelease=' + str(prerelease).lower()))
     require(existing['target_commitish'] == target, 'Existing release source collision')
-    require(not existing.get('prerelease', False), 'Stable release cannot resume a prerelease')
+    require(existing.get('prerelease', False) is prerelease, 'Release prerelease status differs')
     names = [a['name'] for a in existing['assets']]
     require(len(names) == len(set(names)) and set(names) <= set(release['assets']), 'Unexpected existing assets')
     with tempfile.TemporaryDirectory() as tmp:
@@ -540,7 +544,14 @@ def publication_preflight(plan, output):
     integration = {'watch': verify_watch_ancestry(plan['product']['sources']['watch']['accepted_sha'], plan['source_sha']),
                    'owning_sources': verify_current_source_ancestry(plan['product'])}
     verify_driver_releases(plan, output)
-    for release in plan['releases']:
+    release_preflight(plan['releases'], output)
+    print('Verified source integration before publication:\n' + encoded(integration).decode())
+    return integration
+
+
+def release_preflight(releases, output, *, prerelease=False):
+    """Read-only immutable tag/asset collision check, shared by manual publishers."""
+    for release in releases:
         tag, target = release['tag'], release['source_sha']
         existing = release_by_tag(tag)
         lookup = subprocess.run(['gh', 'api', f'repos/{REPOSITORY}/git/ref/tags/{tag}'], cwd=ROOT, capture_output=True)
@@ -552,21 +563,22 @@ def publication_preflight(plan, output):
             continue
         require(existing.get('target_commitish') == target, 'Existing release source collision: ' + tag)
         require(existing['draft'] or lookup.returncode == 0, 'Published release tag missing: ' + tag)
-        require(not existing.get('prerelease', False), 'Stable release cannot resume a prerelease')
+        require(existing.get('prerelease', False) is prerelease, 'Release prerelease status differs')
         names = [a['name'] for a in existing['assets']]
         require(len(names) == len(set(names)) and set(names) <= set(release['assets']), 'Unexpected existing assets: ' + tag)
         require(existing['draft'] or set(names) == set(release['assets']), 'Published release has missing assets: ' + tag)
         for asset in existing['assets']:
             raw = gh('api', f'repos/{REPOSITORY}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream')
             require(raw == (output / tag / asset['name']).read_bytes(), 'Immutable uploaded asset collision: ' + tag)
-    print('Verified source integration before publication:\n' + encoded(integration).decode())
-    return integration
 
 
-def publish_index(index):
+def publish_index(index, *, expected_parent=None, expected_current=None):
     # Same branch-only, monotonic, non-force protocol as Reader. Plumbing avoids
     # copying main's source files into the dedicated index branch.
     parent, current = current_release_index()
+    if expected_parent is not None:
+        require(parent == expected_parent and current == expected_current,
+                'Live index predecessor changed; review before retrying publication')
     result = merged_index(current, index)
     if current == result:
         print('Release index already verified unchanged')

@@ -77,3 +77,5 @@ collisions cannot be hidden by deriving both from the old index. The native
 bridge keeps the existing 1.0.2 cohort anchor, including in its initial-only image.
 
 The SDR launcher uses Springboard 1.4.10 and an explicit 18-entry catalog limit. The actual generated deployment catalog is exercised against the pinned production adapter under normal and ASan/UBSan host builds, enumerating, rendering each icon, and launching all 18 entries, including Waterfall. Other existing application binaries must match released 1.0.2 byte for byte.
+
+The [manual SDR publication runbook](SDR_TEST_PUBLICATION.md) freezes a successful CI artifact and publishes one catalog stage at a time, with a separate operator-confirmed healthy bridge restart required before stage 2. No acceptance pins or publication are implied by the source change.
