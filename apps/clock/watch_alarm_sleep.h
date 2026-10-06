@@ -90,7 +90,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
         uint32_t duration=watch_alarm_duration(&decision);
         if(deep)rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
         else {
-            uint32_t light=hybrid && (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)?PORTABLE_SLEEP_LIGHT_MS:duration;
+            uint32_t light=hybrid && (!duration || duration>WATCH_SLEEP_LIGHT_MS)?WATCH_SLEEP_LIGHT_MS:duration;
             rc=light?(pmu->base.struct_size>=TWATCH_PMU_TIMED_SLEEP_SIZE && pmu->light_sleep_for?
                 watch_enter_light(pmu,motion,light,&result):RISC_LIGHT_SLEEP_UNSUPPORTED):
                 watch_enter_light(pmu,motion,0,&result);
@@ -105,7 +105,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
                 }
             }
             if(rc==RISC_LIGHT_SLEEP_OK && result.wake_cause==RISC_LIGHT_SLEEP_WAKE_TIMER && hybrid &&
-                (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)) {
+                (!duration || duration>WATCH_SLEEP_LIGHT_MS)) {
                 bool pending=true;
                 if(!pmu->sleep_wake_pending || !watch_wake_pending(pmu,motion,&pending))rc=RISC_LIGHT_SLEEP_PLATFORM;
                 else if(!pending) {

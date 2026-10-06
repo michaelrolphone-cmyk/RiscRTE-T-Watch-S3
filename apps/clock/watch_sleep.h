@@ -11,6 +11,12 @@ enum { WATCH_SLEEP_REFUSED=0, WATCH_SLEEP_WOKE=1, WATCH_SLEEP_FAILED=-1,
 /* Standalone policy consumers need not expose the optional Clock diagnostic. */
 static unsigned watch_sleep_stage __attribute__((unused));
 static int32_t watch_sleep_detail __attribute__((unused));
+#ifdef PORTABLE_LOW_BATTERY
+static uint32_t watch_sleep_light_ms=PORTABLE_SLEEP_LIGHT_MS;
+#define WATCH_SLEEP_LIGHT_MS watch_sleep_light_ms
+#else
+#define WATCH_SLEEP_LIGHT_MS PORTABLE_SLEEP_LIGHT_MS
+#endif
 static bool watch_motion_ready(const twatch_motion_api_v1 *motion){
     return !motion || (motion->api_version==TWATCH_MOTION_API_V1 && motion->struct_size>=TWATCH_MOTION_WAKE_SIZE &&
         motion->prepare_wake && motion->wake_pending && motion->resume_wake);
@@ -65,8 +71,12 @@ static int watch_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
             if(pmu->base.struct_size<TWATCH_PMU_TIMED_SLEEP_SIZE || !pmu->light_sleep_for ||
                !pmu->sleep_wake_pending) rc=RISC_LIGHT_SLEEP_UNSUPPORTED;
             else {
+                #ifdef PORTABLE_LOW_BATTERY
+                diagnostic("WATCH_SLEEP phase=light timer=settings");
+#else
                 diagnostic("WATCH_SLEEP phase=light duration_ms=300000");
-                rc=watch_enter_light(pmu,motion,PORTABLE_SLEEP_LIGHT_MS,&result);
+#endif
+                rc=watch_enter_light(pmu,motion,WATCH_SLEEP_LIGHT_MS,&result);
                 if(rc==RISC_LIGHT_SLEEP_OK && result.wake_cause==RISC_LIGHT_SLEEP_WAKE_TIMER) {
                     bool pending=true;
                     /* Never infer timer-only completion from time or UI. Key

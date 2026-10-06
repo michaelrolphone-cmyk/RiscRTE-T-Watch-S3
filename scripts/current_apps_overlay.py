@@ -5,6 +5,7 @@ from pathlib import Path
 from compact_current_elf import PROFILE as COMPACTION_PROFILE, OPTIONS as COMPACTION_OPTIONS
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE='watch-current-apps-v1'
+LOW_BATTERY_PROFILE='watch-low-battery-apps-v1'
 SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store','file_browser')
 UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum','lora_messages','ble_scanner','waterfall','ble_touchpad','ble_buttons')
 PRODUCTIVITY_APPS=('points_in_time','timecard')
@@ -25,9 +26,17 @@ def encoded(v):return (json.dumps(v,indent=2,sort_keys=True)+'\n').encode()
 def require(ok,message):
  if not ok:raise ValueError(message)
 def metadata(b):return {'size_bytes':len(b),'sha256':sha(b)}
-def config(root=ROOT):
- c=json.loads((Path(root)/'apps/current-apps-sources.json').read_text())
- require(c.get('schema')==1 and c.get('profile')==PROFILE,'Wrong current-app profile')
+def config(root=ROOT,profile='current'):
+ require(profile in ('current','low-battery'),'Unknown application profile')
+ path='apps/low-battery-sources.json' if profile=='low-battery' else 'apps/current-apps-sources.json'
+ c=json.loads((Path(root)/path).read_text())
+ require(c.get('schema')==1 and c.get('profile')==(LOW_BATTERY_PROFILE if profile=='low-battery' else PROFILE),'Wrong current-app profile')
+ if profile=='low-battery':
+  require(c.get('features')=={'low_battery':True} and c.get('product_version')=='1.0.7','Low battery must be automatic in the future profile')
+  require(set(c.get('source_app_versions',{}))==set(APPS),'Low-battery source versions incomplete')
+  baseline=json.loads((Path(root)/'apps/current-apps-sources.json').read_text())
+  for name,version in c['app_versions'].items():
+   require(tuple(map(int,version.split('.')))>tuple(map(int,baseline['app_versions'][name].split('.'))),'Rebuilt app requires a new deployment version: '+name)
  require(set(c['sources'])=={'system-apps','utilities','productivity','runtime'},'Current source inventory differs')
  for p in c['sources'].values():require(re.fullmatch('[0-9a-f]{40}',p.get('commit','')) is not None,'Unpinned current source')
  require(c.get('sdr',{}).get('id')=='s3-radio-iq-v1' and re.fullmatch('[0-9a-f]{40}',c['sdr'].get('commit','')) is not None and c['sdr'].get('version')=='0.1.1','Unpinned guarded SDR source')
@@ -128,9 +137,9 @@ def configure_boot(original):
  b['cohort_migration']={'schema':1,'from':{'product':'twatch-s3','version':'1.0.4','source_revision':'674729dbade10c15368731745844e6dc2f6ebd0b'},'to':{'product':'twatch-s3','version':'1.0.5'},'shared_key_value':[{'application_id':name,'api':1,'namespace':1} for name in ('ble_touchpad','ble_buttons')]}
  return b
 
-def verify(artifact,head,root=ROOT):
- artifact=Path(artifact);c=config(root);r=json.loads((artifact/'current-apps-build.json').read_text())
- require(r.get('schema')==1 and r.get('profile')==PROFILE and r.get('watch_source')==head,'Current overlay identity/head mismatch')
+def verify(artifact,head,root=ROOT,profile='current'):
+ artifact=Path(artifact);c=config(root,profile=profile);r=json.loads((artifact/'current-apps-build.json').read_text())
+ require(r.get('schema')==1 and r.get('profile')==c['profile'] and r.get('watch_source')==head,'Current overlay identity/head mismatch')
  require(r.get('configuration')==c,'Current overlay source/version configuration differs')
  require(set(r['files'])==PAYLOADS and set(r['apps'])==set(APPS),'Current payload inventory differs')
  require(r.get('target_validation') is True,'Current target validation missing')
@@ -148,6 +157,7 @@ def verify(artifact,head,root=ROOT):
   require(metadata(debug)==r['debug'][name+'.elf'] and len(debug)==compact.get('before_bytes') and sha(debug)==compact.get('before_sha256'),'Original app ELF differs: '+name)
   require(compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('after_sha256')==sha(files[name+'.elf']) and len(debug)>=compact['after_bytes'],'Current ELF compaction hashes differ: '+name)
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
+  require(('-DPORTABLE_LOW_BATTERY' in a['defines'])==(profile=='low-battery'),'Low battery profile enablement differs: '+name)
   require('-DWATCH_ALARM_SLEEP_RESUME' in a['defines'],'Current alarm sleep resume boundary missing: '+name)
   require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)

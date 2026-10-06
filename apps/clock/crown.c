@@ -31,6 +31,12 @@ static pqa_session clock_quick;
 #ifdef WATCH_QUICK_RADIOS
 #include "PortableQuickRadios.h"
 static pqa_radios clock_radios;
+#ifdef PORTABLE_LOW_BATTERY
+#include "PortableLowBattery.h"
+static portable_low_battery clock_low_battery;
+static uint32_t clock_low_battery_at;
+static bool clock_low_battery_sampled;
+#endif
 #endif
 #endif
 #include "launcher_touch.h"
@@ -332,6 +338,26 @@ static unsigned clock_brightness(void) {
     return 40;
 #endif
 }
+#ifdef PORTABLE_LOW_BATTERY
+static bool clock_low_battery_poll(uint32_t now) {
+    if(held)return true;
+#ifdef WATCH_CLOCK_ALARMS
+    if(!clock_display_settled||clock_alarm_modal)return true;
+#endif
+    if(clock_low_battery_sampled&&(uint32_t)(now-clock_low_battery_at)<5000u)return true;
+    clock_low_battery_sampled=true;clock_low_battery_at=now;
+    risc_battery_sample_v1 sample={0,255,RISC_BATTERY_PROFILE_MISSING};
+    if(!pmu->base.read||!pmu->base.read(pmu->base.context,&sample))return true;
+    unsigned result=portable_low_battery_update(&clock_low_battery,rt,&sample);
+    if(result&PORTABLE_LOW_BATTERY_RETAINED)return false;
+    if(result&PORTABLE_LOW_BATTERY_ERROR)rt->diagnostic("LOW_BATTERY settings=unconfirmed");
+    if(!(result&PORTABLE_LOW_BATTERY_ENTERED))return true;
+    pqa_cancel(&clock_quick.ui);(void)pqa_take_action(&clock_quick.ui);
+    if(!pqa_session_load(&clock_quick,rt)||!pqa_radios_load(&clock_radios,&clock_quick.ui,rt)||
+       !pqa_session_restore(&clock_quick,display))return false;
+    rt->diagnostic(result&PORTABLE_LOW_BATTERY_ERROR?"LOW_BATTERY crossing=partial-once":"LOW_BATTERY crossing=applied-once");return true;
+}
+#endif
 static bool startup(void) {
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -357,6 +383,9 @@ static bool startup(void) {
 #endif
 static int sleep_cycle(void) {
     sleep_status[0]=0;
+#ifdef PORTABLE_LOW_BATTERY
+    watch_sleep_light_ms=clock_quick.deep_ms;
+#endif
 #ifdef WATCH_QUICK_RADIOS
     if(!pqa_radios_suspend(rt)){rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");return false;}
 #endif
@@ -438,6 +467,9 @@ __attribute__((visibility("default"))) void app_main(void) {
     touch=(watch_launcher_touch){0};
 #ifdef WATCH_QUICK_ACTIONS
     pqa_session_init(&clock_quick);
+#ifdef PORTABLE_LOW_BATTERY
+    clock_low_battery=(portable_low_battery){0};clock_low_battery_sampled=false;clock_low_battery_at=0;
+#endif
 #endif
     launcher_swipe_pending=launcher_activity_pending=false;
     launcher_sampled_at=0;
@@ -539,6 +571,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_ALARMS
         if(!clock_alarm_foreground() || !alive(&now))break;
 #endif
+#ifdef PORTABLE_LOW_BATTERY
+        if(!clock_low_battery_poll(now))break;
+#endif
         uint32_t events=0;
         if (!pmu->key_events(pmu->base.context,&events)) break;
         /* The clock closure currently exposes only PMU short/long key events.
@@ -605,7 +640,12 @@ __attribute__((visibility("default"))) void app_main(void) {
         }
 #endif
         bool manual=(events&2u) && (uint32_t)(now-armed_at)>=250u;
-        bool idle=(uint32_t)(now-last_activity)>=60000u;
+        bool idle=(uint32_t)(now-last_activity)>=
+#ifdef PORTABLE_LOW_BATTERY
+            clock_quick.idle_ms;
+#else
+            60000u;
+#endif
         if (manual || idle) {
 #ifdef WATCH_CLOCK_LAUNCHER
 #ifdef WATCH_QUICK_ACTIONS
