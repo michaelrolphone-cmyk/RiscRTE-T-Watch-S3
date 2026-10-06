@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "da92aef5174b9279de1bad0ec05f7234ba587169",
-  "firmware_version": "0.1.32",
+  "source_sha": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+  "firmware_version": "0.1.33",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -15,7 +15,7 @@
     "owned_timed_light_sleep": true,
     "owned_timed_deep_sleep": true,
     "provider_bound_key_value": true,
-    "app_policy_capacity": 19,
+    "app_policy_capacity": 24,
     "native_i2s_tx_cleanup": true,
     "native_station_radio": true,
     "bounded_asynchronous_radio_scan": true,
@@ -45,15 +45,18 @@
     "mixed_polarity_rtc_wake": true,
     "read_only_installed_files": true,
     "scoped_native_radio_spi_gpio": true,
-    "selected_provider_capacity": 17,
+    "selected_provider_capacity": 24,
     "selectable_radio_config_v2": true,
     "explicit_app_data_namespaces": true,
     "atomic_app_data_replacement": true,
     "app_data_retention_barrier": true,
-    "native_i2s_rx_deadline_nonterminal": true
+    "native_i2s_rx_deadline_nonterminal": true,
+    "paired_cohort_updates": true,
+    "cohort_graph_elf_admission": true,
+    "persistent_namespace_ownership_preserved": true
   },
   "abi_changed": true,
-  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier.",
+  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier. Complete native+bootfs cohort updates preserve NVS and app-data while admitting new apps/providers in the inactive pair. This requires the optional bank-store cohort suffix and full graph/ELF/persistent-authority validation before readiness, with 24 app/provider slots.",
   "deployment": {
     "target": "esp32s3-16mb-appdata",
     "layout": "riscrte-paired-appdata-v2",

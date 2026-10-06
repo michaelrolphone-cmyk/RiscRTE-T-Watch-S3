@@ -156,6 +156,17 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         from current_apps_overlay import apply as apply_current_apps
         store, current_apps_record = apply_current_apps(store, current_apps_artifact_dir, head, root=ROOT)
 
+    cohort = None
+    if requirements['required_behavior'].get('paired_cohort_updates'):
+        from current_cohort import create as create_cohort, encode as encode_cohort
+        require(app_data and current_apps_record is not None, 'Cohort identity requires the complete ABI2 profile')
+        product = json.loads((ROOT / 'apps/current-cohort.json').read_text())
+        require(product.get('schema') == 1 and product.get('product') == 'twatch-s3', 'Wrong current cohort identity')
+        cohort = create_cohort(product['version'], candidate['firmware_version'], head,
+                               (runtime_candidate / 'firmware.bin').read_bytes())
+        require('cohort.json' not in store, 'Unexpected pre-existing cohort identity')
+        store['cohort.json'] = encode_cohort(cohort)
+
     image_bytes = image.read_bytes()
     image_record = json.loads(image_record_path.read_text())
     expected_image = {
@@ -267,6 +278,8 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         manifest['initial_appdata']=initial_appdata
         manifest['flash_warning'] += ' This INITIAL app-data image also replaces the entire app-data partition with an EMPTY filesystem. It is not an OTA input or a data-preserving reflash.'
         manifest['ordinary_ota_includes_appdata']=False
+    if cohort is not None:
+        manifest['cohort'] = cohort
     if current_apps_record is not None:
         manifest['current_apps_overlay'] = current_apps_record
         manifest['motion_model'] = motion_model

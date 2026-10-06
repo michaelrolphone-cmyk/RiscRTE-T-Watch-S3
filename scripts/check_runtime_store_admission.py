@@ -51,7 +51,7 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output, app_data=False):
+def compile_harness(runtime, output, app_data=False, native_elf=None):
     runtime, output = Path(runtime).resolve(), Path(output)
     includes = [runtime / p for p in ('src', 'sdk/app', 'sdk/driver', 'sdk/hardware',
                                      'lib/ArduinoJson/src', 'test/drivers/stubs')]
@@ -65,6 +65,17 @@ def compile_harness(runtime, output, app_data=False):
                     '-fno-omit-frame-pointer', '-no-pie']
     if app_data:
         command += ['-DSTORE_ADMISSION_APP_DATA']
+    if native_elf is not None:
+        from verify_update_elf import cohort_admission_header
+        output = output.resolve()
+        (output.parent / 'cohort_elf_admission.h').write_text(cohort_admission_header(runtime, native_elf))
+        includes += [output.parent, runtime / 'lib/elf_loader/include', runtime / 'test/native_bank_stubs']
+        command += ['-DSTORE_ADMISSION_COHORT', '-Wno-misleading-indentation']
+        obj = output.parent / 'cohort-validate.o'
+        cflags = ['-fsanitize=address,undefined', '-fno-sanitize-recover=all'] if os.environ.get('SANITIZE') == '1' else []
+        subprocess.run(['cc', '-std=c11', *cflags, *['-I' + str(p) for p in includes],
+                        '-c', str(runtime / 'lib/elf_loader/src/esp_elf_validate.c'), '-o', str(obj)], check=True)
+        command += [str(obj)]
     cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
     # Match the selected native backend's advertised bound, including API2.
     # Historical Runtime sources without that backend keep their old fixture.
@@ -165,6 +176,29 @@ def admit_many(runtime, stores, expected_error=None, app_data=False):
         results = [dict(label=label, **admit(harness, store, expected_error))
                    for label, store in stores]
     return results
+
+
+def admit_cohort(runtime, native_elf, active, candidate):
+    """Use the real Runtime comparison and native ELF checks without native I/O."""
+    validate_paths(active); validate_paths(candidate)
+    with tempfile.TemporaryDirectory(prefix='risc-cohort-admission-') as temporary:
+        root = Path(temporary)
+        harness = compile_harness(runtime, root / 'admit', True, native_elf)
+        for label, files in [('active', active), ('candidate', candidate)]:
+            for name, data in files.items():
+                path = root / label / name
+                path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(data)
+        result = subprocess.run([str(harness), str(root / 'active'), str(root / 'candidate')],
+                                check=True, timeout=60, capture_output=True, text=True)
+        outcome = json.loads(result.stdout)
+        for label, files in [('active', active), ('candidate', candidate)]:
+            after = {p.relative_to(root / label).as_posix(): p.read_bytes()
+                     for p in (root / label).rglob('*') if p.is_file()}
+            if after != files: raise ValueError('Cohort validation changed ' + label + ' files')
+    if not outcome['prepared'] or not outcome['cohort_validated'] or outcome['hardware_calls'] or outcome['storage_calls']:
+        raise ValueError('Production cohort admission failed: ' + str(outcome))
+    return dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
+                native_elf_sha256=sha(native_elf), target_instructions_executed=False)
 
 
 def main():

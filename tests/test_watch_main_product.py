@@ -15,6 +15,9 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 import publish_watch_product as pub
 import watch_main_product as main
 import watch_release_index as idx
+import current_cohort
+import current_flash_layout
+from current_bootfs import build as pack_current
 
 
 def elf():
@@ -149,6 +152,52 @@ class MainProductTests(unittest.TestCase):
         self.assertNotIn('owner-accepted', files['product-provenance.json'].decode())
         self.assertEqual(files[firmware['asset']], main.image_custody(self.p, self.artifacts['main'], pub)[0])
 
+    def test_abi2_release_binds_native_and_full_store_without_persistent_data(self):
+        p, artifacts, store = copy.deepcopy(self.p), copy.deepcopy(self.artifacts), copy.deepcopy(self.store)
+        p['version'] = '1.0.2'; p['tag'] = 'firmware-v1.0.2'
+        p['component_versions']['runtime'] = '0.1.33'
+        p['deployment'] = dict(target='esp32s3-16mb-appdata', layout=current_flash_layout.APP_DATA_LAYOUT,
+                               store_abi=2, flash_bytes=main.FLASH_BYTES, partitions=current_flash_layout.APP_DATA_PARTS)
+        native = b'fixture native' * 32
+        identity = current_cohort.create('1.0.2', '0.1.33', p['sources']['watch']['accepted_sha'], native)
+        store['cohort.json'] = current_cohort.encode(identity)
+        image, _ = pack_current(store, current_cohort.STORE_SIZE)
+        raw = bytearray(b'\xff' * main.FLASH_BYTES); components = []
+        empty = b'E' * 0x80000  # Synthetic only; production has one pinned disk2.1 digest.
+        for name, start, limit in main.APP_DATA_PARTITIONS:
+            data = {'firmware.bin': native, 'bootfs.bin': image, 'appdata.bin': empty}.get(name)
+            if data is None: data = b'X' * (limit - start if name in ('otadata.bin', 'bank_state.bin') else 256)
+            raw[start:start + len(data)] = data
+            components.append(dict(file='components/' + name, offset=hex(start), size_bytes=len(data), sha256=pub.sha(data)))
+        raw = bytes(raw)
+        old = main.zip_files(artifacts['main'], pub)
+        manifest = json.loads(old['manifest.json'])
+        manifest.update(kind='initial-app-data-full-flash', layout=current_flash_layout.APP_DATA_LAYOUT, store_abi=2,
+                        runtime_version='0.1.33', cohort=identity, components=components, ordinary_ota_includes_appdata=False,
+                        bootfs_sha256=pub.sha(image), bin_sha256=pub.sha(raw),
+                        store=[dict(path=n, size_bytes=len(b), sha256=pub.sha(b)) for n,b in sorted(store.items())])
+        files = {p['accepted_bin_name']: raw, 'manifest.json': pub.encoded(manifest), 'FLASHING.md': old['FLASHING.md']}
+        files['SHA256SUMS'] = ''.join(f'{pub.sha(b)}  {n}\n' for n,b in sorted(files.items())).encode()
+        bundle = pub.archive(files)
+        artifacts['main'] = pub.archive({**files, p['accepted_bundle_name']: bundle})
+        p.update(accepted_bin_sha256=pub.sha(raw), accepted_bundle_sha256=pub.sha(bundle), store_file_count=len(store))
+        p['artifacts']['main']['sha256'] = pub.sha(artifacts['main'])
+        main.validate_config(p)
+        with patch.object(main, 'APP_DATA_SHA', pub.sha(empty)):
+            releases, _, _, index = main.payloads(p, 'e' * 40, artifacts, pub)
+        record, assets, _, _ = releases[-1]
+        ota = record['ota']; self.assertEqual(index['firmware']['ota'], ota)
+        self.assertEqual(native + image, assets[ota['asset']])
+        self.assertEqual(len(native) + len(image), ota['size'])
+        self.assertEqual(pub.sha(assets[ota['asset']]), ota['sha256'])
+        self.assertEqual('paired-cohort', ota['kind'])
+        self.assertIn('use built-in Firmware Update', assets['FLASHING.md'].decode())
+        with self.assertRaisesRegex(ValueError, 'Initial app-data custody'):
+            main.image_custody(p, artifacts['main'], pub)
+        altered = copy.deepcopy(p); altered['version'] = '1.0.3'; altered['tag'] = 'firmware-v1.0.3'
+        with patch.object(main, 'APP_DATA_SHA', pub.sha(empty)), self.assertRaisesRegex(ValueError, 'Cohort version differs'):
+            main.image_custody(altered, artifacts['main'], pub)
+
     def test_all_component_versions_must_be_pinned(self):
         for action in ('remove', 'extra', 'wrong'):
             p = copy.deepcopy(self.p)
@@ -157,6 +206,22 @@ class MainProductTests(unittest.TestCase):
             if action == 'wrong': p['component_versions']['new_app'] = '0.2.0'
             with self.subTest(action=action), self.assertRaises(ValueError):
                 main.app_inventory(p, self.store)
+
+    def test_next_cohort_reuses_unchanged_apps_without_republishing_assets(self):
+        p = copy.deepcopy(self.p)
+        first, _, _, previous = main.payloads(p, 'e' * 40, self.artifacts, pub)
+        reused = copy.deepcopy(next(r for r in previous['apps'] if r['id'] == 'new_app'))
+        reused['source_sha'] = 'f' * 40
+        reused['minimum_runtime_version'] = '0.1.12'
+        p['reused_app_records'] = {'new_app': reused}
+        main.validate_config(p)
+        releases, _, _, index = main.payloads(p, 'd' * 40, self.artifacts, pub)
+        self.assertEqual(reused, next(r for r in index['apps'] if r['id'] == 'new_app'))
+        self.assertNotIn(reused['tag'], [r[0]['tag'] for r in releases])
+        self.assertEqual(len(first) - 1, len(releases))
+        p['reused_app_records']['new_app']['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'Immutable app payload/manifest collision'):
+            main.payloads(p, 'd' * 40, self.artifacts, pub)
 
     def test_invalid_elf_and_unmanifested_application(self):
         for key, raw in [('new_app.elf', b'bad'), ('unmanifested.elf', elf())]:

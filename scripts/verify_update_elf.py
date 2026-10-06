@@ -56,7 +56,41 @@ def public_exports(native):
     return result
 
 
-def verify(runtime, native_elf, app_elf):
+def cohort_admission_header(runtime, native_elf):
+    """Compile the production admission function against actual native exports."""
+    exported = public_exports(ELFFile(io.BytesIO(native_elf)))
+    text = (Path(runtime) / 'src/ports/esp32s3/NativeBankStore.cpp').read_text()
+    function = extract(text, 'bool admitElf(')
+    if 'bool provider=' not in function:
+        raise ValueError('Native candidate source lacks provider ELF admission')
+    return '''#include <cstring>
+#include <fstream>
+#include <iterator>
+#include <vector>
+#include "private/elf_types.h"
+#include "RiscBankStoreV1.h"
+extern "C" bool esp_elf_validate_file(const uint8_t*,size_t);
+namespace CohortElf {
+static uint32_t ticks=0;
+static bool operationSafe(){return true;}
+static uint32_t millis(){return ticks;}
+static void vTaskDelay(unsigned n){ticks+=n;}
+static uintptr_t elf_find_sym_default(const char* name){
+ static const char* exports[]={''' + ','.join(json.dumps(s) for s in sorted(exported)) + '''};
+ for(const char* symbol:exports)if(!strcmp(name,symbol))return 1;return 0;
+}
+''' + extract(text, 'bool allowedImport(') + '\n' + function + '''
+static bool file(void* context,const char* path,bool provider){
+ std::ifstream input(path,std::ios::binary);if(!input)return false;
+ std::vector<uint8_t> bytes(std::istreambuf_iterator<char>(input),{});
+ if(!admitElf(bytes.data(),bytes.size(),provider))return false;
+ ++*static_cast<unsigned*>(context);return true;
+}
+}
+'''
+
+
+def verify(runtime, native_elf, app_elf, provider=False):
     runtime=Path(runtime);native=ELFFile(io.BytesIO(native_elf));app=ELFFile(io.BytesIO(app_elf))
     defined={s.name for s in native.get_section_by_name('.symtab').iter_symbols() if s.name and s['st_shndx']!='SHN_UNDEF'}
     imports=sorted({s.name for section in app.iter_sections() if section['sh_type'] in ('SHT_DYNSYM','SHT_SYMTAB') for s in section.iter_symbols() if s.name and s['st_shndx']=='SHN_UNDEF'})
@@ -91,6 +125,9 @@ int main(int argc,char**argv){
  missing=nullptr;assert(admitElf(data.data(),data.size()));
 }
 '''
+    if provider:
+        if 'bool provider=' not in text:raise ValueError('Native source lacks provider ELF admission')
+        source=source.replace('admitElf(data.data(),data.size())','admitElf(data.data(),data.size(),true)')
     with tempfile.TemporaryDirectory(prefix='watch-update-elf-') as directory:
         root=Path(directory);(root/'check.cpp').write_text(source);(root/'app.elf').write_bytes(app_elf)
         includes=['-I'+str(runtime/'test/native_bank_stubs'),'-I'+str(runtime/'lib/elf_loader/include'),'-I'+str(runtime/'sdk/driver')]
@@ -101,5 +138,5 @@ int main(int argc,char**argv){
     return dict(native_bank_source_sha256=digest(path.read_bytes()),native_elf_sha256=digest(native_elf),
                 app_elf_sha256=digest(app_elf),imports=imports,production_native_admission=True,
                 all_imports_defined_in_native_candidate=True,compiled_public_exports={name:hex(exported[name]) for name in imports},
-                each_missing_import_rejected=True,
+                each_missing_import_rejected=True,provider=provider,
                 target_instructions_executed=False,target_symbol_resolver_host_executed=False)

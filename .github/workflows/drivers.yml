@@ -938,6 +938,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_flash_layout.py -v
           python -m unittest discover -s tests -p test_current_bootfs.py -v
           python -m unittest discover -s tests -p test_current_updates.py -v
+          python -m unittest discover -s tests -p test_current_cohort.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
@@ -986,6 +987,7 @@ jobs:
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
             --bin dist/latest-main/twatch-s3-main-*.bin \
             --output dist/current-runtime/plain
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
@@ -994,6 +996,7 @@ jobs:
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
             --bin dist/latest-main/twatch-s3-main-*.bin \
             --output dist/current-runtime/sanitized
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
@@ -1002,6 +1005,7 @@ jobs:
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps-bma456h \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
             --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
             --output dist/current-runtime-bma456h/plain
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
@@ -1010,6 +1014,7 @@ jobs:
             --utilities .latest/current-utilities \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps-bma456h \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
             --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
             --output dist/current-runtime-bma456h/sanitized
       - uses: actions/upload-artifact@v4
