@@ -41,7 +41,7 @@ and host execution do not qualify physical wake, RF, heap or flash behavior.
 
 ## Next SDR test cohort
 
-Watch 1.0.3 adds Waterfall through an opt-in, reserved-SRAM Runtime 0.1.34 target.
+Watch 1.0.4 adds Waterfall through an opt-in, reserved-SRAM Runtime 0.1.34 target.
 The20-app/18-provider candidate preserves the existing board and all old grants.
 It requires the native-first, then full-cohort upgrade described in
 [SDR Waterfall](SDR_WATERFALL.md); its full initial image is not a data-preserving

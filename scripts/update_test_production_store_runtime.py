@@ -93,7 +93,7 @@ def _host(runtime, build, current_utilities=None, app_data=False, radio_iq=False
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
-        *(['-DSTORE_ADMISSION_APP_DATA'] if app_data else []),
+        *(['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1'] if app_data else []),
         *(['-DCURRENT_RADIO_IQ'] if radio_iq else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',

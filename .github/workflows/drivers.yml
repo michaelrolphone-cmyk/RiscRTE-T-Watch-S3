@@ -1049,8 +1049,8 @@ jobs:
               (Path('.latest/sdr-baseline')/name).write_bytes(data)
           PY_SDR
           python scripts/build_sdr_cohort.py --released-bin .latest/sdr-baseline/released-1.0.2.bin --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --index .latest/sdr-baseline/release-index.json --system-apps .latest/current-system --output dist/sdr-upgrade
-          python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.3/twatch-s3-cohort-1.0.3.bin --output dist/sdr-upgrade-test
-          SANITIZE=1 python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.3/twatch-s3-cohort-1.0.3.bin --output dist/sdr-upgrade-test-san
+          python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.4/twatch-s3-cohort-1.0.4.bin --output dist/sdr-upgrade-test
+          SANITIZE=1 python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.4/twatch-s3-cohort-1.0.4.bin --output dist/sdr-upgrade-test-san
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-sdr-upgrade-${{ github.event.pull_request.head.sha || github.sha }}

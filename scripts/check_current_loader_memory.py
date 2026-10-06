@@ -118,4 +118,4 @@ record={'scope':'offline production loader/relocation execution; no target instr
  'each module allocation below 1 MiB','eight allocator residues; exact mapped bytes and relocation targets; redzones intact'],
  'physical_heap_and_current':'pending'}
 (out/'evidence.json').write_text(json.dumps(record,indent=2)+'\n')
-print('All 35 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)
+print('All 37 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)

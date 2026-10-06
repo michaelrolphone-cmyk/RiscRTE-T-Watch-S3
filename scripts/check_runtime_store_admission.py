@@ -64,7 +64,7 @@ def compile_harness(runtime, output, app_data=False, native_elf=None):
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
     if app_data:
-        command += ['-DSTORE_ADMISSION_APP_DATA']
+        command += ['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1']
     if native_elf is not None:
         from verify_update_elf import cohort_admission_header
         output = output.resolve()
@@ -180,7 +180,7 @@ def admit_many(runtime, stores, expected_error=None, app_data=False):
     return results
 
 
-def admit_cohort(runtime, native_elf, active, candidate):
+def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True):
     """Use the real Runtime comparison and native ELF checks without native I/O."""
     validate_paths(active); validate_paths(candidate)
     with tempfile.TemporaryDirectory(prefix='risc-cohort-admission-') as temporary:
@@ -197,7 +197,7 @@ def admit_cohort(runtime, native_elf, active, candidate):
             after = {p.relative_to(root / label).as_posix(): p.read_bytes()
                      for p in (root / label).rglob('*') if p.is_file()}
             if after != files: raise ValueError('Cohort validation changed ' + label + ' files')
-    if not outcome['prepared'] or not outcome['cohort_validated'] or outcome['hardware_calls'] or outcome['storage_calls']:
+    if not outcome['prepared'] or outcome['cohort_validated'] is not expected_valid or outcome['hardware_calls'] or outcome['storage_calls']:
         raise ValueError('Production cohort admission failed: ' + str(outcome))
     return dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
                 native_elf_sha256=sha(native_elf), target_instructions_executed=False)

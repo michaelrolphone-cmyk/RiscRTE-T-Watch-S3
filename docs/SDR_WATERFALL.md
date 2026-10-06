@@ -1,6 +1,6 @@
 # SDR Waterfall test increment after Watch 1.0.2
 
-This source prepares Watch 1.0.3 with Waterfall 0.1.2, experimental
+This source prepares Watch 1.0.4 with Waterfall 0.1.2, experimental
 `s3-radio-iq-v1`0.1.1 and the opt-in Runtime 0.1.34 IQ resource. It does not
 publish, merge, install, flash or qualify hardware. Released 1.0.2 and its frozen
 inputs remain immutable. All19 existing applications and data namespaces remain;
@@ -29,14 +29,14 @@ new resource or grant a new app an existing namespace. There is no new full-wipe
 migration. The original board stays byte-identical; no ownership is inferred
 from an installed app name or a changed hardware record.
 
-1. Prepare/publish only the native-stage catalog and exact Runtime 0.1.34 image.
+1. Prepare/publish release 1.0.3 with only the native-stage catalog and exact Runtime 0.1.34 image.
    Built-in Firmware Update clones the existing boot store, changes the inactive
    native slot, verifies both and restarts. Confirm Clock health before proceeding.
    The app store/cohort identity remains1.0.2 and all saved data remain in place.
-2. Prepare/publish the cohort-stage catalog. Built-in Firmware Update installs
+2. Prepare/publish release 1.0.4 with the cohort-stage catalog. Built-in Firmware Update installs
    exact native+bootfs in the inactive pair, then restarts and confirms Clock.
    The explicit boot `cohort_migration` record binds source 1.0.2/27876749 to
-   target 1.0.3 and lists only new app Waterfall, KV API 1 namespace 1. Runtime admits
+   target 1.0.4 and lists only new app Waterfall, KV API 1 namespace 1. Runtime admits
    this only because every existing app already shares that exact preference
    grant. Private KV, app-data, provider bindings and existing owners remain
    protected; wrong origin, extra grants, API changes and reassignments reject.
@@ -70,3 +70,8 @@ Tests replace physical flash/SPIFFS/TLS and do not execute Xtensa instructions
 on the host. Physical RF/PLL/sensitivity, power draw, wake, target heap headroom
 and OTA power-loss qualification are unrun. Vendor PHY calibration is not linked;
 software success does not establish useful RF reception.
+
+The two stages have distinct immutable release rows, 1.0.3 then 1.0.4.
+The prepared final index is computed from the native-stage index, so same-version
+collisions cannot be hidden by deriving both from the old index. The native
+bridge keeps the existing 1.0.2 cohort anchor, including in its initial-only image.

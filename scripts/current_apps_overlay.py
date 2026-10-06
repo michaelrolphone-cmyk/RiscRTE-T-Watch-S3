@@ -118,7 +118,7 @@ def configure_boot(original):
    for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16},{'capability':'motion.accel','api':1,'instance_id':7}):
     if grant not in row['grants']:row['grants'].append(copy.deepcopy(grant))
   require(len(row['grants'])<=12,'Current application exceeds Runtime grant bound')
- b['cohort_migration']={'schema':1,'from':{'product':'twatch-s3','version':'1.0.2','source_revision':'27876749f08deaa78910cbd16aa54345684b6bf7'},'to':{'product':'twatch-s3','version':'1.0.3'},'shared_key_value':[{'application_id':'waterfall','api':1,'namespace':1}]}
+ b['cohort_migration']={'schema':1,'from':{'product':'twatch-s3','version':'1.0.2','source_revision':'27876749f08deaa78910cbd16aa54345684b6bf7'},'to':{'product':'twatch-s3','version':'1.0.4'},'shared_key_value':[{'application_id':'waterfall','api':1,'namespace':1}]}
  return b
 
 def verify(artifact,head,root=ROOT):

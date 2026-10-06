@@ -76,7 +76,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.assertFalse(any(g['capability'].startswith('platform.') or g['capability']=='storage.app-data' for g in grants))
   self.assertEqual(boot['cohort_migration']['shared_key_value'],[{'application_id':'waterfall','api':1,'namespace':1}])
   self.assertEqual(boot['cohort_migration']['from']['version'],'1.0.2')
-  self.assertEqual(boot['cohort_migration']['to']['version'],'1.0.3')
+  self.assertEqual(boot['cohort_migration']['to']['version'],'1.0.4')
   self.assertIn({'manifest':'s3-radio-iq/manifest.json'},boot['drivers'])
   flags=definitions('waterfall','0.1.2')
   for flag in ('-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_APP_SLEEP_LOCAL'):self.assertIn(flag,flags)

@@ -21,10 +21,8 @@ def main():
  admission=admit_cohort(a.runtime,elf,previous,following)
  # A current-source check alone cannot establish that released1.0.2 accepts the
  # new dependency/owner policy. The direct old-runtime path must reject it.
- old_rejected=False
- try:admit_cohort(a.released_runtime,(a.native_candidate/'firmware.elf').read_bytes(),previous,following)
- except (ValueError,subprocess.CalledProcessError):old_rejected=True
- assert old_rejected,'SDR must not be advertised as a direct1.0.2 cohort update'
+ old_admission=admit_cohort(a.released_runtime,elf,previous,following,expected_valid=False)
+ old_rejected=not old_admission['cohort_validated']
  image=bytearray(old);image[0x9000:0xf000]=b'\xa5'*0x6000;image[0x270000:0x2f0000]=b'\x5a'*0x80000
  initial=out/'released-with-persisted-sentinels.bin';initial.write_bytes(image)
  results=[]
@@ -45,6 +43,6 @@ def main():
    if proof.exists():results.append(json.loads(proof.read_text()))
   final=(out/f'stage{stage}-success.bin').read_bytes()
   assert final[0x9000:0xf000]==image[0x9000:0xf000] and final[0x270000:0x2f0000]==image[0x270000:0x2f0000]
- record=dict(schema=1,released_runtime=BASE,released_bin_sha256=sha(old),native_candidate=candidate['source_sha'],native_sha256=sha(fw),cohort_sha256=sha(payload),direct_old_cohort_rejected=old_rejected,staged_graph_admission=admission,transactions=results,physical_flash_tls_spiffs_and_target_instructions_executed=False)
+ record=dict(schema=1,released_runtime=BASE,released_bin_sha256=sha(old),native_candidate=candidate['source_sha'],native_sha256=sha(fw),cohort_sha256=sha(payload),direct_old_cohort_rejected=old_rejected,released_graph_rejection=old_admission,staged_graph_admission=admission,transactions=results,physical_flash_tls_spiffs_and_target_instructions_executed=False)
  (out/'upgrade-proof.json').write_text(json.dumps(record,indent=2)+'\n');print('Two-stage source-wired upgrade, persistence, rejection and rollback tests passed')
 if __name__=='__main__':main()
