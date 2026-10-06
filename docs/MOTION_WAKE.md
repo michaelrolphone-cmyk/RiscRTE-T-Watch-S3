@@ -150,3 +150,10 @@ Sources:
 - https://github.com/Xinyuan-LilyGO/TTGO_TWatch_Library/blob/9884d62113cd2f7aa77cd179c346b9017eb08301/schematic/T_WATCH_S3.pdf
 - https://github.com/lewisxhe/SensorLib/tree/477fc682e9ed30ced39774f3b7e93a1504968884/src/bosch/bma4xx
 - https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32s3/api-reference/system/sleep_modes.html
+
+## Post-1.0.2 settings and measured trials
+
+IMU 0.4.0 adds an append-only observation/configuration suffix. Settings 1.3.0
+adds persistent Off/On and empirical live-detector calibration. The release
+reset correction is preserved. See [Tap wake settings](TAP_WAKE_SETTINGS.md)
+for the exact measurement procedure, tests and remaining Deep classifier limit.

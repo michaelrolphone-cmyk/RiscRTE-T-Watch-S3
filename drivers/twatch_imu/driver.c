@@ -119,6 +119,8 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         (void)quiesce();
         return false;
     }
+    wake_value=chip==BMA423_CHIP_ID?WAKE_BMA423_SENSITIVITY:WAKE_BMA456H_THRESHOLD;
+    observe_active=false;
     started = true;
     return true;
 }
@@ -126,7 +128,8 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_motion_api_v1 api = {TWATCH_MOTION_API_V1, sizeof(api), NULL, read_sample,
-                                         chip_id, prepare_wake, wake_pending, resume_wake, wake_error};
+                                         chip_id, prepare_wake, wake_pending, resume_wake, wake_error,
+                                         tap_info,tap_configure,tap_observe_begin,tap_observe};
 static const risc_driver_v2 driver = {RISC_PROVIDER_DRIVER_ABI_V2,
                                       sizeof(driver),
                                       "twatch-imu",

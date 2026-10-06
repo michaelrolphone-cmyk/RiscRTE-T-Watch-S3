@@ -9,7 +9,8 @@ static struct bma4_dev sensor;
  * These settings reduce sensitivity; they do not implement a custom equal-
  * magnitude/quiet-window classifier. */
 enum { WAKE_BMA423_SENSITIVITY=3, WAKE_BMA456H_THRESHOLD=12 };
-static bool wake_enrolled,wake_changed,wake_prepared,io_failed;
+static bool wake_enrolled,wake_changed,wake_prepared,io_failed,observe_active;
+static uint16_t wake_value;
 static const uint8_t saved_regs[]={BMA4_ACCEL_CONFIG_ADDR,BMA4_ACCEL_RANGE_ADDR,
     BMA4_POWER_CONF_ADDR,BMA4_POWER_CTRL_ADDR,BMA4_INT1_IO_CTRL_ADDR,BMA4_INT2_IO_CTRL_ADDR,
     BMA4_INTR_LATCH_ADDR,BMA4_INT_MAP_1_ADDR,BMA4_INT_MAP_2_ADDR,BMA4_INT_MAP_DATA_ADDR};
@@ -48,7 +49,7 @@ static bool resume_wake(void *context){
         if(!sensor_wait_us(20000))return false;
         for(size_t i=0;i<sizeof(saved_regs);i++)if(!write_reg(saved_regs[i],wake_saved[i]))return false;
         for(size_t i=0;i<sizeof(saved_regs);i++){uint8_t value=0;if(!read_reg(saved_regs[i],&value,1) || value!=wake_saved[i])return false;}
-        wake_changed=wake_prepared=false;
+        wake_changed=wake_prepared=observe_active=false;
     }
     /* No resource is released until sensor rollback is verified. The runtime
      * enrollment remains an app-exit barrier across a failed attempt/retry. */
@@ -92,18 +93,21 @@ static bool prepare_wake(void *context){
     if(!sensor_wait_us(20000))return wake_failure(__LINE__);
     if(chip==BMA423_CHIP_ID){
         if(bma423_init(&sensor)!=BMA4_OK)return wake_failure(__LINE__);
+        /* Unlike the H variant init, this pinned BMA423 init does not seed
+         * bma4_read_accel_xyz's software axis map. Preserve physical XYZ. */
+        sensor.remap.x_axis=BMA4_MAP_X_AXIS;sensor.remap.y_axis=BMA4_MAP_Y_AXIS;sensor.remap.z_axis=BMA4_MAP_Z_AXIS;
         sensor.config_size=BMA423_CONFIG_FILE_SIZE;
         if(bma423_write_config_file(&sensor)!=BMA4_OK)return wake_failure(__LINE__);
         if(bma423_feature_enable(BMA423_STEP_CNTR|BMA423_ANY_MOTION|BMA423_NO_MOTION|BMA423_ACTIVITY|BMA423_TILT|BMA423_WAKEUP,0,&sensor)!=BMA4_OK ||
            bma423_step_detector_enable(0,&sensor)!=BMA4_OK || bma423_anymotion_enable_axis(BMA423_ALL_AXIS_DIS,&sensor)!=BMA4_OK ||
            bma423_tap_selection(0,&sensor)!=BMA4_OK || /* 0 is DOUBLE, not single. */
-           bma423_wakeup_set_sensitivity(WAKE_BMA423_SENSITIVITY,&sensor)!=BMA4_OK)return wake_failure(__LINE__);
+           bma423_wakeup_set_sensitivity((uint8_t)wake_value,&sensor)!=BMA4_OK)return wake_failure(__LINE__);
     }else{
         if(bma456h_init(&sensor)!=BMA4_OK || bma456h_write_config_file(&sensor)!=BMA4_OK ||
            bma456h_feature_enable(UINT16_MAX,0,&sensor)!=BMA4_OK)return wake_failure(__LINE__);
         struct bma456h_multitap_settings wanted={0},observed={0};
         if(bma456h_tap_get_parameter(&wanted,&sensor)!=BMA4_OK)return wake_failure(__LINE__);
-        wanted.tap_sens_thres=WAKE_BMA456H_THRESHOLD;
+        wanted.tap_sens_thres=wake_value;
         if(bma456h_tap_set_parameter(&wanted,&sensor)!=BMA4_OK ||
            bma456h_tap_get_parameter(&observed,&sensor)!=BMA4_OK)return wake_failure(__LINE__);
         /* Preserve and verify the complete vendor parameter object, including
@@ -131,7 +135,7 @@ static bool prepare_wake(void *context){
         uint8_t feature[BMA423_FEATURE_SIZE];
         if(bma4_read_regs(BMA4_FEATURE_CONFIG_ADDR,feature,sizeof(feature),&sensor)!=BMA4_OK ||
            (feature[BMA423_WAKEUP_OFFSET]&(BMA423_WAKEUP_EN_MSK|BMA423_TAP_SEL_MSK|BMA423_WAKEUP_SENS_MSK))!=
-               (BMA423_WAKEUP_EN_MSK|(WAKE_BMA423_SENSITIVITY<<BMA423_WAKEUP_SENS_POS)) ||
+               (BMA423_WAKEUP_EN_MSK|(wake_value<<BMA423_WAKEUP_SENS_POS)) ||
            (feature[BMA423_TILT_OFFSET]&BMA423_TILT_EN_MSK) ||
            (feature[BMA423_STEP_CNTR_OFFSET+1]&(BMA423_STEP_CNTR_EN_MSK|BMA423_ACTIVITY_EN_MSK|BMA423_STEP_DETECTOR_EN_MSK)) ||
            (feature[BMA423_ANY_NO_MOTION_OFFSET+3]&BMA423_ANY_NO_MOTION_AXIS_EN_MSK))return wake_failure(__LINE__);
@@ -153,4 +157,39 @@ static bool prepare_wake(void *context){
     bool level=false;
     if(!gpio_api->read(gpio_api->context,irq_claim,&level) || level==config->irq_active_high)return wake_failure(__LINE__);
     wake_prepared=true;return true;
+}
+
+static bool tap_info(void *context,twatch_tap_info_v1 *out){
+    (void)context;if(!started || !out || out->struct_size<sizeof(*out))return false;
+    *out=(twatch_tap_info_v1){sizeof(*out),chip==BMA423_CHIP_ID?TWATCH_TAP_BMA423:TWATCH_TAP_BMA456H,
+        0,chip==BMA423_CHIP_ID?7:15,chip==BMA423_CHIP_ID?WAKE_BMA423_SENSITIVITY:WAKE_BMA456H_THRESHOLD};
+    return true;
+}
+static bool tap_configure(void *context,uint16_t value){
+    (void)context;if(!started || wake_changed || wake_enrolled || value>(chip==BMA423_CHIP_ID?7:15))return false;
+    wake_value=value;return true;
+}
+static bool tap_observe_begin(void *context,uint16_t value){
+    if(!tap_configure(context,value) || !prepare_wake(context))return false;
+    observe_active=true;return true;
+}
+static bool tap_observe(void *context,twatch_tap_observation_v1 *out){
+    (void)context;if(!started || !observe_active || !wake_prepared || !out || out->struct_size<sizeof(*out))return false;
+    uint16_t status=0;uint8_t ready=0;
+    if(bma4_read_int_status(&status,&sensor)!=BMA4_OK ||
+       bma4_read_regs(BMA4_STATUS_ADDR,&ready,1,&sensor)!=BMA4_OK || io_failed)return false;
+    twatch_tap_observation_v1 sample={.struct_size=sizeof(sample),
+        .double_tap=(status&(chip==BMA423_CHIP_ID?BMA423_WAKEUP_INT:BMA456H_TAP_OUT_INT))!=0,
+        .sample_ready=(ready&BMA4_STAT_DATA_RDY_ACCEL_MSK)!=0};
+    if(sample.sample_ready){
+        struct bma4_accel raw;
+        if(bma4_read_accel_xyz(&raw,&sensor)!=BMA4_OK || io_failed)return false;
+        /* Actual configured +/-2 g full scale and Bosch-normalized resolution:
+         * BMA423 12 bit, BMA456H 16 bit. This does NOT map encoded sensitivity. */
+        int32_t units=chip==BMA423_CHIP_ID?2048:32768;
+        sample.x_mg=(int16_t)((int32_t)raw.x*2000/units);
+        sample.y_mg=(int16_t)((int32_t)raw.y*2000/units);
+        sample.z_mg=(int16_t)((int32_t)raw.z*2000/units);
+    }
+    *out=sample;return true;
 }
