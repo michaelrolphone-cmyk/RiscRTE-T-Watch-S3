@@ -1,6 +1,7 @@
 # Manual two-stage SDR test publication
 
-This workflow is prepared but inactive until a reviewed acceptance file is committed.
+This workflow has frozen CI acceptance evidence, but publication still requires a
+separate explicit manual dispatch after review. No SDR release has been published.
 It never substitutes the frozen `release/product.json` (Watch 1.0.2), rebuilds accepted
 bytes, updates 1.0.2 assets, or advances both stages in one invocation. No device has
 been tested or installed by this script. Host evidence is not physical attestation.
@@ -10,7 +11,33 @@ The full 16 MiB images in the immutable releases remain destructive **initial-on
 assets required by the current catalog schema; never send or flash one as an upgrade.
 The actual updater selects the nested `ota` URL, preserving NVS and app-data.
 
+## Accepted hosted candidate
+
+`release/sdr-test-acceptance.json` freezes Watch source
+`674729dbade10c15368731745844e6dc2f6ebd0b`, successful
+[CI run 37448348806](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/37448348806)
+attempt 1 and artifact `11406816292`. Only that original hosted ZIP is accepted;
+its SHA256 is `feb7bba400a467013d85cf63ed77d4972fbe7d13a59dd907007d344c902b39f5`.
+No local rebuild or repackage may replace it.
+
+The hosted native binary differs from an ordinary local rebuild solely because six
+Arduino diagnostic `__FILE__` strings include the PlatformIO package directory.
+A verification-only compiler prefix map to `/home/runner/.platformio` reproduces the
+hosted firmware byte for byte and every file-backed allocated ELF section exactly.
+Pinned source/configuration and static memory layout are unchanged. The cohort store
+differs only in `cohort.json`, which binds the native digest. This is a build-path
+reproducibility explanation, not a production source or compiler-flag change.
+
+`release/sdr-test-build-custody.json` records the compiler/PlatformIO provenance,
+section comparison, exact-hosted normal/sanitized upgrade and Clock lifecycle
+rechecks, 18-entry launcher and 37-ELF loader results. These are software checks;
+physical qualification remains false. Both records are committed for review, without
+publishing any release, changing the live catalog, or operating a device.
+
 ## 1. Freeze final successful CI evidence (read-only remote operations)
+
+The current record is already frozen. The following describes initial preparation;
+`freeze` refuses to overwrite it. Normal verification uses the existing record.
 
 Wait for the final `T-Watch driver contracts` run, including the normal/sanitized
 upgrade proofs and final 18-entry launcher proof, to finish successfully. The source

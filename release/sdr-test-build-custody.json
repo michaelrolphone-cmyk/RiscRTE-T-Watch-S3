@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "watch_source": "674729dbade10c15368731745844e6dc2f6ebd0b",
+  "runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+  "artifact_id": 11406816292,
+  "artifact_zip_sha256": "feb7bba400a467013d85cf63ed77d4972fbe7d13a59dd907007d344c902b39f5",
+  "hosted_native_sha256": "00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38",
+  "unmapped_local_native_sha256": "4c5dd36b968f4ac4e933990cc50cb71b25d5ce85230d870871decd24bd500c49",
+  "path_mapped_local_native_sha256": "00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38",
+  "firmware_bytes_identical_after_path_mapping": true,
+  "all_file_backed_allocated_elf_sections_identical_after_path_mapping": [
+    ".rtc.text",
+    ".rtc.force_fast",
+    ".iram0.vectors",
+    ".iram0.text",
+    ".dram0.data",
+    ".flash.text",
+    ".rtc.entry.literal",
+    ".flash.appdesc",
+    ".flash.rodata"
+  ],
+  "native_static_memory_layout_unchanged": true,
+  "only_different_store_member": "cohort.json",
+  "cause": "Six Arduino core diagnostic __FILE__ literals contain the PlatformIO package prefix. The hosted prefix is /home/runner/.platformio; local prefix is longer. GCC file-prefix mapping reproduces every hosted firmware byte; no product code change was made.",
+  "observed_aligned_rodata_difference_bytes": 256,
+  "normalization_flag": "-ffile-prefix-map=<local PLATFORMIO_CORE_DIR>=/home/runner/.platformio",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "platformio_version": "6.1.19",
+  "physical_qualification": false,
+  "pinned_platformio_configuration_identical": true,
+  "runtime_source_unchanged": true,
+  "exact_hosted_rechecks": {
+    "upgrade_normal": {
+      "sha256": "c3285f920942311c756e32034ad348222c9f6159ffd622a8be50c380dae1e632",
+      "file": "recheck-upgrade-normal/upgrade-proof.json",
+      "passed": true
+    },
+    "upgrade_sanitized": {
+      "sha256": "c3285f920942311c756e32034ad348222c9f6159ffd622a8be50c380dae1e632",
+      "file": "recheck-upgrade-sanitized/upgrade-proof.json",
+      "passed": true
+    },
+    "runtime_normal": {
+      "sha256": "e0963039ed969b0239cc50c299d08fe16cd34a691155c729e87589d0a20e7e17",
+      "file": "recheck-runtime-normal/current-runtime-provenance.json",
+      "passed": true
+    },
+    "runtime_sanitized": {
+      "sha256": "1d0822fd14c0a922c20a900ee838b8017eb8217f1d47578f517fbcfa0eea5ce3",
+      "file": "recheck-runtime-sanitized/current-runtime-provenance.json",
+      "passed": true
+    },
+    "launcher": {
+      "sha256": "b1d964f3a97c0b133f357925b70b35128f2ec24eba039ca85f2729cf566657c4",
+      "file": "recheck-launcher.json",
+      "passed": true
+    },
+    "loader": {
+      "target_elf_count": 37,
+      "software_memory_bytes": 3568786,
+      "passed": true
+    }
+  }
+}

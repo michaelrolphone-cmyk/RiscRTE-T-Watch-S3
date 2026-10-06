@@ -190,6 +190,19 @@ class PublicationTests(unittest.TestCase):
                 pub.publish_index(self.indexes['native'], expected_parent=self.a['base_index_commit'], expected_current=self.a['base_index'])
             command.assert_not_called(); git.assert_not_called()
 
+    def test_committed_acceptance_matches_build_custody(self):
+        accepted = sdr.validate_acceptance(json.loads((ROOT / 'release/sdr-test-acceptance.json').read_text()))
+        custody = json.loads((ROOT / 'release/sdr-test-build-custody.json').read_text())
+        self.assertEqual(custody['watch_source'], accepted['source_sha'])
+        self.assertEqual(custody['artifact_id'], accepted['artifact_id'])
+        self.assertEqual(custody['artifact_zip_sha256'], accepted['sha256'])
+        self.assertEqual(custody['runtime_source'], sdr.RUNTIME)
+        self.assertEqual(custody['hosted_native_sha256'], custody['path_mapped_local_native_sha256'])
+        self.assertTrue(custody['firmware_bytes_identical_after_path_mapping'])
+        self.assertTrue(custody['native_static_memory_layout_unchanged'])
+        self.assertFalse(custody['physical_qualification'])
+        self.assertTrue(all(p['passed'] for p in custody['exact_hosted_rechecks'].values()))
+
     def test_sdr_workflow_manual_only_and_frozen_product(self):
         workflow = (ROOT / '.github/workflows/sdr-test-publication.yml').read_text()
         self.assertIn('  workflow_dispatch:', workflow)
