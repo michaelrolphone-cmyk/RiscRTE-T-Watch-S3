@@ -175,6 +175,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             'Update store image record differs from verified main inputs')
     # The source update-store image predates the overlay, so rebuild the SPIFFS
     # partition from the verified merged store rather than reusing its bytes.
+    packing_record = None
     with tempfile.TemporaryDirectory(prefix='latest-main-store-') as temporary:
         source = Path(temporary) / 'store'
         source.mkdir()
@@ -183,8 +184,13 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
         merged_image = Path(temporary) / 'bootfs.bin'
-        subprocess.run([str(mkspiffs), '-c', str(source), '-p', '256', '-b', '4096',
-                        '-s', str(store_size), str(merged_image)], check=True, timeout=60)
+        if app_data:
+            from current_bootfs import build as build_current_bootfs
+            packed, packing_record = build_current_bootfs(store, store_size)
+            merged_image.write_bytes(packed)
+        else:
+            subprocess.run([str(mkspiffs), '-c', str(source), '-p', '256', '-b', '4096',
+                            '-s', str(store_size), str(merged_image)], check=True, timeout=60)
         check_image(merged_image, store, mkspiffs, store_size)
         image_bytes = merged_image.read_bytes()
 
@@ -257,6 +263,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     }
 
     if app_data:
+        manifest['bootfs_packing'] = packing_record
         manifest['initial_appdata']=initial_appdata
         manifest['flash_warning'] += ' This INITIAL app-data image also replaces the entire app-data partition with an EMPTY filesystem. It is not an OTA input or a data-preserving reflash.'
         manifest['ordinary_ota_includes_appdata']=False
