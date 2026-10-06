@@ -525,7 +525,9 @@ def stage(p, inputs, accepted_watch, runtime_source, output, h):
     if 'current-apps' in p['artifacts']:
         require(json.loads((accepted_watch / 'apps/current-apps-sources.json').read_text()) == p['current_apps_configuration'],
                 'Source checkout current-apps profile mismatch')
-    requirement_name = 'apps/current-runtime-requirements.json' if 'current-apps' in p['artifacts'] else 'apps/update-runtime-requirements.json'
+    # Watch1.0.1's current-app overlay predates the separate Runtime requirement.
+    # Its frozen source must continue using the original update requirement.
+    requirement_name = 'apps/current-runtime-requirements.json' if app_data_product(p) else 'apps/update-runtime-requirements.json'
     requirements = json.loads((accepted_watch / requirement_name).read_text())
     require(requirements['source_sha'] == p['sources']['runtime']['accepted_sha'] and
             requirements['firmware_version'] == p['component_versions']['runtime'], 'Frozen Runtime requirement mismatch')
