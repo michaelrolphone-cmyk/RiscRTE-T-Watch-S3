@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 
 from build_next_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
-    NEW_APPS, read_previous, read_native, runtime_evidence, require, sha, encoded, document, metadata, check_policy)
+    NEW_APPS, read_previous, read_native, runtime_evidence, require, sha, encoded, document, metadata, check_policy, check_requirements)
 from current_cohort import parse, verify, package
 from check_runtime_store_admission import compile_harness, store_digest
 from read_only_spiffs import read_image
@@ -198,6 +198,11 @@ def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None, *
     else:
         root = Path(candidate_bundle)
         proof = document((root / 'next-watch-build-proof.json').read_bytes())
+        requirements_bytes = (root / 'runtime-requirements.json').read_bytes()
+        requirements = check_requirements(document(requirements_bytes), native)
+        require(proof.get('runtime_requirements') == requirements
+                and proof.get('runtime_requirements_sha256') == sha(requirements_bytes),
+                'Candidate Runtime requirements proof/bytes differ')
         payload = (root / ('twatch-s3-cohort-' + VERSION + '.bin')).read_bytes()
         require(payload[:len(firmware)] == firmware and len(payload) == len(firmware) + STORE_BYTES,
                 'Payload must contain exact native followed by bootfs only')
@@ -236,7 +241,10 @@ def prove(previous_bundle, native_dir, runtime, output, candidate_bundle=None, *
             negatives.append({'scenario': label, **outcome})
     results = transactions(previous_runtime, runtime, full, payload, firmware, native, output)
     record = {'schema': 1, 'scope': scope, 'installed_runtime': RUNTIME, 'candidate_runtime': native['source_sha'],
-              'runtime_evidence': evidence, 'previous_native_sha256': sha(old_firmware),
+              'runtime_evidence': evidence,
+              'runtime_requirements': requirements if candidate_bundle is not None else None,
+              'runtime_requirements_sha256': sha(requirements_bytes) if candidate_bundle is not None else None,
+              'previous_native_sha256': sha(old_firmware),
               'previous_native_elf_sha256': sha(old_elf),
               'source_cohort': old_identity, 'target_cohort': parse(following['cohort.json']),
               'source_initial_image_sha256': sha(full), 'native_sha256': sha(firmware),

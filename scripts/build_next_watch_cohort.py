@@ -310,6 +310,33 @@ def check_policy(previous, following):
             'new_shared_migration': migration(), 'hardware_board_sha256': sha(previous['board.json'])}
 
 
+def check_requirements(requirements, native):
+    require(isinstance(requirements, dict) and requirements.get('schema') == 1,
+            'Runtime requirements descriptor missing or invalid')
+    require(requirements.get('repository') == 'https://github.com/michaelrolphone-cmyk/RiscRTE'
+            and requirements.get('source_sha') == native['source_sha']
+            and requirements.get('firmware_version') == native['firmware_version'],
+            'Runtime requirements source/version differs from exact candidate')
+    deployment = requirements.get('deployment', {})
+    for key in ('target', 'layout', 'flash_bytes', 'store_abi'):
+        require(deployment.get(key) == native[key], 'Runtime requirements deployment differs: ' + key)
+    expected = {name: {'offset': row[2], 'size': row[3]}
+                for name, row in native['partitions'].items() if name != 'nvs'}
+    require(deployment.get('partitions') == expected, 'Runtime requirements partition geometry differs')
+    require(deployment.get('ordinary_ota_includes_appdata') is False
+            and deployment.get('existing_8MiB_ota_compatible') is False
+            and deployment.get('radio_iq') is True, 'Runtime requirements OTA/data/IQ policy differs')
+    behavior = requirements.get('required_behavior', {})
+    require(behavior.get('store_abi') == 2, 'Runtime requirements behavior ABI differs')
+    for key in ('paired_cohort_updates', 'cohort_graph_elf_admission',
+                'persistent_namespace_ownership_preserved', 'exact_app_authority_preservation',
+                'explicit_shared_preferences_migration', 'paired_firmware_store', 'immutable_active_bank',
+                'rollback_until_health_confirmation', 'default_app_health_confirmation',
+                'explicit_app_data_namespaces', 'provider_bound_key_value', 'namespaced_key_value'):
+        require(behavior.get(key) is True, 'Runtime requirements safety behavior differs: ' + key)
+    return requirements
+
+
 def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=ROOT, *,
             previous_runtime, previous_native_dir):
     source_root, output = Path(source_root).resolve(), Path(output)
@@ -322,6 +349,8 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
     firmware, elf, native = read_native(native_dir, runtime)
     require(configuration['sources']['runtime']['commit'] == native['source_sha'],
             'Watch configuration differs from exact candidate Runtime source')
+    requirements_bytes = (source_root / 'apps/current-runtime-requirements.json').read_bytes()
+    requirements = check_requirements(document(requirements_bytes), native)
     files, apps = overlay.verify(Path(apps_dir), head, source_root)
     full, previous, old_identity, old_firmware, old_elf, old_native = read_previous(
         previous_bundle, previous_native_dir, previous_runtime)
@@ -339,6 +368,7 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
              'native_candidate_sha256': sha((Path(native_dir) / 'candidate.json').read_bytes()),
              'native_elf_sha256': sha(elf),
              'runtime_evidence': runtime_evidence(previous_runtime, runtime, old_native, native),
+             'runtime_requirements': requirements, 'runtime_requirements_sha256': sha(requirements_bytes),
              'previous_native_sha256': sha(old_firmware), 'previous_native_elf_sha256': sha(old_elf), 'ota': ota, 'policy': policy, 'packing': packing,
              'installed_runtime_admission': admission, 'target_self_admission': self_admission,
              'files': {name: metadata(data) for name, data in sorted(following.items())},
@@ -354,6 +384,7 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
     licenses = Path(apps_dir) / 'licenses'
     (output / 'LICENSES.zip').write_bytes(zip_bytes({p.relative_to(licenses).as_posix(): p.read_bytes()
                                                   for p in licenses.rglob('*') if p.is_file()}))
+    (output / 'runtime-requirements.json').write_bytes(requirements_bytes)
     (output / 'next-watch-build-proof.json').write_bytes(encoded(proof))
     (output / 'INSTALL.txt').write_text(
         'Watch 1.0.5 offline candidate for the accepted Watch 1.0.4.\n'

@@ -176,5 +176,39 @@ class NativeSplitIdentityTest(unittest.TestCase):
                     (root / name).write_bytes(name.encode())
 
 
+class RuntimeRequirementsTest(unittest.TestCase):
+    def setUp(self):
+        import build_next_watch_cohort as cohort
+        self.descriptor = document((cohort.ROOT / 'apps/current-runtime-requirements.json').read_bytes())
+        self.native = {'source_sha': 'f' * 40, 'firmware_version': '0.1.35',
+                       **{k: self.descriptor['deployment'][k] for k in ('target', 'layout', 'flash_bytes', 'store_abi')},
+                       'partitions': {n: [1, 0, r['offset'], r['size']]
+                                      for n, r in self.descriptor['deployment']['partitions'].items()}}
+        self.native['partitions']['nvs'] = [1, 2, 0x9000, 0x6000]
+        self.descriptor.update(source_sha=self.native['source_sha'], firmware_version='0.1.35')
+
+    def test_source_version_and_deployment_must_match_native(self):
+        from build_next_watch_cohort import check_requirements
+        self.assertEqual(check_requirements(self.descriptor, self.native), self.descriptor)
+        for mutate in (lambda d: d.update(source_sha='0' * 40),
+                       lambda d: d.update(firmware_version='0.1.34'),
+                       lambda d: d['deployment'].update(target='esp32s3-16mb-appdata'),
+                       lambda d: d['deployment'].update(store_abi=1),
+                       lambda d: d['deployment'].update(flash_bytes=0x800000),
+                       lambda d: d['deployment']['partitions']['appdata'].update(offset=0x280000)):
+            altered = copy.deepcopy(self.descriptor);mutate(altered)
+            with self.assertRaises(ValueError):check_requirements(altered, self.native)
+
+    def test_missing_or_data_destructive_descriptor_fails_closed(self):
+        from build_next_watch_cohort import check_requirements
+        with self.assertRaisesRegex(ValueError, 'missing or invalid'):check_requirements(None, self.native)
+        for mutate in (lambda d: d['deployment'].update(ordinary_ota_includes_appdata=True),
+                       lambda d: d['deployment'].update(existing_8MiB_ota_compatible=True),
+                       lambda d: d['required_behavior'].update(persistent_namespace_ownership_preserved=False),
+                       lambda d: d['required_behavior'].update(cohort_graph_elf_admission=False)):
+            altered = copy.deepcopy(self.descriptor);mutate(altered)
+            with self.assertRaises(ValueError):check_requirements(altered, self.native)
+
+
 if __name__ == '__main__':
     unittest.main()

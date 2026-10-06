@@ -13,7 +13,10 @@ version 0.1.34. Candidate inputs are separate. They may retain those exact nativ
 bytes for regression, or use version 0.1.35 from an exact clean source containing
 both installed `0a4f3d18c5d830d32678092fa99284810334b485` and reviewed diagnostics
 `a27bf228ecd99f2896638a30b55802560701180d` as ancestors. Watch's verified source
-configuration must name that exact candidate commit. A newer version string or
+configuration and `apps/current-runtime-requirements.json` must both name that
+exact candidate commit and version. The descriptor must agree with the actual
+partition geometry, target, layout, ABI, and data-preserving update behavior;
+a stale 0.1.34 requirements descriptor is rejected before an overlay is packaged. A newer version string or
 candidate metadata alone never substitutes for the compiled identity checks.
 
 ## Prepare the candidate
@@ -38,7 +41,7 @@ python scripts/build_next_watch_cohort.py \
 ```
 
 The output contains `twatch-s3-cohort-1.0.5.bin`, `bootfs.bin`, the exact store,
-`next-watch-build-proof.json`, `LICENSES.zip`, and installation notes. The OTA payload is exactly
+`next-watch-build-proof.json`, `runtime-requirements.json`, `LICENSES.zip`, and installation notes. The OTA payload is exactly
 native firmware followed by the ABI2 bootfs. No NVS, app-data, bootloader,
 partition table, journal, or initial full image is emitted as an upgrade.
 
@@ -118,6 +121,10 @@ candidate in this mode. It checks accepted-source custody, self-admission,
 and all transaction/reboot/retry paths using the unchanged real 1.0.4 cohort. Its
 scope is explicitly `accepted-1.0.4-harness-self-test-only`; it cannot establish
 1.0.5 integration acceptance.
+
+The original Runtime requirements descriptor is copied outside the payload and
+bound by its exact digest and parsed content in both proofs. The upgrade verifier
+independently rejects missing, stale, or altered descriptor evidence.
 
 `runtime_evidence` records installed/candidate source and version, required
 ancestors, and hashes for every listed transaction/boot and graph/ELF source file.
