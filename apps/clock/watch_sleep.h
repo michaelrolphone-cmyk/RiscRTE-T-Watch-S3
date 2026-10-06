@@ -8,8 +8,9 @@
 #include "PortableSleepPolicy.h"
 enum { WATCH_SLEEP_REFUSED=0, WATCH_SLEEP_WOKE=1, WATCH_SLEEP_FAILED=-1,
        WATCH_SLEEP_RETAINED=-2 };
-static unsigned watch_sleep_stage;
-static int32_t watch_sleep_detail;
+/* Standalone policy consumers need not expose the optional Clock diagnostic. */
+static unsigned watch_sleep_stage __attribute__((unused));
+static int32_t watch_sleep_detail __attribute__((unused));
 static bool watch_motion_ready(const twatch_motion_api_v1 *motion){
     return !motion || (motion->api_version==TWATCH_MOTION_API_V1 && motion->struct_size>=TWATCH_MOTION_WAKE_SIZE &&
         motion->prepare_wake && motion->wake_pending && motion->resume_wake);
