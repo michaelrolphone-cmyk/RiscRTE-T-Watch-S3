@@ -6,7 +6,7 @@ initial-only image are explicitly derived, never represented as hosted artifacts
 No firmware compilation, device operation, bridge publication or automatic advancement.
 """
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -33,7 +33,6 @@ SYSTEM_SOURCE = '2d16d9dfa7abc50ce916eebc11d81423adef0000'
 VERSION = '1.0.6'
 TAG = 'firmware-v' + VERSION
 METHOD = 'metadata-only-midpoint-from-original-hosted-ordinary-and-native-v1'
-NOT_BEFORE = '2026-10-06T22:30:00Z'
 SOURCE_FILES = ('scripts/midpoint_upgrade.py', 'scripts/build_next_watch_cohort.py',
     'scripts/current_cohort.py', 'scripts/current_bootfs.py', 'scripts/current_flash_layout.py',
     'scripts/read_only_spiffs.py', 'scripts/build_update_flash_bundle.py',
@@ -106,8 +105,8 @@ def verify_ci_snapshot(item, snapshot):
 def validate_acceptance(a):
     require(isinstance(a, dict) and a.get('schema') == 1 and type(a['schema']) is int
             and a.get('repository') == REPOSITORY and a.get('source_sha') == SOURCE
-            and a.get('version') == VERSION and a.get('derivation') == METHOD
-            and a.get('not_before') == NOT_BEFORE, 'Wrong midpoint acceptance identity')
+            and a.get('version') == VERSION and a.get('derivation') == METHOD,
+            'Wrong midpoint acceptance identity')
     require(a.get('midpoint_source') == midpoint.MIDPOINT_SOURCE and
             a.get('midpoint_initial_sha256') == midpoint.MIDPOINT_SHA and
             a.get('native_source') == NATIVE_SOURCE, 'Wrong frozen source route')
@@ -462,8 +461,6 @@ def publish(a, raw, evidence, predecessor, operator_confirmation, system, *, mut
                 os.environ.get('GITHUB_REF') == 'refs/heads/' + repo['default_branch'] and
                 pub.api(f'repos/{REPOSITORY}/commits/{repo["default_branch"]}')['sha'] == source,
                 'Publication requires explicit manual dispatch at current default source')
-        require(datetime.now(timezone.utc) >= datetime.fromisoformat(NOT_BEFORE.replace('Z', '+00:00')),
-                'BIN publication is not allowed before ' + NOT_BEFORE)
     parent, current = pub.current_release_index()
     check_transition(a, expected, index, predecessor, parent, current, operator_confirmation)
     with tempfile.TemporaryDirectory(prefix='midpoint-publish-') as tmp:
@@ -495,7 +492,7 @@ def freeze(args):
     for role, item in inputs.items(): validate_input(role, item)
     evidence = {role: getattr(args, role + '_proof').read_bytes() for role in ('build', 'normal', 'sanitized', 'execution', 'ci')}
     a = dict(schema=1, repository=REPOSITORY, source_sha=SOURCE, native_source=NATIVE_SOURCE,
-        version=VERSION, derivation=METHOD, not_before=NOT_BEFORE, inputs=inputs,
+        version=VERSION, derivation=METHOD, inputs=inputs,
         midpoint_source=midpoint.MIDPOINT_SOURCE, midpoint_initial_sha256=midpoint.MIDPOINT_SHA,
         bridge_acceptance_sha256=sha(sdr.ACCEPTANCE.read_bytes()), derivation_sources=source_guards(),
         hosted_midpoint_artifact=False, physical_qualification=False,

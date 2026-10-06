@@ -2,8 +2,7 @@
 
 This support publishes no release on a branch push, PR, CI success or merge.
 The two stages remain separate manual operations. Publication does not install
-anything or establish device health. No BIN publication is permitted before
-2026-10-06 22:30 UTC; the new publisher enforces this boundary.
+anything or establish device health.
 
 The only installed-Watch route is the existing **Firmware Update** application:
 

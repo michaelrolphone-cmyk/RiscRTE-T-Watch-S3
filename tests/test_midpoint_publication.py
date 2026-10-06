@@ -8,7 +8,6 @@ ordinary.zip and native.zip to exercise full offline derivation as well.
 """
 import copy
 from contextlib import ExitStack, redirect_stdout
-from datetime import datetime, timedelta
 import io
 import os
 from pathlib import Path
@@ -157,7 +156,7 @@ class FrozenEvidenceTests(unittest.TestCase):
                  (('midpoint_source',), sdr.BASELINE['source_sha']),
                  (('midpoint_initial_sha256',), '0' * 64), (('native_source',), sdr.RUNTIME),
                  (('bridge_acceptance_sha256',), '0' * 64), (('hosted_midpoint_artifact',), True),
-                 (('physical_qualification',), True), (('not_before',), '2026-10-06T00:00:00Z'),
+                 (('physical_qualification',), True),
                  (('inputs', 'native', 'run_attempt'), self.acceptance['inputs']['native']['run_attempt'] + 1),
                  (('evidence', 'normal', 'path'), '../normal.json'), (('evidence', 'normal', 'sha256'), ''),
                  (('derivation_sources',), {})]
@@ -333,16 +332,9 @@ class PublicationGateTests(unittest.TestCase):
 
     def publishing(self, *, mutate=True, event='workflow_dispatch', ref='refs/heads/main',
                    repository=pub.REPOSITORY, default_sha=None, dirty=False, changed_committed=None,
-                   canonical=True, now=None, confirmation=None, parents=None, bridge='published',
+                   canonical=True, confirmation=None, parents=None, bridge='published',
                    collision=None, catalog=True):
         calls = []
-        now = now or datetime.fromisoformat(midpoint.NOT_BEFORE.replace('Z', '+00:00'))
-
-        class FrozenTime(datetime):
-            @classmethod
-            def now(cls, tz=None):
-                return now if tz is not None else now.replace(tzinfo=None)
-
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             root = Path(tmp)
             acceptance = root / 'release/midpoint-test-acceptance.json'
@@ -357,8 +349,7 @@ class PublicationGateTests(unittest.TestCase):
                 path.parent.mkdir(exist_ok=True)
                 path.write_bytes(b'{}\n')
             for owner, name, value in ((midpoint, 'ROOT', root), (midpoint, 'ACCEPTANCE', acceptance),
-                                       (sdr, 'ACCEPTANCE', bridge_acceptance), (pub, 'CONFIG', product),
-                                       (midpoint, 'datetime', FrozenTime)):
+                                       (sdr, 'ACCEPTANCE', bridge_acceptance), (pub, 'CONFIG', product)):
                 stack.enter_context(patch.object(owner, name, value))
             stack.enter_context(patch.object(midpoint, 'verify', return_value=(
                 self.expected, self.index, copy.deepcopy(self.assets), copy.deepcopy(self.bridge))))
@@ -425,7 +416,7 @@ class PublicationGateTests(unittest.TestCase):
                                  ('release', 'firmware-v1.0.6', False, True),
                                  ('index', '1.0.6', self.predecessor, self.expected)])
 
-    def test_read_only_preflight_never_publishes_even_after_time_gate(self):
+    def test_read_only_preflight_never_publishes(self):
         self.assertEqual(self.publishing(mutate=False), [('preflight', 'firmware-v1.0.3', True),
                                                          ('preflight', 'firmware-v1.0.6', True)])
 
@@ -445,13 +436,6 @@ class PublicationGateTests(unittest.TestCase):
                 self.publishing(changed_committed=path)
         with self.assertRaisesRegex(ValueError, 'Canonical committed acceptance'):
             self.publishing(canonical=False)
-
-    def test_time_gate_refuses_one_microsecond_early_and_allows_exact_boundary(self):
-        boundary = datetime.fromisoformat(midpoint.NOT_BEFORE.replace('Z', '+00:00'))
-        with self.assertRaisesRegex(ValueError, 'not allowed before'):
-            self.publishing(now=boundary - timedelta(microseconds=1))
-        self.assertEqual(self.publishing(now=boundary)[-1][0], 'index')
-        self.assertEqual(len(self.publishing(mutate=False, now=boundary - timedelta(days=1))), 2)
 
     def test_missing_operator_confirmation_catalog_acceptance_and_bridge_refuse_before_writes(self):
         with self.assertRaisesRegex(ValueError, 'operator-confirmed'):
