@@ -1,13 +1,13 @@
 # Current Watch app cohort
 
 The explicit app-data profile combines File Browser 1.4.0, BLE Scanner 0.1.0,
-LoRa Messages 0.1.1, Spectrum/Spectrogram 0.4.0 and Timecard 0.1.0 with the
+LoRa Messages 0.1.1, Spectrum/Spectrogram 0.4.1 and Timecard 0.1.0 with the
 existing Clock, Points, alarms, settings, update and audio tools. It contains
 19 executable apps, 17 visible launcher entries and 17 selected provider
 instances. Existing sleep, Quick Controls and radio cancellation hooks remain
 part of every app's Watch profile.
 
-Spectrum and Timecard use distinct native app-data namespaces 2 and 1. Spectrum
+Spectrum and Timecard use distinct native app-data namespaces 2 and 1. Spectrum 0.4.1 renames the third live view to Monitor, identifies the learned room at the top, and ranks detected events and frequency labels by detector confidence with canonical amplitude. Spectrum
 keeps KV API2 namespace7; shared preferences remain KV API1 namespace1, and the
 LoRa picker keeps its versioned profile in namespace9. File Browser receives only
 the read-only installed-files allowlist. Watch navigation is explicitly supplied
