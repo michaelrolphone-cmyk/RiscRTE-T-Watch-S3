@@ -64,7 +64,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for app_name,entry in registry.items():
   if app_name not in APPS:continue
   delivered=[x for x in catalog if x['file_name']==app_name+'.elf'];require(len(delivered)==1 and delivered[0]['icon']==entry['icon'],'Current icon registry mismatch: '+app_name)
- (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in x.items())+',.compatible=true}' for x in catalog)+'};\nconst unsigned portable_catalog_count='+str(len(catalog))+';\n')
+ (out/'catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in sorted(x.items()))+',.compatible=true}' for x in catalog)+'};\nconst unsigned portable_catalog_count='+str(len(catalog))+';\n')
  (out/'empty_catalog.c').write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[1]={{.compatible=false}};\nconst unsigned portable_catalog_count=0;\n')
  cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc');require(cc,'Pinned TWATCH_CC required')
  compiler=subprocess.check_output([cc,'--version'],text=True).splitlines()[0];require('8.4.0' in compiler,'Wrong target compiler')

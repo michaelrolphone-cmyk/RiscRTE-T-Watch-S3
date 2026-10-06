@@ -9,7 +9,7 @@ require(subprocess.check_output(['git','rev-parse','HEAD'],cwd=system,text=True)
 require(not subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=system,text=True).strip(),'Dirty adapter source')
 require('-DPORTABLE_CATALOG_LIMIT=18' in record['apps']['springboard']['defines'],'Final launcher lacks explicit18-entry profile')
 catalog=a.current_apps_artifact_dir/'catalog.c'
-expected='#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in x.items())+',.compatible=true}' for x in record['catalog'])+'};\nconst unsigned portable_catalog_count='+str(len(record['catalog']))+';\n'
+expected='#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[]={'+','.join('{'+','.join('.'+k+'='+json.dumps(v) for k,v in sorted(x.items()))+',.compatible=true}' for x in record['catalog'])+'};\nconst unsigned portable_catalog_count='+str(len(record['catalog']))+';\n'
 require(catalog.read_text()==expected,'Generated catalog differs from verified build record')
 results=[]
 with tempfile.TemporaryDirectory(prefix='watch-catalog-') as d:
