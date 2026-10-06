@@ -8,7 +8,7 @@ class CurrentAppsOverlay(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);(self.root/'apps').mkdir();self.art=self.root/'artifact';(self.art/'files').mkdir(parents=True);(self.art/'licenses').mkdir()
   (self.art/'debug').mkdir()
-  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.1','sdr':{'id':'s3-radio-iq-v1','commit':'4'*40,'version':'0.1.1'}}
+  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.2','sdr':{'id':'s3-radio-iq-v1','commit':'4'*40,'version':'0.1.1'}}
   self.cfg['hid']={'id':'ble-hid','commit':'4'*40,'version':'0.1.0'}
   (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
@@ -38,7 +38,7 @@ class CurrentAppsOverlay(unittest.TestCase):
     b=current.encoded(v)
    elif n=='s3-radio-iq/manifest.json':b=current.encoded({'id':'s3-radio-iq-v1','version':'0.1.1','requires':[{'capability':'platform.radio.iq.resource','api':1}],'provides':[{'capability':'radio.iq','api':1}]})
    elif n=='ble-hid/manifest.json':b=current.encoded({'id':'ble-hid','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')],'provides':[{'capability':'bluetooth.hid','api':1}]})
-   elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.1'})
+   elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.2'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
   r['sdr']={**self.cfg['sdr'],'build':{'source_revision':self.cfg['sdr']['commit'],**r['files']['s3-radio-iq/driver.elf']},'resource_header_sha256':'5'*64}
@@ -58,6 +58,16 @@ class CurrentAppsOverlay(unittest.TestCase):
   (self.art/'current-apps-build.json').write_bytes(current.encoded(self.record))
   names=['current-apps-build.json','source-profile.json']+['files/'+n for n in current.PAYLOADS]+['debug/'+n+'.elf' for n in current.APPS]+['licenses/LICENSE.txt']
   (self.art/'current-apps.zip').write_bytes(zip_bytes({n:(self.art/n).read_bytes() for n in names}))
+ def test_repository_source_profile_requires_resuming_service(self):
+  self.assertEqual(current.config(ROOT)['service_version'],'0.4.2')
+ def test_old_service_cannot_enter_current_profile(self):
+  old=copy.deepcopy(self.cfg);old['service_version']='0.4.1'
+  (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(old))
+  with self.assertRaisesRegex(ValueError,'sleep-resume service'):current.config(self.root)
+ def test_every_current_client_requires_sleep_resume(self):
+  for name in current.APPS:self.assertIn('-DWATCH_ALARM_SLEEP_RESUME',definitions(name,'1.0.1'))
+  self.record['apps']['clock']['defines'].remove('-DWATCH_ALARM_SLEEP_RESUME');self.write_record()
+  with self.assertRaisesRegex(ValueError,'alarm sleep resume boundary'):current.verify(self.art,self.head,self.root)
  def test_exact_allowlist_and_grants(self):
   original=copy.deepcopy(self.store);out,proof=current.apply(self.store,self.art,self.head,self.root)
   self.assertEqual(self.store,original);self.assertEqual(set(out),set(original)|current.ADDED_PAYLOADS)

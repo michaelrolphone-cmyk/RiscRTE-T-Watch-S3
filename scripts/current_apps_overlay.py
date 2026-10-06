@@ -34,7 +34,7 @@ def config(root=ROOT):
  require(c.get('hid',{}).get('id')=='ble-hid' and c['hid'].get('commit')==c['sdr']['commit'] and c['hid'].get('version')=='0.1.0','Unpinned consolidated HID source')
  require(set(c['app_versions'])==set(APPS),'Current app versions incomplete')
  for v in list(c['app_versions'].values())+[c['service_version']]:require(re.fullmatch(r'\d+\.\d+\.\d+',v) is not None,'Bad current version')
- require(c['service_version']=='0.4.1','Expected reviewed CUE/volume service0.4.1')
+ require(c['service_version']=='0.4.2','Expected reviewed CUE/volume/sleep-resume service0.4.2')
  return c
 
 def configure_board(original,root=ROOT,*,motion_model,radio_model):
