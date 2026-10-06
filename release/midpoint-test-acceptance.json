@@ -1,0 +1,148 @@
+{
+  "bridge_acceptance_sha256": "9b123fdd94eb75708f74b1042d3c5e87ad1397f8147f001b7ebd043e3e638763",
+  "derivation": "metadata-only-midpoint-from-original-hosted-ordinary-and-native-v1",
+  "derivation_sources": {
+    "apps/current-apps-sources.json": "1768e09cce1b8b6b5b35fae7b179377829d0e019dd4f75961dd36a2f6c1982d4",
+    "apps/current-runtime-requirements.json": "cb1e5f0a6137a43433926306871c6e8bb0fb69ea44890705bad485174aa62ed4",
+    "apps/midpoint-origin-baseline.json": "5cb11868f1da6067a5d6f01f15b1048bf036df0ccc93a76b1406f19cababedd8",
+    "apps/sdr-upgrade-baseline.json": "cd64237a6bb4fcb9cb88191a241b369114d61fe11d02fbfe17d6108bbd2c95de",
+    "release/sdr-test-acceptance.json": "9b123fdd94eb75708f74b1042d3c5e87ad1397f8147f001b7ebd043e3e638763",
+    "scripts/build_next_watch_cohort.py": "aa8e1814632964bff2316c60c23e799f880f24a9fd8ebff8727694e5024c520d",
+    "scripts/build_update_flash_bundle.py": "16c768aa4ca985ed34b16ee41b2086ee39a0fe48a07485dd5891dac82f3ca53f",
+    "scripts/current_bootfs.py": "3f902ef317e6a112be6b3496d2d6c9cd07376941baa61804b99cadaceb6f798a",
+    "scripts/current_cohort.py": "4a18b103a266331e86f5d99366920284554e66999765edfd6ae437e1c6438b4a",
+    "scripts/current_flash_layout.py": "aa1a5e2886a50493fd138e93a694f20f541b5eb3284380083477bb7328d8251a",
+    "scripts/midpoint_upgrade.py": "decd5a50e908d960fb85c9891e62d4c33f730f8b00b5fa338cb46aec93457a57",
+    "scripts/publish_sdr_test.py": "4c61563f7ad340e7173269bd94fb71af78257586896555f096a8aeee4bf4e5fc",
+    "scripts/publish_watch_product.py": "1d653e06fc1921252a4c9fc9f51c700954e594723ed62b036764cf03d293424f",
+    "scripts/read_only_spiffs.py": "f50729234cd7f5efc3406cc9737a66e097e0de763df2f3c5efc148ab8c4674c6",
+    "scripts/watch_release_index.py": "0080bdb302f06bc938b3aca80337ebb428d19f7443f1b0b7c443a6d33ed23aa0",
+    "tests/midpoint_upgrade/catalog.cpp": "42f78f5acbbd7fc00649c9c538b628fc66fec2b6c6dab1991061e08f812f5c4f",
+    "vendor/esp-idf-spiffs/spiffsgen.py": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466"
+  },
+  "derived_assets": {
+    "INSTALL.txt": {
+      "sha256": "97ebdc76b3391652b1fa179c6ff7b36fff4f45704125f689ac9ac8e8b7eaa97f",
+      "size_bytes": 853
+    },
+    "LICENSES.zip": {
+      "sha256": "74b8f8fb1973efa8862f88ef9ff31b5bfab7b682e6561f98a4fcdc3071f83748",
+      "size_bytes": 160352
+    },
+    "PUBLICATION.txt": {
+      "sha256": "47904f82c45503d42e60c34f849c7cc102dd246844bc64ef480480f64f3c1ad6",
+      "size_bytes": 562
+    },
+    "midpoint-execution-custody.json": {
+      "sha256": "c934fd00ae8a9b57901139109b8f54714d3b62014de2dff1e189d6cf9b8f992a",
+      "size_bytes": 8231
+    },
+    "midpoint-publication-provenance.json": {
+      "sha256": "8790c4e68ea3eb9b5bd01dcc3b146b2da1de9c05a5de7a50dcab256221aa033d",
+      "size_bytes": 6310
+    },
+    "midpoint-upgrade-normal.json": {
+      "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+      "size_bytes": 166987
+    },
+    "midpoint-upgrade-sanitized.json": {
+      "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+      "size_bytes": 166987
+    },
+    "midpoint-watch-build-proof.json": {
+      "sha256": "98e66cb42b3b3e8cb2f0442727f653459c82b3ba44c7977f168978bda8794902",
+      "size_bytes": 68134
+    },
+    "release-record.json": {
+      "sha256": "ef206040e454f18b775d6f99b90b43691d112d06ba4b91611ac750e9fa4021a4",
+      "size_bytes": 2121
+    },
+    "twatch-s3-cohort-1.0.6.bin": {
+      "sha256": "b6134bcaf5fed3cd954ea800a58ace62fe76715f965c79435baf34668309aa6c",
+      "size_bytes": 6519568
+    },
+    "twatch-s3-launcher-1.0.6.bin": {
+      "sha256": "8b683308ab763d62bfd81acab10e4ab6b03f16b1b8ac78cecceb131fe8758c23",
+      "size_bytes": 16777216
+    }
+  },
+  "evidence": {
+    "build": {
+      "path": "release/midpoint-test-evidence/build.json",
+      "sha256": "98e66cb42b3b3e8cb2f0442727f653459c82b3ba44c7977f168978bda8794902"
+    },
+    "ci": {
+      "path": "release/midpoint-test-evidence/ci.json",
+      "sha256": "504ca1de602a4b8248666679513fc0f503f36456d82782ac3d396223b6936535"
+    },
+    "execution": {
+      "path": "release/midpoint-test-evidence/execution.json",
+      "sha256": "c934fd00ae8a9b57901139109b8f54714d3b62014de2dff1e189d6cf9b8f992a"
+    },
+    "normal": {
+      "path": "release/midpoint-test-evidence/normal.json",
+      "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13"
+    },
+    "sanitized": {
+      "path": "release/midpoint-test-evidence/sanitized.json",
+      "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13"
+    }
+  },
+  "hosted_midpoint_artifact": false,
+  "inputs": {
+    "native": {
+      "artifact_id": 11439576096,
+      "name": "twatch-native-runtime-9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+      "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "run_attempt": 1,
+      "run_id": 37516805328,
+      "sha256": "ef1008a6518adb42ae02569b6bd141b03925f34bd8405838a4fa6432087f2a78",
+      "source_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+    },
+    "ordinary": {
+      "artifact_id": 11439655989,
+      "name": "twatch-next-cohort-9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+      "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "run_attempt": 1,
+      "run_id": 37516805328,
+      "sha256": "14185f0757caae8857369d543698ddc0e9321faff70b96e3e9698db577f04a0e",
+      "source_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+    }
+  },
+  "installed_catalog": {
+    "accepted": true,
+    "index_sha256": "8f6b9bd21fa28e3c5d77e55f0015c4527d427d5e97341270b1950437513c606c",
+    "normal_and_asan_ubsan": true,
+    "real_release_record": true,
+    "source_sha": "2d16d9dfa7abc50ce916eebc11d81423adef0000"
+  },
+  "midpoint_initial_sha256": "2225261601729774c7d0d42a88ab1a705c55aa856097af292dce9fa06dd659bf",
+  "midpoint_source": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+  "native_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+  "not_before": "2026-10-06T22:30:00Z",
+  "ota": {
+    "asset": "twatch-s3-cohort-1.0.6.bin",
+    "firmware_sha256": "ec634bb1dea4b44a6d67b5737c1658d7b91aa3bed67f15021dfc57f2d2c8d049",
+    "firmware_size": 1211152,
+    "kind": "paired-cohort",
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.35",
+    "sha256": "b6134bcaf5fed3cd954ea800a58ace62fe76715f965c79435baf34668309aa6c",
+    "size": 6519568,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+    "store_abi": 2,
+    "store_sha256": "60e5b8d2eff7b42e8eddc8bb24a9794bd25db30807074273e4d38b3ba4ccbcd5",
+    "store_size": 5308416,
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.6/twatch-s3-cohort-1.0.6.bin",
+    "version": "1.0.6"
+  },
+  "physical_qualification": false,
+  "release_index_sha256": "8f6b9bd21fa28e3c5d77e55f0015c4527d427d5e97341270b1950437513c606c",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "schema": 1,
+  "source_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+  "stage1_index_sha256": "48ab874b99fef19d16edb9e0f11af6fe719df2b36abc4e55b658f458fc31300b",
+  "version": "1.0.6"
+}

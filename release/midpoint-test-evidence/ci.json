@@ -1,0 +1,107 @@
+{
+  "transport": "read-only-github-connector",
+  "inputs": {
+    "bridge": {
+      "run": {
+        "id": 37448348806,
+        "run_attempt": 1,
+        "head_sha": "674729dbade10c15368731745844e6dc2f6ebd0b",
+        "status": "completed",
+        "conclusion": "success",
+        "path": ".github/workflows/drivers.yml",
+        "run_started_at": "2026-10-06T10:13:31Z",
+        "updated_at": "2026-10-06T10:32:02Z",
+        "repository": {
+          "full_name": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3"
+        }
+      },
+      "artifact": {
+        "id": 11406816292,
+        "name": "twatch-sdr-upgrade-674729dbade10c15368731745844e6dc2f6ebd0b",
+        "size_in_bytes": 13942378,
+        "url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11406816292",
+        "archive_download_url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11406816292/zip",
+        "expired": false,
+        "created_at": "2026-10-06T10:31:37Z",
+        "expires_at": "2026-11-05T10:31:35Z",
+        "updated_at": "2026-10-06T10:31:37Z",
+        "digest": "sha256:feb7bba400a467013d85cf63ed77d4972fbe7d13a59dd907007d344c902b39f5",
+        "workflow_run": {
+          "id": 37448348806,
+          "repository_id": 1402228172,
+          "head_repository_id": 1402228172,
+          "head_branch": "feat/watch-sdr-test-integration",
+          "head_sha": "674729dbade10c15368731745844e6dc2f6ebd0b"
+        }
+      }
+    },
+    "ordinary": {
+      "run": {
+        "id": 37516805328,
+        "run_attempt": 1,
+        "head_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+        "status": "completed",
+        "conclusion": "success",
+        "path": ".github/workflows/drivers.yml",
+        "run_started_at": "2026-10-06T19:09:18Z",
+        "updated_at": "2026-10-06T19:34:16Z",
+        "repository": {
+          "full_name": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3"
+        }
+      },
+      "artifact": {
+        "id": 11439655989,
+        "name": "twatch-next-cohort-9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+        "size_in_bytes": 7923499,
+        "url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11439655989",
+        "archive_download_url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11439655989/zip",
+        "expired": false,
+        "created_at": "2026-10-06T19:33:59Z",
+        "expires_at": "2026-11-05T19:33:57Z",
+        "updated_at": "2026-10-06T19:33:59Z",
+        "digest": "sha256:14185f0757caae8857369d543698ddc0e9321faff70b96e3e9698db577f04a0e",
+        "workflow_run": {
+          "id": 37516805328,
+          "repository_id": 1402228172,
+          "head_repository_id": 1402228172,
+          "head_branch": "feat/watch-1.0.5-integration",
+          "head_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+        }
+      }
+    },
+    "native": {
+      "run": {
+        "id": 37516805328,
+        "run_attempt": 1,
+        "head_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+        "status": "completed",
+        "conclusion": "success",
+        "path": ".github/workflows/drivers.yml",
+        "run_started_at": "2026-10-06T19:09:18Z",
+        "updated_at": "2026-10-06T19:34:16Z",
+        "repository": {
+          "full_name": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3"
+        }
+      },
+      "artifact": {
+        "id": 11439576096,
+        "name": "twatch-native-runtime-9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+        "size_in_bytes": 7660516,
+        "url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11439576096",
+        "archive_download_url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/11439576096/zip",
+        "expired": false,
+        "created_at": "2026-10-06T19:34:04Z",
+        "expires_at": "2026-11-05T19:34:03Z",
+        "updated_at": "2026-10-06T19:34:04Z",
+        "digest": "sha256:ef1008a6518adb42ae02569b6bd141b03925f34bd8405838a4fa6432087f2a78",
+        "workflow_run": {
+          "id": 37516805328,
+          "repository_id": 1402228172,
+          "head_repository_id": 1402228172,
+          "head_branch": "feat/watch-1.0.5-integration",
+          "head_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+        }
+      }
+    }
+  }
+}

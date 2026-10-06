@@ -1,0 +1,3060 @@
+{
+  "bridge": {
+    "asset": "riscrte-runtime-0.1.34.bin",
+    "native_bytes": 1209232,
+    "native_elf_sha256": "e82f53e12bfdfe00a4b371a1fc53403d0b12455ca8a6424eb9ff374645188bf7",
+    "native_sha256": "00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38",
+    "release_version": "1.0.3",
+    "retained_cohort_version": "1.0.2",
+    "retained_source_revision": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+    "retained_store_sha256": "4d34b900aea64348ecf3fb82d47491a6c88f728cd4a9bfc007f4edf1d6a54625",
+    "runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+    "runtime_version": "0.1.34",
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.3/riscrte-runtime-0.1.34.bin"
+  },
+  "bridge_retained_store_self_admission": {
+    "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "candidate_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "cohort_validated": true,
+    "cooperative_yields": 106,
+    "elf_count": 35,
+    "error": "",
+    "hardware_calls": 0,
+    "native_elf_sha256": "e82f53e12bfdfe00a4b371a1fc53403d0b12455ca8a6424eb9ff374645188bf7",
+    "prepared": true,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "files": {
+    "alarm-service/driver.elf": {
+      "sha256": "1ebe6061cab0e3a030a9dd1cdd519e9771f9b482adfc84f48c8327165d6f9f23",
+      "size_bytes": 32888
+    },
+    "alarm-service/manifest.json": {
+      "sha256": "3110194fc33a0786aa8a97e1ed5e727f0d5d6a3ef57cba3f8bb80bc61b62c746",
+      "size_bytes": 689
+    },
+    "alarms.elf": {
+      "sha256": "dfb9c4ce0fa00e5949b03488f8d6d0510af99afbd9b8ede555bf9415bfde4570",
+      "size_bytes": 102032
+    },
+    "alarms.json": {
+      "sha256": "862dab4b87aff0d3111bb5b4a495e852200a9e5fa1dae69f6a92aff5da98d930",
+      "size_bytes": 758
+    },
+    "app_store.elf": {
+      "sha256": "705d865a44645da9e35eb7deadbc585f257fe5f79a7d542f455a9454b9beb8e9",
+      "size_bytes": 100724
+    },
+    "app_store.json": {
+      "sha256": "57d53ea41591c9af01b16428eeb52d709093965357248c7cd9532a0a85730e28",
+      "size_bytes": 836
+    },
+    "audio_spectrum.elf": {
+      "sha256": "92cfcefb5a42e80485911c372904903e3b28c91d678610850faddffffe2c22c0",
+      "size_bytes": 172104
+    },
+    "audio_spectrum.json": {
+      "sha256": "3a2a723baec31c51b6296cfe7924836c0c97097c2fb812231cf36f2ff8fc12bd",
+      "size_bytes": 974
+    },
+    "battery.elf": {
+      "sha256": "243a48eb678dfe364cb3364d8ed7d1ce649a85883f133da2d24aec561e0e87ff",
+      "size_bytes": 93768
+    },
+    "battery.json": {
+      "sha256": "f1876aaa4e9053d07cab7e644de5c321ba182f990e6cf954c868f274cae6df98",
+      "size_bytes": 760
+    },
+    "ble-hid/driver.elf": {
+      "sha256": "49fbf1623a6be7f70acb5c6a46a8f6ffa8776fa592c4413e243b191697ae6972",
+      "size_bytes": 231016
+    },
+    "ble-hid/manifest.json": {
+      "sha256": "1bb2985ce8d4041f4649469f0c7e6959daa1b641f75f90728efb3de184030536",
+      "size_bytes": 537
+    },
+    "ble/driver.elf": {
+      "sha256": "128354d7d632340d9ca0ae405f03e2d255e378a5ce7d511064475e322a63c4a1",
+      "size_bytes": 6140
+    },
+    "ble/manifest.json": {
+      "sha256": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c",
+      "size_bytes": 703
+    },
+    "ble_buttons.elf": {
+      "sha256": "4341a2629e3226a4820cbfe473d33e9df71f322e367a62cd404b863981a525f4",
+      "size_bytes": 106752
+    },
+    "ble_buttons.json": {
+      "sha256": "407b43e4eefbb1564768e803b46d3ef40fc98a35da76cae829ab4bf662ea9cf9",
+      "size_bytes": 833
+    },
+    "ble_scanner.elf": {
+      "sha256": "e6e35891fd5c1fd3a1510eea269dcdbdb3a1d5f6dcb0ec90eb61b17ebe5dae7d",
+      "size_bytes": 98340
+    },
+    "ble_scanner.json": {
+      "sha256": "e1d50ef764e6d8ea69a77e368f41dfe138728827d0bd8395c4a244e88d5053b9",
+      "size_bytes": 768
+    },
+    "ble_touchpad.elf": {
+      "sha256": "e5bbef08f14c0b413524cacfe2bc78ddc64518778eb9e1ce783a0ac70e8ced1d",
+      "size_bytes": 103288
+    },
+    "ble_touchpad.json": {
+      "sha256": "d0e7a0491b067a6dd97a92a22ba25cc3063c4578e2926dfdb51b7ee191f5d0f4",
+      "size_bytes": 835
+    },
+    "board.json": {
+      "sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+      "size_bytes": 8688
+    },
+    "boot.json": {
+      "sha256": "0e60248e4c48f6d602d00ebe4d8ae96f998ed0b5c3a0fc0a3730ae6aa6fed27b",
+      "size_bytes": 29319
+    },
+    "calculator.elf": {
+      "sha256": "ffaedbb77398838a7ab28ef745aed461cbd3732a7256f21dff2df2028810f7fb",
+      "size_bytes": 93836
+    },
+    "calculator.json": {
+      "sha256": "161e18fbe1d1fdad65f58de0fac89e5055d3626e4da0170d10304c0ab58a0345",
+      "size_bytes": 766
+    },
+    "clock.elf": {
+      "sha256": "e20392e44b5925966f5d79d334fb4fd547d86853a41583bee1d45ae1a58d12a3",
+      "size_bytes": 913072
+    },
+    "clock.json": {
+      "sha256": "17ce0ad6c833dd49bf0fcd2a3db5ebb566e5874cb21c9d9104736d92af36953d",
+      "size_bytes": 771
+    },
+    "cohort.json": {
+      "sha256": "85be401f5aa2a92fc0026eafeb147ca52f08b7070a3651f386e8a6c71df45f03",
+      "size_bytes": 391
+    },
+    "countdown.elf": {
+      "sha256": "ca7d3044527d304962767ad1cd604dfe79e7298e353de48839c52e5d7765a661",
+      "size_bytes": 97892
+    },
+    "countdown.json": {
+      "sha256": "de5ecf9c827b63d5cf277f1da5f04f41b53c63dd8ca5a2702cb3d6f04fc7c82d",
+      "size_bytes": 764
+    },
+    "default.elf": {
+      "sha256": "a12cb66a252a270bdcad2a9cb7b049ee1410cfdfaf16e94a171489b729ef5ceb",
+      "size_bytes": 912696
+    },
+    "default.json": {
+      "sha256": "28a3e8ba686fbc91a49d1ea2cc4e85cb0b6357bc2deaca18ee3e627d3763a89a",
+      "size_bytes": 766
+    },
+    "file_browser.elf": {
+      "sha256": "2da733bb3221c8a3ad4ae5c370dbfe27cde648ecbc694256ee895967cff5e01f",
+      "size_bytes": 100104
+    },
+    "file_browser.json": {
+      "sha256": "8bd03c6f53f1b432499ffc555a950fb07244008d2457ba82cd5b1d067b509c35",
+      "size_bytes": 845
+    },
+    "frequency_generator.elf": {
+      "sha256": "22e84b2e413ed7191e2711947bd698ff3486c2523e3c770eff5733865abdb745",
+      "size_bytes": 93780
+    },
+    "frequency_generator.json": {
+      "sha256": "dcac22af2cc10d27657921ceb3f4b9bbb2614ddfe02ab7d2ca608f69e54fa498",
+      "size_bytes": 848
+    },
+    "gpio/driver.elf": {
+      "sha256": "cd83cf4235ef697e91b94c3b10ece447282d8895f35c806cf1f590b8a0d39efb",
+      "size_bytes": 6044
+    },
+    "gpio/manifest.json": {
+      "sha256": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8",
+      "size_bytes": 689
+    },
+    "haptic/driver.elf": {
+      "sha256": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30",
+      "size_bytes": 4516
+    },
+    "haptic/manifest.json": {
+      "sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1",
+      "size_bytes": 738
+    },
+    "i2c/driver.elf": {
+      "sha256": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+      "size_bytes": 4968
+    },
+    "i2c/manifest.json": {
+      "sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+      "size_bytes": 694
+    },
+    "imu/driver.elf": {
+      "sha256": "b52131770b32e818dbc277bf2a9e7463d18344776296b31ad31fe8d5883af6d3",
+      "size_bytes": 54392
+    },
+    "imu/manifest.json": {
+      "sha256": "ed5fbe4af2fba61749db74d31d32fa2f8ec704d9897fc1ab2bdf09651c24fb11",
+      "size_bytes": 801
+    },
+    "lora/driver.elf": {
+      "sha256": "640f206f64afeab69eeaeec2d20594b5286b29489be98c6f6dc8450ef8196f6a",
+      "size_bytes": 13120
+    },
+    "lora/manifest.json": {
+      "sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c",
+      "size_bytes": 1218
+    },
+    "lora_messages.elf": {
+      "sha256": "aa1a5f3ad8f4cc8a1bb13ac291321b277ab1e2a733509cf02c8c4c703fdd0681",
+      "size_bytes": 106152
+    },
+    "lora_messages.json": {
+      "sha256": "ef82aebb8cf6ab4767755a763ca8b58f352473b2189c4cd8347bfb46fde082c2",
+      "size_bytes": 834
+    },
+    "mic/driver.elf": {
+      "sha256": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077",
+      "size_bytes": 4436
+    },
+    "mic/manifest.json": {
+      "sha256": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875",
+      "size_bytes": 673
+    },
+    "ota_update.elf": {
+      "sha256": "10e0c06c8a75e61e5af8ada2098d854a134bfe02b9876ad824007351621d2994",
+      "size_bytes": 100732
+    },
+    "ota_update.json": {
+      "sha256": "082a19867c61d4aed2d68f474f37ab2d91dfc5274e92d0952017b23440b8acb1",
+      "size_bytes": 842
+    },
+    "panel/driver.elf": {
+      "sha256": "a7cddc560dc83e9a7ea8f408ed17637098bdc64fb9b02b028749f49c9d782aad",
+      "size_bytes": 12604
+    },
+    "panel/manifest.json": {
+      "sha256": "8d7ab89dd35c8e8dfc3766e11e0ab51ee0c053fbc4b904617eef86e3ccc5be61",
+      "size_bytes": 876
+    },
+    "pmu/driver.elf": {
+      "sha256": "3a9312650dd98ba154097329787f760d5ea95ce3f92592d3e678f075d0545d0c",
+      "size_bytes": 9888
+    },
+    "pmu/manifest.json": {
+      "sha256": "5ee4f6090e0f512951a099278972681fa382682d59f28559b4f2f1f7035dab9b",
+      "size_bytes": 805
+    },
+    "points_in_time.elf": {
+      "sha256": "75360e1469e0e4d2dcc92f7eca514f9c1a2dc38f1f15a8a819754ea9149c6d7e",
+      "size_bytes": 110388
+    },
+    "points_in_time.json": {
+      "sha256": "2aaae1314eb6a68aca4bc4f5a3598ef2cef5a35f959b8f7c66719c5b207508bb",
+      "size_bytes": 774
+    },
+    "rtc/driver.elf": {
+      "sha256": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+      "size_bytes": 6108
+    },
+    "rtc/manifest.json": {
+      "sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+      "size_bytes": 731
+    },
+    "s3-radio-iq/driver.elf": {
+      "sha256": "121d90cbb47713e88cd2e869e8f5aa06b7d0cf90db8ed3fedf3a5650c5313bf8",
+      "size_bytes": 7916
+    },
+    "s3-radio-iq/manifest.json": {
+      "sha256": "cf6f94032ea8786b324db4b5506e6bad7b5c4c00a7884bf801f746e6a10b5a2a",
+      "size_bytes": 373
+    },
+    "settings.elf": {
+      "sha256": "68532484a49fcd75a5a6be965062804e7fe061b663ad21bfd70a313b42277b09",
+      "size_bytes": 110224
+    },
+    "settings.json": {
+      "sha256": "fe2fc19c5822816386b498e8e85ff658ce13d9ab0e294840c6161734a78f9c44",
+      "size_bytes": 762
+    },
+    "speaker/driver.elf": {
+      "sha256": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e",
+      "size_bytes": 5244
+    },
+    "speaker/manifest.json": {
+      "sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0",
+      "size_bytes": 689
+    },
+    "springboard.elf": {
+      "sha256": "f8ffb183a41bb4d03e4c4df4f43bade23b7162f38bb218486950432c2b6bbd21",
+      "size_bytes": 114316
+    },
+    "springboard.json": {
+      "sha256": "df624990a5603319f8046ee9028c8e152a0d5aca6f68b0f5d4fce7c22658f400",
+      "size_bytes": 768
+    },
+    "stopwatch.elf": {
+      "sha256": "c75f4b03ac94eafa904ca4e3c917f0e490159c252636b24c5072be398c732ad1",
+      "size_bytes": 94144
+    },
+    "stopwatch.json": {
+      "sha256": "5cf21fd7a9cc55a5cd664b290e5caee95cc241db26af323178085f3c5306de09",
+      "size_bytes": 764
+    },
+    "timecard.elf": {
+      "sha256": "4000a641ecf23d175ff87e2d06ad40134c7aa1614fc2a1891e32984bf59c4540",
+      "size_bytes": 110760
+    },
+    "timecard.json": {
+      "sha256": "1bb0b57fa8e42bc6c8f97310969886bfd72dd03c17ba6b597e8f416afd7414d0",
+      "size_bytes": 830
+    },
+    "touch/driver.elf": {
+      "sha256": "f15b964c77433f49414fc591e1960a614d617daecc7a8ae8b4b3952109841ddc",
+      "size_bytes": 8604
+    },
+    "touch/manifest.json": {
+      "sha256": "aff7b544d1298a6e4a3c9318c7f208567ca09cde8513bdbe1a24706097d496ec",
+      "size_bytes": 871
+    },
+    "update-apps/driver.elf": {
+      "sha256": "b1e3d4c2b1e7b9720388a3ee8d18ab183319ccad30d66e695a2c2ccaab166641",
+      "size_bytes": 29156
+    },
+    "update-apps/manifest.json": {
+      "sha256": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5",
+      "size_bytes": 552
+    },
+    "update-fw/driver.elf": {
+      "sha256": "1afea20fe7661d67d05b5894ce935fbdb62f6d5f4b4c9e316c6ff507294e6427",
+      "size_bytes": 29800
+    },
+    "update-fw/manifest.json": {
+      "sha256": "8fd063760488f9846aa6f5710bc02517bfff9b3931f1d0338d523461f577224f",
+      "size_bytes": 560
+    },
+    "waterfall.elf": {
+      "sha256": "cf55889a35452191ea943761ea2b0e8c5e74751e8d6c53f8656e11768011a37a",
+      "size_bytes": 93844
+    },
+    "waterfall.json": {
+      "sha256": "c0641a0289c242f8624885baafebc74ee3156eb974640f0276cf9c1da8c3cb45",
+      "size_bytes": 824
+    },
+    "wifi/driver.elf": {
+      "sha256": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592",
+      "size_bytes": 6080
+    },
+    "wifi/manifest.json": {
+      "sha256": "1d127070ae492e36d910e4c4807ab5478eca7f7f2e09c1bad1ae5e103354431c",
+      "size_bytes": 689
+    },
+    "wifi_settings.elf": {
+      "sha256": "c0757574be5fe1465fdb627cf784f80c5312d75aa5246b4c1b9043f26294e172",
+      "size_bytes": 105904
+    },
+    "wifi_settings.json": {
+      "sha256": "35d017b6734fce207ef143d9b0b678e9c7ef541178f86ca2e9bccf0f3ed4cd11",
+      "size_bytes": 772
+    }
+  },
+  "hardware_qualified": false,
+  "initial_image_emitted": false,
+  "installed_runtime_admission": {
+    "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "candidate_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "cohort_validated": true,
+    "cooperative_yields": 120,
+    "elf_count": 40,
+    "error": "",
+    "hardware_calls": 0,
+    "native_elf_sha256": "e82f53e12bfdfe00a4b371a1fc53403d0b12455ca8a6424eb9ff374645188bf7",
+    "prepared": true,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "licenses_sha256": "74b8f8fb1973efa8862f88ef9ff31b5bfab7b682e6561f98a4fcdc3071f83748",
+  "native_candidate_sha256": "dd27a6e7e7bc2483a233678e971fff8571f7a022d7ab399e7201c2b36675073b",
+  "native_elf_sha256": "268a3994d9ba37ab5a4fbba94a27bec1d6534ab7117a1bdad76d6e374e508270",
+  "original_installed_runtime": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+  "ota": {
+    "asset": "twatch-s3-cohort-1.0.6.bin",
+    "firmware_sha256": "ec634bb1dea4b44a6d67b5737c1658d7b91aa3bed67f15021dfc57f2d2c8d049",
+    "firmware_size": 1211152,
+    "kind": "paired-cohort",
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.35",
+    "sha256": "b6134bcaf5fed3cd954ea800a58ace62fe76715f965c79435baf34668309aa6c",
+    "size": 6519568,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+    "store_abi": 2,
+    "store_sha256": "60e5b8d2eff7b42e8eddc8bb24a9794bd25db30807074273e4d38b3ba4ccbcd5",
+    "store_size": 5308416,
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.6/twatch-s3-cohort-1.0.6.bin",
+    "version": "1.0.6"
+  },
+  "packing": {
+    "config": {
+      "aligned": true,
+      "aligned_obj_ix_tables": false,
+      "block_ix_len": 2,
+      "block_size": 4096,
+      "endianness": "little",
+      "meta_len": 4,
+      "obj_id_len": 2,
+      "obj_name_len": 32,
+      "packed": true,
+      "page_ix_len": 2,
+      "page_size": 256,
+      "span_ix_len": 2,
+      "use_magic": true,
+      "use_magic_len": true
+    },
+    "empty_blocks": 89,
+    "file_count": 83,
+    "generator": "esp-idf-spiffsgen",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "image_bytes": 5308416,
+    "independent_round_trip_verified": true,
+    "metadata": "zero",
+    "occupied_blocks": 1207,
+    "order": "sorted ASCII path names",
+    "payload_bytes": 4476752,
+    "sha256": "60e5b8d2eff7b42e8eddc8bb24a9794bd25db30807074273e4d38b3ba4ccbcd5",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3"
+  },
+  "payload_members": [
+    "native",
+    "bootfs"
+  ],
+  "policy": {
+    "hardware_board_sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+    "migration": {
+      "from": {
+        "product": "twatch-s3",
+        "source_revision": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+        "version": "1.0.2"
+      },
+      "schema": 1,
+      "shared_key_value": [
+        {
+          "api": 1,
+          "application_id": "waterfall",
+          "namespace": 1
+        },
+        {
+          "api": 1,
+          "application_id": "ble_touchpad",
+          "namespace": 1
+        },
+        {
+          "api": 1,
+          "application_id": "ble_buttons",
+          "namespace": 1
+        }
+      ],
+      "to": {
+        "product": "twatch-s3",
+        "version": "1.0.6"
+      }
+    },
+    "only_standard_store_changes": [
+      "boot.json",
+      "cohort.json"
+    ],
+    "ordinary_candidate_policy": {
+      "hardware_board_sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+      "new_shared_migration": {
+        "from": {
+          "product": "twatch-s3",
+          "source_revision": "674729dbade10c15368731745844e6dc2f6ebd0b",
+          "version": "1.0.4"
+        },
+        "schema": 1,
+        "shared_key_value": [
+          {
+            "api": 1,
+            "application_id": "ble_touchpad",
+            "namespace": 1
+          },
+          {
+            "api": 1,
+            "application_id": "ble_buttons",
+            "namespace": 1
+          }
+        ],
+        "to": {
+          "product": "twatch-s3",
+          "version": "1.0.5"
+        }
+      },
+      "prior_app_owners": {
+        "alarms": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            3
+          ]
+        ],
+        "app_store": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "software.update.apps",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ],
+        "audio_spectrum": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "audio.input",
+            1,
+            13
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.app-data",
+            1,
+            2
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            2,
+            7
+          ]
+        ],
+        "battery": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "ble_scanner": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "calculator": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "countdown": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            3
+          ]
+        ],
+        "file_browser": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.installed-files",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "frequency_generator": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "audio.output",
+            1,
+            12
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "lora_messages": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "radio.lora",
+            2,
+            11
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            9
+          ]
+        ],
+        "ota_update": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "software.update.firmware",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ],
+        "points_in_time": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "settings": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "springboard": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "stopwatch": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            2
+          ]
+        ],
+        "timecard": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.app-data",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "twatch-clock": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "twatch-clock-return": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "waterfall": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "radio.iq",
+            1,
+            0
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "wifi_settings": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ]
+      },
+      "prior_provider_bindings": [
+        {
+          "instance_id": 1,
+          "manifest": "gpio/manifest.json"
+        },
+        {
+          "instance_id": 2,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 3,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 4,
+          "manifest": "pmu/manifest.json"
+        },
+        {
+          "instance_id": 5,
+          "manifest": "panel/manifest.json"
+        },
+        {
+          "instance_id": 6,
+          "manifest": "touch/manifest.json"
+        },
+        {
+          "instance_id": 8,
+          "manifest": "rtc/manifest.json"
+        },
+        {
+          "instance_id": 9,
+          "manifest": "haptic/manifest.json"
+        },
+        {
+          "instance_id": 12,
+          "manifest": "speaker/manifest.json"
+        },
+        {
+          "instance_id": 15,
+          "manifest": "wifi/manifest.json"
+        },
+        {
+          "key_value": [
+            {
+              "access": "read",
+              "key": "alarm_cfg",
+              "namespace": 3
+            },
+            {
+              "access": "read",
+              "key": "timer_cfg",
+              "namespace": 3
+            },
+            {
+              "access": "read-write",
+              "key": "alarm_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read-write",
+              "key": "timer_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read",
+              "key": "alert_mode",
+              "namespace": 1
+            },
+            {
+              "access": "read",
+              "key": "points_cfg",
+              "namespace": 5
+            },
+            {
+              "access": "read-write",
+              "key": "points_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read",
+              "key": "alarm_volume",
+              "namespace": 1
+            },
+            {
+              "access": "read",
+              "key": "alert_dnd",
+              "namespace": 1
+            }
+          ],
+          "manifest": "alarm-service/manifest.json"
+        },
+        {
+          "manifest": "update-fw/manifest.json"
+        },
+        {
+          "manifest": "update-apps/manifest.json"
+        },
+        {
+          "instance_id": 13,
+          "manifest": "mic/manifest.json"
+        },
+        {
+          "instance_id": 16,
+          "manifest": "ble/manifest.json"
+        },
+        {
+          "instance_id": 7,
+          "manifest": "imu/manifest.json"
+        },
+        {
+          "instance_id": 11,
+          "manifest": "lora/manifest.json"
+        },
+        {
+          "manifest": "s3-radio-iq/manifest.json"
+        }
+      ]
+    },
+    "prior_app_owners": {
+      "alarms": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          3
+        ]
+      ],
+      "app_store": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "software.update.apps",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ],
+      "audio_spectrum": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "audio.input",
+          1,
+          13
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.app-data",
+          1,
+          2
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          2,
+          7
+        ]
+      ],
+      "battery": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "ble_scanner": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "calculator": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "countdown": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          3
+        ]
+      ],
+      "file_browser": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.installed-files",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "frequency_generator": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "audio.output",
+          1,
+          12
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "lora_messages": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "radio.lora",
+          2,
+          11
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          9
+        ]
+      ],
+      "ota_update": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "software.update.firmware",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ],
+      "points_in_time": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "settings": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "springboard": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "stopwatch": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          2
+        ]
+      ],
+      "timecard": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.app-data",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "twatch-clock": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "twatch-clock-return": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "wifi_settings": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ]
+    },
+    "prior_provider_bindings": [
+      {
+        "instance_id": 1,
+        "manifest": "gpio/manifest.json"
+      },
+      {
+        "instance_id": 2,
+        "manifest": "i2c/manifest.json"
+      },
+      {
+        "instance_id": 3,
+        "manifest": "i2c/manifest.json"
+      },
+      {
+        "instance_id": 4,
+        "manifest": "pmu/manifest.json"
+      },
+      {
+        "instance_id": 5,
+        "manifest": "panel/manifest.json"
+      },
+      {
+        "instance_id": 6,
+        "manifest": "touch/manifest.json"
+      },
+      {
+        "instance_id": 8,
+        "manifest": "rtc/manifest.json"
+      },
+      {
+        "instance_id": 9,
+        "manifest": "haptic/manifest.json"
+      },
+      {
+        "instance_id": 12,
+        "manifest": "speaker/manifest.json"
+      },
+      {
+        "instance_id": 15,
+        "manifest": "wifi/manifest.json"
+      },
+      {
+        "key_value": [
+          {
+            "access": "read",
+            "key": "alarm_cfg",
+            "namespace": 3
+          },
+          {
+            "access": "read",
+            "key": "timer_cfg",
+            "namespace": 3
+          },
+          {
+            "access": "read-write",
+            "key": "alarm_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read-write",
+            "key": "timer_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read",
+            "key": "alert_mode",
+            "namespace": 1
+          },
+          {
+            "access": "read",
+            "key": "points_cfg",
+            "namespace": 5
+          },
+          {
+            "access": "read-write",
+            "key": "points_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read",
+            "key": "alarm_volume",
+            "namespace": 1
+          },
+          {
+            "access": "read",
+            "key": "alert_dnd",
+            "namespace": 1
+          }
+        ],
+        "manifest": "alarm-service/manifest.json"
+      },
+      {
+        "manifest": "update-fw/manifest.json"
+      },
+      {
+        "manifest": "update-apps/manifest.json"
+      },
+      {
+        "instance_id": 13,
+        "manifest": "mic/manifest.json"
+      },
+      {
+        "instance_id": 16,
+        "manifest": "ble/manifest.json"
+      },
+      {
+        "instance_id": 7,
+        "manifest": "imu/manifest.json"
+      },
+      {
+        "instance_id": 11,
+        "manifest": "lora/manifest.json"
+      }
+    ],
+    "profile": "midpoint-27fba6f2"
+  },
+  "profile": "midpoint-27fba6f2",
+  "publication_performed": false,
+  "runtime_evidence": {
+    "candidate_required_ancestors": [
+      "0a4f3d18c5d830d32678092fa99284810334b485",
+      "a27bf228ecd99f2896638a30b55802560701180d"
+    ],
+    "candidate_self_admission_uses_candidate_native_exports": true,
+    "candidate_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+    "candidate_version": "0.1.35",
+    "compared_sources": {
+      "lib/elf_loader/src/esp_elf_validate.c": {
+        "candidate_sha256": "b9071ae62ba5d758fda077d436cc15c350028c341d3d9b531c3e41ba3d465594",
+        "identical": true,
+        "installed_sha256": "b9071ae62ba5d758fda077d436cc15c350028c341d3d9b531c3e41ba3d465594"
+      },
+      "sdk/driver/RiscBankStoreV1.h": {
+        "candidate_sha256": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8",
+        "identical": true,
+        "installed_sha256": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8"
+      },
+      "src/bootstrap/CohortRuntime.inc": {
+        "candidate_sha256": "7485c77adea4716d8e938fb608a4d9799516f852fdcdda4136f79816f59c6ebb",
+        "identical": true,
+        "installed_sha256": "7485c77adea4716d8e938fb608a4d9799516f852fdcdda4136f79816f59c6ebb"
+      },
+      "src/bootstrap/Runtime.cpp": {
+        "candidate_sha256": "8ca5479bd99f6f6f68b1a74119fd14dc8c73ec1ea3c20cb9c5feeabf05afc87a",
+        "identical": true,
+        "installed_sha256": "8ca5479bd99f6f6f68b1a74119fd14dc8c73ec1ea3c20cb9c5feeabf05afc87a"
+      },
+      "src/bootstrap/Runtime.h": {
+        "candidate_sha256": "0a7a5df79d98cb54ae5c8cd2ea13eecd21350676bcbdeb657f1cdc5ca8c75d0f",
+        "identical": true,
+        "installed_sha256": "0a7a5df79d98cb54ae5c8cd2ea13eecd21350676bcbdeb657f1cdc5ca8c75d0f"
+      },
+      "src/ports/esp32s3/NativeBankStore.cpp": {
+        "candidate_sha256": "7af17368ae8ba93bfcd8d7cbbafec450745068ef9277caf9dc8b5e0b6042722f",
+        "identical": true,
+        "installed_sha256": "7af17368ae8ba93bfcd8d7cbbafec450745068ef9277caf9dc8b5e0b6042722f"
+      },
+      "src/ports/esp32s3/NativeBankStore.h": {
+        "candidate_sha256": "e00a1d841f1c70c343f1fbb613426df21951497be3c60e28975c7a97cdb41a00",
+        "identical": true,
+        "installed_sha256": "e00a1d841f1c70c343f1fbb613426df21951497be3c60e28975c7a97cdb41a00"
+      },
+      "src/runtime/update/Cohort.h": {
+        "candidate_sha256": "392cfbb8e500a7cfbd35584e97290ff6b9cc4ddfac6d08e1abd48ab53ebca8e2",
+        "identical": true,
+        "installed_sha256": "392cfbb8e500a7cfbd35584e97290ff6b9cc4ddfac6d08e1abd48ab53ebca8e2"
+      },
+      "src/runtime/update/CohortMigration.h": {
+        "candidate_sha256": "be4485e61f647729a22694a572165065d8dda5d628109744e316d20559dcca69",
+        "identical": true,
+        "installed_sha256": "be4485e61f647729a22694a572165065d8dda5d628109744e316d20559dcca69"
+      },
+      "src/runtime/update/PairedBank.cpp": {
+        "candidate_sha256": "5e8a12534ba5f35b60196de669c543d962901a482bb558f6907d8e21bb1ff049",
+        "identical": true,
+        "installed_sha256": "5e8a12534ba5f35b60196de669c543d962901a482bb558f6907d8e21bb1ff049"
+      },
+      "src/runtime/update/PairedBank.h": {
+        "candidate_sha256": "6c37a04f540e1576e3622bec56c78994f85e1b14fbca9a3c6ef4dfeda73fd31c",
+        "identical": true,
+        "installed_sha256": "6c37a04f540e1576e3622bec56c78994f85e1b14fbca9a3c6ef4dfeda73fd31c"
+      },
+      "src/runtime/update/StoreAudit.cpp": {
+        "candidate_sha256": "0f0660131655137f046bee56b858c3ca3fac16b72ab4046c5886654ef225a359",
+        "identical": true,
+        "installed_sha256": "0f0660131655137f046bee56b858c3ca3fac16b72ab4046c5886654ef225a359"
+      },
+      "src/runtime/update/StoreAudit.h": {
+        "candidate_sha256": "9e4a0a4e74b4583b43067d9bbebbecfb9e2cdc98874e54010b9e3abaa578c274",
+        "identical": true,
+        "installed_sha256": "9e4a0a4e74b4583b43067d9bbebbecfb9e2cdc98874e54010b9e3abaa578c274"
+      },
+      "src/runtime/update/Version.h": {
+        "candidate_sha256": "e6f3df0a6152e250dcc7056c075c07c3bf3c57c7f4a28e59c98ac0d409e122a7",
+        "identical": true,
+        "installed_sha256": "e6f3df0a6152e250dcc7056c075c07c3bf3c57c7f4a28e59c98ac0d409e122a7"
+      }
+    },
+    "installed_graph_uses_installed_native_exports": true,
+    "installed_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+    "installed_version": "0.1.34",
+    "listed_transaction_sources_identical": true
+  },
+  "runtime_requirements": {
+    "abi_changed": true,
+    "deployment": {
+      "existing_8MiB_ota_compatible": false,
+      "flash_bytes": 16777216,
+      "layout": "riscrte-paired-appdata-v2",
+      "migration": "initial-full-16MiB-reflash-overwrites-appdata; installed ABI2 1.0.4-to-1.0.5 paired-cohort update preserves NVS and appdata",
+      "ordinary_ota_includes_appdata": false,
+      "partitions": {
+        "app0": {
+          "offset": 65536,
+          "size": 2490368
+        },
+        "app1": {
+          "offset": 8388608,
+          "size": 2490368
+        },
+        "appdata": {
+          "offset": 2555904,
+          "size": 524288
+        },
+        "bank_state": {
+          "offset": 16719872,
+          "size": 8192
+        },
+        "bootfs0": {
+          "offset": 3080192,
+          "size": 5308416
+        },
+        "bootfs1": {
+          "offset": 11403264,
+          "size": 5308416
+        },
+        "otadata": {
+          "offset": 16711680,
+          "size": 8192
+        }
+      },
+      "radio_iq": true,
+      "store_abi": 2,
+      "target": "esp32s3-16mb-appdata-iq"
+    },
+    "firmware_version": "0.1.35",
+    "public_runtime_api_prefix_changed": false,
+    "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier. Complete native+bootfs cohort updates preserve NVS and app-data while admitting new apps/providers in the inactive pair. This requires the optional bank-store cohort suffix and full graph/ELF/persistent-authority validation before readiness, with 24 app/provider slots. SDR adds one lazy CPU resource-backed provider and Waterfall, for 20 app policies and 18 providers. The optional IQ target reserves its entire capture SRAM bank before heap setup. The board and ABI2 geometry stay unchanged. Install the native Runtime stage first, then the explicitly version-bound SDR cohort; ordinary stages preserve NVS and app-data. The later 1.0.5 cohort has 22 app policies and 19 provider instances. Runtime 0.1.35 retains the IQ and migration changes and adds retained sleep/reset diagnostics. The installed 0.1.34 validator admits this native+bootfs cohort before activation; no second native bridge is required.",
+    "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+    "required_behavior": {
+      "ambiguous_key_value_instance_zero_denied": true,
+      "app_data_retention_barrier": true,
+      "app_grant_capacity": 12,
+      "app_policy_capacity": 24,
+      "app_requirement_capacity": 12,
+      "atomic_app_data_replacement": true,
+      "audio_input_cleanup_barrier": true,
+      "bounded_asynchronous_radio_scan": true,
+      "cohort_graph_elf_admission": true,
+      "default_app_health_confirmation": true,
+      "exact_app_authority_preservation": true,
+      "exclusive_iq_modem_lease": true,
+      "explicit_app_data_namespaces": true,
+      "explicit_key_value_v2": true,
+      "explicit_multiple_key_value_namespaces": true,
+      "explicit_shared_preferences_migration": true,
+      "hci_cleanup_sleep_barrier": true,
+      "immutable_active_bank": true,
+      "independent_graph_provider_registry": true,
+      "mixed_polarity_rtc_wake": true,
+      "namespaced_key_value": true,
+      "native_bounded_hci": true,
+      "native_i2s_pdm_rx": true,
+      "native_i2s_rx_deadline_nonterminal": true,
+      "native_i2s_tx_cleanup": true,
+      "native_station_radio": true,
+      "nonconsuming_hci_status": true,
+      "owned_deep_sleep": true,
+      "owned_timed_deep_sleep": true,
+      "owned_timed_light_sleep": true,
+      "owned_wake_sets": true,
+      "paired_cohort_updates": true,
+      "paired_firmware_store": true,
+      "paired_metadata_psram_only": true,
+      "persistent_namespace_ownership_preserved": true,
+      "provider_bound_key_capacity": 9,
+      "provider_bound_key_value": true,
+      "provider_only_bank_store": true,
+      "provider_only_https": true,
+      "provider_poll_max_quantum_ms": 8,
+      "provider_poll_total_budget_ms": 10,
+      "radio_cleanup_sleep_barrier": true,
+      "read_only_installed_files": true,
+      "reserved_iq_sram": true,
+      "retained_app_unload_barrier": true,
+      "retained_sleep_reset_diagnostics": true,
+      "rollback_until_health_confirmation": true,
+      "scheduler_waits_per_yield": 1,
+      "scoped_native_radio_spi_gpio": true,
+      "selectable_radio_config_v2": true,
+      "selected_provider_capacity": 24,
+      "spi_max_hz": 40000000,
+      "static_output_hold": true,
+      "store_abi": 2
+    },
+    "schema": 1,
+    "source_sha": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158"
+  },
+  "runtime_requirements_sha256": "cb1e5f0a6137a43433926306871c6e8bb0fb69ea44890705bad485174aa62ed4",
+  "schema": 1,
+  "source_baseline_sha256": "5cb11868f1da6067a5d6f01f15b1048bf036df0ccc93a76b1406f19cababedd8",
+  "source_cohort": {
+    "firmware_sha256": "594d6680523a259fb48bad8cd50ffbb64b504d84583feb6199e9fe36edcef5e6",
+    "firmware_size": 1204992,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.33",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+    "store_abi": 2,
+    "version": "1.0.2"
+  },
+  "source_initial_image_sha256": "2225261601729774c7d0d42a88ab1a705c55aa856097af292dce9fa06dd659bf",
+  "source_store_sha256": "4d34b900aea64348ecf3fb82d47491a6c88f728cd4a9bfc007f4edf1d6a54625",
+  "standard_candidate_proof_sha256": "81a1929f39bfc12380cfce9146b73f1a38627c69d83163dd646cb83e7fa180ee",
+  "standard_candidate_sha256": "17b5299bde297939b2b6d147abf22903ba09b2fd813964503b866f87c833bdc4",
+  "standard_candidate_version": "1.0.5",
+  "standard_configuration": {
+    "app_versions": {
+      "alarms": "0.2.2",
+      "app_store": "1.1.3",
+      "audio_spectrum": "0.4.4",
+      "battery": "1.1.0",
+      "ble_buttons": "0.1.0",
+      "ble_scanner": "0.1.1",
+      "ble_touchpad": "0.1.0",
+      "calculator": "0.1.6",
+      "clock": "0.10.2",
+      "countdown": "0.1.5",
+      "default": "0.10.2",
+      "file_browser": "1.4.1",
+      "frequency_generator": "0.1.4",
+      "lora_messages": "0.1.2",
+      "ota_update": "1.1.3",
+      "points_in_time": "0.4.4",
+      "settings": "1.3.0",
+      "springboard": "1.5.0",
+      "stopwatch": "0.1.6",
+      "timecard": "0.1.1",
+      "waterfall": "0.1.3",
+      "wifi_settings": "1.1.4"
+    },
+    "hid": {
+      "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
+      "id": "ble-hid",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.0"
+    },
+    "profile": "watch-current-apps-v1",
+    "schema": 1,
+    "sdr": {
+      "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
+      "id": "s3-radio-iq-v1",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.1"
+    },
+    "service_version": "0.4.2",
+    "sources": {
+      "productivity": {
+        "commit": "460935ca47c3f86d4cb94f0d912c54077330eff4",
+        "repository": "michaelrolphone-cmyk/RiscRTE-Productivity"
+      },
+      "runtime": {
+        "commit": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+        "repository": "michaelrolphone-cmyk/RiscRTE"
+      },
+      "system-apps": {
+        "commit": "1c82933488292be1064336aa592f7b2f7c378902",
+        "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps"
+      },
+      "utilities": {
+        "commit": "e6444bb4887d4254a6985eee8e6f9124f1fa7a02",
+        "repository": "michaelrolphone-cmyk/RiscRTE-Utilities"
+      }
+    }
+  },
+  "target_cohort": {
+    "firmware_sha256": "ec634bb1dea4b44a6d67b5737c1658d7b91aa3bed67f15021dfc57f2d2c8d049",
+    "firmware_size": 1211152,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.35",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+    "store_abi": 2,
+    "version": "1.0.6"
+  },
+  "target_self_admission": {
+    "active_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "candidate_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "cohort_validated": true,
+    "cooperative_yields": 120,
+    "elf_count": 40,
+    "error": "",
+    "hardware_calls": 0,
+    "native_elf_sha256": "268a3994d9ba37ab5a4fbba94a27bec1d6534ab7117a1bdad76d6e374e508270",
+    "prepared": true,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "version": "1.0.6",
+  "watch_source": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+}
