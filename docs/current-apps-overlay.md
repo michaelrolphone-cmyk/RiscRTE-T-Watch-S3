@@ -8,7 +8,7 @@ instances and 17 visible launcher entries. Two I2C instances share one provider
 ELF, so the final 72-file store contains 35 unique ELFs.
 
 The cohort adds File Browser, the BLE sensor scanner, LoRa Messages with an
-explicit hardware picker, Spectrum 0.4 temporal examples and Timecard 0.1.0.
+explicit hardware picker, Spectrum 0.4.1 temporal examples and Monitor context and Timecard 0.1.0.
 Timecard keeps the authoritative model at version 1.0.4. Existing Quick Controls,
 alarms/Points, clock faces, Wi-Fi, updates and double-tap sleep/wake remain part
 of the same source profile. Physical radio, motion wake and storage behavior
@@ -48,7 +48,7 @@ not a capacity guarantee. The measured native BIN is 1,193,872 bytes, leaving
 
 ## Authority and persistence
 
-Timecard receives `storage.app-data@1` namespace1. Spectrum receives namespace2,
+Spectrum 0.4.1 keeps room identification on its raw learned-room path and surfaces it in Monitor while preserving RAW/AUTO/MANUAL filtering. Detected temporal events and active frequency labels are ranked by detector confidence with canonical amplitude.\n\nTimecard receives `storage.app-data@1` namespace1. Spectrum receives namespace2,
 retaining `storage.key-value@2` namespace7 and the separate preference namespace1
 at API1. Spectrum uses all 12 requirement/grant slots. Timecard's source navigation
 requirement is explicitly materialized by the Watch's existing local crown path
