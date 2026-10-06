@@ -18,6 +18,7 @@ static void yield_ms(uint32_t n){now+=n;}
 bool test_face(risc_display_surface_v1 *s,const nova_watch_state *f){(void)f;memset(s->pixels,0x57,sizeof(pixels));return true;}
 bool test_boot(const risc_display_surface_v1 *s,uint32_t ms){(void)ms;assert(!ready);++boot_frames;memset(s->pixels,0,sizeof(pixels));return true;}
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id){(void)id;return test_face(s,f);}
+bool nova_watch_sleep_status(risc_display_surface_v1*s,const char*label){assert(s&&label&&!strncmp(label,"SLEEP ",6)&&strlen(label)<32);return true;}
 bool nova_watch_picker_collections_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id,int position,const int positions[WATCH_FACE_CATEGORY_COUNT],const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*scratch){(void)positions;(void)pulse_face;(void)pulse_scale;(void)position;(void)status;(void)scratch;return nova_watch_face_render(s,f,id);}
 unsigned nova_watch_picker_pulse(uint32_t age){(void)age;return 256;}
 static bool diagnostic(const char *s){

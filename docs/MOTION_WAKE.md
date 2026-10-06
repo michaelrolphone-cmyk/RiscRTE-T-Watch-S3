@@ -37,8 +37,9 @@ configuration, resets and loads the matching feature image, validates ASIC init,
 and configures 200 Hz, 2 g, AVG2/CIC sampling. BMA423 explicitly selects double
 rather than single tap. BMA456H enables only its double-tap feature; single,
 triple, step, activity and motion features stay disabled. Only the selected tap
-interrupt maps to INT1, in latched mode. A stale status is acknowledged before
-enabling the feature. Subsequent pending checks do not acknowledge interrupts.
+interrupt maps to INT1, in latched mode. Status is acknowledged before enabling
+the feature and again after configuration/readback, immediately before the final
+inactive-line check. Subsequent pending checks do not acknowledge interrupts.
 
 The line must be inactive before entry and after native wake arm. Held lines
 refuse sleep instead of creating a reboot loop. Light wake or ordinary refusal
@@ -70,7 +71,28 @@ priority, retained apps, current-store admission/execution and target links.
 Historical GPIO 0.4.2/PMU 0.5.3 packages and the historical Clock/sleep adapters
 are rebuilt from frozen exact source inputs and must match their original hashes.
 Their test lanes use the matching original SDK headers. The current overlay replaces them
-with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.1.
+with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.5.
+
+## Reset refusal diagnosis
+
+The on-device `SLEEP SENSOR 74` diagnostic identified the reset before feature
+upload, rather than a tap threshold or native wake timer. The initial sampling
+configuration disables advanced power-save and enables acceleration. Bosch's
+BMA456 datasheet section 4.12 documents possible I2C ACK loss when soft reset is
+issued in the running state and specifies disabling acceleration/auxiliary
+sampling and enabling advanced power-save before reset. The older BMA423
+datasheet does not contain that explicit ACK note; applicability to the observed
+BMA423 failure remains an inference pending the device test.
+
+IMU 0.3.5 sets and reads back those power preconditions before both sleep-entry
+and wake-cleanup resets. It does not blindly retry or accept a failed transfer.
+The host sensor model now uses reset power defaults and covers a reset that takes
+effect while losing its ACK, plus persistent errors and retained cleanup.
+The Clock's minimal refusal line reports the stage and sensor guard without
+requiring serial capture. Codes 742 and 749 distinguish reset transport failure
+from an elapsed-delay failure.
+
+Source: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bma456-ds000.pdf
 
 ## IMU 0.3.1 sensitivity mitigation
 

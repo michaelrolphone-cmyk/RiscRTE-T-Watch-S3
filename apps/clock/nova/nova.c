@@ -179,3 +179,13 @@ bool nova_watch_render(risc_display_surface_v1 *s,const nova_watch_state *state)
 }
 
 #include "../faces/render.inc"
+
+/* Temporary sleep-refusal diagnosis uses the existing NOVA typeface. */
+bool nova_watch_sleep_status(risc_display_surface_v1 *s,const char *label){
+    if(!s||!s->pixels||s->width!=240||s->height!=240||s->stride_bytes<480||
+       s->stride_bytes>UINT32_MAX/240u||s->size_bytes<s->stride_bytes*240u||!label)return false;
+    for(unsigned n=0;label[n];n++)if(n==31)return false;
+    canvas c={(uint8_t*)s->pixels,s->stride_bytes};
+    for(unsigned y=203;y<231;y++)for(unsigned x=10;x<230;x++)put(at(&c,x,y),0);
+    centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),label,222,128,ORANGE);return true;
+}

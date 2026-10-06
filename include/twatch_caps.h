@@ -52,9 +52,11 @@ typedef struct {
     bool (*prepare_wake)(void *context);
     bool (*wake_pending)(void *context,bool *pending);
     bool (*resume_wake)(void *context);
+    uint32_t (*wake_error)(void *context); /* Optional read-only preparation guard code. */
 } twatch_motion_api_v1;
 #define TWATCH_MOTION_SAMPLE_SIZE offsetof(twatch_motion_api_v1,prepare_wake)
-#define TWATCH_MOTION_WAKE_SIZE sizeof(twatch_motion_api_v1)
+#define TWATCH_MOTION_WAKE_SIZE offsetof(twatch_motion_api_v1,wake_error)
+#define TWATCH_MOTION_DIAGNOSTIC_SIZE sizeof(twatch_motion_api_v1)
 
 #define TWATCH_RTC_API_V1 2u
 #define TWATCH_RTC_CAPABILITY "rtc.clock"

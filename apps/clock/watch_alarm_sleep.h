@@ -49,13 +49,19 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
     /* The ordinary panel sleep performs its120ms delay without a native pad
        hold. Reconcile AFTER that delay but BEFORE Deep creates an exit barrier.
        Runtime must never see service KV while appExitSafe is false. */
+    watch_sleep_stage=1;watch_sleep_detail=0;
     if(!watch_motion_ready(motion))return WATCH_SLEEP_REFUSED;
     bool motion_ok=!motion || motion->prepare_wake(motion->context);
+    if(motion_ok)watch_sleep_stage=2;
     bool panel_ok=motion_ok && panel->prepare_sleep(panel->base.context);
+    if(panel_ok)watch_sleep_stage=3;
     bool pmu_ok=panel_ok && pmu->prepare_sleep(pmu->base.context);
     risc_light_sleep_result_v1 result={.struct_size=sizeof(result)};
     alarm_sleep_v1 decision={0};
-    if(pmu_ok && watch_alarm_deadline(a,&decision)==ALARM_OK) {
+    int32_t alarm_result=ALARM_INVALID;
+    if(pmu_ok){watch_sleep_stage=4;alarm_result=watch_alarm_deadline(a,&decision);watch_sleep_detail=alarm_result;}
+    if(pmu_ok && alarm_result==ALARM_OK) {
+        watch_sleep_stage=deep?6:5;
         uint32_t duration=watch_alarm_duration(&decision);
         if(deep)rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
         else if(duration || hybrid) {
@@ -75,6 +81,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
             }
         } else rc=watch_enter_light(pmu,motion,0,&result);
     }
+    if(watch_sleep_stage==5 || watch_sleep_stage==6)watch_sleep_detail=rc;
     if(rc==RISC_LIGHT_SLEEP_RETAINED){diagnostic("WATCH_ALARM sleep=retained");return WATCH_SLEEP_RETAINED;}
     if(motion && !motion->resume_wake(motion->context)){diagnostic("WATCH_ALARM motion=restore-retained");return WATCH_SLEEP_RETAINED;}
     bool pmu_restored=pmu->resume(pmu->base.context);

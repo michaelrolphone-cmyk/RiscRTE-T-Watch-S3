@@ -126,7 +126,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_motion_api_v1 api = {TWATCH_MOTION_API_V1, sizeof(api), NULL, read_sample,
-                                         chip_id, prepare_wake, wake_pending, resume_wake};
+                                         chip_id, prepare_wake, wake_pending, resume_wake, wake_error};
 static const risc_driver_v2 driver = {RISC_PROVIDER_DRIVER_ABI_V2,
                                       sizeof(driver),
                                       "twatch-imu",

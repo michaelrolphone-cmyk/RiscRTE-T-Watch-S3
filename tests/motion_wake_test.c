@@ -9,7 +9,7 @@ static unsigned operations,fail_at,uploaded,reset_count,delay_total;
 static unsigned force_feature_index,force_feature_mask,force_reg_index,force_reg_mask;
 static unsigned final_read_index,final_read_xor;
 static bool lose_sensitivity_write,alter_reserved_word;
-static bool initialization_event,initialization_latched;
+static bool initialization_event,initialization_latched,fail_reset_always;
 static const uint16_t tap_defaults[12]={6,9,130,6,6,8,80,0,0x44c,2,3,0};
 static uint64_t fake_us,last_write_us;static bool write_wait,short_wait,clock_stalled;
 static bool bus_live,pin_live,enrolled,held_line,fail_enroll,fail_withdraw,fail_gpio,wrong_status;
@@ -25,10 +25,11 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
  if(wn>1){write_wait=true;last_write_us=fake_us;}
  if(++operations==fail_at)return false;
  const uint8_t*p=write;uint8_t*q=read;unsigned reg=p[0];
+ if(fail_reset_always && reg==0x7e && wn==2 && p[1]==0xb6)return false;
  if(rn){assert(wn==1);if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));assert(offset>=6144&&offset-6144+rn<=sizeof(feature));memcpy(q,feature+offset-6144,rn);}else{assert(reg+rn<=256);memcpy(q,regs+reg,rn);
   if(final_read_xor&&regs[0x56]==(silicon==0x13?0x20:1)&&reg<=final_read_index&&final_read_index<reg+rn)q[final_read_index-reg]^=(uint8_t)final_read_xor;
   if(reg==0x1c){regs[0x1c]=regs[0x1d]=0;initialization_latched=false;}}return true;}
- if(reg==0x7e && wn==2 && p[1]==0xb6){memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;uploaded=0;reset_count++;return true;}
+ if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;uploaded=0;reset_count++;return acknowledged;}
  if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));if(!regs[0x59]){assert(offset==uploaded && wn==33);assert(!memcmp(p+1,(silicon==0x13?bma423_config_file:bma456h_config_file)+offset,wn-1));uploaded+=wn-1;}else{assert(offset>=6144&&offset-6144+wn-1<=sizeof(feature));memcpy(feature+offset-6144,p+1,wn-1);
   if(force_feature_mask)feature[force_feature_index]|=(uint8_t)force_feature_mask;
   if(lose_sensitivity_write){if(silicon==0x13)feature[0x38]=(uint8_t)((feature[0x38]&~0x0e)|6);else{feature[0x3e]=9;feature[0x3f]=0;}}
@@ -57,10 +58,10 @@ static risc_gpio_bank_api_v1 gpio={.api_version=1,.struct_size=sizeof(gpio),.cla
 static const risc_platform_clock_api_v1 clock_port={1,sizeof(clock_port),NULL,now,sleep_ms};
 #include "../drivers/twatch_imu/driver.c"
 static void begin(uint8_t id){
- silicon=id;write_wait=short_wait=clock_stalled=false;fake_us=last_write_us=0;memset(regs,0,sizeof(regs));regs[0]=id;operations=fail_at=uploaded=reset_count=delay_total=0;held_line=fail_enroll=fail_withdraw=fail_gpio=wrong_status=false;
+ silicon=id;write_wait=short_wait=clock_stalled=false;fake_us=last_write_us=0;memset(regs,0,sizeof(regs));regs[0]=id;regs[0x7c]=3;operations=fail_at=uploaded=reset_count=delay_total=0;held_line=fail_enroll=fail_withdraw=fail_gpio=wrong_status=false;
  force_feature_index=force_feature_mask=force_reg_index=force_reg_mask=0;lose_sensitivity_write=alter_reserved_word=false;
  final_read_index=final_read_xor=0;
- initialization_event=initialization_latched=false;
+ initialization_event=initialization_latched=fail_reset_always=false;
  config_fixture=(tw_hw_i2c_device_v1){.struct_size=sizeof(config_fixture),.bus={.struct_size=sizeof(risc_hw_bus_v1),.instance_id=101,.kind=RISC_HW_BUS_I2C,.controller=0,.frequency_hz=100000,.sclk=-1,.mosi=-1,.miso=-1,.sda=10,.scl=11},.address=25,.irq=14,.irq_active_high=1,.irq_pull_up=0,.chip_id=id};
  const risc_hardware_device_v1 h={1,sizeof(h),7,"bosch,bma4xx","unspecified","peripheral.i2c",1,sizeof(config_fixture),&config_fixture};
  risc_provider_dependency_v1 deps[]={{"hardware.device",1,&h},{"i2c.bus",1,&bus_api},{"gpio.bank",1,&gpio},{"platform.clock",1,&clock_port}};
@@ -69,6 +70,10 @@ static void begin(uint8_t id){
 static void restored(void){assert(!enrolled&&!wake_changed&&!wake_prepared&&regs[0x40]==0xa8&&regs[0x41]==1&&regs[0x7c]==0&&regs[0x7d]==4);}
 int main(void){
  for(unsigned variant=0;variant<2;variant++){uint8_t id=variant?0x16:0x13;
+  /* The old running-state reset can physically succeed while losing ACK. */
+  begin(id);sensor=(struct bma4_dev){.intf=BMA4_I2C_INTF,.bus_read=sensor_read,.bus_write=sensor_write,.delay_us=sensor_delay,.read_write_len=32};io_failed=false;
+  assert(bma4_soft_reset(&sensor)==BMA4_E_COM_FAIL && io_failed && regs[0x7c]==3 && !regs[0x7d] && !regs[0x41]);
+  io_failed=false;assert(quiesce());
   begin(id);assert(prepare_wake(NULL));unsigned count=operations;assert(enrolled&&wake_prepared&&uploaded==6144&&regs[0x55]==1&&regs[0x53]==0x0a&&regs[0x56]==(variant?1:0x20)&&!regs[0x57]&&!regs[0x58]);
   if(variant){assert(!regs[0x28]&&regs[0x29]==0x20);for(unsigned i=0;i<12;i++)assert(((uint16_t)feature[0x3c+2*i]|((uint16_t)feature[0x3d+2*i]<<8))==(i==1?15:tap_defaults[i]));}
   else assert((feature[0x38]&0x1f)==0x0f&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
@@ -83,6 +88,7 @@ int main(void){
   begin(id);assert(prepare_wake(NULL));operations=0;assert(resume_wake(NULL));unsigned cleanup_count=operations;assert(quiesce());
   for(unsigned failure=1;failure<=cleanup_count;failure++){begin(id);assert(prepare_wake(NULL));operations=0;fail_at=failure;assert(!resume_wake(NULL)&&enrolled);fail_at=0;assert(resume_wake(NULL));restored();assert(quiesce());}
   begin(id);held_line=true;assert(!prepare_wake(NULL)&&enrolled);assert(resume_wake(NULL));restored();assert(quiesce());
+  begin(id);fail_reset_always=true;assert(!prepare_wake(NULL)&&enrolled&&wake_error(NULL)==742);assert(!resume_wake(NULL)&&enrolled);fail_reset_always=false;assert(resume_wake(NULL));restored();assert(quiesce());
   begin(id);wrong_status=true;assert(!prepare_wake(NULL)&&enrolled);wrong_status=false;assert(resume_wake(NULL));restored();assert(quiesce());
   begin(id);fail_gpio=true;assert(!prepare_wake(NULL));fail_gpio=false;assert(resume_wake(NULL));restored();assert(quiesce());
   begin(id);fail_enroll=true;assert(!prepare_wake(NULL)&&!operations&&!enrolled);fail_enroll=false;assert(quiesce());

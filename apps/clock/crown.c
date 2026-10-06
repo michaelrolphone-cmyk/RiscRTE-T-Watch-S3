@@ -11,6 +11,7 @@
 #include "transitions/PortableTransition.h"
 #include <stdlib.h>
 #include <string.h>
+static char sleep_status[32];
 
 static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_CLOCK_ALARMS
@@ -221,6 +222,7 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
         rendered=pqa_render(surface,&clock_quick.ui,labels.hour_minute,face.battery_valid,face.battery_percent);
     }
 #endif
+    if(rendered && sleep_status[0])rendered=nova_watch_sleep_status(surface,sleep_status);
     return rendered;
 #else
     return nova_watch_render(surface,&face);
@@ -354,6 +356,7 @@ static bool startup(void) {
 #endif
 #endif
 static int sleep_cycle(void) {
+    sleep_status[0]=0;
 #ifdef WATCH_QUICK_RADIOS
     if(!pqa_radios_suspend(rt)){rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");return false;}
 #endif
@@ -407,6 +410,15 @@ static int sleep_cycle(void) {
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
     } else {
         rt->diagnostic("WATCH_CLOCK sleep=refused");
+        static const char *const stages[]={"UNKNOWN","SENSOR","PANEL","PMU","ALARM","LIGHT","DEEP","ACQUIRE","API"};
+        memcpy(sleep_status,"SLEEP ",6);unsigned count=6;
+        const char *name=stages[watch_sleep_stage<9?watch_sleep_stage:0];
+        while(*name && count<20)sleep_status[count++]=*name++;
+        sleep_status[count++]=' ';uint32_t value=(uint32_t)watch_sleep_detail;
+        if(watch_sleep_detail<0){sleep_status[count++]='-';value=0u-value;}
+        char digits[10];unsigned used=0;do{digits[used++]=(char)('0'+value%10u);value/=10u;}while(value&&used<10);
+        while(used&&count+1<sizeof(sleep_status)){sleep_status[count++]=digits[--used];}
+        sleep_status[count]=0;
         risc_display_surface_v1 fresh={0};uint32_t now;
         /* The pre-sleep clear also runs before a refused attempt. Replace it
          * with a complete fresh Clock before restoring the previous level. */
