@@ -75,8 +75,8 @@ int main(void){
   assert(bma4_soft_reset(&sensor)==BMA4_E_COM_FAIL && io_failed && regs[0x7c]==3 && !regs[0x7d] && !regs[0x41]);
   io_failed=false;assert(quiesce());
   begin(id);assert(prepare_wake(NULL));unsigned count=operations;assert(enrolled&&wake_prepared&&uploaded==6144&&regs[0x55]==1&&regs[0x53]==0x0a&&regs[0x56]==(variant?1:0x20)&&!regs[0x57]&&!regs[0x58]);
-  if(variant){assert(!regs[0x28]&&regs[0x29]==0x20);for(unsigned i=0;i<12;i++)assert(((uint16_t)feature[0x3c+2*i]|((uint16_t)feature[0x3d+2*i]<<8))==(i==1?15:tap_defaults[i]));}
-  else assert((feature[0x38]&0x1f)==0x0f&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
+  if(variant){assert(!regs[0x28]&&regs[0x29]==0x20);for(unsigned i=0;i<12;i++)assert(((uint16_t)feature[0x3c+2*i]|((uint16_t)feature[0x3d+2*i]<<8))==(i==1?12:tap_defaults[i]));}
+  else assert((feature[0x38]&0x1f)==0x0b&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
   unsigned before=operations;assert(prepare_wake(NULL)&&operations==before);bool pending=true;assert(wake_pending(NULL,&pending)&&!pending);held_line=true;assert(wake_pending(NULL,&pending)&&pending&&operations==before);held_line=false;
   assert(resume_wake(NULL));restored();before=operations;assert(resume_wake(NULL)&&operations==before);assert(quiesce());
   begin(id);initialization_event=true;assert(prepare_wake(NULL));assert(!initialization_latched);

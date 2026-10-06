@@ -120,6 +120,15 @@ pages 16–17 and 58–59. Tests seed documented tap defaults, preserve untouche
 parameter words, reject silent setting loss and unexpected feature/IRQ bits,
 and exercise every transfer failure with retained cleanup and retry.
 
+## IMU 0.3.6 midpoint tuning
+
+After the 0.3.5 reset correction, the owner confirmed sleep/wake and tap wake
+worked, but deliberate taps required too much force. Version 0.3.6 selects the
+requested midpoint between the original feature defaults and the conservative
+settings: BMA423 sensitivity 3 → 7 → **5**, and BMA456H threshold 9 → 15 → **12**.
+The reset correction and all timing/interrupt settings are unchanged. This is
+parameter tuning; the strict impact-matching limitations above still apply.
+
 Remaining hardware checks need no serial connection:
 1. In Light sleep, try one tap, then a deliberate pair. Check that the pair wakes
    the prior app and the crown still wakes it. Repeat after ordinary navigation.

@@ -8,7 +8,7 @@ static struct bma4_dev sensor;
  * threshold scaling parameter (documented default 9; recommended 0..15).
  * These settings reduce sensitivity; they do not implement a custom equal-
  * magnitude/quiet-window classifier. */
-enum { WAKE_BMA423_SENSITIVITY=7, WAKE_BMA456H_THRESHOLD=15 };
+enum { WAKE_BMA423_SENSITIVITY=5, WAKE_BMA456H_THRESHOLD=12 };
 static bool wake_enrolled,wake_changed,wake_prepared,io_failed;
 static const uint8_t saved_regs[]={BMA4_ACCEL_CONFIG_ADDR,BMA4_ACCEL_RANGE_ADDR,
     BMA4_POWER_CONF_ADDR,BMA4_POWER_CTRL_ADDR,BMA4_INT1_IO_CTRL_ADDR,BMA4_INT2_IO_CTRL_ADDR,
