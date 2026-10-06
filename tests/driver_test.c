@@ -162,7 +162,7 @@ int main(void) {
             m_regs[0xa4] = valid_percent[i];
             memcpy(pmu_registers_before, m_regs, sizeof(m_regs));
             assert(a->base.read(NULL, &battery) && battery.millivolts == 3700 &&
-                   battery.percent == valid_percent[i] && battery.flags == RISC_BATTERY_CHARGING);
+                   battery.percent == valid_percent[i] && (battery.flags & 3u) == RISC_BATTERY_CHARGING);
             assert(!memcmp(pmu_registers_before, m_regs, sizeof(m_regs)));
         }
     }

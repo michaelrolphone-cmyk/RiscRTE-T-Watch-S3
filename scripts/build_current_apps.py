@@ -16,17 +16,18 @@ def definitions(name,version):
  if name in CLOCK_APPS:return ['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
  flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES',
         '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS','-DPORTABLE_MOTION_WAKE']
- if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
+ flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
- if name in ('lora_messages','ble_scanner','waterfall'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
+ if name in ('lora_messages','ble_scanner','waterfall','ble_touchpad','ble_buttons'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE']
  if name=='timecard':flags+=['-DTIMECARD_APP_DATA','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='file_browser':flags+=['-DPORTABLE_FILE_BROWSER_APP','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
- if name=='settings':flags+=['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_ALARM_SETTINGS','-DPORTABLE_SETTINGS_VERSION="'+version+'"']
+ if name=='settings':flags+=['-DPORTABLE_SETTINGS_APP','-DPORTABLE_TAP_SETTINGS','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_ALARM_SETTINGS','-DPORTABLE_SETTINGS_VERSION="'+version+'"']
  if name=='wifi_settings':flags+=['-DPORTABLE_WIFI_SETTINGS_APP','-DPORTABLE_WIFI_STORAGE_INSTANCE=6','-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_WIFI_VERSION="'+version+'"']
  if name in ('ota_update','app_store'):flags+=['-Wno-misleading-indentation','-DPORTABLE_UPDATE_APP','-DPORTABLE_UPDATE_FIRMWARE='+str(int(name=='ota_update')),'-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_UPDATE_RTC_UTC_OFFSET_SECONDS=28800']
- if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60','-DPORTABLE_CATALOG_LIMIT=18']
- owner=('LORA_RETURN_APP' if name=='lora_messages' else 'FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
+ if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60','-DPORTABLE_CATALOG_LIMIT=20']
+ owner=('BATTERY_RETURN_APP' if name=='battery' else 'LORA_RETURN_APP' if name=='lora_messages' else 'FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
+ if name=='battery':flags+=['-DPORTABLE_POWER_STATUS']
  if name=='timecard':return flags
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
@@ -54,12 +55,12 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS if n not in NEW_APPS}-{'springboard.elf'})|{'clock.elf'},'Baseline catalog inventory differs')
  require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Baseline launcher icons collide')
  for name,entry in NEW_APPS.items():catalog.append({**entry,'file_name':name+'.elf'})
- require(len(catalog)==len(APPS)-2 and len(catalog)<=18 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
+ require(len(catalog)==len(APPS)-2 and len(catalog)<=20 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
  registry=json.loads((repos['system-apps']/'lib/PortableApps/catalog-icons.json').read_text())['apps']
  additional=json.loads((repos['system-apps']/'lib/PortableApps/additional-icons.json').read_text())
  for name,entry in NEW_APPS.items():
   if name=='timecard':require(entry['icon']=='solid:f274' and additional.get(entry['icon'])=='calendar-check','Timecard glyph is not in the reviewed subset')
-  elif name=='waterfall':require(entry['icon']=='solid:f0ec' and entry['icon'] in json.loads((repos['system-apps']/'lib/PortableApps/fonts/SOURCES.json').read_text())['icons'],'Waterfall glyph missing from pinned subset')
+  elif name in ('waterfall','ble_touchpad','ble_buttons'):require(entry['icon']=={'waterfall':'solid:f0ec','ble_touchpad':'solid:f245','ble_buttons':'solid:f11c'}[name] and entry['icon'] in json.loads((repos['system-apps']/'lib/PortableApps/fonts/SOURCES.json').read_text())['icons'],'Waterfall glyph missing from pinned subset')
   else:require(registry.get(name,{}).get('icon')==entry['icon'],'New app icon is not in the reviewed registry: '+name)
  for app_name,entry in registry.items():
   if app_name not in APPS:continue
@@ -107,6 +108,15 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
  record['sdr']={**c['sdr'],'build':json.loads((sdr/'build-record.json').read_text()),'resource_header_sha256':hashlib.sha256((drivers/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes()).hexdigest()}
  require((drivers/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes()==(repos['runtime']/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes(),'Runtime/driver SDR resource ABI differs')
+ subprocess.run([sys.executable,str(drivers/'scripts/build_ble_hid.py')],env={**os.environ,'NATIVE_DRIVER_CC':cc},check=True)
+ hid=drivers/'dist/ble-hid';dest=files_dir/'ble-hid';dest.mkdir()
+ source_manifest=json.loads((drivers/'Drivers/ble_hid/manifest.json').read_text())
+ require(source_manifest['id']==c['hid']['id'] and source_manifest['version']==c['hid']['version'],'HID package identity differs')
+ require(json.loads((hid/'manifest.json').read_text())==source_manifest,'HID built manifest differs')
+ for name in ('driver.elf','manifest.json'):(dest/name).write_bytes((hid/name).read_bytes())
+ subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
+ header=drivers/'sdk/driver/RiscBluetoothHidV1.h';require(header.read_bytes()==(repos['utilities']/'lib/Bluetooth/include/RiscBluetoothHidV1.h').read_bytes(),'HID driver/app ABI differs')
+ record['hid']={**c['hid'],'build':json.loads((hid/'build-record.json').read_text()),'api_header_sha256':hashlib.sha256(header.read_bytes()).hexdigest()}
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/('timecard_portable.c' if name=='timecard' else name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/('native' if name in ('file_browser','timecard') else '')/(name+'.json')).read_text())
@@ -119,11 +129,11 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
   includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
   if name=='timecard':includes+=[repos['productivity']/'lib/PortableTimecard/include',repos['productivity']/'lib/NativeApps/include']
-  if name=='ble_scanner':includes+=[repos['utilities']/'lib/Bluetooth/include']
+  if name in ('ble_scanner','ble_touchpad','ble_buttons'):includes+=[repos['utilities']/'lib/Bluetooth/include']
   allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
   if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},allowed)
-  if name in ('lora_messages','ble_scanner','waterfall'):
+  if name in ('lora_messages','ble_scanner','waterfall','ble_touchpad','ble_buttons'):
    require(all(isinstance(q['api'],str) and q['api'].startswith('>=') and q['api'][2:].isdigit() for q in original['requires']),'Unsupported new app API range')
    m={'type':'application','id':name,'version':version,'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':[{'capability':q['capability'],'api':int(q['api'][2:])} for q in original['requires']]}
   else:m=json.loads(encoded(original) if name in NEW_APPS else store[name+'.json'])
@@ -182,6 +192,9 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
    original=path/relative
    if original.is_file() and not {'test','tests','fixtures'} & set(Path(relative).parts) and original.name.upper().startswith(('LICENSE','COPYING','NOTICE')):
     target=licenses/name/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
+ for name in ('NimBLE-LICENSE','NimBLE-NOTICE','NimBLE-SOURCE.json','TinyCrypt-LICENSE'):
+  original=drivers/'dist/ble-hid'/name;require(original.is_file(),'HID dependency notice missing: '+name)
+  target=licenses/'ble-hid'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
  # Speech detector source attribution and patent grant travel with the ELF.
  voice=repos['utilities']/'lib/VoiceActivity'
  for name in ('LICENSE','AUTHORS','PATENTS','SOURCES.json','PATCHES.md'):

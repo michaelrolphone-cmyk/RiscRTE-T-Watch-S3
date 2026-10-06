@@ -167,7 +167,7 @@ int main(int argc,char** argv){
   // Current virtual defaults may expire one inactive ledger; kvPut still
   // validates the exact namespace/key/size/content and rejects any config write.
   assert(m.storageWrites<=1&&(!m.storageWrites||startupStorageOk()));
-  if(scenario=="healthy")assert(startupStorageOk());
+  if(scenario=="healthy")assert(startupStorageOk()&&m.hidBondReads==4);
   assert(!m.rtcWrites&&!m.radioActivity&&!rawCalls);
 #else
   assert(!m.rtcWrites&&!m.storageWrites&&!m.radioActivity&&!rawCalls);

@@ -1,10 +1,12 @@
 /* AXP2101 bring-up and battery sample for the 470 mAh T-Watch-S3 cell.
  * Charge current is hardcoded to the XPowersLib 100 mA code. There is no
- * setter. LilyGO: keep charge current below 130 mA. Amazon listing notes:
- * do not set the library default above 125 mA. Percentage is the PMIC's
+ * setter. LilyGO requires constant-current charging below 130 mA. The
+ * existing precharge, termination, voltage and thermal policy are preserved.
+ * Percentage is the PMIC's
  * existing fuel-gauge estimate; this driver never writes battery parameters.
  * See docs/PMU_BATTERY.md for the read-only admission and accuracy limits. */
 #include "RiscBatteryGaugeV1.h"
+#include "PortablePowerStatus.h"
 #include "twatch_caps.h"
 #include "RiscGpioBankV1.h"
 #include "RiscI2cBusV1.h"
@@ -30,6 +32,9 @@
 #define AXP_ADC_EN 0x30u
 #define AXP_VBAT_H 0x34u
 #define AXP_ICC 0x62u
+#define AXP_CHARGE_CTRL 0x18u
+#define AXP_TS_CTRL 0x50u
+#define AXP_CHARGER_ENABLED (1u << 1)
 #define AXP_V_3V3 28u
 #define AXP_LDO_MASK ((1u << 1) | (1u << 2) | (1u << 3) | (1u << 5))
 static const risc_i2c_bus_api_v1 *bus;
@@ -52,6 +57,60 @@ static bool read_reg(uint8_t reg, uint8_t *out, size_t n) {
 static const tw_hw_axp2101_v1 *power;
 static uint8_t saved_enable, saved_voltage[4], saved_irq;
 static bool changed;
+/* Charger enable is transactional until start commits. Cleanup after a failed
+ * start may restore only this bit. Never restore an inherited unsafe current,
+ * toggle an already-enabled charger (safety timer), or disable it on unload. */
+static bool charge_enable_pending;
+static uint8_t charge_control_before;
+static bool rollback_charge_enable(void) {
+    if (!charge_enable_pending) return true;
+    uint8_t value;
+    if (!read_reg(AXP_CHARGE_CTRL, &value, 1)) return false;
+    uint8_t expected = (uint8_t)((value & ~AXP_CHARGER_ENABLED) |
+                               (charge_control_before & AXP_CHARGER_ENABLED));
+    if (value != expected && !write_reg(AXP_CHARGE_CTRL, expected)) return false;
+    if (!read_reg(AXP_CHARGE_CTRL, &value, 1) ||
+        (value & AXP_CHARGER_ENABLED) != (expected & AXP_CHARGER_ENABLED)) return false;
+    charge_enable_pending = false;
+    return true;
+}
+static bool initialize_charge(void) {
+    uint8_t current, policy, value;
+    if (!read_reg(AXP_ICC, &current, 1) ||
+        !read_reg(AXP_CHARGE_CTRL, &charge_control_before, 1) ||
+        !read_reg(AXP_TS_CTRL, &policy, 1)) {
+        set_error("AXP2101 charge configuration read failed");
+        return false;
+    }
+    /* Program the already-approved 100mA ceiling, preserving reserved bits.
+     * The fixed-input TS wiring is documented, but its mode, die protection,
+     * JEITA, safety timers, voltage and battery model are deliberately untouched. */
+    uint8_t target = (uint8_t)((current & 0xe0u) | 4u);
+    if ((current != target && !write_reg(AXP_ICC, target)) ||
+        !read_reg(AXP_ICC, &value, 1) || (value & 0x1fu) != 4u) {
+        set_error("AXP2101 100mA charge limit not verified");
+        return false;
+    }
+    if (!(charge_control_before & AXP_CHARGER_ENABLED)) {
+        /* Mark before the write: a failed transaction can still have reached
+         * the device. A retained claim permits explicit cleanup retry. */
+        charge_enable_pending = true;
+        if (!write_reg(AXP_CHARGE_CTRL, charge_control_before | AXP_CHARGER_ENABLED)) {
+            set_error("AXP2101 charger enable write failed");
+            return false;
+        }
+    }
+    if (!read_reg(AXP_CHARGE_CTRL, &value, 1) ||
+        value != (uint8_t)(charge_control_before | AXP_CHARGER_ENABLED)) {
+        set_error("AXP2101 charger enable not verified");
+        return false;
+    }
+    if (!read_reg(AXP_TS_CTRL, &value, 1) || value != policy) {
+        set_error("AXP2101 temperature policy not verified");
+        return false;
+    }
+    return true;
+}
 static uint8_t sleep_irq[3];
 static bool sleep_changed, sleep_prepared;
 /* IRQ status is an event history, not the PWRON pin level. In particular, no
@@ -75,11 +134,9 @@ static bool rails(void) {
         if (!write_reg((uint8_t)(0x92 + id), (uint8_t)((power->rails[i].millivolts - 500) / 100)))
             return false;
     }
-    if (!write_reg(AXP_LDO_ON, saved_enable | mask) || !write_reg(AXP_ICC, 4))
+    if (!write_reg(AXP_LDO_ON, saved_enable | mask))
         return false;
     uint8_t value = 0;
-    if (!read_reg(AXP_ICC, &value, 1) || (value & 0x1f) != 4)
-        return false;
     if (!read_reg(AXP_ADC_EN, &value, 1) || !write_reg(AXP_ADC_EN, value | 1))
         return false;
     return write_reg(0x41, saved_irq | 0x0f);
@@ -232,6 +289,18 @@ static bool read_sample(void *context, risc_battery_sample_v1 *out) {
         out->percent = percent;
         out->flags &= (uint8_t)~RISC_BATTERY_PROFILE_MISSING;
     }
+    /* All status flags come from this successful sample, with no IRQ ACK.
+     * Completion additionally requires usable input and an attached battery. */
+    /* With detection disabled, presence may be synthetic. Do not advertise
+     * the extended set as valid; old clients still receive voltage/direction. */
+    if (detect & AXP_BAT_DETECT_ENABLED) out->flags |= PORTABLE_POWER_STATUS_VALID;
+    if (status[0] & 0x20u) out->flags |= PORTABLE_POWER_INPUT_READY;
+    if (status[0] & AXP_BAT_PRESENT) out->flags |= PORTABLE_POWER_BATTERY_PRESENT;
+    if (gauge[1] & AXP_CHARGER_ENABLED) out->flags |= PORTABLE_POWER_CHARGER_ENABLED;
+    if (status[0] & 0x02u) out->flags |= PORTABLE_POWER_THERMAL_LIMIT;
+    if ((status[0] & 0x28u) == 0x28u && (status[1] & 7u) == 4u)
+        out->flags |= PORTABLE_POWER_CHARGE_DONE;
+    error[0] = 0;
     return true;
 }
 static bool last_error(char *dst, size_t cap) {
@@ -243,6 +312,10 @@ static bool last_error(char *dst, size_t cap) {
 static bool quiesce(void) {
     bool ok = true;
     if (sleep_changed && !resume_sleep(NULL)) return false;
+    if (!rollback_charge_enable()) {
+        set_error("AXP2101 charger rollback needs retry");
+        return false;
+    }
     if (changed && claim) {
         if (!write_reg(0x41, saved_irq) || !write_reg(AXP_LDO_ON, saved_enable))
             return false;
@@ -268,6 +341,7 @@ static bool quiesce(void) {
 static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     if (started || claim || irq_claim)
         return false;
+    error[0] = 0;
     power = tw_config(deps, count, "x-powers,axp2101", "power.axp2101", sizeof(*power));
     if (!power || power->charge_ma != 100 || !power->rail_count || power->rail_count > 4 ||
         power->reserved)
@@ -303,7 +377,7 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         (void)quiesce();
         return false;
     }
-    if (!rails()) {
+    if (!rails() || !initialize_charge()) {
         if (!error[0])
             set_error("AXP2101 rail or charge setup failed");
         (void)quiesce();
@@ -312,6 +386,8 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
     if (clock_api->sleep_ms)
         clock_api->sleep_ms(clock_api->context, 5);
     key_state = KEY_UNKNOWN;
+    charge_enable_pending = false; /* Autonomous charging survives sleep/unload. */
+    error[0] = 0;
     started = true;
     return true;
 }

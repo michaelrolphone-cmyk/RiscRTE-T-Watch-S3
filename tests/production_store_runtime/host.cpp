@@ -20,6 +20,7 @@ struct Model {
   unsigned healthCalls=0,moduleLoads=0,moduleUnloads=0,appLoads=0,appUnloads=0;
   unsigned rows=0,frameRows=0,frames=0,brightness=0,touchReads=0,rtcWrites=0;
   unsigned appSettingsReads=0,appPointsReads=0,quickSettingsReads=0,radioActivity=0,storageWrites=0;
+  unsigned hidBondReads=0;
   uint8_t pointsLedger[64]{};bool pointsLedgerPresent=false;unsigned pointsLedgerReads=0;
   unsigned command=0,row=0;
   void* application=nullptr;
@@ -92,7 +93,17 @@ bool spiTransfer(uint8_t p,const uint8_t* tx,uint8_t*,size_t n,uint32_t ms){
 bool spiEnd(uint8_t p,uint8_t cs,uint32_t){assert(p==2&&cs==12&&m.held);m.held=false;m.levels[cs]=true;return true;}
 bool spiClose(uint8_t p){assert(p==2&&!m.held&&m.spi);m.spi=false;return true;}
 int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_t* size){
-  assert(ns>=1&&ns<=5&&key&&size);*size=0;
+  assert(key&&size);*size=0;
+#ifdef CURRENT_APPS_PROFILE
+  if(ns==10){
+    // The lazy HID provider reads only its four bound records at startup.
+    // Empty bonds must not cause radio activity or persistent writes.
+    assert(!m.appLoaded&&bytes&&cap==64);
+    assert(!strcmp(key,"hid_ours")||!strcmp(key,"hid_peer")||!strcmp(key,"hid_ccc")||!strcmp(key,"hid_identity"));
+    ++m.hidBondReads;return RISC_KEY_VALUE_NOT_FOUND;
+  }
+#endif
+  assert(ns>=1&&ns<=5);
   // Before Clock's first yield no provider poll has run. These are direct
   // namespace reads by production crown.c, after all providers started.
   if(m.appLoaded&&!m.firstAppDelay){

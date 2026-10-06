@@ -106,6 +106,35 @@ int main(void){
   for(unsigned i=0;i<8;i++)if((1u<<i)!=(variant?1u:32u)){begin(id);force_reg_index=0x56;force_reg_mask=1u<<i;assert(!prepare_wake(NULL)&&enrolled);force_reg_mask=0;assert(resume_wake(NULL));restored();assert(quiesce());}
   const unsigned read_indices[]={0x57,0x58,0x53,0x53,0x53,0x53,0x55};const unsigned read_bits[]={1,128,2,8,4,16,1};
   for(unsigned i=0;i<sizeof(read_indices)/sizeof(read_indices[0]);i++){begin(id);final_read_index=read_indices[i];final_read_xor=read_bits[i];assert(!prepare_wake(NULL)&&enrolled);final_read_xor=0;assert(resume_wake(NULL));restored();assert(prepare_wake(NULL));assert(resume_wake(NULL));assert(quiesce());}
+  /* Every encoded setting uses actual vendor semantics and readback; the
+   * observation suffix never acknowledges an ordinary prepared sleep. */
+  for(unsigned value=0;value<=(variant?15u:7u);value++){
+   begin(id);twatch_tap_info_v1 info={.struct_size=sizeof(info)};
+   assert(tap_info(NULL,&info) && info.profile==(variant?2u:1u) && info.minimum==0 && info.maximum==(variant?15u:7u));
+   assert(!tap_configure(NULL,(uint16_t)(info.maximum+1)) && !operations);
+   assert(tap_configure(NULL,(uint16_t)value) && prepare_wake(NULL));
+   assert((variant?(unsigned)feature[0x3e]:(unsigned)((feature[0x38]&14)>>1))==value);
+   twatch_tap_observation_v1 sample={.struct_size=sizeof(sample)};
+   assert(!tap_observe(NULL,&sample) && !tap_configure(NULL,0));
+   assert(resume_wake(NULL));restored();
+   assert(tap_observe_begin(NULL,(uint16_t)value));
+   regs[0x1c]=variant?1:0x20;regs[3]=0x80;
+   regs[0x12]=0;regs[0x13]=0x40;regs[0x14]=0;regs[0x15]=0xc0;regs[0x16]=0;regs[0x17]=0x20;
+   assert(tap_observe(NULL,&sample) && sample.double_tap && sample.sample_ready &&
+       sample.x_mg==1000 && sample.y_mg==-1000 && sample.z_mg==500 && !regs[0x1c]);
+   regs[3]=0;assert(tap_observe(NULL,&sample) && !sample.double_tap && !sample.sample_ready && !sample.x_mg);
+   assert(resume_wake(NULL));restored();assert(!observe_active && !tap_observe(NULL,&sample));assert(quiesce());
+  }
+  begin(id);assert(tap_observe_begin(NULL,0));regs[3]=0x80;
+  twatch_tap_observation_v1 sample={.struct_size=sizeof(sample)};
+  operations=0;assert(tap_observe(NULL,&sample));unsigned observed_transfers=operations;
+  assert(resume_wake(NULL));assert(quiesce());
+  for(unsigned failure=1;failure<=observed_transfers;failure++){
+   begin(id);assert(tap_observe_begin(NULL,0));regs[3]=0x80;operations=0;fail_at=failure;
+   sample=(twatch_tap_observation_v1){.struct_size=sizeof(sample),.x_mg=123};
+   assert(!tap_observe(NULL,&sample) && sample.x_mg==123 && enrolled && observe_active);
+   fail_at=0;assert(resume_wake(NULL));restored();assert(!observe_active);assert(quiesce());
+  }
   printf("BMA%u actual Bosch image/configuration: %u preparation transfers, %u rollback transfers fault-injected, retry/held IRQ/cleanup PASS\n",variant?456:423,count,cleanup_count);
  }
 }

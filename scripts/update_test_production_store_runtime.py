@@ -5,6 +5,7 @@ The delivered provider-registry correction remains in the baseline. This
 lane uses the pinned paired Runtime and real target registry with host relocation.
 """
 import argparse
+import sys
 import contextlib
 import hashlib
 import json
@@ -269,6 +270,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
         if current_profile:source_manifests['s3-radio-iq-v1']=drivers/'Drivers/s3_radio_iq_v1/manifest.json'
+        if current_profile:source_manifests['ble-hid']=drivers/'Drivers/ble_hid/manifest.json'
         if not current_profile:
             from build_legacy_sleep import legacy_inputs
             legacy=legacy_inputs(ROOT)
@@ -309,6 +311,12 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 source=drivers/'Drivers/s3_radio_iq_v1/driver.c'
                 extra=['-DRISC_IQ_HOST_TEST']
                 module_includes=['-I'+str(drivers/'sdk/driver'),'-I'+str(drivers/'test')]
+            elif name=='ble-hid':
+                command([sys.executable,drivers/'scripts/build_ble_hid.py','--host',*(['--sanitize'] if os.environ.get('SANITIZE')=='1' else [])])
+                built=drivers/('build/ble-hid-san' if os.environ.get('SANITIZE')=='1' else 'build/ble-hid-host')/'driver.so'
+                shutil.copy2(built,module)
+                for target in targets:shutil.copy2(module,target)
+                continue
             elif name.startswith('software-update-'):
                 source = system / 'Services/update/service.cpp'
                 compiler, language = cxx, '-std=c++17'

@@ -820,6 +820,9 @@ jobs:
 
 
   latest-main-image:
+    permissions:
+      contents: read
+      actions: read
     needs: [software-checks, alarm-integration, points-integration, points-store-faces, wifi-integration, production-store-admission, update-integration, update-cross-layer]
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-22.04
@@ -842,12 +845,20 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
               out.write('sha='+value['source_sha']+'\n')
               out.write('version='+value['firmware_version']+'\n')
+              out.write('previous_sha='+json.load(open('apps/next-cohort-baseline.json'))['runtime_source_sha']+'\n')
           PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
           ref: ${{ steps.runtime.outputs.sha }}
           path: .latest/runtime
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.runtime.outputs.previous_sha }}
+          path: .latest/previous-runtime
           fetch-depth: 0
           persist-credentials: false
       - name: Read exact integrated current-app source pins
@@ -950,6 +961,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_bootfs.py -v
           python -m unittest discover -s tests -p test_current_updates.py -v
           python -m unittest discover -s tests -p test_current_cohort.py -v
+          python -m unittest discover -s tests -p test_next_watch_cohort.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
           python scripts/test_current_launcher_catalog.py --system-apps .latest/current-system --current-apps-artifact-dir dist/current-apps --output dist/current-launcher-catalog-proof.json
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
@@ -1033,35 +1045,36 @@ jobs:
             --native-elf .latest/runtime/dist/esp32s3-16mb-appdata-iq/firmware.elf \
             --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
             --output dist/current-runtime-bma456h/sanitized
-      - uses: actions/checkout@v4
-        with:
-          repository: michaelrolphone-cmyk/RiscRTE
-          ref: e08609b465d9368d4e6efc45e377adbdbbb706a1
-          path: .latest/released-runtime
-          persist-credentials: false
-      - name: Prepare exact staged SDR upgrade inputs
+      - name: Verify the exact accepted SDR predecessor and next cohort
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p .latest/sdr-baseline
-          python - <<'PY_SDR'
-          import json,hashlib,urllib.request
+          python - <<'PY_NEXT'
+          import hashlib,json,subprocess,sys
           from pathlib import Path
-          b=json.load(open('apps/sdr-upgrade-baseline.json'))
-          for key,name in [('release_bin_url','released-1.0.2.bin'),('index_url','release-index.json')]:
-              data=urllib.request.urlopen(b[key],timeout=60).read()
-              if key=='release_bin_url' and hashlib.sha256(data).hexdigest()!=b['release_bin_sha256']:raise ValueError('Released baseline hash differs')
-              (Path('.latest/sdr-baseline')/name).write_bytes(data)
-          PY_SDR
-          python scripts/build_sdr_cohort.py --released-bin .latest/sdr-baseline/released-1.0.2.bin --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --index .latest/sdr-baseline/release-index.json --system-apps .latest/current-system --output dist/sdr-upgrade
-          python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.4/twatch-s3-cohort-1.0.4.bin --output dist/sdr-upgrade-test
-          SANITIZE=1 python scripts/test_sdr_upgrade.py --released-runtime .latest/released-runtime --runtime .latest/runtime --released-bin .latest/sdr-baseline/released-1.0.2.bin --native-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq --cohort dist/sdr-upgrade/firmware-v1.0.4/twatch-s3-cohort-1.0.4.bin --output dist/sdr-upgrade-test-san
+          sys.path.insert(0,'scripts')
+          from publish_watch_product import checked_zip
+          pins=json.load(open('apps/next-cohort-baseline.json'))
+          for kind,item in pins['artifacts'].items():
+              data=subprocess.check_output(['gh','api','repos/'+pins['repository']+'/actions/artifacts/'+str(item['id'])+'/zip'])
+              if hashlib.sha256(data).hexdigest()!=item['sha256']:raise ValueError('Accepted predecessor artifact differs: '+kind)
+              destination=Path('.latest/accepted-sdr')/kind
+              with checked_zip(data) as archive:
+                  for name in archive.namelist():
+                      if name.endswith('/'):continue
+                      target=destination/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(archive.read(name))
+          PY_NEXT
+          python scripts/build_next_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
+          python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test
+          SANITIZE=1 python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test-san
       - uses: actions/upload-artifact@v4
         with:
-          name: twatch-sdr-upgrade-${{ github.event.pull_request.head.sha || github.sha }}
+          name: twatch-next-cohort-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
-            dist/sdr-upgrade/
+            dist/next-watch-cohort/
             dist/current-launcher-catalog-proof.json
-            dist/sdr-upgrade-test/upgrade-proof.json
-            dist/sdr-upgrade-test-san/upgrade-proof.json
+            dist/next-watch-upgrade-test/next-watch-upgrade-proof.json
+            dist/next-watch-upgrade-test-san/next-watch-upgrade-proof.json
           if-no-files-found: error
           retention-days: 30
       - uses: actions/upload-artifact@v4
