@@ -50,6 +50,8 @@
     "apps/clock/crown.c": "230742ed60949366bd566607a8cc7b0fb820c30f6bb6dd31dbeb5fa326d98958",
     "apps/clock/portable_sleep.c": "be241d67da4e03ed6433a03616b833664582e66257a489d396de218329bb7f75",
     "apps/clock/watch_sleep.h": "437db1919d34385b9b0bc1f24c39b81477b0a5bd1737e391e87bc98f61c0b0b1",
-    "apps/clock/watch_alarm_sleep.h": "8ab72d6532e9bf2876391d0614a88d6052fa686c02715e3d1f522412053e3783"
+    "apps/clock/watch_alarm_sleep.h": "8ab72d6532e9bf2876391d0614a88d6052fa686c02715e3d1f522412053e3783",
+    "apps/clock/nova/nova.c": "60afddc36e6e9c5e5d8f67b785f65a2f14b17d767c6cab4899d407b70c538627",
+    "apps/clock/nova/nova.h": "472deb82629e1ee10579c5c22c4d217e42d0ca267e7b94b98f4662ba54ebfe2f"
   }
 }

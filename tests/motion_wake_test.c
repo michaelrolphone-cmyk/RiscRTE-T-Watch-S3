@@ -32,7 +32,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
  if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;uploaded=0;reset_count++;return acknowledged;}
  if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));if(!regs[0x59]){assert(offset==uploaded && wn==33);assert(!memcmp(p+1,(silicon==0x13?bma423_config_file:bma456h_config_file)+offset,wn-1));uploaded+=wn-1;}else{assert(offset>=6144&&offset-6144+wn-1<=sizeof(feature));memcpy(feature+offset-6144,p+1,wn-1);
   if(force_feature_mask)feature[force_feature_index]|=(uint8_t)force_feature_mask;
-  if(lose_sensitivity_write){if(silicon==0x13)feature[0x38]=(uint8_t)((feature[0x38]&~0x0e)|6);else{feature[0x3e]=9;feature[0x3f]=0;}}
+  if(lose_sensitivity_write){if(silicon==0x13)feature[0x38]=(uint8_t)((feature[0x38]&~0x0e)|14);else{feature[0x3e]=9;feature[0x3f]=0;}}
   if(alter_reserved_word&&silicon==0x16&&offset-6144<=0x3c&&0x3c<offset-6144+wn-1)feature[0x3c]^=1;
  }return true;}
  assert(reg+wn-1<=256);memcpy(regs+reg,p+1,wn-1);
@@ -76,7 +76,7 @@ int main(void){
   io_failed=false;assert(quiesce());
   begin(id);assert(prepare_wake(NULL));unsigned count=operations;assert(enrolled&&wake_prepared&&uploaded==6144&&regs[0x55]==1&&regs[0x53]==0x0a&&regs[0x56]==(variant?1:0x20)&&!regs[0x57]&&!regs[0x58]);
   if(variant){assert(!regs[0x28]&&regs[0x29]==0x20);for(unsigned i=0;i<12;i++)assert(((uint16_t)feature[0x3c+2*i]|((uint16_t)feature[0x3d+2*i]<<8))==(i==1?12:tap_defaults[i]));}
-  else assert((feature[0x38]&0x1f)==0x0b&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
+  else assert((feature[0x38]&0x1f)==0x07&&!feature[0x3a]&&!(feature[0x37]&0x38)&&!(feature[3]&0xe0));
   unsigned before=operations;assert(prepare_wake(NULL)&&operations==before);bool pending=true;assert(wake_pending(NULL,&pending)&&!pending);held_line=true;assert(wake_pending(NULL,&pending)&&pending&&operations==before);held_line=false;
   assert(resume_wake(NULL));restored();before=operations;assert(resume_wake(NULL)&&operations==before);assert(quiesce());
   begin(id);initialization_event=true;assert(prepare_wake(NULL));assert(!initialization_latched);

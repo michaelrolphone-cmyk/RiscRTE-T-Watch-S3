@@ -71,7 +71,7 @@ priority, retained apps, current-store admission/execution and target links.
 Historical GPIO 0.4.2/PMU 0.5.3 packages and the historical Clock/sleep adapters
 are rebuilt from frozen exact source inputs and must match their original hashes.
 Their test lanes use the matching original SDK headers. The current overlay replaces them
-with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.6.
+with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.7.
 
 ## Reset refusal diagnosis
 
@@ -129,6 +129,11 @@ requested midpoint between the original feature defaults and the conservative
 settings: BMA423 sensitivity 3 → 7 → **5**, and BMA456H threshold 9 → 15 → **12**.
 The reset correction and all timing/interrupt settings are unchanged. This is
 parameter tuning; the strict impact-matching limitations above still apply.
+
+After testing the midpoint, the owner requested the original BMA423 sensitivity
+3 for the final 1.0.2 release. IMU 0.3.7 explicitly selects 3 while preserving
+the reset correction. The BMA456H profile retains threshold 12. A measured
+tap-calibration page and an explicit off switch are separate post-release work.
 
 Remaining hardware checks need no serial connection:
 1. In Light sleep, try one tap, then a deliberate pair. Check that the pair wakes
