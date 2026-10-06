@@ -968,6 +968,7 @@ jobs:
           python scripts/test_quick_clock.py --system-apps .latest/current-system
           python .latest/current-system/scripts/test_quick_actions.py
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
+          python scripts/test_alarm_sleep_resume.py --system-apps .latest/current-system --utilities .latest/current-utilities --runtime .latest/runtime
           python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities
       - name: Assemble explicit initial app-data Watch candidates

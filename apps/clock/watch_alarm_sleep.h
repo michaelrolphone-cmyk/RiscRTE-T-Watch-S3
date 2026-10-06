@@ -27,6 +27,25 @@ static uint32_t watch_alarm_duration(const alarm_sleep_v1 *s) {
     uint32_t seconds=s->deadline-s->rtc_seconds;
     return seconds>RISC_TIMED_SLEEP_MAX_MS/1000u?RISC_TIMED_SLEEP_MAX_MS:seconds*1000u;
 }
+/* Current cohorts explicitly require the append-only service sleep suffix.
+ * Frozen historical builds keep the old prefix contract and source inputs. */
+static bool watch_alarm_resume_ready(const alarm_service_v1 *a) {
+#ifdef WATCH_ALARM_SLEEP_RESUME
+    const alarm_service_sleep_v1 *extended=(const alarm_service_sleep_v1 *)a;
+    return a && a->api_version==ALARM_SERVICE_API_V1 &&
+        a->struct_size>=ALARM_SERVICE_SLEEP_V1_SIZE && extended->resume_sleep;
+#else
+    (void)a;return true;
+#endif
+}
+static int32_t watch_alarm_resume_light(const alarm_service_v1 *a,const alarm_sleep_v1 *decision) {
+#ifdef WATCH_ALARM_SLEEP_RESUME
+    const alarm_service_sleep_v1 *extended=(const alarm_service_sleep_v1 *)a;
+    return watch_alarm_resume_ready(a)?extended->resume_sleep(a->context,decision):ALARM_INVALID;
+#else
+    (void)a;(void)decision;return ALARM_OK;
+#endif
+}
 /* No service or storage calls belong after this pad-hold boundary. */
 static int32_t watch_alarm_enter_deep(const twatch_panel_power_v1 *panel,
         const twatch_pmu_api_v1 *pmu,const twatch_motion_api_v1 *motion,uint32_t duration) {
@@ -51,6 +70,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
        hold. Reconcile AFTER that delay but BEFORE Deep creates an exit barrier.
        Runtime must never see service KV while appExitSafe is false. */
     watch_sleep_stage=1;watch_sleep_detail=0;
+    if(!watch_alarm_resume_ready(a)){watch_sleep_stage=4;watch_sleep_detail=ALARM_INVALID;return WATCH_SLEEP_REFUSED;}
     if(!watch_motion_ready(motion))return WATCH_SLEEP_REFUSED;
     bool motion_ok=!motion || motion->prepare_wake(motion->context);
     if(motion_ok)watch_sleep_stage=2;
@@ -69,10 +89,21 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
         watch_sleep_stage=deep?6:5;
         uint32_t duration=watch_alarm_duration(&decision);
         if(deep)rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
-        else if(duration || hybrid) {
+        else {
             uint32_t light=hybrid && (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)?PORTABLE_SLEEP_LIGHT_MS:duration;
-            rc=pmu->base.struct_size>=TWATCH_PMU_TIMED_SLEEP_SIZE && pmu->light_sleep_for?
-                watch_enter_light(pmu,motion,light,&result):RISC_LIGHT_SLEEP_UNSUPPORTED;
+            rc=light?(pmu->base.struct_size>=TWATCH_PMU_TIMED_SLEEP_SIZE && pmu->light_sleep_for?
+                watch_enter_light(pmu,motion,light,&result):RISC_LIGHT_SLEEP_UNSUPPORTED):
+                watch_enter_light(pmu,motion,0,&result);
+            /* Only successful native Light sleep may consume this exact plan.
+             * Reanchor before any service step/refresh or Deep pad hold. A
+             * refusal/retained native result never authorizes this boundary. */
+            if(rc==RISC_LIGHT_SLEEP_OK) {
+                alarm_result=watch_alarm_resume_light(a,&decision);
+                if(alarm_result!=ALARM_OK) {
+                    watch_sleep_stage=4;watch_sleep_detail=alarm_result;alarm_failed=true;
+                    rc=RISC_LIGHT_SLEEP_PLATFORM;
+                }
+            }
             if(rc==RISC_LIGHT_SLEEP_OK && result.wake_cause==RISC_LIGHT_SLEEP_WAKE_TIMER && hybrid &&
                 (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)) {
                 bool pending=true;
@@ -93,7 +124,7 @@ static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
                     }
                 }
             }
-        } else rc=watch_enter_light(pmu,motion,0,&result);
+        }
     }
     if(watch_sleep_stage==5 || watch_sleep_stage==6)watch_sleep_detail=rc;
     if(rc==RISC_LIGHT_SLEEP_RETAINED){diagnostic("WATCH_ALARM sleep=retained");return WATCH_SLEEP_RETAINED;}

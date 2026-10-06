@@ -254,7 +254,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
-    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE']
+    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE','WATCH_ALARM_SLEEP_RESUME']
     with _build(output) as build:
         if current_profile:
             require(drivers is not None,'Exact SDR source required for current execution')

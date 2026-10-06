@@ -4,11 +4,11 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "0904b46bfe9d10ad91cf96e734f70412aaa520e7"
+      "commit": "1c82933488292be1064336aa592f7b2f7c378902"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "96ff53eb1b456ea8dbf5f02191ddd5ef67f8260e"
+      "commit": "e6444bb4887d4254a6985eee8e6f9124f1fa7a02"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
@@ -43,7 +43,7 @@
     "ble_touchpad": "0.1.0",
     "ble_buttons": "0.1.0"
   },
-  "service_version": "0.4.1",
+  "service_version": "0.4.2",
   "sdr": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
     "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",

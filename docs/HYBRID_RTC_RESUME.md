@@ -41,9 +41,36 @@ attribution of the reported freeze.
 - [IDF 4.4.7 sleep compensation](https://github.com/espressif/esp-idf/blob/v4.4.7/components/esp_hw_support/sleep_modes.c#L694-L810)
 - [IDF RTC source and sleep-time drift](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32s3/api-reference/system/system_time.html#rtc-clock-source)
 
-A narrowly scoped, one-use service resume boundary is in progress. It will
-reanchor independent clocks only after successful native Light sleep, validate
-a fresh calendar and reject backward RTC/monotonic time, while retaining the
-existing awake time-edit checks. Until that integration is verified, this
-checkpoint is only the error-propagation correction. No physical qualification,
-release, catalog advancement or device installation is implied.
+## Explicit successful-Light resume boundary
+
+Utilities alarm-service 0.4.2 adds an optional `alarm_service_sleep_v1` wrapper.
+The original 36-byte target table remains unchanged, and the wrapper appends a
+single callback at byte 36 (40 bytes total). System carries the byte-identical
+header from Utilities `e6444bb4`; existing prefix consumers remain compatible.
+
+A successful `prepare_sleep` produces a one-use copied decision. Only after the
+native Light call returns OK does the current Watch adapter pass that unchanged
+decision to `resume_sleep`, before any service step/refresh or Deep pad hold.
+The service validates the ticket, one fresh calendar, backward RTC and monotonic
+time, then reanchors the independent clocks and begins full reconciliation.
+Wrong/reused decisions, invalid/backward clocks and ordinary native refusal do
+not authorize reanchoring. The existing awake two-second change checks remain.
+
+The new current-cohort compile flag requires this suffix explicitly. Old-prefix
+providers refuse that current sleep path before peripheral preparation; frozen
+historical builds retain their original prefix path. The current source profile
+and actual-store host execution both require the flag, preventing tests from
+silently exercising the old path while target applications use the new one.
+
+`test_alarm_sleep_resume.py` compiles the real provider and Watch adapter with
+independent clocks. Both drift directions now reach the Hybrid Deep decision or
+deliver the due alarm; an alarm becoming due across the five-minute boundary wins
+over Deep. Real storage/RTC failures remain visible, and native refusal still
+preserves awake clock-edit rejection. Normal and ASan/UBSan runs pass. The exact
+installed helper fails the same combined regression. Original API consumers,
+Clock/retained-app alarm behavior and Points cues have separate regression gates.
+
+This is software evidence, not measured hardware drift or proof of every reported
+freeze. No release, catalog advancement or device installation is implied. The
+installed midpoint source also needs its own bounded migration profile; it must
+not be substituted into the frozen released-1.0.2 upgrade proofs by name alone.

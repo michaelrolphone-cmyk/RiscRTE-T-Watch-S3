@@ -148,6 +148,7 @@ def verify(artifact,head,root=ROOT):
   require(metadata(debug)==r['debug'][name+'.elf'] and len(debug)==compact.get('before_bytes') and sha(debug)==compact.get('before_sha256'),'Original app ELF differs: '+name)
   require(compact.get('after_bytes')==len(files[name+'.elf']) and compact.get('after_sha256')==sha(files[name+'.elf']) and len(debug)>=compact['after_bytes'],'Current ELF compaction hashes differ: '+name)
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
+  require('-DWATCH_ALARM_SLEEP_RESUME' in a['defines'],'Current alarm sleep resume boundary missing: '+name)
   require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
   require(('-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE' in a['defines']) == (name == 'audio_spectrum'),'Current continuous capture profile differs: '+name)
