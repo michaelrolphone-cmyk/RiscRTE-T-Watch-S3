@@ -38,7 +38,12 @@ def prepare(released_bin,apps_dir,runtime,native_dir,index_path,output,system_ap
  new_files={'waterfall.elf','waterfall.json','s3-radio-iq/driver.elf','s3-radio-iq/manifest.json'}
  require(set(following)==set(previous)|new_files,'SDR store inventory differs')
  for row in before['app_capabilities']:
-  require(json.loads(previous[row['manifest']])==json.loads(following[row['manifest']]),'Existing app authority/version differs: '+row['manifest'])
+  before_app=json.loads(previous[row['manifest']]);after_app=json.loads(following[row['manifest']])
+  if row['manifest']=='springboard.json':
+   require(before_app.pop('version')=='1.4.9' and after_app.pop('version')=='1.4.10','Expected distinct launcher catalog version')
+  else:
+   require(previous[before_app['file_name']]==following[after_app['file_name']],'Unrelated existing app binary changed: '+row['manifest'])
+  require(before_app==after_app,'Existing app authority/version differs: '+row['manifest'])
  candidate=json.loads((native_dir/'candidate.json').read_text());fw=(native_dir/'firmware.bin').read_bytes();elf=(native_dir/'firmware.elf').read_bytes()
  require(candidate['source_sha']==c['sources']['runtime']['commit'] and candidate['target']=='esp32s3-16mb-appdata-iq' and candidate['firmware_version']=='0.1.34','Wrong guarded native candidate')
  for name,meta in candidate['assets'].items():

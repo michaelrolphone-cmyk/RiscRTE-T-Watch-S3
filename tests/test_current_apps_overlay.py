@@ -68,6 +68,11 @@ class CurrentAppsOverlay(unittest.TestCase):
   browser=next(x for x in b['app_capabilities'] if x['manifest']=='file_browser.json')
   self.assertEqual([g for g in browser['grants'] if g['capability'].startswith('storage.')],[{'capability':'storage.installed-files','api':1,'instance_id':0},current.ALARM_PREFERENCES])
   self.assertFalse(any(g['capability']=='storage.installed-files' for row in b['app_capabilities'] if row['manifest']!='file_browser.json' for g in row['grants']))
+ def test_catalog_capacity_override_is_launcher_only(self):
+  for name in current.APPS:
+   self.assertEqual('-DPORTABLE_CATALOG_LIMIT=18' in definitions(name,'1.0.1'),name=='springboard')
+  self.record['apps']['springboard']['defines'].remove('-DPORTABLE_CATALOG_LIMIT=18');self.write_record()
+  with self.assertRaisesRegex(ValueError,'launcher catalog profile'):current.verify(self.art,self.head,self.root)
  def test_waterfall_has_only_granted_iq_and_explicit_shared_migration(self):
   boot=current.configure_boot(self.boot)
   grants=next(row['grants'] for row in boot['app_capabilities'] if row['manifest']=='waterfall.json')

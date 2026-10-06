@@ -75,3 +75,5 @@ The two stages have distinct immutable release rows, 1.0.3 then 1.0.4.
 The prepared final index is computed from the native-stage index, so same-version
 collisions cannot be hidden by deriving both from the old index. The native
 bridge keeps the existing 1.0.2 cohort anchor, including in its initial-only image.
+
+The SDR launcher uses Springboard 1.4.10 and an explicit 18-entry catalog limit. The actual generated deployment catalog is exercised against the pinned production adapter under normal and ASan/UBSan host builds, enumerating, rendering each icon, and launching all 18 entries, including Waterfall. Other existing application binaries must match released 1.0.2 byte for byte.

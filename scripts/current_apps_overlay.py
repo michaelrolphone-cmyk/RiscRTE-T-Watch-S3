@@ -144,6 +144,7 @@ def verify(artifact,head,root=ROOT):
   require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
   require(('-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE' in a['defines']) == (name == 'audio_spectrum'),'Current continuous capture profile differs: '+name)
+  require(('-DPORTABLE_CATALOG_LIMIT=18' in a['defines']) == (name == 'springboard'),'Current launcher catalog profile differs: '+name)
   if name=='audio_spectrum':
    dependencies=a.get('target_dependencies',{})
    require(a.get('host_fixture_excluded') is True and isinstance(dependencies,dict) and bool(dependencies),'Spectrum target input closure missing')

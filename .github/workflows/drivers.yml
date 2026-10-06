@@ -949,6 +949,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_updates.py -v
           python -m unittest discover -s tests -p test_current_cohort.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
+          python scripts/test_current_launcher_catalog.py --system-apps .latest/current-system --current-apps-artifact-dir dist/current-apps --output dist/current-launcher-catalog-proof.json
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
           python .latest/current-system/scripts/test_quick_actions.py
@@ -1056,6 +1057,7 @@ jobs:
           name: twatch-sdr-upgrade-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             dist/sdr-upgrade/
+            dist/current-launcher-catalog-proof.json
             dist/sdr-upgrade-test/upgrade-proof.json
             dist/sdr-upgrade-test-san/upgrade-proof.json
           if-no-files-found: error
