@@ -29,7 +29,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
  if(rn){assert(wn==1);if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));assert(offset>=6144&&offset-6144+rn<=sizeof(feature));memcpy(q,feature+offset-6144,rn);}else{assert(reg+rn<=256);memcpy(q,regs+reg,rn);
   if(final_read_xor&&regs[0x56]==(silicon==0x13?0x20:1)&&reg<=final_read_index&&final_read_index<reg+rn)q[final_read_index-reg]^=(uint8_t)final_read_xor;
   if(reg==0x1c){regs[0x1c]=regs[0x1d]=0;initialization_latched=false;}}return true;}
- if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;uploaded=0;reset_count++;return acknowledged;}
+ if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;initialization_latched=false;uploaded=0;reset_count++;return acknowledged;}
  if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));if(!regs[0x59]){assert(offset==uploaded && wn==33);assert(!memcmp(p+1,(silicon==0x13?bma423_config_file:bma456h_config_file)+offset,wn-1));uploaded+=wn-1;}else{assert(offset>=6144&&offset-6144+wn-1<=sizeof(feature));memcpy(feature+offset-6144,p+1,wn-1);
   if(force_feature_mask)feature[force_feature_index]|=(uint8_t)force_feature_mask;
   if(lose_sensitivity_write){if(silicon==0x13)feature[0x38]=(uint8_t)((feature[0x38]&~0x0e)|14);else{feature[0x3e]=9;feature[0x3f]=0;}}
@@ -85,8 +85,11 @@ int main(void){
    * reset. A cold fixture alone cannot catch this entry path. */
   begin(id);
   for(unsigned cycle=0;cycle<5;cycle++){
-   assert(prepare_wake(NULL));assert(regs[0x7d]&4);regs[0x1c]=variant?1:0x20;
-   fresh_cpu();assert(start_fixture());assert(!enrolled && started && regs[0x7d]==4 && !regs[0x1c]);
+   assert(prepare_wake(NULL));assert(regs[0x7d]&4);regs[0x1c]=variant?1:0x20;initialization_latched=true;
+   bool wake_line=false;assert(gpio_read(NULL,irq_claim,&wake_line) && wake_line);
+   fresh_cpu();assert(initialization_latched && regs[0x1c]);assert(start_fixture());
+   assert(!enrolled && started && regs[0x7d]==4 && !regs[0x1c]);
+   assert(gpio_read(NULL,irq_claim,&wake_line) && !wake_line);
   }
   unsigned startup_count=operations;assert(quiesce());
   /* Startup must fail closed on every transport error, without accepting a

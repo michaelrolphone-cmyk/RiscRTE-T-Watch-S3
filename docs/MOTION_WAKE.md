@@ -168,15 +168,17 @@ Watch 1.0.2 (Watch source `27876749`, IMU 0.3.7) as well as the uninstalled 1.0.
 candidate. It is not a regression introduced by the newer candidate.
 
 The existing reset-ACK model reproduces a failed fresh IMU activation after
-successful detector preparation when only CPU state is cleared. A failure here
-prevents normal provider-graph startup after Deep wake. IMU 0.4.1 verifies the
-selected chip first, then uses the same checked accel/aux disable and APS-enable
+successful detector preparation when only CPU state is cleared. The provider
+is activated lazily: Clock first acquires it on the next sleep attempt, so this
+failure can refuse that acquisition after Deep wake or another CPU-only restart.
+It does not by itself establish a failed Clock boot or inability to wake.
+IMU 0.4.1 verifies the selected chip first, then uses the same checked accel/aux disable and APS-enable
 sequence before the startup reset. Transport errors still fail activation; no
 failed reset is accepted or silently retried.
 
 The added regression keeps sensor registers and feature memory while clearing
 CPU ownership/provider state. Both explicit chip profiles pass five repeated
-Deep-wake activations with a latched wake event, ordinary CPU-only restart,
+Deep-wake activations with a retained latched status and asserted GPIO wake line, ordinary CPU-only restart,
 every startup-transfer failure and subsequent explicit activation, persistent
 reset failure, stalled time, and identity mismatch before mutation. Existing
 entry/cleanup fault tests remain intact. The old startup path fails this new
