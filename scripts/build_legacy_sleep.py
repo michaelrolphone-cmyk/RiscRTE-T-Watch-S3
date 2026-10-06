@@ -17,7 +17,7 @@ def legacy_clock(root=ROOT):
  # reviewed pre-motion sources; the current app lane never uses this.
  source=legacy_inputs(root);out=root/'dist/legacy-sleep/clock-source'
  shutil.copytree(root/'apps/clock',out,dirs_exist_ok=True)
- for name in ('crown.c','portable_sleep.c','watch_sleep.h','watch_alarm_sleep.h','nova/nova.c','nova/nova.h'):
+ for name in ('crown.c','portable_sleep.c','watch_sleep.h','watch_alarm_sleep.h','PortableSleepPolicy.h','nova/nova.c','nova/nova.h'):
   shutil.copyfile(source/'apps/clock'/name,out/name)
  return out
 def build(cc,root=ROOT):

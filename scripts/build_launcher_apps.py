@@ -5,6 +5,9 @@ from pathlib import Path
 from build_clock_app import build as build_clock
 from build_legacy_sleep import legacy_inputs,legacy_clock
 ROOT=Path(__file__).resolve().parents[1]
+def verify_sleep_policy(system,clock_source):
+    if (system/'lib/PortableApps/include/PortableSleepPolicy.h').read_bytes()!=(clock_source/'PortableSleepPolicy.h').read_bytes():
+        raise ValueError('Clock and Settings sleep policy differ')
 def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=False,updates=None):
     if updates is not None and (not wifi or any(n not in ('ota_update','app_store') for n in updates)):raise ValueError("Updates require explicit Wi-Fi baseline and known app names")
     if wifi and not (alarms and runtime and productivity):raise ValueError("Wi-Fi requires the complete Points baseline")
@@ -21,8 +24,8 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
             raise ValueError('Shared RTC forward policy differs from deployed Clock: '+relative)
     if (system/'lib/PortableApps/include/PortableTransition.h').read_bytes()!=(ROOT/'apps/clock/transitions/PortableTransition.h').read_bytes():
         raise ValueError('Clock and shared app transition implementations differ')
-    if (system/'lib/PortableApps/include/PortableSleepPolicy.h').read_bytes()!=(ROOT/'apps/clock/PortableSleepPolicy.h').read_bytes():
-        raise ValueError('Clock and Settings sleep policy differ')
+    sleep_source=legacy_clock(ROOT);driver_source=legacy_inputs(ROOT)
+    verify_sleep_policy(system,sleep_source)
     if alarms and (system/'lib/PortableApps/include/PortableTimeFormat.h').read_bytes()!=(ROOT/'apps/clock/PortableTimeFormat.h').read_bytes():
         raise ValueError('Clock and Settings time-format record differ')
     if (system/'lib/PortableApps/include/RiscKeyValueV1.h').read_bytes()!=(ROOT/'sdk/app/RiscKeyValueV1.h').read_bytes():
@@ -51,7 +54,6 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     if productivity:record['return_targets']['points_in_time']='springboard.elf'
     record['daily_apps']={'stopwatch':{'storage_instance':2,'key':'stopwatch','awake_clock':'monotonic-ms','restored_clock':'raw-RTC-seconds','precision':'approximate-after-recovery'},'calculator':{'arithmetic':'fixed-decimal','fractional_digits':6}}
     record['sleep_policy']={'default':'hybrid','application_idle_ms':60000,'light_ms':300000,'scope':'saved Clock mode; other apps always hybrid','choice':'storage.key-value@1','instance_id':1,'key':'sleep_mode','deep_wake':'fresh-default','ulp_program':False}
-    sleep_source=legacy_clock(ROOT);driver_source=legacy_inputs(ROOT)
     build_clock(launcher=True,alarm_system=system if alarms else None,points_utilities=utilities if productivity else None,wifi=wifi,paired=updates is not None)
     clock_record=json.loads((out/'build-record.json').read_text())
     record['apps']['default']={**clock_record,'repository_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}

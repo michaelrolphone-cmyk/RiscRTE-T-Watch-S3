@@ -47,6 +47,19 @@ class LowBatteryProfile(unittest.TestCase):
       build_clock_app.build(launcher=True,returning=returning,alarm_system=root/'system',points_utilities=root/'utilities',paired=True,current=True,low_battery=True)
    actual=[x for x in commands[-1] if x.startswith('-D')]
    self.assertCountEqual(actual,definitions('clock' if returning else 'default','0.10.3',True))
+ def test_legacy_header_parity_uses_frozen_clock_input(self):
+  from build_legacy_sleep import legacy_clock
+  from build_launcher_apps import verify_sleep_policy
+  import hashlib
+  source=legacy_clock(ROOT)
+  old=(source/'PortableSleepPolicy.h').read_bytes()
+  self.assertEqual(hashlib.sha256(old).hexdigest(),'a543173afd4ceec4707fcda3b63c75108546b95813abed550edf05383dbc0532')
+  self.assertNotEqual(old,(ROOT/'apps/clock/PortableSleepPolicy.h').read_bytes())
+  with tempfile.TemporaryDirectory() as tmp:
+   system=Path(tmp);header=system/'lib/PortableApps/include/PortableSleepPolicy.h';header.parent.mkdir(parents=True);header.write_bytes(old)
+   verify_sleep_policy(system,source)
+   header.write_bytes(old+b'changed')
+   with self.assertRaises(ValueError):verify_sleep_policy(system,source)
  def test_no_low_battery_in_legacy_builds(self):
   with self.assertRaises(ValueError):clock_manifest(low_battery=True)
   with self.assertRaises(ValueError):build_clock_app.build(low_battery=True)
