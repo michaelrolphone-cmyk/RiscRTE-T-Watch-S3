@@ -23,7 +23,7 @@ def run(*args, **kwargs):
     return subprocess.run(list(map(str, args)), check=True, **kwargs)
 
 
-def compile_transaction(runtime, build, version):
+def compile_transaction(runtime, build, version, fixture=None):
     runtime, build = Path(runtime).resolve(), Path(build).resolve()
     build.mkdir(parents=True)
     (build / 'RiscBuildIdentity.h').write_text('#pragma once\n#define RISC_BUILD_VERSION "' + version + '"\n')
@@ -39,7 +39,7 @@ def compile_transaction(runtime, build, version):
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
         '-rdynamic', '-no-pie', '-Wl,--wrap=fopen,--wrap=opendir,--wrap=stat,--wrap=lstat',
-        *inc, *sources, ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
+        *inc, *sources, fixture or ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
         '-lcrypto', '-ldl', '-o', executable)
     return executable
 
@@ -118,15 +118,20 @@ def negative_stores(previous, following):
     yield changed('corrupt-app-elf', lambda b, f: f.update({'ble_buttons.elf': b'not an ELF'}))
 
 
-def check_preserved(original, image):
+def check_preserved(original, image, source_bank=0):
     require(len(image) == len(original) == 0x1000000, 'Flash image size changed')
-    for start, length in ((0, 0x10000), (0x270000, 0x80000), (0x10000, 0x260000),
-                          (0x2f0000, STORE_BYTES), (0xff2000, 4096)):
+    require(source_bank in (0, 1), 'Invalid source bank')
+    for start, length in ((0, 0x10000), (0x270000, 0x80000),
+                          ((0x10000, 0x800000)[source_bank], 0x260000),
+                          ((0x2f0000, 0xae0000)[source_bank], STORE_BYTES),
+                          (0xff2000 + source_bank * 4096, 4096)):
         require(image[start:start + length] == original[start:start + length],
                 'Persisted bytes or source rollback pair changed at ' + hex(start))
 
 
-def transactions(previous_runtime, runtime, full, payload, firmware, native, output):
+def transactions(previous_runtime, runtime, full, payload, firmware, native, output, *, source_bank=0):
+    require(source_bank in (0, 1), 'Invalid source bank')
+    target_bank = 1 - source_bank
     installed_executable = compile_transaction(previous_runtime, output / 'installed-native-build', RUNTIME_VERSION)
     candidate_version = native['firmware_version']
     candidate_executable = compile_transaction(runtime, output / 'candidate-native-build', candidate_version)
@@ -137,15 +142,15 @@ def transactions(previous_runtime, runtime, full, payload, firmware, native, out
     original = bytes(original)
     initial = output / 'source-with-persisted-data.bin';initial.write_bytes(original)
     asset = output / 'tested-cohort.bin';asset.write_bytes(payload)
-    def execute(input_path, scenario, label, active=0):
+    def execute(input_path, scenario, label, active=source_bank):
         image, proof = output / (label + '.bin'), output / (label + '.json')
-        executable = candidate_executable if active == 1 else installed_executable
+        executable = candidate_executable if active == target_bank else installed_executable
         run(executable, input_path, asset, len(firmware), active, scenario, image, proof,
             candidate_version, timeout=120, env={**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0'})
-        data = image.read_bytes();check_preserved(original, data)
+        data = image.read_bytes();check_preserved(original, data, source_bank)
         result = document(proof.read_bytes())
-        result.update(label=label, executing_runtime_source=native['source_sha'] if active == 1 else RUNTIME,
-                      executing_runtime_version=candidate_version if active == 1 else RUNTIME_VERSION,
+        result.update(label=label, executing_runtime_source=native['source_sha'] if active == target_bank else RUNTIME,
+                      executing_runtime_version=candidate_version if active == target_bank else RUNTIME_VERSION,
                       snapshot_sha256=sha(data), nvs_sha256=sha(data[0x9000:0xf000]),
                       appdata_sha256=sha(data[0x270000:0x2f0000]))
         return image, result
@@ -156,19 +161,21 @@ def transactions(previous_runtime, runtime, full, payload, firmware, native, out
         # actually running in the selected bank. No candidate code handles the
         # installed transaction or the restored old-bank reboot.
         if result['selected']:
-            image, pending_boot = execute(image, 'boot', scenario + '-candidate-pending-boot', active=1)
+            image, pending_boot = execute(image, 'boot', scenario + '-candidate-pending-boot', active=target_bank)
             results.append(pending_boot)
             if scenario != 'success':
-                image, rejection = execute(image, 'boot-reject', scenario + '-candidate-rejected', active=1)
+                image, rejection = execute(image, 'boot-reject', scenario + '-candidate-rejected', active=target_bank)
                 results.append(rejection)
         if scenario != 'success':
             image, result = execute(image, 'boot', scenario + '-prior-reboot');results.append(result)
             image, result = execute(image, 'success', scenario + '-retry');results.append(result)
             candidate = image.read_bytes()
-            require(candidate[0x800000:0x800000 + len(firmware)] == firmware
-                    and candidate[0xae0000:0xff0000] == payload[len(firmware):], 'Retry pair differs')
-            image, result = execute(image, 'boot', scenario + '-retry-pending-boot', active=1);results.append(result)
-        image, result = execute(image, 'boot-healthy', scenario + '-candidate-valid-restart', active=1)
+            firmware_offset = (0x10000, 0x800000)[target_bank]
+            store_offset = (0x2f0000, 0xae0000)[target_bank]
+            require(candidate[firmware_offset:firmware_offset + len(firmware)] == firmware
+                    and candidate[store_offset:store_offset + STORE_BYTES] == payload[len(firmware):], 'Retry pair differs')
+            image, result = execute(image, 'boot', scenario + '-retry-pending-boot', active=target_bank);results.append(result)
+        image, result = execute(image, 'boot-healthy', scenario + '-candidate-valid-restart', active=target_bank)
         results.append(result)
         # Every snapshot has been consumed by reboot/retry. Preserve digest and
         # comparison results while bounding disk use to the current scenario.

@@ -177,7 +177,9 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.uncompacted.elf'))],check=True);subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
   for ext in ('.elf','.json'):
    b=(built/(name+ext)).read_bytes();(files_dir/(name+ext)).write_bytes(b);clock_record['files'][name+ext]=metadata(b)
-  meta=json.loads((built/'build-record.json').read_text());record['apps'][name]={**meta,'defines':definitions(name,c['app_versions'][name]),'repository':'watch','repository_sha':record['watch_source']}
+  meta=json.loads((built/'build-record.json').read_text())
+  require(sorted(meta.get('defines',[]))==sorted(definitions(name,c['app_versions'][name])),'Actual Clock compiler flags differ from current profile: '+name)
+  record['apps'][name]={**meta,'repository':'watch','repository_sha':record['watch_source']}
  record['clock']=clock_record
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  clean(drivers,c['sdr']['commit'])

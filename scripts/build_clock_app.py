@@ -48,20 +48,21 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     subprocess.run([cc.removesuffix('gcc')+'g++','-std=c++11','-Os','-fPIC','-mtext-section-literals','-mlongcalls',
         '-fvisibility=hidden','-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-ffreestanding','-fno-builtin',
         '-Wall','-Wextra','-Werror','-I'+str(driver_source/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
-    subprocess.run([cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
+    command = [cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     *([] if current_points else ['-DWATCH_POINTS_LEGACY_PRESENTATION']),
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
-                    *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE'] if current else []),
+                    *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE','-DWATCH_ALARM_SLEEP_RESUME'] if current else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
                     '-I'+str(ROOT/'sdk/app'),'-I'+str(driver_source/'sdk/driver'),'-I'+str(driver_source/'include'),
                     str(clock_source/'crown.c'),str(clock_source/'nova/nova.c'),
                     *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')] if current else []),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
-                    '-lgcc','-o',str(elf)],check=True)
+                    '-lgcc','-o',str(elf)]
+    subprocess.run(command,check=True)
     compaction_proof=None
     if current:
         from compact_current_elf import compact
@@ -89,7 +90,8 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,
         'size_bytes':elf.stat().st_size,'sha256':hashlib.sha256(elf.read_bytes()).hexdigest(),
-        'sdk':sources,'imports':sorted(imports),'compaction':compaction_proof},indent=2)+'\n')
+        'sdk':sources,'imports':sorted(imports),'compaction':compaction_proof,
+        **({'defines':[arg for arg in command if arg.startswith('-D')]} if current else {})},indent=2)+'\n')
     print(f"{elf.name} {manifest['version']}: target ABI, entry and import checks passed")
 
 

@@ -61,6 +61,11 @@ providers refuse that current sleep path before peripheral preparation; frozen
 historical builds retain their original prefix path. The current source profile
 and actual-store host execution both require the flag, preventing tests from
 silently exercising the old path while target applications use the new one.
+The separate current Clock compiler also receives that flag for both `default`
+and returning `clock`. Its build record now copies definitions from the actual
+compiler invocation; the cohort builder checks those definitions instead of
+substituting expected metadata. Compiler-command tests cover both current Clock
+identities and ensure frozen historical commands do not acquire the suffix.
 
 `test_alarm_sleep_resume.py` compiles the real provider and Watch adapter with
 independent clocks. Both drift directions now reach the Hybrid Deep decision or

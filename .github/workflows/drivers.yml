@@ -962,6 +962,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_updates.py -v
           python -m unittest discover -s tests -p test_current_cohort.py -v
           python -m unittest discover -s tests -p test_next_watch_cohort.py -v
+          python -m unittest discover -s tests -p test_midpoint_watch_cohort.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
           python scripts/test_current_launcher_catalog.py --system-apps .latest/current-system --current-apps-artifact-dir dist/current-apps --output dist/current-launcher-catalog-proof.json
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
