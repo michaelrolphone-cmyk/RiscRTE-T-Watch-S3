@@ -27,8 +27,10 @@ no separate SOC-ready or model-accuracy flag.
 A successful transport with unavailable SOC still returns the measured
 millivolts and charge-direction flag. Any failed read returns `false` and leaves
 an initialized unknown sample, never a prior percentage or a partial success.
-The sampling path performs no register writes. Startup, sleep and teardown
-retain the existing power policy, including the 100 mA charging ceiling.
+The sampling path performs no register writes. PMU0.6.1 adds explicit charger-enable
+initialization/readback while preserving thermal and gauge policy; see
+[charging and status](PMU_CHARGING.md). Sleep and successful teardown retain
+autonomous charging and the configured 100mA constant-current limit.
 
 ## Manufacturer evidence and accuracy
 
