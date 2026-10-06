@@ -157,3 +157,34 @@ IMU 0.4.0 adds an append-only observation/configuration suffix. Settings 1.3.0
 adds persistent Off/On and empirical live-detector calibration. The release
 reset correction is preserved. See [Tap wake settings](TAP_WAKE_SETTINGS.md)
 for the exact measurement procedure, tests and remaining Deep classifier limit.
+
+## IMU 0.4.1 Deep-wake startup reset
+
+Deep sleep resets the CPU and provider state, while the powered BMA detector
+retains its acceleration configuration. The earlier 0.3.5 correction established
+safe reset preconditions on sleep preparation and Light-wake cleanup, but the
+fresh-start path still issued a bare soft reset. This path is present in released
+Watch 1.0.2 (Watch source `27876749`, IMU 0.3.7) as well as the uninstalled 1.0.5
+candidate. It is not a regression introduced by the newer candidate.
+
+The existing reset-ACK model reproduces a failed fresh IMU activation after
+successful detector preparation when only CPU state is cleared. A failure here
+prevents normal provider-graph startup after Deep wake. IMU 0.4.1 verifies the
+selected chip first, then uses the same checked accel/aux disable and APS-enable
+sequence before the startup reset. Transport errors still fail activation; no
+failed reset is accepted or silently retried.
+
+The added regression keeps sensor registers and feature memory while clearing
+CPU ownership/provider state. Both explicit chip profiles pass five repeated
+Deep-wake activations with a latched wake event, ordinary CPU-only restart,
+every startup-transfer failure and subsequent explicit activation, persistent
+reset failure, stalled time, and identity mismatch before mutation. Existing
+entry/cleanup fault tests remain intact. The old startup path fails this new
+regression, including against the exact released 1.0.2 source.
+
+This establishes a missing software path, not physical confirmation that it
+caused every reported screen/wake symptom. The model's ACK preconditions are
+explicitly documented for BMA456; their applicability to BMA423 remains the same
+inference described above. Physical Deep entry, crown/tap wake, repeated restart
+and the reported lit-screen behavior still require device testing. The panel,
+PMU/crown programming, native wake sources, and user tap settings are unchanged.

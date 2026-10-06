@@ -30,6 +30,11 @@ static int8_t sensor_write(uint8_t reg,const uint8_t *data,uint32_t n,void *c){
 static void sensor_delay(uint32_t us,void *c){
     (void)c;if(!sensor_wait_us(us))io_failed=true;
 }
+static void sensor_attach(void){
+    sensor=(struct bma4_dev){0};sensor.intf=BMA4_I2C_INTF;sensor.bus_read=sensor_read;
+    sensor.bus_write=sensor_write;sensor.delay_us=sensor_delay;sensor.read_write_len=32;
+    io_failed=false;
+}
 static bool wake_pending(void *context,bool *pending){
     (void)context;if(!started || !wake_prepared || !pending)return false;
     bool level=false;if(!gpio_api->read(gpio_api->context,irq_claim,&level))return false;
@@ -86,9 +91,7 @@ static bool prepare_wake(void *context){
     if(gpio_api->wake_source(gpio_api->context,irq_claim,config->irq_active_high,RISC_WAKE_SET_LIGHT|RISC_WAKE_SET_DEEP)!=0)return wake_failure(__LINE__);
     wake_enrolled=true;
     for(size_t i=0;i<sizeof(saved_regs);i++)if(!read_reg(saved_regs[i],&wake_saved[i],1))return wake_failure(__LINE__);
-    sensor=(struct bma4_dev){0};sensor.intf=BMA4_I2C_INTF;sensor.bus_read=sensor_read;
-    sensor.bus_write=sensor_write;sensor.delay_us=sensor_delay;sensor.read_write_len=32;
-    io_failed=false;wake_changed=true;
+    sensor_attach();wake_changed=true;
     if(!reset_before_wake())return false;
     if(!sensor_wait_us(20000))return wake_failure(__LINE__);
     if(chip==BMA423_CHIP_ID){

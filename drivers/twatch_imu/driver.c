@@ -107,7 +107,11 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         (void)quiesce();
         return false;
     }
-    if (!write_reg(0x7Eu, 0xB6u)) {
+    /* A CPU Deep-wake/reset does not power-cycle the sensor. Its autonomous
+     * detector may still have acceleration enabled, so startup needs the same
+     * checked reset preconditions as sleep entry and Light-wake cleanup. */
+    sensor_attach();
+    if (!reset_before_wake()) {
         (void)quiesce();
         return false;
     }
