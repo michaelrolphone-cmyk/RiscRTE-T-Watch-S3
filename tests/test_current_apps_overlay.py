@@ -40,6 +40,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   for n in current.APPS:
    debug=(self.art/'files'/(n+'.elf')).read_bytes();(self.art/'debug'/(n+'.elf')).write_bytes(debug);r['debug'][n+'.elf']=current.metadata(debug)
    r['apps'][n]={**r['files'][n+'.elf'],'version':'1.0.1','defines':definitions(n,'1.0.1'),'compaction':{'profile':current.COMPACTION_PROFILE,'retained_loader_sections_symbols_relocations_unchanged':True,'original_elf_retained':True,'tool':'GNU objcopy test','options':list(current.COMPACTION_OPTIONS),'removed_sections':[],'before_bytes':len(debug),'after_bytes':len(debug),'before_sha256':current.sha(debug),'after_sha256':current.sha(debug)}}
+   if n=='audio_spectrum':r['apps'][n].update(host_fixture_excluded=True,target_dependencies={'utilities:Apps/audio_spectrum.c':current.metadata(debug)})
   r['service']['points_headers']={'PointsRecords.h':'schema','PointsSchedule.h':'schema2'}
   r['clock']={'watch_source':self.head,'sources':self.cfg['sources'],'paired_boot_confirmation':True,'headers':r['service']['points_headers'],'files':{n+e:r['files'][n+e] for n in current.CLOCK_APPS for e in ('.elf','.json')}}
   (self.root/'clock-test.c').write_bytes(b'clock');r['clock']['source_sha256']={'clock-test.c':current.sha(b'clock')}
@@ -152,6 +153,20 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.assertIn('-DALARM_RETURN_APP="springboard.elf"',definitions('alarms','0.2.0'))
   self.assertIn('-DCALCULATOR_RETURN_APP="springboard.elf"',definitions('calculator','0.1.4'))
   self.assertIn('-DPORTABLE_APP_OWNS_TOUCH_CHROME',definitions('audio_spectrum','0.2.2'))
+ def test_continuous_capture_is_only_for_spectrum(self):
+  flag='-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE'
+  for name in current.APPS:self.assertEqual(flag in definitions(name,'0.4.2'),name=='audio_spectrum')
+  self.record['apps']['audio_spectrum']['defines'].remove(flag);self.write_record()
+  with self.assertRaisesRegex(ValueError,'continuous capture profile'):
+   current.verify(self.art,self.head,self.root)
+ def test_other_apps_cannot_inherit_capture_idle_override(self):
+  self.record['apps']['settings']['defines'].append('-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE');self.write_record()
+  with self.assertRaisesRegex(ValueError,'continuous capture profile'):
+   current.verify(self.art,self.head,self.root)
+ def test_spectrum_cannot_include_host_fixture_dependencies(self):
+  self.record['apps']['audio_spectrum']['target_dependencies']['utilities:tests/fixtures/speech.pcm']={};self.write_record()
+  with self.assertRaisesRegex(ValueError,'Host fixture'):
+   current.verify(self.art,self.head,self.root)
   browser=definitions('file_browser','1.4.0')
   self.assertIn('-DPORTABLE_FILE_BROWSER_APP',browser)
   self.assertIn('-DPORTABLE_APP_OWNS_TOUCH_CHROME',browser)

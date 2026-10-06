@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "1d9bcb204a0b12ac6483511f32ba56da47699404",
-  "firmware_version": "0.1.30",
+  "source_sha": "da92aef5174b9279de1bad0ec05f7234ba587169",
+  "firmware_version": "0.1.32",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -49,10 +49,11 @@
     "selectable_radio_config_v2": true,
     "explicit_app_data_namespaces": true,
     "atomic_app_data_replacement": true,
-    "app_data_retention_barrier": true
+    "app_data_retention_barrier": true,
+    "native_i2s_rx_deadline_nonterminal": true
   },
   "abi_changed": true,
-  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged.",
+  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier.",
   "deployment": {
     "target": "esp32s3-16mb-appdata",
     "layout": "riscrte-paired-appdata-v2",

@@ -132,6 +132,11 @@ def verify(artifact,head,root=ROOT):
   require(a['sha256']==sha(files[name+'.elf']) and a['size_bytes']==len(files[name+'.elf']),'Current app build record differs')
   require(('-DWATCH_MOTION_WAKE' if name in CLOCK_APPS else '-DPORTABLE_MOTION_WAKE') in a['defines'],'Current motion wake client missing: '+name)
   require(('-DWATCH_CLOCK_ALARMS' if name in CLOCK_APPS else '-DPORTABLE_ALARM_CLIENT') in a['defines'],'Current CUE client missing: '+name)
+  require(('-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE' in a['defines']) == (name == 'audio_spectrum'),'Current continuous capture profile differs: '+name)
+  if name=='audio_spectrum':
+   dependencies=a.get('target_dependencies',{})
+   require(a.get('host_fixture_excluded') is True and isinstance(dependencies,dict) and bool(dependencies),'Spectrum target input closure missing')
+   require(all(isinstance(k,str) and ':' in k and not {'test','tests','fixtures'} & set(Path(k.split(':',1)[1]).parts) for k in dependencies),'Host fixture entered Spectrum build inputs')
   if name not in ('frequency_generator',*CLOCK_APPS):require('-DPORTABLE_NOVA_UI' in a['defines'],'Current Nova profile missing: '+name)
  clock=r['clock'];require(clock['watch_source']==head and clock['sources']==c['sources'] and clock['paired_boot_confirmation'] is True,'Current Clock source/profile mismatch')
  require(set(clock['files'])=={n+e for n in CLOCK_APPS for e in ('.elf','.json')},'Current Clock inventory differs')

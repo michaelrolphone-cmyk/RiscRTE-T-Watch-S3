@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build the explicit final current-app cohort, separate from frozen custody lanes."""
-import argparse,hashlib,json,os,shutil,subprocess,sys
+import argparse,hashlib,json,os,shlex,shutil,subprocess,sys
 from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,NEW_APPS,
                                  RADIO_MODELS,config,configure_boot,configure_board,metadata,encoded,require,verify)
@@ -19,7 +19,7 @@ def definitions(name,version):
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
  if name in ('lora_messages','ble_scanner'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
- if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME']
+ if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE']
  if name=='timecard':flags+=['-DTIMECARD_APP_DATA','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='file_browser':flags+=['-DPORTABLE_FILE_BROWSER_APP','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='settings':flags+=['-DPORTABLE_SETTINGS_APP','-DPORTABLE_SLEEP_SETTINGS','-DPORTABLE_ALARM_SETTINGS','-DPORTABLE_SETTINGS_VERSION="'+version+'"']
@@ -34,7 +34,7 @@ def definitions(name,version):
 def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None,radio_model=None):
  require(motion_model in ('bma423','bma456h'),'Explicit --motion-model required; do not infer from earlier boots')
  require(radio_model in RADIO_MODELS,'Explicit --radio-model required; do not infer RF band')
- root=Path(root);out=Path(out);repos={'system-apps':Path(system),'utilities':Path(utilities),'productivity':Path(productivity),'runtime':Path(runtime)};c=config(root)
+ root=Path(root).resolve();out=Path(out).resolve();repos={'system-apps':Path(system).resolve(),'utilities':Path(utilities).resolve(),'productivity':Path(productivity).resolve(),'runtime':Path(runtime).resolve()};c=config(root)
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  require(not out.exists() or not any(out.iterdir()),'Current output must be empty to reject stale files')
  out.mkdir(parents=True,exist_ok=True);files_dir=out/'files';files_dir.mkdir();debug_dir=out/'debug';debug_dir.mkdir()
@@ -68,6 +68,16 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  validator=out/'validate-elf'
  subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-I'+str(repos['system-apps']/'test/native_apps/stubs'),'-I'+str(repos['system-apps']/'lib/elf_loader/include'),str(repos['system-apps']/'lib/elf_loader/src/esp_elf_validate.c'),str(repos['system-apps']/'test/native_apps/validate_test.c'),'-o',str(validator)],check=True)
  def compile_target(name,sources,flags,includes,exports,allowed):
+  dependency_proof={}
+  if name=='audio_spectrum':
+   for source in sources:
+    output=subprocess.check_output([cc,'-std=c11','-Os','-fPIC','-ffreestanding','-fno-builtin','-MM',*flags,*['-I'+str(p) for p in includes],str(source)],text=True)
+    for item in shlex.split(output.replace('\\\n',' ').split(':',1)[1]):
+     path=Path(item).resolve();require(path.is_file(),'Missing target dependency: '+item)
+     require(not {'test','tests','fixtures'} & set(path.parts),'Host fixture entered target dependency closure: '+item)
+     owners=[(repo_name,path.relative_to(repo)) for repo_name,repo in {**repos,'watch':root,'generated':out}.items() if path.is_relative_to(repo)]
+     require(owners,'Unowned target dependency: '+item)
+     repo_name,relative=owners[-1];dependency_proof[repo_name+':'+relative.as_posix()]=metadata(path.read_bytes())
   mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(sorted(exports))+'; local: *; };\n');elf=out/(name+'.elf')
   subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(p) for p in includes],*map(str,sources),'-lgcc','-o',str(elf)],check=True)
   if name in APPS:subprocess.run([str(validator),str(elf)],check=True)
@@ -75,7 +85,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True);imports={l.split()[-1] for l in symbols.splitlines() if ' U ' in ' '+l};actual={l.split()[-1] for l in symbols.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')}
   require(imports<=allowed and actual==exports,'Current ABI imports/exports differ: '+name+' '+str(sorted(imports-allowed)))
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
-  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof}
+  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof,**({'target_dependencies':dependency_proof,'host_fixture_excluded':True} if name=='audio_spectrum' else {})}
  record={'schema':1,'profile':PROFILE,'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
  record['motion_model']=motion_model;record['radio_model']=radio_model
  record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root,motion_model=motion_model,radio_model=radio_model)
@@ -155,8 +165,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for name,path in repos.items():
   for relative in git(path,'ls-files').splitlines():
    original=path/relative
-   if original.is_file() and original.name.upper().startswith(('LICENSE','COPYING','NOTICE')):
+   if original.is_file() and not {'test','tests','fixtures'} & set(Path(relative).parts) and original.name.upper().startswith(('LICENSE','COPYING','NOTICE')):
     target=licenses/name/relative;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
+ # Speech detector source attribution and patent grant travel with the ELF.
+ voice=repos['utilities']/'lib/VoiceActivity'
+ for name in ('LICENSE','AUTHORS','PATENTS','SOURCES.json','PATCHES.md'):
+  original=voice/name;require(original.is_file(),'Voice activity notice missing: '+name)
+  target=licenses/'voice-activity'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
  # Sensor vendor notices accompany source and binary current deployments.
  for src in (root/'vendor/SensorLib').rglob('*'):
   if src.is_file() and (src.name in ('LICENSE','PROVENANCE.json') or src.name.startswith('NOTICE')):

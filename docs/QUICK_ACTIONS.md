@@ -31,7 +31,12 @@ merge or release is performed. Native renders are genuine C renderer output.
 The interactive HTML reference could not be rendered in the local cloud shell
 because Chromium sockets are restricted; no browser comparison is claimed.
 
-Double-tap wake and five-minute Hybrid wake recovery are separate future work.
+The owner reported successful Quick Actions testing on 2026-10-06. Motion
+double-tap wake is now integrated and also has a user success report; the exact
+tested sleep mode and sensor model were not specified. Five-minute Hybrid wake
+recovery, sleep/wake diagnostics, Light-sleep serial access and charging
+initialization/readback verification remain queued after the current baseline.
+Migration of all remaining app UIs to NOVA-7 is also queued.
 
 The owner requested the local DND-all BIN before broad verification/hosted CI.
 Its exact local source trees are preserved as remote commits in the source

@@ -4,11 +4,11 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "dbd358746bc8f1254619ca42073e1d44f6ad45df"
+      "commit": "fdc15395928a1fa8eee62a2823b3c8777dcf0fa0"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "94ec4ddbc95fd6f25513e190e25ae9e061435193"
+      "commit": "e0cea758af8102879cb9c717d381d7950c29584a"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
@@ -16,7 +16,7 @@
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "1d9bcb204a0b12ac6483511f32ba56da47699404"
+      "commit": "da92aef5174b9279de1bad0ec05f7234ba587169"
     }
   },
   "app_versions": {
@@ -31,7 +31,7 @@
     "alarms": "0.2.1",
     "countdown": "0.1.4",
     "frequency_generator": "0.1.3",
-    "audio_spectrum": "0.4.1",
+    "audio_spectrum": "0.4.2",
     "points_in_time": "0.4.3",
     "default": "0.10.0",
     "clock": "0.10.0",

@@ -937,6 +937,7 @@ jobs:
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python -m unittest discover -s tests -p test_current_flash_layout.py -v
           python -m unittest discover -s tests -p test_current_bootfs.py -v
+          python -m unittest discover -s tests -p test_current_updates.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
@@ -970,6 +971,13 @@ jobs:
         run: |
           python scripts/check_current_loader_memory.py --runtime .latest/runtime --utilities .latest/current-utilities --bin dist/latest-main/twatch-s3-main-*.bin --output dist/current-loader-proof
           python scripts/check_current_loader_memory.py --runtime .latest/runtime --utilities .latest/current-utilities --bin dist/latest-main-bma456h/twatch-s3-main-*.bin --output dist/current-loader-proof-bma456h
+      - name: Verify ABI2 paired updates preserve NVS and app-data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/current-update
+          APP_DATA_TEST=1 BUILD_DIR="$PWD/dist/current-update/normal" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata/bootloader.bin 2>&1 | tee dist/current-update/normal.log
+          APP_DATA_TEST=1 SANITIZE=1 BUILD_DIR="$PWD/dist/current-update/sanitized" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata/bootloader.bin 2>&1 | tee dist/current-update/sanitized.log
       - name: Execute the actual final current-app store through Runtime
         run: |
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
@@ -1010,6 +1018,21 @@ jobs:
           path: |
             dist/current-runtime/
             dist/current-loader-proof/
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-current-update-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/current-update/*.log
+            dist/current-update/**/power-flash.bin.gz
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-native-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .latest/runtime/dist/esp32s3-16mb-appdata/
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
       - uses: actions/upload-artifact@v4

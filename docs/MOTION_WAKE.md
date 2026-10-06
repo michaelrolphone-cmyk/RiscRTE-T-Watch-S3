@@ -59,6 +59,10 @@ reconciliation and quick-control radio suspend/resume remain in place.
 
 ## Software and observable device checks
 
+On 2026-10-06 the owner reported that double-tap wake works on their Watch.
+The report did not identify a particular sleep mode or sensor model, so it
+does not qualify Light and Deep modes separately or establish the fitted chip.
+
 Software gates cover both chip profiles, complete feature writes/readback,
 stale/held IRQs, every preparation and rollback transfer fault, retry, registration
 ownership, legacy ABI prefixes, source coexistence, native cleanup, alarm boundary
@@ -68,7 +72,7 @@ are rebuilt from frozen exact source inputs and must match their original hashes
 Their test lanes use the matching original SDK headers. The current overlay replaces them
 with GPIO 0.5.0/PMU 0.6.0 and adds IMU 0.3.0.
 
-Hardware checks need no serial connection:
+Remaining hardware checks need no serial connection:
 1. In Light sleep, try one tap, then a deliberate pair. Check that the pair wakes
    the prior app and the crown still wakes it. Repeat after ordinary navigation.
 2. In manually selected Deep sleep, repeat the same checks. A valid double tap
