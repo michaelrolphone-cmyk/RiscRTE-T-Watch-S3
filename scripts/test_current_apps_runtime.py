@@ -13,7 +13,7 @@ from update_test_production_store_runtime import execute_many
 
 def main():
  p=argparse.ArgumentParser()
- for n in ('runtime','system-apps','utilities','productivity','current-apps-artifact-dir','output'):p.add_argument('--'+n,type=Path,required=True)
+ for n in ('runtime','system-apps','utilities','productivity','drivers','current-apps-artifact-dir','output'):p.add_argument('--'+n,type=Path,required=True)
  p.add_argument('--native-elf',type=Path)
  g=p.add_mutually_exclusive_group(required=True);g.add_argument('--bin',type=Path);g.add_argument('--image',type=Path)
  a=p.parse_args();head=subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip();files,record=verify(a.current_apps_artifact_dir,head)
@@ -34,7 +34,7 @@ def main():
  if 'cohort.json' in content:
   require(a.native_elf is not None,'Cohort validation requires the exact native ELF')
   cohort=admit_cohort(a.runtime,a.native_elf.read_bytes(),content,content)
- executed=execute_many(a.runtime,a.system_apps,a.utilities,a.productivity,[(path.name,content)],output=a.output/'execution',current_profile=True,app_data=app_data)
+ executed=execute_many(a.runtime,a.system_apps,a.utilities,a.productivity,[(path.name,content)],output=a.output/'execution',current_profile=True,app_data=app_data,drivers=a.drivers)
  evidence={'schema':1,'watch_source':head,'configuration':cfg,'input':{'file':path.name,**metadata(raw)},'current_artifact_sha256':hashlib.sha256((a.current_apps_artifact_dir/'current-apps.zip').read_bytes()).hexdigest(),'store_files':len(content),'admission':admitted,'cohort_admission':cohort,'execution':executed,'policy_substitutions':0,'physical_verification':'pending'}
  (a.output/'current-runtime-provenance.json').write_text(json.dumps(evidence,indent=2)+'\n')
  print('Exact current final store: Runtime admission and six paired Clock startup/lifecycle scenarios passed')

@@ -8,7 +8,7 @@ class CurrentAppsOverlay(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);(self.root/'apps').mkdir();self.art=self.root/'artifact';(self.art/'files').mkdir(parents=True);(self.art/'licenses').mkdir()
   (self.art/'debug').mkdir()
-  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.1'}
+  self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.1','sdr':{'id':'s3-radio-iq-v1','commit':'4'*40,'version':'0.1.1'}}
   (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
@@ -29,13 +29,16 @@ class CurrentAppsOverlay(unittest.TestCase):
     name=n[:-5];v={'version':'1.0.1','file_name':name+'.elf','entry':'app_main','architecture':'xtensa-esp32s3','requires':[{'capability':'storage.key-value','api':1},{'capability':'alarm.service','api':1},{'capability':'rtc.clock','api':2},{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1},{'capability':'motion.accel','api':1}]}
     if name=='audio_spectrum':v['requires'] += [{'capability':'storage.key-value','api':2},{'capability':'storage.app-data','api':1}]
     if name=='timecard':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.app-data')]
+    if name=='waterfall':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','radio.iq')]
     if name=='ble_scanner':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]
     if name=='lora_messages':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]+[{'capability':'radio.lora','api':2}]
     if name=='file_browser':v['requires']+=[{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.installed-files')]
     b=current.encoded(v)
+   elif n=='s3-radio-iq/manifest.json':b=current.encoded({'id':'s3-radio-iq-v1','version':'0.1.1','requires':[{'capability':'platform.radio.iq.resource','api':1}],'provides':[{'capability':'radio.iq','api':1}]})
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.1'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
+  r['sdr']={**self.cfg['sdr'],'build':{'source_revision':self.cfg['sdr']['commit'],**r['files']['s3-radio-iq/driver.elf']},'resource_header_sha256':'5'*64}
   r['debug']={}
   for n in current.APPS:
    debug=(self.art/'files'/(n+'.elf')).read_bytes();(self.art/'debug'/(n+'.elf')).write_bytes(debug);r['debug'][n+'.elf']=current.metadata(debug)
@@ -65,6 +68,24 @@ class CurrentAppsOverlay(unittest.TestCase):
   browser=next(x for x in b['app_capabilities'] if x['manifest']=='file_browser.json')
   self.assertEqual([g for g in browser['grants'] if g['capability'].startswith('storage.')],[{'capability':'storage.installed-files','api':1,'instance_id':0},current.ALARM_PREFERENCES])
   self.assertFalse(any(g['capability']=='storage.installed-files' for row in b['app_capabilities'] if row['manifest']!='file_browser.json' for g in row['grants']))
+ def test_waterfall_has_only_granted_iq_and_explicit_shared_migration(self):
+  boot=current.configure_boot(self.boot)
+  grants=next(row['grants'] for row in boot['app_capabilities'] if row['manifest']=='waterfall.json')
+  self.assertEqual([g for g in grants if g['capability']=='radio.iq'],[{'capability':'radio.iq','api':1,'instance_id':0}])
+  self.assertFalse(any(g['capability']=='radio.iq' for row in boot['app_capabilities'] if row['manifest']!='waterfall.json' for g in row['grants']))
+  self.assertFalse(any(g['capability'].startswith('platform.') or g['capability']=='storage.app-data' for g in grants))
+  self.assertEqual(boot['cohort_migration']['shared_key_value'],[{'application_id':'waterfall','api':1,'namespace':1}])
+  self.assertEqual(boot['cohort_migration']['from']['version'],'1.0.2')
+  self.assertEqual(boot['cohort_migration']['to']['version'],'1.0.3')
+  self.assertIn({'manifest':'s3-radio-iq/manifest.json'},boot['drivers'])
+  flags=definitions('waterfall','0.1.2')
+  for flag in ('-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_APP_SLEEP_LOCAL'):self.assertIn(flag,flags)
+ def test_sdr_source_and_resource_authority_are_not_substitutable(self):
+  self.record['sdr']['build']['source_revision']='a'*40;self.write_record()
+  with self.assertRaisesRegex(ValueError,'SDR target custody'):current.verify(self.art,self.head,self.root)
+  self.record['sdr']['build']['source_revision']=self.cfg['sdr']['commit']
+  path=self.art/'files/s3-radio-iq/manifest.json';m=json.loads(path.read_bytes());m['requires']=[];path.write_bytes(current.encoded(m));self.record['files']['s3-radio-iq/manifest.json']=current.metadata(path.read_bytes());self.write_record()
+  with self.assertRaisesRegex(ValueError,'SDR capability authority'):current.verify(self.art,self.head,self.root)
  def test_new_browser_cannot_replace_prior_files_or_policy(self):
   self.store['file_browser.elf']=b'preexisting'
   with self.assertRaises(ValueError):current.apply(self.store,self.art,self.head,self.root)
@@ -102,7 +123,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   for flag in ('-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DLORA_RETURN_APP="springboard.elf"'):self.assertIn(flag,flags)
   self.assertFalse(any(x.startswith('-DPORTABLE_RETURN_APP=') for x in flags))
  def test_ble_exact_authority_and_owned_chrome(self):
-  boot=current.configure_boot(self.boot);self.assertEqual(len(boot['app_capabilities']),19)
+  boot=current.configure_boot(self.boot);self.assertEqual(len(boot['app_capabilities']),20)
   scanner=next(x for x in boot['app_capabilities'] if x['manifest']=='ble_scanner.json')
   self.assertEqual(len(scanner['grants']),9)
   self.assertEqual([g for g in scanner['grants'] if g['capability']=='bluetooth.hci'],[{'capability':'bluetooth.hci','api':1,'instance_id':16}])

@@ -8,7 +8,7 @@
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "ecc465ac2ff1bd92901e20631435bafa2d4ffb11"
+      "commit": "026ce2744346a70e92693ec80f2ece3bf24b73f9"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
@@ -16,7 +16,7 @@
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "e08609b465d9368d4e6efc45e377adbdbbb706a1"
+      "commit": "6f7432d819a4e76028a33dce476d0b3568e5ac5f"
     }
   },
   "app_versions": {
@@ -38,7 +38,14 @@
     "file_browser": "1.4.0",
     "lora_messages": "0.1.1",
     "ble_scanner": "0.1.0",
-    "timecard": "0.1.0"
+    "timecard": "0.1.0",
+    "waterfall": "0.1.2"
   },
-  "service_version": "0.4.1"
+  "service_version": "0.4.1",
+  "sdr": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "commit": "1c1f10d66f3d90d512132b5c48542729a75d1b91",
+    "id": "s3-radio-iq-v1",
+    "version": "0.1.1"
+  }
 }

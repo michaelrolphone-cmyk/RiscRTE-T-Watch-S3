@@ -82,6 +82,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None):
     native_kv=runtime/'src/ports/esp32s3/NvsKeyValue.h'
     if native_kv.is_file() and 'RISC_KEY_VALUE_V2_BLOB_MAX' in native_kv.read_text():
         command += ['-DSTORE_ADMISSION_KV_V2']
+    if 'radioIqReady' in cpu_header:
+        command += ['-DSTORE_ADMISSION_RADIO_IQ']
     if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
     if 'hciOpen' in cpu_header:

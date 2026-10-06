@@ -18,7 +18,7 @@ def definitions(name,version):
         '-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS','-DPORTABLE_MOTION_WAKE']
  if name!='frequency_generator':flags+=['-DPORTABLE_NOVA_UI']
  if name in ('frequency_generator','audio_spectrum'):flags+=['-DPORTABLE_AUDIO_SESSION']
- if name in ('lora_messages','ble_scanner'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
+ if name in ('lora_messages','ble_scanner','waterfall'):flags+=['-DPORTABLE_RADIO_SESSION','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='audio_spectrum':flags+=['-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE']
  if name=='timecard':flags+=['-DTIMECARD_APP_DATA','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
  if name=='file_browser':flags+=['-DPORTABLE_FILE_BROWSER_APP','-DPORTABLE_APP_OWNS_TOUCH_CHROME']
@@ -31,11 +31,13 @@ def definitions(name,version):
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
 
-def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None,radio_model=None):
+def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None,radio_model=None,drivers=None):
  require(motion_model in ('bma423','bma456h'),'Explicit --motion-model required; do not infer from earlier boots')
  require(radio_model in RADIO_MODELS,'Explicit --radio-model required; do not infer RF band')
  root=Path(root).resolve();out=Path(out).resolve();repos={'system-apps':Path(system).resolve(),'utilities':Path(utilities).resolve(),'productivity':Path(productivity).resolve(),'runtime':Path(runtime).resolve()};c=config(root)
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
+ require(drivers is not None,'Exact SDR driver source required')
+ drivers=Path(drivers).resolve();clean(drivers,c['sdr']['commit'])
  require(not out.exists() or not any(out.iterdir()),'Current output must be empty to reject stale files')
  out.mkdir(parents=True,exist_ok=True);files_dir=out/'files';files_dir.mkdir();debug_dir=out/'debug';debug_dir.mkdir()
  # Decode a separately verified immutable baseline only to reuse exact catalog,
@@ -52,11 +54,12 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS if n not in NEW_APPS}-{'springboard.elf'})|{'clock.elf'},'Baseline catalog inventory differs')
  require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Baseline launcher icons collide')
  for name,entry in NEW_APPS.items():catalog.append({**entry,'file_name':name+'.elf'})
- require(len(catalog)==len(APPS)-2 and len(catalog)<=17 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
+ require(len(catalog)==len(APPS)-2 and len(catalog)<=18 and len({x['icon'] for x in catalog})==len(catalog),'Current launcher inventory/icons exceed the reviewed bound')
  registry=json.loads((repos['system-apps']/'lib/PortableApps/catalog-icons.json').read_text())['apps']
  additional=json.loads((repos['system-apps']/'lib/PortableApps/additional-icons.json').read_text())
  for name,entry in NEW_APPS.items():
   if name=='timecard':require(entry['icon']=='solid:f274' and additional.get(entry['icon'])=='calendar-check','Timecard glyph is not in the reviewed subset')
+  elif name=='waterfall':require(entry['icon']=='solid:f0ec' and entry['icon'] in json.loads((repos['system-apps']/'lib/PortableApps/fonts/SOURCES.json').read_text())['icons'],'Waterfall glyph missing from pinned subset')
   else:require(registry.get(name,{}).get('icon')==entry['icon'],'New app icon is not in the reviewed registry: '+name)
  for app_name,entry in registry.items():
   if app_name not in APPS:continue
@@ -95,6 +98,15 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   (dest/'driver.elf').write_bytes((root/'dist'/driver/'driver.elf').read_bytes())
   (dest/'manifest.json').write_bytes(encoded(json.loads((root/'drivers'/driver.replace('-','_')/'manifest.json').read_text())))
   subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
+ subprocess.run([sys.executable,str(drivers/'scripts/build_s3_radio_iq_v1.py')],env={**os.environ,'NATIVE_DRIVER_CC':cc},check=True)
+ sdr=drivers/'dist/s3-radio-iq-v1';dest=files_dir/'s3-radio-iq';dest.mkdir()
+ source_manifest=json.loads((drivers/'Drivers/s3_radio_iq_v1/manifest.json').read_text())
+ require(source_manifest['id']==c['sdr']['id'] and source_manifest['version']==c['sdr']['version'],'SDR package identity differs')
+ require(json.loads((sdr/'manifest.json').read_text())==source_manifest,'SDR built manifest differs')
+ for name in ('driver.elf','manifest.json'):(dest/name).write_bytes((sdr/name).read_bytes())
+ subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
+ record['sdr']={**c['sdr'],'build':json.loads((sdr/'build-record.json').read_text()),'resource_header_sha256':hashlib.sha256((drivers/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes()).hexdigest()}
+ require((drivers/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes()==(repos['runtime']/'sdk/driver/RiscRadioIqResourceV1.h').read_bytes(),'Runtime/driver SDR resource ABI differs')
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/('timecard_portable.c' if name=='timecard' else name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/('native' if name in ('file_browser','timecard') else '')/(name+'.json')).read_text())
@@ -111,7 +123,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
   if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
   b,meta=compile_target(name,sources,definitions(name,version),includes,{'app_main','app_module_init','app_module_fini'},allowed)
-  if name in ('lora_messages','ble_scanner'):
+  if name in ('lora_messages','ble_scanner','waterfall'):
    require(all(isinstance(q['api'],str) and q['api'].startswith('>=') and q['api'][2:].isdigit() for q in original['requires']),'Unsupported new app API range')
    m={'type':'application','id':name,'version':version,'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':[{'capability':q['capability'],'api':int(q['api'][2:])} for q in original['requires']]}
   else:m=json.loads(encoded(original) if name in NEW_APPS else store[name+'.json'])
@@ -158,10 +170,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   meta=json.loads((built/'build-record.json').read_text());record['apps'][name]={**meta,'defines':definitions(name,c['app_versions'][name]),'repository':'watch','repository_sha':record['watch_source']}
  record['clock']=clock_record
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
+ clean(drivers,c['sdr']['commit'])
  record['files']={n:metadata((files_dir/n).read_bytes()) for n in sorted(PAYLOADS)}
  record['debug']={n+'.elf':metadata((debug_dir/(n+'.elf')).read_bytes()) for n in APPS}
  (out/'current-apps-build.json').write_bytes(encoded(record));(out/'source-profile.json').write_bytes(encoded(c))
  licenses=out/'licenses';licenses.mkdir()
+ sdr_license=licenses/'sdr';sdr_license.mkdir()
+ (sdr_license/'LICENSE-eSpDR.txt').write_bytes((drivers/'Drivers/s3_radio_iq_v1/LICENSE-eSpDR.txt').read_bytes())
  for name,path in repos.items():
   for relative in git(path,'ls-files').splitlines():
    original=path/relative
@@ -199,6 +214,7 @@ if __name__=='__main__':
  p=argparse.ArgumentParser()
  for n in ('system-apps','utilities','productivity','runtime','baseline','output'):p.add_argument('--'+n,type=Path,required=True)
  p.add_argument('--baseline-root',type=Path)
+ p.add_argument('--drivers',type=Path,required=True)
  p.add_argument('--motion-model',choices=['bma423','bma456h'],required=True)
  p.add_argument('--radio-model',choices=RADIO_MODELS,default='selectable')
- a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model,radio_model=a.radio_model)
+ a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model,radio_model=a.radio_model,drivers=a.drivers)

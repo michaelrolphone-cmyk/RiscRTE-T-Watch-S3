@@ -90,6 +90,11 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
         require(len(data) == meta['bytes'] and sha(data) == meta['sha256'],
                 'Runtime candidate component differs: ' + name)
 
+    if deployment.get('radio_iq'):
+        spec=importlib.util.spec_from_file_location('current_iq_proof',runtime_source/'scripts/radio_iq_proof.py')
+        verifier=importlib.util.module_from_spec(spec);spec.loader.exec_module(verifier)
+        iq_proof=json.loads(json.dumps(verifier.prove((runtime_candidate/'firmware.elf').read_bytes())))
+        require(candidate.get('native_proof',{}).get('radio_iq')==iq_proof,'Native IQ reservation proof differs')
     initial_appdata=None
     if app_data:
         spec=importlib.util.spec_from_file_location('current_app_data_image',runtime_source/'scripts/app_data_image.py')

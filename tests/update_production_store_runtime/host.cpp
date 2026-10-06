@@ -1,3 +1,16 @@
+#ifdef CURRENT_RADIO_IQ
+#include <cstdint>
+#include <cstdlib>
+extern "C" {
+volatile uint32_t *iq_test_register(uint32_t){std::abort();}
+volatile uint32_t *iq_test_bank(void){std::abort();}
+uint32_t iq_test_cycles(void){std::abort();}
+uint8_t iq_test_analog_read(uint8_t,uint8_t,uint8_t){std::abort();}
+void iq_test_analog_write(uint8_t,uint8_t,uint8_t,uint8_t){std::abort();}
+unsigned iq_test_pbus_read(unsigned,unsigned){std::abort();}
+void iq_test_delay(uint32_t){std::abort();}
+}
+#endif
 // Reuse the unchanged delivered-Clock lowest-hardware fixture. Its original
 // main remains compiled (and is never called); update-only hooks are separate.
 #include "ports/esp32s3/CpuPort.h"
@@ -46,6 +59,7 @@ bool confirm(){
 #endif
   bool nonzero=false;for(auto pixel:m.frame)nonzero|=pixel!=0;assert(nonzero);
   risc_runtime_capability_v1 grant{};grant.struct_size=sizeof(grant);
+  assert(!current->acquire("radio.iq",1,0,&grant));
   assert(!current->acquire(RISC_HTTP_CLIENT_CAPABILITY,1,0,&grant));
   assert(!current->acquire(RISC_BANK_STORE_CAPABILITY,1,0,&grant));
   ++confirms;return scenario!="confirm-refused";
@@ -119,6 +133,9 @@ int main(int argc,char** argv){
   hardware.radioScanStart=[](){++m.radioActivity;return false;};
   hardware.radioScanPoll=[](garden_radio_scan_result_v1*){raw();return false;};
   hardware.radioScanCancel=[](){return true;};hardware.radioIdle=[](){return true;};
+#ifdef CURRENT_RADIO_IQ
+  hardware.radioIqReady=[](){std::abort();return false;};
+#endif
   hardware.httpClient=&http;hardware.httpIdle=[](){return true;};hardware.httpSafe=[](){return true;};
   RiscCpu::Port port(hardware);cpu=&port;
   const RiscBoot::KeyValueBackend kv={nullptr,

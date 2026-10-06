@@ -6,15 +6,15 @@ from compact_current_elf import PROFILE as COMPACTION_PROFILE, OPTIONS as COMPAC
 ROOT=Path(__file__).resolve().parents[1]
 PROFILE='watch-current-apps-v1'
 SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store','file_browser')
-UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum','lora_messages','ble_scanner')
+UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum','lora_messages','ble_scanner','waterfall')
 PRODUCTIVITY_APPS=('points_in_time','timecard')
 CLOCK_APPS=('default','clock')
 NON_CLOCK_APPS=SYSTEM_APPS+UTILITY_APPS+PRODUCTIVITY_APPS
 APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
-NEW_APPS={'file_browser':{'display_name':'Files','icon':'solid:f07c'},'lora_messages':{'display_name':'LoRa Messages','icon':'solid:f27a'},'ble_scanner':{'display_name':'BLE Scanner','icon':'solid:f7c0'},'timecard':{'display_name':'Timecard','icon':'solid:f274'}}
+NEW_APPS={'waterfall':{'display_name':'Waterfall','icon':'solid:f0ec'},'file_browser':{'display_name':'Files','icon':'solid:f07c'},'lora_messages':{'display_name':'LoRa Messages','icon':'solid:f27a'},'ble_scanner':{'display_name':'BLE Scanner','icon':'solid:f7c0'},'timecard':{'display_name':'Timecard','icon':'solid:f274'}}
 RADIO_MODELS=('sx1262-433','sx1262-868','sx1262-915','sx1280-2400','selectable')
-ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
+ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora','s3-radio-iq') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
@@ -30,6 +30,7 @@ def config(root=ROOT):
  require(c.get('schema')==1 and c.get('profile')==PROFILE,'Wrong current-app profile')
  require(set(c['sources'])=={'system-apps','utilities','productivity','runtime'},'Current source inventory differs')
  for p in c['sources'].values():require(re.fullmatch('[0-9a-f]{40}',p.get('commit','')) is not None,'Unpinned current source')
+ require(c.get('sdr',{}).get('id')=='s3-radio-iq-v1' and re.fullmatch('[0-9a-f]{40}',c['sdr'].get('commit','')) is not None and c['sdr'].get('version')=='0.1.1','Unpinned guarded SDR source')
  require(set(c['app_versions'])==set(APPS),'Current app versions incomplete')
  for v in list(c['app_versions'].values())+[c['service_version']]:require(re.fullmatch(r'\d+\.\d+\.\d+',v) is not None,'Bad current version')
  require(c['service_version']=='0.4.1','Expected reviewed CUE/volume service0.4.1')
@@ -53,7 +54,8 @@ def configure_board(original,root=ROOT,*,motion_model,radio_model):
  require(len(radio)==1 and not any(d['instance_id']==11 for d in b['devices']),'Unexpected prior radio hardware')
  bus=[x for x in source['buses'] if x['instance_id']==radio[0]['config']['bus_instance_id']]
  require(len(bus)==1 and not any(x['instance_id']==bus[0]['instance_id'] for x in b['buses']),'Unexpected prior radio bus')
- b['devices'].append(copy.deepcopy(radio[0]));b['buses'].append(copy.deepcopy(bus[0]));return b
+ b['devices'].append(copy.deepcopy(radio[0]));b['buses'].append(copy.deepcopy(bus[0]))
+ return b
 
 def configure_boot(original):
  """Add shared settings/RTC grants explicitly; preserve each existing grant."""
@@ -83,6 +85,12 @@ def configure_boot(original):
   {'capability':'board.battery','api':1,'instance_id':4},
   {'capability':'storage.app-data','api':1,'instance_id':1},
   {'capability':'alarm.service','api':1,'instance_id':0}]})
+ b['app_capabilities'].append({'manifest':'waterfall.json','grants':[
+  {'capability':'display.output','api':1,'instance_id':5},
+  {'capability':'input.touch.raw','api':1,'instance_id':6},
+  {'capability':'board.battery','api':1,'instance_id':4},
+  {'capability':'radio.iq','api':1,'instance_id':0},
+  {'capability':'alarm.service','api':1,'instance_id':0}]})
  spectrum=next(x for x in b['app_capabilities'] if x['manifest']=='audio_spectrum.json')
  storage=[g for g in spectrum['grants'] if g['capability']=='storage.key-value']
  require(storage==[{'capability':'storage.key-value','api':1,'instance_id':7}],'Unexpected prior Spectrum namespace')
@@ -103,11 +111,14 @@ def configure_boot(original):
  b['drivers'].append({'manifest':'imu/manifest.json','instance_id':7})
  require(not any(x.get('instance_id')==11 for x in b['drivers']),'Unexpected prior radio provider')
  b['drivers'].append({'manifest':'lora/manifest.json','instance_id':11})
+ require(not any(x['manifest']=='s3-radio-iq/manifest.json' for x in b['drivers']),'Unexpected prior SDR provider')
+ b['drivers'].append({'manifest':'s3-radio-iq/manifest.json'})
  for row in b['app_capabilities']:
   if row['manifest'] in {n+'.json' for n in APPS}:
    for grant in (ALARM_PREFERENCES,{'capability':'rtc.clock','api':2,'instance_id':8},{'capability':'net.wifi','api':1,'instance_id':15},{'capability':'bluetooth.hci','api':1,'instance_id':16},{'capability':'motion.accel','api':1,'instance_id':7}):
     if grant not in row['grants']:row['grants'].append(copy.deepcopy(grant))
   require(len(row['grants'])<=12,'Current application exceeds Runtime grant bound')
+ b['cohort_migration']={'schema':1,'from':{'product':'twatch-s3','version':'1.0.2','source_revision':'27876749f08deaa78910cbd16aa54345684b6bf7'},'to':{'product':'twatch-s3','version':'1.0.3'},'shared_key_value':[{'application_id':'waterfall','api':1,'namespace':1}]}
  return b
 
 def verify(artifact,head,root=ROOT):
@@ -146,6 +157,11 @@ def verify(artifact,head,root=ROOT):
  for name,digest in clock['source_sha256'].items():
   require(not Path(name).is_absolute() and '..' not in Path(name).parts and re.fullmatch('[0-9a-f]{64}',digest) is not None,'Unsafe Clock source hash entry')
   require((Path(root)/name).is_file() and sha((Path(root)/name).read_bytes())==digest,'Current Clock source bytes differ: '+name)
+ sdr=r.get('sdr',{});require({k:sdr.get(k) for k in c['sdr']}==c['sdr'],'Current SDR source identity differs')
+ built=sdr.get('build',{});require(built.get('source_revision')==c['sdr']['commit'] and built.get('sha256')==sha(files['s3-radio-iq/driver.elf']) and built.get('size_bytes')==len(files['s3-radio-iq/driver.elf']),'Current SDR target custody differs')
+ require(re.fullmatch('[0-9a-f]{64}',sdr.get('resource_header_sha256','')) is not None,'SDR resource ABI proof missing')
+ iq_manifest=json.loads(files['s3-radio-iq/manifest.json'])
+ require(iq_manifest.get('id')==c['sdr']['id'] and iq_manifest.get('version')==c['sdr']['version'] and iq_manifest.get('requires')==[{'capability':'platform.radio.iq.resource','api':1}] and iq_manifest.get('provides')==[{'capability':'radio.iq','api':1}],'SDR capability authority differs')
  require(json.loads(files['alarm-service/manifest.json'])['version']==c['service_version'],'Current alarm version mismatch')
  require(r['service']['defines']==['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'],'Wrong current service profile')
  archive=artifact/'current-apps.zip';require(archive.is_file(),'Current archive missing')
