@@ -10,7 +10,9 @@ from pathlib import Path, PurePosixPath
 import re
 
 from read_only_spiffs import read_image
-from watch_release_index import EMPTY_INDEX, REPOSITORY, require, update_index, validate_record, version_tuple
+from watch_release_index import EMPTY_INDEX, REPOSITORY, require, update_index, validate_record, version_tuple, reuse_app_record
+from current_flash_layout import validate as validate_layout, APP_DATA_LAYOUT, APP_DATA_SHA
+from current_cohort import parse as parse_cohort, verify as verify_cohort, package as package_cohort
 
 FLASH_BYTES = 0x1000000
 BOOTFS_OFFSET, BOOTFS_SIZE = 0x310000, 0x4f0000
@@ -26,6 +28,19 @@ PARTITIONS = [('bootloader.bin', 0, 0x8000), ('partitions.bin', 0x8000, 0x9000),
               ('firmware.bin', 0x10000, BOOTFS_OFFSET),
               ('bootfs.bin', BOOTFS_OFFSET, 0x800000),
               ('otadata.bin', 0xff0000, 0xff2000), ('bank_state.bin', 0xff2000, 0xff4000)]
+APP_DATA_PARTITIONS = [('bootloader.bin', 0, 0x8000), ('partitions.bin', 0x8000, 0x9000),
+                      ('firmware.bin', 0x10000, 0x270000), ('appdata.bin', 0x270000, 0x2f0000),
+                      ('bootfs.bin', 0x2f0000, 0x800000), ('otadata.bin', 0xff0000, 0xff2000),
+                      ('bank_state.bin', 0xff2000, 0xff4000)]
+
+
+def app_data_product(p):
+    deployment = p.get('deployment')
+    if deployment is None:
+        return False
+    require(validate_layout(deployment, True), 'Product deployment must select the explicit ABI2 layout')
+    require(version_tuple(p['version']) >= (1, 0, 2), 'ABI2 product version predates cohort updates')
+    return True
 
 
 def exact_hex(value, length):
@@ -40,6 +55,7 @@ def validate_config(p):
     require(p.get('schema') == 2 and p.get('repository') == REPOSITORY, 'Product identity mismatch')
     version_tuple(p['version']); version_tuple(p['accepted_build'])
     require(p.get('tag') == 'firmware-v' + p['version'], 'Product tag/version mismatch')
+    app_data_product(p)
     require(p.get('acceptance') == ACCEPTANCE, 'Schema 2 requires explicit CI-only acceptance')
     limitations = p.get('known_limitations', [])
     require(isinstance(limitations, list) and len(limitations) <= 10 and
@@ -77,6 +93,13 @@ def validate_config(p):
         validate_record('drivers', record)
         require(record['id'] == identity and record['version'] == p['driver_versions'][identity],
                 'Reused driver identity/version mismatch')
+    reused_apps = p.get('reused_app_records', {})
+    require(isinstance(reused_apps, dict) and set(reused_apps) <= set(p['component_versions']) - {'runtime'},
+            'Unrecognized reused app identity')
+    for identity, record in reused_apps.items():
+        validate_record('apps', record)
+        require(record['id'] == identity and record['version'] == p['component_versions'][identity],
+                'Reused app identity/version mismatch')
     require(p['component_versions'].get('default') == p['accepted_build'] and
             p['component_versions'].get('clock') == p['accepted_build'] and
             'runtime' in p['component_versions'], 'Clock/Runtime component version mismatch')
@@ -173,34 +196,47 @@ def image_custody(p, raw, h):
     binary = files[p['accepted_bin_name']]
     require(len(binary) == FLASH_BYTES and h.sha(binary) == p['accepted_bin_sha256'], 'Frozen main BIN hash/size mismatch')
     manifest = json.loads(files['manifest.json'])
-    expected = {'schema': 1, 'kind': 'latest-merged-main-full-flash', 'file': p['accepted_bin_name'],
+    app_data = app_data_product(p)
+    layout, abi = (APP_DATA_LAYOUT, 2) if app_data else (LAYOUT, 1)
+    partitions = APP_DATA_PARTITIONS if app_data else PARTITIONS
+    store_offset, store_size = (0x2f0000, 0x510000) if app_data else (BOOTFS_OFFSET, BOOTFS_SIZE)
+    expected = {'schema': 1, 'kind': 'initial-app-data-full-flash' if app_data else 'latest-merged-main-full-flash', 'file': p['accepted_bin_name'],
                 'watch_source': p['sources']['watch']['accepted_sha'], 'watch_tree': p['sources']['watch']['tree'],
                 'watch_version': p['accepted_build'], 'runtime_source': p['sources']['runtime']['accepted_sha'],
-                'runtime_version': p['component_versions']['runtime'], 'layout': LAYOUT, 'store_abi': 1,
+                'runtime_version': p['component_versions']['runtime'], 'layout': layout, 'store_abi': abi,
                 'bin_sha256': p['accepted_bin_sha256'], 'size_bytes': FLASH_BYTES, 'flash_offset': '0x0',
                 'overwrite_bytes': FLASH_BYTES, 'flash_capacity_bytes': FLASH_BYTES, 'physical_verification': 'pending'}
     require(all(manifest.get(k) == v for k, v in expected.items()), 'Frozen main manifest identity mismatch')
-    require(len(manifest.get('components', [])) == len(PARTITIONS), 'Incomplete paired component inventory')
+    require(len(manifest.get('components', [])) == len(partitions), 'Incomplete paired component inventory')
     cursor = 0
-    for entry, (name, offset, limit) in zip(manifest['components'], PARTITIONS):
+    components = {}
+    for entry, (name, offset, limit) in zip(manifest['components'], partitions):
         size = entry.get('size_bytes')
         require(entry.get('file') == 'components/' + name and entry.get('offset') == hex(offset) and
                 type(size) is int and size > 0 and offset + size <= limit, 'Paired component layout mismatch')
         require(binary[cursor:offset] == b'\xff' * (offset - cursor), 'Unexpected occupied flash gap')
         require(h.sha(binary[offset:offset + size]) == entry.get('sha256'), 'Frozen component bytes differ: ' + name)
-        if name in ('bootfs.bin', 'otadata.bin', 'bank_state.bin'):
+        components[name] = binary[offset:offset + size]
+        if name in ('bootfs.bin', 'otadata.bin', 'bank_state.bin', 'appdata.bin'):
             require(offset + size == limit, 'Fixed paired partition size mismatch')
         cursor = offset + size
     require(binary[cursor:] == b'\xff' * (len(binary) - cursor), 'Unexpected occupied flash tail')
-    image = binary[BOOTFS_OFFSET:BOOTFS_OFFSET + BOOTFS_SIZE]
+    image = binary[store_offset:store_offset + store_size]
     require(h.sha(image) == manifest.get('bootfs_sha256'), 'Boot store digest mismatch')
     try:
-        store = read_image(image)
+        store = read_image(image, store_size)
     except (AssertionError, KeyError, IndexError) as error:
         raise ValueError('Invalid frozen SPIFFS store') from error
     expected_store = [{'path': n, 'size_bytes': len(b), 'sha256': h.sha(b)} for n, b in sorted(store.items())]
     require(len(store) == p['store_file_count'] and manifest.get('store') == expected_store, 'Exact frozen store inventory mismatch')
     require({'default.json', 'default.elf', 'clock.json', 'clock.elf', 'boot.json', 'board.json'} <= store.keys(), 'Incomplete main store')
+    if app_data:
+        require(h.sha(components['appdata.bin']) == APP_DATA_SHA and
+                manifest.get('ordinary_ota_includes_appdata') is False, 'Initial app-data custody differs')
+        identity = verify_cohort(parse_cohort(store.get('cohort.json', b'')), components['firmware.bin'],
+                                 version=p['version'], runtime_version=p['component_versions']['runtime'],
+                                 source_revision=p['sources']['watch']['accepted_sha'])
+        require(manifest.get('cohort') == identity, 'Product cohort identity differs')
     embedded_drivers = {}
     for path, data in store.items():
         if not path.endswith('/manifest.json'):
@@ -318,6 +354,10 @@ def current_apps_custody(p, manifest, store, artifacts, h):
                       for suffix in ('.elf', '.json')} | {name + '/' + suffix
                       for name in ('alarm-service', 'update-fw', 'update-apps')
                       for suffix in ('driver.elf', 'manifest.json')}
+    if app_data_product(p):
+        expected_files |= {'board.json'} | {name + '/' + suffix
+                           for name in ('gpio', 'pmu', 'imu', 'ble', 'lora')
+                           for suffix in ('driver.elf', 'manifest.json')}
     require({n[6:] for n in files if n.startswith('files/')} == set(payloads) == expected_files,
             'Current-apps payload inventory mismatch')
     for name, metadata in payloads.items():
@@ -327,7 +367,8 @@ def current_apps_custody(p, manifest, store, artifacts, h):
     changed = overlay['files']
     preserved = overlay['preserved_files']
     require(set(changed) == set(payloads) | {'boot.json'} and not set(changed) & set(preserved) and
-            set(changed) | set(preserved) == set(store), 'Current-apps final store partition mismatch')
+            set(changed) | set(preserved) == set(store) - ({'cohort.json'} if app_data_product(p) else set()),
+            'Current-apps final store partition mismatch')
     for name, metadata in {**changed, **preserved}.items():
         require(metadata == {'size_bytes': len(store[name]), 'sha256': h.sha(store[name])},
                 'Current-apps changed/preserved store evidence mismatch')
@@ -415,7 +456,12 @@ def flashing_document(p):
             'After your own backup and device selection:\n'
             f'python -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\n'
             'Independent application ELFs and manifests are extracted from this exact frozen store. '
-            'Downloading an ELF does not install it. Retain the matching board, grants and component configuration.\n').encode()
+            'Downloading an ELF does not install it. Retain the matching board, grants and component configuration.\n' +
+            ('\nThis initial full flash also erases Timecard and Spectrum app-data. After this one-time transition, '
+             'use built-in Firmware Update for complete native+bootfs cohort upgrades, including new apps/providers. '
+             'These stage in the inactive pair and preserve NVS/preferences and the independent app-data volume. '
+             'App Store remains available for compatible installed-app upgrades. Do not full-flash future updates '
+             'when retaining samples. Physical OTA/power-loss qualification remains pending.\n' if app_data_product(p) else '')).encode()
 
 
 def payloads(p, source, artifacts, h):
@@ -435,23 +481,32 @@ def payloads(p, source, artifacts, h):
                           build_sources=p['sources'], deployment_sources=p['deployment_sources'],
                           configuration='frozen-watch-main-' + p['accepted_build'],
                           **({'current_apps_configuration': p['current_apps_configuration']} if current_evidence else {}))
+        record, reused = reuse_app_record(p.get('reused_app_records', {}).get(name), record)
         index = update_index(index, 'apps', record)
-        releases.append((record, {name + '.elf': data, name + '.json': manifest_data,
-                         'LICENSES.zip': license_archive, 'release-record.json': h.encoded(record)},
-                         p['sources']['watch']['accepted_sha'], False))
+        if not reused:
+            releases.append((record, {name + '.elf': data, name + '.json': manifest_data,
+                             'LICENSES.zip': license_archive, 'release-record.json': h.encoded(record)},
+                             p['sources']['watch']['accepted_sha'], False))
     drivers, assets = driver_records(p, artifacts['drivers'], store, h)
     for record in drivers:
         index = update_index(index, 'drivers', record)
     name = f'twatch-s3-launcher-{p["version"]}.bin'
     firmware = h.record('firmware', '', p['version'], name, binary, source_sha=source,
                         accepted_source_sha=p['sources']['watch']['accepted_sha'], component_versions=p['component_versions'])
+    cohort_assets = {}
+    if app_data_product(p):
+        native_entry = next(x for x in manifest['components'] if x['file'] == 'components/firmware.bin')
+        native = binary[0x10000:0x10000 + native_entry['size_bytes']]
+        payload, ota = package_cohort(manifest['cohort'], native, binary[0x2f0000:0x800000])
+        firmware['ota'] = ota
+        cohort_assets[ota['asset']] = payload
     index = update_index(index, 'firmware', firmware)
     provenance = {**p, 'release_source_sha': source, 'binary_rebuilt': False,
                   'version_scope': 'Product release only; every frozen embedded component version and byte is unchanged.',
                   'hardware_acceptance_scope': SCOPE, 'accepted_manifest': manifest,
                   'installed_physical_drivers': installed_physical_drivers(p, artifacts['drivers'], store, h),
                   'driver_installation_scope': 'installed_physical_drivers is authoritative for this product; reused immutable index records retain their original release context.'}
-    releases.append((firmware, {name: binary, p['accepted_bundle_name']: bundle,
+    releases.append((firmware, {name: binary, p['accepted_bundle_name']: bundle, **cohort_assets,
                      'release-record.json': h.encoded(firmware), 'product-provenance.json': h.encoded(provenance),
                      'release-index.json': h.serialize_index(index).encode(), 'FLASHING.md': flashing_document(p)}, source, True))
     return releases, drivers, assets, index
@@ -470,7 +525,10 @@ def stage(p, inputs, accepted_watch, runtime_source, output, h):
     if 'current-apps' in p['artifacts']:
         require(json.loads((accepted_watch / 'apps/current-apps-sources.json').read_text()) == p['current_apps_configuration'],
                 'Source checkout current-apps profile mismatch')
-    requirements = json.loads((accepted_watch / 'apps/update-runtime-requirements.json').read_text())
+    # Watch1.0.1's current-app overlay predates the separate Runtime requirement.
+    # Its frozen source must continue using the original update requirement.
+    requirement_name = 'apps/current-runtime-requirements.json' if app_data_product(p) else 'apps/update-runtime-requirements.json'
+    requirements = json.loads((accepted_watch / requirement_name).read_text())
     require(requirements['source_sha'] == p['sources']['runtime']['accepted_sha'] and
             requirements['firmware_version'] == p['component_versions']['runtime'], 'Frozen Runtime requirement mismatch')
     require(not output.exists(), 'Output directory already exists; use a fresh staging directory')

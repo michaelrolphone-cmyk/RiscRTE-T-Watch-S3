@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Independent paired store authority, preservation, source and layout verifier."""
+from build_legacy_sleep import legacy_inputs
 import argparse
 import copy
 import io
@@ -130,7 +131,7 @@ def verify_files(files, root=ROOT, expected_head=None, common=False):
     if not common:
         source = next((v for v in baseline['inputs'] if v['profile'] == record['profile']), None)
         require(source is not None, 'Unknown explicit hardware profile')
-        require(files['source-profile.json'] == (root/'hardware'/(record['profile']+'.json')).read_bytes()
+        require(files['source-profile.json'] == (legacy_inputs(root)/'hardware'/(record['profile']+'.json')).read_bytes()
                 and sha(files['source-profile.json']) == source['source_profile_sha256'] and
                 sha(files['store/board.json']) == source['board_sha256'], 'Board/profile changed')
     expected_boot = copy.deepcopy(baseline['boot'])

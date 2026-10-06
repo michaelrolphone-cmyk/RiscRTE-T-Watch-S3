@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "kind": "local-user-hardware-test-build",
+  "file": "twatch-s3-quick-actions-DND-all-5172d7cc.bin",
+  "sha256": "d9c4c542e1d744e9b1bdc883bc4344573cce3ce25ce4e239b560382bd6d93e7e",
+  "size_bytes": 16777216,
+  "flash_offset": "0x0",
+  "layout": "riscrte-paired-16m-v1",
+  "runtime_version": "0.1.26",
+  "service_version": "0.4.1",
+  "sources": {
+    "watch": {
+      "local_commit": "5172d7ccc438153c324fc0047ce540896b8e38c9",
+      "matching_remote_commit": "8050b3e3d1bddba3489223460729fedc04979723",
+      "identical_tree": "ddf8bfcdee6abe5f3dccf91bbc930c5165049e49"
+    },
+    "system-apps": {
+      "local_commit": "88a15372bda1496b441a6eeae6d3373b1572c983",
+      "matching_remote_commit": "52df6f3893b069f636586968cd93966e18e49561",
+      "identical_tree": "e984e66de69031024dbbaf999d8f082e2be2e51f"
+    },
+    "utilities": {
+      "local_commit": "f63525754d67ccfc39f4a0b30024312626b81235",
+      "matching_remote_commit": "288582f56032d0ac3d2c5cfe168e8118b0456170",
+      "identical_tree": "0525f55b3f4a73322e4f1457303c4545fd6ada93"
+    },
+    "runtime": {
+      "local_commit": "e027d10016b1133dfa9165e6a765ea94dd8f0b96",
+      "matching_remote_commit": "8609b78f20a1c47028603730665a80cd56cf453a",
+      "identical_tree": "682c7b40526ef4c60b7972fdbdf212698df4e2b3"
+    },
+    "productivity": {
+      "commit": "2fa164e313a4d27d5de9a471b65f0a9a7aab3981"
+    }
+  },
+  "included": ["shared top-edge quick-controls panel", "brightness", "notification volume default50%", "Silent", "DND for sound and vibration of Alarms/Countdowns/Points", "Torch", "Wi-Fi enabled policy", "Bluetooth controller On/Off", "Airplane with prior radio restoration"],
+  "performed": ["target compilation", "focused DND/session smoke checks", "exact60-file store admission", "final store bytes, partition geometry and hash checks"],
+  "not_claimed": ["broad verification or hosted CI for this delivered new DND build", "hardware qualification"],
+  "waiver": "Owner requested immediate local BIN and will hardware-test; broad verification/CI waiting was skipped for this build.",
+  "warning": "Full16MiB replacement erases saved NVS/settings/credentials and app records; reverting firmware does not restore erased saved data.",
+  "later_review_commits": "Subsequent test/docs updates and the generic-USB PSRAM metadata repair do not replace or relabel this delivered BIN. Current review pins are separate."
+}

@@ -62,6 +62,18 @@ def serialize_index(index):
     return json.dumps(index, sort_keys=True, separators=(',', ':')) + '\n'
 
 
+def reuse_app_record(previous, proposed):
+    """Keep published provenance when an unchanged app accompanies a new cohort."""
+    validate_record('apps', proposed)
+    if previous is None or previous.get('version') != proposed['version']:
+        return copy.deepcopy(proposed), False
+    validate_record('apps', previous)
+    fields = ('id', 'version', 'tag', 'asset', 'url', 'size', 'sha256', 'manifest')
+    require(all(previous.get(k) == proposed.get(k) for k in fields),
+            'Immutable app payload/manifest collision: ' + proposed['id'])
+    return copy.deepcopy(previous), True
+
+
 def update_index(index, product, record):
     require(isinstance(index, dict) and index.get('schema') == 1, 'Index schema mismatch')
     result = copy.deepcopy(index)

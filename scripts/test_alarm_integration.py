@@ -8,7 +8,7 @@ system,utilities=a.system_apps.resolve(),a.utilities.resolve()
 out=ROOT/'dist/alarm-tests';out.mkdir(parents=True,exist_ok=True)
 incs=['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',ROOT,ROOT/'sdk/app',ROOT/'sdk/driver',ROOT/'include']]
 for mode,sanitize in [('plain',[]),('san',['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame-pointer','-no-pie'])]:
- for name in ('alarm_sleep','alarm_clock','retained_calculator','retained_stopwatch'):
+ for name in ('alarm_sleep','motion_client','alarm_clock','retained_calculator','retained_stopwatch'):
   sources=[ROOT/'tests'/(name+'_test.c')];defines=[]
   if name.startswith('retained_'):
    app=name.removeprefix('retained_');sources=[system/'Apps/settings.c',ROOT/'tests/retained_alarm_apps_test.c']

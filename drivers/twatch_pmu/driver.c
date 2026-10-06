@@ -189,6 +189,18 @@ static int32_t deep_sleep_for(void *context,uint32_t duration) {
     if(gpio_api->struct_size<RISC_GPIO_BANK_DEEP_SLEEP_FOR_V1_SIZE || !gpio_api->deep_sleep_for)return RISC_DEEP_SLEEP_UNSUPPORTED;
     return gpio_api->deep_sleep_for(gpio_api->context,irq_claim,false,duration);
 }
+static int32_t light_sleep_set(void *context,uint32_t duration,risc_light_sleep_result_v1 *result){
+    (void)context;
+    if(!started || !sleep_prepared || !result || result->struct_size<sizeof(*result) || duration>RISC_TIMED_SLEEP_MAX_MS)return RISC_LIGHT_SLEEP_INVALID;
+    if(gpio_api->struct_size<RISC_GPIO_BANK_LIGHT_SLEEP_SET_V1_SIZE || !gpio_api->light_sleep_set)return RISC_LIGHT_SLEEP_UNSUPPORTED;
+    return gpio_api->light_sleep_set(gpio_api->context,irq_claim,config->irq_active_high,duration,result);
+}
+static int32_t deep_sleep_set(void *context,uint32_t duration){
+    (void)context;
+    if(!started || !sleep_prepared || duration>RISC_TIMED_SLEEP_MAX_MS)return RISC_DEEP_SLEEP_INVALID;
+    if(gpio_api->struct_size<RISC_GPIO_BANK_DEEP_SLEEP_SET_V1_SIZE || !gpio_api->deep_sleep_set)return RISC_DEEP_SLEEP_UNSUPPORTED;
+    return gpio_api->deep_sleep_set(gpio_api->context,irq_claim,config->irq_active_high,duration);
+}
 static bool read_sample(void *context, risc_battery_sample_v1 *out) {
     (void)context;
     if (!out)
@@ -307,7 +319,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_pmu_api_v1 api = {{RISC_BATTERY_GAUGE_API_V1, sizeof(api), NULL, read_sample},
-                                      key_events, prepare_sleep, resume_sleep, light_sleep, deep_sleep, light_sleep_for, sleep_wake_pending, deep_sleep_for};
+                                      key_events, prepare_sleep, resume_sleep, light_sleep, deep_sleep, light_sleep_for, sleep_wake_pending, deep_sleep_for, light_sleep_set, deep_sleep_set};
 static const risc_driver_diagnostics_v2 driver = {
     {RISC_PROVIDER_DRIVER_ABI_V2, sizeof(driver), "twatch-pmu", RISC_BATTERY_GAUGE_CAPABILITY,
      RISC_BATTERY_GAUGE_API_V1, &api, start, stop, quiesce},

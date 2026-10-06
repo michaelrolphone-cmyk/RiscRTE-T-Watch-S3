@@ -6,6 +6,12 @@
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
+#ifdef STORE_ADMISSION_COHORT
+#include "cohort_elf_admission.h"
+#endif
+#ifdef STORE_ADMISSION_APP_DATA
+#include "app_data_admission_backend.h"
+#endif
 #ifdef STORE_ADMISSION_UPDATE_PLATFORMS
 #include <RiscHttpClientV1.h>
 #include <RiscBankStoreV1.h>
@@ -13,6 +19,9 @@
 
 namespace {
 unsigned hardwareCalls = 0, storageCalls = 0;
+#ifdef STORE_ADMISSION_COHORT
+unsigned cooperativeYields = 0;
+#endif
 RiscCpu::Port* cpu = nullptr;
 bool owner() { return true; }
 #ifdef STORE_ADMISSION_UPDATE_PLATFORMS
@@ -49,6 +58,13 @@ bool bind(RiscBoot::Runtime& runtime) {
 }
 RiscCpu::Hardware hardware() {
   RiscCpu::Hardware h{};
+#ifdef STORE_ADMISSION_HCI
+  h.hciOpen=[](){++hardwareCalls;return false;};
+  h.hciSend=[](uint8_t,const uint8_t*,size_t,uint32_t){++hardwareCalls;return false;};
+  h.hciReceive=[](uint8_t*,uint8_t*,size_t,size_t*,uint32_t){++hardwareCalls;return false;};
+  h.hciClose=[](){++hardwareCalls;return false;};
+  h.hciIdle=[](){++hardwareCalls;return false;};h.hciSafe=[](){++hardwareCalls;return false;};
+#endif
   h.owner = owner;
   h.now = []() -> uint64_t { ++hardwareCalls; return 0; };
   h.sleep = [](uint32_t) { ++hardwareCalls; };
@@ -87,7 +103,11 @@ RiscCpu::Hardware hardware() {
 }
 
 int main(int argc, char** argv) {
+#ifdef STORE_ADMISSION_COHORT
+  if (argc != 3) return 2;
+#else
   if (argc != 2) return 2;
+#endif
   const RiscBoot::KeyValueBackend kv{
     nullptr,
     [](void*, uint32_t, const char*, void*, uint32_t, uint32_t*) -> int32_t {
@@ -95,12 +115,27 @@ int main(int argc, char** argv) {
     },
     [](void*, uint32_t, const char*, const void*, uint32_t) -> int32_t {
       ++storageCalls; return RISC_KEY_VALUE_IO;
-    }};
+    }
+#ifdef STORE_ADMISSION_KV_V2
+    ,RISC_KEY_VALUE_V2_BLOB_MAX
+#endif
+  };
   RiscCpu::Port port(hardware());
   cpu = &port;
+#ifdef STORE_ADMISSION_APP_DATA
+  const auto appData=admissionAppData(&storageCalls);
+#endif
   RiscBoot::Runtime runtime({owner, [](risc_runtime_health_v1*) { return true; },
+#ifdef STORE_ADMISSION_COHORT
+                            [](uint32_t) { ++cooperativeYields; },
+#else
                             [](uint32_t) { ++hardwareCalls; },
-                            [](const char*) { return true; }, bind, &kv});
+#endif
+                            [](const char*) { return true; }, bind, &kv
+#ifdef STORE_ADMISSION_APP_DATA
+                            ,nullptr,nullptr,nullptr,&appData
+#endif
+                            });
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {
     fprintf(stderr, "ADMISSION platforms=%zu drivers=%zu\n", runtime.platformCount_, runtime.driverCount_);
@@ -119,8 +154,15 @@ int main(int argc, char** argv) {
       }
     }
   }
+#ifdef STORE_ADMISSION_COHORT
+  RiscBoot::Runtime candidate({});unsigned admitted=0;
+  const bool validated=prepared && runtime.validateCohort(candidate,argv[2],CohortElf::file,&admitted);
+  printf("{\"prepared\":%s,\"cohort_validated\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"elf_count\":%u,\"cooperative_yields\":%u}\n",
+         prepared?"true":"false",validated?"true":"false",candidate.error(),hardwareCalls,storageCalls,admitted,cooperativeYields);
+#else
   // Runtime errors are constant diagnostics, with no input text or credentials.
   printf("{\"prepared\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"i2s_tables\":%zu}\n",
          prepared ? "true" : "false", runtime.error(), hardwareCalls, storageCalls, port.i2sCount_);
+#endif
   return hardwareCalls || storageCalls ? 3 : 0;
 }

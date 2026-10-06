@@ -37,13 +37,17 @@ static risc_key_value_v1 copiedKv{};
 static void nativeAuthorityChecks();
 static esp_ota_img_states_t otaState=ESP_OTA_IMG_PENDING_VERIFY;
 static esp_partition_t table[]={
- {ESP_PARTITION_TYPE_APP,ESP_PARTITION_SUBTYPE_APP_OTA_0,0x10000,0x300000,"app0",false},
- {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_SPIFFS,0x310000,0x4f0000,"bootfs0",false},
- {ESP_PARTITION_TYPE_APP,esp_partition_subtype_t(17),0x800000,0x300000,"app1",false},
- {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_SPIFFS,0xb00000,0x4f0000,"bootfs1",false},
+ {ESP_PARTITION_TYPE_APP,ESP_PARTITION_SUBTYPE_APP_OTA_0,0x10000,RiscUpdate::FirmwareBytes,"app0",false},
+ {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_SPIFFS,RiscUpdate::StoreOffset[0],RiscUpdate::StoreBytes,"bootfs0",false},
+ {ESP_PARTITION_TYPE_APP,esp_partition_subtype_t(17),0x800000,RiscUpdate::FirmwareBytes,"app1",false},
+ {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_SPIFFS,RiscUpdate::StoreOffset[1],RiscUpdate::StoreBytes,"bootfs1",false},
  {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_OTA,0xff0000,0x2000,"otadata",false},
  {ESP_PARTITION_TYPE_DATA,esp_partition_subtype_t(0x40),0xff2000,0x2000,"bank_state",false},
- {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_NVS,0x9000,0x6000,"nvs",false}};
+ {ESP_PARTITION_TYPE_DATA,ESP_PARTITION_SUBTYPE_DATA_NVS,0x9000,0x6000,"nvs",false}
+#ifdef RISC_PAIRED_APP_DATA
+ ,{ESP_PARTITION_TYPE_DATA,esp_partition_subtype_t(0x41),0x270000,0x80000,"appdata",false}
+#endif
+ };
 static Bytes bytes(const std::string& s){return Bytes(s.begin(),s.end());}
 static Bytes readFile(const fs::path& p){std::ifstream f(p,std::ios::binary);assert(f);return Bytes(std::istreambuf_iterator<char>(f),{});}
 static void writeFile(const fs::path& p,const Bytes& b){std::ofstream f(p,std::ios::binary);assert(f);if(!b.empty())f.write((const char*)b.data(),b.size());assert(f);}
@@ -56,7 +60,7 @@ extern "C" DIR* __wrap_opendir(const char* p){return __real_opendir(mapped(p).c_
 extern "C" int __real_stat(const char*,struct stat*);
 extern "C" int __wrap_stat(const char* p,struct stat* s){return __real_stat(mapped(p).c_str(),s);}
 // A bounded deterministic fake SPIFFS format. The production transaction still
-// clones and independently hashes every real 0x4f0000 store byte.
+// clones and independently hashes every byte of the selected store geometry.
 static Files directory(const std::string& dir){Files files;for(auto& f:fs::directory_iterator(dir)){assert(f.is_regular_file());files[f.path().filename().string()]=readFile(f.path());}return files;}
 static void pack(unsigned bank,const Files& files){
  auto* p=flash.data()+table[bank*2+1].address;size_t at=0;memset(p,0xff,RiscUpdate::StoreBytes);
@@ -80,7 +84,7 @@ void vTaskDelay(unsigned n){ticks+=n;}
 esp_err_t esp_flash_read(esp_flash_t*,void* out,uint32_t off,uint32_t n){if(uint64_t(off)+n>flash.size())return -1;memcpy(out,flash.data()+off,n);return 0;}
 const esp_partition_t* esp_partition_find_first(esp_partition_type_t t,esp_partition_subtype_t s,const char* label){for(auto& p:table)if(p.type==t&&p.subtype==s&&!strcmp(label,p.label))return &p;return nullptr;}
 esp_err_t esp_partition_read(const esp_partition_t* p,size_t off,void* out,size_t n){if(!p||off+n>p->size)return -1;memcpy(out,flash.data()+p->address+off,n);return 0;}
-static void permitted(const esp_partition_t* p,size_t off,size_t n){assert(p&&off+n<=p->size);assert(p!=&table[activeBank*2]&&p!=&table[activeBank*2+1]);if(p==&table[5])assert(off/4096!=activeBank);++writeCount;}
+static void permitted(const esp_partition_t* p,size_t off,size_t n){assert(p&&off+n<=p->size);assert(p==&table[(1-activeBank)*2]||p==&table[(1-activeBank)*2+1]||p==&table[5]);if(p==&table[5])assert(off/4096!=activeBank);++writeCount;}
 esp_err_t esp_partition_write(const esp_partition_t* p,size_t off,const void* in,size_t n){permitted(p,off,n);memcpy(flash.data()+p->address+off,in,n);return 0;}
 esp_err_t esp_partition_erase_range(const esp_partition_t* p,size_t off,size_t n){permitted(p,off,n);memset(flash.data()+p->address+off,0xff,n);return 0;}
 const esp_partition_t* esp_ota_get_running_partition(){return &table[activeBank*2];}
@@ -132,7 +136,12 @@ static bool bind(RiscBoot::Runtime& r){return cpu->bind(r)&&RiscBankStore::bind(
 static int32_t kvGet(void*,uint32_t ns,const char*,void*,uint32_t,uint32_t* size){assert(ns==1||ns==6||ns==5);kvNamespaces|=1u<<ns;*size=0;return RISC_KEY_VALUE_NOT_FOUND;}
 static int32_t kvPut(void*,uint32_t ns,const char*,const void*,uint32_t){assert(ns==1||ns==6||ns==5);kvNamespaces|=1u<<ns;return RISC_KEY_VALUE_OK;}
 static RiscBoot::KeyValueBackend kv{nullptr,kvGet,kvPut};
-static void ensureActiveIntact(){for(unsigned r=0;r<2;++r){const auto& p=table[activeBank*2+r];assert(!memcmp(flash.data()+p.address,originalFlash.data()+p.address,p.size));}assert(!memcmp(flash.data()+RiscUpdate::JournalOffset+activeBank*4096,originalFlash.data()+RiscUpdate::JournalOffset+activeBank*4096,4096));}
+static void ensureActiveIntact(){for(unsigned r=0;r<2;++r){const auto& p=table[activeBank*2+r];assert(!memcmp(flash.data()+p.address,originalFlash.data()+p.address,p.size));}assert(!memcmp(flash.data()+RiscUpdate::JournalOffset+activeBank*4096,originalFlash.data()+RiscUpdate::JournalOffset+activeBank*4096,4096));
+ assert(!memcmp(flash.data()+0x9000,originalFlash.data()+0x9000,0x6000));
+#ifdef RISC_PAIRED_APP_DATA
+ for(size_t i=0x270000;i<0x2f0000;++i)assert(flash[i]==0x5a);
+#endif
+}
 static risc_bank_status_v1 nativeStatus(){risc_bank_status_v1 s{};s.struct_size=sizeof(s);assert(RiscBankStore::api.status(nullptr,&s));nativeStates.insert(s.state);return s;}
 static software_update_status_v1 status(const software_update_v1* s){software_update_status_v1 out{};out.struct_size=sizeof(out);assert(s->status(s->context,&out));return out;}
 static void advance(const software_update_v1* s,uint32_t desired){for(unsigned i=0;i<400000;++i){auto v=status(s);if(v.state==desired||v.state==SOFTWARE_UPDATE_ERROR||v.state==SOFTWARE_UPDATE_RETAINED)return;s->step(s->context);nativeStatus();++ticks;}assert(false);}
@@ -226,7 +235,7 @@ extern "C" void integration_entry(const risc_runtime_api_v1* runtime){
  assert(runtime->release(&grant)); // Runtime still owns its independent provider lease.
  ensureActiveIntact();
 }
-static Bytes syntheticFirmware(const char* version,const char* abi="1"){
+static Bytes syntheticFirmware(const char* version,const char* abi=RiscUpdate::StoreAbi==2?"2":"1"){
  Bytes out(imageSize,0);std::string m=std::string("RISC_PAIRED_STORE_ABI:")+abi;memcpy(out.data()+100,m.c_str(),m.size()+1);m=std::string("RISC_RUNTIME_VERSION:")+version;memcpy(out.data()+4087,m.c_str(),m.size()+1);return out;
 }
 static std::vector<uint8_t> elf(const char* imported){
@@ -254,7 +263,7 @@ static void nativeAuthorityChecks(){
  // These calls are never made through, or exported to, the host probe app API.
  auto installed=directory(activeRoot)["clock.json"];JsonDocument doc;
  assert(RiscBoot::parse(reinterpret_cast<const char*>(installed.data()),installed.size(),doc));doc["version"]="1.1.0";
- risc_bank_image_v1 image{};image.struct_size=sizeof(image);image.size=1024;image.store_abi=1;auto current=nativeStatus();memcpy(image.active_store_sha256,current.active_store_sha256,32);
+ risc_bank_image_v1 image{};image.struct_size=sizeof(image);image.size=1024;image.store_abi=RiscUpdate::StoreAbi;auto current=nativeStatus();memcpy(image.active_store_sha256,current.active_store_sha256,32);
  auto refused=[&](const char* id){std::string text;serializeJson(doc,text);uint64_t token=99;assert(RiscBankStore::api.begin_app(nullptr,id,text.data(),text.size(),&image,&token)==RISC_BANK_INVALID&&token==0&&writeCount==0);};
  refused("unknown-app");
  for(const char* path:{"board.json","../clock.elf","other.elf","/clock.elf"}){doc["file_name"]=path;refused("clock");}doc["file_name"]="clock.elf";
@@ -298,7 +307,7 @@ static std::string makeCatalog(){
  std::string m=manifest("clock","1.1.0","clock.elf","["+req+"]");
  std::string app="{\"kind\":\"app\",\"id\":\"clock\",\"version\":\"1.1.0\",\"tag\":\"app-clock-v1.1.0\",\"asset\":\"clock.elf\",\"url\":\"https://github.com/"+std::string(repo)+"/releases/download/app-clock-v1.1.0/clock.elf\",\"size\":"+std::to_string(payload.size())+",\"sha256\":\""+hash+"\",\"manifest\":"+m+"}";
  std::string firmware="{\"kind\":\"firmware\",\"version\":\"1.0.0\",\"tag\":\"firmware-v1.0.0\",\"asset\":\"twatch-s3-launcher-1.0.0.bin\",\"url\":\"https://github.com/"+std::string(repo)+"/releases/download/firmware-v1.0.0/twatch-s3-launcher-1.0.0.bin\",\"size\":8388608,\"sha256\":\""+hash+"\"";
- if(scenario!="authority"||kind!="firmware")firmware+=",\"ota\":{\"kind\":\"runtime-image\",\"runtime_version\":\"0.1.12\",\"layout\":\"riscrte-paired-16m-v1\",\"store_abi\":1,\"asset\":\"riscrte-runtime-0.1.12.bin\",\"url\":\"https://github.com/"+std::string(repo)+"/releases/download/firmware-v1.0.0/riscrte-runtime-0.1.12.bin\",\"size\":"+std::to_string(payload.size())+",\"sha256\":\""+hash+"\"}";
+ if(scenario!="authority"||kind!="firmware")firmware+=",\"ota\":{\"kind\":\"runtime-image\",\"runtime_version\":\"0.1.12\",\"layout\":\""+std::string(RiscUpdate::StoreAbi==2?"riscrte-paired-appdata-v2":"riscrte-paired-16m-v1")+"\",\"store_abi\":"+std::to_string(RiscUpdate::StoreAbi)+",\"asset\":\"riscrte-runtime-0.1.12.bin\",\"url\":\"https://github.com/"+std::string(repo)+"/releases/download/firmware-v1.0.0/riscrte-runtime-0.1.12.bin\",\"size\":"+std::to_string(payload.size())+",\"sha256\":\""+hash+"\"}";
  return "{\"schema\":1,\"firmware\":"+firmware+"},\"apps\":["+app+"],\"drivers\":[]}";
 }
 int main(int argc,char** argv){
@@ -310,8 +319,12 @@ int main(int argc,char** argv){
   // additionally verified by a separately compiled newer Runtime executable.
  }else{
   auto boot=readFile(argv[3]);assert(boot.size()==15104);memcpy(flash.data(),boot.data(),boot.size());
+  #ifdef RISC_PAIRED_APP_DATA
+  memset(flash.data()+0x270000,0x5a,0x80000);
+#endif
+  memset(flash.data()+0x9000,0xa5,0x6000);
   auto image=syntheticFirmware(RISC_BUILD_VERSION);memcpy(flash.data()+0x10000,image.data(),image.size());pack(0,initialFiles());
-  uint8_t fw[32],store[32];SHA256(flash.data()+0x10000,imageSize,fw);SHA256(flash.data()+0x310000,RiscUpdate::StoreBytes,store);
+  uint8_t fw[32],store[32];SHA256(flash.data()+0x10000,imageSize,fw);SHA256(flash.data()+RiscUpdate::StoreOffset[0],RiscUpdate::StoreBytes,store);
   auto record=RiscUpdate::makeRecord(0,imageSize,fw,store);memcpy(flash.data()+RiscUpdate::JournalOffset,&record,sizeof(record));
  }
  originalFlash=flash;materialize(activeRoot,unpack(activeBank));
@@ -336,7 +349,7 @@ int main(int argc,char** argv){
   std::cout<<kind<<" "<<scenario<<" PASS (raw app policy denied before module load)\n";return 0;
  }
  if(!prepared){std::cerr<<rt->error()<<"\n";return 2;}
- payload=kind=="app"?elf(scenario=="elf-import"?"esp_partition_write":"memcpy"):syntheticFirmware(scenario=="firmware-old"?RISC_BUILD_VERSION:"0.1.12",scenario=="firmware-abi"?"2":"1");
+ payload=kind=="app"?elf(scenario=="elf-import"?"esp_partition_write":"memcpy"):syntheticFirmware(scenario=="firmware-old"?RISC_BUILD_VERSION:"0.1.12",scenario=="firmware-abi"?(RiscUpdate::StoreAbi==2?"1":"2"):(RiscUpdate::StoreAbi==2?"2":"1"));
  if(kind=="app")payload[400]=0x5a; // Distinct synthetic executable content, never target-executed.
  if(scenario=="elf-structure")payload[0]=0;
  catalog=makeCatalog();

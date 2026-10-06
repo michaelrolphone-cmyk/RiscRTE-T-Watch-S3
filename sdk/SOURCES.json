@@ -41,15 +41,13 @@
   },
   "GardenPlatformV1.h": {
     "repository": "RiscRTE",
-    "commit": "52b085c2d8f00ceea287ba7a506eea6dc135a29d",
-    "path": "sdk/driver/GardenPlatformV1.h",
-    "sha256": "8d5f468eea9a8d28ca8e989b954926fb61c51b99812a3a67e78ca31e831a52c5"
+    "commit": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9",
+    "sha256": "771b2819b602afa3d1120f54717277756e35e161d279307c2d1080433a35ab71"
   },
   "RiscGpioBankV1.h": {
     "repository": "RiscRTE",
-    "commit": "8609fb92ee56ad1c6fb0417051c3fc9796c0edca",
-    "path": "sdk/driver/RiscGpioBankV1.h",
-    "sha256": "147f0dc029041e473f0d0f9034583be881d935c9aa77ddc52cbbc4c2b198a71b"
+    "commit": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9",
+    "sha256": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c"
   },
   "RiscLightSleepV1.h": {
     "repository": "RiscRTE",
@@ -74,5 +72,10 @@
     "commit": "52b085c2d8f00ceea287ba7a506eea6dc135a29d",
     "path": "sdk/driver/RiscRadioScanV1.h",
     "sha256": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b"
+  },
+  "RiscWakeSetV1.h": {
+    "repository": "RiscRTE",
+    "commit": "2510758a6fbffdb49688ed6f0a181f93ff10cfa9",
+    "sha256": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375"
   }
 }

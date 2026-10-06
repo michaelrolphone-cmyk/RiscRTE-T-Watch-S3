@@ -3,6 +3,7 @@
 #include "twatch_caps.h"
 #include "RiscDisplayOutputV1.h"
 #include "RiscTouchV1.h"
+#include "RiscHciControllerStatusV1.h"
 #include <assert.h>
 #include <stdio.h>
 static uint64_t m_now, m_serial;
@@ -52,6 +53,9 @@ static bool m_free(void *c, uint64_t t) {
 }
 static bool m_gclaim(void *c, uint8_t p, bool output, bool initial, bool pull, uint64_t *t) {
     (void)c;
+#if TEST_KIND == 11
+    assert(!pull); /* The real radio.lora scope has no pull-up authority. */
+#endif
     (void)pull;
     if (m_fail_io || !m_admit())
         return false;
@@ -91,13 +95,18 @@ static int32_t m_light_sleep(void *c,uint64_t t,bool high,risc_light_sleep_resul
     (void)c; assert(t && m_tokens[t] && !high && out->struct_size==sizeof(*out));
     m_sleep_token=t;out->wake_cause=RISC_LIGHT_SLEEP_WAKE_GPIO;return RISC_LIGHT_SLEEP_OK;
 }
+static int32_t m_set_result;
+static uint32_t m_wake_modes,m_set_duration;
+static int32_t m_wake_source(void*c,uint64_t t,bool high,uint32_t modes){(void)c;(void)high;assert(t&&m_tokens[t]);m_sleep_token=t;m_wake_modes=modes;return m_set_result;}
+static int32_t m_light_set(void*c,uint64_t t,bool high,uint32_t ms,risc_light_sleep_result_v1*out){m_set_duration=ms;(void)m_light_sleep(c,t,high,out);return m_set_result;}
+static int32_t m_deep_set(void*c,uint64_t t,bool high,uint32_t ms){(void)c;assert(t&&m_tokens[t]&&!high);m_sleep_token=t;m_set_duration=ms;return m_set_result;}
 static garden_gpio_v1 m_gpio = {1,       sizeof(m_gpio), NULL,   m_gclaim, m_gwrite,
-                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep, NULL, NULL, NULL, NULL};
+                                m_gread, m_pwm,          m_free, m_wave, m_light_sleep, NULL, NULL, NULL, NULL, m_wake_source, m_light_set, m_deep_set};
 static bool m_bank_claim(void *c, uint8_t pin, uint32_t flags, uint64_t *t) {
     return m_gclaim(c, pin, flags & RISC_GPIO_OUTPUT, false, flags & RISC_GPIO_PULLUP, t);
 }
 static risc_gpio_bank_api_v1 m_bank = {1,        sizeof(m_bank), NULL,  m_bank_claim,
-                                       m_gwrite, m_gread,        m_free, m_light_sleep, NULL, NULL, NULL};
+                                       m_gwrite, m_gread,        m_free, m_light_sleep, NULL, NULL, NULL, m_wake_source, m_light_set, m_deep_set};
 static uint64_t m_time(void *c) {
     (void)c;
 #if TEST_KIND == 5
@@ -389,9 +398,11 @@ static bool m_addresses(void *c, uint64_t t, uint8_t *s, uint8_t *a) {
 }
 static garden_radio_v1 m_radio = {1,       sizeof(m_radio), NULL, m_rclaim, m_join,     m_state,
                                   m_leave, m_free,          m_ap, m_leave,  m_addresses};
+static uint64_t m_hci_token;
+static bool m_hci_retained;
 static bool m_hopen(void *c, uint32_t unit, uint64_t *t) {
     assert(!unit);
-    return m_rclaim(c, t);
+    bool ok=m_rclaim(c,t);if(ok)m_hci_token=*t;return ok;
 }
 static bool m_hsend(void *c, uint64_t t, uint8_t type, const uint8_t *p, size_t n, uint32_t ms) {
     (void)c;
@@ -412,5 +423,6 @@ static bool m_hreceive(void *c, uint64_t t, uint8_t *type, uint8_t *p, size_t ca
     *n = 3;
     return true;
 }
-static twatch_hci_controller_v1 m_hci = {1,       sizeof(m_hci), NULL,  m_hopen,
-                                         m_hsend, m_hreceive,    m_free};
+static bool m_hclose(void*c,uint64_t t){bool ok=m_free(c,t);m_hci_retained=!ok;if(ok)m_hci_token=0;return ok;}
+static bool m_hstatus(void*c,uint64_t t,uint8_t*out){(void)c;*out=2;if(t!=m_hci_token)return false;*out=!t?0:m_hci_retained?2:1;return true;}
+static risc_hci_controller_status_v1 m_hci={{1,sizeof(m_hci),NULL,m_hopen,m_hsend,m_hreceive,m_hclose},m_hstatus};

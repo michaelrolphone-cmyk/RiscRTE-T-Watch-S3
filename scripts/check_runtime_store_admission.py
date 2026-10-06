@@ -51,7 +51,7 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output):
+def compile_harness(runtime, output, app_data=False, native_elf=None):
     runtime, output = Path(runtime).resolve(), Path(output)
     includes = [runtime / p for p in ('src', 'sdk/app', 'sdk/driver', 'sdk/hardware',
                                      'lib/ArduinoJson/src', 'test/drivers/stubs')]
@@ -63,9 +63,29 @@ def compile_harness(runtime, output):
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
+    if app_data:
+        command += ['-DSTORE_ADMISSION_APP_DATA']
+    if native_elf is not None:
+        from verify_update_elf import cohort_admission_header
+        output = output.resolve()
+        (output.parent / 'cohort_elf_admission.h').write_text(cohort_admission_header(runtime, native_elf))
+        includes += [output.parent, runtime / 'lib/elf_loader/include', runtime / 'test/native_bank_stubs']
+        command += ['-DSTORE_ADMISSION_COHORT', '-Wno-misleading-indentation']
+        obj = output.parent / 'cohort-validate.o'
+        cflags = ['-fsanitize=address,undefined', '-fno-sanitize-recover=all'] if os.environ.get('SANITIZE') == '1' else []
+        subprocess.run(['cc', '-std=c11', *cflags, *['-I' + str(p) for p in includes],
+                        '-c', str(runtime / 'lib/elf_loader/src/esp_elf_validate.c'), '-o', str(obj)], check=True)
+        command += [str(obj)]
     cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
+    # Match the selected native backend's advertised bound, including API2.
+    # Historical Runtime sources without that backend keep their old fixture.
+    native_kv=runtime/'src/ports/esp32s3/NvsKeyValue.h'
+    if native_kv.is_file() and 'RISC_KEY_VALUE_V2_BLOB_MAX' in native_kv.read_text():
+        command += ['-DSTORE_ADMISSION_KV_V2']
     if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
+    if 'hciOpen' in cpu_header:
+        command += ['-DSTORE_ADMISSION_HCI']
     if 'i2sOpenRx' in cpu_header:
         command += ['-DSTORE_ADMISSION_I2S_RX']
     if (runtime/'sdk/driver/RiscHttpClientV1.h').is_file() and (runtime/'sdk/driver/RiscBankStoreV1.h').is_file():
@@ -97,15 +117,17 @@ def validate_paths(store):
             raise ValueError('Unsafe store member: ' + name)
 
 
-def unpack_image(raw, tool=None):
+def unpack_image(raw, tool=None, expected_size=BOOTFS_SIZE):
+    if expected_size not in (BOOTFS_SIZE, 0x510000):
+        raise ValueError('Unknown SPIFFS geometry')
     if tool is None:
-        files = read_image(raw)
+        files = read_image(raw, expected_size)
         validate_paths(files)
         return files
     tool = Path(tool).resolve()
     if sha(tool.read_bytes()) != MKSPIFFS_SHA256:
         raise ValueError('SPIFFS tool differs from pinned Arduino ESP32 binary')
-    if len(raw) != BOOTFS_SIZE:
+    if len(raw) != expected_size:
         raise ValueError('Incorrect SPIFFS partition size')
     with tempfile.TemporaryDirectory(prefix='risc-spiffs-') as temporary:
         root = Path(temporary)
@@ -114,7 +136,7 @@ def unpack_image(raw, tool=None):
         store = root / 'store'
         store.mkdir()
         subprocess.run([str(tool), '-u', str(store), '-p', '256', '-b', '4096',
-                        '-s', str(BOOTFS_SIZE), str(image)], check=True, timeout=60,
+                        '-s', str(expected_size), str(image)], check=True, timeout=60,
                        stdout=subprocess.DEVNULL)
         files = {p.relative_to(store).as_posix(): p.read_bytes()
                  for p in store.rglob('*') if p.is_file()}
@@ -148,12 +170,35 @@ def admit(harness, store, expected_error=None):
     return dict(outcome, store_files=len(store), store_sha256=before)
 
 
-def admit_many(runtime, stores, expected_error=None):
+def admit_many(runtime, stores, expected_error=None, app_data=False):
     with tempfile.TemporaryDirectory(prefix='risc-admission-') as temporary:
-        harness = compile_harness(runtime, Path(temporary) / 'admit')
+        harness = compile_harness(runtime, Path(temporary) / 'admit', app_data)
         results = [dict(label=label, **admit(harness, store, expected_error))
                    for label, store in stores]
     return results
+
+
+def admit_cohort(runtime, native_elf, active, candidate):
+    """Use the real Runtime comparison and native ELF checks without native I/O."""
+    validate_paths(active); validate_paths(candidate)
+    with tempfile.TemporaryDirectory(prefix='risc-cohort-admission-') as temporary:
+        root = Path(temporary)
+        harness = compile_harness(runtime, root / 'admit', True, native_elf)
+        for label, files in [('active', active), ('candidate', candidate)]:
+            for name, data in files.items():
+                path = root / label / name
+                path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(data)
+        result = subprocess.run([str(harness), str(root / 'active'), str(root / 'candidate')],
+                                check=True, timeout=60, capture_output=True, text=True)
+        outcome = json.loads(result.stdout)
+        for label, files in [('active', active), ('candidate', candidate)]:
+            after = {p.relative_to(root / label).as_posix(): p.read_bytes()
+                     for p in (root / label).rglob('*') if p.is_file()}
+            if after != files: raise ValueError('Cohort validation changed ' + label + ' files')
+    if not outcome['prepared'] or not outcome['cohort_validated'] or outcome['hardware_calls'] or outcome['storage_calls']:
+        raise ValueError('Production cohort admission failed: ' + str(outcome))
+    return dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
+                native_elf_sha256=sha(native_elf), target_instructions_executed=False)
 
 
 def main():

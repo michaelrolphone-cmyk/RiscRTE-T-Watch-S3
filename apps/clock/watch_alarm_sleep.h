@@ -28,7 +28,7 @@ static uint32_t watch_alarm_duration(const alarm_sleep_v1 *s) {
 }
 /* No service or storage calls belong after this pad-hold boundary. */
 static int32_t watch_alarm_enter_deep(const twatch_panel_power_v1 *panel,
-        const twatch_pmu_api_v1 *pmu,uint32_t duration) {
+        const twatch_pmu_api_v1 *pmu,const twatch_motion_api_v1 *motion,uint32_t duration) {
     if(panel->base.struct_size<TWATCH_PANEL_RESUME_STATUS_SIZE || !panel->prepare_deep_sleep || !panel->resume_status ||
        pmu->base.struct_size<TWATCH_PMU_TIMED_SLEEP_SIZE || !pmu->sleep_wake_pending ||
        (duration?(pmu->base.struct_size<TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE || !pmu->deep_sleep_for):!pmu->deep_sleep))
@@ -36,44 +36,54 @@ static int32_t watch_alarm_enter_deep(const twatch_panel_power_v1 *panel,
     int32_t rc=panel->prepare_deep_sleep(panel->base.context);
     if(rc!=0)return rc;
     bool pending=true;
-    if(!pmu->sleep_wake_pending(pmu->base.context,&pending))return RISC_DEEP_SLEEP_PLATFORM;
+    if(!watch_wake_pending(pmu,motion,&pending))return RISC_DEEP_SLEEP_PLATFORM;
     if(pending)return RISC_DEEP_SLEEP_ACTIVE_WAKE;
-    rc=duration?pmu->deep_sleep_for(pmu->base.context,duration):pmu->deep_sleep(pmu->base.context);
+    rc=watch_enter_deep(pmu,motion,duration);
     return rc>=0?RISC_DEEP_SLEEP_RETAINED:rc;
 }
-static int watch_alarm_sleep_prepared(const twatch_panel_power_v1 *panel,
-        const twatch_pmu_api_v1 *pmu,unsigned mode,const alarm_service_v1 *a,
+static int watch_alarm_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
+        const twatch_pmu_api_v1 *pmu,const twatch_motion_api_v1 *motion,unsigned mode,const alarm_service_v1 *a,
         bool (*diagnostic)(const char *)) {
     bool deep=mode==PORTABLE_SLEEP_DEEP,hybrid=mode==PORTABLE_SLEEP_HYBRID;
     int32_t rc=RISC_LIGHT_SLEEP_INVALID;
     /* The ordinary panel sleep performs its120ms delay without a native pad
        hold. Reconcile AFTER that delay but BEFORE Deep creates an exit barrier.
        Runtime must never see service KV while appExitSafe is false. */
-    bool panel_ok=panel->prepare_sleep(panel->base.context);
+    watch_sleep_stage=1;watch_sleep_detail=0;
+    if(!watch_motion_ready(motion))return WATCH_SLEEP_REFUSED;
+    bool motion_ok=!motion || motion->prepare_wake(motion->context);
+    if(motion_ok)watch_sleep_stage=2;
+    bool panel_ok=motion_ok && panel->prepare_sleep(panel->base.context);
+    if(panel_ok)watch_sleep_stage=3;
     bool pmu_ok=panel_ok && pmu->prepare_sleep(pmu->base.context);
     risc_light_sleep_result_v1 result={.struct_size=sizeof(result)};
     alarm_sleep_v1 decision={0};
-    if(pmu_ok && watch_alarm_deadline(a,&decision)==ALARM_OK) {
+    int32_t alarm_result=ALARM_INVALID;
+    if(pmu_ok){watch_sleep_stage=4;alarm_result=watch_alarm_deadline(a,&decision);watch_sleep_detail=alarm_result;}
+    if(pmu_ok && alarm_result==ALARM_OK) {
+        watch_sleep_stage=deep?6:5;
         uint32_t duration=watch_alarm_duration(&decision);
-        if(deep)rc=watch_alarm_enter_deep(panel,pmu,duration);
+        if(deep)rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
         else if(duration || hybrid) {
             uint32_t light=hybrid && (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)?PORTABLE_SLEEP_LIGHT_MS:duration;
             rc=pmu->base.struct_size>=TWATCH_PMU_TIMED_SLEEP_SIZE && pmu->light_sleep_for?
-                pmu->light_sleep_for(pmu->base.context,light,&result):RISC_LIGHT_SLEEP_UNSUPPORTED;
+                watch_enter_light(pmu,motion,light,&result):RISC_LIGHT_SLEEP_UNSUPPORTED;
             if(rc==RISC_LIGHT_SLEEP_OK && result.wake_cause==RISC_LIGHT_SLEEP_WAKE_TIMER && hybrid &&
                 (!duration || duration>PORTABLE_SLEEP_LIGHT_MS)) {
                 bool pending=true;
-                if(!pmu->sleep_wake_pending || !pmu->sleep_wake_pending(pmu->base.context,&pending))rc=RISC_LIGHT_SLEEP_PLATFORM;
+                if(!pmu->sleep_wake_pending || !watch_wake_pending(pmu,motion,&pending))rc=RISC_LIGHT_SLEEP_PLATFORM;
                 else if(!pending && watch_alarm_deadline(a,&decision)==ALARM_OK) {
                     /* Fresh RTC-backed decision first; hold and recheck crown
                        immediately afterward, then owned entry. No post-hold KV. */
                     duration=watch_alarm_duration(&decision);
-                    rc=watch_alarm_enter_deep(panel,pmu,duration);
+                    rc=watch_alarm_enter_deep(panel,pmu,motion,duration);
                 }
             }
-        } else rc=pmu->light_sleep(pmu->base.context,&result);
+        } else rc=watch_enter_light(pmu,motion,0,&result);
     }
+    if(watch_sleep_stage==5 || watch_sleep_stage==6)watch_sleep_detail=rc;
     if(rc==RISC_LIGHT_SLEEP_RETAINED){diagnostic("WATCH_ALARM sleep=retained");return WATCH_SLEEP_RETAINED;}
+    if(motion && !motion->resume_wake(motion->context)){diagnostic("WATCH_ALARM motion=restore-retained");return WATCH_SLEEP_RETAINED;}
     bool pmu_restored=pmu->resume(pmu->base.context);
     int32_t panel_restore=panel->base.struct_size>=TWATCH_PANEL_RESUME_STATUS_SIZE && panel->resume_status?
         panel->resume_status(panel->base.context):(panel->resume(panel->base.context)?0:RISC_LIGHT_SLEEP_PLATFORM);
@@ -83,4 +93,9 @@ static int watch_alarm_sleep_prepared(const twatch_panel_power_v1 *panel,
     if(!pmu->key_events(pmu->base.context,&ignored))return WATCH_SLEEP_FAILED;
     (void)a->refresh(a->context);
     return rc==RISC_LIGHT_SLEEP_OK && !deep?WATCH_SLEEP_WOKE:WATCH_SLEEP_REFUSED;
+}
+
+static int watch_alarm_sleep_prepared(const twatch_panel_power_v1 *panel,const twatch_pmu_api_v1 *pmu,
+        unsigned mode,const alarm_service_v1 *a,bool (*diagnostic)(const char *)){
+    return watch_alarm_sleep_motion_prepared(panel,pmu,NULL,mode,a,diagnostic);
 }

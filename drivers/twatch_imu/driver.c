@@ -1,5 +1,4 @@
-/* BMA423/BMA456 accelerometer on the system bus. Enables the accelerometer
- * and reads the data registers. Feature/FIFO firmware is not loaded. */
+/* Manifest-scoped BMA423/BMA456H samples and autonomous double-tap wake. */
 #include "RiscI2cBusV1.h"
 #include "RiscPlatformClockV1.h"
 #include "twatch_caps.h"
@@ -12,13 +11,32 @@ static const risc_gpio_bank_api_v1 *gpio_api;
 static bool started;
 static const tw_hw_i2c_device_v1 *config;
 static uint8_t chip;
+/* One RTOS tick may expire immediately. Verify elapsed monotonic time rather
+ * than trusting a requested delay. Add1ms for the clock's integer quantization;
+ * bounded retries fail closed if the clock stops advancing. */
+static bool sensor_wait_us(uint32_t us) {
+    if(!us)return true;
+    const uint64_t start_ms=clock_api->monotonic_ms(clock_api->context);
+    const uint64_t minimum_ms=us/1000u+(us%1000u!=0)+1u;
+    for(unsigned attempt=0;attempt<32;attempt++) {
+        uint64_t elapsed=clock_api->monotonic_ms(clock_api->context)-start_ms;
+        if(elapsed>=minimum_ms)return true;
+        clock_api->sleep_ms(clock_api->context,(uint32_t)(minimum_ms-elapsed));
+    }
+    return clock_api->monotonic_ms(clock_api->context)-start_ms>=minimum_ms;
+}
 static bool write_reg(uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
-    return bus->transact(bus->context, claim, buf, 2, NULL, 0, 30);
+    bool ok=bus->transact(bus->context, claim, buf, 2, NULL, 0, 30);
+    /* Bosch requires >=450us after writes in suspend/low-power mode. The
+     * shared clock is millisecond-granular; the elapsed-time guard also covers
+     * quantization and a short first tick, even when a failed transfer may have partially reached the device. */
+    return sensor_wait_us(450) && ok;
 }
 static bool read_reg(uint8_t reg, uint8_t *out, size_t n) {
     return bus->transact(bus->context, claim, &reg, 1, out, n, 30);
 }
+#include "motion_wake.inc"
 static bool chip_id(void *context, uint8_t *out) {
     (void)context;
     if (!started || !out || !chip)
@@ -28,7 +46,7 @@ static bool chip_id(void *context, uint8_t *out) {
 }
 static bool read_sample(void *context, twatch_accel_sample_v1 *out) {
     (void)context;
-    if (!started || !out)
+    if (!started || !out || wake_changed)
         return false;
     uint8_t raw[6] = {0};
     if (!read_reg(0x12u, raw, 6))
@@ -40,6 +58,7 @@ static bool read_sample(void *context, twatch_accel_sample_v1 *out) {
 }
 static bool quiesce(void) {
     bool ok = true;
+    if (!resume_wake(NULL)) return false;
     if (started && claim && !write_reg(0x7d, 0))
         return false;
     if (claim && bus) {
@@ -92,8 +111,9 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
         (void)quiesce();
         return false;
     }
-    if (clock_api->sleep_ms)
-        clock_api->sleep_ms(clock_api->context, 10);
+    if (!sensor_wait_us(10000)) {
+        (void)quiesce();return false;
+    }
     if (!write_reg(0x7Cu, 0x00u) || !write_reg(0x40u, 0xA8u) || !write_reg(0x41u, 0x01u) ||
         !write_reg(0x7Du, 0x04u)) {
         (void)quiesce();
@@ -106,7 +126,7 @@ static void stop(void) {
     (void)quiesce();
 }
 static const twatch_motion_api_v1 api = {TWATCH_MOTION_API_V1, sizeof(api), NULL, read_sample,
-                                         chip_id};
+                                         chip_id, prepare_wake, wake_pending, resume_wake, wake_error};
 static const risc_driver_v2 driver = {RISC_PROVIDER_DRIVER_ABI_V2,
                                       sizeof(driver),
                                       "twatch-imu",

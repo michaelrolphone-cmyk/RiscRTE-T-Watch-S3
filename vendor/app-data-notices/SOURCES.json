@@ -1,0 +1,23 @@
+{
+  "purpose": "Notices for the Runtime app-data filesystem and offline initial image",
+  "licenses": [
+    {
+      "file": "LICENSE-esp-littlefs.txt",
+      "repository": "https://github.com/joltwallet/esp_littlefs",
+      "commit": "41873c20fb5cdbcf28d7d6cc04e4bcb4a1305317",
+      "source_path": "LICENSE",
+      "source_sha256": "b6bbf3bd17c2b5532bc25a7acf1760faac0b995d6e0ad8bec29435166727d4c5",
+      "distributed_sha256": "81dfefa7711672ea4a8b17e577d6a834881028d64c26fe3b56a07cc384a52866",
+      "normalization": "LF line endings and removed trailing spaces; license wording unchanged"
+    },
+    {
+      "file": "LICENSE-littlefs.txt",
+      "repository": "https://github.com/littlefs-project/littlefs",
+      "commit": "f53a0cc961a8acac85f868b431d2f3e58e447ba3",
+      "source_path": "LICENSE.md",
+      "source_sha256": "0cb4ff1daf5fdc1359c6a6ee3116092f08fc100c9d58b1b77ab17bfd801f856d",
+      "distributed_sha256": "476f73294dbc49831e404c07268e040cb1f61c7b780bd7170a9de82ea0db09e1",
+      "normalization": "LF line endings and removed trailing spaces; license wording unchanged"
+    }
+  ]
+}

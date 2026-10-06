@@ -41,7 +41,7 @@ class CommonClock(unittest.TestCase):
         cls.addClassCleanup(cls.temp.cleanup)
         cls.root = Path(cls.temp.name) / 'inputs'
         cls.root.mkdir()
-        for name in ('hardware', 'drivers', 'apps/clock/nova/fonts'):
+        for name in ('hardware', 'drivers', 'apps/clock/nova/fonts', 'custody'):
             shutil.copytree(ROOT / name, cls.root / name)
         for name in ('board.json', 'apps/clock/manifest.json', 'apps/clock/runtime-requirements.json', 'apps/clock/time-policy.json', 'sdk/app/SOURCES.json',
                      'releases/board-baseline.json', 'docs/CLOCK_INSTALL.md', 'docs/CROWN_SLEEP.md', 'docs/PMU_BATTERY.md'):
@@ -60,6 +60,14 @@ class CommonClock(unittest.TestCase):
             packages.append({'id': manifest['id'], 'version': manifest['version'],
                              'archive': name, 'sha256': deployment.sha(archive.read_bytes())})
         (cls.root / 'dist/catalog.json').write_bytes(deployment.encoded({'packages': packages}))
+        legacy=[]
+        for path in sorted((cls.root/'custody/sleep-prefix/drivers').glob('*/manifest.json')):
+            manifest=json.loads(path.read_text());name=f"driver-{manifest['id']}-{manifest['version']}.rte.zip";archive=cls.root/'dist'/name
+            write_zip(archive,{'source-manifest.json':deployment.encoded(manifest),'driver.elf':elf_fixture(manifest['id'])})
+            legacy.append({'id':manifest['id'],'version':manifest['version'],'archive':name,'sha256':deployment.sha(archive.read_bytes())})
+        (cls.root/'dist/legacy-sleep').mkdir()
+        (cls.root/'dist/legacy-sleep/catalog.json').write_bytes(deployment.encoded({'packages':legacy}))
+
         with patch.object(deployment.subprocess, 'check_output', return_value='a' * 40 + '\n'):
             for profile in sorted((cls.root / 'hardware').glob('*.json')):
                 deployment.build(profile, root=cls.root)

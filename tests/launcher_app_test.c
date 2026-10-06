@@ -33,7 +33,9 @@ static bool submit_frame(void*c,uint64_t f,const risc_display_rect_v1*d,size_t n
  if(face_writes&&scenario!=11&&scenario!=15){
   assert(!picker.open&&!picker_scratch);
   risc_display_surface_v1 expected={0,expected_pixels,240,240,480,sizeof(expected_pixels),5};
-  assert(nova_watch_face_render(&expected,&face,picker.selected)&&!memcmp(pixels,expected_pixels,sizeof(pixels)));
+  assert(nova_watch_face_render(&expected,&face,picker.selected));
+  if(sleep_status[0])assert(nova_watch_sleep_status(&expected,sleep_status));
+  assert(!memcmp(pixels,expected_pixels,sizeof(pixels)));
  }
  owned=false;pending=true;frame_started=clock_ms;*t=++submitted;return true;}
 static bool status(void*c,uint64_t t,risc_display_present_status_v1*s){(void)c;assert(t==submitted&&pending);if((scenario==14||scenario==19)&&clock_ms-frame_started<95){s->state=RISC_DISPLAY_PRESENT_ACTIVE;return true;}pending=false;s->state=scenario==5 && touch_step>=2?RISC_DISPLAY_PRESENT_FAILED:RISC_DISPLAY_PRESENT_COMPLETE;
@@ -86,7 +88,7 @@ static bool snapshot(void*c,risc_touch_snapshot_v1*s){
 }
 static risc_touch_api_v1 ta={1,sizeof(ta),NULL,subscribe,unsubscribe,poll,next,snapshot};
 static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acquire_frame,release_frame,submit_frame,status,NULL,brightness},prepare,resume,NULL,NULL};
-static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending,NULL};
+static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending,NULL,NULL,NULL};
 static twatch_rtc_api_v1 ra={2,sizeof(ra),NULL,rtc_read,NULL,NULL,NULL};
 static int32_t face_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){(void)c;*z=0;if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){if(scenario==17||scenario==18){assert(n==4);uint8_t f[]={0x54,1,1,scenario==17?0xa4:0};memcpy(b,f,4);*z=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}if(strcmp(k,WATCH_FACE_KEY))return RISC_KEY_VALUE_NOT_FOUND;face_reads++;if(scenario==15&&face_writes)return RISC_KEY_VALUE_IO;if(!saved_face)return RISC_KEY_VALUE_NOT_FOUND;assert(n==4);memcpy(b,saved_blob,4);*z=4;return 0;}
 static int32_t face_put(void*c,const char*k,const void*b,uint32_t n){(void)c;assert(!strcmp(k,WATCH_FACE_KEY)&&n==4);face_writes++;if(scenario==11)return RISC_KEY_VALUE_IO;memcpy(saved_blob,b,4);saved_face=true;return 0;}
@@ -96,7 +98,9 @@ static bool release_cap(risc_runtime_capability_v1*g){assert(g->api&&!owned&&!pe
 static bool launch(const char*p){assert(!strcmp(p,"springboard.elf")&&!owned&&!pending&&!touch.subscription);assert(submitted==last_complete&&submitted==swipe_submitted&&clock_ms==swipe_time);
  assert(!memcmp(completed_pixels,pixels,sizeof(pixels)));
  risc_display_surface_v1 expected={0,expected_pixels,240,240,480,sizeof(expected_pixels),5};
- assert(nova_watch_face_render(&expected,&face,picker.selected)&&!memcmp(pixels,expected_pixels,sizeof(pixels)));
+ assert(nova_watch_face_render(&expected,&face,picker.selected));
+  if(sleep_status[0])assert(nova_watch_sleep_status(&expected,sleep_status));
+  assert(!memcmp(pixels,expected_pixels,sizeof(pixels)));
  launches++;if(scenario==6)return false;launched=true;return true;}
 static const risc_runtime_api_v1 runtime={1,sizeof(runtime),health,yield,diagnostic,launch,acquire_cap,release_cap};
 const risc_runtime_api_v1*risc_runtime_get_api(uint32_t v){assert(v==1);return &runtime;}

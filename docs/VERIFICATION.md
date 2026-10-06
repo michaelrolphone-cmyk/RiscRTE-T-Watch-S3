@@ -48,7 +48,7 @@ backends, firmware image or full watch application is provided. No module was
 loaded into an actual runtime. BLE HCI is a controller transport, not a BLE host
 stack; Wi-Fi depends on the future CPU stack service. Flash/PSRAM/module store,
 USB role/PHY/power adaptation, filesystem/network services and sleep/wake are
-port/backlog items. Sensor feature firmware/FIFO/step counters, haptic motor
+port/backlog items. Sensor FIFO/step counters, haptic motor
 calibration, LoRaWAN/FSK/ranging and GPS are not advertised implementations.
 
 Actual radio/antenna/sensor/PCB variant, oscillator voltage, electrical timing,
@@ -56,3 +56,7 @@ IRQ/wake behavior, motor calibration, battery/charger behavior, display orientat
 audio quality and RF operation remain **unverified on hardware**. Explicit profile
 selection and correct runtime providers are required before authorized physical
 qualification. No release, merge, default launcher or hardware test occurred.
+
+The current motion wake implementation and per-chip, software-only verification
+are documented in [MOTION_WAKE.md](MOTION_WAKE.md). Physical qualification remains
+pending.

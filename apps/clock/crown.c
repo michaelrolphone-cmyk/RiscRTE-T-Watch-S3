@@ -11,6 +11,7 @@
 #include "transitions/PortableTransition.h"
 #include <stdlib.h>
 #include <string.h>
+static char sleep_status[32];
 
 static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_CLOCK_ALARMS
@@ -23,6 +24,15 @@ static bool clock_alarm_failure(void);
 #endif
 #ifdef WATCH_CLOCK_LAUNCHER
 #include "faces/picker.h"
+#ifdef WATCH_QUICK_ACTIONS
+#include "PortableQuickSession.h"
+#include "PortableQuickRender.h"
+static pqa_session clock_quick;
+#ifdef WATCH_QUICK_RADIOS
+#include "PortableQuickRadios.h"
+static pqa_radios clock_radios;
+#endif
+#endif
 #include "launcher_touch.h"
 #include "PortableSleepPolicy.h"
 #include "PortableTimeFormat.h"
@@ -204,7 +214,16 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
         picker.category_positions[picker.category]=picker.position;
         return nova_watch_picker_collections_render(surface,&face,picker.selected,picker.category_position,picker.category_positions,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
     }
-    return nova_watch_face_render(surface,&face,picker.selected);
+    bool rendered=nova_watch_face_render(surface,&face,picker.selected);
+#ifdef WATCH_QUICK_ACTIONS
+    pqa_animate(&clock_quick.ui,now);
+    if(rendered && pqa_visible(&clock_quick.ui)) {
+        nova_watch_labels labels;nova_watch_format(&face,&labels);
+        rendered=pqa_render(surface,&clock_quick.ui,labels.hour_minute,face.battery_valid,face.battery_percent);
+    }
+#endif
+    if(rendered && sleep_status[0])rendered=nova_watch_sleep_status(surface,sleep_status);
+    return rendered;
 #else
     return nova_watch_render(surface,&face);
 #endif
@@ -306,6 +325,13 @@ done:
     free(scratch);free(old);return ok;
 }
 #endif
+static unsigned clock_brightness(void) {
+#ifdef WATCH_QUICK_ACTIONS
+    return clock_quick.brightness;
+#else
+    return 40;
+#endif
+}
 static bool startup(void) {
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -317,7 +343,7 @@ static bool startup(void) {
         /* The retained provider may already contain a previous app's frame.
          * Entry blanks it before acquiring other capabilities. Restore light
          * only after the first complete new intro frame, never before submit. */
-        if (!count && !display->set_brightness(display->context,40,100)) return false;
+        if (!count && !display->set_brightness(display->context,(uint16_t)clock_brightness(),100)) return false;
         if (age>=1800) return hold_boot_frame() && logo_to_clock();
         if (!pace_frame(now)) return false;
     }
@@ -325,8 +351,15 @@ static bool startup(void) {
 }
 #ifdef WATCH_CLOCK_ALARMS
 #include "clock_alarm.inc"
+#ifdef WATCH_MOTION_WAKE
+#include "watch_motion_client.h"
+#endif
 #endif
 static int sleep_cycle(void) {
+    sleep_status[0]=0;
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_suspend(rt)){rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");return false;}
+#endif
     /* Clear retained panel RAM before sleep, not merely its PWM. If the
      * platform briefly restores the backlight before the panel resume hook,
      * the exposed completed image is black rather than the old Clock. */
@@ -347,7 +380,12 @@ static int sleep_cycle(void) {
 #endif
 #ifdef WATCH_CLOCK_ALARMS
     (void)watch_sleep_prepared;
+#ifdef WATCH_MOTION_WAKE
+    (void)watch_alarm_sleep_prepared;
+    int rc=watch_motion_sleep(rt,panel,pmu,mode,clock_alarm.api);
+#else
     int rc=watch_alarm_sleep_prepared(panel,pmu,mode,clock_alarm.api,rt->diagnostic);
+#endif
 #else
     int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
 #endif
@@ -355,6 +393,9 @@ static int sleep_cycle(void) {
     if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
 #endif
     if(rc<0)return false;
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_resume(&clock_radios,&clock_quick.ui,rt))return false;
+#endif
     uint32_t discard;
     reset_telemetry();
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -369,12 +410,21 @@ static int sleep_cycle(void) {
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
     } else {
         rt->diagnostic("WATCH_CLOCK sleep=refused");
+        static const char *const stages[]={"UNKNOWN","SENSOR","PANEL","PMU","ALARM","LIGHT","DEEP","ACQUIRE","API"};
+        memcpy(sleep_status,"SLEEP ",6);unsigned count=6;
+        const char *name=stages[watch_sleep_stage<9?watch_sleep_stage:0];
+        while(*name && count<20)sleep_status[count++]=*name++;
+        sleep_status[count++]=' ';uint32_t value=(uint32_t)watch_sleep_detail;
+        if(watch_sleep_detail<0){sleep_status[count++]='-';value=0u-value;}
+        char digits[10];unsigned used=0;do{digits[used++]=(char)('0'+value%10u);value/=10u;}while(value&&used<10);
+        while(used&&count+1<sizeof(sleep_status)){sleep_status[count++]=digits[--used];}
+        sleep_status[count]=0;
         risc_display_surface_v1 fresh={0};uint32_t now;
         /* The pre-sleep clear also runs before a refused attempt. Replace it
          * with a complete fresh Clock before restoring the previous level. */
         if (!display->set_brightness(display->context,0,100) || !alive(&now) ||
             !frame(&fresh) || !draw_clock(now,&fresh) || !present() ||
-            !display->set_brightness(display->context,40,100)) return false;
+            !display->set_brightness(display->context,(uint16_t)clock_brightness(),100)) return false;
     }
     return pmu->key_events(pmu->base.context,&discard);
 }
@@ -386,6 +436,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_CLOCK_LAUNCHER
     touch=(watch_launcher_touch){0};
+#ifdef WATCH_QUICK_ACTIONS
+    pqa_session_init(&clock_quick);
+#endif
     launcher_swipe_pending=launcher_activity_pending=false;
     launcher_sampled_at=0;
     picker=(watch_face_picker){0};picker_scratch=NULL;
@@ -430,6 +483,12 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(!rt->release(&face_grant))goto done;
         if(rc!=RISC_KEY_VALUE_OK&&rc!=RISC_KEY_VALUE_NOT_FOUND)rt->diagnostic("WATCH_CLOCK face=unreadable default=nova");
     }
+#endif
+#ifdef WATCH_QUICK_ACTIONS
+    if(!pqa_session_load(&clock_quick,rt))goto done;
+#ifdef WATCH_QUICK_RADIOS
+    if(!pqa_radios_load(&clock_radios,&clock_quick.ui,rt))goto done;
+#endif
 #endif
 #ifdef WATCH_CLOCK_ALARMS
 #ifdef WATCH_CLOCK_POINTS
@@ -489,6 +548,24 @@ __attribute__((visibility("default"))) void app_main(void) {
         sample_launcher_touch(now,true);
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
+#ifdef WATCH_QUICK_ACTIONS
+        if(events&3u)pqa_close(&clock_quick.ui);
+        uint32_t quick_actions=pqa_take_action(&clock_quick.ui);bool volume_changed=false;
+        if(!pqa_session_apply(&clock_quick,rt,display,quick_actions,&volume_changed))break;
+#ifdef WATCH_QUICK_RADIOS
+        if(!pqa_radios_apply(&clock_radios,&clock_quick.ui,rt,quick_actions))break;
+#endif
+#ifdef WATCH_CLOCK_ALARMS
+        if(volume_changed && clock_alarm.api)(void)clock_alarm.api->refresh(clock_alarm.api->context);
+#endif
+        if(!clock_quick.ui.radio_controls && (quick_actions&PQA_WIFI)) {
+            pqa_cancel(&clock_quick.ui);
+            if(!pqa_session_restore(&clock_quick,display) || !launcher_touch_close(&touch))break;
+            if(rt->request_launch("wifi_settings.elf"))break;
+            clock_quick.ui.error_flags|=PQA_ERROR_WIFI;
+            if(!launcher_touch_open(&touch))break;
+        }
+#endif
         if(picker_open_pending) {
             picker_open_pending=false;
             if(!picker_scratch){picker_scratch=malloc(sizeof(*picker_scratch));if(picker_scratch)picker_scratch->valid_mask=0;}
@@ -531,6 +608,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         bool idle=(uint32_t)(now-last_activity)>=60000u;
         if (manual || idle) {
 #ifdef WATCH_CLOCK_LAUNCHER
+#ifdef WATCH_QUICK_ACTIONS
+            pqa_cancel(&clock_quick.ui);(void)pqa_take_action(&clock_quick.ui);
+#endif
             /* Retained input subscriptions must not veto platform sleep. */
             if(!launcher_touch_close(&touch)) break;
             watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
@@ -553,6 +633,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
     }
 done:
+#ifdef WATCH_QUICK_ACTIONS
+    if(clock_quick.ui.torch && display && !pqa_session_restore(&clock_quick,display))rt->diagnostic("QUICK brightness-restore-failed");
+#endif
 #ifdef WATCH_CLOCK_ALARMS
     clock_alarm_finish();
 #endif

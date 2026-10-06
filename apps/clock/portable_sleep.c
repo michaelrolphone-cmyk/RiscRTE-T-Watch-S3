@@ -5,6 +5,13 @@
 #include "watch_sleep.h"
 #ifdef PORTABLE_ALARM_CLIENT
 #include "watch_alarm_sleep.h"
+#ifdef PORTABLE_MOTION_WAKE
+#include "watch_motion_client.h"
+#endif
+#endif
+#ifdef PORTABLE_QUICK_ACTIONS
+/* Same invocation-local confirmed preference as the shared controls overlay. */
+extern unsigned portable_quick_brightness(void);
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -62,7 +69,12 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
     if(d->set_brightness(d->context,0,100) && transfer(rt,d,NULL)) {
 #ifdef PORTABLE_ALARM_CLIENT
         (void)watch_sleep_prepared; /* old deployment path remains compiled/tested */
+#ifdef PORTABLE_MOTION_WAKE
+        (void)watch_alarm_sleep_prepared;
+        rc=watch_motion_sleep(rt,panel,pmu,PORTABLE_SLEEP_HYBRID,alarms);
+#else
         rc=watch_alarm_sleep_prepared(panel,pmu,PORTABLE_SLEEP_HYBRID,alarms,rt->diagnostic);
+#endif
         /* Preserve this image and the original app's grants. No yield (which
            polls providers), free, restore or stop-only after native retention. */
         if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
@@ -73,7 +85,13 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
             /* Resume stays dark until a complete previous-app frame arrives.
              * The caller then continues in its original stack and app state. */
             if(!d->set_brightness(d->context,0,100) || !transfer(rt,d,saved) ||
-               !d->set_brightness(d->context,40,100))rc=-1;
+               !d->set_brightness(d->context,
+#ifdef PORTABLE_QUICK_ACTIONS
+                 (uint16_t)portable_quick_brightness(),
+#else
+                 40,
+#endif
+                 100))rc=-1;
         }
     }
     free(saved);

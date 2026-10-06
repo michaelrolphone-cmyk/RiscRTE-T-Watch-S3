@@ -160,3 +160,10 @@ swipe-to-launcher handoff, explicit180-degree touch mapping, seven physical
 driver instances, Denver display/inverse RTC policy and first-safe-frame
 backlight gating. See [launcher build and verification](docs/LAUNCHER_INSTALL.md).
 The accepted PR6 clock0.3.1 bundle is preserved unchanged.
+
+## Current motion-wake candidate
+
+[Motion double-tap wake](docs/MOTION_WAKE.md) is implemented for both Light and
+Deep using the selected BMA423 or BMA456H ELF driver and generic Runtime wake
+sets. Builds require an explicit sensor model; earlier successful boots do not
+identify the part. Hardware qualification remains pending.

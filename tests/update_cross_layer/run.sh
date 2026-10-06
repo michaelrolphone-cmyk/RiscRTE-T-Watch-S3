@@ -7,6 +7,7 @@ boot="${3:?Pass verified rollback bootloader}"
 build="${BUILD_DIR:-$here/build}"
 mkdir -p "$build/modules"
 flags=(-Wall -Wextra -Werror -Wno-missing-field-initializers -Wno-misleading-indentation -Wno-deprecated-declarations -g)
+if [[ "${APP_DATA_TEST:-0}" == 1 ]]; then flags+=(-DRISC_PAIRED_APP_DATA=1); fi
 san=()
 if [[ "${SANITIZE:-0}" == 1 ]]; then san=(-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer);fi
 inc=(-I"$here/shim" -I"$runtime/test/native_http_shim" -I"$runtime/test/native_bank_stubs" -I"$runtime/test/drivers/stubs" -I"$runtime/lib/elf_loader/include" -I"$runtime/src" -I"$runtime/sdk/app" -I"$runtime/sdk/driver" -I"$runtime/sdk/hardware" -I"$runtime/lib/ArduinoJson/src" -I"$apps/lib/PortableApps/include" -I"$apps/lib/NativeApps/include")

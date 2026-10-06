@@ -52,10 +52,10 @@ def source_state(path):
             'tracked_changes': git('status', '--porcelain', '--untracked-files=no')}
 
 
-def _runtime(runtime):
+def _runtime(runtime, current_profile=False):
     runtime = Path(runtime).resolve()
     state = source_state(runtime)
-    require(state['commit'] == RUNTIME_COMMIT and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
+    require(state['commit'] == (json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['source_sha'] if current_profile else RUNTIME_COMMIT) and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
     return runtime
 
 
@@ -68,7 +68,7 @@ def _flags():
     return flags
 
 
-def _host(runtime, build, current_utilities=None):
+def _host(runtime, build, current_utilities=None, app_data=False):
     registry = runtime / 'test/support/native_registry'
     require((registry / 'build.sh').is_file(), 'Production target registry support is required')
     registry_build = build / 'native-registry'
@@ -93,6 +93,7 @@ def _host(runtime, build, current_utilities=None):
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
+        *(['-DSTORE_ADMISSION_APP_DATA'] if app_data else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
@@ -141,8 +142,9 @@ def _policies(content, current_profile=False):
         expected = {('display.output', 1, 5), ('input.touch.raw', 1, 6), ('rtc.clock', 2, 8),
                     ('board.battery', 1, 4), ('storage.key-value', 1, 6), ('net.wifi', 1, 15),
                     ('software.update.' + kind, 1, 0), ('alarm.service', 1, 0)}
+        if current_profile:expected.update({('storage.key-value',1,1),('bluetooth.hci',1,16),('motion.accel',1,7)})
         actual = {(g['capability'], g['api'], g.get('instance_id', 0)) for g in policy['grants']}
-        require(len(policy['grants']) == 8 and actual == expected, 'Update app requires exactly its eight bounded grants')
+        require(len(policy['grants']) == (11 if current_profile else 8) and actual == expected, 'Update app requires exactly its bounded grants')
     return boot
 
 
@@ -181,7 +183,7 @@ def admit_many(runtime_source, stores, output=None):
 def _source_hashes(runtime, system=None, utilities=None):
     files = [runtime / name for name in RUNTIME_SOURCES]
     for base in (runtime / 'sdk', runtime / 'src/bootstrap', runtime / 'src/runtime/drivers', ROOT / 'sdk', ROOT / 'include', ROOT / 'drivers', ROOT / 'apps/clock', HERE,
-                 ROOT / 'tests/production_store_runtime'):
+                 ROOT / 'tests/production_store_runtime', ROOT/'vendor',ROOT/'custody'):
         files += [p for p in base.rglob('*') if p.is_file() and p.suffix in ('.c', '.cpp', '.h', '.inc', '.json')]
     files += [Path(__file__), ROOT / 'apps/update-sources.json', runtime / 'src/bootstrap/Runtime.h', runtime / 'src/ports/esp32s3/CpuPort.h',
               runtime / 'test/run_update_runtime_test.sh', runtime / 'test/update_runtime_test.cpp',
@@ -199,9 +201,9 @@ def _source_hashes(runtime, system=None, utilities=None):
     return {str(p): sha(p) for p in sorted(set(files))}
 
 
-def verify_clock_abi(runtime_source, output=None, compiler=None):
+def verify_clock_abi(runtime_source, output=None, compiler=None, current_profile=False):
     """Guard-page tests using frozen/canonical SDKs, plus optional target compile."""
-    runtime = _runtime(runtime_source)
+    runtime = _runtime(runtime_source,current_profile)
     compiler = compiler or os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
     require(compiler, 'Set TWATCH_CC to the pinned Xtensa compiler for the required target ABI checks')
     record = {'host': [], 'xtensa': [], 'target_executed': False}
@@ -226,13 +228,13 @@ def verify_clock_abi(runtime_source, output=None, compiler=None):
     return record
 
 
-def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False):
+def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False, app_data=False):
     """Run paired defaultClock against exact profile/common/extracted stores.
 
     productivity is recorded for the enclosing product's source custody; its
     applications are admitted but aren't substituted or executed by this lane.
     """
-    runtime, system, utilities = _runtime(runtime_source), Path(system_apps).resolve(), Path(utilities).resolve()
+    runtime, system, utilities = _runtime(runtime_source,current_profile), Path(system_apps).resolve(), Path(utilities).resolve()
     stores = list(stores)
     require(stores, 'At least one actual production store is required')
     require(len({label for label, _ in stores}) == len(stores), 'Duplicate store label')
@@ -243,20 +245,26 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         record['sources']['productivity'] = source_state(productivity)
     pins = (json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources'] if current_profile else json.loads((ROOT / 'apps/update-sources.json').read_text()))
     record['current_apps_profile']=bool(current_profile)
+    if current_profile:record['runtime_version']=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['firmware_version']
     for name, state in record['sources'].items():
         if name != 'watch':
             require(state['commit'] == pins[name]['commit'] and not state['tracked_changes'], 'Wrong or modified pinned production source: ' + name)
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
+    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE']
     with _build(output) as build:
-        host = _host(runtime, build, utilities if current_profile else None)
+        host = _host(runtime, build, utilities if current_profile else None, app_data)
         modules = build / 'modules'
         modules.mkdir(exist_ok=True)
         cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')
         includes = ['-I' + str(p) for p in (ROOT / 'sdk/app', ROOT / 'sdk/driver', ROOT / 'include', ROOT)]
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
+        if not current_profile:
+            from build_legacy_sleep import legacy_inputs
+            legacy=legacy_inputs(ROOT)
+            source_manifests.update({json.loads(p.read_text())['id']:p for p in (legacy/'drivers').glob('*/manifest.json')})
         selections = {}
         prepared = []
         for index, (label, content) in enumerate(stores):
@@ -287,7 +295,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             extra, compiler, language = [], cc, '-std=c11'
             if name == 'alarm-service':
                 source = utilities / 'Services/alarm_service/service.c'
-                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL'] if current_profile else [])
+                extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'] if current_profile else [])
                 module_includes = ['-I' + str(p) for p in (utilities / 'lib/Alarm/include', runtime / 'sdk/driver', system / 'lib/PortableApps/include')]
             elif name.startswith('software-update-'):
                 source = system / 'Services/update/service.cpp'
@@ -298,8 +306,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 candidates = list(source_manifests[name].parent.glob('*.c'))
                 require(len(candidates) == 1, 'Driver does not have one production source: ' + name)
                 source, module_includes = candidates[0], includes
+                if not current_profile and name in ('twatch-gpio','twatch-pmu'):
+                    module_includes=['-I'+str(legacy/p) for p in ('sdk/driver','include')]+includes
             command([compiler, language, *_flags(), '-fPIC', '-shared', '-fvisibility=hidden',
-                     *module_includes, *extra, source, '-o', module])
+                     *module_includes, *extra, source, *(__import__('imu_sources').extra_sources(name)), '-o', module])
             for target in targets:
                 shutil.copy2(module, target)
         objects = []
@@ -308,6 +318,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             command([cc, '-std=c11', *_flags(), '-fPIC', '-fvisibility=hidden', *clock_includes,
                      *['-D' + flag for flag in record['clock_defines']], '-c', ROOT / 'apps/clock' / name, '-o', obj])
             objects.append(obj)
+        if current_profile:
+            for name in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c'):
+                obj=modules/(Path(name).stem+'.o')
+                command([cc,'-std=c11',*_flags(),'-fPIC','-fvisibility=hidden',*clock_includes,'-c',system/'lib/PortableApps/src'/name,'-o',obj]);objects.append(obj)
         clock = modules / 'default.elf'
         command([cxx, '-std=c++11', *_flags(), '-fPIC', '-shared', '-fvisibility=hidden', *includes,
                  ROOT / 'apps/clock/effects/boot.cpp', *objects, '-o', clock])
@@ -330,8 +344,8 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         # actual Runtime repository's established fixture, not a parallel stack.
         record['runtime_owner_regression'] = command(['bash', runtime / 'test/run_update_runtime_test.sh'])
         record['runtime_owner_regression_sanitized'] = os.environ.get('SANITIZE', '0') == '1'
-        record['clock_abi'] = verify_clock_abi(runtime, build / 'abi')
-        require(_runtime(runtime) == runtime, 'Runtime identity changed during test')
+        record['clock_abi'] = verify_clock_abi(runtime, build / 'abi',current_profile=current_profile)
+        require(_runtime(runtime,current_profile) == runtime, 'Runtime identity changed during test')
         record['compiled_source_sha256'] = _source_hashes(runtime, system, utilities)
         require(record['compiled_source_sha256'] == before_sources, 'Production source changed during execution')
         (build / 'execution-provenance.json').write_text(json.dumps(record, indent=2) + '\n')

@@ -8,6 +8,9 @@ static bool clock_alarm_failed_cleaned,clock_alarm_error_seen;
 static int32_t clock_alarm_seen_error;
 static uint32_t clock_alarm_seen_snapshot;
 static void clock_alarm_cancel_input(void) {
+#ifdef WATCH_QUICK_ACTIONS
+    pqa_cancel(&clock_quick.ui);clock_quick.ui.pending&=~(uint32_t)PQA_WIFI;
+#endif
     launcher_swipe_pending=launcher_activity_pending=false;
     /* A long press sampled inside present() marks the picker open before the
      * settled loop allocates its cache. Cancelling that queued opening must
@@ -66,7 +69,7 @@ static bool clock_alarm_foreground(void) {
                clock_alarm.status.state==ALARM_STATE_BLOCKED,clock_alarm.status.error==ALARM_RTC,
                clock_alarm.status.state==ALARM_STATE_DISMISSING,clock_alarm.status.output_uncertain,
                clock_alarm.status.occurrence.generation!=0) || !present() ||
-               !display->set_brightness(display->context,40,100))return clock_alarm_failure();
+               !display->set_brightness(display->context,(uint16_t)clock_brightness(),100))return clock_alarm_failure();
             redraw=false;
         }
         uint32_t now,events=0;

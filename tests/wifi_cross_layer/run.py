@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Actual Runtime/CpuPort/provider/grant lifecycle, using synthetic RF hardware."""
-import argparse,json,os,subprocess,tempfile,shutil
+import argparse,json,os,subprocess,tempfile,shutil,sys
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--runtime',type=Path,required=True);p.add_argument('--system-apps',type=Path,required=True);p.add_argument('--utilities',type=Path,required=True);a=p.parse_args()
 w=Path(__file__).resolve().parents[2];r=a.runtime.resolve();s=a.system_apps.resolve();u=a.utilities.resolve();here=Path(__file__).resolve().parent;b=w/'dist/wifi-cross-layer';b.mkdir(parents=True,exist_ok=True)
+sys.path.insert(0,str(w/'scripts'))
+from build_legacy_sleep import legacy_inputs
+legacy=legacy_inputs(w)
 san=['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame-pointer'] if os.environ.get('SANITIZE')=='1' else []
 # One physical copy of each header: pragma-once cannot reliably deduplicate
 # byte-identical SDK copies with different checkout timestamps/inodes in CI.
@@ -11,7 +14,7 @@ san=['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame
 # rather than weakening type checks or changing a production ABI.
 sdk_temporary=tempfile.TemporaryDirectory(prefix='wifi-sdk-',dir=b)
 sdk_root=Path(sdk_temporary.name);sdk=sdk_root/'include';sdk.mkdir()
-for folder in [r/'sdk/app',r/'sdk/driver',r/'sdk/hardware',w/'sdk/app',w/'sdk/driver',w/'drivers/twatch_wifi',s/'lib/PortableApps/include',s/'lib/NativeApps/include']:
+for folder in [r/'sdk/app',r/'sdk/driver',r/'sdk/hardware',w/'sdk/app',legacy/'sdk/driver',w/'drivers/twatch_wifi',s/'lib/PortableApps/include',s/'lib/NativeApps/include']:
  for header in folder.glob('*.h'):
   target=sdk/header.name;data=header.read_bytes()
   if target.exists():

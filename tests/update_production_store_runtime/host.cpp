@@ -10,6 +10,9 @@
 #undef log
 #include <RiscBankStoreV1.h>
 #include <RiscHttpClientV1.h>
+#ifdef STORE_ADMISSION_APP_DATA
+#include "../app_data_admission_backend.h"
+#endif
 namespace {
 std::string scenario;
 unsigned confirms=0,rawCalls=0,hardwareCalls=0,storageCalls=0;
@@ -36,7 +39,11 @@ bool confirm(){
   // the real graph/providers and actual Clock have completed their startup.
   assert(current&&current->active()&&!current->retained()&&!m.ready);
   assert(m.appLoaded&&m.frames>0&&m.frameRows==240&&m.brightness>0&&m.touchReads>0);
+#ifdef CURRENT_APPS_PROFILE
+  assert(m.appSettingsReads==3&&m.quickSettingsReads==4&&m.appPointsReads==1&&nativeSafe);
+#else
   assert(m.appSettingsReads==2&&m.appPointsReads==1&&nativeSafe);
+#endif
   bool nonzero=false;for(auto pixel:m.frame)nonzero|=pixel!=0;assert(nonzero);
   risc_runtime_capability_v1 grant{};grant.struct_size=sizeof(grant);
   assert(!current->acquire(RISC_HTTP_CLIENT_CAPABILITY,1,0,&grant));
@@ -69,6 +76,13 @@ int main(int argc,char** argv){
   assert(argc==3);scenario=argv[2];setvbuf(stdout,nullptr,_IONBF,0);
   m.registers[0][3]=0x4a;m.registers[0][0x34]=0x0f;m.registers[0][0x35]=0xa0;
   m.registers[2][0]=0x60;
+#ifdef CURRENT_APPS_PROFILE
+  JsonDocument motionBoard;
+  assert(RiscBoot::readJson((std::string(argv[1])+"/board.json").c_str(),motionBoard));
+  for(auto d:motionBoard["devices"].as<ArduinoJson::JsonArrayConst>())
+    if(d["instance_id"].as<unsigned>()==7)m.registers[3][0]=d["config"]["chip_id"].as<uint8_t>();
+  assert(m.registers[3][0]==0x13 || m.registers[3][0]==0x16);
+#endif
   const uint8_t date[]={0,0x40,0,4,0,0x10,0x26};memcpy(m.registers[1]+2,date,sizeof(date));
   RiscCpu::Hardware hardware{owner,nativeNow,nativeDelay,
     [](uint8_t p,bool o,bool i,bool u){++hardwareCalls;return gpioOpen(p,o,i,u);},
@@ -88,6 +102,13 @@ int main(int argc,char** argv){
   hardware.i2sWrite=[](uint8_t,const int16_t*,size_t,size_t*,uint32_t){raw();return false;};
   hardware.i2sClose=[](uint8_t){raw();return false;};
 #ifdef CURRENT_APPS_PROFILE
+  // Bluetooth defaults to Off. Startup may query the native controller but
+  // must never initialize or send packets without an explicit saved choice.
+  hardware.hciOpen=[](){raw();return false;};
+  hardware.hciSend=[](uint8_t,const uint8_t*,size_t,uint32_t){raw();return false;};
+  hardware.hciReceive=[](uint8_t*,uint8_t*,size_t,size_t*,uint32_t){raw();return false;};
+  hardware.hciClose=[](){raw();return false;};
+  hardware.hciIdle=[](){return true;};hardware.hciSafe=[](){return true;};
   hardware.i2sOpenRx=[](uint8_t,uint8_t,uint8_t,uint32_t){raw();return false;};
   hardware.i2sRead=[](uint8_t,int16_t*,size_t,size_t*,uint32_t){raw();return false;};
 #endif
@@ -102,8 +123,19 @@ int main(int argc,char** argv){
   RiscCpu::Port port(hardware);cpu=&port;
   const RiscBoot::KeyValueBackend kv={nullptr,
     [](void* c,uint32_t ns,const char* key,void* out,uint32_t cap,uint32_t* size){++storageCalls;return kvGet(c,ns,key,out,cap,size);},
-    [](void* c,uint32_t ns,const char* key,const void* data,uint32_t size){++storageCalls;return kvPut(c,ns,key,data,size);}};
-  RiscBoot::Runtime runtime({owner,updateHealth,nativeDelay,updateLog,updateBind,&kv,safe,storageSafe,confirm});current=&runtime;
+    [](void* c,uint32_t ns,const char* key,const void* data,uint32_t size){++storageCalls;return kvPut(c,ns,key,data,size);}
+#ifdef CURRENT_APPS_PROFILE
+    ,RISC_KEY_VALUE_V2_BLOB_MAX
+#endif
+  };
+#ifdef STORE_ADMISSION_APP_DATA
+  const auto appData=admissionAppData(&storageCalls);
+#endif
+  RiscBoot::Runtime runtime({owner,updateHealth,nativeDelay,updateLog,updateBind,&kv,safe,storageSafe,confirm
+#ifdef STORE_ADMISSION_APP_DATA
+    ,&appData
+#endif
+  });current=&runtime;
   assert(!runtime.confirmBoot()&&!confirms);
   const bool prepared=runtime.prepare(argv[1]);
   if(scenario=="admit"||scenario=="missing-bank"){

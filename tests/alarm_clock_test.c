@@ -21,6 +21,7 @@ static alarm_status_v1 av={.api_version=1,.struct_size=sizeof(av),.state=ALARM_S
 static bool health(risc_runtime_health_v1 *h){h->uptime_ms=now;if(scenario==99)return !retained&&now<180000&&!deep_calls;return !retained && now<10000 && (!ready || now-ready_at<1500);}
 static void yield_ms(uint32_t n){now+=n;}
 bool test_face(risc_display_surface_v1 *s,const nova_watch_state *f){(void)f;memset(s->pixels,0x57,sizeof(pixels));return true;}
+bool nova_watch_sleep_status(risc_display_surface_v1*s,const char*label){assert(s&&label&&!strncmp(label,"SLEEP ",6)&&strlen(label)<32);return true;}
 bool test_boot(const risc_display_surface_v1 *s,uint32_t ms){(void)ms;assert(!av.occurrence.generation);++boot_frames;memset(s->pixels,0,sizeof(pixels));return true;}
 unsigned nova_watch_picker_pulse(uint32_t elapsed){(void)elapsed;return 256;}
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id){(void)id;return test_face(s,f);}
@@ -92,7 +93,7 @@ if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){*size=0;return RISC_KEY_VALUE_NOT_FOUND;
 static int32_t kv_put(void*c,const char*k,const void*b,uint32_t size){(void)c;(void)k;(void)b;(void)size;assert(!"Clock never writes settings");return -1;}
 static const risc_key_value_v1 kv={1,sizeof(kv),NULL,kv_get,kv_put};
 static twatch_panel_power_v1 dp={{1,sizeof(dp),NULL,get_info,frame_acquire,frame_release,frame_submit,frame_status,NULL,brightness},prepare_panel,resume_panel,prepare_deep,typed_resume};
-static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep,timed,wake_pending,timed_deep};
+static twatch_pmu_api_v1 pp={{1,sizeof(pp),NULL,battery},key,prepare_pmu,resume_pmu,light,deep,timed,wake_pending,timed_deep,NULL,NULL};
 static twatch_rtc_api_v1 rp={2,sizeof(rp),NULL,read_clock,NULL,NULL,NULL};
 static risc_touch_api_v1 tp={1,sizeof(tp),NULL,sub,unsub,touch_poll,next,snapshot};
 static int32_t alarm_status(void*c,alarm_status_v1*out){(void)c;*out=av;return ALARM_OK;}

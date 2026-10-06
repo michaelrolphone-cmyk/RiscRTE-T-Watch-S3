@@ -12,8 +12,9 @@ if not __debug__:
     raise RuntimeError("Read-only SPIFFS verification requires Python assertions")
 
 
-def read_image(data):
-    assert len(data) == 0x4f0000
+def read_image(data, expected_size=0x4f0000):
+    assert expected_size in (0x4f0000, 0x510000)
+    assert len(data) == expected_size
     page_count = len(data) // 256
     live = {}
     for block in range(len(data) // 4096):

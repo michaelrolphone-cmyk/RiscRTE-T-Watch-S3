@@ -3,6 +3,7 @@
 import json,os,subprocess
 from pathlib import Path
 from generate_board import generate
+from imu_sources import extra_sources
 ROOT=Path(__file__).resolve().parents[1]
 TYPES={'controller.gpio':'tw_hw_gpio_controller_v1','controller.i2c':'tw_hw_i2c_controller_v1','power.axp2101':'tw_hw_axp2101_v1','display.spi':'risc_hw_spi_display_v1','touch.i2c':'risc_hw_i2c_touch_v1','peripheral.i2c':'tw_hw_i2c_device_v1','gpio.bank':'risc_hw_gpio_bank_v1','radio.lora':'tw_hw_lora_v1','audio.i2s':'tw_hw_audio_v1','radio.integrated':'risc_hw_radio_v1'}
 def initializer(v):
@@ -45,7 +46,7 @@ def main():
             config_header=f'static {typ} m_config={initializer(c)};\nstatic risc_hardware_device_v1 m_device={{1,sizeof(m_device),{entry["instance_id"]},"{entry["compatible"]}","unspecified","{entry["config_type"]}",1,sizeof(m_config),&m_config}};\n'
             (gen/'fixture_config.h').write_text(config_header)
             out=ROOT/'dist'/f'test-{entry["driver"]}-{variant}'
-            args=[cc,'-std=c11','-g','-fsanitize=undefined','-fno-sanitize-recover=all','-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),'-I'+str(gen),'-I'+str(ROOT),f'-DTEST_KIND={kind}',f'-DDRIVER_SOURCE="{src}"',str(ROOT/'tests/driver_test.c'),'-o',str(out)]
+            args=[cc,'-std=c11','-g','-fsanitize=undefined','-fno-sanitize-recover=all','-I'+str(ROOT/'sdk/driver'),'-I'+str(ROOT/'include'),'-I'+str(gen),'-I'+str(ROOT),f'-DTEST_KIND={kind}',f'-DDRIVER_SOURCE="{src}"',str(ROOT/'tests/driver_test.c'),*extra_sources(entry['driver']),'-o',str(out)]
             subprocess.run(args,check=True);subprocess.run([str(out)],check=True);total+=1
     # Catalog selection has no hardware dependencies.
     out=ROOT/'dist/test-board'
@@ -58,5 +59,8 @@ def main():
     executable=ROOT/'dist/test-multi-instance'
     subprocess.run(common+[str(ROOT/'tests/multi_instance.c'),*objects,'-o',str(executable)],check=True)
     subprocess.run([str(executable)],check=True);total+=1
+    picker=ROOT/'dist/test-lora-profiles'
+    subprocess.run(common+['-I'+str(ROOT),str(ROOT/'tests/lora_profile_test.c'),'-o',str(picker)],check=True)
+    subprocess.run([str(picker)],check=True);total+=1
     print(total,'production contract fixtures passed (UBSan)')
 if __name__=='__main__':main()

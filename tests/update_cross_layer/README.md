@@ -12,6 +12,7 @@ From any directory:
 ```sh
 bash tests/update_cross_layer/run.sh /path/to/runtime /path/to/system-apps /path/to/bootloader.bin
 SANITIZE=1 BUILD_DIR=/absolute/writable/build-dir bash tests/update_cross_layer/run.sh /path/to/runtime /path/to/system-apps /path/to/bootloader.bin
+APP_DATA_TEST=1 BUILD_DIR=/absolute/writable/abi2-dir bash tests/update_cross_layer/run.sh /path/to/current-runtime /path/to/current-system-apps /path/to/bootloader.bin
 ```
 
 The third argument must identify the verified 15,104-byte rollback bootloader. Its SHA-256 is checked by production `knownBootloader()`. Builds and
@@ -20,6 +21,15 @@ fixtures stay beneath `BUILD_DIR`, defaulting to this directory's `build`.
 not performed). Completed power snapshots are retained as `power-flash.bin.gz`.
 The script does not use networking, device access, credentials, production
 partitions, release indexes, publication, or deployment.
+
+`APP_DATA_TEST=1` selects the existing ABI2 constants (0x260000 native slots,
+0x510000 stores) and the separate 0x270000/0x80000 app-data partition. NVS and
+app-data contain non-erased sentinels. Every native write/erase must target only
+the inactive pair or its journal sector; all scenarios and saved power-cut
+snapshots preserve NVS and app-data bytes. The normal ABI1 lane retains its
+original geometry. These checks exercise the native bank write set; physical
+SPIFFS/LittleFS behavior and unrelated application preference writes are not
+substituted for device qualification.
 
 ## Executed production chain
 

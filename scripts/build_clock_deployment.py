@@ -51,6 +51,12 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
     if wifi and not points:raise ValueError("Wi-Fi preserves the complete Points baseline")
     if points and not alarms:raise ValueError("Points requires alarm service deployment")
     if alarms and not launcher:raise ValueError("Alarms requires launcher deployment")
+    from build_legacy_sleep import legacy_inputs
+    legacy=legacy_inputs(root)
+    frozen_profile=legacy/'hardware'/profile_path.name
+    if profile_path.read_bytes() not in ((root/'hardware'/profile_path.name).read_bytes(),frozen_profile.read_bytes()):
+        raise ValueError('Historical lane needs an exact named profile, not a modified input')
+    profile_path=frozen_profile
     profile = json.loads(profile_path.read_text())
     devices = WIFI_DEVICES if wifi else ALARM_DEVICES if alarms else LAUNCHER_DEVICES if launcher else DEVICES
     flavor = 'update-launcher' if updates is not None else 'wifi-launcher' if wifi else 'points-launcher' if points else 'alarm-launcher' if alarms else 'launcher' if launcher else 'clock'
@@ -60,6 +66,12 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
     source_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
+    # Historical deployment/custody lanes retain their frozen GPIO/PMU ABI.
+    from build_legacy_sleep import legacy_inputs
+    legacy=legacy_inputs(root)
+    legacy_catalog=json.loads((root/'dist/legacy-sleep/catalog.json').read_text())['packages']
+    catalog=[p for p in catalog if p['id'] not in ('twatch-gpio','twatch-pmu')]+legacy_catalog
+    manifests=[m for m in manifests if m['id'] not in ('twatch-gpio','twatch-pmu')]+[json.loads(p.read_text()) for p in (legacy/'drivers').glob('*/manifest.json')]
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
     runtime = json.loads((root / ('apps/update-runtime-requirements.json' if updates is not None else 'apps/wifi-runtime-requirements.json' if wifi else 'apps/alarm-runtime-requirements.json' if alarms else 'apps/clock/runtime-requirements.json')).read_text())
     time_policy = json.loads((root / 'apps/clock/time-policy.json').read_text())
@@ -67,7 +79,7 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
              'store/board.json': encoded(board),
              'store/default.json': (root / (app_dir+'/default.json' if launcher else 'apps/clock/manifest.json')).read_bytes(),
              'source-profile.json': profile_path.read_bytes(),
-             'board-baseline.json': (root / 'releases/board-baseline.json').read_bytes(),
+             'board-baseline.json': (legacy / 'releases/board-baseline.json').read_bytes(),
              'INSTALL.md': (root / 'docs/CLOCK_INSTALL.md').read_bytes(),
              'CROWN_SLEEP.md': (root / 'docs/CROWN_SLEEP.md').read_bytes(),
              'PMU_BATTERY.md': (root / 'docs/PMU_BATTERY.md').read_bytes(),

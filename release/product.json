@@ -1,32 +1,32 @@
 {
   "schema": 2,
   "product": "Original/non-Plus LILYGO T-Watch-S3",
-  "version": "1.0.1",
-  "tag": "firmware-v1.0.1",
+  "version": "1.0.2",
+  "tag": "firmware-v1.0.2",
   "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-  "accepted_build": "0.8.1",
-  "accepted_on": "2026-10-05",
+  "accepted_build": "0.10.1",
+  "accepted_on": "2026-10-06",
   "acceptance": {
     "kind": "ci-accepted",
     "hardware_qualified": false
   },
-  "accepted_bin_name": "twatch-s3-main-0.8.1-3e703ab7.bin",
-  "accepted_bundle_name": "twatch-s3-main-0.8.1-3e703ab7-install.zip",
-  "accepted_bin_sha256": "c9acc4bf2a4070a97fb1a8090d584e68e6ad8fe411d9cef7d4c4135ce672e7c1",
-  "accepted_bundle_sha256": "0a0b5b42a8b66c38a6df511be5420ab1f567c3e8274708a1d7382bb2ff9a77f1",
+  "accepted_bin_name": "twatch-s3-main-0.10.1-appdata-bma423-27876749.bin",
+  "accepted_bundle_name": "twatch-s3-main-0.10.1-appdata-bma423-27876749-install.zip",
+  "accepted_bin_sha256": "849e57783b25bca4bdb25aa7815867ad06714425f605aefe760d211ea1d21c04",
+  "accepted_bundle_sha256": "184b7a9ba777d57e472767d48b4a94f5035824d7234a7fd402536a9d91e24db6",
   "bin_size": 16777216,
   "flash_offset": "0x0",
   "flash_capacity": 16777216,
-  "store_file_count": 58,
+  "store_file_count": 73,
   "sources": {
     "watch": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "accepted_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "tree": "0203a38dc25e6b3bef7d7a9b79a73549a64d21ce"
+      "accepted_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "tree": "ddf1949002e1f34861a4fad5a8c04ce006c8a478"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "accepted_sha": "0fa8c576f547817b8124ed10686d80a6351bb634"
+      "accepted_sha": "e08609b465d9368d4e6efc45e377adbdbbb706a1"
     }
   },
   "deployment_sources": {
@@ -82,104 +82,111 @@
     }
   },
   "component_versions": {
-    "springboard": "1.4.6",
-    "settings": "1.2.4",
-    "wifi_settings": "1.1.2",
-    "ota_update": "1.1.1",
-    "app_store": "1.1.1",
-    "battery": "1.0.9",
-    "calculator": "0.1.4",
-    "stopwatch": "0.1.4",
-    "alarms": "0.2.0",
-    "countdown": "0.1.3",
-    "frequency_generator": "0.1.2",
-    "audio_spectrum": "0.2.2",
-    "points_in_time": "0.4.2",
-    "default": "0.8.1",
-    "clock": "0.8.1",
-    "runtime": "0.1.16"
+    "springboard": "1.4.9",
+    "settings": "1.2.5",
+    "wifi_settings": "1.1.3",
+    "ota_update": "1.1.2",
+    "app_store": "1.1.2",
+    "battery": "1.0.10",
+    "calculator": "0.1.5",
+    "stopwatch": "0.1.5",
+    "alarms": "0.2.1",
+    "countdown": "0.1.4",
+    "frequency_generator": "0.1.3",
+    "audio_spectrum": "0.4.3",
+    "points_in_time": "0.4.3",
+    "default": "0.10.1",
+    "clock": "0.10.1",
+    "file_browser": "1.4.0",
+    "lora_messages": "0.1.1",
+    "ble_scanner": "0.1.0",
+    "timecard": "0.1.0",
+    "runtime": "0.1.33"
   },
   "driver_versions": {
-    "twatch-ble": "0.1.0",
-    "twatch-board": "0.1.1",
+    "twatch-ble": "0.3.0",
+    "twatch-board": "0.1.2",
     "twatch-button": "0.2.0",
-    "twatch-gpio": "0.4.2",
+    "twatch-gpio": "0.5.0",
     "twatch-haptic": "0.2.1",
     "twatch-i2c": "0.2.0",
     "twatch-i2c-touch": "0.2.0",
-    "twatch-imu": "0.2.0",
+    "twatch-imu": "0.3.7",
     "twatch-ir": "0.2.0",
-    "twatch-lora": "0.2.0",
+    "twatch-lora": "0.3.0",
     "twatch-mic": "0.2.1",
     "twatch-panel": "0.4.1",
-    "twatch-pmu": "0.5.3",
+    "twatch-pmu": "0.6.0",
     "twatch-rtc": "0.2.0",
     "twatch-speaker": "0.2.1",
     "twatch-touch": "0.2.0",
     "wifi": "0.2.0"
   },
   "embedded_driver_versions": {
-    "wifi": "0.2.0",
-    "mic": "0.2.1",
-    "pmu": "0.5.3",
-    "gpio": "0.4.2",
-    "rtc": "0.2.0",
-    "update-fw": "0.1.0",
-    "i2c": "0.2.0",
-    "alarm-service": "0.4.0",
-    "update-apps": "0.1.0",
+    "alarm-service": "0.4.1",
+    "ble": "0.3.0",
+    "gpio": "0.5.0",
     "haptic": "0.2.1",
-    "touch": "0.2.0",
+    "i2c": "0.2.0",
+    "imu": "0.3.7",
+    "lora": "0.3.0",
+    "mic": "0.2.1",
     "panel": "0.4.1",
-    "speaker": "0.2.1"
+    "pmu": "0.6.0",
+    "rtc": "0.2.0",
+    "speaker": "0.2.1",
+    "touch": "0.2.0",
+    "update-apps": "0.1.3",
+    "update-fw": "0.1.3",
+    "wifi": "0.2.0"
   },
   "artifacts": {
     "main": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "run_id": 37276394351,
+      "run_id": 37433024815,
       "run_attempt": 1,
-      "artifact_id": 11330727243,
-      "name": "twatch-flashable-bin-3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "head_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "sha256": "e12e15c676d0f6d6a358714944d9f42f529e0ab63979a4f510f0b365da68634b"
+      "artifact_id": 11398580776,
+      "name": "twatch-flashable-bin-27876749f08deaa78910cbd16aa54345684b6bf7",
+      "head_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "sha256": "494826846011e57d1219074e691f931df15749823d73d1123311283882d4c72c"
     },
     "audio": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "run_id": 37276394351,
+      "run_id": 37433024815,
       "run_attempt": 1,
-      "artifact_id": 11331080284,
-      "name": "twatch-update-integration-3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "head_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "sha256": "80add8bc2daf257b616b9ab53fa34dd4aaec674370ee4b042929b9ca0b98882c",
+      "artifact_id": 11397827301,
+      "name": "twatch-update-integration-27876749f08deaa78910cbd16aa54345684b6bf7",
+      "head_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "sha256": "2cbf367d19679c14ab9839ac76625a977fdacd54318b2145190b413b9215c093",
       "bundle_member": "audio-common/audio-tools-common.zip"
     },
     "points": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "run_id": 37276394351,
+      "run_id": 37433024815,
       "run_attempt": 1,
-      "artifact_id": 11330153216,
-      "name": "twatch-points-integration-3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "head_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "sha256": "d353dab746f6ddcdc7262347b9b039bdcee6823c6996b6a5fb524536f23db15c",
+      "artifact_id": 11397971968,
+      "name": "twatch-points-integration-27876749f08deaa78910cbd16aa54345684b6bf7",
+      "head_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "sha256": "87241928721627951a17a6c5abd566d47c5d9232ef296fcc7d19f05c03e4b219",
       "bundle_member": "points-common/twatch-points-launcher-0.8.0-points-launcher-common.zip"
     },
     "drivers": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "run_id": 37276394351,
+      "run_id": 37433024815,
       "run_attempt": 1,
-      "artifact_id": 11330203195,
+      "artifact_id": 11398002092,
       "name": "twatch-driver-packages",
-      "head_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "sha256": "95bc76c5159055e05490491ad6dfbe031c806030e8a911dd050ffc231abc494b"
+      "head_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "sha256": "19571b3247eb761d453cab54615ac88a1fc6619e3ea5d06c1021392ea59bfe28"
     },
     "current-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "run_id": 37276394351,
+      "run_id": 37433024815,
       "run_attempt": 1,
-      "artifact_id": 11330183828,
-      "name": "twatch-current-apps-3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "head_sha": "3e703ab7e8ef506394fb24c6862dc8bfafddc475",
-      "sha256": "6d5f41de8843ee1d38787dedf9b5807fd61e4083508f1b7a4d16c3975164cd08"
+      "artifact_id": 11398198761,
+      "name": "twatch-current-apps-27876749f08deaa78910cbd16aa54345684b6bf7",
+      "head_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+      "sha256": "f1cd61997d3423d6a33a46b15065ce6675888577fef63a5d8ae828b555ad982c"
     }
   },
   "current_apps_configuration": {
@@ -188,225 +195,45 @@
     "sources": {
       "system-apps": {
         "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-        "commit": "13f32d3e5fee262a960f5fe0add63db835381893"
+        "commit": "2d16d9dfa7abc50ce916eebc11d81423adef0000"
       },
       "utilities": {
         "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-        "commit": "9f2e60221198f53646f05050720d92dc19895f3b"
+        "commit": "ecc465ac2ff1bd92901e20631435bafa2d4ffb11"
       },
       "productivity": {
         "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
-        "commit": "edd754abc5f83fcebe9cb42ce36bf68cff857b70"
+        "commit": "5acbd52d97d90c509e217a128b3ee5a6da30975c"
       },
       "runtime": {
         "repository": "michaelrolphone-cmyk/RiscRTE",
-        "commit": "0fa8c576f547817b8124ed10686d80a6351bb634"
+        "commit": "e08609b465d9368d4e6efc45e377adbdbbb706a1"
       }
     },
     "app_versions": {
-      "springboard": "1.4.6",
-      "settings": "1.2.4",
-      "wifi_settings": "1.1.2",
-      "ota_update": "1.1.1",
-      "app_store": "1.1.1",
-      "battery": "1.0.9",
-      "calculator": "0.1.4",
-      "stopwatch": "0.1.4",
-      "alarms": "0.2.0",
-      "countdown": "0.1.3",
-      "frequency_generator": "0.1.2",
-      "audio_spectrum": "0.2.2",
-      "points_in_time": "0.4.2",
-      "default": "0.8.1",
-      "clock": "0.8.1"
+      "springboard": "1.4.9",
+      "settings": "1.2.5",
+      "wifi_settings": "1.1.3",
+      "ota_update": "1.1.2",
+      "app_store": "1.1.2",
+      "battery": "1.0.10",
+      "calculator": "0.1.5",
+      "stopwatch": "0.1.5",
+      "alarms": "0.2.1",
+      "countdown": "0.1.4",
+      "frequency_generator": "0.1.3",
+      "audio_spectrum": "0.4.3",
+      "points_in_time": "0.4.3",
+      "default": "0.10.1",
+      "clock": "0.10.1",
+      "file_browser": "1.4.0",
+      "lora_messages": "0.1.1",
+      "ble_scanner": "0.1.0",
+      "timecard": "0.1.0"
     },
-    "service_version": "0.4.0"
+    "service_version": "0.4.1"
   },
   "reused_driver_records": {
-    "twatch-ble": {
-      "architecture": "xtensa-esp32s3",
-      "asset": "driver-twatch-ble-0.1.0-xtensa-esp32s3.rte.zip",
-      "format": "rte.zip",
-      "id": "twatch-ble",
-      "included_in_accepted_bin": false,
-      "kind": "driver",
-      "manifest": {
-        "architecture": "xtensa-esp32s3",
-        "artifact": "driver.elf",
-        "driver_abi": 2,
-        "entries": [
-          {
-            "executable": true,
-            "name": "driver.elf",
-            "sha256": "3d81704cbcaf777fce133f81080a26df51cdab009b2d6f3e6c4cf07511a5b0a2",
-            "size_bytes": 3860
-          },
-          {
-            "executable": false,
-            "name": "provider-abi.v1",
-            "sha256": "98d0e995c90c0705570a7bd8c118e20e851da52457dba0e8fc6a8dd6d0e97c5f",
-            "size_bytes": 42
-          },
-          {
-            "executable": false,
-            "name": "source-manifest.json",
-            "sha256": "2b2f411af636ecd2198465159e4fefeb143010e82267f91173df8b864b67f2a5",
-            "size_bytes": 702
-          }
-        ],
-        "hardware_compatibility": [
-          {
-            "compatible": "espressif,esp32s3-ble",
-            "config_type": "radio.integrated",
-            "config_version": 1,
-            "revisions": [
-              "unspecified"
-            ]
-          }
-        ],
-        "id": "twatch-ble",
-        "kind": "driver",
-        "provides": [
-          {
-            "api": 1,
-            "capability": "bluetooth.hci"
-          }
-        ],
-        "requires": [
-          {
-            "capability": "hardware.device",
-            "min_api": 1
-          },
-          {
-            "capability": "platform.hci.controller",
-            "min_api": 1
-          }
-        ],
-        "schema": 1,
-        "version": "0.1.0"
-      },
-      "sha256": "d156f65e42d7d5ba13b8f4fe1f7aad0e30eb5acee3f31a07b9ee168ca7220d92",
-      "size": 6238,
-      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "tag": "driver-twatch-ble-v0.1.0",
-      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-ble-v0.1.0/driver-twatch-ble-0.1.0-xtensa-esp32s3.rte.zip",
-      "version": "0.1.0"
-    },
-    "twatch-board": {
-      "architecture": "xtensa-esp32s3",
-      "asset": "driver-twatch-board-0.1.1-xtensa-esp32s3.rte.zip",
-      "format": "rte.zip",
-      "id": "twatch-board",
-      "included_in_accepted_bin": false,
-      "kind": "driver",
-      "manifest": {
-        "architecture": "xtensa-esp32s3",
-        "artifact": "driver.elf",
-        "driver_abi": 2,
-        "entries": [
-          {
-            "executable": true,
-            "name": "driver.elf",
-            "sha256": "35d7863220eddc52dae2ec03dfa655ba4c4466d476476d37c196f80a22936c16",
-            "size_bytes": 51948
-          },
-          {
-            "executable": false,
-            "name": "provider-abi.v1",
-            "sha256": "2992a914d8364f37384a1f325899efd747695816282cdc8e6465b3cfdad898d0",
-            "size_bytes": 45
-          },
-          {
-            "executable": false,
-            "name": "source-manifest.json",
-            "sha256": "931fc2cdf00f53e262c0eb1c09d4e095eb171b3ac4463f85f8618202e07d8404",
-            "size_bytes": 420
-          },
-          {
-            "executable": false,
-            "name": "sx1262-868-bma423.json",
-            "sha256": "ccaefee9e268a467601d26570b2626407d142ca63dfd3145be73ea0f3382d600",
-            "size_bytes": 9689
-          },
-          {
-            "executable": false,
-            "name": "sx1262-915-bma456h.json",
-            "sha256": "aad85a43849650526ea358de6cc90e874d8f7c14ac1c3f20fb592e833f4928d7",
-            "size_bytes": 9691
-          },
-          {
-            "executable": false,
-            "name": "sx1280-2400-bma456h.json",
-            "sha256": "b6968739858c9399a94d67f37c827fa9a1f27a2e3a4f17d8cc4efb000827c6d4",
-            "size_bytes": 9694
-          },
-          {
-            "executable": false,
-            "name": "sx1262-915-bma423.json",
-            "sha256": "75368f819ef70cd859403c18d14e5291614759303135389405a7d4eedc1553ee",
-            "size_bytes": 9689
-          },
-          {
-            "executable": false,
-            "name": "sx1262-868-bma456h.json",
-            "sha256": "5dc6fd5cbeec34903b97cfbe16a0174674c2c1c604bba8f381a2fef3cb3f3b06",
-            "size_bytes": 9691
-          },
-          {
-            "executable": false,
-            "name": "sx1262-433-bma456h.json",
-            "sha256": "154024ba6f40b51ffdcb424dbf28f3b4d7d07799106bd507024d30c35cb2bd44",
-            "size_bytes": 9691
-          },
-          {
-            "executable": false,
-            "name": "sx1262-433-bma423.json",
-            "sha256": "3765377e233ececab78528ff38ec16f438b91be90a04e3646d400ee5040c45de",
-            "size_bytes": 9689
-          },
-          {
-            "executable": false,
-            "name": "sx1280-2400-bma423.json",
-            "sha256": "a066b7969eb741912d7832b3e87c4a63b0e0e19b94d152ea8c63875c9a0da546",
-            "size_bytes": 9692
-          },
-          {
-            "executable": false,
-            "name": "platform-resources.json",
-            "sha256": "fdd6f49134ed0f74321b8c590d3b59bf3115e44e0d3009a716a37478ea617c94",
-            "size_bytes": 2119
-          },
-          {
-            "executable": false,
-            "name": "board-variants.json",
-            "sha256": "d116fbee832c8d9627269affe1ae19c9cf3d318b5f511d52566b1849a9ae96df",
-            "size_bytes": 831
-          }
-        ],
-        "id": "twatch-board",
-        "kind": "driver",
-        "provides": [
-          {
-            "api": 1,
-            "capability": "hardware.catalog"
-          }
-        ],
-        "requires": [
-          {
-            "capability": "platform.board",
-            "min_api": 2
-          }
-        ],
-        "schema": 1,
-        "version": "0.1.1"
-      },
-      "sha256": "83739e08dca10e9a19ecfe273deb51a2af99468595536f0f1c65813650bca98e",
-      "size": 137339,
-      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "tag": "driver-twatch-board-v0.1.1",
-      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-board-v0.1.1/driver-twatch-board-0.1.1-xtensa-esp32s3.rte.zip",
-      "version": "0.1.1"
-    },
     "twatch-button": {
       "architecture": "xtensa-esp32s3",
       "asset": "driver-twatch-button-0.2.0-xtensa-esp32s3.rte.zip",
@@ -479,6 +306,79 @@
       "tag": "driver-twatch-button-v0.2.0",
       "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-button-v0.2.0/driver-twatch-button-0.2.0-xtensa-esp32s3.rte.zip",
       "version": "0.2.0"
+    },
+    "twatch-haptic": {
+      "architecture": "xtensa-esp32s3",
+      "asset": "driver-twatch-haptic-0.2.1-xtensa-esp32s3.rte.zip",
+      "format": "rte.zip",
+      "id": "twatch-haptic",
+      "included_in_accepted_bin": true,
+      "kind": "driver",
+      "manifest": {
+        "architecture": "xtensa-esp32s3",
+        "artifact": "driver.elf",
+        "driver_abi": 2,
+        "entries": [
+          {
+            "executable": true,
+            "name": "driver.elf",
+            "sha256": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30",
+            "size_bytes": 4516
+          },
+          {
+            "executable": false,
+            "name": "provider-abi.v1",
+            "sha256": "30b265a89c4c55d2a42438de6fc224fe4845d69d953f2b71b1f5431ae9aec48d",
+            "size_bytes": 42
+          },
+          {
+            "executable": false,
+            "name": "source-manifest.json",
+            "sha256": "d5f67d8466f67f24577778d5f0e07395ad002de8c8258ffa5fe34e23d4b26899",
+            "size_bytes": 738
+          }
+        ],
+        "hardware_compatibility": [
+          {
+            "compatible": "ti,drv2605",
+            "config_type": "peripheral.i2c",
+            "config_version": 1,
+            "revisions": [
+              "unspecified"
+            ]
+          }
+        ],
+        "id": "twatch-haptic",
+        "kind": "driver",
+        "provides": [
+          {
+            "api": 1,
+            "capability": "haptic.effect"
+          }
+        ],
+        "requires": [
+          {
+            "capability": "hardware.device",
+            "min_api": 1
+          },
+          {
+            "capability": "i2c.bus",
+            "min_api": 1
+          },
+          {
+            "capability": "board.battery",
+            "min_api": 1
+          }
+        ],
+        "schema": 1,
+        "version": "0.2.1"
+      },
+      "sha256": "55a070d37fec9470e541bebdcccd75824a7f1601cf75a6ac20b522ec0b27069e",
+      "size": 6973,
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "tag": "driver-twatch-haptic-v0.2.1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-haptic-v0.2.1/driver-twatch-haptic-0.2.1-xtensa-esp32s3.rte.zip",
+      "version": "0.2.1"
     },
     "twatch-i2c": {
       "architecture": "xtensa-esp32s3",
@@ -609,83 +509,6 @@
       "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-i2c-touch-v0.2.0/driver-twatch-i2c-touch-0.2.0-xtensa-esp32s3.rte.zip",
       "version": "0.2.0"
     },
-    "twatch-imu": {
-      "architecture": "xtensa-esp32s3",
-      "asset": "driver-twatch-imu-0.2.0-xtensa-esp32s3.rte.zip",
-      "format": "rte.zip",
-      "id": "twatch-imu",
-      "included_in_accepted_bin": false,
-      "kind": "driver",
-      "manifest": {
-        "architecture": "xtensa-esp32s3",
-        "artifact": "driver.elf",
-        "driver_abi": 2,
-        "entries": [
-          {
-            "executable": true,
-            "name": "driver.elf",
-            "sha256": "80af8e78fc5e2117f57d23f54d2b2ff5874ffb5e6917a9c462eac8af218ba2cd",
-            "size_bytes": 4792
-          },
-          {
-            "executable": false,
-            "name": "provider-abi.v1",
-            "sha256": "257545545fa0741295470dd649391535a2909ffa733052caaafc6beefe57dcfe",
-            "size_bytes": 41
-          },
-          {
-            "executable": false,
-            "name": "source-manifest.json",
-            "sha256": "37b943488a4bddc78bce678f83045fda5dc08ef50887a6084eeb2d3da9a00043",
-            "size_bytes": 801
-          }
-        ],
-        "hardware_compatibility": [
-          {
-            "compatible": "bosch,bma4xx",
-            "config_type": "peripheral.i2c",
-            "config_version": 1,
-            "revisions": [
-              "unspecified"
-            ]
-          }
-        ],
-        "id": "twatch-imu",
-        "kind": "driver",
-        "provides": [
-          {
-            "api": 1,
-            "capability": "motion.accel"
-          }
-        ],
-        "requires": [
-          {
-            "capability": "hardware.device",
-            "min_api": 1
-          },
-          {
-            "capability": "i2c.bus",
-            "min_api": 1
-          },
-          {
-            "capability": "gpio.bank",
-            "min_api": 1
-          },
-          {
-            "capability": "platform.clock",
-            "min_api": 1
-          }
-        ],
-        "schema": 1,
-        "version": "0.2.0"
-      },
-      "sha256": "e29b9dff37d738a07c701de7abb5adc5c93317caf74ee9f135ef72cd7648d622",
-      "size": 7375,
-      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "tag": "driver-twatch-imu-v0.2.0",
-      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-imu-v0.2.0/driver-twatch-imu-0.2.0-xtensa-esp32s3.rte.zip",
-      "version": "0.2.0"
-    },
     "twatch-ir": {
       "architecture": "xtensa-esp32s3",
       "asset": "driver-twatch-ir-0.2.0-xtensa-esp32s3.rte.zip",
@@ -755,12 +578,12 @@
       "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-ir-v0.2.0/driver-twatch-ir-0.2.0-xtensa-esp32s3.rte.zip",
       "version": "0.2.0"
     },
-    "twatch-lora": {
+    "twatch-mic": {
       "architecture": "xtensa-esp32s3",
-      "asset": "driver-twatch-lora-0.2.0-xtensa-esp32s3.rte.zip",
+      "asset": "driver-twatch-mic-0.2.1-xtensa-esp32s3.rte.zip",
       "format": "rte.zip",
-      "id": "twatch-lora",
-      "included_in_accepted_bin": false,
+      "id": "twatch-mic",
+      "included_in_accepted_bin": true,
       "kind": "driver",
       "manifest": {
         "architecture": "xtensa-esp32s3",
@@ -770,46 +593,107 @@
           {
             "executable": true,
             "name": "driver.elf",
-            "sha256": "e7bdf98dbf625515d1f7a7c8292a586b9f33a6ae3b6bc673067f2b3fb1c9a080",
-            "size_bytes": 11364
+            "sha256": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077",
+            "size_bytes": 4436
           },
           {
             "executable": false,
             "name": "provider-abi.v1",
-            "sha256": "2dffcc0053ef48c8aeb989546f48c52737bfec0180fcf03d8e322b699f52e4f2",
-            "size_bytes": 39
+            "sha256": "35212e169aef00ca1fdf037c7441dabf41526fc2a924a64bba4bce693e3a8354",
+            "size_bytes": 40
           },
           {
             "executable": false,
             "name": "source-manifest.json",
-            "sha256": "e229e0685536b8b257ab53e32dcc6d21406050b25cfe62742f361b23fea1a123",
-            "size_bytes": 1031
+            "sha256": "d74743fdd42947a7d17433ed2b0f0a3cea69509c2d4be3921fe88fb26b15fa34",
+            "size_bytes": 673
           }
         ],
         "hardware_compatibility": [
           {
-            "compatible": "semtech,sx1262",
-            "config_type": "radio.lora",
-            "config_version": 1,
-            "revisions": [
-              "unspecified"
-            ]
-          },
-          {
-            "compatible": "semtech,sx1280",
-            "config_type": "radio.lora",
+            "compatible": "knowles,spm1423",
+            "config_type": "audio.i2s",
             "config_version": 1,
             "revisions": [
               "unspecified"
             ]
           }
         ],
-        "id": "twatch-lora",
+        "id": "twatch-mic",
         "kind": "driver",
         "provides": [
           {
-            "api": 2,
-            "capability": "radio.lora"
+            "api": 1,
+            "capability": "audio.input"
+          }
+        ],
+        "requires": [
+          {
+            "capability": "hardware.device",
+            "min_api": 1
+          },
+          {
+            "capability": "platform.i2s.controller",
+            "min_api": 1
+          }
+        ],
+        "schema": 1,
+        "version": "0.2.1"
+      },
+      "sha256": "1c812723cfde8369501817b32d199679318308aac9800cbd6cbabd0d782f22bb",
+      "size": 6768,
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "tag": "driver-twatch-mic-v0.2.1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-mic-v0.2.1/driver-twatch-mic-0.2.1-xtensa-esp32s3.rte.zip",
+      "version": "0.2.1"
+    },
+    "twatch-panel": {
+      "architecture": "xtensa-esp32s3",
+      "asset": "driver-twatch-panel-0.4.1-xtensa-esp32s3.rte.zip",
+      "format": "rte.zip",
+      "id": "twatch-panel",
+      "included_in_accepted_bin": true,
+      "kind": "driver",
+      "manifest": {
+        "architecture": "xtensa-esp32s3",
+        "artifact": "driver.elf",
+        "driver_abi": 2,
+        "entries": [
+          {
+            "executable": true,
+            "name": "driver.elf",
+            "sha256": "a7cddc560dc83e9a7ea8f408ed17637098bdc64fb9b02b028749f49c9d782aad",
+            "size_bytes": 12604
+          },
+          {
+            "executable": false,
+            "name": "provider-abi.v1",
+            "sha256": "cca12f2ee41a2ca2522bfba007df2f72c411533feaad04e8ee2f87cf14e3e895",
+            "size_bytes": 43
+          },
+          {
+            "executable": false,
+            "name": "source-manifest.json",
+            "sha256": "d616460fc0302b014c789dae45ff152e913fd2828db111c5522cfe3b2b20e055",
+            "size_bytes": 876
+          }
+        ],
+        "hardware_compatibility": [
+          {
+            "compatible": "sitronix,st7789v3",
+            "config_type": "display.spi",
+            "config_version": 1,
+            "revisions": [
+              "unspecified"
+            ]
+          }
+        ],
+        "id": "twatch-panel",
+        "kind": "driver",
+        "provides": [
+          {
+            "api": 1,
+            "capability": "display.output"
           }
         ],
         "requires": [
@@ -835,14 +719,14 @@
           }
         ],
         "schema": 1,
-        "version": "0.2.0"
+        "version": "0.4.1"
       },
-      "sha256": "00190dfe81cf845bb4011d5be25e7ba81424ac94c827fbbf7b2f030ce781a419",
-      "size": 14411,
+      "sha256": "6b59a6c443becc77ca8240cbc7624bca0865e408e45f46973cf0639f8fd6b90d",
+      "size": 15344,
       "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-      "tag": "driver-twatch-lora-v0.2.0",
-      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-lora-v0.2.0/driver-twatch-lora-0.2.0-xtensa-esp32s3.rte.zip",
-      "version": "0.2.0"
+      "tag": "driver-twatch-panel-v0.4.1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-panel-v0.4.1/driver-twatch-panel-0.4.1-xtensa-esp32s3.rte.zip",
+      "version": "0.4.1"
     },
     "twatch-rtc": {
       "architecture": "xtensa-esp32s3",
@@ -916,6 +800,75 @@
       "tag": "driver-twatch-rtc-v0.2.0",
       "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-rtc-v0.2.0/driver-twatch-rtc-0.2.0-xtensa-esp32s3.rte.zip",
       "version": "0.2.0"
+    },
+    "twatch-speaker": {
+      "architecture": "xtensa-esp32s3",
+      "asset": "driver-twatch-speaker-0.2.1-xtensa-esp32s3.rte.zip",
+      "format": "rte.zip",
+      "id": "twatch-speaker",
+      "included_in_accepted_bin": true,
+      "kind": "driver",
+      "manifest": {
+        "architecture": "xtensa-esp32s3",
+        "artifact": "driver.elf",
+        "driver_abi": 2,
+        "entries": [
+          {
+            "executable": true,
+            "name": "driver.elf",
+            "sha256": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e",
+            "size_bytes": 5244
+          },
+          {
+            "executable": false,
+            "name": "provider-abi.v1",
+            "sha256": "8c90b0b0c5a550ce9f3b37a6206dc5ccaf1d586fc8c202227648bdea8f13ceee",
+            "size_bytes": 41
+          },
+          {
+            "executable": false,
+            "name": "source-manifest.json",
+            "sha256": "cc5cc3975ba84ad242bce3db117d2291564f4fa6a2b2c3cf60f8e5cb9d080af2",
+            "size_bytes": 689
+          }
+        ],
+        "hardware_compatibility": [
+          {
+            "compatible": "maxim,max98357a",
+            "config_type": "audio.i2s",
+            "config_version": 1,
+            "revisions": [
+              "unspecified"
+            ]
+          }
+        ],
+        "id": "twatch-speaker",
+        "kind": "driver",
+        "provides": [
+          {
+            "api": 1,
+            "capability": "audio.output"
+          }
+        ],
+        "requires": [
+          {
+            "capability": "hardware.device",
+            "min_api": 1
+          },
+          {
+            "capability": "platform.i2s.controller",
+            "min_api": 1
+          }
+        ],
+        "schema": 1,
+        "version": "0.2.1"
+      },
+      "sha256": "74954eaea49ca49ed7c52305436553b9270da64ce2572febbbbf5a84b4a1c9e6",
+      "size": 7598,
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "tag": "driver-twatch-speaker-v0.2.1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-speaker-v0.2.1/driver-twatch-speaker-0.2.1-xtensa-esp32s3.rte.zip",
+      "version": "0.2.1"
     },
     "twatch-touch": {
       "architecture": "xtensa-esp32s3",
@@ -997,17 +950,92 @@
       "tag": "driver-twatch-touch-v0.2.0",
       "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-twatch-touch-v0.2.0/driver-twatch-touch-0.2.0-xtensa-esp32s3.rte.zip",
       "version": "0.2.0"
+    },
+    "wifi": {
+      "architecture": "xtensa-esp32s3",
+      "asset": "driver-wifi-0.2.0-xtensa-esp32s3.rte.zip",
+      "format": "rte.zip",
+      "id": "wifi",
+      "included_in_accepted_bin": true,
+      "kind": "driver",
+      "manifest": {
+        "architecture": "xtensa-esp32s3",
+        "artifact": "driver.elf",
+        "driver_abi": 2,
+        "entries": [
+          {
+            "executable": true,
+            "name": "driver.elf",
+            "sha256": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592",
+            "size_bytes": 6080
+          },
+          {
+            "executable": false,
+            "name": "provider-abi.v1",
+            "sha256": "dc71391670da3a08dd95a872725beacd28a0a2dc451336ebaab782d90e793753",
+            "size_bytes": 37
+          },
+          {
+            "executable": false,
+            "name": "source-manifest.json",
+            "sha256": "c070cc0f5ca6a0451a9f7810eb64182e3130d1228b81a47906343ea7112fad8f",
+            "size_bytes": 689
+          }
+        ],
+        "hardware_compatibility": [
+          {
+            "compatible": "espressif,esp32s3-wifi",
+            "config_type": "radio.integrated",
+            "config_version": 1,
+            "revisions": [
+              "unspecified"
+            ]
+          }
+        ],
+        "id": "wifi",
+        "kind": "driver",
+        "provides": [
+          {
+            "api": 1,
+            "capability": "net.wifi"
+          }
+        ],
+        "requires": [
+          {
+            "capability": "hardware.device",
+            "min_api": 1
+          },
+          {
+            "capability": "platform.radio",
+            "min_api": 1
+          }
+        ],
+        "schema": 1,
+        "version": "0.2.0"
+      },
+      "sha256": "080dffddf65757d93013a341434619347da9cf17fc95183f85741e82c595f817",
+      "size": 8421,
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "tag": "driver-wifi-v0.2.0",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/driver-wifi-v0.2.0/driver-wifi-0.2.0-xtensa-esp32s3.rte.zip",
+      "version": "0.2.0"
     }
   },
   "known_limitations": [
-    "The observed five-minute Hybrid wake issue is deferred to the next increment; its isolated recovery changes are not included.",
-    "This release is accepted on software CI. Physical microphone response, audio loudness, touch behavior and power consumption are not newly hardware-qualified."
+    "The initial full 16 MiB transition overwrites settings and app data. Subsequent supported built-in app, native and complete-cohort updates preserve NVS and app data.",
+    "The separate five-minute Hybrid wake investigation remains deferred. Owner sleep/wake and tap reports do not qualify all sleep modes separately.",
+    "BMA423 sensitivity is explicitly 3 as requested after midpoint testing. Measured calibration and a tap-wake off switch are post-release work.",
+    "No new physical audio, optional-radio, power-consumption or power-loss qualification is claimed."
   ],
   "contributing_pull_requests": {
     "RiscRTE-T-Watch-S3": [
-      26
+      27,
+      28,
+      29,
+      30,
+      31
     ],
-    "RiscRTE-Utilities": [
+    "RiscRTE": [
       16,
       17,
       18,
@@ -1015,32 +1043,73 @@
       20,
       21,
       22,
-      23
+      23,
+      24
     ],
     "RiscRTE-System-Apps": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "RiscRTE-Utilities": [
+      25,
+      26,
+      27,
+      28,
       29,
       30,
       31,
-      33,
-      34,
-      35,
-      40
+      32,
+      33
     ],
     "RiscRTE-Productivity": [
-      7
+      9,
+      10,
+      11
     ]
   },
-  "already_integrated_or_superseded_pull_requests": {
-    "RiscRTE-System-Apps": {
-      "already_integrated": [
-        26,
-        27,
-        28
-      ],
-      "superseded_equivalents": [
-        25,
-        36
-      ]
-    }
-  }
+  "deployment": {
+    "target": "esp32s3-16mb-appdata",
+    "layout": "riscrte-paired-appdata-v2",
+    "flash_bytes": 16777216,
+    "store_abi": 2,
+    "migration": "explicit-initial-full-16MiB-reflash-overwrites-appdata; no data-preserving migration implemented",
+    "existing_8MiB_ota_compatible": false,
+    "partitions": {
+      "app0": {
+        "offset": 65536,
+        "size": 2490368
+      },
+      "bootfs0": {
+        "offset": 3080192,
+        "size": 5308416
+      },
+      "app1": {
+        "offset": 8388608,
+        "size": 2490368
+      },
+      "bootfs1": {
+        "offset": 11403264,
+        "size": 5308416
+      },
+      "otadata": {
+        "offset": 16711680,
+        "size": 8192
+      },
+      "bank_state": {
+        "offset": 16719872,
+        "size": 8192
+      },
+      "appdata": {
+        "offset": 2555904,
+        "size": 524288
+      }
+    },
+    "ordinary_ota_includes_appdata": false
+  },
+  "reused_app_records": {}
 }

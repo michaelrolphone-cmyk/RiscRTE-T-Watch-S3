@@ -515,6 +515,27 @@ def publication_preflight(plan, output):
         by_id = {r['id']: r for r in existing}
         require(all(by_id.get(identity) == record for identity, record in reused.items()),
                 'Reviewed reused driver record differs from current immutable index')
+    reused_apps = plan.get('product', {}).get('reused_app_records', {})
+    if reused_apps:
+        existing = current.get('apps', [])
+        require(len({r['id'] for r in existing}) == len(existing), 'Duplicate existing app index identity')
+        by_id = {r['id']: r for r in existing}
+        for identity, record in reused_apps.items():
+            require(by_id.get(identity) == record, 'Reviewed reused app differs from immutable index')
+            release = release_by_tag(record['tag'])
+            require(release and not release['draft'] and not release.get('prerelease', False), 'Reused app release is not published')
+            require(release['target_commitish'] == record['source_sha'] and
+                    api(f'repos/{REPOSITORY}/commits/{record["tag"]}')['sha'] == record['source_sha'],
+                    'Reused app source/tag differs')
+            assets = {a['name']: a for a in release['assets']}
+            require(len(assets) == len(release['assets']), 'Duplicate reused app assets')
+            def read(name):
+                require(name in assets, 'Missing reused app asset: ' + name)
+                return gh('api', f'repos/{REPOSITORY}/releases/assets/{assets[name]["id"]}', '-H', 'Accept: application/octet-stream')
+            raw = read(record['asset'])
+            require(len(raw) == record['size'] and sha(raw) == record['sha256'], 'Reused app payload differs')
+            require(json.loads(read(identity + '.json')) == record['manifest'] and
+                    json.loads(read('release-record.json')) == record, 'Reused app manifest/provenance differs')
     merged_index(current, plan['index'])
     integration = {'watch': verify_watch_ancestry(plan['product']['sources']['watch']['accepted_sha'], plan['source_sha']),
                    'owning_sources': verify_current_source_ancestry(plan['product'])}

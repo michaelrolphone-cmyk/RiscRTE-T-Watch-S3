@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CUSTODY_PATH = 'scripts/pmu-sleep-custody.json'
 SOURCE_PATHS = {'drivers/twatch_pmu/driver.c', 'drivers/twatch_pmu/manifest.json'}
+SOURCE_ROOT = 'custody/sleep-prefix'
 PMU_FILES = {'pmu/driver.elf', 'pmu/manifest.json'}
 
 
@@ -24,8 +25,8 @@ def current_pmu_custody(root=ROOT):
     require(value['schema'] == 1 and set(value['source_sha256']) == SOURCE_PATHS and
             set(value['files']) == PMU_FILES, 'Unexpected PMU custody scope')
     for path, expected in value['source_sha256'].items():
-        require(sha((root / path).read_bytes()) == expected, 'PMU source differs from target custody: ' + path)
-    manifest = json.loads((root / 'drivers/twatch_pmu/manifest.json').read_text())
+        require(sha((root / SOURCE_ROOT / path).read_bytes()) == expected, 'PMU source differs from target custody: ' + path)
+    manifest = json.loads((root / SOURCE_ROOT / 'drivers/twatch_pmu/manifest.json').read_text())
     package = value['package']
     require(package['id'] == 'twatch-pmu' and package['instance_id'] == 4 and
             package['kind'] == 'driver' and package['architecture'] == 'xtensa-esp32s3' and
