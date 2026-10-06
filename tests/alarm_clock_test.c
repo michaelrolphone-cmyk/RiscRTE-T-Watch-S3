@@ -21,6 +21,7 @@ static alarm_status_v1 av={.api_version=1,.struct_size=sizeof(av),.state=ALARM_S
 static bool health(risc_runtime_health_v1 *h){h->uptime_ms=now;if(scenario==99)return !retained&&now<180000&&!deep_calls;return !retained && now<10000 && (!ready || now-ready_at<1500);}
 static void yield_ms(uint32_t n){now+=n;}
 bool test_face(risc_display_surface_v1 *s,const nova_watch_state *f){(void)f;memset(s->pixels,0x57,sizeof(pixels));return true;}
+bool nova_watch_sleep_status(risc_display_surface_v1*s,const char*label){assert(s&&label&&!strncmp(label,"SLEEP ",6)&&strlen(label)<32);return true;}
 bool test_boot(const risc_display_surface_v1 *s,uint32_t ms){(void)ms;assert(!av.occurrence.generation);++boot_frames;memset(s->pixels,0,sizeof(pixels));return true;}
 unsigned nova_watch_picker_pulse(uint32_t elapsed){(void)elapsed;return 256;}
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*f,unsigned id){(void)id;return test_face(s,f);}

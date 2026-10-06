@@ -71,7 +71,7 @@ priority, retained apps, current-store admission/execution and target links.
 Historical GPIO 0.4.2/PMU 0.5.3 packages and the historical Clock/sleep adapters
 are rebuilt from frozen exact source inputs and must match their original hashes.
 Their test lanes use the matching original SDK headers. The current overlay replaces them
-with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.5.
+with GPIO 0.5.0/PMU 0.6.0 and IMU 0.3.6.
 
 ## Reset refusal diagnosis
 
@@ -82,7 +82,8 @@ BMA456 datasheet section 4.12 documents possible I2C ACK loss when soft reset is
 issued in the running state and specifies disabling acceleration/auxiliary
 sampling and enabling advanced power-save before reset. The older BMA423
 datasheet does not contain that explicit ACK note; applicability to the observed
-BMA423 failure remains an inference pending the device test.
+BMA423 failure remains an inference about the bus-level mechanism. The owner
+subsequently confirmed sleep/wake and tap wake with the 0.3.5 correction.
 
 IMU 0.3.5 sets and reads back those power preconditions before both sleep-entry
 and wake-cleanup resets. It does not blindly retry or accept a failed transfer.

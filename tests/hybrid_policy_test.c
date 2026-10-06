@@ -29,6 +29,7 @@ static twatch_panel_power_v1 panel={{.api_version=1,.struct_size=sizeof(panel)},
 static twatch_pmu_api_v1 pmu={{1,sizeof(pmu),NULL,NULL},keys,pmu_prepare,resume,light,deep,timed,pending,NULL,NULL,NULL};
 static void reset(unsigned n){scenario=n;light_calls=timed_calls=deep_calls=panel_prepares=deep_prepares=pmu_prepares=resumes=observations=diagnostics=elapsed=0;terminal=false;panel.base.struct_size=sizeof(panel);pmu.base.struct_size=sizeof(pmu);}
 int main(void){
+ assert(watch_sleep_stage==0&&watch_sleep_detail==0);
  for(unsigned n=0;n<15;n++) {
   reset(n);int status=watch_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_HYBRID,log_message);
   if(n==8||n==10||n==13||n==14){assert(status==WATCH_SLEEP_RETAINED&&!resumes);continue;}
