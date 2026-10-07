@@ -34,7 +34,7 @@ STORE_BYTES = 0x510000
 STORE_OFFSETS = (0x2f0000, 0xae0000)
 FIRMWARE_OFFSETS = (0x10000, 0x800000)
 NEW_APPS = ('ble_touchpad', 'ble_buttons')
-NEW_PROVIDERS = ('ble-hid', 'ble-sensors', 'telemetry-battery', 'ble-telemetry')
+NEW_PROVIDERS = ('ble-hid', 'ble-sensors', 'battery-telem', 'ble-telemetry')
 NEW_FILES = {n + suffix for n in NEW_APPS for suffix in ('.elf', '.json')} | {
     folder + '/' + name for folder in NEW_PROVIDERS for name in ('manifest.json', 'driver.elf')}
 
@@ -320,14 +320,15 @@ def check_policy(previous, following):
             and provider['provides'] == [{'capability': 'bluetooth.hid', 'api': 1}], 'HID dependency authority differs')
     logical = {
         'ble-sensors/manifest.json': ([('bluetooth.hci', 1), ('platform.clock', 1)], [('bluetooth.sensors', 1)]),
-        'telemetry-battery/manifest.json': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
+        'battery-telem/manifest.json': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
         'ble-telemetry/manifest.json': ([('bluetooth.hci', 1), ('platform.clock', 1), ('sensor.telemetry', 1)], [('bluetooth.telemetry', 1)]),
     }
     for row in suffix:
         if row['manifest'] == 'ble-hid/manifest.json':continue
         require(set(row) == {'manifest'}, 'New BLE sensor/telemetry providers must be logical Global0 providers')
         provider = document(following[row['manifest']]);expected_requires, expected_provides = logical[row['manifest']]
-        require(provider['driver_abi'] == 2 and provider['file_name'] == 'driver.elf' and 'hardware_compatibility' not in provider,
+        expected_id = 'telemetry-battery' if row['manifest'] == 'battery-telem/manifest.json' else row['manifest'].split('/',1)[0]
+        require(provider['id'] == expected_id and provider['driver_abi'] == 2 and provider['file_name'] == 'driver.elf' and 'hardware_compatibility' not in provider,
                 'BLE sensor/telemetry provider must not invent hardware')
         require([(r['capability'], r['api']) for r in provider['requires']] == expected_requires
                 and [(r['capability'], r['api']) for r in provider['provides']] == expected_provides,
