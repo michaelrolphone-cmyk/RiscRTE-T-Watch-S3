@@ -1,4 +1,4 @@
-"""Reproduce historical GPIO/PMU and Clock/sleep bytes from frozen source inputs.
+"""Reproduce historical GPIO/PMU/panel and Clock/sleep bytes from frozen source inputs.
 
 Only current-apps replaces these with wake-set drivers. Never rehash a prior
 release to legitimize newly compiled ABI tables.
@@ -11,6 +11,17 @@ def legacy_inputs(root=ROOT):
  assert record['commit']=='2a4fbae8fb2425bf830c302863a5e195106e77c9'
  for name,digest in record['files'].items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==digest,name
  return source
+def legacy_panel_inputs(root=ROOT):
+ source=root/'custody/panel-0.4.1';provenance=(source/'PROVENANCE.json').read_bytes()
+ assert hashlib.sha256(provenance).hexdigest()=='0c935bab64c90b9a5746a1a1643a63871842e8d1ceda7eb70c7b72a7b9bb67a4','Panel custody record changed'
+ record=json.loads(provenance)
+ assert record['commit']=='273b58d64ccc9a7dd66f0659271a942f244edcdf'
+ for name,digest in record['files'].items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==digest,name
+ return source
+def legacy_manifests(root=ROOT):
+ # The independent panel snapshot does not alter the older sleep-prefix inputs.
+ return sorted((legacy_inputs(root)/'drivers').glob('*/manifest.json'))+[
+  legacy_panel_inputs(root)/'drivers/twatch_panel/manifest.json']
 def legacy_clock(root=ROOT):
  # Original Clock and portable sleep bodies must keep their emitted bytes as
  # well as behavior. Copy the unchanged source topology and overlay only the
@@ -22,8 +33,9 @@ def legacy_clock(root=ROOT):
  return out
 def build(cc,root=ROOT):
  source=legacy_inputs(root);catalog=[]
- expected={'twatch-gpio':'0f079b1d8957725ef38c037252eb8cf25e42f2dfff10157bd71cedf4aec78549','twatch-pmu':'ea536f0532e001bd4a3d36e50d2f2fcbe1db5bfab218def6ad28b536f578fbfb'}
- for mp in sorted((source/'drivers').glob('*/manifest.json')):
+ expected={'twatch-gpio':'0f079b1d8957725ef38c037252eb8cf25e42f2dfff10157bd71cedf4aec78549','twatch-pmu':'ea536f0532e001bd4a3d36e50d2f2fcbe1db5bfab218def6ad28b536f578fbfb','twatch-panel':'6b59a6c443becc77ca8240cbc7624bca0865e408e45f46973cf0639f8fd6b90d'}
+ for mp in legacy_manifests(root):
+  source=mp.parents[2]
   m=json.loads(mp.read_text());out=root/'dist/legacy-sleep'/m['id'];out.mkdir(parents=True,exist_ok=True);elf=out/'driver.elf'
   subprocess.run([cc,'-std=c11','-shared','-fPIC','-fvisibility=hidden','-nostdlib','-mlongcalls','-Os','-ffreestanding','-fno-builtin','-Wall','-Wextra','-Wno-misleading-indentation','-Wno-unused-function','-Werror',f'-I{source}/sdk/driver',f'-I{source}/include',f'-Wl,--version-script={source}/exports.map','-Wl,-soname,driver.elf',str(mp.parent/'driver.c'),'-lgcc','-o',str(elf)],check=True)
   cap=m['provides'][0];files={'driver.elf':elf.read_bytes(),'provider-abi.v1':f"os-cpu-abi=1\nprovides={cap['capability']}\napi={cap['api']}\n".encode(),'source-manifest.json':(json.dumps(m,indent=2)+'\n').encode()}
@@ -36,4 +48,4 @@ def build(cc,root=ROOT):
   data=package.read_bytes();digest=hashlib.sha256(data).hexdigest();assert digest==expected[m['id']],(m['id'],digest)
   catalog.append(dict(id=m['id'],version=m['version'],kind='driver',architecture=m['architecture'],archive=package.name,size_bytes=len(data),sha256=digest))
  (root/'dist/legacy-sleep/catalog.json').write_text(json.dumps({'packages':catalog},indent=2)+'\n')
- print('Frozen GPIO0.4.2/PMU0.5.3 target package bytes remain exact')
+ print('Frozen GPIO0.4.2/PMU0.5.3/panel0.4.1 target package bytes remain exact')
