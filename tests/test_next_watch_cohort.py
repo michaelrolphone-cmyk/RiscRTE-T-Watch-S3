@@ -189,7 +189,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
 class RuntimeRequirementsTest(unittest.TestCase):
     def setUp(self):
         import build_current_watch_cohort as cohort
-        self.descriptor = document((cohort.ROOT / 'apps/current-runtime-requirements.json').read_bytes())
+        self.descriptor = document((cohort.ROOT / 'apps/apex-runtime-requirements.json').read_bytes())
         self.native = {'source_sha': 'f' * 40, 'firmware_version': '0.1.35',
                        **{k: self.descriptor['deployment'][k] for k in ('target', 'layout', 'flash_bytes', 'store_abi')},
                        'partitions': {n: [1, 0, r['offset'], r['size']]
