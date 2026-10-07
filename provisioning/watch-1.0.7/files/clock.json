@@ -1,0 +1,46 @@
+{
+  "type": "application",
+  "id": "twatch-clock-return",
+  "version": "0.10.3",
+  "architecture": "xtensa-esp32s3",
+  "file_name": "clock.elf",
+  "entry": "app_main",
+  "requires": [
+    {
+      "capability": "display.output",
+      "api": 1
+    },
+    {
+      "capability": "input.touch.raw",
+      "api": 1
+    },
+    {
+      "capability": "rtc.clock",
+      "api": 2
+    },
+    {
+      "capability": "board.battery",
+      "api": 1
+    },
+    {
+      "capability": "storage.key-value",
+      "api": 1
+    },
+    {
+      "capability": "alarm.service",
+      "api": 1
+    },
+    {
+      "capability": "net.wifi",
+      "api": 1
+    },
+    {
+      "capability": "bluetooth.hci",
+      "api": 1
+    },
+    {
+      "capability": "motion.accel",
+      "api": 1
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "ti,drv2605",
+      "config_type": "peripheral.i2c",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "twatch-haptic",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "haptic.effect"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "i2c.bus"
+    },
+    {
+      "api": 1,
+      "capability": "board.battery"
+    }
+  ],
+  "status": "software-only-alarm-output-candidate",
+  "type": "driver",
+  "version": "0.2.1"
+}

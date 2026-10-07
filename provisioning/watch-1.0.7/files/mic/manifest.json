@@ -1,0 +1,36 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "knowles,spm1423",
+      "config_type": "audio.i2s",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "twatch-mic",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "audio.input"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "platform.i2s.controller"
+    }
+  ],
+  "status": "runtime-0.1.16-pdm-backed",
+  "type": "driver",
+  "version": "0.2.1"
+}

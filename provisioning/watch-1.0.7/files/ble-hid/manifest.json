@@ -1,0 +1,30 @@
+{
+  "type": "driver",
+  "id": "ble-hid",
+  "version": "0.1.2",
+  "driver_abi": 2,
+  "architecture": "xtensa-esp32s3",
+  "file_name": "driver.elf",
+  "requires": [
+    {
+      "capability": "bluetooth.hci",
+      "api": 1
+    },
+    {
+      "capability": "platform.clock",
+      "api": 1
+    },
+    {
+      "capability": "storage.key-value.bound",
+      "api": 1
+    }
+  ],
+  "provides": [
+    {
+      "capability": "bluetooth.hid",
+      "api": 1
+    }
+  ],
+  "status": "experimental-unpublished",
+  "physical_verification": "pending"
+}
