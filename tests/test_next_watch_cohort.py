@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from build_next_watch_cohort import check_policy, document, encoded, migration, NEW_APPS, NEW_PROVIDERS
+from build_current_watch_cohort import check_policy, document, encoded, migration, NEW_APPS, NEW_PROVIDERS
 
 
 def fixture():
