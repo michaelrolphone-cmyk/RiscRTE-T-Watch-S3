@@ -122,8 +122,8 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  record['hid']={**c['hid'],'build':json.loads((hid/'build-record.json').read_text()),'api_header_sha256':hashlib.sha256(header.read_bytes()).hexdigest()}
  subprocess.run([sys.executable,str(drivers/'scripts/build_ble_sensors.py')],env={**os.environ,'NATIVE_DRIVER_CC':cc},check=True)
  record['ble_components']={}
- for key,identity in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
-  package=drivers/'dist'/identity;dest=files_dir/identity;dest.mkdir()
+ for key,identity,folder in (('ble_sensors','ble-sensors','ble-sensors'),('ble_telemetry','ble-telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery','battery-telem')):
+  package=drivers/'dist'/identity;dest=files_dir/folder;dest.mkdir()
   source_manifest=json.loads((drivers/'Drivers'/identity.replace('-','_')/'manifest.json').read_text())
   require(source_manifest['id']==c[key]['id'] and source_manifest['version']==c[key]['version'],'BLE component identity differs: '+identity)
   require(json.loads((package/'manifest.json').read_text())==source_manifest,'BLE component built manifest differs: '+identity)
