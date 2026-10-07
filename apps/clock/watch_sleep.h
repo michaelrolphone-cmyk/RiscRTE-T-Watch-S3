@@ -108,8 +108,10 @@ static int watch_sleep_motion_prepared(const twatch_panel_power_v1 *panel,
     }
     if(motion && !motion->resume_wake(motion->context)) {diagnostic("WATCH_SLEEP motion=restore-retained");return WATCH_SLEEP_RETAINED;}
     bool pmu_restored=pmu->resume(pmu->base.context);
-    bool panel_restored=panel->resume(panel->base.context);
-    if(!pmu_restored || !panel_restored) {
+    int32_t panel_restore=panel->base.struct_size>=TWATCH_PANEL_RESUME_STATUS_SIZE && panel->resume_status?
+        panel->resume_status(panel->base.context):(panel->resume(panel->base.context)?0:RISC_LIGHT_SLEEP_PLATFORM);
+    if(panel_restore==RISC_DEEP_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
+    if(!pmu_restored || panel_restore!=0) {
         diagnostic("WATCH_CLOCK error=sleep-restore");return WATCH_SLEEP_FAILED;
     }
     uint32_t ignored=0;

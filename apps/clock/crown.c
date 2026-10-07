@@ -418,9 +418,7 @@ static int sleep_cycle(void) {
 #else
     int rc=watch_sleep_prepared(panel,pmu,mode,rt->diagnostic);
 #endif
-#ifdef WATCH_CLOCK_ALARMS
     if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
-#endif
     if(rc<0)return false;
 #ifdef WATCH_QUICK_RADIOS
     if(!pqa_radios_resume(&clock_radios,&clock_quick.ui,rt))return false;
@@ -657,9 +655,7 @@ __attribute__((visibility("default"))) void app_main(void) {
             picker_open_pending=picker_select_pending=picker_save_failed=false;
 #endif
             int sleep_result=sleep_cycle();
-#ifdef WATCH_CLOCK_ALARMS
             if(sleep_result==WATCH_SLEEP_RETAINED)return; /* Runtime retains before fini. */
-#endif
             if (!sleep_result || !alive(&armed_at)) break;
             /* A refused/held-key attempt also starts a new bounded interval;
              * it must not turn an expired timeout into a busy retry loop. */

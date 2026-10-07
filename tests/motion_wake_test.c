@@ -126,7 +126,22 @@ int main(void){
   /* Every physical transfer can fail; bulk firmware loops must not hide one. */
   for(unsigned failure=1;failure<=count;failure++){begin(id);fail_at=failure;assert(!prepare_wake(NULL));assert(operations==failure);fail_at=0;assert(resume_wake(NULL));restored();assert(prepare_wake(NULL));assert(resume_wake(NULL));restored();assert(quiesce());}
   begin(id);assert(prepare_wake(NULL));operations=0;assert(resume_wake(NULL));unsigned cleanup_count=operations;assert(quiesce());
-  for(unsigned failure=1;failure<=cleanup_count;failure++){begin(id);assert(prepare_wake(NULL));operations=0;fail_at=failure;assert(!resume_wake(NULL)&&enrolled);fail_at=0;assert(resume_wake(NULL));restored();assert(quiesce());}
+  for(unsigned observing=0;observing<2;observing++)for(unsigned failure=1;failure<=cleanup_count;failure++){
+   begin(id);assert(observing?tap_observe_begin(NULL,0):prepare_wake(NULL));operations=0;fail_at=failure;
+   assert(!resume_wake(NULL)&&enrolled);fail_at=0;
+   /* Even an early rollback fault invalidates the prior armed proof. Later
+    * failures can occur after reset has removed the entire feature image. */
+   assert(!wake_prepared && !observe_active && wake_changed);
+   unsigned before_retry=operations;
+   for(unsigned retry=0;retry<3;retry++){
+    bool pending=true;assert(!prepare_wake(NULL) && !wake_pending(NULL,&pending));
+    twatch_tap_observation_v1 sample={.struct_size=sizeof(sample)};
+    assert(!tap_observe(NULL,&sample) && !tap_configure(NULL,0));
+    assert(enrolled && operations==before_retry);
+   }
+   assert(resume_wake(NULL));restored();
+   assert(prepare_wake(NULL));assert(resume_wake(NULL));restored();assert(quiesce());
+  }
   begin(id);held_line=true;assert(!prepare_wake(NULL)&&enrolled);assert(resume_wake(NULL));restored();assert(quiesce());
   begin(id);fail_reset_always=true;assert(!prepare_wake(NULL)&&enrolled&&wake_error(NULL)==742);assert(!resume_wake(NULL)&&enrolled);fail_reset_always=false;assert(resume_wake(NULL));restored();assert(quiesce());
   begin(id);wrong_status=true;assert(!prepare_wake(NULL)&&enrolled);wrong_status=false;assert(resume_wake(NULL));restored();assert(quiesce());

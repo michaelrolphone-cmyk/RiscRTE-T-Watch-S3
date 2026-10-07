@@ -75,7 +75,7 @@ static bool acquire_cap(const char*k,uint32_t version,uint64_t id,risc_runtime_c
  else {assert(!id);if(!strcmp(k,"display.output"))g->api=&dp;else if(!strcmp(k,"board.battery"))g->api=&pp;else if(!strcmp(k,"rtc.clock"))g->api=&rp;else{assert(!strcmp(k,"input.touch.raw"));g->api=&tp;}}
  ++grants;return true;
 }
-static bool release_cap(risc_runtime_capability_v1*g){assert(g->api&&!owned&&!pending);if(g->api==&kv)++kv_releases;g->api=NULL;++releases;return true;}
+static bool release_cap(risc_runtime_capability_v1*g){assert(!retained&&g->api&&!owned&&!pending);if(g->api==&kv)++kv_releases;g->api=NULL;++releases;return true;}
 static bool launch(const char*s){(void)s;assert(!"No launcher gesture");return false;}
 static const risc_runtime_api_v1 runtime={1,sizeof(runtime),health,yield_ms,diagnostic,launch,acquire_cap,release_cap};
 const risc_runtime_api_v1 *risc_runtime_get_api(uint32_t v){assert(v==1);return &runtime;}
@@ -83,7 +83,12 @@ static void reset(unsigned test){scenario=test;now=ready_at=frames=mode_diag=kv_
 int main(void){
  for(unsigned test=0;test<13;++test){
   reset(test);if(test==7){dp.base.struct_size=TWATCH_PANEL_LIGHT_SLEEP_SIZE;pp.base.struct_size=TWATCH_PMU_LIGHT_SLEEP_SIZE;}
-  app_main();assert(ready&&!owned&&!pending&&grants==releases&&subscriptions==closed);
+  app_main();assert(ready&&!owned&&!pending&&subscriptions==closed);
+  /* Native retention returns directly to the runtime before app cleanup.
+   * Display, PMU and RTC grants remain owned; touch/settings already closed. */
+  assert(kv_grants==kv_releases);
+  if(test==4||test==5||test==12)assert(retained&&grants==releases+3);
+  else assert(!retained&&grants==releases);
   if(test>=9){assert(!mode_diag&&light_calls==1&&!deep_calls);if(test==12)assert(retained&&!panel_resumes&&!pmu_resumes);}
   else if(test==4){assert(retained&&!deep_calls&&!pmu_prepares&&!panel_resumes&&!pmu_resumes);}
   else if(test==5){assert(retained&&deep_calls==1&&!panel_resumes&&!pmu_resumes);}
