@@ -1202,6 +1202,8 @@ jobs:
         run: |
           python .low-battery/system/scripts/test_low_battery.py
           python scripts/test_low_battery.py --system-apps .low-battery/system
+          python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime
+          python scripts/test_waterfall_serial.py --utilities .low-battery/utilities --system-apps .low-battery/system --runtime .low-battery/runtime --output dist/waterfall-serial
           python scripts/test_alarm_sleep_resume.py --system-apps .low-battery/system --utilities .low-battery/utilities --runtime .low-battery/runtime
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
           python -m unittest discover -s tests -p test_current_execution_sources.py -v
