@@ -1,0 +1,30 @@
+{
+  "repository": "https://github.com/lewisxhe/SensorLib",
+  "commit": "477fc682e9ed30ced39774f3b7e93a1504968884",
+  "files": {
+    "SensorBuildOpt.h": "b3c4563f3d173b53a7d1d938a440800a0759450c40fb8c5a3210341db81cf9ba",
+    "SensorBuildOptUser.h": "852e1cfacba07bc7ff2c481de691de02bec4406b601bfbd80b08fc9983bf7a9a",
+    "bosch/bma4xx/LICENSE": "7d32b0d25c587b4a9c25adb882885fe63ce77533d90f26676d2edf40f5b302c9",
+    "bosch/bma4xx/bma4.c": "d368ab32a636aa4de0b63316fdbdc1a8c91b77bbce35f21395f9c96042a1fa01",
+    "bosch/bma4xx/bma4.h": "35d6af6ea0e0c045a392ef99255279fac16996ddcfe9875743171aaf9953a397",
+    "bosch/bma4xx/bma4_defs.h": "f4d3cfe5349ce16664161b971df9ba9526b392ee0fe578ce75b63446e643dd20",
+    "bosch/bma4xx/bma423.c": "b4fbc4f16e081b34ce0afe220d747d74835098bf9e0f959ddfb7e1b1520a016b",
+    "bosch/bma4xx/bma423.h": "216673bd099389e32ba6fd757e326795148c7ff1819b645d5edb84c97cbdd70c",
+    "bosch/bma4xx/bma456h.c": "e1faa4e2cb1509180bb7462dd11204aba8c456fceca2d605062c2aa5b231b6ca",
+    "bosch/bma4xx/bma456h.h": "751221df9da6fc1699008b7ffd4e5d663a78ecbcb4dac34ab0ccf96e2b70f239",
+    "LICENSE": "08c3c586bb218337a79867e6fed917c65ee041858e93cb856c4d610e3d0dc413"
+  },
+  "source_paths": {
+    "SensorBuildOpt.h": "src/SensorBuildOpt.h",
+    "SensorBuildOptUser.h": "src/SensorBuildOptUser.h",
+    "bosch/bma4xx/LICENSE": "src/bosch/bma4xx/LICENSE",
+    "bosch/bma4xx/bma4.c": "src/bosch/bma4xx/bma4.c",
+    "bosch/bma4xx/bma4.h": "src/bosch/bma4xx/bma4.h",
+    "bosch/bma4xx/bma4_defs.h": "src/bosch/bma4xx/bma4_defs.h",
+    "bosch/bma4xx/bma423.c": "src/bosch/bma4xx/bma423.c",
+    "bosch/bma4xx/bma423.h": "src/bosch/bma4xx/bma423.h",
+    "bosch/bma4xx/bma456h.c": "src/bosch/bma4xx/bma456h.c",
+    "bosch/bma4xx/bma456h.h": "src/bosch/bma4xx/bma456h.h",
+    "LICENSE": "LICENSE"
+  }
+}

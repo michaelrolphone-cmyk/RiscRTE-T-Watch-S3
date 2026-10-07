@@ -1,0 +1,20 @@
+{
+  "repository": "https://github.com/espressif/esp-idf",
+  "revision": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3",
+  "tag": "v4.4.7",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "upstream": "components/spiffs/spiffsgen.py",
+      "local": "vendor/esp-idf-spiffs/spiffsgen.py",
+      "sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+      "modified": false
+    },
+    {
+      "upstream": "LICENSE",
+      "local": "licenses/spiffsgen/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "modified": false
+    }
+  ]
+}
