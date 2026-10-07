@@ -66,7 +66,7 @@ def build(artifact_dir, points_artifact_dir, runtime_source, runtime_candidate, 
     require(not git(ROOT, 'status', '--porcelain', '--untracked-files=no'), 'Watch checkout has tracked modifications')
 
     historical_requirements = json.loads((ROOT / 'apps/update-runtime-requirements.json').read_text())
-    requirements = json.loads((ROOT / ('apps/current-runtime-requirements.json' if current_apps_artifact_dir else 'apps/update-runtime-requirements.json')).read_text())
+    requirements = json.loads((ROOT / ('apps/apex-runtime-requirements.json' if current_apps_artifact_dir else 'apps/update-runtime-requirements.json')).read_text())
     runtime_head = git(runtime_source, 'rev-parse', 'HEAD')
     require(runtime_head == requirements['source_sha'], 'Runtime checkout differs from Watch runtime requirement')
     require(not git(runtime_source, 'status', '--porcelain', '--untracked-files=no'), 'Runtime checkout has tracked modifications')
