@@ -7,6 +7,18 @@ store files and 43 Xtensa ELFs remain byte-identical to the accepted release.
 This is separate from the 1.0.8 RF Spectrum candidate and later power repairs;
 it is not a new/latest product release or an existing-device OTA update.
 
+## Pinned public inputs
+
+- [Complete immutable file inventory](../provisioning/deployments/watch-1.0.7/inventory.json)
+- [Deployment record and seed/archive checksums](../provisioning/deployments/watch-1.0.7/deployment.json)
+- [Exact generic seed ZIP](https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/a944c3828075eb2fa35188e7850a6ab18a79e7e2/provisioning/watch-1.0.7/seed.zip)
+- [Frozen product payload](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/tree/a944c3828075eb2fa35188e7850a6ab18a79e7e2/provisioning/watch-1.0.7)
+
+The complete store's URLs are pinned to commit
+`a944c3828075eb2fa35188e7850a6ab18a79e7e2`. Keep the inventory unchanged when
+preparing the private owner profile. The seed ZIP is 8,093,772 bytes with SHA-256
+`fdb7c400dc81e17923ca6f00c6866065724817c4972b41aa4e80e73337e696cd`.
+
 ## Exact native and seed custody
 
 Runtime source is `4a0891fc0ec10dcd100c6248768cabecaafec888`, version 0.1.41,
