@@ -22,13 +22,14 @@ def checked_source(root, expected=None):
     return head
 
 
-def read_native(native_dir, runtime, root=ROOT):
+def read_native(native_dir, runtime, root=ROOT, *, requirements_override=None):
     """Require clean pinned source, new compiled markers and fresh native proofs."""
     native_dir, runtime, root = Path(native_dir), Path(runtime), Path(root)
-    requirements = runtime_requirements(root)
+    requirements = runtime_requirements(root) if requirements_override is None else requirements_override
+    expected_version = requirements['firmware_version']
     source = requirements['source_sha'];checked_source(runtime, source)
     raw = (native_dir / 'candidate.json').read_bytes();record = document(raw)
-    require(record['schema'] == 1 and record['source_sha'] == source and record['firmware_version'] == RUNTIME_VERSION,
+    require(record['schema'] == 1 and record['source_sha'] == source and record['firmware_version'] == expected_version,
             'Power native candidate source/version differs')
     expected_assets = {'firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin', 'platformio.ini',
                        'partitions-paired-appdata.csv', 'requirements-ci.txt', 'radio-iq-proof.json',
@@ -83,8 +84,8 @@ for n in ('platformio.ini','partitions-paired-appdata.csv','requirements-ci.txt'
         name: {'offset': values[2], 'size': values[3]} for name, values in record['partitions'].items() if name != 'nvs'},
         'Power native partition requirements differ')
     require(record['partitions']['nvs'] == [1, 2, 0x9000, 0x6000], 'Power native NVS geometry changed')
-    custody = {'schema': 1, 'source_sha': source, 'firmware_version': RUNTIME_VERSION,
-               'target': record['target'], 'candidate_sha256': sha(raw), 'native_rebuilt': True,
+    custody = {'schema': 1, 'source_sha': source, 'firmware_version': expected_version,
+               'target': record['target'], 'candidate_sha256': sha(raw), 'native_rebuilt': False, 'native_reused_exact': True,
                'assets': {name: metadata(b) for name, b in sorted(blobs.items())}}
     return {'record': record, 'blobs': blobs, 'custody': custody, 'requirements': requirements}
 
@@ -92,12 +93,14 @@ for n in ('platformio.ini','partitions-paired-appdata.csv','requirements-ci.txt'
 def check_policy(previous, following, configuration, *, initial_only=False):
     require(set(previous) == set(following), 'Power candidate changed full-store inventory')
     if not initial_only: require(previous['board.json'] == following['board.json'], 'Preserving update changed accepted board')
+    source_version = parse(previous['cohort.json'])['version']
+    require(source_version in ('1.0.7', '1.0.10'), 'Unqualified power source version')
     old_boot, new_boot = document(previous['boot.json']), document(following['boot.json'])
-    require(new_boot == upgrade_boot(old_boot), 'Power candidate changed accepted plus RF boot authority')
+    require(new_boot == (upgrade_boot(old_boot) if source_version == '1.0.7' else old_boot), 'Power candidate changed accepted plus RF boot authority')
     for name in APPS:
         old, new = document(previous[name + '.json']), document(following[name + '.json'])
         expected = authority(old)
-        if name == 'waterfall': expected['requires'] |= {(g['capability'], g['api']) for g in PRIVATE_GRANTS}
+        if name == 'waterfall' and source_version == '1.0.7': expected['requires'] |= {(g['capability'], g['api']) for g in PRIVATE_GRANTS}
         require(authority(new) == expected and new['version'] == configuration['app_versions'][name],
                 'Power candidate changed app authority/version: ' + name)
     for row in old_boot['drivers']:
@@ -107,10 +110,14 @@ def check_policy(previous, following, configuration, *, initial_only=False):
     for folder, version in POWER_DRIVERS.items():
         require(document(following[folder + '/manifest.json'])['version'] == version,
                 'Power candidate lost repaired driver: ' + folder)
-        require(previous[folder + '/driver.elf'] != following[folder + '/driver.elf'], 'Power driver was not rebuilt: ' + folder)
+        old_version = document(previous[folder + '/manifest.json'])['version']
+        if old_version == version:
+            require(previous[folder + '/driver.elf'] == following[folder + '/driver.elf'], 'Changed power driver needs a version increment: ' + folder)
+        else:
+            require(previous[folder + '/driver.elf'] != following[folder + '/driver.elf'], 'Power driver was not rebuilt: ' + folder)
     return {'accepted_boot_sha256': sha(previous['boot.json']), 'candidate_boot_sha256': sha(following['boot.json']),
             'prior_app_count': len(APPS), 'provider_bindings_preserved': True,
-            'all_prior_persistent_owners_preserved': True, 'new_private_grants': PRIVATE_GRANTS,
+            'all_prior_persistent_owners_preserved': True, 'new_private_grants': PRIVATE_GRANTS if source_version == '1.0.7' else [],
             'shared_migration_added': False, 'board_bytes_preserved': following['board.json'] == previous['board.json'],
             'power_driver_versions': POWER_DRIVERS}
 
@@ -124,8 +131,16 @@ def compose(origin, native, files, apps, head, root=ROOT, *, initial_only=False)
     require(apps['board'] == board and document(files['board.json']) == board, 'Power board proof differs')
     if not initial_only: require(apps['motion_model'] == 'bma423' and apps['radio_model'] == 'selectable',
                                  'Preserving power update has only an accepted BMA423/selectable origin')
-    require(native['blobs']['firmware.bin'] != origin['full'][0x10000:0x10000 + len(native['blobs']['firmware.bin'])],
-            'Power candidate must contain fresh Runtime firmware')
+    if origin['identity']['version'] == '1.0.7':
+        require(native['blobs']['firmware.bin'] != origin['full'][0x10000:0x10000 + len(native['blobs']['firmware.bin'])],
+                'Accepted 1.0.7 requires the verified replacement Runtime')
+    else:
+        old_runtime = tuple(map(int, origin['identity']['runtime_version'].split('.')))
+        target_runtime = tuple(map(int, native['record']['firmware_version'].split('.')))
+        require(target_runtime >= old_runtime, 'Cutoff may not downgrade the delivered Runtime')
+        if target_runtime == old_runtime:
+            require(native['blobs']['firmware.bin'] == origin['full'][0x10000:0x10000 + len(native['blobs']['firmware.bin'])],
+                    'Changed Runtime bytes require a version increment')
     following = {**origin['store'], **files, 'boot.json': encoded(apps['boot'])}
     identity = create(VERSION, RUNTIME_VERSION, head, native['blobs']['firmware.bin'])
     following['cohort.json'] = encode(identity)

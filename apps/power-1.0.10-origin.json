@@ -1,0 +1,116 @@
+{
+  "app_versions": {
+    "alarms": "0.2.5",
+    "app_store": "1.1.6",
+    "audio_spectrum": "0.4.8",
+    "battery": "1.1.3",
+    "ble_buttons": "0.1.5",
+    "ble_scanner": "0.2.3",
+    "ble_touchpad": "0.1.5",
+    "calculator": "0.1.9",
+    "clock": "0.10.5",
+    "countdown": "0.1.8",
+    "default": "0.10.5",
+    "file_browser": "1.4.4",
+    "frequency_generator": "0.1.7",
+    "lora_messages": "0.1.5",
+    "ota_update": "1.1.6",
+    "points_in_time": "0.4.7",
+    "settings": "1.3.4",
+    "springboard": "1.5.3",
+    "stopwatch": "0.1.9",
+    "timecard": "0.1.4",
+    "waterfall": "0.2.1",
+    "wifi_settings": "1.1.7"
+  },
+  "assets": {
+    "power-apps.zip": {
+      "sha256": "37c29d9a6f8948b34705ab35f8b047ddd4a0469aad35c2fba1641a7a86ea0f10",
+      "size_bytes": 10473594
+    },
+    "power-watch-build-proof.json": {
+      "sha256": "e813db09b14fbd417ba636ba19f6341548314178880176a2e15cd5781ccbe8aa",
+      "size_bytes": 30220
+    },
+    "runtime-requirements.json": {
+      "sha256": "e4d4520f961d1a633cd094c1b190d0509bbcc9475cbccff2bda240360a249725",
+      "size_bytes": 3837
+    },
+    "twatch-s3-1.0.10-FULL-INITIAL-ERASES-DATA-bma423.bin": {
+      "sha256": "7e348e14f014a891021a73589e03e94130a74476d85ea8d6f31c0107dc5e9e74",
+      "size_bytes": 16777216
+    }
+  },
+  "identity": {
+    "firmware_sha256": "86789ea85292ecb0ead481218e7ed52c937aa2663f458e4dedff4ca64b660575",
+    "firmware_size": 1238480,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.53",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "3afac445be3ed20339aa8bfa075ef9b2a356a4d2",
+    "store_abi": 2,
+    "version": "1.0.10"
+  },
+  "kind": "delivered-test-candidate-origin",
+  "motion_model": "bma423",
+  "native_custody": {
+    "assets": {
+      "appdata-image.json": {
+        "sha256": "518da93e321701682210ef5794c388849732281b5946488afaaacf25223b7838",
+        "size_bytes": 1248
+      },
+      "appdata.bin": {
+        "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+        "size_bytes": 524288
+      },
+      "bootloader.bin": {
+        "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
+        "size_bytes": 15104
+      },
+      "firmware.bin": {
+        "sha256": "86789ea85292ecb0ead481218e7ed52c937aa2663f458e4dedff4ca64b660575",
+        "size_bytes": 1238480
+      },
+      "firmware.elf": {
+        "sha256": "dc88cd64484760f2cce2f0848fffd6f708aa3bf26d8dbd10005a3f5ff0e0d422",
+        "size_bytes": 19809148
+      },
+      "partitions-paired-appdata.csv": {
+        "sha256": "31f6e41e2acc48df13ee30ad91e55928b2c2093b6916080235a833dd69f3b844",
+        "size_bytes": 630
+      },
+      "partitions.bin": {
+        "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9",
+        "size_bytes": 3072
+      },
+      "platformio.ini": {
+        "sha256": "3a380857df300a512006ab478a277c4e8c80aa0277658ab9cab32d3a483e15cb",
+        "size_bytes": 5322
+      },
+      "radio-iq-proof.json": {
+        "sha256": "15764d1f2cf9709525479e71fb69c29c50085ffad6ac3c679086a696e80b3645",
+        "size_bytes": 2174
+      },
+      "requirements-ci.txt": {
+        "sha256": "1b5f9a84f4862cb05fc918850fc8ab2516d5c39fb3087747e7df1aba2c7a7600",
+        "size_bytes": 52
+      }
+    },
+    "candidate_sha256": "a7a2d5c7afc10977b2a7299e5185c0598d10d805de87431ee6af4011f8da63bb",
+    "firmware_version": "0.1.53",
+    "native_rebuilt": true,
+    "schema": 1,
+    "source_sha": "3fde7198deffd21b263666a86f58eab2c6eadbc7",
+    "target": "esp32s3-16mb-appdata-iq"
+  },
+  "physical_acceptance_claimed": false,
+  "radio_model": "selectable",
+  "runtime_source": "3fde7198deffd21b263666a86f58eab2c6eadbc7",
+  "runtime_version": "0.1.53",
+  "schema": 1,
+  "version": "1.0.10",
+  "watch_source": "3afac445be3ed20339aa8bfa075ef9b2a356a4d2"
+}

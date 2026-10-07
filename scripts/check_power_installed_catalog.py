@@ -16,7 +16,8 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 SYSTEM_SOURCE = 'f146d82d4c2bc4d4b6ac97f7be83b04035ad7d60'
 REPOSITORY = 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
-VERSION = '1.0.10'
+VERSION = '1.0.11'
+from power_repair_profile import RUNTIME_VERSION
 SOURCE_FILES = ('Services/update/Catalog.h', 'Services/update/JsonCursor.h',
                 'lib/PortableApps/include/SoftwareUpdateV1.h',
                 'lib/PortableApps/include/RiscBankStoreV1.h',
@@ -36,9 +37,9 @@ def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
-def source_state(system_apps):
+def source_state(system_apps, expected_source=SYSTEM_SOURCE):
     head = subprocess.check_output(['git', '-C', str(system_apps), 'rev-parse', 'HEAD'], text=True).strip()
-    require(head == SYSTEM_SOURCE, 'RF catalog check requires the exact accepted System source')
+    require(head == expected_source, 'RF catalog check requires the exact accepted System source')
     require(not subprocess.check_output(['git', '-C', str(system_apps), 'status', '--porcelain',
                                          '--untracked-files=no'], text=True).strip(),
             'Installed System source is dirty')
@@ -63,7 +64,7 @@ def cases(ota):
                   'malformed-firmware-sha', 'malformed-store-sha'):
         changed = copy.deepcopy(ota)
         if label.startswith('renamed-'):
-            alternate = 'twatch-s3-1.0.10-NATIVE-BOOTFS-OTA-PRESERVES-DATA-bma423.bin'
+            alternate = 'twatch-s3-1.0.11-NATIVE-BOOTFS-OTA-PRESERVES-DATA-bma423.bin'
             if label in ('renamed-asset-and-url', 'renamed-asset'):
                 changed['asset'] = alternate
             if label in ('renamed-asset-and-url', 'renamed-url'):
@@ -79,15 +80,15 @@ def cases(ota):
         yield label, changed, False
 
 
-def check(ota, system_apps):
+def check(ota, system_apps, *, expected_source=SYSTEM_SOURCE):
     """Return source-bound parser evidence for the supplied exact OTA descriptor."""
     system_apps = Path(system_apps).resolve()
     require(isinstance(ota, dict) and ota.get('kind') == 'paired-cohort'
-            and ota.get('version') == VERSION and ota.get('runtime_version') == '0.1.53'
+            and ota.get('version') == VERSION and ota.get('runtime_version') == RUNTIME_VERSION
             and ota.get('layout') == 'riscrte-paired-appdata-v2' and ota.get('store_abi') == 2,
-            'RF catalog check requires a Watch1.0.10 Runtime0.1.53 paired descriptor')
+            'RF catalog check requires a the selected Watch1.0.11/Runtime paired descriptor')
     supplied = encoded(ota)
-    source_files = source_state(system_apps)
+    source_files = source_state(system_apps, expected_source)
     fixture = ROOT / 'tests/rf_watch_upgrade/catalog_admission.cpp'
     fixture_sha = sha(fixture.read_bytes())
     results = []
@@ -117,10 +118,10 @@ def check(ota, system_apps):
                         'Installed RF parser did not retain the supplied paired payload sizes')
             results.append({'scenario': label, 'ota_sha256': sha(encoded(descriptor)),
                             'parser_assertions_passed': True, **result})
-    require(source_state(system_apps) == source_files and sha(fixture.read_bytes()) == fixture_sha,
+    require(source_state(system_apps, expected_source) == source_files and sha(fixture.read_bytes()) == fixture_sha,
             'RF catalog parser source changed during verification')
     require(encoded(ota) == supplied, 'RF catalog check modified the supplied OTA descriptor')
-    return {'schema': 1, 'installed_system_source': SYSTEM_SOURCE, 'source_file_sha256': source_files,
+    return {'schema': 1, 'installed_system_source': expected_source, 'source_file_sha256': source_files,
             'fixture_sha256': fixture_sha, 'accepted_ota_sha256': sha(supplied),
             'ota_digest_encoding': 'sorted compact JSON with trailing newline',
             'framing_fixture_only': True, 'full_initial_image_verified': False,

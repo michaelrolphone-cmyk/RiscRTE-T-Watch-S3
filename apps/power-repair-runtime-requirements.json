@@ -40,9 +40,9 @@
     "store_abi": 2,
     "target": "esp32s3-16mb-appdata-iq"
   },
-  "firmware_version": "0.1.53",
+  "firmware_version": "0.1.54",
   "public_runtime_api_prefix_changed": false,
-  "reason": "Watch 1.0.10 power-repair test candidate requires a fresh exact-source Runtime 0.1.53 build. Retains all 22 RF 1.0.8 applications, private namespaces, paired ABI2 layout, NVS and app-data bounds. No earlier native custody is relabelled.",
+  "reason": "Watch 1.0.11 open cutoff staging selects the reviewed Runtime0.1.54 generic union and Watch USB sleep repair. Exact public/local provenance is separate. The full22-app RF/power profile and paired ABI2 layout/NVS/app-data ownership remain required.",
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
   "required_behavior": {
     "ambiguous_key_value_instance_zero_denied": true,
@@ -111,5 +111,5 @@
     "shared_preferences_instance": 1
   },
   "schema": 1,
-  "source_sha": "3fde7198deffd21b263666a86f58eab2c6eadbc7"
+  "source_sha": "7fa39e01d7214a4a341032a15ab467a58ae22cec"
 }

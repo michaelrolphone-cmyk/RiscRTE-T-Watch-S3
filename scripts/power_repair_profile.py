@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit Watch 1.0.10 power-repair profile; earlier accepted lanes stay fixed."""
+"""Explicit Watch 1.0.11 cutoff power profile; earlier accepted lanes stay fixed."""
 import copy
 import io
 import json
@@ -11,11 +11,25 @@ from current_apps_overlay import APPS, NEW_APPS, ROOT, encoded, metadata, requir
 from rf_spectrum_profile import STORAGE
 
 PROFILE = 'power-repair'
-VERSION = '1.0.10'
-RUNTIME_VERSION = '0.1.53'
+VERSION = '1.0.11'
+RUNTIME_VERSION = '0.1.54'
 PRIOR_SOURCE = '273b58d64ccc9a7dd66f0659271a942f244edcdf'
 PRIOR_ARCHIVE = {'size_bytes': 10451352, 'sha256': 'fad1e9dcadd862b6f1c14753253010ae61f85fbe896dbeb1c20e87fb4fb28339'}
 POWER_DRIVERS = {'pmu': '0.6.2', 'panel': '0.4.2', 'imu': '0.4.2'}
+
+
+def cutoff_selection(root=ROOT):
+    value = json.loads((Path(root) / 'apps/cutoff-1.0.11-selection.json').read_text())
+    require(value['schema'] == 1 and value['product_version'] == VERSION
+            and value['cutoff_utc'] == '2026-10-07T23:30:00Z'
+            and value['status'] in ('open', 'frozen'), 'Wrong cutoff selection contract')
+    current = json.loads((Path(root) / 'apps/power-repair-sources.json').read_text())
+    require(value['selected_sources'] == current['sources'] and value['runtime'] == current['sources']['runtime'],
+            'Cutoff selection/source pins disagree')
+    if value['status'] == 'frozen':
+        require(value.get('frozen_at_utc', '') >= value['cutoff_utc'] and not value['pending_completed_work'],
+                'Cutoff selection frozen before cutoff or with unresolved completed work')
+    return value
 
 
 def prior_configuration(root=ROOT):
@@ -43,10 +57,11 @@ def validate_configuration(c, root=ROOT, *, allow_pending=False):
             and c.get('product_version') == VERSION, 'Incomplete power-repair features/version')
     require(c.get('power_drivers') == POWER_DRIVERS, 'Wrong power-repair driver generations')
     require(c['rf_storage'] == STORAGE and set(c['app_versions']) == set(APPS), 'Power-repair RF inventory/storage changed')
+    delivered = json.loads((Path(root) / 'apps/power-1.0.10-origin.json').read_text())['app_versions']
     for name in APPS:
         require(re.fullmatch(r'\d+\.\d+\.\d+', c['app_versions'][name]) is not None and
                 tuple(map(int, c['app_versions'][name].split('.'))) >
-                tuple(map(int, prior['app_versions'][name].split('.'))), 'Rebuilt app version was not incremented: ' + name)
+                tuple(map(int, delivered[name].split('.'))), 'Rebuilt app version was not incremented: ' + name)
     for key in ('source_app_versions', 'service_version', 'sdr', 'hid', 'ble_sensors', 'ble_telemetry', 'telemetry_battery'):
         require(c[key] == prior[key], 'Power-repair changed complete RF source input: ' + key)
     for name in ('system-apps', 'utilities', 'productivity'):
@@ -107,6 +122,7 @@ def verify_profile(files, record, root=ROOT):
     from current_apps_overlay import configure_boot
     from build_current_apps import definitions
     c = record['configuration'];validate_configuration(c, root)
+    require(record.get('cutoff_selection') == cutoff_selection(root), 'Cutoff selection evidence differs')
     require(record['boot'] == configure_boot(record['baseline_boot'], PROFILE), 'Power-repair RF boot authority changed')
     require(record.get('runtime_requirements') == runtime_requirements(root) and record.get('rf_storage') == STORAGE,
             'Power-repair Runtime/storage proof differs')

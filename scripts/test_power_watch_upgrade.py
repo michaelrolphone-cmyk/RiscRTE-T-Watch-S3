@@ -75,7 +75,7 @@ def negative_stores(previous, following):
         row = next(r for r in boot['app_capabilities'] if r['manifest'] == 'waterfall.json')
         private = lambda cap: next(g for g in row['grants'] if g['capability'] == cap and
                                   (cap != 'storage.key-value' or g['api'] == 2))
-        if label == 'stale-hid-migration': boot['cohort_migration'] = document(previous['boot.json'])['cohort_migration']
+        if label == 'stale-hid-migration': boot['cohort_migration'] = document(accepted()['store']['boot.json'])['cohort_migration']
         elif label == 'steal-spectrum-kv': private('storage.key-value')['instance_id'] = 7
         elif label == 'steal-timecard-data': private('storage.app-data')['instance_id'] = 1
         elif label == 'steal-spectrum-data': private('storage.app-data')['instance_id'] = 2
@@ -118,10 +118,12 @@ def _unchanged_store(path, files):
 
 def prove(origin, native, following, payload, runtime, *, installed_runtime, installed_native, scope='complete-power-candidate', apps_dir=None):
     RUNTIME_SOURCE = native['record']['source_sha']
+    INSTALLED_RUNTIME_SOURCE = origin['runtime_source']
+    INSTALLED_RUNTIME_VERSION = origin['identity']['runtime_version']
     require(scope == 'complete-power-candidate', 'Only a complete fresh power artifact can qualify')
     firmware, elf = native['blobs']['firmware.bin'], native['blobs']['firmware.elf']
     require(payload[:len(firmware)] == firmware and len(payload) == len(firmware) + STORE_BYTES,
-            'RF proof payload must be exact freshly built native followed by bootfs')
+            'RF proof payload must be exact verified native followed by bootfs')
     bootfs = payload[len(firmware):]
     require(read_image(bootfs, STORE_BYTES) == following, 'RF proof store differs from actual OTA bytes')
     identity = parse(following['cohort.json'])
@@ -134,7 +136,7 @@ def prove(origin, native, following, payload, runtime, *, installed_runtime, ins
         require(all(following.get(name) == raw for name, raw in files.items())
                 and document(following['boot.json']) == apps['boot'], 'RF proof target differs from complete app artifact')
         app_archive = metadata((Path(apps_dir) / 'current-apps.zip').read_bytes())
-    require(origin['identity']['version'] == SOURCE_VERSION and origin['full'][0x10000:0x10000 + len(installed_native['blobs']['firmware.bin'])] == installed_native['blobs']['firmware.bin'],
+    require(origin['identity']['version'] in ('1.0.7', '1.0.10') and origin['full'][0x10000:0x10000 + len(installed_native['blobs']['firmware.bin'])] == installed_native['blobs']['firmware.bin'],
             'RF proof origin is not the accepted native/source cohort')
     check_disk(Path(tempfile.gettempdir()))
     results, rejections = [], []
@@ -210,6 +212,7 @@ def prove(origin, native, following, payload, runtime, *, installed_runtime, ins
               'runtime_source': RUNTIME_SOURCE, 'runtime_version': RUNTIME_VERSION,
               'installed_runtime_source': INSTALLED_RUNTIME_SOURCE, 'installed_runtime_version': INSTALLED_RUNTIME_VERSION,
               'installed_native_elf': metadata(installed_native['blobs']['firmware.elf']),
+              'source_kind': origin['kind'], 'source_physical_acceptance_claimed': origin['physical_acceptance_claimed'],
               'source_initial_image': metadata(origin['full']), 'source_cohort': origin['identity'],
               'target_cohort': identity, 'native_elf': metadata(elf), 'payload': metadata(payload),
               'app_archive': app_archive,
@@ -217,7 +220,7 @@ def prove(origin, native, following, payload, runtime, *, installed_runtime, ins
               'installed_runtime_admission': installed, 'target_self_admission': candidate_self,
               'rejections': rejections, 'scenarios': list(SCENARIOS), 'transactions': results,
               'nvs_sha256': sha(original[0x9000:0xf000]), 'appdata_sha256': sha(original[0x270000:0x2f0000]),
-              'native_api_used': True, 'modeled_host_app_active': True, 'modeled_idf_flash_vfs_selection': True,
+              'host_optimization': 'compiler-default-O0', 'native_api_used': True, 'modeled_host_app_active': True, 'modeled_idf_flash_vfs_selection': True,
               'physical_flash_tls_spiffs_and_target_instructions_executed': False,
               'device_health_confirmation_executed': False, 'sanitized': os.environ.get('SANITIZE') == '1'}
     validate_proof(record, origin, following, payload, native, complete=scope == 'complete-power-candidate')
@@ -226,6 +229,8 @@ def prove(origin, native, following, payload, runtime, *, installed_runtime, ins
 
 def validate_proof(record, origin, following, payload, native, *, complete=True):
     RUNTIME_SOURCE = native['record']['source_sha']
+    INSTALLED_RUNTIME_SOURCE = origin['runtime_source']
+    INSTALLED_RUNTIME_VERSION = origin['identity']['runtime_version']
     require(complete and record['installed_runtime_source'] == INSTALLED_RUNTIME_SOURCE
             and record['installed_runtime_version'] == INSTALLED_RUNTIME_VERSION, 'Installed Runtime identity differs')
     require(record['schema'] == 1 and record['complete_target_artifact'] is complete
@@ -241,6 +246,8 @@ def validate_proof(record, origin, following, payload, native, *, complete=True)
             and record['source_initial_image'] == metadata(origin['full'])
             and record['source_cohort'] == origin['identity'] and record['target_cohort'] == parse(following['cohort.json'])
             and record['payload'] == metadata(payload), 'RF transaction proof bytes/source differ')
+    require(record['source_kind'] == origin['kind'] and record['source_physical_acceptance_claimed'] is origin['physical_acceptance_claimed'], 'Source qualification differs')
+    require(record['host_optimization'] == 'compiler-default-O0', 'Wrong cutoff host compiler profile')
     require(record['scenarios'] == list(SCENARIOS) and record['native_api_used'] is True,
             'RF native API failure/reboot coverage is incomplete')
     require(record['accepted_store_sha256'] == store_digest(origin['store'])

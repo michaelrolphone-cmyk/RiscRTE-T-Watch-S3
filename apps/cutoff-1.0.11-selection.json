@@ -1,0 +1,46 @@
+{
+  "additional_watch_commits": [],
+  "cutoff_utc": "2026-10-07T23:30:00Z",
+  "note": "Staging only. Root will supply completed dependency work up to cutoff; final selection has not been frozen.",
+  "packaged_provider_limits": {
+    "bluetooth.telemetry": "Packaged provider only; no current app/default publisher activates it",
+    "telemetry-battery": "Packaged provider only; no active outbound telemetry is claimed",
+    "temperature": "No current source"
+  },
+  "pending_completed_work": [],
+  "product_version": "1.0.11",
+  "runtime": {
+    "commit": "7fa39e01d7214a4a341032a15ab467a58ae22cec",
+    "repository": "michaelrolphone-cmyk/RiscRTE"
+  },
+  "runtime_provenance": {
+    "commit": "7fa39e01d7214a4a341032a15ab467a58ae22cec",
+    "native_stage_verified": true,
+    "ordinary_suites_passed": 23,
+    "publication": "local-stage; public reconciliation pending",
+    "sanitized_suites_passed": 14,
+    "tree": "942258bcfb369426b9776e3326fbbddfac76f093",
+    "version": "0.1.54"
+  },
+  "schema": 1,
+  "selected_sources": {
+    "productivity": {
+      "commit": "460935ca47c3f86d4cb94f0d912c54077330eff4",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Productivity"
+    },
+    "runtime": {
+      "commit": "7fa39e01d7214a4a341032a15ab467a58ae22cec",
+      "repository": "michaelrolphone-cmyk/RiscRTE"
+    },
+    "system-apps": {
+      "commit": "fcdb5b0a54a11a407bf68c6e35ac2548471cd9f1",
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps"
+    },
+    "utilities": {
+      "commit": "9a4c4aca3d4bb2cac17af26c2ba75d0193a031a2",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Utilities"
+    }
+  },
+  "source_base": "a409553250be4c40fa5061baf825b7422b31e044",
+  "status": "open"
+}

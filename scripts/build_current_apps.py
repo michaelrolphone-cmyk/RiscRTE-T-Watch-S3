@@ -116,9 +116,10 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  record={'schema':1,'profile':c['profile'],'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':raw['power-baseline-sha256'].decode() if profile=='power-repair' else hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
  record['motion_model']=motion_model;record['radio_model']=radio_model
  if profile=='power-repair':
-  from power_repair_profile import runtime_requirements,STORAGE
+  from power_repair_profile import runtime_requirements,STORAGE,cutoff_selection
   record['runtime_requirements']=runtime_requirements(root);record['rf_storage']=dict(STORAGE)
   record['baseline_artifact']=metadata(baseline.read_bytes())
+  record['cutoff_selection']=cutoff_selection(root)
  elif rf_enabled(profile):
   from rf_spectrum_profile import runtime_requirements,STORAGE
   record['runtime_requirements']=runtime_requirements(root);record['rf_storage']=dict(STORAGE)

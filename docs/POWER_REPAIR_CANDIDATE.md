@@ -1,3 +1,6 @@
+> Historical 1.0.10 lineage. The active 1.0.11 cutoff staging workflow is in
+> [CUTOFF_2026_10_07.md](CUTOFF_2026_10_07.md); delivered 1.0.10 stays unchanged.
+
 # Watch 1.0.10 power-repair test candidate
 
 This is an explicit complete 22-application **test candidate**, retaining the

@@ -23,14 +23,15 @@ from rf_watch_candidate import accepted
 class PowerRepairProfile(unittest.TestCase):
     def copy_profile(self, root):
         for file in ('apps/power-repair-sources.json', 'apps/power-repair-runtime-requirements.json',
-                     'apps/rf-spectrum-sources.json', 'apps/rf-spectrum-runtime-requirements.json'):
+                     'apps/rf-spectrum-sources.json', 'apps/rf-spectrum-runtime-requirements.json',
+                     'apps/power-1.0.10-origin.json'):
             path = root / file;path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes((ROOT / file).read_bytes())
 
     def test_all_apps_increment_and_all_rf_features_remain(self):
         c = config(profile='power-repair', allow_pending=True)
         prior = config(profile='rf-spectrum')
-        self.assertEqual(c['product_version'], '1.0.10')
+        self.assertEqual(c['product_version'], '1.0.11')
         self.assertEqual(len(c['app_versions']), 22)
         self.assertEqual(c['rf_storage'], STORAGE)
         self.assertEqual(c['power_drivers'], POWER_DRIVERS)
@@ -120,7 +121,7 @@ class PowerRepairProfile(unittest.TestCase):
             original = config(root, profile='power-repair', allow_pending=True)['sources']['runtime']['commit']
             expected = 'f' * 40
             def git(command, **kwargs):
-                return 'version = 0.1.53\n' if 'show' in command else 'same-tree\n'
+                return 'version = 0.1.54\n' if 'show' in command else 'same-tree\n'
             with patch('power_watch_candidate.checked_source', return_value=expected), \
                  patch.object(pin_power_repair_sources.subprocess, 'check_output', side_effect=git):
                 with self.assertRaisesRegex(ValueError, 'already pinned'):
@@ -135,7 +136,7 @@ class PowerRepairProfile(unittest.TestCase):
             original = config(root, profile='power-repair', allow_pending=True)['sources']['runtime']['commit']
             expected = 'e' * 40
             def git(command, **kwargs):
-                if 'show' in command: return 'version = 0.1.53\n'
+                if 'show' in command: return 'version = 0.1.54\n'
                 return 'old-tree\n' if command[-1].startswith(original) else 'new-tree\n'
             with patch('power_watch_candidate.checked_source', return_value=expected), \
                  patch.object(pin_power_repair_sources.subprocess, 'check_output', side_effect=git):
@@ -146,8 +147,8 @@ class PowerRepairProfile(unittest.TestCase):
     def test_initial_and_paired_instructions_are_explicit(self):
         from build_power_watch_candidate import instructions
         text = instructions('both', 'bma423', {'asset': 'paired.bin'}, {'asset': 'initial.bin'})
-        self.assertIn('Watch 1.0.10', text)
-        self.assertIn('Runtime 0.1.53', text)
+        self.assertIn('Watch 1.0.11', text)
+        self.assertIn('Runtime 0.1.54', text)
         self.assertIn('Erases NVS', text)
         self.assertIn('Preserves NVS', text)
         self.assertNotIn('reused from accepted', text)
