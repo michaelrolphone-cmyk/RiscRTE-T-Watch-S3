@@ -10,6 +10,9 @@ class CurrentAppsOverlay(unittest.TestCase):
   (self.art/'debug').mkdir()
   self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.2','sdr':{'id':'s3-radio-iq-v1','commit':'4'*40,'version':'0.1.1'}}
   self.cfg['hid']={'id':'ble-hid','commit':'4'*40,'version':'0.1.0'}
+  self.cfg['ble_sensors']={'id':'ble-sensors','commit':'4'*40,'version':'0.1.0'}
+  self.cfg['ble_telemetry']={'id':'ble-telemetry','commit':'4'*40,'version':'0.1.0'}
+  self.cfg['telemetry_battery']={'id':'telemetry-battery','commit':'4'*40,'version':'0.1.0'}
   (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
@@ -32,17 +35,23 @@ class CurrentAppsOverlay(unittest.TestCase):
     if name=='timecard':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.app-data')]
     if name=='waterfall':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','radio.iq')]
     if name in ('ble_touchpad','ble_buttons'):v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','bluetooth.hid')]
-    if name=='ble_scanner':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]
+    if name=='ble_scanner':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','bluetooth.sensors')]
     if name=='lora_messages':v['requires'] += [{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery')]+[{'capability':'radio.lora','api':2}]
     if name=='file_browser':v['requires']+=[{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.installed-files')]
     b=current.encoded(v)
    elif n=='s3-radio-iq/manifest.json':b=current.encoded({'id':'s3-radio-iq-v1','version':'0.1.1','requires':[{'capability':'platform.radio.iq.resource','api':1}],'provides':[{'capability':'radio.iq','api':1}]})
    elif n=='ble-hid/manifest.json':b=current.encoded({'id':'ble-hid','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')],'provides':[{'capability':'bluetooth.hid','api':1}]})
+   elif n=='ble-sensors/manifest.json':b=current.encoded({'id':'ble-sensors','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock')],'provides':[{'capability':'bluetooth.sensors','api':1}]})
+   elif n=='ble-telemetry/manifest.json':b=current.encoded({'id':'ble-telemetry','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','sensor.telemetry')],'provides':[{'capability':'bluetooth.telemetry','api':1}]})
+   elif n=='telemetry-battery/manifest.json':b=current.encoded({'id':'telemetry-battery','version':'0.1.0','requires':[{'capability':'board.battery','api':1}],'provides':[{'capability':'sensor.telemetry','api':1}]})
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.2'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
   r['sdr']={**self.cfg['sdr'],'build':{'source_revision':self.cfg['sdr']['commit'],**r['files']['s3-radio-iq/driver.elf']},'resource_header_sha256':'5'*64}
   r['hid']={**self.cfg['hid'],'build':{'source_revision':self.cfg['hid']['commit'],**r['files']['ble-hid/driver.elf']},'api_header_sha256':'6'*64}
+  r['ble_components']={}
+  for key,folder in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
+   r['ble_components'][key]={**self.cfg[key],'build':{'source_revision':self.cfg[key]['commit'],**r['files'][folder+'/driver.elf']}}
   r['debug']={}
   for n in current.APPS:
    debug=(self.art/'files'/(n+'.elf')).read_bytes();(self.art/'debug'/(n+'.elf')).write_bytes(debug);r['debug'][n+'.elf']=current.metadata(debug)
@@ -168,8 +177,9 @@ class CurrentAppsOverlay(unittest.TestCase):
  def test_ble_exact_authority_and_owned_chrome(self):
   boot=current.configure_boot(self.boot);self.assertEqual(len(boot['app_capabilities']),22)
   scanner=next(x for x in boot['app_capabilities'] if x['manifest']=='ble_scanner.json')
-  self.assertEqual(len(scanner['grants']),9)
+  self.assertEqual(len(scanner['grants']),10)
   self.assertEqual([g for g in scanner['grants'] if g['capability']=='bluetooth.hci'],[{'capability':'bluetooth.hci','api':1,'instance_id':16}])
+  self.assertEqual([g for g in scanner['grants'] if g['capability']=='bluetooth.sensors'],[{'capability':'bluetooth.sensors','api':1,'instance_id':0}])
   self.assertEqual([g for g in scanner['grants'] if g['capability'].startswith('storage.')],[current.ALARM_PREFERENCES])
   self.assertFalse(any(g['capability']=='radio.lora' for g in scanner['grants']))
   flags=definitions('ble_scanner','0.1.0')
