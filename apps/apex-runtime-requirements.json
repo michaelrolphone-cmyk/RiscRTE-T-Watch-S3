@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "source_sha": "7cb3047f6049093e2309cab94ddbde993ee47544",
+  "firmware_version": "0.1.37",
+  "required_behavior": {
+    "spi_max_hz": 40000000,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true,
+    "owned_timed_light_sleep": true,
+    "owned_timed_deep_sleep": true,
+    "provider_bound_key_value": true,
+    "app_policy_capacity": 24,
+    "native_i2s_tx_cleanup": true,
+    "native_station_radio": true,
+    "bounded_asynchronous_radio_scan": true,
+    "radio_cleanup_sleep_barrier": true,
+    "explicit_multiple_key_value_namespaces": true,
+    "ambiguous_key_value_instance_zero_denied": true,
+    "provider_only_https": true,
+    "provider_only_bank_store": true,
+    "paired_firmware_store": true,
+    "immutable_active_bank": true,
+    "exact_app_authority_preservation": true,
+    "default_app_health_confirmation": true,
+    "rollback_until_health_confirmation": true,
+    "store_abi": 2,
+    "paired_metadata_psram_only": true,
+    "independent_graph_provider_registry": true,
+    "explicit_key_value_v2": true,
+    "native_i2s_pdm_rx": true,
+    "audio_input_cleanup_barrier": true,
+    "app_grant_capacity": 12,
+    "app_requirement_capacity": 12,
+    "native_bounded_hci": true,
+    "nonconsuming_hci_status": true,
+    "hci_cleanup_sleep_barrier": true,
+    "provider_bound_key_capacity": 9,
+    "owned_wake_sets": true,
+    "mixed_polarity_rtc_wake": true,
+    "read_only_installed_files": true,
+    "scoped_native_radio_spi_gpio": true,
+    "selected_provider_capacity": 24,
+    "selectable_radio_config_v2": true,
+    "explicit_app_data_namespaces": true,
+    "atomic_app_data_replacement": true,
+    "app_data_retention_barrier": true,
+    "native_i2s_rx_deadline_nonterminal": true,
+    "paired_cohort_updates": true,
+    "cohort_graph_elf_admission": true,
+    "persistent_namespace_ownership_preserved": true,
+    "reserved_iq_sram": true,
+    "exclusive_iq_modem_lease": true,
+    "explicit_shared_preferences_migration": true,
+    "retained_sleep_reset_diagnostics": true
+  },
+  "abi_changed": true,
+  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier. Complete native+bootfs cohort updates preserve NVS and app-data while admitting new apps/providers in the inactive pair. This requires the optional bank-store cohort suffix and full graph/ELF/persistent-authority validation before readiness, with 24 app/provider slots. SDR adds one lazy CPU resource-backed provider and Waterfall, for 20 app policies and 18 providers. The optional IQ target reserves its entire capture SRAM bank before heap setup. The board and ABI2 geometry stay unchanged. Install the native Runtime stage first, then the explicitly version-bound SDR cohort; ordinary stages preserve NVS and app-data. The later 1.0.5 cohort has 22 app policies and 19 provider instances. Runtime 0.1.35 retains the IQ and migration changes and adds retained sleep/reset diagnostics. The installed 0.1.34 validator admits this native+bootfs cohort before activation; no second native bridge is required. Runtime 0.1.36 preserves the accepted 0.1.35 IQ and retained-diagnostics lineage as an ancestor and adds owner-profile provisioning without changing the Watch paired ABI2 layout. Runtime 0.1.37 performs the required native ESP32-S3 PHY calibration before each IQ lease and disables the PHY after the driver restores the calibrated state.",
+  "deployment": {
+    "target": "esp32s3-16mb-appdata-iq",
+    "layout": "riscrte-paired-appdata-v2",
+    "flash_bytes": 16777216,
+    "store_abi": 2,
+    "migration": "initial-full-16MiB-reflash-overwrites-appdata; installed ABI2 1.0.4-to-1.0.5 paired-cohort update preserves NVS and appdata",
+    "existing_8MiB_ota_compatible": false,
+    "partitions": {
+      "app0": {
+        "offset": 65536,
+        "size": 2490368
+      },
+      "bootfs0": {
+        "offset": 3080192,
+        "size": 5308416
+      },
+      "app1": {
+        "offset": 8388608,
+        "size": 2490368
+      },
+      "bootfs1": {
+        "offset": 11403264,
+        "size": 5308416
+      },
+      "otadata": {
+        "offset": 16711680,
+        "size": 8192
+      },
+      "bank_state": {
+        "offset": 16719872,
+        "size": 8192
+      },
+      "appdata": {
+        "offset": 2555904,
+        "size": 524288
+      }
+    },
+    "ordinary_ota_includes_appdata": false,
+    "radio_iq": true
+  },
+  "public_runtime_api_prefix_changed": false
+}

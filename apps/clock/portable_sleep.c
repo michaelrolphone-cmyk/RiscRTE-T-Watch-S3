@@ -12,6 +12,9 @@
 #ifdef PORTABLE_QUICK_ACTIONS
 /* Same invocation-local confirmed preference as the shared controls overlay. */
 extern unsigned portable_quick_brightness(void);
+#ifdef PORTABLE_LOW_BATTERY
+extern uint32_t portable_quick_sleep_light_ms(void);
+#endif
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +59,9 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
        !pmu->key_events || !pmu->prepare_sleep || !pmu->resume || !pmu->light_sleep_for || !pmu->sleep_wake_pending) {
         rt->diagnostic("PORTABLE_APP sleep=unsupported");return 0;
     }
+#ifdef PORTABLE_LOW_BATTERY
+    watch_sleep_light_ms=portable_quick_sleep_light_ms();
+#endif
     uint16_t *saved=malloc(240u*240u*2u);
     if(!saved){rt->diagnostic("PORTABLE_APP sleep=memory-refused");return 0;}
     risc_display_surface_v1 s={0};

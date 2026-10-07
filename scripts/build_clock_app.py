@@ -11,14 +11,16 @@ from build_legacy_sleep import legacy_inputs, legacy_clock
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def clock_manifest(paired=False, current=False):
+def clock_manifest(paired=False, current=False, low_battery=False):
+    if low_battery and not current:raise ValueError('Low-battery Clock requires the new current-based profile')
     if current and not paired:
         raise ValueError('Current Clock requires the paired final profile')
-    path = 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
+    path = 'apps/clock/low-battery-manifest.json' if low_battery else 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
     return json.loads((ROOT/path).read_text())
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None, low_battery=False):
+    if low_battery and not current:raise ValueError("Low-battery Clock requires the new current-based profile")
     if current and not (paired and launcher and alarm_system and points_utilities):
         raise ValueError('Current Clock requires the complete paired CUE cohort')
     if wifi and not points_utilities:raise ValueError("Wi-Fi build preserves Points deployment")
@@ -52,6 +54,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     *([] if current_points else ['-DWATCH_POINTS_LEGACY_PRESENTATION']),
+                    *(['-DPORTABLE_LOW_BATTERY'] if low_battery else []),
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
@@ -78,7 +81,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = clock_manifest(paired=paired, current=current)
+    manifest = clock_manifest(paired=paired, current=current, low_battery=low_battery)
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:

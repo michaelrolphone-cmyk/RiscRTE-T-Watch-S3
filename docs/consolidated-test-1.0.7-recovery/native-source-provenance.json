@@ -1,0 +1,87 @@
+{
+  "runtime_version": "0.1.41",
+  "local_source_commit": "4b6f00e18b51378bdfd3f9bbe0aa136da7be7eeb",
+  "published_source_commit": "4a0891fc0ec10dcd100c6248768cabecaafec888",
+  "parent_commit": "7cb3047f6049093e2309cab94ddbde993ee47544",
+  "identical_source_tree": "5248494ea7a953b73d027dda41e43dde8d355989",
+  "candidate_source_marker": "4b6f00e18b51378bdfd3f9bbe0aa136da7be7eeb",
+  "note": "GitHub connector publication generated a different commit identity for the exact same source tree and parent. Local test firmware embeds the original local commit. No hosted CI or hardware qualification is claimed. Bundle restores that original commit on a repository containing the prerequisite parent.",
+  "files": {
+    "runtime-0.1.41-4b6f00e.bundle": {
+      "bytes": 5855,
+      "sha256": "16148e41915e72f26015da906a6587538503aba49e235a83079b4a4de976ce89"
+    },
+    "original-commit.txt": {
+      "bytes": 310,
+      "sha256": "b91544c9fb449b4410519e28282798b7b516395dbe9f93d1ae700e1c604b9246"
+    },
+    "watch-runtime-iq-041-build.log": {
+      "bytes": 11319,
+      "sha256": "659a190036eb8d3df93c1d0a9532e63a31be62b0a77adf211d6b39527aaeb228"
+    },
+    "watch-runtime-iq-041-normal.log": {
+      "bytes": 1139,
+      "sha256": "e6e0516ecaf0dddaa958d97300c05505d1d4bfb98d6aedf3109731073bb98c1d"
+    },
+    "watch-runtime-iq-041-sanitized.log": {
+      "bytes": 1139,
+      "sha256": "e6e0516ecaf0dddaa958d97300c05505d1d4bfb98d6aedf3109731073bb98c1d"
+    }
+  },
+  "native_assets": {
+    "appdata-image.json": {
+      "bytes": 1248,
+      "sha256": "518da93e321701682210ef5794c388849732281b5946488afaaacf25223b7838"
+    },
+    "appdata.bin": {
+      "bytes": 524288,
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0"
+    },
+    "bootloader.bin": {
+      "bytes": 15104,
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+    },
+    "firmware.bin": {
+      "bytes": 1238288,
+      "sha256": "1d95892cd2a1c9aa5a84e57f25971c24f55dc7786d17d5e668cddc83ce5db37b"
+    },
+    "firmware.elf": {
+      "bytes": 19806564,
+      "sha256": "0ee377085f288a78d7b731b696ac0ed8cce5b45a31c68879f54e836ff3ce48d2"
+    },
+    "partitions-paired-appdata.csv": {
+      "bytes": 630,
+      "sha256": "31f6e41e2acc48df13ee30ad91e55928b2c2093b6916080235a833dd69f3b844"
+    },
+    "partitions.bin": {
+      "bytes": 3072,
+      "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+    },
+    "platformio.ini": {
+      "bytes": 5322,
+      "sha256": "fd471102e837c159ba5cdb45e9881b0151800145392afc7b0623ac3a3bffe2ca"
+    },
+    "radio-iq-proof.json": {
+      "bytes": 2174,
+      "sha256": "0ab35b90dfc0e8c8c52b791fd1cd48c8814c17f879772014a3ae392c44468efa"
+    },
+    "requirements-ci.txt": {
+      "bytes": 52,
+      "sha256": "1b5f9a84f4862cb05fc918850fc8ab2516d5c39fb3087747e7df1aba2c7a7600"
+    }
+  },
+  "pull_request": "https://github.com/michaelrolphone-cmyk/RiscRTE/pull/31",
+  "verification": {
+    "iq_normal": "passed",
+    "iq_asan_ubsan": "passed; ASAN_OPTIONS=detect_leaks=0",
+    "hci": "passed",
+    "station_radio": "passed",
+    "diagnostics": "passed",
+    "version_guard": "passed",
+    "native_target": "passed; single job",
+    "final_elf_tests": "5 passed; non-IQ baseline absence skipped",
+    "candidate_stage": "passed",
+    "hardware": "unrun",
+    "published_head_ci": "no runs; PR base branch is not included by integration.yml trigger"
+  }
+}

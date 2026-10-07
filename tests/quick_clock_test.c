@@ -35,6 +35,11 @@ static wifi_link_t wifi_status(void*c){(void)c;return WIFI_LINK_DOWN;}
 static const portable_bluetooth_control_v1 qa_ble={.api_version=1,.struct_size=sizeof(qa_ble),.set_enabled=ble_enable,.status=ble_status};
 static const wifi_api_v1 qa_wifi={.api_version=1,.struct_size=sizeof(qa_wifi),.status=wifi_status,.disconnect_checked=wifi_off};
 #endif
+#ifdef PORTABLE_LOW_BATTERY
+static uint8_t low_bytes[3][5];static uint32_t low_lengths[3];static unsigned low_writes[3];
+static unsigned low_percent=55,low_flags;static bool low_read_fail;
+static int low_key(const char *key){return !strcmp(key,PORTABLE_LOW_BATTERY_KEY)?0:!strcmp(key,PORTABLE_SLEEP_IDLE_KEY)?1:!strcmp(key,PORTABLE_SLEEP_DEEP_KEY)?2:-1;}
+#endif
 static bool saved_face;static uint8_t saved_blob[4];
 static bool health(risc_runtime_health_v1 *h){h->uptime_ms=clock_ms;return !launched && clock_ms<(scenario==24?10000u:scenario>=8?6000u:3000u);}
 static void yield(uint32_t n){assert(n>=1&&n<=20);clock_ms+=n;}
@@ -62,10 +67,23 @@ return true;}
 static bool resume(void*c){(void)c;return true;}
 static bool key(void*c,uint32_t*e){(void)c;*e=(scenario==7&&ready&&!sleeps&&clock_ms>2400)||(scenario==24&&ready&&!sleeps&&clock_ms-ready_time>2400)?2:((scenario==10&&clock_ms-ready_time==2000)||(scenario==20&&clock_ms-ready_time>=960&&clock_ms-ready_time<1000))&&ready?1:0;return true;}
 static int32_t sleep_now(void*c,risc_light_sleep_result_v1*r){(void)c;(void)r;assert(!touch.subscription);sleeps++;return RISC_LIGHT_SLEEP_ACTIVE_WAKE;}
-static int32_t sleep_timed(void*c,uint32_t ms,risc_light_sleep_result_v1*r){assert(ms==300000);return sleep_now(c,r);}
+static int32_t sleep_timed(void*c,uint32_t ms,risc_light_sleep_result_v1*r){assert(ms==
+#ifdef PORTABLE_LOW_BATTERY
+watch_sleep_light_ms
+#else
+300000
+#endif
+);return sleep_now(c,r);}
 static bool wake_pending(void*c,bool*p){(void)c;*p=false;return true;}
 static bool rtc_read(void*c,twatch_rtc_time_v1*t){(void)c;*t=(twatch_rtc_time_v1){2026,10,4,0,0,40,0};return true;}
-static bool battery(void*c,risc_battery_sample_v1*s){(void)c;*s=(risc_battery_sample_v1){3900,55,0};return true;}
+static bool battery(void*c,risc_battery_sample_v1*s){(void)c;
+#ifdef PORTABLE_LOW_BATTERY
+if(low_read_fail)return false;
+*s=(risc_battery_sample_v1){3900,(uint8_t)low_percent,(uint8_t)low_flags};
+#else
+*s=(risc_battery_sample_v1){3900,55,0};
+#endif
+return true;}
 static uint64_t subscribe(void*c){(void)c;subscribed++;return subscribed;}
 static bool unsubscribe(void*c,uint64_t h){(void)c;assert(h);unsubscribed++;return true;}
 static bool poll(void*c,size_t n){(void)c;assert(n==1);polls++;touch_step++;return true;}
@@ -128,11 +146,17 @@ static twatch_panel_power_v1 da={{1,TWATCH_PANEL_LIGHT_SLEEP_SIZE,NULL,info,acqu
 static twatch_pmu_api_v1 pa={{1,sizeof(pa),NULL,battery},key,prepare,resume,sleep_now,NULL,sleep_timed,wake_pending,NULL,NULL,NULL};
 static twatch_rtc_api_v1 ra={2,sizeof(ra),NULL,rtc_read,NULL,NULL,NULL};
 static int32_t face_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){(void)c;*z=0;
+#ifdef PORTABLE_LOW_BATTERY
+int low=low_key(k);if(low>=0){*z=low_lengths[low];if(!*z)return RISC_KEY_VALUE_NOT_FOUND;if(n<*z)return RISC_KEY_VALUE_BUFFER_SMALL;memcpy(b,low_bytes[low],*z);return RISC_KEY_VALUE_OK;}
+#endif
 #ifdef WATCH_QUICK_RADIOS
 if(!strcmp(k,PORTABLE_RADIO_KEY)){assert(n>=4);if(!radio_saved)return RISC_KEY_VALUE_NOT_FOUND;memcpy(b,radio_bytes,4);*z=4;return 0;}
 #endif
 int qi=quick_key(k);if(qi>=0){assert(n==1);if(!quick_saved[qi])return RISC_KEY_VALUE_NOT_FOUND;*(uint8_t*)b=quick_values[qi];*z=1;return 0;}if(!strcmp(k,PORTABLE_TIME_FORMAT_KEY)){if(scenario==17||scenario==18){assert(n==4);uint8_t f[]={0x54,1,1,scenario==17?0xa4:0};memcpy(b,f,4);*z=4;return 0;}return RISC_KEY_VALUE_NOT_FOUND;}if(strcmp(k,WATCH_FACE_KEY))return RISC_KEY_VALUE_NOT_FOUND;face_reads++;if(scenario==15&&face_writes)return RISC_KEY_VALUE_IO;if(!saved_face)return RISC_KEY_VALUE_NOT_FOUND;assert(n==4);memcpy(b,saved_blob,4);*z=4;return 0;}
 static int32_t face_put(void*c,const char*k,const void*b,uint32_t n){(void)c;
+#ifdef PORTABLE_LOW_BATTERY
+int low=low_key(k);if(low>=0){assert(n<=5);low_writes[low]++;low_lengths[low]=n;memcpy(low_bytes[low],b,n);return RISC_KEY_VALUE_OK;}
+#endif
 #ifdef WATCH_QUICK_RADIOS
 if(!strcmp(k,PORTABLE_RADIO_KEY)){assert(n==4);memcpy(radio_bytes,b,4);radio_saved=true;return 0;}
 #endif
@@ -178,4 +202,5 @@ int main(void){
   if(scenario==23){assert(clock_quick.brightness==40&&hardware_brightness==40&&!quick_saved[0]);assert(clock_quick.ui.error_flags&PQA_ERROR_SAVE);}
  }
  puts("Current Clock quick controls: top edge, notification volume, brightness, Silent restoration, torch off, reload and failed save passed");
+return 0;
 }

@@ -1,0 +1,203 @@
+{
+  "product_version": "1.0.7",
+  "motion_model": "bma423",
+  "watch_source": "f939c99aef7aa5d9d2ab6f627761d01954c6c752",
+  "utilities_source": "c735386637121c2ce466de1937816bb92d5b1f43",
+  "runtime_source": "4b6f00e18b51378bdfd3f9bbe0aa136da7be7eeb",
+  "runtime_version": "0.1.41",
+  "file": "twatch-s3-1.0.7-RECOVERY-TRACE-FULL-INITIAL-ERASES-DATA-bma423.bin",
+  "size_bytes": 16777216,
+  "sha256": "27a9b0c80600fae99ebe79f05f4e04d70dbb1decae4a89d7eeb05adcd08ca98c",
+  "flash_offset": "0x0",
+  "full_initial_image": true,
+  "erases_nvs_settings_wifi_credentials_alarms_points_and_app_data": true,
+  "app_count": 22,
+  "automatic_low_battery_every_app": true,
+  "configuration": {
+    "app_versions": {
+      "alarms": "0.2.3",
+      "app_store": "1.1.4",
+      "audio_spectrum": "0.4.6",
+      "battery": "1.1.1",
+      "ble_buttons": "0.1.3",
+      "ble_scanner": "0.2.1",
+      "ble_touchpad": "0.1.3",
+      "calculator": "0.1.7",
+      "clock": "0.10.3",
+      "countdown": "0.1.6",
+      "default": "0.10.3",
+      "file_browser": "1.4.2",
+      "frequency_generator": "0.1.5",
+      "lora_messages": "0.1.3",
+      "ota_update": "1.1.4",
+      "points_in_time": "0.4.5",
+      "settings": "1.3.2",
+      "springboard": "1.5.1",
+      "stopwatch": "0.1.7",
+      "timecard": "0.1.2",
+      "waterfall": "0.1.6",
+      "wifi_settings": "1.1.5"
+    },
+    "ble_sensors": {
+      "commit": "9b156fdc4c1a4b81832ab707b8ca2d0699bbc85c",
+      "id": "ble-sensors",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.0"
+    },
+    "ble_telemetry": {
+      "commit": "9b156fdc4c1a4b81832ab707b8ca2d0699bbc85c",
+      "id": "ble-telemetry",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.0"
+    },
+    "features": {
+      "low_battery": true
+    },
+    "hid": {
+      "commit": "9b156fdc4c1a4b81832ab707b8ca2d0699bbc85c",
+      "id": "ble-hid",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.2"
+    },
+    "product_version": "1.0.7",
+    "profile": "watch-low-battery-apps-v1",
+    "schema": 1,
+    "sdr": {
+      "commit": "9b156fdc4c1a4b81832ab707b8ca2d0699bbc85c",
+      "id": "s3-radio-iq-v1",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.4"
+    },
+    "service_version": "0.4.2",
+    "source_app_versions": {
+      "alarms": "0.2.2",
+      "app_store": "1.1.3",
+      "audio_spectrum": "0.4.5",
+      "battery": "1.1.0",
+      "ble_buttons": "0.1.2",
+      "ble_scanner": "0.2.0",
+      "ble_touchpad": "0.1.2",
+      "calculator": "0.1.6",
+      "clock": "0.10.2",
+      "countdown": "0.1.5",
+      "default": "0.10.2",
+      "file_browser": "1.4.1",
+      "frequency_generator": "0.1.4",
+      "lora_messages": "0.1.2",
+      "ota_update": "1.1.3",
+      "points_in_time": "0.4.4",
+      "settings": "1.3.1",
+      "springboard": "1.5.0",
+      "stopwatch": "0.1.6",
+      "timecard": "0.1.1",
+      "waterfall": "0.1.5",
+      "wifi_settings": "1.1.4"
+    },
+    "sources": {
+      "productivity": {
+        "commit": "460935ca47c3f86d4cb94f0d912c54077330eff4",
+        "repository": "michaelrolphone-cmyk/RiscRTE-Productivity"
+      },
+      "runtime": {
+        "commit": "4b6f00e18b51378bdfd3f9bbe0aa136da7be7eeb",
+        "repository": "michaelrolphone-cmyk/RiscRTE"
+      },
+      "system-apps": {
+        "commit": "f146d82d4c2bc4d4b6ac97f7be83b04035ad7d60",
+        "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps"
+      },
+      "utilities": {
+        "commit": "c735386637121c2ce466de1937816bb92d5b1f43",
+        "repository": "michaelrolphone-cmyk/RiscRTE-Utilities"
+      }
+    },
+    "telemetry_battery": {
+      "commit": "9b156fdc4c1a4b81832ab707b8ca2d0699bbc85c",
+      "id": "telemetry-battery",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+      "version": "0.1.0"
+    }
+  },
+  "components": [
+    {
+      "file": "components/bootloader.bin",
+      "offset": "0x0",
+      "size_bytes": 15104,
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+    },
+    {
+      "file": "components/partitions.bin",
+      "offset": "0x8000",
+      "size_bytes": 3072,
+      "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+    },
+    {
+      "file": "components/firmware.bin",
+      "offset": "0x10000",
+      "size_bytes": 1238288,
+      "sha256": "1d95892cd2a1c9aa5a84e57f25971c24f55dc7786d17d5e668cddc83ce5db37b"
+    },
+    {
+      "file": "components/appdata.bin",
+      "offset": "0x270000",
+      "size_bytes": 524288,
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0"
+    },
+    {
+      "file": "components/bootfs.bin",
+      "offset": "0x2f0000",
+      "size_bytes": 5308416,
+      "sha256": "979045f28b89a2df944c5f8ddfa1433c4be5c587ea1fbe31030f7b4578ca4de6"
+    },
+    {
+      "file": "components/otadata.bin",
+      "offset": "0xff0000",
+      "size_bytes": 8192,
+      "sha256": "8ba3b110139f45443d4f268d1a3373ef99a1718b71d51664531b83ee2d4b91a3"
+    },
+    {
+      "file": "components/bank_state.bin",
+      "offset": "0xff2000",
+      "size_bytes": 8192,
+      "sha256": "7a76b17e2df260bc3b8f8a4c1cd592d16790c3517526197c3b15b823a917975d"
+    }
+  ],
+  "packing": {
+    "generator": "esp-idf-spiffsgen",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "config": {
+      "page_size": 256,
+      "page_ix_len": 2,
+      "block_size": 4096,
+      "block_ix_len": 2,
+      "meta_len": 4,
+      "obj_name_len": 32,
+      "obj_id_len": 2,
+      "span_ix_len": 2,
+      "packed": true,
+      "aligned": true,
+      "endianness": "little",
+      "use_magic": true,
+      "use_magic_len": true,
+      "aligned_obj_ix_tables": false
+    },
+    "order": "sorted ASCII path names",
+    "metadata": "zero",
+    "image_bytes": 5308416,
+    "file_count": 89,
+    "payload_bytes": 4596071,
+    "occupied_blocks": 1239,
+    "empty_blocks": 57,
+    "sha256": "979045f28b89a2df944c5f8ddfa1433c4be5c587ea1fbe31030f7b4578ca4de6",
+    "independent_round_trip_verified": true
+  },
+  "fixes": {
+    "touch": "0.2.1 last-emitted event sequence",
+    "hid_apps": "0.1.3 packet error ownership, clean saved-bond reconnect and original-cause diagnostics",
+    "sdr": "0.1.4 no CPU reads while DMA owns SRAM, stop/settle/copy and stage/register tracing",
+    "waterfall": "0.1.6 pre-operation capture stage diagnostics",
+    "native_iq": "Runtime0.1.41 balanced modem/power-domain/PHY ownership"
+  },
+  "validation": "Focused production regressions and sanitizers passed; full target compilation and package integrity checked. Native power lifecycle and SRAM ownership corrections follow pinned SDK/upstream contracts. Prior device freeze and intermittent HID failure still require hardware confirmation; no CI wait."
+}

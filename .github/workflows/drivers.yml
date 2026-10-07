@@ -841,7 +841,7 @@ jobs:
         run: |
           python - <<'PY'
           import json, os
-          value=json.load(open('apps/current-runtime-requirements.json'))
+          value=json.load(open('apps/apex-runtime-requirements.json'))
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
               out.write('sha='+value['source_sha']+'\n')
               out.write('version='+value['firmware_version']+'\n')
@@ -866,12 +866,12 @@ jobs:
         run: |
           python - <<'PY_CURRENT'
           import json, os
-          pins=json.load(open('apps/current-apps-sources.json'))['sources']
-          runtime=json.load(open('apps/current-runtime-requirements.json'))['source_sha']
+          pins=json.load(open('apps/apex-apps-sources.json'))['sources']
+          runtime=json.load(open('apps/apex-runtime-requirements.json'))['source_sha']
           if pins['runtime']['commit'] != runtime:
               raise ValueError('Final current-app Runtime differs from paired native source')
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
-              out.write('drivers='+json.load(open('apps/current-apps-sources.json'))['sdr']['commit']+'\n')
+              out.write('drivers='+json.load(open('apps/apex-apps-sources.json'))['sdr']['commit']+'\n')
               for name in ('system-apps','utilities','productivity'):
                   out.write(name.replace('-','_')+'='+pins[name]['commit']+'\n')
           PY_CURRENT
@@ -956,6 +956,7 @@ jobs:
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
             --output dist/current-apps-bma456h
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
+          python -m unittest discover -s tests -p test_current_execution_sources.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python -m unittest discover -s tests -p test_current_flash_layout.py -v
           python -m unittest discover -s tests -p test_current_bootfs.py -v
@@ -1066,7 +1067,7 @@ jobs:
                       if name.endswith('/'):continue
                       target=destination/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(archive.read(name))
           PY_NEXT
-          python scripts/build_next_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
+          python scripts/build_current_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
           python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test
           SANITIZE=1 python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test-san
       - uses: actions/upload-artifact@v4
@@ -1136,3 +1137,116 @@ jobs:
             dist/current-loader-proof-bma456h/
             dist/latest-main-bma456h/
           if-no-files-found: error
+
+  low-battery-profile:
+    name: Automatic low-battery profile
+    needs: [update-integration]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read separate future profile pins
+        id: pins
+        run: |
+          python - <<'PY'
+          import json,os
+          c=json.load(open('apps/low-battery-sources.json'))
+          assert c['profile']=='watch-low-battery-apps-v1' and c['features']=={'low_battery':True}
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+            for name,pin in c['sources'].items():out.write(name.replace('-','_')+'='+pin['commit']+'\n')
+            out.write('drivers='+c['sdr']['commit']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs.system_apps }}
+          path: .low-battery/system
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .low-battery/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .low-battery/productivity
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .low-battery/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Drivers
+          ref: ${{ steps.pins.outputs.drivers }}
+          path: .low-battery/drivers
+          persist-credentials: false
+      - name: Pinned validation and target compiler
+        run: |
+          python -m pip install -r scripts/requirements.txt platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          echo "TWATCH_CC=$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
+      - name: Production policy, Settings, Clock and alarm boundary regressions
+        run: |
+          python .low-battery/system/scripts/test_low_battery.py
+          python scripts/test_low_battery.py --system-apps .low-battery/system
+          bash .low-battery/runtime/test/run_radio_iq_test.sh
+          SANITIZE=1 bash .low-battery/runtime/test/run_radio_iq_test.sh
+          python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime --low-battery
+          python scripts/test_waterfall_serial.py --utilities .low-battery/utilities --system-apps .low-battery/system --runtime .low-battery/runtime --output dist/waterfall-serial
+          python scripts/test_alarm_sleep_resume.py --system-apps .low-battery/system --utilities .low-battery/utilities --runtime .low-battery/runtime
+          python -m unittest discover -s tests -p test_low_battery_profile.py -v
+          python -m unittest discover -s tests -p test_current_execution_sources.py -v
+          python -m unittest discover -s tests -p test_midpoint_publication.py -v
+      - uses: actions/download-artifact@v4
+        with:
+          name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .low-battery/baseline
+      - name: Compile the exact native IQ backend used by the complete profile
+        working-directory: .low-battery/runtime
+        run: |
+          python -m pip install -r requirements-ci.txt
+          pio run -e esp32s3-16mb-appdata-iq -j 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-complete-profile-native-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/firmware.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/firmware.elf
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/partitions.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/radio-iq-proof.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Compile and verify all future app targets for both motion models
+        run: |
+          python scripts/build_twatch_drivers.py
+          for model in bma423 bma456h; do
+            python scripts/build_current_apps.py --profile low-battery --motion-model "$model" --radio-model selectable \
+              --system-apps .low-battery/system --utilities .low-battery/utilities \
+              --productivity .low-battery/productivity --runtime .low-battery/runtime --drivers .low-battery/drivers \
+              --baseline .low-battery/baseline/audio-common/audio-tools-common.zip --output "dist/low-battery-$model"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-low-battery-source-profile-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/low-battery-bma423/current-apps.zip
+            dist/low-battery-bma423/current-apps-build.json
+            dist/low-battery-bma456h/current-apps.zip
+            dist/low-battery-bma456h/current-apps-build.json
+          if-no-files-found: error
+          retention-days: 14

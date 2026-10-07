@@ -26,7 +26,10 @@ static void current_reset(void){
 static int current(unsigned mode){
     return watch_alarm_sleep_motion_prepared(&panel,&pmu,&motion,mode,&extended.base,diagnostic);
 }
-int main(void){
+#ifndef ALARM_RESUME_FIXTURE_MAIN
+#define ALARM_RESUME_FIXTURE_MAIN main
+#endif
+int ALARM_RESUME_FIXTURE_MAIN(void){
     (void)legacy_alarm_sleep_test_main;
     for(unsigned mode=0;mode<3;mode++)for(int rc=RISC_LIGHT_SLEEP_RETAINED;rc<0;rc++){
         current_reset();entry_result=rc;(void)current(mode);assert(!resumes);
@@ -58,4 +61,5 @@ int main(void){
     current_reset();assert(watch_alarm_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_LIGHT,&api,diagnostic)==WATCH_SLEEP_REFUSED);
     assert(!light_calls && !resumes);
     puts("Current alarm resume adapter: exact ticket, successful Light only, both wake causes, untimed Light, Deep exclusion, retained/refusal, explicit errors and short suffix PASS");
+    return 0;
 }

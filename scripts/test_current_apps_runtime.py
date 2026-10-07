@@ -17,7 +17,7 @@ def main():
  p.add_argument('--native-elf',type=Path)
  g=p.add_mutually_exclusive_group(required=True);g.add_argument('--bin',type=Path);g.add_argument('--image',type=Path)
  a=p.parse_args();head=subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip();files,record=verify(a.current_apps_artifact_dir,head)
- deployment=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['deployment']
+ deployment=json.loads((ROOT/'apps/apex-runtime-requirements.json').read_text())['deployment']
  from current_flash_layout import validate
  app_data=deployment['store_abi']==2;validate(deployment,app_data)
  offset=deployment['partitions']['bootfs0']['offset'];size=deployment['partitions']['bootfs0']['size']

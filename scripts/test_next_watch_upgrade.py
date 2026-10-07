@@ -8,7 +8,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 
-from build_next_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
+from build_current_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
     NEW_APPS, read_previous, read_native, runtime_evidence, require, sha, encoded, document, metadata, check_policy, check_requirements)
 from current_cohort import parse, verify, package
 from check_runtime_store_admission import compile_harness, store_digest
@@ -35,10 +35,15 @@ def compile_transaction(runtime, build, version, fixture=None):
     sources = [runtime / p for p in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp', 'src/bootstrap/Runtime.cpp',
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp',
         'src/runtime/update/PairedBank.cpp', 'src/runtime/update/StoreAudit.cpp')]
+    if (runtime/'src/runtime/provisioning/StoreFiles.h').is_file():
+        sources += [runtime / p for p in ('src/ports/esp32s3/CpuPort.cpp',
+            'src/runtime/provisioning/BootstrapInput.cpp', 'src/runtime/provisioning/Coordinator.cpp',
+            'src/runtime/provisioning/StoreFiles.cpp', 'src/runtime/provisioning/Profile.cpp')]
     executable = build / 'transaction'
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
         '-rdynamic', '-no-pie', '-Wl,--wrap=fopen,--wrap=opendir,--wrap=stat,--wrap=lstat',
+        *(['-Wl,--wrap=fclose'] if '--wrap=fclose' in (runtime/'test/run_native_bank_test.sh').read_text() else []),
         *inc, *sources, fixture or ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
         '-lcrypto', '-ldl', '-o', executable)
     return executable
@@ -94,7 +99,8 @@ def negative_stores(previous, following):
                 entry['namespace'] = 3
     yield changed('migration-cannot-share-private-kv', private_migration)
     def provider_private(b, f):
-        for key in b['drivers'][-1]['key_value']:
+        hid = next(row for row in b['drivers'] if row['manifest']=='ble-hid/manifest.json')
+        for key in hid['key_value']:
             key['namespace'] = 4
     yield changed('new-provider-steals-private-kv', provider_private)
     def app_data(b, f):

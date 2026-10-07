@@ -24,6 +24,25 @@ RUNTIME_SOURCES = ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp',
     'src/bootstrap/Runtime.cpp', 'src/ports/esp32s3/CpuPort.cpp',
     'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp')
 SCENARIOS = ('healthy', 'early-health', 'frame-health-loss', 'confirm-refused', 'retained')
+EXTERNAL_DRIVERS = {
+    's3-radio-iq-v1': 's3_radio_iq_v1',
+    'ble-hid': 'ble_hid',
+    'ble-sensors': 'ble_sensors',
+    'ble-telemetry': 'ble_telemetry',
+    'telemetry-battery': 'telemetry_battery',
+}
+
+
+def external_driver_manifests(drivers):
+    return {identity: Path(drivers) / 'Drivers' / folder / 'manifest.json'
+            for identity, folder in EXTERNAL_DRIVERS.items()}
+
+
+def external_source_hashes(drivers):
+    roots = [Path(drivers) / 'Drivers' / folder for folder in EXTERNAL_DRIVERS.values()]
+    roots.append(Path(drivers) / 'sdk/driver')
+    return {str(p): sha(p) for root in roots for p in root.rglob('*') if p.is_file()}
+
 
 
 def require(condition, message):
@@ -56,7 +75,7 @@ def source_state(path):
 def _runtime(runtime, current_profile=False):
     runtime = Path(runtime).resolve()
     state = source_state(runtime)
-    require(state['commit'] == (json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['source_sha'] if current_profile else RUNTIME_COMMIT) and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
+    require(state['commit'] == (json.loads((ROOT/'apps/apex-runtime-requirements.json').read_text())['source_sha'] if current_profile else RUNTIME_COMMIT) and not state['tracked_changes'], 'Wrong or modified paired Runtime source')
     return runtime
 
 
@@ -96,6 +115,7 @@ def _host(runtime, build, current_utilities=None, app_data=False, radio_iq=False
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
         *(['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1'] if app_data else []),
         *(['-DCURRENT_RADIO_IQ'] if radio_iq else []),
+        *(['-DCURRENT_IQ_LIFECYCLE'] if radio_iq and 'radioIqPrepare' in (runtime/'src/ports/esp32s3/CpuPort.h').read_text() else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
@@ -131,7 +151,7 @@ def _write_store(destination, content):
 def _policies(content, current_profile=False):
     boot = json.loads(content['boot.json'])
     require(boot['default_app'] == 'default.elf', 'Not a defaultClock store')
-    version=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['app_versions']['default'] if current_profile else '0.8.0'
+    version=json.loads((ROOT/'apps/apex-apps-sources.json').read_text())['app_versions']['default'] if current_profile else '0.8.0'
     require(json.loads(content['default.json'])['version'] == version, 'Paired Clock manifest required')
     for name in ('default.json', 'clock.json', 'points_in_time.json'):
         policy = next(item for item in boot['app_capabilities'] if item['manifest'] == name)
@@ -245,9 +265,9 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                          [('watch', ROOT), ('system-apps', system), ('utilities', utilities)]}
     if productivity:
         record['sources']['productivity'] = source_state(productivity)
-    pins = (json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources'] if current_profile else json.loads((ROOT / 'apps/update-sources.json').read_text()))
+    pins = (json.loads((ROOT/'apps/apex-apps-sources.json').read_text())['sources'] if current_profile else json.loads((ROOT / 'apps/update-sources.json').read_text()))
     record['current_apps_profile']=bool(current_profile)
-    if current_profile:record['runtime_version']=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['firmware_version']
+    if current_profile:record['runtime_version']=json.loads((ROOT/'apps/apex-runtime-requirements.json').read_text())['firmware_version']
     for name, state in record['sources'].items():
         if name != 'watch':
             require(state['commit'] == pins[name]['commit'] and not state['tracked_changes'], 'Wrong or modified pinned production source: ' + name)
@@ -258,10 +278,10 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     with _build(output) as build:
         if current_profile:
             require(drivers is not None,'Exact SDR source required for current execution')
-            drivers=Path(drivers).resolve();expected=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sdr']
+            drivers=Path(drivers).resolve();expected=json.loads((ROOT/'apps/apex-apps-sources.json').read_text())['sdr']
             record['sdr_source']=source_state(drivers)
             require(record['sdr_source']['commit']==expected['commit'] and not record['sdr_source']['tracked_changes'],'Wrong or modified SDR source')
-            record['sdr_source_hashes']={str(p):sha(p) for base in ('Drivers/s3_radio_iq_v1','sdk/driver') for p in (drivers/base).glob('*') if p.is_file()}
+            record['sdr_source_hashes']=external_source_hashes(drivers)
         host = _host(runtime, build, utilities if current_profile else None, app_data, radio_iq=current_profile)
         modules = build / 'modules'
         modules.mkdir(exist_ok=True)
@@ -269,8 +289,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         includes = ['-I' + str(p) for p in (ROOT / 'sdk/app', ROOT / 'sdk/driver', ROOT / 'include', ROOT)]
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
-        if current_profile:source_manifests['s3-radio-iq-v1']=drivers/'Drivers/s3_radio_iq_v1/manifest.json'
-        if current_profile:source_manifests['ble-hid']=drivers/'Drivers/ble_hid/manifest.json'
+        if current_profile:source_manifests.update(external_driver_manifests(drivers))
         if not current_profile:
             from build_legacy_sleep import legacy_inputs
             legacy=legacy_inputs(ROOT)
@@ -325,7 +344,8 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
             else:
                 candidates = list(source_manifests[name].parent.glob('*.c'))
                 require(len(candidates) == 1, 'Driver does not have one production source: ' + name)
-                source, module_includes = candidates[0], includes
+                source = candidates[0]
+                module_includes = ['-I'+str(drivers/'sdk/driver')] if current_profile and name in EXTERNAL_DRIVERS else includes
                 if not current_profile and name in ('twatch-gpio','twatch-pmu'):
                     module_includes=['-I'+str(legacy/p) for p in ('sdk/driver','include')]+includes
             command([compiler, language, *_flags(), '-fPIC', '-shared', '-fvisibility=hidden',
@@ -368,6 +388,8 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         require(_runtime(runtime,current_profile) == runtime, 'Runtime identity changed during test')
         record['compiled_source_sha256'] = _source_hashes(runtime, system, utilities)
         require(record['compiled_source_sha256'] == before_sources, 'Production source changed during execution')
+        if current_profile:
+            require(record['sdr_source_hashes']==external_source_hashes(drivers),'External driver source changed during execution')
         (build / 'execution-provenance.json').write_text(json.dumps(record, indent=2) + '\n')
     return record
 

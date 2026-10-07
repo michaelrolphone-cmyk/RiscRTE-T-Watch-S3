@@ -75,7 +75,7 @@ def build(full_dir, apps_dir, installed_bin, runtime, native_dir, index_path, pr
     head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     require(not subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], cwd=ROOT, text=True).strip(), 'Dirty Watch source')
     pins = config(); files, apps = verify(apps_dir, head)
-    requirements = json.loads((ROOT / 'apps/current-runtime-requirements.json').read_text())
+    requirements = json.loads((ROOT / 'apps/apex-runtime-requirements.json').read_text())
     validate(requirements['deployment'], True)
     runtime = Path(runtime).resolve()
     system_apps = Path(system_apps).resolve()

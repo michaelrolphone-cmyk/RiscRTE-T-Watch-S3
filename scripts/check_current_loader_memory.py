@@ -17,7 +17,7 @@ def extract(text,signature):
  raise ValueError('Incomplete loader function')
 p=argparse.ArgumentParser(description=__doc__);p.add_argument('--runtime',type=Path,required=True);g=p.add_mutually_exclusive_group(required=True);g.add_argument('--store',type=Path);g.add_argument('--image',type=Path);g.add_argument('--bin',type=Path);p.add_argument('--utilities',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args()
 runtime=args.runtime.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
-pins=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources']
+pins=json.loads((ROOT/'apps/apex-apps-sources.json').read_text())['sources']
 for name,path in [('runtime',runtime),('utilities',args.utilities)]:
  if subprocess.check_output(['git','rev-parse','HEAD'],cwd=path,text=True).strip()!=pins[name]['commit']:raise ValueError('Wrong pinned source: '+name)
  if subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=path,text=True).strip():raise ValueError('Dirty pinned source: '+name)
@@ -25,7 +25,7 @@ image_sha=None
 if args.image or args.bin:
  from read_only_spiffs import read_image
  from current_flash_layout import validate
- deployment=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['deployment'];validate(deployment,True)
+ deployment=json.loads((ROOT/'apps/apex-runtime-requirements.json').read_text())['deployment'];validate(deployment,True)
  data=(args.image or args.bin).read_bytes();image_sha=hashlib.sha256(data).hexdigest()
  if args.bin:
   if len(data)!=deployment['flash_bytes']:raise ValueError('Wrong full BIN size')
@@ -80,7 +80,7 @@ int main(int argc,char**argv){
 (out/'loader.c').write_text(source);binary=out/'loader'
 subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-Wno-unused-parameter','-Wno-pointer-to-int-cast','-Wno-int-to-pointer-cast','-I'+str(out),'-I'+str(runtime/'lib/elf_loader/include'),str(out/'loader.c'),'-o',str(binary)],check=True)
 files=sorted(args.store.rglob('*.elf'))
-if len(files)!=40 or len(list(args.store.glob('*.elf')))!=22:raise ValueError('Expected 22 app ELFs and 18 unique provider ELFs for 19 selected instances')
+if len(files)!=43 or len(list(args.store.glob('*.elf')))!=22:raise ValueError('Expected 22 app ELFs and 21 unique provider ELFs for 22 selected instances')
 measurements={}
 for path in files:
  result=subprocess.run([str(binary),str(path)],check=True,capture_output=True,text=True)
@@ -96,7 +96,7 @@ subprocess.run([os.environ.get('CC','cc'),'-std=gnu11','-O1','-g','-Wno-pointer-
 proof=subprocess.run([str(relocator),*map(str,files)],check=True,capture_output=True,text=True)
 (out/'relocations.log').write_text(proof.stdout)
 boot=json.loads((args.store/'boot.json').read_text());providers=0
-if len(boot['drivers'])!=19:raise ValueError('Expected 19 selected provider instances')
+if len(boot['drivers'])!=22:raise ValueError('Expected 22 selected provider instances')
 for item in boot['drivers']:
  manifest_path=Path(item['manifest']);manifest=json.loads((args.store/manifest_path).read_text())
  value=measurements[(manifest_path.parent/manifest['file_name']).as_posix()]
@@ -118,4 +118,4 @@ record={'scope':'offline production loader/relocation execution; no target instr
  'each module allocation below 1 MiB','eight allocator residues; exact mapped bytes and relocation targets; redzones intact'],
  'physical_heap_and_current':'pending'}
 (out/'evidence.json').write_text(json.dumps(record,indent=2)+'\n')
-print('All 40 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)
+print('All 43 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)

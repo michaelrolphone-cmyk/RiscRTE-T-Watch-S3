@@ -18,6 +18,12 @@ for kind in 0 1; do
  c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -fPIC -fvisibility=hidden -shared -DUPDATE_FIRMWARE="$kind" "$apps/Services/update/service.cpp" -o "$build/modules/update-$kind.elf"
 done
 sources=("$runtime/src/bootstrap/Json.cpp" "$runtime/src/bootstrap/Board.cpp" "$runtime/src/bootstrap/Runtime.cpp" "$runtime/src/runtime/drivers/ProviderGraphV2.cpp" "$runtime/src/runtime/drivers/ProviderModuleV2.cpp" "$runtime/src/ports/esp32s3/CpuPort.cpp" "$runtime/src/runtime/update/PairedBank.cpp" "$runtime/src/runtime/update/StoreAudit.cpp")
+# Provisioning-capable NativeBankStore retains its production StoreFiles methods
+# even in this ordinary-update harness. Historical pinned runtimes have no such
+# module and keep their original source closure.
+if [[ -f "$runtime/src/runtime/provisioning/StoreFiles.h" ]]; then
+ sources+=("$runtime/src/runtime/provisioning/StoreFiles.cpp")
+fi
 c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=close -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration"
 c++ "${san[@]}" -std=c++17 "${flags[@]}" "${inc[@]}" -DRISC_PAIRED_BANKS=1 -DRISC_TEST_RECOVERY_NEW=1 -rdynamic -no-pie "${sources[@]}" "$here/integration.cpp" "$build/validate.o" "$build/parser.o" -Wl,--wrap=close -Wl,--wrap=fopen -Wl,--wrap=opendir -Wl,--wrap=stat -ldl -lcrypto -o "$build/integration-new-runtime"
 run_case() {
@@ -28,6 +34,9 @@ run_case() {
  if [[ "$kind:$scenario" == firmware:power-selected ]]; then ASAN_OPTIONS=detect_leaks=0 "$build/integration-new-runtime" "$build/modules" "$dir" "$boot" "$kind" recover; fi
  # Preserve unique flash evidence without keeping 16 MiB of mostly-erased bytes.
  if [[ -f "$dir/power-flash.bin" ]]; then gzip -f "$dir/power-flash.bin"; fi
+ # Local disk-constrained runs may discard only a completed case's generated
+ # fixtures. Every scenario and recovery above still ran; CI retains evidence.
+ if [[ "${DISCARD_PASSED_CASES:-0}" == 1 ]]; then rm -rf "$dir"; fi
 }
 pids=()
 for kind in app firmware; do

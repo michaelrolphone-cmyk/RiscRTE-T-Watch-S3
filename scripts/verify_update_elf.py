@@ -56,13 +56,24 @@ def public_exports(native):
     return result
 
 
+def admission_source(text):
+    """Preserve the selected Runtime's strict app/driver role implementation."""
+    function = extract(text, 'bool admitElf(')
+    if 'ElfRole role=' in function:
+        # Include the exact production enum; never widen a driver to Either.
+        start = text.index('enum class ElfRole ')
+        enum = text[start:text.index(';', start) + 1]
+        return enum + '\n' + function, 'provider?ElfRole::Driver:ElfRole::Application', 'ElfRole::Driver'
+    if 'bool provider=' in function:
+        return function, 'provider', 'true'
+    raise ValueError('Native candidate source lacks provider ELF admission')
+
+
 def cohort_admission_header(runtime, native_elf):
     """Compile the production admission function against actual native exports."""
     exported = public_exports(ELFFile(io.BytesIO(native_elf)))
     text = (Path(runtime) / 'src/ports/esp32s3/NativeBankStore.cpp').read_text()
-    function = extract(text, 'bool admitElf(')
-    if 'bool provider=' not in function:
-        raise ValueError('Native candidate source lacks provider ELF admission')
+    function, provider_role, _ = admission_source(text)
     return '''#include <cstring>
 #include <fstream>
 #include <iterator>
@@ -83,7 +94,7 @@ static uintptr_t elf_find_sym_default(const char* name){
 static bool file(void* context,const char* path,bool provider){
  std::ifstream input(path,std::ios::binary);if(!input)return false;
  std::vector<uint8_t> bytes(std::istreambuf_iterator<char>(input),{});
- if(!admitElf(bytes.data(),bytes.size(),provider))return false;
+ if(!admitElf(bytes.data(),bytes.size(),''' + provider_role + '''))return false;
  ++*static_cast<unsigned*>(context);return true;
 }
 }
@@ -98,6 +109,10 @@ def verify(runtime, native_elf, app_elf, provider=False):
     exported=public_exports(native)
     if not set(imports)<=set(exported):raise ValueError('App import absent from compiled public resolver tables')
     path=runtime/'src/ports/esp32s3/NativeBankStore.cpp';text=path.read_text()
+    function = extract(text, 'bool admitElf(')
+    driver_role = None
+    if 'bool provider=' in function or 'ElfRole role=' in function:
+        function, _, driver_role = admission_source(text)
     source='''#include <cassert>
 #include <cstring>
 #include <fstream>
@@ -115,7 +130,7 @@ static uintptr_t elf_find_sym_default(const char* name){
  if(missing&&!strcmp(name,missing))return 0;
  for(const char* symbol:imports)if(!strcmp(name,symbol))return 1;return 0;
 }
-'''+extract(text,'bool allowedImport(')+'\n'+extract(text,'bool admitElf(')+'''
+'''+extract(text,'bool allowedImport(')+'\n'+function+'''
 int main(int argc,char**argv){
  assert(argc==2);std::ifstream f(argv[1],std::ios::binary);assert(f);
  std::vector<uint8_t> data(std::istreambuf_iterator<char>(f),{});
@@ -126,8 +141,8 @@ int main(int argc,char**argv){
 }
 '''
     if provider:
-        if 'bool provider=' not in text:raise ValueError('Native source lacks provider ELF admission')
-        source=source.replace('admitElf(data.data(),data.size())','admitElf(data.data(),data.size(),true)')
+        if driver_role is None:raise ValueError('Native source lacks provider ELF admission')
+        source=source.replace('admitElf(data.data(),data.size())','admitElf(data.data(),data.size(),'+driver_role+')')
     with tempfile.TemporaryDirectory(prefix='watch-update-elf-') as directory:
         root=Path(directory);(root/'check.cpp').write_text(source);(root/'app.elf').write_bytes(app_elf)
         includes=['-I'+str(runtime/'test/native_bank_stubs'),'-I'+str(runtime/'lib/elf_loader/include'),'-I'+str(runtime/'sdk/driver')]

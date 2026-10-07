@@ -68,6 +68,10 @@ RiscCpu::Hardware hardware() {
   h.owner = owner;
 #ifdef STORE_ADMISSION_RADIO_IQ
   h.radioIqReady=[](){++hardwareCalls;return false;};
+#ifdef STORE_ADMISSION_IQ_LIFECYCLE
+  h.radioIqPrepare=[](){++hardwareCalls;return false;};
+  h.radioIqCleanup=[](){++hardwareCalls;return false;};
+#endif
 #endif
   h.now = []() -> uint64_t { ++hardwareCalls; return 0; };
   h.sleep = [](uint32_t) { ++hardwareCalls; };
