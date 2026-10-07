@@ -40,7 +40,7 @@ def config(root=ROOT,profile='current'):
  require(set(c['sources'])=={'system-apps','utilities','productivity','runtime'},'Current source inventory differs')
  for p in c['sources'].values():require(re.fullmatch('[0-9a-f]{40}',p.get('commit','')) is not None,'Unpinned current source')
  require(c.get('sdr',{}).get('id')=='s3-radio-iq-v1' and re.fullmatch('[0-9a-f]{40}',c['sdr'].get('commit','')) is not None and c['sdr'].get('version')=='0.1.1','Unpinned guarded SDR source')
- require(c.get('hid',{}).get('id')=='ble-hid' and c['hid'].get('commit')==c['sdr']['commit'] and c['hid'].get('version')=='0.1.0','Unpinned consolidated HID source')
+ require(c.get('hid',{}).get('id')=='ble-hid' and c['hid'].get('commit')==c['sdr']['commit'] and c['hid'].get('version')=='0.1.1','Unpinned consolidated HID source')
  for key,identity in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
   require(c.get(key,{}).get('id')==identity and c[key].get('commit')==c['sdr']['commit'] and c[key].get('version')=='0.1.0','Unpinned '+identity+' source')
  require(set(c['app_versions'])==set(APPS),'Current app versions incomplete')
