@@ -46,12 +46,13 @@ def fixture():
     manifests = {
         'ble-hid': ([('bluetooth.hci', 1), ('platform.clock', 1), ('storage.key-value.bound', 1)], [('bluetooth.hid', 1)]),
         'ble-sensors': ([('bluetooth.hci', 1), ('platform.clock', 1)], [('bluetooth.sensors', 1)]),
-        'telemetry-battery': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
+        'battery-telem': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
         'ble-telemetry': ([('bluetooth.hci', 1), ('platform.clock', 1), ('sensor.telemetry', 1)], [('bluetooth.telemetry', 1)]),
     }
     for name in NEW_PROVIDERS:
         requires, provides = manifests[name]
-        following[name + '/manifest.json'] = encoded({'id': name, 'driver_abi': 2, 'file_name': 'driver.elf',
+        identity = 'telemetry-battery' if name == 'battery-telem' else name
+        following[name + '/manifest.json'] = encoded({'id': identity, 'driver_abi': 2, 'file_name': 'driver.elf',
             'requires': [{'capability': c, 'api': a} for c, a in requires],
             'provides': [{'capability': c, 'api': a} for c, a in provides]})
         following[name + '/driver.elf'] = b'new-provider-' + name.encode()
