@@ -15,6 +15,7 @@ import build_next_watch_cohort as frozen
 import build_current_watch_cohort as live
 import check_runtime_store_admission as admission
 import test_next_watch_upgrade as upgrade
+from verify_update_elf import admission_source
 
 class CurrentExecutionSources(unittest.TestCase):
  def test_runtime_routes_to_apex_and_legacy_remains_exact(self):
@@ -77,10 +78,13 @@ class CurrentExecutionSources(unittest.TestCase):
   for enabled in (False,True):
    with self.subTest(enabled=enabled),tempfile.TemporaryDirectory() as temp:
     root=Path(temp);header=root/'src/runtime/provisioning/StoreFiles.h'
+    fixture=root/'test/native_bank_test.cpp';fixture.parent.mkdir();fixture.write_text('__wrap_fclose' if enabled else '')
     if enabled:header.parent.mkdir(parents=True);header.touch()
     with patch.object(upgrade,'run') as run:
      upgrade.compile_transaction(root,root/'build','0.1.37')
     self.assertEqual(header.with_suffix('.cpp') in run.call_args.args,enabled)
+    self.assertEqual('-Wl,--wrap=fclose' in run.call_args.args,enabled)
+    self.assertEqual(root/'src/runtime/provisioning/Coordinator.cpp' in run.call_args.args,enabled)
  def test_negative_private_namespace_targets_hid_not_last_provider(self):
   previous,following=live_fixture()
   original=json.loads(following['boot.json'])
@@ -92,5 +96,16 @@ class CurrentExecutionSources(unittest.TestCase):
    if before['manifest']=='ble-hid/manifest.json':
     self.assertTrue(after['key_value']);self.assertTrue(all(row['namespace']==4 for row in after['key_value']))
    else:self.assertEqual(before,after)
+
+ def test_native_admission_preserves_strict_driver_roles(self):
+  legacy='bool admitElf(const void* bytes,int n,bool provider=false){return provider;}'
+  self.assertEqual(admission_source(legacy),(legacy,'provider','true'))
+  enum='enum class ElfRole {Application,Driver,Either};'
+  function='bool admitElf(const void* bytes,int n,ElfRole role=ElfRole::Application){return role==ElfRole::Driver;}'
+  source,role,driver=admission_source(enum+'\n'+function)
+  self.assertEqual(source,enum+'\n'+function)
+  self.assertEqual(role,'provider?ElfRole::Driver:ElfRole::Application')
+  self.assertEqual(driver,'ElfRole::Driver')
+  with self.assertRaisesRegex(ValueError,'lacks provider'):admission_source('bool admitElf(const void* bytes,int n){return true;}')
 
 if __name__=='__main__':unittest.main()

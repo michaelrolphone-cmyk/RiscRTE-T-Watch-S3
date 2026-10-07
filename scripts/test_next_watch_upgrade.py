@@ -36,11 +36,14 @@ def compile_transaction(runtime, build, version, fixture=None):
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp',
         'src/runtime/update/PairedBank.cpp', 'src/runtime/update/StoreAudit.cpp')]
     if (runtime/'src/runtime/provisioning/StoreFiles.h').is_file():
-        sources.append(runtime/'src/runtime/provisioning/StoreFiles.cpp')
+        sources += [runtime / p for p in ('src/ports/esp32s3/CpuPort.cpp',
+            'src/runtime/provisioning/BootstrapInput.cpp', 'src/runtime/provisioning/Coordinator.cpp',
+            'src/runtime/provisioning/StoreFiles.cpp', 'src/runtime/provisioning/Profile.cpp')]
     executable = build / 'transaction'
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
         '-rdynamic', '-no-pie', '-Wl,--wrap=fopen,--wrap=opendir,--wrap=stat,--wrap=lstat',
+        *(['-Wl,--wrap=fclose'] if '__wrap_fclose' in (runtime/'test/native_bank_test.cpp').read_text() else []),
         *inc, *sources, fixture or ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
         '-lcrypto', '-ldl', '-o', executable)
     return executable
