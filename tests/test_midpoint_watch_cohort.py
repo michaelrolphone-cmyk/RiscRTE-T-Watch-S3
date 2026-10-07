@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from test_next_watch_cohort import fixture as ordinary_fixture
+from frozen_watch_cohort_fixture import fixture as ordinary_fixture
 import build_next_watch_cohort as base
 import midpoint_upgrade as midpoint
 from current_cohort import create, encode, parse

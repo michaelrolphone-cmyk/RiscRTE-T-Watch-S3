@@ -26,7 +26,7 @@ class LowBatteryProfile(unittest.TestCase):
   for mutation in ('features','version','profile','sources'):
    with tempfile.TemporaryDirectory() as tmp:
     root=Path(tmp);(root/'apps').mkdir();c=copy.deepcopy(config(profile='low-battery'))
-    (root/'apps/current-apps-sources.json').write_text(json.dumps(config()))
+    (root/'apps/apex-apps-sources.json').write_text(json.dumps(config()))
     if mutation=='features':c['features']={'low_battery':False}
     elif mutation=='version':c['app_versions']['clock']='0.10.2'
     elif mutation=='profile':c['profile']='watch-current-apps-v1'

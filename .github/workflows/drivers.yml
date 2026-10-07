@@ -956,6 +956,7 @@ jobs:
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
             --output dist/current-apps-bma456h
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
+          python -m unittest discover -s tests -p test_current_execution_sources.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
           python -m unittest discover -s tests -p test_current_flash_layout.py -v
           python -m unittest discover -s tests -p test_current_bootfs.py -v
@@ -1203,6 +1204,7 @@ jobs:
           python scripts/test_low_battery.py --system-apps .low-battery/system
           python scripts/test_alarm_sleep_resume.py --system-apps .low-battery/system --utilities .low-battery/utilities --runtime .low-battery/runtime
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
+          python -m unittest discover -s tests -p test_current_execution_sources.py -v
           python -m unittest discover -s tests -p test_midpoint_publication.py -v
       - uses: actions/download-artifact@v4
         with:
