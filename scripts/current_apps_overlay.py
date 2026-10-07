@@ -28,13 +28,13 @@ def require(ok,message):
 def metadata(b):return {'size_bytes':len(b),'sha256':sha(b)}
 def config(root=ROOT,profile='current'):
  require(profile in ('current','low-battery'),'Unknown application profile')
- path='apps/low-battery-sources.json' if profile=='low-battery' else 'apps/current-apps-sources.json'
+ path='apps/low-battery-sources.json' if profile=='low-battery' else 'apps/apex-apps-sources.json'
  c=json.loads((Path(root)/path).read_text())
  require(c.get('schema')==1 and c.get('profile')==(LOW_BATTERY_PROFILE if profile=='low-battery' else PROFILE),'Wrong current-app profile')
  if profile=='low-battery':
   require(c.get('features')=={'low_battery':True} and c.get('product_version')=='1.0.7','Low battery must be automatic in the future profile')
   require(set(c.get('source_app_versions',{}))==set(APPS),'Low-battery source versions incomplete')
-  baseline=json.loads((Path(root)/'apps/current-apps-sources.json').read_text())
+  baseline=json.loads((Path(root)/'apps/apex-apps-sources.json').read_text())
   for name,version in c['app_versions'].items():
    require(tuple(map(int,version.split('.')))>tuple(map(int,baseline['app_versions'][name].split('.'))),'Rebuilt app requires a new deployment version: '+name)
  require(set(c['sources'])=={'system-apps','utilities','productivity','runtime'},'Current source inventory differs')
