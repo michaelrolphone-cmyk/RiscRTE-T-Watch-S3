@@ -46,13 +46,13 @@
   "service_version": "0.4.2",
   "sdr": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "20f62881985f7199761185607b2920c0ef0f7d95",
     "id": "s3-radio-iq-v1",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "hid": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "20f62881985f7199761185607b2920c0ef0f7d95",
     "id": "ble-hid",
     "version": "0.1.1"
   },
@@ -86,19 +86,19 @@
   },
   "ble_sensors": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "20f62881985f7199761185607b2920c0ef0f7d95",
     "id": "ble-sensors",
     "version": "0.1.0"
   },
   "ble_telemetry": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "20f62881985f7199761185607b2920c0ef0f7d95",
     "id": "ble-telemetry",
     "version": "0.1.0"
   },
   "telemetry_battery": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "20f62881985f7199761185607b2920c0ef0f7d95",
     "id": "telemetry-battery",
     "version": "0.1.0"
   }
