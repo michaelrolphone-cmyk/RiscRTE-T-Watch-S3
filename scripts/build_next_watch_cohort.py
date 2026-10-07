@@ -25,7 +25,7 @@ RUNTIME = '0a4f3d18c5d830d32678092fa99284810334b485'
 VERSION = '1.0.5'
 RUNTIME_VERSION = '0.1.34'
 DIAGNOSTICS = 'a27bf228ecd99f2896638a30b55802560701180d'
-CANDIDATE_VERSION = '0.1.35'
+CANDIDATE_VERSION = '0.1.36'
 FULL_SHA = 'd4a1f41035e272adb0ec5d0c64b63835c771cc773a19805463cfe7ab2eb3c67e'
 COHORT_SHA = 'a51c3c2bfc220740afd8a9ae1560e2ce8332e3dcc71736ce182c54f4b257aa83'
 NATIVE_SHA = '00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38'
@@ -34,8 +34,9 @@ STORE_BYTES = 0x510000
 STORE_OFFSETS = (0x2f0000, 0xae0000)
 FIRMWARE_OFFSETS = (0x10000, 0x800000)
 NEW_APPS = ('ble_touchpad', 'ble_buttons')
+NEW_PROVIDERS = ('ble-hid', 'ble-sensors', 'telemetry-battery', 'ble-telemetry')
 NEW_FILES = {n + suffix for n in NEW_APPS for suffix in ('.elf', '.json')} | {
-    'ble-hid/manifest.json', 'ble-hid/driver.elf'}
+    folder + '/' + name for folder in NEW_PROVIDERS for name in ('manifest.json', 'driver.elf')}
 
 
 def require(condition, message):
@@ -256,13 +257,24 @@ def check_policy(previous, following):
     require(set(new_rows) == set(old_rows) | {n + '.json' for n in NEW_APPS}, 'Unexpected application inventory')
     owners = {}
     for name, row in old_rows.items():
-        require(new_rows[name] == row, 'Existing app grants changed: ' + name)
         original, current = document(previous[name]), document(following[name])
-        require(manifest_authority(original) == manifest_authority(current), 'Existing app manifest authority changed: ' + name)
-        owners[original['id']] = sorted(grants(row['grants']))
+        if name == 'ble_scanner.json':
+            old_grants, current_grants = grants(row['grants']), grants(new_rows[name]['grants'])
+            require(current_grants == old_grants | {('bluetooth.sensors', 1, 0)}, 'BLE Scanner sensor grant differs')
+            old_authority, current_authority = manifest_authority(original), manifest_authority(current)
+            old_requires = {(r['capability'], r['api']) for r in old_authority.pop('requires')}
+            current_requires = {(r['capability'], r['api']) for r in current_authority.pop('requires')}
+            require(current_requires == old_requires | {('bluetooth.sensors', 1)} and old_authority == current_authority,
+                    'BLE Scanner sensor manifest authority differs')
+        else:
+            require(new_rows[name] == row, 'Existing app grants changed: ' + name)
+            require(manifest_authority(original) == manifest_authority(current), 'Existing app manifest authority changed: ' + name)
+        owners[original['id']] = sorted(grants(new_rows[name]['grants']))
     prior_drivers = before['drivers']
-    require(after['drivers'][:-1] == prior_drivers and len(after['drivers']) == len(prior_drivers) + 1,
-            'Existing provider bindings or ordering changed')
+    suffix = after['drivers'][len(prior_drivers):]
+    require(after['drivers'][:len(prior_drivers)] == prior_drivers and len(suffix) == len(NEW_PROVIDERS)
+            and [row['manifest'] for row in suffix] == [name + '/manifest.json' for name in NEW_PROVIDERS],
+            'Existing provider bindings or new provider ordering changed')
     for row in prior_drivers:
         name = row['manifest']
         require(manifest_authority(document(previous[name])) == manifest_authority(document(following[name])),
@@ -270,6 +282,9 @@ def check_policy(previous, following):
     stripped = copy.deepcopy(after)
     stripped['app_capabilities'] = [row for row in after['app_capabilities'] if row['manifest'] in old_rows]
     stripped['drivers'] = prior_drivers
+    if 'ble_scanner.json' in old_rows:
+        stripped['app_capabilities'] = [copy.deepcopy(old_rows[row['manifest']]) if row['manifest'] == 'ble_scanner.json' else row
+                                        for row in stripped['app_capabilities']]
     stripped['cohort_migration'] = before['cohort_migration']
     require(stripped == before, 'Unexpected boot authority change')
     common = {('display.output', 1, 5), ('input.touch.raw', 1, 6), ('board.battery', 1, 4),
@@ -284,7 +299,7 @@ def check_policy(previous, following):
         require(len(app['requires']) == len({(r['capability'], r['api']) for r in app['requires']})
                 and {(r['capability'], r['api']) for r in app['requires']} == {(c, a) for c, a, _ in expected},
                 'New manifest requirements differ: ' + name)
-    hid = after['drivers'][-1]
+    hid = next(row for row in suffix if row['manifest'] == 'ble-hid/manifest.json')
     require(set(hid) == {'manifest', 'key_value'} and hid['manifest'] == 'ble-hid/manifest.json',
             'HID must be a logical Global0 provider without a hardware instance')
     require(hid['key_value'] == [{'key': key, 'namespace': 10, 'access': 'read-write'}
@@ -303,9 +318,23 @@ def check_policy(previous, following):
     require(provider['requires'] == [{'capability': c, 'api': 1} for c in
                                     ('bluetooth.hci', 'platform.clock', 'storage.key-value.bound')]
             and provider['provides'] == [{'capability': 'bluetooth.hid', 'api': 1}], 'HID dependency authority differs')
+    logical = {
+        'ble-sensors/manifest.json': ([('bluetooth.hci', 1), ('platform.clock', 1)], [('bluetooth.sensors', 1)]),
+        'telemetry-battery/manifest.json': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
+        'ble-telemetry/manifest.json': ([('bluetooth.hci', 1), ('platform.clock', 1), ('sensor.telemetry', 1)], [('bluetooth.telemetry', 1)]),
+    }
+    for row in suffix:
+        if row['manifest'] == 'ble-hid/manifest.json':continue
+        require(set(row) == {'manifest'}, 'New BLE sensor/telemetry providers must be logical Global0 providers')
+        provider = document(following[row['manifest']]);expected_requires, expected_provides = logical[row['manifest']]
+        require(provider['driver_abi'] == 2 and provider['file_name'] == 'driver.elf' and 'hardware_compatibility' not in provider,
+                'BLE sensor/telemetry provider must not invent hardware')
+        require([(r['capability'], r['api']) for r in provider['requires']] == expected_requires
+                and [(r['capability'], r['api']) for r in provider['provides']] == expected_provides,
+                'BLE sensor/telemetry dependency authority differs: ' + row['manifest'])
     hci = [r for r in after['drivers'] if any(p['capability'] == 'bluetooth.hci'
            for p in document(following[r['manifest']])['provides'])]
-    require(len(hci) == 1 and hci[0].get('instance_id') == 16, 'HID requires unique existing HCI provider')
+    require(len(hci) == 1 and hci[0].get('instance_id') == 16, 'BLE providers require unique existing HCI provider')
     return {'prior_app_owners': owners, 'prior_provider_bindings': prior_drivers,
             'new_shared_migration': migration(), 'hardware_board_sha256': sha(previous['board.json'])}
 
