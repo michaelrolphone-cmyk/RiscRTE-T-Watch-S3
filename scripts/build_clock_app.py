@@ -11,16 +11,18 @@ from build_legacy_sleep import legacy_inputs, legacy_clock
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def clock_manifest(paired=False, current=False, low_battery=False, rf_spectrum=False):
+def clock_manifest(paired=False, current=False, low_battery=False, rf_spectrum=False, power_repair=False):
+    if power_repair and not rf_spectrum:raise ValueError('Power-repair Clock requires the full RF profile')
     if rf_spectrum and not low_battery:raise ValueError('RF Clock requires automatic low battery')
     if low_battery and not current:raise ValueError('Low-battery Clock requires the new current-based profile')
     if current and not paired:
         raise ValueError('Current Clock requires the paired final profile')
-    path = 'apps/clock/rf-spectrum-manifest.json' if rf_spectrum else 'apps/clock/low-battery-manifest.json' if low_battery else 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
+    path = 'apps/clock/power-repair-manifest.json' if power_repair else 'apps/clock/rf-spectrum-manifest.json' if rf_spectrum else 'apps/clock/low-battery-manifest.json' if low_battery else 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
     return json.loads((ROOT/path).read_text())
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None, low_battery=False, rf_spectrum=False):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None, low_battery=False, rf_spectrum=False, power_repair=False):
+    if power_repair and not rf_spectrum:raise ValueError('Power-repair Clock requires the full RF profile')
     if rf_spectrum and not low_battery:raise ValueError('RF Clock requires automatic low battery')
     if low_battery and not current:raise ValueError("Low-battery Clock requires the new current-based profile")
     if current and not (paired and launcher and alarm_system and points_utilities):
@@ -83,7 +85,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = clock_manifest(paired=paired, current=current, low_battery=low_battery, rf_spectrum=rf_spectrum)
+    manifest = clock_manifest(paired=paired, current=current, low_battery=low_battery, rf_spectrum=rf_spectrum, power_repair=power_repair)
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:

@@ -1,8 +1,13 @@
-name: Check future Watch RF profile
+name: Check Watch RF and power profiles
 on:
   pull_request:
     paths:
       - 'apps/rf-spectrum-*.json'
+      - 'apps/power-repair-*.json'
+      - 'apps/clock/power-repair-manifest.json'
+      - 'scripts/*power*.py'
+      - 'tests/test_power_repair_profile.py'
+      - 'docs/POWER_REPAIR_CANDIDATE.md'
       - 'apps/clock/rf-spectrum-manifest.json'
       - 'scripts/*rf*profile*.py'
       - 'scripts/*rf_spectrum*.py'
@@ -53,6 +58,7 @@ jobs:
           persist-credentials: false
       - name: Profile and unchanged accepted/frozen custody
         run: |
+          python -m unittest discover -s tests -p test_power_repair_profile.py -v
           python -m unittest discover -s tests -p test_rf_spectrum_profile.py -v
           python -m unittest discover -s tests -p test_rf_watch_candidate.py -v
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
