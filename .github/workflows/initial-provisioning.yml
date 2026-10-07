@@ -1,0 +1,91 @@
+name: Accepted Watch initial provisioning
+on:
+  pull_request:
+    paths:
+      - 'scripts/watch_provisioning.py'
+      - 'tests/test_watch_provisioning.py'
+      - 'docs/INITIAL_PROVISIONING.md'
+      - 'provisioning/**'
+      - '.github/workflows/initial-provisioning.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'No'
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install esptool==4.11.0 pyelftools==0.32
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 4a0891fc0ec10dcd100c6248768cabecaafec888
+          path: .dependencies/provisioning-runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: pellepl/spiffs
+          ref: 0dbb3f71c5f6fae3747a9d935372773762baf852
+          path: .dependencies/provisioning-spiffs
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: espressif/arduino-esp32
+          ref: 2.0.17
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/sdk/esp32s3/include/spiffs/include/spiffs_config.h
+            /tools/sdk/esp32s3/qio_opi/include/sdkconfig.h
+          path: .dependencies/provisioning-arduino
+          persist-credentials: false
+      - name: Read exact published inputs and verify the committed seed
+        run: |
+          mkdir -p dist/provisioning-inputs
+          curl --fail --location --max-time 120 https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.7/accepted-store.zip -o dist/provisioning-inputs/accepted-store.zip
+          curl --fail --location --max-time 120 https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.7/LICENSES.zip -o dist/provisioning-inputs/LICENSES.zip
+          python scripts/watch_provisioning.py --runtime .dependencies/provisioning-runtime verify --payload provisioning/watch-1.0.7 --archive dist/provisioning-inputs/accepted-store.zip > dist/provisioning-inputs/payload-proof.json
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts')
+          import watch_provisioning as p
+          _, profile = p.runtime_tools(Path('.dependencies/provisioning-runtime'))
+          p.write_files(Path('dist/provisioning-inputs/seed'), p.unpack(Path('provisioning/watch-1.0.7/seed.zip').read_bytes(), profile))
+          PY
+      - name: Complete payload, exact native exports and rejection tests
+        env:
+          WATCH_PROVISION_RUNTIME: .dependencies/provisioning-runtime
+          WATCH_PROVISION_STORE: dist/provisioning-inputs/accepted-store.zip
+          WATCH_PROVISION_SEED: dist/provisioning-inputs/seed
+        run: |
+          python tests/test_watch_provisioning.py -v
+          SANITIZE=1 python tests/test_watch_provisioning.py -v
+      - name: Real SPIFFS complete-store retry and interruption tests
+        run: |
+          runtime=.dependencies/provisioning-runtime
+          spiffs=.dependencies/provisioning-spiffs
+          sdk=.dependencies/provisioning-arduino/tools/sdk/esp32s3
+          bash "$runtime/test/run_provisioning_spiffs_test.sh" "$spiffs" "$sdk" dist/provisioning-inputs/seed/bootfs0.bin provisioning/watch-1.0.7/files dist/provisioning-inputs/streamed.bin
+          SANITIZE=1 bash "$runtime/test/run_provisioning_spiffs_test.sh" "$spiffs" "$sdk" dist/provisioning-inputs/seed/bootfs0.bin provisioning/watch-1.0.7/files dist/provisioning-inputs/streamed-sanitized.bin
+      - name: Generic download, rollback, receipt and cleanup lifecycle
+        run: |
+          export BOOTLOADER_FILE="$PWD/dist/provisioning-inputs/seed/bootloader.bin"
+          export SEED_DIRECTORY="$PWD/dist/provisioning-inputs/seed"
+          export APP_DATA_TEST=1
+          cd .dependencies/provisioning-runtime
+          bash test/run_provisioning_test.sh
+          SANITIZE=1 bash test/run_provisioning_test.sh
+          bash test/run_native_bank_test.sh
+          SANITIZE=1 bash test/run_native_bank_test.sh
+      - name: Verify immutable public download endpoints
+        run: python scripts/watch_provisioning.py --runtime .dependencies/provisioning-runtime verify-endpoints --deployment provisioning/deployments/watch-1.0.7
