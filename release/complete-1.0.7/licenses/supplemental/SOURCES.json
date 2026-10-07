@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "sources": {
+    "Arduino-ESP32-LICENSE.md": "https://github.com/espressif/arduino-esp32/blob/2.0.17/LICENSE.md",
+    "ESP-IDF-LICENSE": "https://github.com/espressif/esp-idf/blob/v4.4.7/LICENSE",
+    "Arduino-ESP32-package.json": "installed PlatformIO framework-arduinoespressif32 package metadata"
+  },
+  "files": {
+    "ESP-IDF-LICENSE": {
+      "sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac",
+      "size_bytes": 11359
+    },
+    "Arduino-ESP32-LICENSE.md": {
+      "sha256": "5d756a25fcd918f8caece46c421242f67703f50596657ef3f2791ea3d94fb7e4",
+      "size_bytes": 26339
+    },
+    "Arduino-ESP32-package.json": {
+      "sha256": "f35415c75f6f43755df92bbbf7ef10c9e65c2edb2569d512636a0477be64d5bf",
+      "size_bytes": 414
+    }
+  },
+  "drivers_source": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "commit": "6ab1b14c960ebe6d58f78864aef682ade07849d9",
+    "top_level_license": "No top-level LICENSE or NOTICE exists at this source. Preserve per-component eSpDR, NimBLE/TinyCrypt and Utilities sensor attribution from accepted current-apps custody; no repository-wide license is invented."
+  }
+}

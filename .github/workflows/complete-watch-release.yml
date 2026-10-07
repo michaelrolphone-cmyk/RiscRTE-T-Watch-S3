@@ -1,0 +1,75 @@
+name: Publish accepted complete Watch 1.0.7
+on:
+  pull_request:
+    paths:
+      - 'release/complete-1.0.7/**'
+      - 'scripts/publish_complete_watch.py'
+      - 'tests/test_complete_watch_release.py'
+      - '.github/workflows/complete-watch-release.yml'
+  push:
+    branches: [main, master]
+    paths:
+      - 'release/complete-1.0.7/**'
+      - 'scripts/publish_complete_watch.py'
+      - 'tests/test_complete_watch_release.py'
+      - '.github/workflows/complete-watch-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: twatch-driver-publication
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing release validation dependencies
+        run: python -m pip install -r scripts/requirements.txt
+      - name: Validate exact accepted bytes and refusal paths
+        run: python -m unittest discover -s tests -p test_complete_watch_release.py -v
+      - name: Package accepted image and independent components without rebuilding
+        run: python scripts/publish_complete_watch.py stage
+      - name: Read-only immutable release and predecessor check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_complete_watch.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-complete-watch-${{ github.event.pull_request.head.sha || github.sha }}
+          path: dist/complete-watch-release/staged/
+          if-no-files-found: error
+  publish:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing release validation dependencies
+        run: python -m pip install -r scripts/requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-complete-watch-${{ github.sha }}
+          path: dist/complete-watch-release/staged
+      - name: Publish verified immutable releases then compare-and-swap the index
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_complete_watch.py publish

@@ -1,0 +1,24 @@
+{
+  "twatch-imu": {
+    "architecture": "xtensa-esp32s3",
+    "archive": "driver-twatch-imu-0.4.1-xtensa-esp32s3.rte.zip",
+    "id": "twatch-imu",
+    "kind": "driver",
+    "sha256": "069973093c2dea18e3ce51d9a916db20ffc95acaebe6a15270621b64ca7ac613",
+    "size_bytes": 66553,
+    "source_sha": "019e6d88a517535c6c8005a2036b7a6c4a829a34",
+    "tag": "driver-twatch-imu-v0.4.1",
+    "version": "0.4.1"
+  },
+  "twatch-pmu": {
+    "architecture": "xtensa-esp32s3",
+    "archive": "driver-twatch-pmu-0.6.1-xtensa-esp32s3.rte.zip",
+    "id": "twatch-pmu",
+    "kind": "driver",
+    "sha256": "1e696ecb391d32bb668e1e32973f32ee5a0d021c4ef36894486f473e25ba7805",
+    "size_bytes": 12480,
+    "source_sha": "019e6d88a517535c6c8005a2036b7a6c4a829a34",
+    "tag": "driver-twatch-pmu-v0.6.1",
+    "version": "0.6.1"
+  }
+}
