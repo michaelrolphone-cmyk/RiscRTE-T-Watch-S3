@@ -15,7 +15,7 @@ APPS=NON_CLOCK_APPS+CLOCK_APPS
 PROVIDERS=('alarm-service','update-fw','update-apps')
 NEW_APPS={'waterfall': {'display_name': 'Waterfall', 'icon': 'solid:f0ec'}, 'file_browser': {'display_name': 'Files', 'icon': 'solid:f07c'}, 'lora_messages': {'display_name': 'LoRa Messages', 'icon': 'solid:f27a'}, 'ble_scanner': {'display_name': 'BLE Scanner', 'icon': 'solid:f7c0'}, 'timecard': {'display_name': 'Timecard', 'icon': 'solid:f274'}, 'ble_touchpad': {'display_name': 'BLE Touchpad', 'icon': 'solid:f245'}, 'ble_buttons': {'display_name': 'BLE Buttons', 'icon': 'solid:f11c'}}
 RADIO_MODELS=('sx1262-433','sx1262-868','sx1262-915','sx1280-2400','selectable')
-ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora','s3-radio-iq','ble-hid','ble-sensors','ble-telemetry','telemetry-battery') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
+ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora','s3-radio-iq','ble-hid','ble-sensors','ble-telemetry','battery-telem') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
@@ -132,7 +132,7 @@ def configure_boot(original):
  b['drivers'].append({'manifest':'s3-radio-iq/manifest.json'})
  require(not any(x['manifest']=='ble-hid/manifest.json' for x in b['drivers']),'Unexpected prior HID provider')
  b['drivers'].append({'manifest':'ble-hid/manifest.json','key_value':[{'key':key,'namespace':10,'access':'read-write'} for key in ('hid_ours','hid_peer','hid_ccc','hid_identity')]})
- for manifest in ('ble-sensors/manifest.json','telemetry-battery/manifest.json','ble-telemetry/manifest.json'):
+ for manifest in ('ble-sensors/manifest.json','battery-telem/manifest.json','ble-telemetry/manifest.json'):
   require(not any(x['manifest']==manifest for x in b['drivers']),'Unexpected prior BLE sensor/telemetry provider')
   b['drivers'].append({'manifest':manifest})
  for row in b['app_capabilities']:
@@ -192,7 +192,7 @@ def verify(artifact,head,root=ROOT,profile='current'):
  require(re.fullmatch('[0-9a-f]{64}',hid.get('api_header_sha256','')) is not None,'HID public ABI proof missing')
  hid_manifest=json.loads(files['ble-hid/manifest.json']);require(hid_manifest.get('id')=='ble-hid' and hid_manifest.get('version')==c['hid']['version'] and hid_manifest.get('requires')==[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')] and hid_manifest.get('provides')==[{'capability':'bluetooth.hid','api':1}],'HID capability authority differs')
  ble_components=r.get('ble_components',{})
- for key,folder,provided in (('ble_sensors','ble-sensors','bluetooth.sensors'),('ble_telemetry','ble-telemetry','bluetooth.telemetry'),('telemetry_battery','telemetry-battery','sensor.telemetry')):
+ for key,folder,provided in (('ble_sensors','ble-sensors','bluetooth.sensors'),('ble_telemetry','ble-telemetry','bluetooth.telemetry'),('telemetry_battery','battery-telem','sensor.telemetry')):
   meta=ble_components.get(key,{});require({k:meta.get(k) for k in c[key]}==c[key],'Current '+folder+' source identity differs')
   built=meta.get('build',{});require(built.get('source_revision')==c[key]['commit'] and built.get('sha256')==sha(files[folder+'/driver.elf']) and built.get('size_bytes')==len(files[folder+'/driver.elf']),'Current '+folder+' target custody differs')
   manifest=json.loads(files[folder+'/manifest.json']);require(manifest.get('id')==c[key]['id'] and manifest.get('version')==c[key]['version'] and manifest.get('provides')==[{'capability':provided,'api':1}],'Current '+folder+' capability authority differs')
