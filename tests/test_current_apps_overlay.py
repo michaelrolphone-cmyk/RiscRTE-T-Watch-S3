@@ -9,7 +9,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);(self.root/'apps').mkdir();self.art=self.root/'artifact';(self.art/'files').mkdir(parents=True);(self.art/'licenses').mkdir()
   (self.art/'debug').mkdir()
   self.cfg={'schema':1,'profile':current.PROFILE,'sources':{n:{'repository':n,'commit':'1'*40} for n in ['system-apps','utilities','productivity','runtime']},'app_versions':{n:'1.0.1' for n in current.APPS},'service_version':'0.4.2','sdr':{'id':'s3-radio-iq-v1','commit':'4'*40,'version':'0.1.1'}}
-  self.cfg['hid']={'id':'ble-hid','commit':'4'*40,'version':'0.1.0'}
+  self.cfg['hid']={'id':'ble-hid','commit':'4'*40,'version':'0.1.1'}
   self.cfg['ble_sensors']={'id':'ble-sensors','commit':'4'*40,'version':'0.1.0'}
   self.cfg['ble_telemetry']={'id':'ble-telemetry','commit':'4'*40,'version':'0.1.0'}
   self.cfg['telemetry_battery']={'id':'telemetry-battery','commit':'4'*40,'version':'0.1.0'}
@@ -40,7 +40,7 @@ class CurrentAppsOverlay(unittest.TestCase):
     if name=='file_browser':v['requires']+=[{'capability':c,'api':1} for c in ('display.output','input.touch.raw','board.battery','storage.installed-files')]
     b=current.encoded(v)
    elif n=='s3-radio-iq/manifest.json':b=current.encoded({'id':'s3-radio-iq-v1','version':'0.1.1','requires':[{'capability':'platform.radio.iq.resource','api':1}],'provides':[{'capability':'radio.iq','api':1}]})
-   elif n=='ble-hid/manifest.json':b=current.encoded({'id':'ble-hid','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')],'provides':[{'capability':'bluetooth.hid','api':1}]})
+   elif n=='ble-hid/manifest.json':b=current.encoded({'id':'ble-hid','version':'0.1.1','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')],'provides':[{'capability':'bluetooth.hid','api':1}]})
    elif n=='ble-sensors/manifest.json':b=current.encoded({'id':'ble-sensors','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock')],'provides':[{'capability':'bluetooth.sensors','api':1}]})
    elif n=='ble-telemetry/manifest.json':b=current.encoded({'id':'ble-telemetry','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','sensor.telemetry')],'provides':[{'capability':'bluetooth.telemetry','api':1}]})
    elif n=='battery-telem/manifest.json':b=current.encoded({'id':'telemetry-battery','version':'0.1.0','requires':[{'capability':'board.battery','api':1}],'provides':[{'capability':'sensor.telemetry','api':1}]})
