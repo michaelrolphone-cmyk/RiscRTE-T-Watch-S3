@@ -1066,7 +1066,7 @@ jobs:
                       if name.endswith('/'):continue
                       target=destination/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(archive.read(name))
           PY_NEXT
-          python scripts/build_next_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
+          python scripts/build_current_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
           python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test
           SANITIZE=1 python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test-san
       - uses: actions/upload-artifact@v4
