@@ -841,7 +841,7 @@ jobs:
         run: |
           python - <<'PY'
           import json, os
-          value=json.load(open('apps/current-runtime-requirements.json'))
+          value=json.load(open('apps/apex-runtime-requirements.json'))
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
               out.write('sha='+value['source_sha']+'\n')
               out.write('version='+value['firmware_version']+'\n')
@@ -866,12 +866,12 @@ jobs:
         run: |
           python - <<'PY_CURRENT'
           import json, os
-          pins=json.load(open('apps/current-apps-sources.json'))['sources']
-          runtime=json.load(open('apps/current-runtime-requirements.json'))['source_sha']
+          pins=json.load(open('apps/apex-apps-sources.json'))['sources']
+          runtime=json.load(open('apps/apex-runtime-requirements.json'))['source_sha']
           if pins['runtime']['commit'] != runtime:
               raise ValueError('Final current-app Runtime differs from paired native source')
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
-              out.write('drivers='+json.load(open('apps/current-apps-sources.json'))['sdr']['commit']+'\n')
+              out.write('drivers='+json.load(open('apps/apex-apps-sources.json'))['sdr']['commit']+'\n')
               for name in ('system-apps','utilities','productivity'):
                   out.write(name.replace('-','_')+'='+pins[name]['commit']+'\n')
           PY_CURRENT
