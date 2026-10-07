@@ -17,7 +17,7 @@ def extract(text,signature):
  raise ValueError('Incomplete loader function')
 p=argparse.ArgumentParser(description=__doc__);p.add_argument('--runtime',type=Path,required=True);g=p.add_mutually_exclusive_group(required=True);g.add_argument('--store',type=Path);g.add_argument('--image',type=Path);g.add_argument('--bin',type=Path);p.add_argument('--utilities',type=Path,required=True);p.add_argument('--output',type=Path,required=True);args=p.parse_args()
 runtime=args.runtime.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
-pins=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sources']
+pins=json.loads((ROOT/'apps/apex-apps-sources.json').read_text())['sources']
 for name,path in [('runtime',runtime),('utilities',args.utilities)]:
  if subprocess.check_output(['git','rev-parse','HEAD'],cwd=path,text=True).strip()!=pins[name]['commit']:raise ValueError('Wrong pinned source: '+name)
  if subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=path,text=True).strip():raise ValueError('Dirty pinned source: '+name)
@@ -25,7 +25,7 @@ image_sha=None
 if args.image or args.bin:
  from read_only_spiffs import read_image
  from current_flash_layout import validate
- deployment=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())['deployment'];validate(deployment,True)
+ deployment=json.loads((ROOT/'apps/apex-runtime-requirements.json').read_text())['deployment'];validate(deployment,True)
  data=(args.image or args.bin).read_bytes();image_sha=hashlib.sha256(data).hexdigest()
  if args.bin:
   if len(data)!=deployment['flash_bytes']:raise ValueError('Wrong full BIN size')
