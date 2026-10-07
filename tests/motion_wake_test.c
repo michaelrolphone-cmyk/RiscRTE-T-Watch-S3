@@ -29,7 +29,7 @@ static bool transact(void*c,uint64_t t,const uint8_t*write,size_t wn,uint8_t*rea
  if(rn){assert(wn==1);if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));assert(offset>=6144&&offset-6144+rn<=sizeof(feature));memcpy(q,feature+offset-6144,rn);}else{assert(reg+rn<=256);memcpy(q,regs+reg,rn);
   if(final_read_xor&&regs[0x56]==(silicon==0x13?0x20:1)&&reg<=final_read_index&&final_read_index<reg+rn)q[final_read_index-reg]^=(uint8_t)final_read_xor;
   if(reg==0x1c){regs[0x1c]=regs[0x1d]=0;initialization_latched=false;}}return true;}
- if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;uploaded=0;reset_count++;return acknowledged;}
+ if(reg==0x7e && wn==2 && p[1]==0xb6){bool acknowledged=(regs[0x7c]&1)&&!(regs[0x7d]&5);memset(regs,0,sizeof(regs));memset(feature,0,sizeof(feature));regs[0]=silicon;regs[0x7c]=3;initialization_latched=false;uploaded=0;reset_count++;return acknowledged;}
  if(reg==0x5e){unsigned offset=2u*((unsigned)regs[0x5b]+((unsigned)regs[0x5c]<<4));if(!regs[0x59]){assert(offset==uploaded && wn==33);assert(!memcmp(p+1,(silicon==0x13?bma423_config_file:bma456h_config_file)+offset,wn-1));uploaded+=wn-1;}else{assert(offset>=6144&&offset-6144+wn-1<=sizeof(feature));memcpy(feature+offset-6144,p+1,wn-1);
   if(force_feature_mask)feature[force_feature_index]|=(uint8_t)force_feature_mask;
   if(lose_sensitivity_write){if(silicon==0x13)feature[0x38]=(uint8_t)((feature[0x38]&~0x0e)|14);else{feature[0x3e]=9;feature[0x3f]=0;}}
@@ -57,19 +57,59 @@ static const risc_i2c_bus_api_v1 bus_api={1,sizeof(bus_api),NULL,claim_bus,trans
 static risc_gpio_bank_api_v1 gpio={.api_version=1,.struct_size=sizeof(gpio),.claim=claim_pin,.write=gpio_write,.read=gpio_read,.release=release_pin,.wake_source=enroll};
 static const risc_platform_clock_api_v1 clock_port={1,sizeof(clock_port),NULL,now,sleep_ms};
 #include "../drivers/twatch_imu/driver.c"
+static bool start_fixture(void){
+ const risc_hardware_device_v1 h={1,sizeof(h),7,"bosch,bma4xx","unspecified","peripheral.i2c",1,sizeof(config_fixture),&config_fixture};
+ risc_provider_dependency_v1 deps[]={{"hardware.device",1,&h},{"i2c.bus",1,&bus_api},{"gpio.bank",1,&gpio},{"platform.clock",1,&clock_port}};
+ return start(deps,4);
+}
+/* CPU Deep sleep resets provider RAM and ownership, not the powered sensor. */
+static void fresh_cpu(void){
+ bus=NULL;clock_api=NULL;claim=irq_claim=0;gpio_api=NULL;started=false;config=NULL;chip=0;
+ sensor=(struct bma4_dev){0};wake_enrolled=wake_changed=wake_prepared=io_failed=observe_active=false;
+ wake_value=0;memset(wake_saved,0,sizeof(wake_saved));wake_failure_code=0;
+ bus_live=pin_live=enrolled=false;operations=0;
+}
 static void begin(uint8_t id){
  silicon=id;write_wait=short_wait=clock_stalled=false;fake_us=last_write_us=0;memset(regs,0,sizeof(regs));regs[0]=id;regs[0x7c]=3;operations=fail_at=uploaded=reset_count=delay_total=0;held_line=fail_enroll=fail_withdraw=fail_gpio=wrong_status=false;
  force_feature_index=force_feature_mask=force_reg_index=force_reg_mask=0;lose_sensitivity_write=alter_reserved_word=false;
  final_read_index=final_read_xor=0;
  initialization_event=initialization_latched=fail_reset_always=false;
  config_fixture=(tw_hw_i2c_device_v1){.struct_size=sizeof(config_fixture),.bus={.struct_size=sizeof(risc_hw_bus_v1),.instance_id=101,.kind=RISC_HW_BUS_I2C,.controller=0,.frequency_hz=100000,.sclk=-1,.mosi=-1,.miso=-1,.sda=10,.scl=11},.address=25,.irq=14,.irq_active_high=1,.irq_pull_up=0,.chip_id=id};
- const risc_hardware_device_v1 h={1,sizeof(h),7,"bosch,bma4xx","unspecified","peripheral.i2c",1,sizeof(config_fixture),&config_fixture};
- risc_provider_dependency_v1 deps[]={{"hardware.device",1,&h},{"i2c.bus",1,&bus_api},{"gpio.bank",1,&gpio},{"platform.clock",1,&clock_port}};
- assert(start(deps,4));operations=0;
+ assert(start_fixture());operations=0;
 }
 static void restored(void){assert(!enrolled&&!wake_changed&&!wake_prepared&&regs[0x40]==0xa8&&regs[0x41]==1&&regs[0x7c]==0&&regs[0x7d]==4);}
 int main(void){
  for(unsigned variant=0;variant<2;variant++){uint8_t id=variant?0x16:0x13;
+  /* Deep-wake reactivation must reset the still-powered detector safely.
+   * Repeat with latched wake status and preserve the sensor across each CPU
+   * reset. A cold fixture alone cannot catch this entry path. */
+  begin(id);
+  for(unsigned cycle=0;cycle<5;cycle++){
+   assert(prepare_wake(NULL));assert(regs[0x7d]&4);regs[0x1c]=variant?1:0x20;initialization_latched=true;
+   bool wake_line=false;assert(gpio_read(NULL,irq_claim,&wake_line) && wake_line);
+   fresh_cpu();assert(initialization_latched && regs[0x1c]);assert(start_fixture());
+   assert(!enrolled && started && regs[0x7d]==4 && !regs[0x1c]);
+   assert(gpio_read(NULL,irq_claim,&wake_line) && !wake_line);
+  }
+  unsigned startup_count=operations;assert(quiesce());
+  /* Startup must fail closed on every transport error, without accepting a
+   * failed reset ACK. A later explicit activation may retry after cleanup. */
+  for(unsigned failure=1;failure<=startup_count;failure++){
+   begin(id);assert(prepare_wake(NULL));fresh_cpu();fail_at=failure;
+   assert(!start_fixture() && !started && !bus_live && !pin_live && !enrolled);
+   fail_at=0;assert(start_fixture());assert(quiesce());
+  }
+  /* CPU-only restart from ordinary sampling (APS off) has the same contract. */
+  begin(id);assert(regs[0x7c]==0 && regs[0x7d]==4);fresh_cpu();assert(start_fixture());assert(quiesce());
+  begin(id);assert(prepare_wake(NULL));fresh_cpu();fail_reset_always=true;
+  assert(!start_fixture() && !started && !bus_live && !pin_live);
+  fail_reset_always=false;assert(start_fixture());assert(quiesce());
+  begin(id);fresh_cpu();clock_stalled=true;
+  assert(!start_fixture() && operations==1 && !started && !bus_live && !pin_live);
+  clock_stalled=false;assert(start_fixture());assert(quiesce());
+  /* Verify the configured identity before any new power-state writes. */
+  begin(id);fresh_cpu();regs[0]=variant?0x13:0x16;unsigned resets=reset_count;
+  assert(!start_fixture() && operations==1 && reset_count==resets && !bus_live && !pin_live);
   /* The old running-state reset can physically succeed while losing ACK. */
   begin(id);sensor=(struct bma4_dev){.intf=BMA4_I2C_INTF,.bus_read=sensor_read,.bus_write=sensor_write,.delay_us=sensor_delay,.read_write_len=32};io_failed=false;
   assert(bma4_soft_reset(&sensor)==BMA4_E_COM_FAIL && io_failed && regs[0x7c]==3 && !regs[0x7d] && !regs[0x41]);
@@ -106,6 +146,36 @@ int main(void){
   for(unsigned i=0;i<8;i++)if((1u<<i)!=(variant?1u:32u)){begin(id);force_reg_index=0x56;force_reg_mask=1u<<i;assert(!prepare_wake(NULL)&&enrolled);force_reg_mask=0;assert(resume_wake(NULL));restored();assert(quiesce());}
   const unsigned read_indices[]={0x57,0x58,0x53,0x53,0x53,0x53,0x55};const unsigned read_bits[]={1,128,2,8,4,16,1};
   for(unsigned i=0;i<sizeof(read_indices)/sizeof(read_indices[0]);i++){begin(id);final_read_index=read_indices[i];final_read_xor=read_bits[i];assert(!prepare_wake(NULL)&&enrolled);final_read_xor=0;assert(resume_wake(NULL));restored();assert(prepare_wake(NULL));assert(resume_wake(NULL));assert(quiesce());}
+  /* Every encoded setting uses actual vendor semantics and readback; the
+   * observation suffix never acknowledges an ordinary prepared sleep. */
+  for(unsigned value=0;value<=(variant?15u:7u);value++){
+   begin(id);twatch_tap_info_v1 info={.struct_size=sizeof(info)};
+   assert(tap_info(NULL,&info) && info.profile==(variant?2u:1u) && info.minimum==0 && info.maximum==(variant?15u:7u));
+   assert(!tap_configure(NULL,(uint16_t)(info.maximum+1)) && !operations);
+   assert(tap_configure(NULL,(uint16_t)value) && prepare_wake(NULL));
+   assert((variant?(unsigned)feature[0x3e]:(unsigned)((feature[0x38]&14)>>1))==value);
+   twatch_tap_observation_v1 sample={.struct_size=sizeof(sample)};
+   assert(!tap_observe(NULL,&sample) && !tap_configure(NULL,0));
+   assert(resume_wake(NULL));restored();
+   assert(tap_observe_begin(NULL,(uint16_t)value));
+   regs[0x1c]=variant?1:0x20;regs[3]=0x80;
+   regs[0x12]=0;regs[0x13]=0x40;regs[0x14]=0;regs[0x15]=0xc0;regs[0x16]=0;regs[0x17]=0x20;
+   assert(tap_observe(NULL,&sample) && sample.double_tap && sample.sample_ready &&
+       sample.x_mg==1000 && sample.y_mg==-1000 && sample.z_mg==500 && !regs[0x1c]);
+   regs[3]=0;assert(tap_observe(NULL,&sample) && !sample.double_tap && !sample.sample_ready && !sample.x_mg);
+   assert(resume_wake(NULL));restored();assert(!observe_active && !tap_observe(NULL,&sample));assert(quiesce());
+  }
+  begin(id);assert(tap_observe_begin(NULL,0));regs[3]=0x80;
+  twatch_tap_observation_v1 sample={.struct_size=sizeof(sample)};
+  operations=0;assert(tap_observe(NULL,&sample));unsigned observed_transfers=operations;
+  assert(resume_wake(NULL));assert(quiesce());
+  for(unsigned failure=1;failure<=observed_transfers;failure++){
+   begin(id);assert(tap_observe_begin(NULL,0));regs[3]=0x80;operations=0;fail_at=failure;
+   sample=(twatch_tap_observation_v1){.struct_size=sizeof(sample),.x_mg=123};
+   assert(!tap_observe(NULL,&sample) && sample.x_mg==123 && enrolled && observe_active);
+   fail_at=0;assert(resume_wake(NULL));restored();assert(!observe_active);assert(quiesce());
+  }
+  printf("BMA%u fresh-CPU retained-sensor startup: 5 Deep cycles, %u activation transfers fault-injected PASS\n",variant?456:423,startup_count);
   printf("BMA%u actual Bosch image/configuration: %u preparation transfers, %u rollback transfers fault-injected, retry/held IRQ/cleanup PASS\n",variant?456:423,count,cleanup_count);
  }
 }

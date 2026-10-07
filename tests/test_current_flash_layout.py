@@ -20,6 +20,12 @@ class CurrentFlashLayout(unittest.TestCase):
    with self.assertRaises(ValueError):validate(wrong,new)
   wrong=self.spec(False);wrong['layout']='unknown'
   with self.assertRaises(ValueError):validate(wrong)
+ def test_iq_target_requires_explicit_marker_and_unchanged_geometry(self):
+  spec=self.spec(True);spec['target']='esp32s3-16mb-appdata-iq'
+  with self.assertRaises(ValueError):validate(spec,True)
+  spec['radio_iq']=True;self.assertTrue(validate(spec,True))
+  spec['partitions']['appdata']['offset']+=4096
+  with self.assertRaises(ValueError):validate(spec,True)
  def test_initial_image_bounds_and_erased_bank(self):
   import hashlib
   parts={**self.components(),'bootfs.bin':b'\xee'*0x510000,'appdata.bin':b'\xcc'*0x80000};digest=hashlib.sha256(parts['appdata.bin']).hexdigest()

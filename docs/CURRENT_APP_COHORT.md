@@ -13,7 +13,7 @@ and frequency labels by detector confidence with canonical amplitude. Version
 0.4.2 keeps requested sampling active across idle periods and bounded RX waits,
 resumes capture after settled alarm cues, and improves room/event learning.
 Spectrum
-keeps KV API2 namespace7; shared preferences remain KV API1 namespace1, and the
+keeps KV API2 namespace7; shared preferences remain KV API 1 namespace 1, and the
 LoRa picker keeps its versioned profile in namespace9. File Browser receives only
 the read-only installed-files allowlist. Watch navigation is explicitly supplied
 through its local battery-event adapter.
@@ -38,3 +38,11 @@ authority, build commands, loader memory measurements, overwrite classification
 and validation limits. The configured source pins, build records, actual final
 store hashes and exact-head CI determine candidate provenance. Source preparation
 and host execution do not qualify physical wake, RF, heap or flash behavior.
+
+## Next SDR test cohort
+
+Watch 1.0.4 adds Waterfall through an opt-in, reserved-SRAM Runtime 0.1.34 target.
+The20-app/18-provider candidate preserves the existing board and all old grants.
+It requires the native-first, then full-cohort upgrade described in
+[SDR Waterfall](SDR_WATERFALL.md); its full initial image is not a data-preserving
+upgrade. This source does not alter the released 1.0.2 record or assets.

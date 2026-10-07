@@ -27,7 +27,9 @@ jobs:
           tar -xzf "$RUNNER_TEMP/toolchain.tar.gz" -C "$RUNNER_TEMP/toolchain"
           echo "TWATCH_CC=$RUNNER_TEMP/toolchain/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc" >> "$GITHUB_ENV"
       - name: Release automation tests
-        run: python -m unittest discover -s tests -p 'test_*releases.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_*releases.py' -v
+          python -m unittest discover -s tests -p test_sdr_publication.py -v
       - name: Host contract fixtures with UBSan
         run: |
           python scripts/test_contracts.py
@@ -818,6 +820,9 @@ jobs:
 
 
   latest-main-image:
+    permissions:
+      contents: read
+      actions: read
     needs: [software-checks, alarm-integration, points-integration, points-store-faces, wifi-integration, production-store-admission, update-integration, update-cross-layer]
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-22.04
@@ -840,12 +845,20 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
               out.write('sha='+value['source_sha']+'\n')
               out.write('version='+value['firmware_version']+'\n')
+              out.write('previous_sha='+json.load(open('apps/next-cohort-baseline.json'))['runtime_source_sha']+'\n')
           PY
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE
           ref: ${{ steps.runtime.outputs.sha }}
           path: .latest/runtime
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.runtime.outputs.previous_sha }}
+          path: .latest/previous-runtime
           fetch-depth: 0
           persist-credentials: false
       - name: Read exact integrated current-app source pins
@@ -858,6 +871,7 @@ jobs:
           if pins['runtime']['commit'] != runtime:
               raise ValueError('Final current-app Runtime differs from paired native source')
           with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('drivers='+json.load(open('apps/current-apps-sources.json'))['sdr']['commit']+'\n')
               for name in ('system-apps','utilities','productivity'):
                   out.write(name.replace('-','_')+'='+pins[name]['commit']+'\n')
           PY_CURRENT
@@ -878,6 +892,12 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE-Productivity
           ref: ${{ steps.current.outputs.productivity }}
           path: .latest/current-productivity
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Drivers
+          ref: ${{ steps.current.outputs.drivers }}
+          path: .latest/current-drivers
           persist-credentials: false
       - name: Install pinned build tools
         run: |
@@ -902,9 +922,9 @@ jobs:
           python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
           python scripts/app_data_image.py --littlefs-source ../littlefs-source/src/littlefs --output build/current-initial-appdata
           APP_DATA_INITIAL_IMAGE=build/current-initial-appdata bash test/run_app_data_layout_test.sh
-          pio run -e esp32s3-16mb-appdata -j 1
-          APP_DATA_TEST=1 BOOTLOADER_FILE=.pio/build/esp32s3-16mb-appdata/bootloader.bin bash test/run_native_bank_test.sh
-          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA" --app-data --app-data-image build/current-initial-appdata
+          pio run -e esp32s3-16mb-appdata-iq -j 1
+          APP_DATA_TEST=1 BOOTLOADER_FILE=.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin bash test/run_native_bank_test.sh
+          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA" --app-data --radio-iq --app-data-image build/current-initial-appdata
       - uses: actions/download-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -922,6 +942,7 @@ jobs:
           python scripts/build_current_apps.py --motion-model bma423 --radio-model selectable \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --runtime .latest/runtime \
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
@@ -929,6 +950,7 @@ jobs:
           python scripts/build_current_apps.py --motion-model bma456h --radio-model selectable \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --runtime .latest/runtime \
             --baseline .latest/watch-artifact/audio-common/audio-tools-common.zip \
@@ -939,11 +961,15 @@ jobs:
           python -m unittest discover -s tests -p test_current_bootfs.py -v
           python -m unittest discover -s tests -p test_current_updates.py -v
           python -m unittest discover -s tests -p test_current_cohort.py -v
+          python -m unittest discover -s tests -p test_next_watch_cohort.py -v
+          python -m unittest discover -s tests -p test_midpoint_watch_cohort.py -v
           python -m unittest discover -s tests -p test_compact_current_elf.py -v
+          python scripts/test_current_launcher_catalog.py --system-apps .latest/current-system --current-apps-artifact-dir dist/current-apps --output dist/current-launcher-catalog-proof.json
           python scripts/test_compact_current_runtime.py --runtime .latest/runtime --output dist/compaction-runtime-proof.json
           python scripts/test_quick_clock.py --system-apps .latest/current-system
           python .latest/current-system/scripts/test_quick_actions.py
           python scripts/test_alarm_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
+          python scripts/test_alarm_sleep_resume.py --system-apps .latest/current-system --utilities .latest/current-utilities --runtime .latest/runtime
           python scripts/test_points_integration.py --system-apps .latest/current-system --utilities .latest/current-utilities
           python scripts/test_points_cold_boot_idle.py --system-apps .latest/current-system --utilities .latest/current-utilities
       - name: Assemble explicit initial app-data Watch candidates
@@ -955,7 +981,7 @@ jobs:
             --points-artifact-dir .latest/points-artifact \
             --current-apps-artifact-dir dist/current-apps \
             --runtime-source .latest/runtime \
-            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main
@@ -964,7 +990,7 @@ jobs:
             --points-artifact-dir .latest/points-artifact \
             --current-apps-artifact-dir dist/current-apps-bma456h \
             --runtime-source .latest/runtime \
-            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata \
+            --runtime-candidate .latest/runtime/dist/esp32s3-16mb-appdata-iq \
             --mkspiffs "$HOME/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino" \
             --watch-head "$TWATCH_HEAD" \
             --output dist/latest-main-bma456h
@@ -977,46 +1003,82 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist/current-update
-          APP_DATA_TEST=1 BUILD_DIR="$PWD/dist/current-update/normal" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata/bootloader.bin 2>&1 | tee dist/current-update/normal.log
-          APP_DATA_TEST=1 SANITIZE=1 BUILD_DIR="$PWD/dist/current-update/sanitized" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata/bootloader.bin 2>&1 | tee dist/current-update/sanitized.log
+          APP_DATA_TEST=1 BUILD_DIR="$PWD/dist/current-update/normal" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin 2>&1 | tee dist/current-update/normal.log
+          APP_DATA_TEST=1 SANITIZE=1 BUILD_DIR="$PWD/dist/current-update/sanitized" bash tests/update_cross_layer/run.sh .latest/runtime .latest/current-system .latest/runtime/.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin 2>&1 | tee dist/current-update/sanitized.log
       - name: Execute the actual final current-app store through Runtime
         run: |
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
             --runtime .latest/runtime \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps \
-            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata-iq/firmware.elf \
             --bin dist/latest-main/twatch-s3-main-*.bin \
             --output dist/current-runtime/plain
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
             --runtime .latest/runtime \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps \
-            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata-iq/firmware.elf \
             --bin dist/latest-main/twatch-s3-main-*.bin \
             --output dist/current-runtime/sanitized
           SANITIZE=0 python scripts/test_current_apps_runtime.py \
             --runtime .latest/runtime \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps-bma456h \
-            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata-iq/firmware.elf \
             --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
             --output dist/current-runtime-bma456h/plain
           SANITIZE=1 ADDRESS_SANITIZE=1 python scripts/test_current_apps_runtime.py \
             --runtime .latest/runtime \
             --system-apps .latest/current-system \
             --utilities .latest/current-utilities \
+            --drivers .latest/current-drivers \
             --productivity .latest/current-productivity \
             --current-apps-artifact-dir dist/current-apps-bma456h \
-            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata/firmware.elf \
+            --native-elf .latest/runtime/dist/esp32s3-16mb-appdata-iq/firmware.elf \
             --bin dist/latest-main-bma456h/twatch-s3-main-*.bin \
             --output dist/current-runtime-bma456h/sanitized
+      - name: Verify the exact accepted SDR predecessor and next cohort
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY_NEXT'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          from publish_watch_product import checked_zip
+          pins=json.load(open('apps/next-cohort-baseline.json'))
+          for kind,item in pins['artifacts'].items():
+              data=subprocess.check_output(['gh','api','repos/'+pins['repository']+'/actions/artifacts/'+str(item['id'])+'/zip'])
+              if hashlib.sha256(data).hexdigest()!=item['sha256']:raise ValueError('Accepted predecessor artifact differs: '+kind)
+              destination=Path('.latest/accepted-sdr')/kind
+              with checked_zip(data) as archive:
+                  for name in archive.namelist():
+                      if name.endswith('/'):continue
+                      target=destination/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(archive.read(name))
+          PY_NEXT
+          python scripts/build_next_watch_cohort.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --apps-dir dist/current-apps --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-cohort
+          python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test
+          SANITIZE=1 python scripts/test_next_watch_upgrade.py --previous-bundle .latest/accepted-sdr/bundle/sdr-upgrade --candidate-bundle dist/next-watch-cohort --runtime .latest/runtime --native-dir .latest/runtime/dist/esp32s3-16mb-appdata-iq --previous-runtime .latest/previous-runtime --previous-native-dir .latest/accepted-sdr/native --output dist/next-watch-upgrade-test-san
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-next-cohort-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/next-watch-cohort/
+            dist/current-launcher-catalog-proof.json
+            dist/next-watch-upgrade-test/next-watch-upgrade-proof.json
+            dist/next-watch-upgrade-test-san/next-watch-upgrade-proof.json
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-current-runtime-${{ github.event.pull_request.head.sha || github.sha }}
@@ -1036,7 +1098,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: twatch-native-runtime-${{ github.event.pull_request.head.sha || github.sha }}
-          path: .latest/runtime/dist/esp32s3-16mb-appdata/
+          path: .latest/runtime/dist/esp32s3-16mb-appdata-iq/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30

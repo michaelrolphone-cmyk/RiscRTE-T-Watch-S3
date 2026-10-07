@@ -36,27 +36,7 @@ extern "C" {
 #endif
 /* Board-local capabilities. Runtime treats the id as opaque. These are not
  * upstream RiscRTE capabilities until a later ABI promotion. */
-#define TWATCH_MOTION_API_V1 1u
-#define TWATCH_MOTION_CAPABILITY "motion.accel"
-typedef struct {
-    int16_t x, y, z;
-} twatch_accel_sample_v1;
-typedef struct {
-    uint32_t api_version, struct_size;
-    void *context;
-    bool (*read)(void *context, twatch_accel_sample_v1 *out);
-    bool (*chip_id)(void *context, uint8_t *out);
-    /* Autonomous sensor double-knock only. prepare may partially mutate;
-     * pair every attempt with resume unless native sleep returns RETAINED.
-     * pending observes the latched wire without acknowledging it. */
-    bool (*prepare_wake)(void *context);
-    bool (*wake_pending)(void *context,bool *pending);
-    bool (*resume_wake)(void *context);
-    uint32_t (*wake_error)(void *context); /* Optional read-only preparation guard code. */
-} twatch_motion_api_v1;
-#define TWATCH_MOTION_SAMPLE_SIZE offsetof(twatch_motion_api_v1,prepare_wake)
-#define TWATCH_MOTION_WAKE_SIZE offsetof(twatch_motion_api_v1,wake_error)
-#define TWATCH_MOTION_DIAGNOSTIC_SIZE sizeof(twatch_motion_api_v1)
+#include "PortableMotionTap.h"
 
 #define TWATCH_RTC_API_V1 2u
 #define TWATCH_RTC_CAPABILITY "rtc.clock"

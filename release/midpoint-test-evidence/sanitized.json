@@ -1,0 +1,5539 @@
+{
+  "all_flash_snapshots_temporary": true,
+  "bridge_retained_store_self_admission": {
+    "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "candidate_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "cohort_validated": true,
+    "cooperative_yields": 106,
+    "elf_count": 35,
+    "error": "",
+    "hardware_calls": 0,
+    "prepared": true,
+    "storage_calls": 0
+  },
+  "bridge_runtime_admission": {
+    "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+    "candidate_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "cohort_validated": true,
+    "cooperative_yields": 120,
+    "elf_count": 40,
+    "error": "",
+    "hardware_calls": 0,
+    "prepared": true,
+    "storage_calls": 0
+  },
+  "bridge_transactions": [
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-begin",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-begin",
+      "selected": false,
+      "snapshot_sha256": "66664b7f99572427b0df322f911ee22edfcce61740ec6022fcfa5f9e01e56fb5",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 1
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-begin-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "66664b7f99572427b0df322f911ee22edfcce61740ec6022fcfa5f9e01e56fb5",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-begin-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-begin-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "power-begin-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-copy",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 4096,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-copy",
+      "selected": false,
+      "snapshot_sha256": "5624da40c4977c2542eedc905fa1d0c7d1af49eac5e1ff867b24db1085e094b7",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-copy-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "5624da40c4977c2542eedc905fa1d0c7d1af49eac5e1ff867b24db1085e094b7",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-copy-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-copy-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "power-copy-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-download",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-download",
+      "selected": false,
+      "snapshot_sha256": "d66a438762b37450cf1eff6761862530e5e7b04f7f9e3ec57cf6315b17d574b1",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 2598
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-download-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "d66a438762b37450cf1eff6761862530e5e7b04f7f9e3ec57cf6315b17d574b1",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-download-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-download-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "power-download-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "cancel",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "cancel",
+      "selected": false,
+      "snapshot_sha256": "d66a438762b37450cf1eff6761862530e5e7b04f7f9e3ec57cf6315b17d574b1",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 2599
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "cancel-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "d66a438762b37450cf1eff6761862530e5e7b04f7f9e3ec57cf6315b17d574b1",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "cancel-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "cancel-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "cancel-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "corrupt",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "corrupt",
+      "selected": false,
+      "snapshot_sha256": "057edb86abf2341fd0a2cdcc534e44eceec6bc422800069ee0822b9e41568387",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3482
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "corrupt-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "057edb86abf2341fd0a2cdcc534e44eceec6bc422800069ee0822b9e41568387",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "corrupt-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "corrupt-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "corrupt-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-ready",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-ready",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3482
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-ready-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-ready-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-ready-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "power-ready-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "activation-unknown",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-bridge-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-bridge-rejected",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "activation-unknown-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "rollback",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "rollback",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "rollback-bridge-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "rollback-bridge-rejected",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "rollback-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "rollback-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "rollback-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "rollback-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-selected",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-selected",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-selected-bridge-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-selected-bridge-rejected",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-selected-prior-reboot",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "power-selected-retry",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "power-selected-retry-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "power-selected-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.33",
+      "executing_runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+      "executing_runtime_version": "0.1.33",
+      "host_idf_valid_state": false,
+      "label": "success",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 3483
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": false,
+      "label": "success-bridge-pending",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "host_idf_valid_state": true,
+      "label": "success-bridge-valid",
+      "native_bytes": 1209232,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "partial_copy_bytes": 0,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "1c4a5228c8de16b8045f395ac90d5d7c0d322f79de0903c37d92fe48a0bfc84d",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    }
+  ],
+  "device_health_confirmation_executed": false,
+  "final_artifact_acceptance": true,
+  "final_transactions": [
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-begin",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-begin",
+      "selected": false,
+      "snapshot_sha256": "a68ba6c1c9b45bc84cd75a6a5e7d84459b07d34a1fc94c38c1390d5f3e516953",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 1
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-begin-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "a68ba6c1c9b45bc84cd75a6a5e7d84459b07d34a1fc94c38c1390d5f3e516953",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-begin-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-begin-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-begin-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-native",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-native",
+      "selected": false,
+      "snapshot_sha256": "d1fe89b45360a8cde546e5eb4f4dc950f84dd3613b4bf9fa8bce343a0a50c166",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 6
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-native-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "d1fe89b45360a8cde546e5eb4f4dc950f84dd3613b4bf9fa8bce343a0a50c166",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-native-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-native-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-native-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-store",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-store",
+      "selected": false,
+      "snapshot_sha256": "bb7c3f67970cde0426ab7fc9d499ae1c643cb78304063509f1683d7136f9b0f0",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 894
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-store-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "bb7c3f67970cde0426ab7fc9d499ae1c643cb78304063509f1683d7136f9b0f0",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-store-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-store-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-store-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "cancel",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "cancel",
+      "selected": false,
+      "snapshot_sha256": "d1fe89b45360a8cde546e5eb4f4dc950f84dd3613b4bf9fa8bce343a0a50c166",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 7
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "cancel-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "d1fe89b45360a8cde546e5eb4f4dc950f84dd3613b4bf9fa8bce343a0a50c166",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "cancel-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "cancel-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "cancel-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-native",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "corrupt-native",
+      "selected": false,
+      "snapshot_sha256": "8ba1ce3135dbb865332b1fd36259e5eee2648b7d4310baf93d2e750200830ee4",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4783
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-native-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "8ba1ce3135dbb865332b1fd36259e5eee2648b7d4310baf93d2e750200830ee4",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "corrupt-native-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-native-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "corrupt-native-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-store",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "corrupt-store",
+      "selected": false,
+      "snapshot_sha256": "16719610af6a7a0016ad1b41273ccdb447a984c4a60334e78278149a416e6741",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4783
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-store-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "16719610af6a7a0016ad1b41273ccdb447a984c4a60334e78278149a416e6741",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "corrupt-store-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "corrupt-store-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "corrupt-store-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "wrong-runtime-request",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "wrong-runtime-request",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4783
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "wrong-runtime-request-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "wrong-runtime-request-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "wrong-runtime-request-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "wrong-runtime-request-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-native",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-verify-native",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4782
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-native-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-verify-native-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-native-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-verify-native-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-store",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-verify-store",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4782
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-store-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "61e84ca1538f77582a0c01bf6b63f4b042cc6dd6dedfe416dc4cda7cff013aa6",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-verify-store-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-verify-store-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-verify-store-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-ready",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-ready",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4783
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-ready-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-ready-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-ready-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-ready-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "activation-unknown",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-candidate-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-candidate-rejected",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "activation-unknown-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "activation-unknown-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "rollback",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "rollback",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "rollback-candidate-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "rollback-candidate-rejected",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "rollback-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "rollback-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "rollback-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "rollback-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-selected",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "power-selected",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-selected-candidate-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-selected-candidate-rejected",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 1,
+      "scenario": "boot-reject",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-selected-prior-reboot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "power-selected-retry",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "power-selected-retry-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "power-selected-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 1,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.34",
+      "executing_runtime_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+      "executing_runtime_version": "0.1.34",
+      "graph_callbacks": 1,
+      "host_idf_valid_state": false,
+      "label": "success",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 0,
+      "target_executed": false,
+      "writes": 4784
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": false,
+      "label": "success-candidate-pending-boot",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+      "build_runtime_version": "0.1.35",
+      "executing_runtime_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+      "executing_runtime_version": "0.1.35",
+      "graph_callbacks": 0,
+      "host_idf_valid_state": true,
+      "label": "success-candidate-valid-restart",
+      "native_bytes": 1211152,
+      "nvs_appdata_preserved": true,
+      "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+      "payload_bytes": 6519568,
+      "previous_pair_preserved": true,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "snapshot_sha256": "460d0efa7164234955b69deeb89272412254d179a466e602944f651a1b15e4b2",
+      "target_bank": 1,
+      "target_executed": false,
+      "writes": 0
+    }
+  ],
+  "initial_image_emitted": false,
+  "installed_catalog": {
+    "cases": [
+      {
+        "accepted": true,
+        "parser_assertions_passed": true,
+        "scenario": "canonical"
+      },
+      {
+        "accepted": false,
+        "parser_assertions_passed": true,
+        "scenario": "rejected-suffix-from-midpoint-27fba6f2"
+      },
+      {
+        "accepted": false,
+        "parser_assertions_passed": true,
+        "scenario": "rejected-suffix-midpoint"
+      },
+      {
+        "accepted": false,
+        "parser_assertions_passed": true,
+        "scenario": "rejected-suffix-1.0.5"
+      },
+      {
+        "accepted": false,
+        "parser_assertions_passed": true,
+        "scenario": "wrong-release-url"
+      }
+    ],
+    "installed_system_source": "2d16d9dfa7abc50ce916eebc11d81423adef0000",
+    "publishable_catalog_emitted": false,
+    "synthetic_parser_envelope_only": true
+  },
+  "original_runtime_boot_admission": {
+    "error": "",
+    "hardware_calls": 0,
+    "i2s_tables": 2,
+    "prepared": true,
+    "storage_calls": 0,
+    "store_files": 73,
+    "store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44"
+  },
+  "ota": {
+    "asset": "twatch-s3-cohort-1.0.6.bin",
+    "firmware_sha256": "ec634bb1dea4b44a6d67b5737c1658d7b91aa3bed67f15021dfc57f2d2c8d049",
+    "firmware_size": 1211152,
+    "kind": "paired-cohort",
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.35",
+    "sha256": "b6134bcaf5fed3cd954ea800a58ace62fe76715f965c79435baf34668309aa6c",
+    "size": 6519568,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+    "store_abi": 2,
+    "store_sha256": "60e5b8d2eff7b42e8eddc8bb24a9794bd25db30807074273e4d38b3ba4ccbcd5",
+    "store_size": 5308416,
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.6/twatch-s3-cohort-1.0.6.bin",
+    "version": "1.0.6"
+  },
+  "physical_flash_tls_spiffs_and_target_instructions_executed": false,
+  "policy": {
+    "hardware_board_sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+    "migration": {
+      "from": {
+        "product": "twatch-s3",
+        "source_revision": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+        "version": "1.0.2"
+      },
+      "schema": 1,
+      "shared_key_value": [
+        {
+          "api": 1,
+          "application_id": "waterfall",
+          "namespace": 1
+        },
+        {
+          "api": 1,
+          "application_id": "ble_touchpad",
+          "namespace": 1
+        },
+        {
+          "api": 1,
+          "application_id": "ble_buttons",
+          "namespace": 1
+        }
+      ],
+      "to": {
+        "product": "twatch-s3",
+        "version": "1.0.6"
+      }
+    },
+    "only_standard_store_changes": [
+      "boot.json",
+      "cohort.json"
+    ],
+    "ordinary_candidate_policy": {
+      "hardware_board_sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+      "new_shared_migration": {
+        "from": {
+          "product": "twatch-s3",
+          "source_revision": "674729dbade10c15368731745844e6dc2f6ebd0b",
+          "version": "1.0.4"
+        },
+        "schema": 1,
+        "shared_key_value": [
+          {
+            "api": 1,
+            "application_id": "ble_touchpad",
+            "namespace": 1
+          },
+          {
+            "api": 1,
+            "application_id": "ble_buttons",
+            "namespace": 1
+          }
+        ],
+        "to": {
+          "product": "twatch-s3",
+          "version": "1.0.5"
+        }
+      },
+      "prior_app_owners": {
+        "alarms": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            3
+          ]
+        ],
+        "app_store": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "software.update.apps",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ],
+        "audio_spectrum": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "audio.input",
+            1,
+            13
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.app-data",
+            1,
+            2
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            2,
+            7
+          ]
+        ],
+        "battery": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "ble_scanner": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "calculator": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "countdown": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            3
+          ]
+        ],
+        "file_browser": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.installed-files",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "frequency_generator": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "audio.output",
+            1,
+            12
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "lora_messages": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "radio.lora",
+            2,
+            11
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            9
+          ]
+        ],
+        "ota_update": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "software.update.firmware",
+            1,
+            0
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ],
+        "points_in_time": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "settings": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "springboard": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "stopwatch": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            2
+          ]
+        ],
+        "timecard": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.app-data",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "twatch-clock": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "twatch-clock-return": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            5
+          ]
+        ],
+        "waterfall": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "radio.iq",
+            1,
+            0
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ]
+        ],
+        "wifi_settings": [
+          [
+            "alarm.service",
+            1,
+            0
+          ],
+          [
+            "bluetooth.hci",
+            1,
+            16
+          ],
+          [
+            "board.battery",
+            1,
+            4
+          ],
+          [
+            "display.output",
+            1,
+            5
+          ],
+          [
+            "input.touch.raw",
+            1,
+            6
+          ],
+          [
+            "motion.accel",
+            1,
+            7
+          ],
+          [
+            "net.wifi",
+            1,
+            15
+          ],
+          [
+            "rtc.clock",
+            2,
+            8
+          ],
+          [
+            "storage.key-value",
+            1,
+            1
+          ],
+          [
+            "storage.key-value",
+            1,
+            6
+          ]
+        ]
+      },
+      "prior_provider_bindings": [
+        {
+          "instance_id": 1,
+          "manifest": "gpio/manifest.json"
+        },
+        {
+          "instance_id": 2,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 3,
+          "manifest": "i2c/manifest.json"
+        },
+        {
+          "instance_id": 4,
+          "manifest": "pmu/manifest.json"
+        },
+        {
+          "instance_id": 5,
+          "manifest": "panel/manifest.json"
+        },
+        {
+          "instance_id": 6,
+          "manifest": "touch/manifest.json"
+        },
+        {
+          "instance_id": 8,
+          "manifest": "rtc/manifest.json"
+        },
+        {
+          "instance_id": 9,
+          "manifest": "haptic/manifest.json"
+        },
+        {
+          "instance_id": 12,
+          "manifest": "speaker/manifest.json"
+        },
+        {
+          "instance_id": 15,
+          "manifest": "wifi/manifest.json"
+        },
+        {
+          "key_value": [
+            {
+              "access": "read",
+              "key": "alarm_cfg",
+              "namespace": 3
+            },
+            {
+              "access": "read",
+              "key": "timer_cfg",
+              "namespace": 3
+            },
+            {
+              "access": "read-write",
+              "key": "alarm_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read-write",
+              "key": "timer_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read",
+              "key": "alert_mode",
+              "namespace": 1
+            },
+            {
+              "access": "read",
+              "key": "points_cfg",
+              "namespace": 5
+            },
+            {
+              "access": "read-write",
+              "key": "points_occ",
+              "namespace": 4
+            },
+            {
+              "access": "read",
+              "key": "alarm_volume",
+              "namespace": 1
+            },
+            {
+              "access": "read",
+              "key": "alert_dnd",
+              "namespace": 1
+            }
+          ],
+          "manifest": "alarm-service/manifest.json"
+        },
+        {
+          "manifest": "update-fw/manifest.json"
+        },
+        {
+          "manifest": "update-apps/manifest.json"
+        },
+        {
+          "instance_id": 13,
+          "manifest": "mic/manifest.json"
+        },
+        {
+          "instance_id": 16,
+          "manifest": "ble/manifest.json"
+        },
+        {
+          "instance_id": 7,
+          "manifest": "imu/manifest.json"
+        },
+        {
+          "instance_id": 11,
+          "manifest": "lora/manifest.json"
+        },
+        {
+          "manifest": "s3-radio-iq/manifest.json"
+        }
+      ]
+    },
+    "prior_app_owners": {
+      "alarms": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          3
+        ]
+      ],
+      "app_store": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "software.update.apps",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ],
+      "audio_spectrum": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "audio.input",
+          1,
+          13
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.app-data",
+          1,
+          2
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          2,
+          7
+        ]
+      ],
+      "battery": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "ble_scanner": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "calculator": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "countdown": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          3
+        ]
+      ],
+      "file_browser": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.installed-files",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "frequency_generator": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "audio.output",
+          1,
+          12
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "lora_messages": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "radio.lora",
+          2,
+          11
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          9
+        ]
+      ],
+      "ota_update": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "software.update.firmware",
+          1,
+          0
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ],
+      "points_in_time": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "settings": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "springboard": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "stopwatch": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          2
+        ]
+      ],
+      "timecard": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.app-data",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ]
+      ],
+      "twatch-clock": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "twatch-clock-return": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          5
+        ]
+      ],
+      "wifi_settings": [
+        [
+          "alarm.service",
+          1,
+          0
+        ],
+        [
+          "bluetooth.hci",
+          1,
+          16
+        ],
+        [
+          "board.battery",
+          1,
+          4
+        ],
+        [
+          "display.output",
+          1,
+          5
+        ],
+        [
+          "input.touch.raw",
+          1,
+          6
+        ],
+        [
+          "motion.accel",
+          1,
+          7
+        ],
+        [
+          "net.wifi",
+          1,
+          15
+        ],
+        [
+          "rtc.clock",
+          2,
+          8
+        ],
+        [
+          "storage.key-value",
+          1,
+          1
+        ],
+        [
+          "storage.key-value",
+          1,
+          6
+        ]
+      ]
+    },
+    "prior_provider_bindings": [
+      {
+        "instance_id": 1,
+        "manifest": "gpio/manifest.json"
+      },
+      {
+        "instance_id": 2,
+        "manifest": "i2c/manifest.json"
+      },
+      {
+        "instance_id": 3,
+        "manifest": "i2c/manifest.json"
+      },
+      {
+        "instance_id": 4,
+        "manifest": "pmu/manifest.json"
+      },
+      {
+        "instance_id": 5,
+        "manifest": "panel/manifest.json"
+      },
+      {
+        "instance_id": 6,
+        "manifest": "touch/manifest.json"
+      },
+      {
+        "instance_id": 8,
+        "manifest": "rtc/manifest.json"
+      },
+      {
+        "instance_id": 9,
+        "manifest": "haptic/manifest.json"
+      },
+      {
+        "instance_id": 12,
+        "manifest": "speaker/manifest.json"
+      },
+      {
+        "instance_id": 15,
+        "manifest": "wifi/manifest.json"
+      },
+      {
+        "key_value": [
+          {
+            "access": "read",
+            "key": "alarm_cfg",
+            "namespace": 3
+          },
+          {
+            "access": "read",
+            "key": "timer_cfg",
+            "namespace": 3
+          },
+          {
+            "access": "read-write",
+            "key": "alarm_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read-write",
+            "key": "timer_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read",
+            "key": "alert_mode",
+            "namespace": 1
+          },
+          {
+            "access": "read",
+            "key": "points_cfg",
+            "namespace": 5
+          },
+          {
+            "access": "read-write",
+            "key": "points_occ",
+            "namespace": 4
+          },
+          {
+            "access": "read",
+            "key": "alarm_volume",
+            "namespace": 1
+          },
+          {
+            "access": "read",
+            "key": "alert_dnd",
+            "namespace": 1
+          }
+        ],
+        "manifest": "alarm-service/manifest.json"
+      },
+      {
+        "manifest": "update-fw/manifest.json"
+      },
+      {
+        "manifest": "update-apps/manifest.json"
+      },
+      {
+        "instance_id": 13,
+        "manifest": "mic/manifest.json"
+      },
+      {
+        "instance_id": 16,
+        "manifest": "ble/manifest.json"
+      },
+      {
+        "instance_id": 7,
+        "manifest": "imu/manifest.json"
+      },
+      {
+        "instance_id": 11,
+        "manifest": "lora/manifest.json"
+      }
+    ],
+    "profile": "midpoint-27fba6f2"
+  },
+  "profile": "midpoint-27fba6f2",
+  "publication_performed": false,
+  "rejections": [
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "40facb31587f9c1115cd985ae33c41b2862f07d4abf5dd70a5545e32bdb53700",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "frozen-104-wrong-origin",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "7f859acb18f4d19fb1b40257c57a2f72b0ef954bb407e1fd1f9af0fa1d901499",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "ordinary-105-wrong-origin",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "64e40dd7b71aa3bc8ea22d842d7c24d6386cd8e47b2746468271fa28d6a53b8e",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "missing-migration",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "65fdafaf7c58f8132c95f17545088474ac22aac91094f36690c819da6ba008b2",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "wrong-origin-source",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "9c2432aefb8ea76e1d2fa75646b0635bc68cd3163ccda071881af8eb516ade12",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "wrong-origin-version",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "6e114db8bd28278e26fcdad277775d506f4d84c720f004484988531ec301fba1",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "wrong-target-version",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "e7ac2b6acb3b8acb8fa8c7ec96e757493a04bf780c6a782db4bfa3cafb004831",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "unused-migration-entry",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "f9abb29d963d335b5a245448bceee55b767445f7e7a58ade97b035718241cd7d",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "missing-migration-entry",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "7d37eb1a4a7a3e6eb8c34c500982802466aa8faf1e0657f4392209dd4924f6b0",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "new-app-steals-private-kv",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "bc44322b52cd93b95d728ce8d002976962e79b45addf10ea357cb96b2afa665a",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "migration-cannot-share-private-kv",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "41ece3345408f8e767522e463001a50f8e02d9a3221d8a7380137d7b43dd379a",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "new-provider-steals-private-kv",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "439d7f508d731aa5f2c92da6d911b3c259e99495ac8151dc1806bb83ac850b52",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "app-data namespace already owned",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "new-app-steals-app-data",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "befe2bb8428fbb92cac5e20d635090b01d8c5737f192864be0149ebcd0f28ac9",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "prior-app-owner-reassigned",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "939018cd1a0f27497d07ab4c69eb02db754575484eb2097ca9f01fefca2c4e5f",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "prior-provider-owner-reassigned",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "b1bbf90040936a4e09d5bce7689e92f77122308d61e58e7ec7d0af93f9a18ec1",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "hardware-change",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "c11404894607d1a611700169af628e8c22bf5af9f29a79212e1b449ca53263d9",
+      "cohort_validated": false,
+      "cooperative_yields": 2,
+      "elf_count": 40,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "extra-store-member",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "a7294e340d711c96ccd9a30da617aef8c096ce456dde51c9c5046908cbfa2a80",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 21,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "corrupt-app-elf",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "95b91028fa3914301ed938f5a624df018a219068f3f958cad055345d54f6de08",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "missing-waterfall-grant",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a9c01b7e12fa9bcb76c439958a8cc4ff76785893540028f1aa484052cbe8f44",
+      "candidate_store_sha256": "1b1e1b17c95d3b8df4d1b8950e78ae4d10be10012d39cd3cdacc36293656b995",
+      "cohort_validated": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "scenario": "wrong-midpoint-source",
+      "storage_calls": 0
+    }
+  ],
+  "runtime_evidence": {
+    "candidate_required_ancestors": [
+      "0a4f3d18c5d830d32678092fa99284810334b485",
+      "a27bf228ecd99f2896638a30b55802560701180d"
+    ],
+    "candidate_self_admission_uses_candidate_native_exports": true,
+    "candidate_source": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+    "candidate_version": "0.1.35",
+    "compared_sources": {
+      "lib/elf_loader/src/esp_elf_validate.c": {
+        "candidate_sha256": "b9071ae62ba5d758fda077d436cc15c350028c341d3d9b531c3e41ba3d465594",
+        "identical": true,
+        "installed_sha256": "b9071ae62ba5d758fda077d436cc15c350028c341d3d9b531c3e41ba3d465594"
+      },
+      "sdk/driver/RiscBankStoreV1.h": {
+        "candidate_sha256": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8",
+        "identical": true,
+        "installed_sha256": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8"
+      },
+      "src/bootstrap/CohortRuntime.inc": {
+        "candidate_sha256": "7485c77adea4716d8e938fb608a4d9799516f852fdcdda4136f79816f59c6ebb",
+        "identical": true,
+        "installed_sha256": "7485c77adea4716d8e938fb608a4d9799516f852fdcdda4136f79816f59c6ebb"
+      },
+      "src/bootstrap/Runtime.cpp": {
+        "candidate_sha256": "8ca5479bd99f6f6f68b1a74119fd14dc8c73ec1ea3c20cb9c5feeabf05afc87a",
+        "identical": true,
+        "installed_sha256": "8ca5479bd99f6f6f68b1a74119fd14dc8c73ec1ea3c20cb9c5feeabf05afc87a"
+      },
+      "src/bootstrap/Runtime.h": {
+        "candidate_sha256": "0a7a5df79d98cb54ae5c8cd2ea13eecd21350676bcbdeb657f1cdc5ca8c75d0f",
+        "identical": true,
+        "installed_sha256": "0a7a5df79d98cb54ae5c8cd2ea13eecd21350676bcbdeb657f1cdc5ca8c75d0f"
+      },
+      "src/ports/esp32s3/NativeBankStore.cpp": {
+        "candidate_sha256": "7af17368ae8ba93bfcd8d7cbbafec450745068ef9277caf9dc8b5e0b6042722f",
+        "identical": true,
+        "installed_sha256": "7af17368ae8ba93bfcd8d7cbbafec450745068ef9277caf9dc8b5e0b6042722f"
+      },
+      "src/ports/esp32s3/NativeBankStore.h": {
+        "candidate_sha256": "e00a1d841f1c70c343f1fbb613426df21951497be3c60e28975c7a97cdb41a00",
+        "identical": true,
+        "installed_sha256": "e00a1d841f1c70c343f1fbb613426df21951497be3c60e28975c7a97cdb41a00"
+      },
+      "src/runtime/update/Cohort.h": {
+        "candidate_sha256": "392cfbb8e500a7cfbd35584e97290ff6b9cc4ddfac6d08e1abd48ab53ebca8e2",
+        "identical": true,
+        "installed_sha256": "392cfbb8e500a7cfbd35584e97290ff6b9cc4ddfac6d08e1abd48ab53ebca8e2"
+      },
+      "src/runtime/update/CohortMigration.h": {
+        "candidate_sha256": "be4485e61f647729a22694a572165065d8dda5d628109744e316d20559dcca69",
+        "identical": true,
+        "installed_sha256": "be4485e61f647729a22694a572165065d8dda5d628109744e316d20559dcca69"
+      },
+      "src/runtime/update/PairedBank.cpp": {
+        "candidate_sha256": "5e8a12534ba5f35b60196de669c543d962901a482bb558f6907d8e21bb1ff049",
+        "identical": true,
+        "installed_sha256": "5e8a12534ba5f35b60196de669c543d962901a482bb558f6907d8e21bb1ff049"
+      },
+      "src/runtime/update/PairedBank.h": {
+        "candidate_sha256": "6c37a04f540e1576e3622bec56c78994f85e1b14fbca9a3c6ef4dfeda73fd31c",
+        "identical": true,
+        "installed_sha256": "6c37a04f540e1576e3622bec56c78994f85e1b14fbca9a3c6ef4dfeda73fd31c"
+      },
+      "src/runtime/update/StoreAudit.cpp": {
+        "candidate_sha256": "0f0660131655137f046bee56b858c3ca3fac16b72ab4046c5886654ef225a359",
+        "identical": true,
+        "installed_sha256": "0f0660131655137f046bee56b858c3ca3fac16b72ab4046c5886654ef225a359"
+      },
+      "src/runtime/update/StoreAudit.h": {
+        "candidate_sha256": "9e4a0a4e74b4583b43067d9bbebbecfb9e2cdc98874e54010b9e3abaa578c274",
+        "identical": true,
+        "installed_sha256": "9e4a0a4e74b4583b43067d9bbebbecfb9e2cdc98874e54010b9e3abaa578c274"
+      },
+      "src/runtime/update/Version.h": {
+        "candidate_sha256": "e6f3df0a6152e250dcc7056c075c07c3bf3c57c7f4a28e59c98ac0d409e122a7",
+        "identical": true,
+        "installed_sha256": "e6f3df0a6152e250dcc7056c075c07c3bf3c57c7f4a28e59c98ac0d409e122a7"
+      }
+    },
+    "installed_graph_uses_installed_native_exports": true,
+    "installed_source": "0a4f3d18c5d830d32678092fa99284810334b485",
+    "installed_version": "0.1.34",
+    "listed_transaction_sources_identical": true
+  },
+  "schema": 1,
+  "scope": "exact-midpoint-two-stage-upgrade",
+  "source_cohort": {
+    "firmware_sha256": "594d6680523a259fb48bad8cd50ffbb64b504d84583feb6199e9fe36edcef5e6",
+    "firmware_size": 1204992,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.33",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "27fba6f26a64501eadd308d4b1e7225c712ea50b",
+    "store_abi": 2,
+    "version": "1.0.2"
+  },
+  "source_initial_image_sha256": "2225261601729774c7d0d42a88ab1a705c55aa856097af292dce9fa06dd659bf",
+  "target_cohort": {
+    "firmware_sha256": "ec634bb1dea4b44a6d67b5737c1658d7b91aa3bed67f15021dfc57f2d2c8d049",
+    "firmware_size": 1211152,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.35",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+    "store_abi": 2,
+    "version": "1.0.6"
+  },
+  "target_self_admission": {
+    "active_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "candidate_store_sha256": "ecd3a9b0fd58e203abe81f57fddb8f486523617e181a5f5574d9f6c129f8957f",
+    "cohort_validated": true,
+    "cooperative_yields": 120,
+    "elf_count": 40,
+    "error": "",
+    "hardware_calls": 0,
+    "prepared": true,
+    "storage_calls": 0
+  },
+  "version": "1.0.6"
+}

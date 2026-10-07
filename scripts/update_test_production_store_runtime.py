@@ -5,6 +5,7 @@ The delivered provider-registry correction remains in the baseline. This
 lane uses the pinned paired Runtime and real target registry with host relocation.
 """
 import argparse
+import sys
 import contextlib
 import hashlib
 import json
@@ -68,7 +69,7 @@ def _flags():
     return flags
 
 
-def _host(runtime, build, current_utilities=None, app_data=False):
+def _host(runtime, build, current_utilities=None, app_data=False, radio_iq=False):
     registry = runtime / 'test/support/native_registry'
     require((registry / 'build.sh').is_file(), 'Production target registry support is required')
     registry_build = build / 'native-registry'
@@ -93,7 +94,8 @@ def _host(runtime, build, current_utilities=None, app_data=False):
     command([os.environ.get('CXX', 'c++'), '-std=c++17', *_flags(), '-O0',
         '-Wno-missing-field-initializers', '-rdynamic', '-no-pie',
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
-        *(['-DSTORE_ADMISSION_APP_DATA'] if app_data else []),
+        *(['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1'] if app_data else []),
+        *(['-DCURRENT_RADIO_IQ'] if radio_iq else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
@@ -228,7 +230,7 @@ def verify_clock_abi(runtime_source, output=None, compiler=None, current_profile
     return record
 
 
-def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False, app_data=False):
+def execute_many(runtime_source, system_apps, utilities, productivity, stores, output=None, current_profile=False, app_data=False, drivers=None):
     """Run paired defaultClock against exact profile/common/extracted stores.
 
     productivity is recorded for the enclosing product's source custody; its
@@ -252,15 +254,23 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
     before_sources = _source_hashes(runtime, system, utilities)
     record['clock_defines'] = ['WATCH_CLOCK_LAUNCHER', 'WATCH_CLOCK_ALARMS', 'WATCH_CLOCK_POINTS',
                               'PORTABLE_RTC_UTC8_DENVER', 'WATCH_PAIRED_BOOT_CONFIRM']
-    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE']
+    if current_profile:record['clock_defines']+=['WATCH_QUICK_ACTIONS','WATCH_QUICK_RADIOS','WATCH_MOTION_WAKE','WATCH_ALARM_SLEEP_RESUME']
     with _build(output) as build:
-        host = _host(runtime, build, utilities if current_profile else None, app_data)
+        if current_profile:
+            require(drivers is not None,'Exact SDR source required for current execution')
+            drivers=Path(drivers).resolve();expected=json.loads((ROOT/'apps/current-apps-sources.json').read_text())['sdr']
+            record['sdr_source']=source_state(drivers)
+            require(record['sdr_source']['commit']==expected['commit'] and not record['sdr_source']['tracked_changes'],'Wrong or modified SDR source')
+            record['sdr_source_hashes']={str(p):sha(p) for base in ('Drivers/s3_radio_iq_v1','sdk/driver') for p in (drivers/base).glob('*') if p.is_file()}
+        host = _host(runtime, build, utilities if current_profile else None, app_data, radio_iq=current_profile)
         modules = build / 'modules'
         modules.mkdir(exist_ok=True)
         cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')
         includes = ['-I' + str(p) for p in (ROOT / 'sdk/app', ROOT / 'sdk/driver', ROOT / 'include', ROOT)]
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
+        if current_profile:source_manifests['s3-radio-iq-v1']=drivers/'Drivers/s3_radio_iq_v1/manifest.json'
+        if current_profile:source_manifests['ble-hid']=drivers/'Drivers/ble_hid/manifest.json'
         if not current_profile:
             from build_legacy_sleep import legacy_inputs
             legacy=legacy_inputs(ROOT)
@@ -297,6 +307,16 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 source = utilities / 'Services/alarm_service/service.c'
                 extra = ['-DPOINTS_IN_TIME_SERVICE', '-DPORTABLE_RTC_UTC8_DENVER']+(['-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'] if current_profile else [])
                 module_includes = ['-I' + str(p) for p in (utilities / 'lib/Alarm/include', runtime / 'sdk/driver', system / 'lib/PortableApps/include')]
+            elif name=='s3-radio-iq-v1':
+                source=drivers/'Drivers/s3_radio_iq_v1/driver.c'
+                extra=['-DRISC_IQ_HOST_TEST']
+                module_includes=['-I'+str(drivers/'sdk/driver'),'-I'+str(drivers/'test')]
+            elif name=='ble-hid':
+                command([sys.executable,drivers/'scripts/build_ble_hid.py','--host',*(['--sanitize'] if os.environ.get('SANITIZE')=='1' else [])])
+                built=drivers/('build/ble-hid-san' if os.environ.get('SANITIZE')=='1' else 'build/ble-hid-host')/'driver.so'
+                shutil.copy2(built,module)
+                for target in targets:shutil.copy2(module,target)
+                continue
             elif name.startswith('software-update-'):
                 source = system / 'Services/update/service.cpp'
                 compiler, language = cxx, '-std=c++17'

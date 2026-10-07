@@ -167,3 +167,8 @@ The accepted PR6 clock0.3.1 bundle is preserved unchanged.
 Deep using the selected BMA423 or BMA456H ELF driver and generic Runtime wake
 sets. Builds require an explicit sensor model; earlier successful boots do not
 identify the part. Hardware qualification remains pending.
+
+## Next SDR test increment
+
+See [Waterfall integration and staged data-preserving upgrade](docs/SDR_WATERFALL.md).
+Released 1.0.2 remains unchanged; this candidate is not published or hardware-qualified.

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "source_sha": "674729dbade10c15368731745844e6dc2f6ebd0b",
+  "run_id": 37448348806,
+  "run_attempt": 1,
+  "artifacts": {
+    "bundle": {
+      "id": 11406816292,
+      "sha256": "feb7bba400a467013d85cf63ed77d4972fbe7d13a59dd907007d344c902b39f5"
+    },
+    "native": {
+      "id": 11406521415,
+      "sha256": "d1a25cb4c1ec96d8a91274f0d228d88b75a6b2a7f1c641af4c85953b9612d253"
+    }
+  },
+  "native_sha256": "00f5b15ef3701125557e3c5641edab3bcedd79bf53c47a2318c1899cc4257e38",
+  "cohort_sha256": "a51c3c2bfc220740afd8a9ae1560e2ce8332e3dcc71736ce182c54f4b257aa83",
+  "runtime_source_sha": "0a4f3d18c5d830d32678092fa99284810334b485",
+  "runtime_version": "0.1.34"
+}

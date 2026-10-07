@@ -1,0 +1,21 @@
+name: PMU charge initialization
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  charge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python scripts/test_pmu_charge_status.py
+          python scripts/test_pmu_cold_boot_sleep.py
+          python scripts/test_deep_sleep.py

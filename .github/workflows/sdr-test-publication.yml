@@ -1,0 +1,59 @@
+name: Manually publish one accepted SDR test stage
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Read-only preflight or explicitly publish this single stage
+        type: choice
+        options: [preflight, publish]
+        default: preflight
+        required: true
+      stage:
+        description: Native bridge first; cohort only after operator-confirmed restart
+        type: choice
+        options: [native, cohort]
+        default: native
+        required: true
+      expected_index_commit:
+        description: Exact current release-index branch SHA, reviewed before dispatch
+        type: string
+        required: true
+      operator_confirmation:
+        description: Cohort only; exact script-generated statement after observing bridge health
+        type: string
+        required: false
+permissions:
+  contents: read
+  actions: read
+# Serialize with the existing immutable product/driver publishers.
+concurrency:
+  group: twatch-driver-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Guarded publication tests
+        run: python -m unittest discover -s tests -p test_sdr_publication.py -v
+      - name: Recheck accepted CI, immutable bytes and exact predecessor; operate one stage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SDR_ACTION: ${{ inputs.action }}
+          SDR_STAGE: ${{ inputs.stage }}
+          SDR_PREDECESSOR: ${{ inputs.expected_index_commit }}
+          SDR_CONFIRMATION: ${{ inputs.operator_confirmation }}
+        run: |
+          python scripts/publish_sdr_test.py "$SDR_ACTION" \
+            --stage "$SDR_STAGE" --expected-index-commit "$SDR_PREDECESSOR" \
+            --operator-confirmation "$SDR_CONFIRMATION"

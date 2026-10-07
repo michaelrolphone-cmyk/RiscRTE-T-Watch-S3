@@ -10,7 +10,7 @@ def require(ok,message):
 def validate(deployment,initialize_app_data=False):
  app_data=deployment.get('layout')==APP_DATA_LAYOUT
  layout=APP_DATA_LAYOUT if app_data else LEGACY_LAYOUT
- target='esp32s3-16mb-appdata' if app_data else 'esp32s3-16mb-paired'
+ target=('esp32s3-16mb-appdata-iq' if deployment.get('radio_iq') is True else 'esp32s3-16mb-appdata') if app_data else 'esp32s3-16mb-paired'
  abi=2 if app_data else 1
  require(deployment.get('layout')==layout and deployment.get('target')==target and type(deployment.get('store_abi')) is int and deployment['store_abi']==abi,'Unknown or mismatched current layout/ABI')
  require(deployment.get('flash_bytes')==0x1000000 and deployment.get('partitions')==(APP_DATA_PARTS if app_data else LEGACY_PARTS),'Current partition geometry differs')

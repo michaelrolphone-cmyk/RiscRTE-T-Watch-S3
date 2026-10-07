@@ -80,7 +80,7 @@ int main(int argc,char**argv){
 (out/'loader.c').write_text(source);binary=out/'loader'
 subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-Wno-misleading-indentation','-Wno-unused-parameter','-Wno-pointer-to-int-cast','-Wno-int-to-pointer-cast','-I'+str(out),'-I'+str(runtime/'lib/elf_loader/include'),str(out/'loader.c'),'-o',str(binary)],check=True)
 files=sorted(args.store.rglob('*.elf'))
-if len(files)!=35 or len(list(args.store.glob('*.elf')))!=19:raise ValueError('Expected 19 app ELFs and 16 unique provider ELFs for 17 selected instances')
+if len(files)!=40 or len(list(args.store.glob('*.elf')))!=22:raise ValueError('Expected 22 app ELFs and 18 unique provider ELFs for 19 selected instances')
 measurements={}
 for path in files:
  result=subprocess.run([str(binary),str(path)],check=True,capture_output=True,text=True)
@@ -96,7 +96,7 @@ subprocess.run([os.environ.get('CC','cc'),'-std=gnu11','-O1','-g','-Wno-pointer-
 proof=subprocess.run([str(relocator),*map(str,files)],check=True,capture_output=True,text=True)
 (out/'relocations.log').write_text(proof.stdout)
 boot=json.loads((args.store/'boot.json').read_text());providers=0
-if len(boot['drivers'])!=17:raise ValueError('Expected 17 selected provider instances')
+if len(boot['drivers'])!=19:raise ValueError('Expected 19 selected provider instances')
 for item in boot['drivers']:
  manifest_path=Path(item['manifest']);manifest=json.loads((args.store/manifest_path).read_text())
  value=measurements[(manifest_path.parent/manifest['file_name']).as_posix()]
@@ -118,4 +118,4 @@ record={'scope':'offline production loader/relocation execution; no target instr
  'each module allocation below 1 MiB','eight allocator residues; exact mapped bytes and relocation targets; redzones intact'],
  'physical_heap_and_current':'pending'}
 (out/'evidence.json').write_text(json.dumps(record,indent=2)+'\n')
-print('All 35 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)
+print('All 40 target ELFs: allocation failures, PSRAM-only mapping, relocation/alignment and software memory budget passed:',subtotal)

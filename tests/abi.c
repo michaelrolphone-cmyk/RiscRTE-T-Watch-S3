@@ -45,3 +45,9 @@ _Static_assert(offsetof(twatch_radio_api_v2,profile_info)==36,"LoRa v2 prefix un
 _Static_assert(sizeof(twatch_lora_profile_info_v1)==16,"LoRa profile information ABI");
 _Static_assert(offsetof(tw_hw_lora_v2,base)==0,"LoRa config v1 prefix unchanged");
 _Static_assert(offsetof(tw_hw_lora_v2,allowed_profiles)==sizeof(tw_hw_lora_v1),"LoRa config profile suffix");
+
+_Static_assert(TWATCH_MOTION_WAKE_SIZE==32,"motion wake prefix unchanged");
+_Static_assert(TWATCH_MOTION_DIAGNOSTIC_SIZE==36,"motion diagnostic prefix unchanged");
+_Static_assert(TWATCH_MOTION_TAP_SIZE==52,"motion observation suffix size");
+_Static_assert(sizeof(twatch_tap_info_v1)==12,"motion info ABI");
+_Static_assert(sizeof(twatch_tap_observation_v1)==12,"motion observation ABI");

@@ -4,41 +4,56 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "2d16d9dfa7abc50ce916eebc11d81423adef0000"
+      "commit": "1c82933488292be1064336aa592f7b2f7c378902"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "ecc465ac2ff1bd92901e20631435bafa2d4ffb11"
+      "commit": "e6444bb4887d4254a6985eee8e6f9124f1fa7a02"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
-      "commit": "5acbd52d97d90c509e217a128b3ee5a6da30975c"
+      "commit": "460935ca47c3f86d4cb94f0d912c54077330eff4"
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "e08609b465d9368d4e6efc45e377adbdbbb706a1"
+      "commit": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158"
     }
   },
   "app_versions": {
-    "springboard": "1.4.9",
-    "settings": "1.2.5",
-    "wifi_settings": "1.1.3",
-    "ota_update": "1.1.2",
-    "app_store": "1.1.2",
-    "battery": "1.0.10",
-    "calculator": "0.1.5",
-    "stopwatch": "0.1.5",
-    "alarms": "0.2.1",
-    "countdown": "0.1.4",
-    "frequency_generator": "0.1.3",
-    "audio_spectrum": "0.4.3",
-    "points_in_time": "0.4.3",
-    "default": "0.10.1",
-    "clock": "0.10.1",
-    "file_browser": "1.4.0",
-    "lora_messages": "0.1.1",
-    "ble_scanner": "0.1.0",
-    "timecard": "0.1.0"
+    "springboard": "1.5.0",
+    "settings": "1.3.0",
+    "wifi_settings": "1.1.4",
+    "ota_update": "1.1.3",
+    "app_store": "1.1.3",
+    "battery": "1.1.0",
+    "calculator": "0.1.6",
+    "stopwatch": "0.1.6",
+    "alarms": "0.2.2",
+    "countdown": "0.1.5",
+    "frequency_generator": "0.1.4",
+    "audio_spectrum": "0.4.4",
+    "points_in_time": "0.4.4",
+    "default": "0.10.2",
+    "clock": "0.10.2",
+    "file_browser": "1.4.1",
+    "lora_messages": "0.1.2",
+    "ble_scanner": "0.1.1",
+    "timecard": "0.1.1",
+    "waterfall": "0.1.3",
+    "ble_touchpad": "0.1.0",
+    "ble_buttons": "0.1.0"
   },
-  "service_version": "0.4.1"
+  "service_version": "0.4.2",
+  "sdr": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
+    "id": "s3-radio-iq-v1",
+    "version": "0.1.1"
+  },
+  "hid": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
+    "id": "ble-hid",
+    "version": "0.1.0"
+  }
 }

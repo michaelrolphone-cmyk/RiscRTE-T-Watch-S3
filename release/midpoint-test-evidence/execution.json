@@ -1,0 +1,151 @@
+{
+  "original_execution_receipt": {
+    "arguments": {
+      "cmd": "set -e\nfor mode in normal sanitized; do\n  if [ \"$mode\" = sanitized ]; then export SANITIZE=1 ASAN_OPTIONS=detect_leaks=0; else export SANITIZE=0; fi\n  watch-build-tools/python/bin/python watch-hybrid-rtc-fix/scripts/test_midpoint_watch_upgrade.py --installed-bin watch-deep-wake-evidence/installed-midpoint/twatch-s3-tap-midpoint-27fba6f2.bin --previous-bundle watch-sdr-evidence/accepted-674729db/bundle/sdr-upgrade --candidate-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/ordinary-local --midpoint-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint --native-dir watch-deep-wake-evidence/accepted-375a6767/native-runtime --runtime watch-runtime-035 --installed-runtime watch102-runtime-final --previous-runtime watch-sdr-runtime --previous-native-dir watch-sdr-evidence/accepted-674729db/native --installed-system watch102-system-final --output watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode > watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log 2>&1\n  tail -2 watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log\n done",
+      "max_output_tokens": 2000,
+      "yield_time_ms": 1000
+    },
+    "auxiliary_catalog_scope": "The original catalog parser was normal-only in both route runs; catalog-sanitized/proof.json separately records five actual ASan/UBSan parser cases.",
+    "independent_sanitizer_link_evidence": "sanitizer-link-custody.json",
+    "individual_subprocess_status": "Both Python commands succeeded because set -e loop completed with exit 0; individual exit codes were not separately printed.",
+    "initial_result": {
+      "chunk_id": "853d47",
+      "original_token_count": 0,
+      "output": "",
+      "session_id": 94722,
+      "wall_time_seconds": 1.000825105
+    },
+    "missing_fields": [],
+    "modes": {
+      "normal": {
+        "SANITIZE": "0",
+        "log": {
+          "path": "watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-normal.log",
+          "sha256": "71e1d9f58bdaf08e4316eaa24a8cfff9829ff7f7023527a7e547ece2c6ee85f9",
+          "size_bytes": 102
+        },
+        "proof": {
+          "path": "watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-normal/midpoint-watch-upgrade-proof.json",
+          "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+          "size_bytes": 166987
+        }
+      },
+      "sanitized": {
+        "ASAN_OPTIONS": "detect_leaks=0",
+        "SANITIZE": "1",
+        "log": {
+          "path": "watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-sanitized.log",
+          "sha256": "71e1d9f58bdaf08e4316eaa24a8cfff9829ff7f7023527a7e547ece2c6ee85f9",
+          "size_bytes": 102
+        },
+        "proof": {
+          "path": "watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-sanitized/midpoint-watch-upgrade-proof.json",
+          "sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+          "size_bytes": 166987
+        }
+      }
+    },
+    "normal_completion_poll": {
+      "chunk_id": "42f262",
+      "original_token_count": 26,
+      "output": "exact-midpoint-two-stage-upgrade: 128 transaction/reboot/retry checks, 19 admission rejections passed\n",
+      "session_id": 94722,
+      "wall_time_seconds": 60.001269235
+    },
+    "schema": 1,
+    "session_id": 94722,
+    "terminal_result": {
+      "chunk_id": "8a91d7",
+      "exit_code": 0,
+      "original_token_count": 26,
+      "output": "exact-midpoint-two-stage-upgrade: 128 transaction/reboot/retry checks, 19 admission rejections passed\n",
+      "wall_time_seconds": 7.621e-06
+    },
+    "tool": "exec_command"
+  },
+  "ota_sha256": "b6134bcaf5fed3cd954ea800a58ace62fe76715f965c79435baf34668309aa6c",
+  "runs": {
+    "normal": {
+      "command": "set -e\nfor mode in normal sanitized; do\n  if [ \"$mode\" = sanitized ]; then export SANITIZE=1 ASAN_OPTIONS=detect_leaks=0; else export SANITIZE=0; fi\n  watch-build-tools/python/bin/python watch-hybrid-rtc-fix/scripts/test_midpoint_watch_upgrade.py --installed-bin watch-deep-wake-evidence/installed-midpoint/twatch-s3-tap-midpoint-27fba6f2.bin --previous-bundle watch-sdr-evidence/accepted-674729db/bundle/sdr-upgrade --candidate-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/ordinary-local --midpoint-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint --native-dir watch-deep-wake-evidence/accepted-375a6767/native-runtime --runtime watch-runtime-035 --installed-runtime watch102-runtime-final --previous-runtime watch-sdr-runtime --previous-native-dir watch-sdr-evidence/accepted-674729db/native --installed-system watch102-system-final --output watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode > watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log 2>&1\n  tail -2 watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log\n done",
+      "environment": {
+        "SANITIZE": "0"
+      },
+      "exit_code": 0,
+      "exit_evidence": "Both Python commands succeeded because set -e loop completed with exit 0; individual exit codes were not separately printed.",
+      "proof_sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+      "sanitized": false
+    },
+    "sanitized": {
+      "command": "set -e\nfor mode in normal sanitized; do\n  if [ \"$mode\" = sanitized ]; then export SANITIZE=1 ASAN_OPTIONS=detect_leaks=0; else export SANITIZE=0; fi\n  watch-build-tools/python/bin/python watch-hybrid-rtc-fix/scripts/test_midpoint_watch_upgrade.py --installed-bin watch-deep-wake-evidence/installed-midpoint/twatch-s3-tap-midpoint-27fba6f2.bin --previous-bundle watch-sdr-evidence/accepted-674729db/bundle/sdr-upgrade --candidate-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/ordinary-local --midpoint-bundle watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint --native-dir watch-deep-wake-evidence/accepted-375a6767/native-runtime --runtime watch-runtime-035 --installed-runtime watch102-runtime-final --previous-runtime watch-sdr-runtime --previous-native-dir watch-sdr-evidence/accepted-674729db/native --installed-system watch102-system-final --output watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode > watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log 2>&1\n  tail -2 watch-deep-wake-evidence/accepted-9c8ecf7e/midpoint-$mode.log\n done",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=0",
+        "SANITIZE": "1"
+      },
+      "exit_code": 0,
+      "exit_evidence": "Both Python commands succeeded because set -e loop completed with exit 0; individual exit codes were not separately printed.",
+      "proof_sha256": "956c96c2416c89fa02e8c6dbd826ae7f3a16fc8a69bafa2682cfa99940816a13",
+      "sanitized": true
+    }
+  },
+  "sanitizer_linkage_audit": [
+    {
+      "asan": true,
+      "path": "midpoint-sanitized/bridge-graph/admit",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "midpoint-sanitized/bridge-transactions/bridge-native-build/transaction",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "midpoint-sanitized/bridge-transactions/original-native-build/transaction",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "midpoint-sanitized/candidate-graph/admit",
+      "ubsan": true
+    },
+    {
+      "asan": false,
+      "path": "midpoint-sanitized/installed-catalog",
+      "ubsan": false
+    },
+    {
+      "asan": true,
+      "path": "midpoint-sanitized/original-graph/boot",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "ordinary-sanitized/candidate-graph-build/admit-candidate",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "ordinary-sanitized/candidate-native-build/transaction",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "ordinary-sanitized/graph-build/admit-installed",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "ordinary-sanitized/installed-native-build/transaction",
+      "ubsan": true
+    },
+    {
+      "asan": true,
+      "path": "catalog-sanitized/installed-catalog",
+      "scope": "independent five-case parser rerun",
+      "ubsan": true
+    }
+  ],
+  "schema": 1,
+  "scope": "independent-local-exact-artifact-rechecks",
+  "source_sha": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a"
+}

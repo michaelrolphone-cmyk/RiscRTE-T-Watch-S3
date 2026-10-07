@@ -66,6 +66,9 @@ RiscCpu::Hardware hardware() {
   h.hciIdle=[](){++hardwareCalls;return false;};h.hciSafe=[](){++hardwareCalls;return false;};
 #endif
   h.owner = owner;
+#ifdef STORE_ADMISSION_RADIO_IQ
+  h.radioIqReady=[](){++hardwareCalls;return false;};
+#endif
   h.now = []() -> uint64_t { ++hardwareCalls; return 0; };
   h.sleep = [](uint32_t) { ++hardwareCalls; };
   h.gpioOpen = [](uint8_t, bool, bool, bool) { ++hardwareCalls; return false; };
