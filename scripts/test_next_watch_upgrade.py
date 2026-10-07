@@ -8,7 +8,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 
-from build_next_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
+from build_current_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION, STORE_BYTES,
     NEW_APPS, read_previous, read_native, runtime_evidence, require, sha, encoded, document, metadata, check_policy, check_requirements)
 from current_cohort import parse, verify, package
 from check_runtime_store_admission import compile_harness, store_digest
