@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from build_legacy_sleep import legacy_inputs, legacy_manifests, legacy_panel_inputs
 from pmu_sleep_custody import current_driver_packages
+from update_test_production_store_runtime import driver_source_manifests
 
 PANEL_PACKAGE_SHA = '6b59a6c443becc77ca8240cbc7624bca0865e408e45f46973cf0639f8fd6b90d'
 PANEL_ELF_SHA = 'a7cddc560dc83e9a7ea8f408ed17637098bdc64fb9b02b028749f49c9d782aad'
@@ -22,6 +23,22 @@ def sha(data):
 
 
 class LegacyPanelCustody(unittest.TestCase):
+    def test_execution_selects_frozen_panel_with_each_overlay_generation(self):
+        baseline = json.loads((ROOT / 'scripts/update-preservation-baseline.json').read_text())
+        expected = baseline['files']['panel/manifest.json']
+        for current in (False, True):
+            with self.subTest(current_profile=current):
+                manifests, frozen = driver_source_manifests(current, Path('/external-drivers'))
+                self.assertEqual(set(frozen), {'twatch-panel'} if current else {'twatch-gpio', 'twatch-pmu', 'twatch-panel'})
+                deployed = (json.dumps(json.loads(manifests['twatch-panel'].read_text()), indent=2, sort_keys=True) + '\n').encode()
+                self.assertEqual({'size_bytes': len(deployed), 'sha256': sha(deployed)}, expected)
+                source_root = manifests['twatch-panel'].parents[2]
+                self.assertEqual(source_root, legacy_panel_inputs(ROOT))
+                self.assertTrue((source_root / 'sdk/driver/RiscDisplayOutputV1.h').is_file())
+                if current:
+                    self.assertEqual(manifests['twatch-pmu'], ROOT / 'drivers/twatch_pmu/manifest.json')
+                    self.assertEqual(manifests['twatch-gpio'], ROOT / 'drivers/twatch_gpio/manifest.json')
+
     def test_separate_source_closure_preserves_older_sleep_snapshot(self):
         old = legacy_inputs(ROOT)
         panel = legacy_panel_inputs(ROOT)

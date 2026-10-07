@@ -44,6 +44,19 @@ def external_source_hashes(drivers):
     return {str(p): sha(p) for root in roots for p in root.rglob('*') if p.is_file()}
 
 
+def driver_source_manifests(current_profile=False, drivers=None, root=ROOT):
+    from build_legacy_sleep import legacy_manifests
+    sources = {json.loads(p.read_text())['id']: p for p in (root / 'drivers').glob('*/manifest.json')}
+    frozen = {json.loads(p.read_text())['id']: p for p in legacy_manifests(root)}
+    if current_profile:
+        sources.update(external_driver_manifests(drivers))
+        # The historical current-app overlay replaces GPIO/PMU but retains
+        # the original panel. The separate power-repair profile replaces it.
+        frozen = {'twatch-panel': frozen['twatch-panel']}
+    sources.update(frozen)
+    return sources, frozen
+
+
 
 def require(condition, message):
     if not condition:
@@ -288,12 +301,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         cc, cxx = os.environ.get('CC', 'cc'), os.environ.get('CXX', 'c++')
         includes = ['-I' + str(p) for p in (ROOT / 'sdk/app', ROOT / 'sdk/driver', ROOT / 'include', ROOT)]
         clock_includes = ['-I' + str(p) for p in (system / 'lib/PortableApps/include', utilities / 'lib/Alarm/include')] + includes
-        source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
-        if current_profile:source_manifests.update(external_driver_manifests(drivers))
-        if not current_profile:
-            from build_legacy_sleep import legacy_manifests
-            frozen_manifests = {json.loads(p.read_text())['id']: p for p in legacy_manifests(ROOT)}
-            source_manifests.update(frozen_manifests)
+        source_manifests, frozen_manifests = driver_source_manifests(current_profile, drivers)
         selections = {}
         prepared = []
         for index, (label, content) in enumerate(stores):
@@ -346,7 +354,7 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 require(len(candidates) == 1, 'Driver does not have one production source: ' + name)
                 source = candidates[0]
                 module_includes = ['-I'+str(drivers/'sdk/driver')] if current_profile and name in EXTERNAL_DRIVERS else includes
-                if not current_profile and name in frozen_manifests:
+                if name in frozen_manifests:
                     frozen_root = frozen_manifests[name].parents[2]
                     module_includes=['-I'+str(frozen_root/p) for p in ('sdk/driver','include')]+includes
             command([compiler, language, *_flags(), '-fPIC', '-shared', '-fvisibility=hidden',
