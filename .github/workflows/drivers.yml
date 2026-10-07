@@ -1204,7 +1204,7 @@ jobs:
           python scripts/test_low_battery.py --system-apps .low-battery/system
           bash .low-battery/runtime/test/run_radio_iq_test.sh
           SANITIZE=1 bash .low-battery/runtime/test/run_radio_iq_test.sh
-          python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime
+          python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime --low-battery
           python scripts/test_waterfall_serial.py --utilities .low-battery/utilities --system-apps .low-battery/system --runtime .low-battery/runtime --output dist/waterfall-serial
           python scripts/test_alarm_sleep_resume.py --system-apps .low-battery/system --utilities .low-battery/utilities --runtime .low-battery/runtime
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
