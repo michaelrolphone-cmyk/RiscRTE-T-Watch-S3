@@ -43,14 +43,14 @@ class CurrentAppsOverlay(unittest.TestCase):
    elif n=='ble-hid/manifest.json':b=current.encoded({'id':'ble-hid','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','storage.key-value.bound')],'provides':[{'capability':'bluetooth.hid','api':1}]})
    elif n=='ble-sensors/manifest.json':b=current.encoded({'id':'ble-sensors','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock')],'provides':[{'capability':'bluetooth.sensors','api':1}]})
    elif n=='ble-telemetry/manifest.json':b=current.encoded({'id':'ble-telemetry','version':'0.1.0','requires':[{'capability':cap,'api':1} for cap in ('bluetooth.hci','platform.clock','sensor.telemetry')],'provides':[{'capability':'bluetooth.telemetry','api':1}]})
-   elif n=='telemetry-battery/manifest.json':b=current.encoded({'id':'telemetry-battery','version':'0.1.0','requires':[{'capability':'board.battery','api':1}],'provides':[{'capability':'sensor.telemetry','api':1}]})
+   elif n=='battery-telem/manifest.json':b=current.encoded({'id':'telemetry-battery','version':'0.1.0','requires':[{'capability':'board.battery','api':1}],'provides':[{'capability':'sensor.telemetry','api':1}]})
    elif n=='alarm-service/manifest.json':b=current.encoded({'version':'0.4.2'})
    else:b=('current-'+n).encode()
    p.write_bytes(b);r['files'][n]=current.metadata(b)
   r['sdr']={**self.cfg['sdr'],'build':{'source_revision':self.cfg['sdr']['commit'],**r['files']['s3-radio-iq/driver.elf']},'resource_header_sha256':'5'*64}
   r['hid']={**self.cfg['hid'],'build':{'source_revision':self.cfg['hid']['commit'],**r['files']['ble-hid/driver.elf']},'api_header_sha256':'6'*64}
   r['ble_components']={}
-  for key,folder in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
+  for key,folder in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','battery-telem')):
    r['ble_components'][key]={**self.cfg[key],'build':{'source_revision':self.cfg[key]['commit'],**r['files'][folder+'/driver.elf']}}
   r['debug']={}
   for n in current.APPS:
