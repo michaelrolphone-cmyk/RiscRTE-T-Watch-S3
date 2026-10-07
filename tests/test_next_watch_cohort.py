@@ -138,7 +138,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
         import subprocess
         import build_current_watch_cohort as cohort
         head = 'f' * 40
-        candidate = {'source_sha': head, 'firmware_version': '0.1.36'}
+        candidate = {'source_sha': head, 'firmware_version': '0.1.37'}
         for failures in ((1,), (0, 1)):
             with patch.object(cohort, 'checked_source', return_value=head), patch.object(
                     cohort.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], c) for c in failures]):
@@ -146,7 +146,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
                     cohort.native_identity(Path('/unused'), candidate)
         with patch.object(cohort, 'checked_source', return_value=head), patch.object(
                 cohort.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0)) as run:
-            self.assertEqual(cohort.native_identity(Path('/unused'), candidate), (head, '0.1.36'))
+            self.assertEqual(cohort.native_identity(Path('/unused'), candidate), (head, '0.1.37'))
             self.assertEqual([c.args[0][3] for c in run.call_args_list], [cohort.RUNTIME, cohort.DIAGNOSTICS])
 
     def test_installed_identity_cannot_be_replaced_by_candidate(self):
@@ -160,7 +160,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'clean checkout'):
                 cohort.native_identity(Path('/unused'), {'source_sha': head, 'firmware_version': '0.1.34'})
             with self.assertRaisesRegex(ValueError, 'Unsupported'):
-                cohort.native_identity(Path('/unused'), {'source_sha': cohort.RUNTIME, 'firmware_version': '0.1.37'})
+                cohort.native_identity(Path('/unused'), {'source_sha': cohort.RUNTIME, 'firmware_version': '0.1.38'})
 
     def test_every_native_asset_is_hashed_before_post_link_admission(self):
         from unittest.mock import patch
