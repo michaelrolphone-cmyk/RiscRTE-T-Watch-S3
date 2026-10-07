@@ -16,7 +16,7 @@
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "c56e20c9c02c9a9c2061050757add1c6597f1403"
+      "commit": "7cb3047f6049093e2309cab94ddbde993ee47544"
     }
   },
   "app_versions": {
