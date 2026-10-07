@@ -120,6 +120,18 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
  header=drivers/'sdk/driver/RiscBluetoothHidV1.h';require(header.read_bytes()==(repos['utilities']/'lib/Bluetooth/include/RiscBluetoothHidV1.h').read_bytes(),'HID driver/app ABI differs')
  record['hid']={**c['hid'],'build':json.loads((hid/'build-record.json').read_text()),'api_header_sha256':hashlib.sha256(header.read_bytes()).hexdigest()}
+ subprocess.run([sys.executable,str(drivers/'scripts/build_ble_sensors.py')],env={**os.environ,'NATIVE_DRIVER_CC':cc},check=True)
+ record['ble_components']={}
+ for key,identity in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
+  package=drivers/'dist'/identity;dest=files_dir/identity;dest.mkdir()
+  source_manifest=json.loads((drivers/'Drivers'/identity.replace('-','_')/'manifest.json').read_text())
+  require(source_manifest['id']==c[key]['id'] and source_manifest['version']==c[key]['version'],'BLE component identity differs: '+identity)
+  require(json.loads((package/'manifest.json').read_text())==source_manifest,'BLE component built manifest differs: '+identity)
+  for filename in ('driver.elf','manifest.json'):(dest/filename).write_bytes((package/filename).read_bytes())
+  subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
+  record['ble_components'][key]={**c[key],'build':json.loads((package/'build-record.json').read_text())}
+ sensor_header=drivers/'sdk/driver/RiscBluetoothSensorsV1.h';require(sensor_header.read_bytes()==(repos['utilities']/'lib/Bluetooth/include/RiscBluetoothSensorsV1.h').read_bytes(),'BLE sensor driver/app ABI differs')
+ telemetry_header=drivers/'sdk/driver/RiscTelemetryV1.h';require(telemetry_header.read_bytes()==(repos['utilities']/'lib/Bluetooth/include/RiscTelemetryV1.h').read_bytes(),'Telemetry driver/app ABI differs')
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/('timecard_portable.c' if name=='timecard' else name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/('native' if name in ('file_browser','timecard') else '')/(name+'.json')).read_text())
@@ -202,6 +214,9 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for name in ('NimBLE-LICENSE','NimBLE-NOTICE','NimBLE-SOURCE.json','TinyCrypt-LICENSE'):
   original=drivers/'dist/ble-hid'/name;require(original.is_file(),'HID dependency notice missing: '+name)
   target=licenses/'ble-hid'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
+ for identity in ('ble-sensors','ble-telemetry','telemetry-battery'):
+  for original in (drivers/'dist'/identity).glob('LICENSE*'):
+   target=licenses/identity/original.name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(original.read_bytes())
  # Speech detector source attribution and patent grant travel with the ELF.
  voice=repos['utilities']/'lib/VoiceActivity'
  for name in ('LICENSE','AUTHORS','PATENTS','SOURCES.json','PATCHES.md'):
@@ -228,7 +243,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for name in ('current-apps-build.json','source-profile.json'):members[name]=(out/name).read_bytes()
  (out/'current-apps.zip').write_bytes(zip_bytes(members))
  verify(out,record['watch_source'],root,profile=profile)
- print(f'Current final cohort:{len(APPS)} rebuilt apps + alarm service +2 update providers; exact pins and strict targets verified')
+ print(f'Current final cohort:{len(APPS)} rebuilt apps + alarm service +2 update providers + BLE sensor/telemetry providers; exact pins and strict targets verified')
  return record
 if __name__=='__main__':
  p=argparse.ArgumentParser()
