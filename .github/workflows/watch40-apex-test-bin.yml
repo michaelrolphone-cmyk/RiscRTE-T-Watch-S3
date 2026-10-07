@@ -10,7 +10,7 @@ permissions:
   actions: read
 
 env:
-  TARGET_SHA: 8e73715cf471f283f11b997d0c9aaa080b0142a0
+  TARGET_SHA: 647a21af397fcbca7aec486db39c322f7d204b58
   BASELINE_ARTIFACT_ID: "11444396075"
 
 jobs:
