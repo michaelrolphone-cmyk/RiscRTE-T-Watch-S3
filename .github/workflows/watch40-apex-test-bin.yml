@@ -1,0 +1,247 @@
+name: Watch 40 apex test image
+
+on:
+  push:
+    branches:
+      - test/watch40-apex-bin
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TARGET_SHA: 5ccf1e465ccb8d4ba07be516d91476d184342a71
+  BASELINE_ARTIFACT_ID: "11444396075"
+
+jobs:
+  build-apex-image:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 50
+    steps:
+      - name: Check out exact Watch PR 40 source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Read exact apex pins
+        id: pins
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          cfg=json.load(open('apps/low-battery-sources.json'))
+          runtime=json.load(open('apps/current-runtime-requirements.json'))
+          assert cfg['profile']=='watch-low-battery-apps-v1'
+          assert cfg['features']=={'low_battery': True}
+          assert cfg['product_version']=='1.0.7'
+          assert cfg['sources']['runtime']['commit']==runtime['source_sha']
+          assert runtime['firmware_version']=='0.1.36'
+          driver=cfg['sdr']['commit']
+          assert all(cfg[k]['commit']==driver for k in ('hid','ble_sensors','ble_telemetry','telemetry_battery'))
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('system_apps='+cfg['sources']['system-apps']['commit']+'\n')
+              out.write('utilities='+cfg['sources']['utilities']['commit']+'\n')
+              out.write('productivity='+cfg['sources']['productivity']['commit']+'\n')
+              out.write('runtime='+cfg['sources']['runtime']['commit']+'\n')
+              out.write('drivers='+driver+'\n')
+          PY
+
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs.system_apps }}
+          path: .apex/system
+          persist-credentials: false
+
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: .apex/utilities
+          persist-credentials: false
+
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Productivity
+          ref: ${{ steps.pins.outputs.productivity }}
+          path: .apex/productivity
+          persist-credentials: false
+
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .apex/runtime
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Drivers
+          ref: ${{ steps.pins.outputs.drivers }}
+          path: .apex/drivers
+          persist-credentials: false
+
+      - name: Install build tools
+        run: |
+          python -m pip install -r scripts/requirements.txt
+          python -m pip install platformio==6.1.19
+          python -m pip install -r .apex/runtime/requirements-ci.txt
+          pio pkg install --global --tool 'platformio/tool-mkspiffs@2.230.0'
+
+      - uses: actions/checkout@v4
+        with:
+          repository: joltwallet/esp_littlefs
+          ref: 41873c20fb5cdbcf28d7d6cc04e4bcb4a1305317
+          submodules: recursive
+          path: .apex/littlefs-source
+          persist-credentials: false
+
+      - name: Download immutable Watch baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .baseline
+          gh api "repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/$BASELINE_ARTIFACT_ID/zip" > "$RUNNER_TEMP/watch-baseline.zip"
+          unzip -q "$RUNNER_TEMP/watch-baseline.zip" -d .baseline
+          test -f .baseline/audio-common/audio-tools-common.zip
+
+      - name: Build exact Runtime 0.1.36 IQ candidate
+        working-directory: .apex/runtime
+        env:
+          RUNTIME_SHA: ${{ steps.pins.outputs.runtime }}
+        run: |
+          pio run -e esp32s3-16mb-paired -j 1
+          BOOTLOADER_FILE=.pio/build/esp32s3-16mb-paired/bootloader.bin bash test/run_native_bank_test.sh
+          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA"
+          python scripts/app_data_image.py --littlefs-source ../littlefs-source/src/littlefs --output build/current-initial-appdata
+          APP_DATA_INITIAL_IMAGE=build/current-initial-appdata bash test/run_app_data_layout_test.sh
+          pio run -e esp32s3-16mb-appdata-iq -j 1
+          APP_DATA_TEST=1 BOOTLOADER_FILE=.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin bash test/run_native_bank_test.sh
+          python scripts/paired_candidate.py --source-sha "$RUNTIME_SHA" --app-data --radio-iq --app-data-image build/current-initial-appdata
+
+      - name: Validate low-battery policy against apex components
+        run: |
+          export TWATCH_CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
+          python .apex/system/scripts/test_low_battery.py
+          python scripts/test_low_battery.py --system-apps .apex/system
+          python scripts/test_alarm_sleep_resume.py --system-apps .apex/system --utilities .apex/utilities --runtime .apex/runtime
+          python -m unittest discover -s tests -p test_low_battery_profile.py -v
+
+      - name: Build Watch drivers and 1.0.7 app cohorts
+        run: |
+          export TWATCH_CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
+          python scripts/build_twatch_drivers.py
+          for model in bma423 bma456h; do
+            python scripts/build_current_apps.py --profile low-battery --motion-model "$model" --radio-model selectable \
+              --system-apps .apex/system \
+              --utilities .apex/utilities \
+              --drivers .apex/drivers \
+              --productivity .apex/productivity \
+              --runtime .apex/runtime \
+              --baseline .baseline/audio-common/audio-tools-common.zip \
+              --output "dist/apex-apps-$model"
+          done
+
+      - name: Assemble and verify full flash images
+        env:
+          TWATCH_HEAD: ${{ env.TARGET_SHA }}
+        run: |
+          python - <<'PY'
+          import hashlib, importlib.util, json, os, sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          import current_apps_overlay as overlay
+          from build_wifi_common import read_zip
+          from current_bootfs import build as build_bootfs
+          from current_cohort import create, encode as encode_cohort
+          from current_flash_layout import validate as validate_layout, assemble as assemble_flash
+          from build_latest_main_flash import load_runtime_metadata
+          from check_runtime_store_admission import unpack_image
+
+          ROOT=Path('.').resolve()
+          target=os.environ['TWATCH_HEAD']
+          baseline=Path('.baseline/audio-common/audio-tools-common.zip')
+          runtime=Path('.apex/runtime')
+          candidate_dir=runtime/'dist/esp32s3-16mb-appdata-iq'
+          candidate=json.loads((candidate_dir/'candidate.json').read_text())
+          requirements=json.loads((ROOT/'apps/current-runtime-requirements.json').read_text())
+          cfg=overlay.config(ROOT,profile='low-battery')
+          assert candidate['source_sha']==requirements['source_sha']==cfg['sources']['runtime']['commit']
+          assert candidate['firmware_version']==requirements['firmware_version']=='0.1.36'
+          deployment=requirements['deployment']
+          assert validate_layout(deployment,True) is True
+          raw=read_zip(baseline)
+          base_store={n[6:]:b for n,b in raw.items() if n.startswith('store/')}
+          out=ROOT/'dist/apex-test-bin';out.mkdir(parents=True,exist_ok=True)
+          firmware=(candidate_dir/'firmware.bin').read_bytes()
+          metadata=load_runtime_metadata(runtime)
+          mkspiffs=Path.home()/'.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino'
+          for model in ('bma423','bma456h'):
+              files,record=overlay.verify(ROOT/f'dist/apex-apps-{model}',target,ROOT,profile='low-battery')
+              before=dict(base_store)
+              overlay.require(set(overlay.PAYLOADS)-overlay.ADDED_PAYLOADS <= set(before),'Baseline lacks replaced payloads')
+              overlay.require(not (overlay.ADDED_PAYLOADS & set(before)),'Baseline already contains newly-added payloads')
+              overlay.require(json.loads(before['board.json'])==record['baseline_board'],'Baseline board differs')
+              store=dict(before);store.update(files);store['boot.json']=overlay.encoded(record['boot'])
+              overlay.require(set(before)|overlay.ADDED_PAYLOADS==set(store),'Unexpected final store inventory')
+              for row in record['boot']['app_capabilities']:
+                  if row['manifest'] not in store: continue
+                  manifest=json.loads(store[row['manifest']])
+                  required={(q['capability'],q['api']) for q in manifest['requires']}
+                  granted={(g['capability'],g['api']) for g in row['grants']}
+                  overlay.require(required==granted,'Manifest/grant mismatch: '+row['manifest'])
+              overlay.require('cohort.json' not in store,'Baseline unexpectedly contains cohort identity')
+              identity=create(cfg['product_version'],candidate['firmware_version'],target,firmware)
+              store['cohort.json']=encode_cohort(identity)
+              store_size=deployment['partitions']['bootfs0']['size']
+              bootfs,packing=build_bootfs(store,store_size)
+              components={
+                  'bootloader.bin':(candidate_dir/'bootloader.bin').read_bytes(),
+                  'partitions.bin':(candidate_dir/'partitions.bin').read_bytes(),
+                  'firmware.bin':firmware,
+                  'bootfs.bin':bootfs,
+                  'otadata.bin':metadata.initial_otadata(),
+                  'appdata.bin':(candidate_dir/'appdata.bin').read_bytes(),
+              }
+              components['bank_state.bin']=metadata.initial_bank_state(firmware,bootfs,app_data=True)
+              image,parts=assemble_flash(components,deployment,True)
+              offset=deployment['partitions']['bootfs0']['offset']
+              assert unpack_image(image[offset:offset+store_size],mkspiffs,store_size)==store
+              name=f"twatch-s3-1.0.7-apex-{model}-{target[:8]}.bin"
+              path=out/name;path.write_bytes(image)
+              manifest={
+                  'schema':1,'kind':'watch-40-apex-test-full-flash','watch_source':target,
+                  'product_version':cfg['product_version'],'runtime_version':candidate['firmware_version'],
+                  'motion_model':model,'radio_model':'selectable','size_bytes':len(image),
+                  'sha256':hashlib.sha256(image).hexdigest(),'sources':cfg['sources'],
+                  'drivers':{k:cfg[k] for k in ('sdr','hid','ble_sensors','ble_telemetry','telemetry_battery')},
+                  'baseline_artifact_id':int(os.environ.get('BASELINE_ARTIFACT_ID','11444396075')),
+                  'initial_full_flash_overwrites_nvs_and_appdata':True,
+                  'packing':packing,'parts':parts,
+              }
+              (out/(name+'.json')).write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+              print(name,manifest['sha256'])
+          PY
+          python scripts/check_current_loader_memory.py --runtime .apex/runtime --utilities .apex/utilities --bin dist/apex-test-bin/twatch-s3-1.0.7-apex-bma423-*.bin --output dist/apex-loader-bma423
+          python scripts/check_current_loader_memory.py --runtime .apex/runtime --utilities .apex/utilities --bin dist/apex-test-bin/twatch-s3-1.0.7-apex-bma456h-*.bin --output dist/apex-loader-bma456h
+          sha256sum dist/apex-test-bin/*.bin | tee dist/apex-test-bin/SHA256SUMS
+
+      - name: Upload flashable test images
+        uses: actions/upload-artifact@v4
+        with:
+          name: watch40-apex-test-bin-${{ env.TARGET_SHA }}
+          path: |
+            dist/apex-test-bin/
+            dist/apex-loader-bma423/
+            dist/apex-loader-bma456h/
+            dist/apex-apps-bma423/current-apps-build.json
+            dist/apex-apps-bma456h/current-apps-build.json
+          if-no-files-found: error
+          retention-days: 30
