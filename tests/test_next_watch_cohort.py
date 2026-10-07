@@ -136,7 +136,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
     def test_candidate_requires_both_reviewed_ancestors(self):
         from unittest.mock import patch
         import subprocess
-        import build_next_watch_cohort as cohort
+        import build_current_watch_cohort as cohort
         head = 'f' * 40
         candidate = {'source_sha': head, 'firmware_version': '0.1.36'}
         for failures in ((1,), (0, 1)):
@@ -151,7 +151,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
 
     def test_installed_identity_cannot_be_replaced_by_candidate(self):
         from unittest.mock import patch
-        import build_next_watch_cohort as cohort
+        import build_current_watch_cohort as cohort
         head = 'f' * 40
         with patch.object(cohort, 'checked_source', return_value=head):
             with self.assertRaisesRegex(ValueError, 'installed Runtime'):
@@ -165,7 +165,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
     def test_every_native_asset_is_hashed_before_post_link_admission(self):
         from unittest.mock import patch
         from tempfile import TemporaryDirectory
-        import build_next_watch_cohort as cohort
+        import build_current_watch_cohort as cohort
         names = ('firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin', 'appdata.bin',
                  'appdata-image.json', 'partitions-paired-appdata.csv', 'platformio.ini',
                  'requirements-ci.txt', 'radio-iq-proof.json')
@@ -188,7 +188,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
 
 class RuntimeRequirementsTest(unittest.TestCase):
     def setUp(self):
-        import build_next_watch_cohort as cohort
+        import build_current_watch_cohort as cohort
         self.descriptor = document((cohort.ROOT / 'apps/current-runtime-requirements.json').read_bytes())
         self.native = {'source_sha': 'f' * 40, 'firmware_version': '0.1.35',
                        **{k: self.descriptor['deployment'][k] for k in ('target', 'layout', 'flash_bytes', 'store_abi')},
@@ -198,7 +198,7 @@ class RuntimeRequirementsTest(unittest.TestCase):
         self.descriptor.update(source_sha=self.native['source_sha'], firmware_version='0.1.35')
 
     def test_source_version_and_deployment_must_match_native(self):
-        from build_next_watch_cohort import check_requirements
+        from build_current_watch_cohort import check_requirements
         self.assertEqual(check_requirements(self.descriptor, self.native), self.descriptor)
         for mutate in (lambda d: d.update(source_sha='0' * 40),
                        lambda d: d.update(firmware_version='0.1.34'),
@@ -210,7 +210,7 @@ class RuntimeRequirementsTest(unittest.TestCase):
             with self.assertRaises(ValueError):check_requirements(altered, self.native)
 
     def test_missing_or_data_destructive_descriptor_fails_closed(self):
-        from build_next_watch_cohort import check_requirements
+        from build_current_watch_cohort import check_requirements
         with self.assertRaisesRegex(ValueError, 'missing or invalid'):check_requirements(None, self.native)
         for mutate in (lambda d: d['deployment'].update(ordinary_ota_includes_appdata=True),
                        lambda d: d['deployment'].update(existing_8MiB_ota_compatible=True),
