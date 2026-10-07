@@ -42,6 +42,14 @@ static int capture(void *context,uint32_t *pairs,uint32_t count) {
     assert(active && context==&radio.base && pairs && count==RISC_RADIO_IQ_PAIRS);
     assert(portable_radio_services_safe());++captures;return RISC_RADIO_IQ_DUMP_TIMEOUT;
 }
+#ifdef WATERFALL_TRACE_API
+static int capture_traced(void *context,uint32_t *pairs,uint32_t count,risc_radio_iq_trace_v1 trace,void *trace_context) {
+    assert(trace && trace(trace_context,"native-claim"));
+    assert(trace(trace_context,"dump-start"));
+    int result=capture(context,pairs,count);
+    assert(trace(trace_context,"dump-stopped"));return result;
+}
+#endif
 static bool suspend_radio(void *context) { assert(active && context==&radio.base);return true; }
 static bool copy_diagnostics(void *context,risc_radio_iq_diagnostics_v1 *out) {
     assert(active && context==&radio.base && out && out->struct_size==sizeof(*out));
@@ -60,7 +68,7 @@ static bool acquire(const char *name,uint32_t version,uint64_t instance,risc_run
 static bool release(risc_runtime_capability_v1 *grant) {
     assert(active && grant && live && portable_radio_services_safe());++releases;--live;return true;
 }
-static void yield(uint32_t ms) { (void)ms;assert(0); }
+static void yield(uint32_t ms) { assert(active && ms==1); }
 static bool launch(const char *file) {
     assert(active && !strcmp(file,"springboard.elf"));++launches;return true;
 }
@@ -82,14 +90,22 @@ int main(int argc,char **argv) {
     kv=(risc_key_value_v1){.api_version=1,.struct_size=sizeof(kv),.context=&kv,.get=get,.put=put};
     radio=(risc_radio_iq_diagnostics_api_v1){.base={.api_version=1,.struct_size=sizeof(radio),
         .context=&radio.base,.capture_burst=capture,.suspend=suspend_radio},.diagnostics=copy_diagnostics};
+#ifdef WATERFALL_TRACE_API
+    radio.capture_burst_traced=capture_traced;
+#endif
     active=true;app_main();active=false;
-    assert(captures==1 && copies==1 && releases==2 && live==0 && lines==8);
+    assert(captures==1 && copies==1 && releases==2 && live==0);
+#ifdef WATERFALL_TRACE_API
+    assert(lines==12);
+#else
+    assert(lines==8);
+#endif
     assert(launches==(use_back?1u:0u));
     /* Invalidate the complete fixture before replay: no app/provider pointer is
      * needed to print journal-owned copies after app_main and grant release. */
     memset(&app,0,sizeof(app));memset(&runtime_api,0,sizeof(runtime_api));
     memset(&kv,0,sizeof(kv));memset(&radio,0,sizeof(radio));
     waterfall_serial_finish(argv[1],argv[2]);
-    printf("Waterfall %s/%s: capture=4 copies=1 released=2 live=0 diagnostics=8 PASS\n",argv[2],argv[3]);
+    printf("Waterfall %s/%s: capture=4 copies=1 released=2 live=0 diagnostics=%u PASS\n",argv[2],argv[3],lines);
     return 0;
 }

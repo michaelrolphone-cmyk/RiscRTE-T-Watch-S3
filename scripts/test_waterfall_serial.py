@@ -16,6 +16,7 @@ utilities=a.utilities.resolve();system=a.system_apps.resolve();runtime=a.runtime
 for sanitizer in (False,True):
     out=a.output.resolve()/('sanitized' if sanitizer else 'normal');out.mkdir(parents=True,exist_ok=True)
     flags=['-O1','-g','-Wall','-Wextra','-Werror']
+    if 'capture_burst_traced' in (utilities/'Apps/radio_iq_v1.h').read_text():flags+=['-DWATERFALL_TRACE_API']
     if sanitizer:
         flags+=['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame-pointer','-no-pie']
     objects=[]

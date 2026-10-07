@@ -1202,6 +1202,8 @@ jobs:
         run: |
           python .low-battery/system/scripts/test_low_battery.py
           python scripts/test_low_battery.py --system-apps .low-battery/system
+          bash .low-battery/runtime/test/run_radio_iq_test.sh
+          SANITIZE=1 bash .low-battery/runtime/test/run_radio_iq_test.sh
           python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime
           python scripts/test_waterfall_serial.py --utilities .low-battery/utilities --system-apps .low-battery/system --runtime .low-battery/runtime --output dist/waterfall-serial
           python scripts/test_alarm_sleep_resume.py --system-apps .low-battery/system --utilities .low-battery/utilities --runtime .low-battery/runtime
@@ -1212,6 +1214,23 @@ jobs:
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
           path: .low-battery/baseline
+      - name: Compile the exact native IQ backend used by the complete profile
+        working-directory: .low-battery/runtime
+        run: |
+          python -m pip install -r requirements-ci.txt
+          pio run -e esp32s3-16mb-appdata-iq -j 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-complete-profile-native-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/firmware.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/firmware.elf
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/bootloader.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/partitions.bin
+            .low-battery/runtime/.pio/build/esp32s3-16mb-appdata-iq/radio-iq-proof.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Compile and verify all future app targets for both motion models
         run: |
           python scripts/build_twatch_drivers.py
