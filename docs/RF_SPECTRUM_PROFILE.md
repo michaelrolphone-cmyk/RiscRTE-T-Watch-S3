@@ -3,13 +3,14 @@
 The next full 22-app candidate uses the separate `watch-rf-spectrum-apps-v1`
 profile. Waterfall source and deployment version are 0.2.0, and its IQ provider
 is 0.2.0 at Drivers `4088b6892c2e2654b0342f04a7d191068e4a8e2e`. All rebuilt
-apps receive a deployment version newer than accepted 1.0.7. The accepted
-System, Productivity and Runtime 0.1.41 pins are retained. Automatic low battery,
+apps receive a deployment version newer than accepted 1.0.7. System uses the
+narrow QuickActions/launch-guard correction `fcdb5b0a54a11a407bf68c6e35ac2548471cd9f1`;
+accepted Productivity and Runtime 0.1.41 pins are retained. Automatic low battery,
 alarm resume, Hybrid sleep, motion wake, touch corrections, HID and BLE sensor
 providers are retained for the full cohort.
 
 `apps/rf-spectrum-sources.json` pins the completed Utilities source
-`39b8b0edd71bbf2831689aaa45077181eed5b27f`. The profile supports a null Utilities
+`9a4c4aca3d4bb2cac17af26c2ba75d0193a031a2`. The profile supports a null Utilities
 commit while a source checkpoint is still incomplete; builds fail closed until
 the completed clean source is pinned. The exact-pin helper is:
 
@@ -41,7 +42,10 @@ The archive contains all 22 apps, all existing providers, debug ELF custody,
 licenses and exact source/Runtime/storage proofs. Waterfall links System
 `SingleFloatDivisionCompat.c`; its transitive target dependencies are recorded
 and checked to exclude host fixtures. The RF app owns nested Back and root
-launch through `RF_RETURN_APP="springboard.elf"`.
+launch through `RF_RETURN_APP="springboard.elf"`. Waterfall alone enables
+`PORTABLE_APP_LAUNCH_GUARD` so pending settings and failed cleanup can reject an
+adapter-requested Home transition. Ordinary gear taps leave capture running;
+modal cleanup begins only after a QuickActions swipe commits.
 
 ## Storage and migration
 
@@ -77,5 +81,7 @@ The Runtime test reuses accepted target ELFs with candidate metadata to isolate
 production policy admission. It does not qualify the new RF ELF or device
 behavior. Both complete target cohorts, strict ELF admission of those cohorts,
 capacity/packing checks and a separately verified 1.0.7-to-1.0.8 update package
-remain required before publication. This work creates no full images or release
-and changes none of the accepted 1.0.7 or frozen 1.0.6 publication inputs.
+remain required before publication. The separate [RF candidate packager](RF_WATCH_CANDIDATE.md)
+provides those exact-target checks and the preserving update proof. Implementing
+this profile creates no full images or release and changes none of the accepted
+1.0.7 or frozen 1.0.6 publication inputs.

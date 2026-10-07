@@ -99,11 +99,11 @@
       "repository": "michaelrolphone-cmyk/RiscRTE"
     },
     "system-apps": {
-      "commit": "f146d82d4c2bc4d4b6ac97f7be83b04035ad7d60",
+      "commit": "fcdb5b0a54a11a407bf68c6e35ac2548471cd9f1",
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps"
     },
     "utilities": {
-      "commit": "39b8b0edd71bbf2831689aaa45077181eed5b27f",
+      "commit": "9a4c4aca3d4bb2cac17af26c2ba75d0193a031a2",
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities"
     }
   },

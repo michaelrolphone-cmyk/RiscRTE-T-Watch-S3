@@ -108,10 +108,12 @@ class RfSpectrumProfile(unittest.TestCase):
                 self.assertIn('-DRF_STORAGE_INSTANCE=13', following)
                 self.assertIn('-DRF_APP_DATA_INSTANCE=3', following)
                 self.assertIn('-DRF_RETURN_APP="springboard.elf"', following)
+                self.assertIn('-DPORTABLE_APP_LAUNCH_GUARD', following)
                 self.assertNotIn('-DPORTABLE_RETURN_APP="springboard.elf"', following)
                 self.assertIn('-DPORTABLE_RETURN_APP="springboard.elf"', previous)
             else:
                 self.assertEqual(previous, following)
+                self.assertNotIn('-DPORTABLE_APP_LAUNCH_GUARD', following)
         with self.assertRaisesRegex(ValueError, 'automatic low battery'):
             build_current_apps.definitions('waterfall', '0.2.0', rf_spectrum=True)
 
@@ -163,7 +165,7 @@ class RfSpectrumProfile(unittest.TestCase):
                                                                   '0.10.4', True, rf_spectrum=True))
 
     def test_configuration_rejects_namespace_runtime_version_and_source_drift(self):
-        for mutation in ('namespace', 'quota', 'features', 'version', 'source', 'runtime', 'drivers'):
+        for mutation in ('namespace', 'quota', 'features', 'version', 'source', 'runtime', 'system', 'drivers'):
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temp:
                 root = Path(temp)
                 self.copy_profile(root)
@@ -174,6 +176,7 @@ class RfSpectrumProfile(unittest.TestCase):
                 elif mutation == 'version': c['app_versions']['clock'] = '0.10.3'
                 elif mutation == 'source': c['source_app_versions']['waterfall'] = '0.1.5'
                 elif mutation == 'runtime': c['sources']['runtime']['commit'] = '1' * 40
+                elif mutation == 'system': c['sources']['system-apps']['commit'] = '1' * 40
                 else: c['sdr']['commit'] = '1' * 40
                 (root / 'apps/rf-spectrum-sources.json').write_text(json.dumps(c))
                 with self.assertRaises(ValueError): config(root, profile='rf-spectrum', allow_pending=True)

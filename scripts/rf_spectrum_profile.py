@@ -10,6 +10,7 @@ from current_apps_overlay import APPS, ROOT, require
 PROFILE = 'rf-spectrum'
 VERSION = '1.0.8'
 RUNTIME_SOURCE = '4a0891fc0ec10dcd100c6248768cabecaafec888'
+SYSTEM_SOURCE = 'fcdb5b0a54a11a407bf68c6e35ac2548471cd9f1'
 DRIVERS_SOURCE = '4088b6892c2e2654b0342f04a7d191068e4a8e2e'
 STORAGE = {'key_value_api': 2, 'key_value_instance': 13,
            'app_data_api': 1, 'app_data_instance': 3,
@@ -56,8 +57,10 @@ def validate_configuration(c, root=ROOT, *, allow_pending=False):
     expected = {**accepted['source_app_versions'], 'waterfall': '0.2.0'}
     require(c.get('source_app_versions') == expected and c['app_versions']['waterfall'] == '0.2.0',
             'RF source versions differ from reviewed app inputs')
-    for name in ('system-apps', 'productivity', 'runtime'):
+    for name in ('productivity', 'runtime'):
         require(c['sources'][name] == accepted['sources'][name], 'RF accepted source changed: ' + name)
+    require(c['sources']['system-apps'] == {**accepted['sources']['system-apps'], 'commit': SYSTEM_SOURCE},
+            'RF reviewed System QuickActions/launch-guard source differs')
     require(c['sources']['utilities']['repository'] == accepted['sources']['utilities']['repository'],
             'RF Utilities repository differs')
     pin = c['sources']['utilities']['commit']

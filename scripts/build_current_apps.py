@@ -29,7 +29,7 @@ def definitions(name,version,low_battery=False,*,rf_spectrum=False):
  if name in ('ota_update','app_store'):flags+=['-Wno-misleading-indentation','-DPORTABLE_UPDATE_APP','-DPORTABLE_UPDATE_FIRMWARE='+str(int(name=='ota_update')),'-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_UPDATE_RTC_UTC_OFFSET_SECONDS=28800']
  if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60','-DPORTABLE_CATALOG_LIMIT=20']
  if name=='waterfall' and rf_spectrum:
-  return flags+['-DRF_STORAGE_INSTANCE=13','-DRF_APP_DATA_INSTANCE=3','-DRF_RETURN_APP="springboard.elf"']
+  return flags+['-DRF_STORAGE_INSTANCE=13','-DRF_APP_DATA_INSTANCE=3','-DRF_RETURN_APP="springboard.elf"','-DPORTABLE_APP_LAUNCH_GUARD']
  owner=('BATTERY_RETURN_APP' if name=='battery' else 'LORA_RETURN_APP' if name=='lora_messages' else 'FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
  if name=='battery':flags+=['-DPORTABLE_POWER_STATUS']
  if name=='timecard':return flags

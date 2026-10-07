@@ -6,11 +6,17 @@ on:
       - 'apps/clock/rf-spectrum-manifest.json'
       - 'scripts/*rf*profile*.py'
       - 'scripts/*rf_spectrum*.py'
+      - 'scripts/rf_watch_candidate.py'
+      - 'scripts/build_rf_watch_candidate.py'
+      - 'scripts/test_rf_watch_upgrade.py'
+      - 'scripts/check_rf_installed_catalog.py'
       - 'scripts/build_current_apps.py'
       - 'scripts/build_clock_app.py'
       - 'scripts/current_apps_overlay.py'
       - 'scripts/check_runtime_store_admission.py'
       - 'tests/test_rf_spectrum_profile.py'
+      - 'tests/test_rf_watch_candidate.py'
+      - 'tests/rf_watch_upgrade/**'
       - 'tests/runtime_store_admission.cpp'
       - '.github/workflows/rf-spectrum-profile.yml'
   workflow_dispatch:
@@ -48,6 +54,7 @@ jobs:
       - name: Profile and unchanged accepted/frozen custody
         run: |
           python -m unittest discover -s tests -p test_rf_spectrum_profile.py -v
+          python -m unittest discover -s tests -p test_rf_watch_candidate.py -v
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
           python -m unittest discover -s tests -p test_current_apps_overlay.py -v
           python -m unittest discover -s tests -p test_current_clock_manifest.py -v
