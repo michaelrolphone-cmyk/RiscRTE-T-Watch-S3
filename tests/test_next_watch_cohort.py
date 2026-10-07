@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from build_next_watch_cohort import check_policy, document, encoded, migration, NEW_APPS
+from build_next_watch_cohort import check_policy, document, encoded, migration, NEW_APPS, NEW_PROVIDERS
 
 
 def fixture():
@@ -42,10 +42,19 @@ def fixture():
         following[name + '.elf'] = b'new-elf'
     after['drivers'].append({'manifest': 'ble-hid/manifest.json', 'key_value': [
         {'key': k, 'namespace': 10, 'access': 'read-write'} for k in ('hid_ours', 'hid_peer', 'hid_ccc', 'hid_identity')]})
-    following['ble-hid/manifest.json'] = encoded({'id': 'ble-hid', 'driver_abi': 2, 'file_name': 'driver.elf',
-        'requires': [{'capability': c, 'api': 1} for c in ('bluetooth.hci', 'platform.clock', 'storage.key-value.bound')],
-        'provides': [{'capability': 'bluetooth.hid', 'api': 1}]})
-    following['ble-hid/driver.elf'] = b'new-provider'
+    after['drivers'] += [{'manifest': name + '/manifest.json'} for name in NEW_PROVIDERS if name != 'ble-hid']
+    manifests = {
+        'ble-hid': ([('bluetooth.hci', 1), ('platform.clock', 1), ('storage.key-value.bound', 1)], [('bluetooth.hid', 1)]),
+        'ble-sensors': ([('bluetooth.hci', 1), ('platform.clock', 1)], [('bluetooth.sensors', 1)]),
+        'telemetry-battery': ([('board.battery', 1)], [('sensor.telemetry', 1)]),
+        'ble-telemetry': ([('bluetooth.hci', 1), ('platform.clock', 1), ('sensor.telemetry', 1)], [('bluetooth.telemetry', 1)]),
+    }
+    for name in NEW_PROVIDERS:
+        requires, provides = manifests[name]
+        following[name + '/manifest.json'] = encoded({'id': name, 'driver_abi': 2, 'file_name': 'driver.elf',
+            'requires': [{'capability': c, 'api': a} for c, a in requires],
+            'provides': [{'capability': c, 'api': a} for c, a in provides]})
+        following[name + '/driver.elf'] = b'new-provider-' + name.encode()
     following['boot.json'] = encoded(after)
     return previous, following
 
@@ -105,9 +114,9 @@ class NextWatchPolicyTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'provider bindings'):self.check()
 
     def test_hid_may_not_use_hardware_or_private_namespace(self):
-        for mutate in (lambda b: b['drivers'][-1].update(instance_id=17),
-                       lambda b: b['drivers'][-1]['key_value'][0].update(namespace=4),
-                       lambda b: b['drivers'][-1]['key_value'].append({'key': 'extra', 'namespace': 10, 'access': 'read'})):
+        for mutate in (lambda b: next(x for x in b['drivers'] if x['manifest']=='ble-hid/manifest.json').update(instance_id=17),
+                       lambda b: next(x for x in b['drivers'] if x['manifest']=='ble-hid/manifest.json')['key_value'][0].update(namespace=4),
+                       lambda b: next(x for x in b['drivers'] if x['manifest']=='ble-hid/manifest.json')['key_value'].append({'key': 'extra', 'namespace': 10, 'access': 'read'})):
             self.previous, self.following = fixture();self.boot(mutate)
             with self.assertRaises(ValueError):self.check()
 
@@ -128,7 +137,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
         import subprocess
         import build_next_watch_cohort as cohort
         head = 'f' * 40
-        candidate = {'source_sha': head, 'firmware_version': '0.1.35'}
+        candidate = {'source_sha': head, 'firmware_version': '0.1.36'}
         for failures in ((1,), (0, 1)):
             with patch.object(cohort, 'checked_source', return_value=head), patch.object(
                     cohort.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], c) for c in failures]):
@@ -136,7 +145,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
                     cohort.native_identity(Path('/unused'), candidate)
         with patch.object(cohort, 'checked_source', return_value=head), patch.object(
                 cohort.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0)) as run:
-            self.assertEqual(cohort.native_identity(Path('/unused'), candidate), (head, '0.1.35'))
+            self.assertEqual(cohort.native_identity(Path('/unused'), candidate), (head, '0.1.36'))
             self.assertEqual([c.args[0][3] for c in run.call_args_list], [cohort.RUNTIME, cohort.DIAGNOSTICS])
 
     def test_installed_identity_cannot_be_replaced_by_candidate(self):
@@ -150,7 +159,7 @@ class NativeSplitIdentityTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'clean checkout'):
                 cohort.native_identity(Path('/unused'), {'source_sha': head, 'firmware_version': '0.1.34'})
             with self.assertRaisesRegex(ValueError, 'Unsupported'):
-                cohort.native_identity(Path('/unused'), {'source_sha': cohort.RUNTIME, 'firmware_version': '0.1.36'})
+                cohort.native_identity(Path('/unused'), {'source_sha': cohort.RUNTIME, 'firmware_version': '0.1.37'})
 
     def test_every_native_asset_is_hashed_before_post_link_admission(self):
         from unittest.mock import patch
