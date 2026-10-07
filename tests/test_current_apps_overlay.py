@@ -13,7 +13,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.cfg['ble_sensors']={'id':'ble-sensors','commit':'4'*40,'version':'0.1.0'}
   self.cfg['ble_telemetry']={'id':'ble-telemetry','commit':'4'*40,'version':'0.1.0'}
   self.cfg['telemetry_battery']={'id':'telemetry-battery','commit':'4'*40,'version':'0.1.0'}
-  (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
+  (self.root/'apps/apex-apps-sources.json').write_bytes(current.encoded(self.cfg));self.head='2'*40
   bindings={'alarm_cfg':(3,'read'),'timer_cfg':(3,'read'),'alarm_occ':(4,'read-write'),'timer_occ':(4,'read-write'),'alert_mode':(1,'read'),'points_cfg':(5,'read'),'points_occ':(4,'read-write')}
   grants=[{'capability':'storage.key-value','api':1,'instance_id':3},{'capability':'alarm.service','api':1,'instance_id':0}]
   self.boot={'drivers':[{'manifest':'alarm-service/manifest.json','key_value':[{'key':k,'namespace':n,'access':a} for k,(n,a) in bindings.items()]}],'app_capabilities':[{'manifest':n+'.json','grants':copy.deepcopy(grants)} for n in current.APPS if n not in current.NEW_APPS]}
@@ -71,7 +71,7 @@ class CurrentAppsOverlay(unittest.TestCase):
   self.assertEqual(current.config(ROOT)['service_version'],'0.4.2')
  def test_old_service_cannot_enter_current_profile(self):
   old=copy.deepcopy(self.cfg);old['service_version']='0.4.1'
-  (self.root/'apps/current-apps-sources.json').write_bytes(current.encoded(old))
+  (self.root/'apps/apex-apps-sources.json').write_bytes(current.encoded(old))
   with self.assertRaisesRegex(ValueError,'sleep-resume service'):current.config(self.root)
  def test_every_current_client_requires_sleep_resume(self):
   for name in current.APPS:self.assertIn('-DWATCH_ALARM_SLEEP_RESUME',definitions(name,'1.0.1'))
