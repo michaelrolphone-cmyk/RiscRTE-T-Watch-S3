@@ -3,7 +3,7 @@
 import argparse,hashlib,json,os,shlex,shutil,subprocess,sys
 from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,NEW_APPS,
-                                 RADIO_MODELS,config,configure_boot,configure_board,metadata,encoded,require,verify)
+                                 RADIO_MODELS,config,payloads,configure_boot,configure_board,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
 from compact_current_elf import compact
 from build_wifi_common import read_zip,zip_bytes
@@ -102,6 +102,11 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   (dest/'driver.elf').write_bytes((root/'dist'/driver/'driver.elf').read_bytes())
   (dest/'manifest.json').write_bytes(encoded(json.loads((root/'drivers'/driver.replace('-','_')/'manifest.json').read_text())))
   subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
+ if profile=='low-battery':
+  source=root/'drivers/current/twatch_touch';dest=files_dir/'touch';dest.mkdir()
+  content,touch_proof=compile_target('twatch-touch-current',[source/'driver.c'],[],[root/'sdk/driver',root/'include'],{'t5_driver_get'},{'memcpy','memset','strcmp','strlen'})
+  (dest/'driver.elf').write_bytes(content);(dest/'manifest.json').write_bytes(encoded(json.loads((source/'manifest.json').read_text())))
+  record['touch']={**touch_proof,'source_sha256':hashlib.sha256((source/'driver.c').read_bytes()).hexdigest()}
  subprocess.run([sys.executable,str(drivers/'scripts/build_s3_radio_iq_v1.py')],env={**os.environ,'NATIVE_DRIVER_CC':cc},check=True)
  sdr=drivers/'dist/s3-radio-iq-v1';dest=files_dir/'s3-radio-iq';dest.mkdir()
  source_manifest=json.loads((drivers/'Drivers/s3_radio_iq_v1/manifest.json').read_text())
@@ -200,7 +205,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  record['clock']=clock_record
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
  clean(drivers,c['sdr']['commit'])
- record['files']={n:metadata((files_dir/n).read_bytes()) for n in sorted(PAYLOADS)}
+ record['files']={n:metadata((files_dir/n).read_bytes()) for n in sorted(payloads(profile))}
  record['debug']={n+'.elf':metadata((debug_dir/(n+'.elf')).read_bytes()) for n in APPS}
  (out/'current-apps-build.json').write_bytes(encoded(record));(out/'source-profile.json').write_bytes(encoded(c))
  licenses=out/'licenses';licenses.mkdir()

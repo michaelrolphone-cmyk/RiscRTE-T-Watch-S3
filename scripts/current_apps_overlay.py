@@ -18,6 +18,8 @@ RADIO_MODELS=('sx1262-433','sx1262-868','sx1262-915','sx1280-2400','selectable')
 ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora','s3-radio-iq','ble-hid','ble-sensors','ble-telemetry','battery-telem') for name in ('driver.elf','manifest.json')}|{n+suffix for n in NEW_APPS for suffix in ('.elf','.json')}
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
+def payloads(profile='current'):
+ return PAYLOADS|({'touch/driver.elf','touch/manifest.json'} if profile=='low-battery' else set())
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
 ALARM_DND={'key':'alert_dnd','namespace':1,'access':'read'}
 ALARM_PREFERENCES={'capability':'storage.key-value','api':1,'instance_id':1}
@@ -39,7 +41,7 @@ def config(root=ROOT,profile='current'):
    require(tuple(map(int,version.split('.')))>tuple(map(int,baseline['app_versions'][name].split('.'))),'Rebuilt app requires a new deployment version: '+name)
  require(set(c['sources'])=={'system-apps','utilities','productivity','runtime'},'Current source inventory differs')
  for p in c['sources'].values():require(re.fullmatch('[0-9a-f]{40}',p.get('commit','')) is not None,'Unpinned current source')
- require(c.get('sdr',{}).get('id')=='s3-radio-iq-v1' and re.fullmatch('[0-9a-f]{40}',c['sdr'].get('commit','')) is not None and c['sdr'].get('version')=='0.1.2','Unpinned guarded SDR source')
+ require(c.get('sdr',{}).get('id')=='s3-radio-iq-v1' and re.fullmatch('[0-9a-f]{40}',c['sdr'].get('commit','')) is not None and c['sdr'].get('version')==('0.1.3' if profile=='low-battery' else '0.1.2'),'Unpinned guarded SDR source')
  require(c.get('hid',{}).get('id')=='ble-hid' and c['hid'].get('commit')==c['sdr']['commit'] and c['hid'].get('version')=='0.1.1','Unpinned consolidated HID source')
  for key,identity in (('ble_sensors','ble-sensors'),('ble_telemetry','ble-telemetry'),('telemetry_battery','telemetry-battery')):
   require(c.get(key,{}).get('id')==identity and c[key].get('commit')==c['sdr']['commit'] and c[key].get('version')=='0.1.0','Unpinned '+identity+' source')
@@ -147,7 +149,7 @@ def verify(artifact,head,root=ROOT,profile='current'):
  artifact=Path(artifact);c=config(root,profile=profile);r=json.loads((artifact/'current-apps-build.json').read_text())
  require(r.get('schema')==1 and r.get('profile')==c['profile'] and r.get('watch_source')==head,'Current overlay identity/head mismatch')
  require(r.get('configuration')==c,'Current overlay source/version configuration differs')
- require(set(r['files'])==PAYLOADS and set(r['apps'])==set(APPS),'Current payload inventory differs')
+ require(set(r['files'])==payloads(profile) and set(r['apps'])==set(APPS),'Current payload inventory differs')
  require(r.get('target_validation') is True,'Current target validation missing')
  require(set(r.get('debug',{}))=={n+'.elf' for n in APPS},'Original app ELF inventory differs')
  files={}
@@ -196,12 +198,18 @@ def verify(artifact,head,root=ROOT,profile='current'):
   meta=ble_components.get(key,{});require({k:meta.get(k) for k in c[key]}==c[key],'Current '+folder+' source identity differs')
   built=meta.get('build',{});require(built.get('source_revision')==c[key]['commit'] and built.get('sha256')==sha(files[folder+'/driver.elf']) and built.get('size_bytes')==len(files[folder+'/driver.elf']),'Current '+folder+' target custody differs')
   manifest=json.loads(files[folder+'/manifest.json']);require(manifest.get('id')==c[key]['id'] and manifest.get('version')==c[key]['version'] and manifest.get('provides')==[{'capability':provided,'api':1}],'Current '+folder+' capability authority differs')
+ if profile=='low-battery':
+  source=Path(root)/'drivers/current/twatch_touch'
+  touch=json.loads(files['touch/manifest.json'])
+  require(touch==json.loads((source/'manifest.json').read_text()) and touch['version']=='0.2.1','Current touch correction identity differs')
+  witness=r.get('touch',{})
+  require(witness.get('sha256')==sha(files['touch/driver.elf']) and witness.get('source_sha256')==sha((source/'driver.c').read_bytes()),'Current touch source/binary custody differs')
  require(json.loads(files['alarm-service/manifest.json'])['version']==c['service_version'],'Current alarm version mismatch')
  require(r['service']['defines']==['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'],'Wrong current service profile')
  archive=artifact/'current-apps.zip';require(archive.is_file(),'Current archive missing')
  with zipfile.ZipFile(archive) as z:
   names=z.namelist();require(len(names)==len(set(names)),'Duplicate current archive members')
-  expected={'current-apps-build.json','source-profile.json'}|{'files/'+n for n in PAYLOADS}|{'debug/'+n+'.elf' for n in APPS}|{p.relative_to(artifact).as_posix() for p in (artifact/'licenses').rglob('*') if p.is_file()}
+  expected={'current-apps-build.json','source-profile.json'}|{'files/'+n for n in payloads(profile)}|{'debug/'+n+'.elf' for n in APPS}|{p.relative_to(artifact).as_posix() for p in (artifact/'licenses').rglob('*') if p.is_file()}
   require(set(names)==expected,'Current archive inventory differs')
   for name in names:require(z.read(name)==(artifact/name).read_bytes(),'Current archive/member differs: '+name)
  require(json.loads((artifact/'source-profile.json').read_text())==c,'Current source profile differs')
