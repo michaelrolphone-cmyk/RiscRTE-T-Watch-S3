@@ -291,9 +291,9 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
         source_manifests = {json.loads(p.read_text())['id']: p for p in (ROOT / 'drivers').glob('*/manifest.json')}
         if current_profile:source_manifests.update(external_driver_manifests(drivers))
         if not current_profile:
-            from build_legacy_sleep import legacy_inputs
-            legacy=legacy_inputs(ROOT)
-            source_manifests.update({json.loads(p.read_text())['id']:p for p in (legacy/'drivers').glob('*/manifest.json')})
+            from build_legacy_sleep import legacy_manifests
+            frozen_manifests = {json.loads(p.read_text())['id']: p for p in legacy_manifests(ROOT)}
+            source_manifests.update(frozen_manifests)
         selections = {}
         prepared = []
         for index, (label, content) in enumerate(stores):
@@ -346,8 +346,9 @@ def execute_many(runtime_source, system_apps, utilities, productivity, stores, o
                 require(len(candidates) == 1, 'Driver does not have one production source: ' + name)
                 source = candidates[0]
                 module_includes = ['-I'+str(drivers/'sdk/driver')] if current_profile and name in EXTERNAL_DRIVERS else includes
-                if not current_profile and name in ('twatch-gpio','twatch-pmu'):
-                    module_includes=['-I'+str(legacy/p) for p in ('sdk/driver','include')]+includes
+                if not current_profile and name in frozen_manifests:
+                    frozen_root = frozen_manifests[name].parents[2]
+                    module_includes=['-I'+str(frozen_root/p) for p in ('sdk/driver','include')]+includes
             command([compiler, language, *_flags(), '-fPIC', '-shared', '-fvisibility=hidden',
                      *module_includes, *extra, source, *(__import__('imu_sources').extra_sources(name)), '-o', module])
             for target in targets:
