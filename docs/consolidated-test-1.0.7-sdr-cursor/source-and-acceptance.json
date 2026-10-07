@@ -1,0 +1,13 @@
+{
+  "source_commit_in_delivered_image": "5c317f80b471d754111dbbe5a14fe97fd0dc377c",
+  "published_source_commit": "628c7a8f8c4217b5629075f63a42504c43ed70c7",
+  "identical_source_tree": "aca84108e40fbedb48de81d93c7d226e2c9d9944",
+  "bundle_prerequisite": "dbd24acae885981b35dea4e7cd461ea821944a78",
+  "bin_sha256": "b039468858ab3cb5d1b53d843257e0e034d0a0b661ddaf3b74b59670519b0b2b",
+  "owner_hardware_report": {
+    "text": "SDR works. Merge all completed watch work across all repos",
+    "message_id": "Sentinel_e654a83e26b88191800b211432e2dedd",
+    "date": "2026-10-07"
+  },
+  "qualification_limit": "SDR success was reported; sustained HID reconnect after the recovery image was not separately confirmed."
+}

@@ -3,6 +3,7 @@ from contextlib import ExitStack
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -209,7 +210,18 @@ class PublicationTests(unittest.TestCase):
         self.assertNotIn('  push:', workflow); self.assertNotIn('  workflow_run:', workflow)
         self.assertNotIn('  pull_request:', workflow)
         self.assertIn('group: twatch-driver-publication', workflow)
+        self.assertLess(workflow.index('python -m pip install -r scripts/requirements.txt'),
+                        workflow.index('python -m unittest discover -s tests -p test_sdr_publication.py'))
         self.assertEqual(json.loads(pub.CONFIG.read_text())['version'], '1.0.2')
+
+    def test_publish_only_configuration_imports_in_fresh_interpreter(self):
+        # Release creation lazily loads this validator; exercise it before either
+        # preflight or publication can claim the workflow environment is ready.
+        code = ('import json,sys; sys.path.insert(0,"scripts"); '
+                'from publish_watch_product import read_config; '
+                'p=read_config(); print(json.dumps([p["schema"],p["version"]]))')
+        result = subprocess.check_output([sys.executable, '-c', code], cwd=ROOT)
+        self.assertEqual(json.loads(result), [2, '1.0.2'])
 
     def publishing(self, stage, confirmation='', current=None, event='workflow_dispatch', parents=None):
         calls = []
