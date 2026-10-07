@@ -135,6 +135,10 @@ int main(int argc,char** argv){
   hardware.radioScanCancel=[](){return true;};hardware.radioIdle=[](){return true;};
 #ifdef CURRENT_RADIO_IQ
   hardware.radioIqReady=[](){std::abort();return false;};
+#ifdef CURRENT_IQ_LIFECYCLE
+  hardware.radioIqPrepare=[](){std::abort();return false;};
+  hardware.radioIqCleanup=[](){std::abort();return false;};
+#endif
 #endif
   hardware.httpClient=&http;hardware.httpIdle=[](){return true;};hardware.httpSafe=[](){return true;};
   RiscCpu::Port port(hardware);cpu=&port;

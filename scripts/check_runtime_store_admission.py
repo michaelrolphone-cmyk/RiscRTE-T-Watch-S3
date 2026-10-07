@@ -84,6 +84,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None):
         command += ['-DSTORE_ADMISSION_KV_V2']
     if 'radioIqReady' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO_IQ']
+    if 'radioIqPrepare' in cpu_header and 'radioIqCleanup' in cpu_header:
+        command += ['-DSTORE_ADMISSION_IQ_LIFECYCLE']
     if 'radioJoin' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO']
     if 'hciOpen' in cpu_header:

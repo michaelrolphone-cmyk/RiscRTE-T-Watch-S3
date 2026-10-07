@@ -35,6 +35,8 @@ def compile_transaction(runtime, build, version, fixture=None):
     sources = [runtime / p for p in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp', 'src/bootstrap/Runtime.cpp',
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp',
         'src/runtime/update/PairedBank.cpp', 'src/runtime/update/StoreAudit.cpp')]
+    if (runtime/'src/runtime/provisioning/StoreFiles.h').is_file():
+        sources.append(runtime/'src/runtime/provisioning/StoreFiles.cpp')
     executable = build / 'transaction'
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
@@ -94,7 +96,8 @@ def negative_stores(previous, following):
                 entry['namespace'] = 3
     yield changed('migration-cannot-share-private-kv', private_migration)
     def provider_private(b, f):
-        for key in b['drivers'][-1]['key_value']:
+        hid = next(row for row in b['drivers'] if row['manifest']=='ble-hid/manifest.json')
+        for key in hid['key_value']:
             key['namespace'] = 4
     yield changed('new-provider-steals-private-kv', provider_private)
     def app_data(b, f):

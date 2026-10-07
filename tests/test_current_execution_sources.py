@@ -13,6 +13,8 @@ from frozen_watch_cohort_fixture import fixture as frozen_fixture
 from test_next_watch_cohort import fixture as live_fixture
 import build_next_watch_cohort as frozen
 import build_current_watch_cohort as live
+import check_runtime_store_admission as admission
+import test_next_watch_upgrade as upgrade
 
 class CurrentExecutionSources(unittest.TestCase):
  def test_runtime_routes_to_apex_and_legacy_remains_exact(self):
@@ -55,5 +57,40 @@ class CurrentExecutionSources(unittest.TestCase):
   frozen.check_policy(old_before,old_after);live.check_policy(new_before,new_after)
   self.assertFalse(any(name.startswith(('ble-sensors/','ble-telemetry/','battery-telem/')) for name in old_after))
   with self.assertRaisesRegex(ValueError,'inventory'):frozen.check_policy(new_before,new_after)
+
+ def test_admission_iq_lifecycle_tracks_selected_runtime(self):
+  for declaration,enabled in [('radioIqReady',False),('radioIqReady radioIqPrepare radioIqCleanup',True)]:
+   with self.subTest(declaration=declaration),tempfile.TemporaryDirectory() as temp:
+    root=Path(temp);header=root/'src/ports/esp32s3/CpuPort.h';header.parent.mkdir(parents=True);header.write_text(declaration)
+    with patch.object(admission.subprocess,'run') as run:
+     admission.compile_harness(root,root/'admit')
+    self.assertEqual('-DSTORE_ADMISSION_IQ_LIFECYCLE' in run.call_args.args[0],enabled)
+ def test_execution_iq_lifecycle_tracks_selected_runtime(self):
+  for declaration,enabled in [('radioIqReady',False),('radioIqReady radioIqPrepare radioIqCleanup',True)]:
+   with self.subTest(declaration=declaration),tempfile.TemporaryDirectory() as temp:
+    root=Path(temp);header=root/'src/ports/esp32s3/CpuPort.h';header.parent.mkdir(parents=True);header.write_text(declaration)
+    registry=root/'test/support/native_registry/build.sh';registry.parent.mkdir(parents=True);registry.touch()
+    with patch.object(execution,'command') as run:
+     execution._host(root,root/'build',radio_iq=True)
+    self.assertEqual('-DCURRENT_IQ_LIFECYCLE' in run.call_args.args[0],enabled)
+ def test_transaction_links_provisioning_only_when_present(self):
+  for enabled in (False,True):
+   with self.subTest(enabled=enabled),tempfile.TemporaryDirectory() as temp:
+    root=Path(temp);header=root/'src/runtime/provisioning/StoreFiles.h'
+    if enabled:header.parent.mkdir(parents=True);header.touch()
+    with patch.object(upgrade,'run') as run:
+     upgrade.compile_transaction(root,root/'build','0.1.37')
+    self.assertEqual(header.with_suffix('.cpp') in run.call_args.args,enabled)
+ def test_negative_private_namespace_targets_hid_not_last_provider(self):
+  previous,following=live_fixture()
+  original=json.loads(following['boot.json'])
+  self.assertNotEqual(original['drivers'][-1]['manifest'],'ble-hid/manifest.json')
+  for label,candidate in upgrade.negative_stores(previous,following):
+   if label=='new-provider-steals-private-kv':break
+  changed=json.loads(candidate['boot.json'])
+  for before,after in zip(original['drivers'],changed['drivers']):
+   if before['manifest']=='ble-hid/manifest.json':
+    self.assertTrue(after['key_value']);self.assertTrue(all(row['namespace']==4 for row in after['key_value']))
+   else:self.assertEqual(before,after)
 
 if __name__=='__main__':unittest.main()

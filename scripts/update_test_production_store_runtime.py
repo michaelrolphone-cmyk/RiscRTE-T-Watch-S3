@@ -115,6 +115,7 @@ def _host(runtime, build, current_utilities=None, app_data=False, radio_iq=False
         '-DPRODUCTION_POINTS_READS=1', '-DPRODUCTION_HAS_RADIO', '-DPRODUCTION_STORAGE_SAFE',
         *(['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1'] if app_data else []),
         *(['-DCURRENT_RADIO_IQ'] if radio_iq else []),
+        *(['-DCURRENT_IQ_LIFECYCLE'] if radio_iq and 'radioIqPrepare' in (runtime/'src/ports/esp32s3/CpuPort.h').read_text() else []),
         *(['-DPRODUCTION_POINTS_DEFAULTS','-DCURRENT_APPS_PROFILE','-I'+str(current_utilities/'lib/Alarm/include')] if current_utilities else []),
         '-include', registry / 'redirect.h',
         *['-I' + str(p) for p in includes], *sources, HERE / 'host.cpp', *objects,
