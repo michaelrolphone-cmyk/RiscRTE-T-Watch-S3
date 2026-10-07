@@ -3,7 +3,7 @@
 import argparse,hashlib,json,os,shlex,shutil,subprocess,sys
 from pathlib import Path
 from current_apps_overlay import (ROOT,PROFILE,APPS,NON_CLOCK_APPS,CLOCK_APPS,SYSTEM_APPS,UTILITY_APPS,PAYLOADS,NEW_APPS,
-                                 RADIO_MODELS,config,payloads,configure_boot,configure_board,metadata,encoded,require,verify)
+                                 RADIO_MODELS,PROFILES,automatic_low_battery,config,payloads,configure_boot,configure_board,metadata,encoded,require,verify)
 from audio_overlay import verify as verify_audio
 from compact_current_elf import compact
 from build_wifi_common import read_zip,zip_bytes
@@ -12,7 +12,8 @@ def git(path,*args):return subprocess.check_output(['git','-C',str(path),*args],
 def clean(path,expected):
  require(git(path,'rev-parse','HEAD')==expected,'Current source pin differs: '+str(path))
  require(not git(path,'status','--porcelain','--untracked-files=no'),'Current source is dirty: '+str(path))
-def definitions(name,version,low_battery=False):
+def definitions(name,version,low_battery=False,*,rf_spectrum=False):
+ require(not rf_spectrum or low_battery,'RF profile requires automatic low battery')
  feature_flags=['-DPORTABLE_LOW_BATTERY'] if low_battery else []
  if name in CLOCK_APPS:return feature_flags+['-DWATCH_CLOCK_LAUNCHER','-DWATCH_CLOCK_ALARMS','-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-DWATCH_PAIRED_BOOT_CONFIRM','-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE','-DWATCH_ALARM_SLEEP_RESUME']+(['-DWATCH_CLOCK_RETURN'] if name=='clock' else [])
  flags=feature_flags+['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES',
@@ -27,11 +28,24 @@ def definitions(name,version,low_battery=False):
  if name=='wifi_settings':flags+=['-DPORTABLE_WIFI_SETTINGS_APP','-DPORTABLE_WIFI_STORAGE_INSTANCE=6','-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_WIFI_VERSION="'+version+'"']
  if name in ('ota_update','app_store'):flags+=['-Wno-misleading-indentation','-DPORTABLE_UPDATE_APP','-DPORTABLE_UPDATE_FIRMWARE='+str(int(name=='ota_update')),'-DPORTABLE_WIFI_INSTANCE=15','-DPORTABLE_UPDATE_RTC_UTC_OFFSET_SECONDS=28800']
  if name=='springboard':flags+=['-DPORTABLE_RETAINED_RGB565_HANDOFF','-DPORTABLE_HANDOFF_EAGER_MS=60','-DPORTABLE_CATALOG_LIMIT=20']
+ if name=='waterfall' and rf_spectrum:
+  return flags+['-DRF_STORAGE_INSTANCE=13','-DRF_APP_DATA_INSTANCE=3','-DRF_RETURN_APP="springboard.elf"']
  owner=('BATTERY_RETURN_APP' if name=='battery' else 'LORA_RETURN_APP' if name=='lora_messages' else 'FILE_BROWSER_RETURN_APP' if name=='file_browser' else 'POINTS_RETURN_APP' if name=='points_in_time' else 'WIFI_RETURN_APP' if name=='wifi_settings' else 'UPDATE_RETURN_APP' if name in ('ota_update','app_store') else 'CALCULATOR_RETURN_APP' if name=='calculator' else 'ALARM_RETURN_APP' if name in ('alarms','countdown') else 'PORTABLE_RETURN_APP')
  if name=='battery':flags+=['-DPORTABLE_POWER_STATUS']
  if name=='timecard':return flags
  flags+=['-D'+owner+'="'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"']
  return flags
+
+def application_inputs(name,source,repos,root,out,profile='current'):
+ sources=[source,repos['system-apps']/'lib/PortableApps/src/adapter.c',out/('catalog.c' if name=='springboard' else 'empty_catalog.c'),root/'apps/clock/portable_navigation.c',root/'apps/clock/portable_sleep.c']
+ sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]
+ if name=='springboard' or (name=='waterfall' and profile=='rf-spectrum'):sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
+ includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
+ if name=='timecard':includes+=[repos['productivity']/'lib/PortableTimecard/include',repos['productivity']/'lib/NativeApps/include']
+ if name in ('ble_scanner','ble_touchpad','ble_buttons'):includes+=[repos['utilities']/'lib/Bluetooth/include']
+ allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
+ if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
+ return sources,includes,allowed
 
 def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_root=None,motion_model=None,radio_model=None,drivers=None,profile='current'):
  require(motion_model in ('bma423','bma456h'),'Explicit --motion-model required; do not infer from earlier boots')
@@ -52,8 +66,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  else:verify_audio(baseline,root=root)
  raw=read_zip(baseline);store={n[6:]:b for n,b in raw.items() if n.startswith('store/')}
  require(len([n for n in store if n.endswith('.elf') and '/' not in n])==15,'Unexpected baseline app inventory')
- boot=json.loads(store['boot.json']);new_boot=configure_boot(boot)
- if profile=='low-battery':new_boot['cohort_migration']['to']['version']=c['product_version']
+ boot=json.loads(store['boot.json']);new_boot=configure_boot(boot,profile)
  catalog=json.loads(raw['shared/catalog.json'])
  require({x['file_name'] for x in catalog}==({n+'.elf' for n in NON_CLOCK_APPS if n not in NEW_APPS}-{'springboard.elf'})|{'clock.elf'},'Baseline catalog inventory differs')
  require(len(catalog)==13 and len({x['icon'] for x in catalog})==13,'Baseline launcher icons collide')
@@ -76,7 +89,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  subprocess.run([os.environ.get('CC','cc'),'-std=c11','-Wall','-Wextra','-Werror','-I'+str(repos['system-apps']/'test/native_apps/stubs'),'-I'+str(repos['system-apps']/'lib/elf_loader/include'),str(repos['system-apps']/'lib/elf_loader/src/esp_elf_validate.c'),str(repos['system-apps']/'test/native_apps/validate_test.c'),'-o',str(validator)],check=True)
  def compile_target(name,sources,flags,includes,exports,allowed):
   dependency_proof={}
-  if name=='audio_spectrum':
+  if name=='audio_spectrum' or (profile=='rf-spectrum' and name=='waterfall'):
    for source in sources:
     output=subprocess.check_output([cc,'-std=c11','-Os','-fPIC','-ffreestanding','-fno-builtin','-MM',*flags,*['-I'+str(p) for p in includes],str(source)],text=True)
     for item in shlex.split(output.replace('\\\n',' ').split(':',1)[1]):
@@ -92,9 +105,12 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True);imports={l.split()[-1] for l in symbols.splitlines() if ' U ' in ' '+l};actual={l.split()[-1] for l in symbols.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')}
   require(imports<=allowed and actual==exports,'Current ABI imports/exports differ: '+name+' '+str(sorted(imports-allowed)))
   subprocess.run([str(validator),str(elf)],check=True);b=elf.read_bytes();require(b[:7]==b'\x7fELF\x01\x01\x01' and b[16:20]==b'\x03\x00\x5e\x00','Wrong target ELF')
-  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof,**({'target_dependencies':dependency_proof,'host_fixture_excluded':True} if name=='audio_spectrum' else {})}
+  return b,{**metadata(b),'imports':sorted(imports),'exports':sorted(exports),'defines':flags,'compaction':compact_proof,**({'target_dependencies':dependency_proof,'host_fixture_excluded':True} if dependency_proof else {})}
  record={'schema':1,'profile':c['profile'],'watch_source':git(root,'rev-parse','HEAD'),'configuration':c,'compiler':compiler,'target_validation':True,'baseline_boot':boot,'boot':new_boot,'catalog':catalog,'baseline_sha256':hashlib.sha256(baseline.read_bytes()).hexdigest(),'apps':{},'providers':{},'files':{}}
  record['motion_model']=motion_model;record['radio_model']=radio_model
+ if profile=='rf-spectrum':
+  from rf_spectrum_profile import runtime_requirements,STORAGE
+  record['runtime_requirements']=runtime_requirements(root);record['rf_storage']=dict(STORAGE)
  record['baseline_board']=json.loads(store['board.json']);record['board']=configure_board(record['baseline_board'],root,motion_model=motion_model,radio_model=radio_model)
  (files_dir/'board.json').write_bytes(encoded(record['board']))
  for driver,folder in [('twatch-ble','ble'),('twatch-imu','imu'),('twatch-gpio','gpio'),('twatch-pmu','pmu'),('twatch-lora','lora')]:
@@ -102,7 +118,7 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   (dest/'driver.elf').write_bytes((root/'dist'/driver/'driver.elf').read_bytes())
   (dest/'manifest.json').write_bytes(encoded(json.loads((root/'drivers'/driver.replace('-','_')/'manifest.json').read_text())))
   subprocess.run([str(validator),str(dest/'driver.elf')],check=True)
- if profile=='low-battery':
+ if automatic_low_battery(profile):
   source=root/'drivers/current/twatch_touch';dest=files_dir/'touch';dest.mkdir()
   content,touch_proof=compile_target('twatch-touch-current',[source/'driver.c'],[],[root/'sdk/driver',root/'include'],{'t5_driver_get'},{'memcpy','memset','strcmp','strlen'})
   (dest/'driver.elf').write_bytes(content);(dest/'manifest.json').write_bytes(encoded(json.loads((source/'manifest.json').read_text())))
@@ -140,20 +156,16 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  for name in NON_CLOCK_APPS:
   repo_name='system-apps' if name in SYSTEM_APPS else 'utilities' if name in UTILITY_APPS else 'productivity';repo=repos[repo_name];source=repo/'Apps'/('timecard_portable.c' if name=='timecard' else name+'.c');version=c['app_versions'][name]
   original=json.loads((repo/'Apps'/('native' if name in ('file_browser','timecard') else '')/(name+'.json')).read_text())
+  if name=='waterfall' and profile=='rf-spectrum':
+   from rf_spectrum_profile import validate_waterfall_manifest
+   validate_waterfall_manifest(original)
   source_version=c.get('source_app_versions',c['app_versions'])[name]
   if name not in ('ota_update','app_store'):require(original['version']==source_version,'App source version differs: '+name)
   else:
    native=repo/'Apps/native'/(name+'.json');require(native.is_file(),'Current native updater manifest missing: '+name)
    require(json.loads(native.read_text())['version']==source_version,'Portable Nova updater manifest differs')
-  sources=[source,repos['system-apps']/'lib/PortableApps/src/adapter.c',out/('catalog.c' if name=='springboard' else 'empty_catalog.c'),root/'apps/clock/portable_navigation.c',root/'apps/clock/portable_sleep.c']
-  sources+=[repos['system-apps']/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]
-  if name=='springboard':sources+=[repos['system-apps']/'lib/NativeApps/src/SingleFloatDivisionCompat.c']
-  includes=[repos['system-apps']/'lib/PortableApps/include',repos['system-apps']/'lib/NativeApps/include',repos['system-apps']/'Apps',repos['utilities']/'Apps',repos['utilities']/'lib/Alarm/include',root/'sdk/app',root/'sdk/driver',root/'include']
-  if name=='timecard':includes+=[repos['productivity']/'lib/PortableTimecard/include',repos['productivity']/'lib/NativeApps/include']
-  if name in ('ble_scanner','ble_touchpad','ble_buttons'):includes+=[repos['utilities']/'lib/Bluetooth/include']
-  allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','calloc','free','strcpy'}
-  if name=='file_browser':allowed|={'strncmp','strrchr','memchr'}
-  b,meta=compile_target(name,sources,definitions(name,version,profile=='low-battery'),includes,{'app_main','app_module_init','app_module_fini'},allowed)
+  sources,includes,allowed=application_inputs(name,source,repos,root,out,profile)
+  b,meta=compile_target(name,sources,definitions(name,version,automatic_low_battery(profile),rf_spectrum=profile=='rf-spectrum'),includes,{'app_main','app_module_init','app_module_fini'},allowed)
   if name in ('lora_messages','ble_scanner','waterfall','ble_touchpad','ble_buttons'):
    require(all(isinstance(q['api'],str) and q['api'].startswith('>=') and q['api'][2:].isdigit() for q in original['requires']),'Unsupported new app API range')
    m={'type':'application','id':name,'version':version,'architecture':'xtensa-esp32s3','file_name':name+'.elf','entry':'app_main','requires':[{'capability':q['capability'],'api':int(q['api'][2:])} for q in original['requires']]}
@@ -192,15 +204,15 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
   record['providers'][short]=json.loads((src/'build-record.json').read_text())
  from build_clock_app import build as build_clock
  clock_record={'watch_source':record['watch_source'],'sources':c['sources'],'files':{},'paired_boot_confirmation':True,'headers':record['service']['points_headers'],'source_sha256':{p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for base in ('apps/clock','sdk/app','sdk/driver','include') for p in (root/base).rglob('*') if p.is_file()}}
- clock_manifest='apps/clock/low-battery-manifest.json' if profile=='low-battery' else 'apps/clock/current-manifest.json'
+ clock_manifest='apps/clock/rf-spectrum-manifest.json' if profile=='rf-spectrum' else 'apps/clock/low-battery-manifest.json' if profile=='low-battery' else 'apps/clock/current-manifest.json'
  require(json.loads((root/clock_manifest).read_text())['version']==c['app_versions']['default']==c['app_versions']['clock'],'Current paired Clock version differs')
  for name in CLOCK_APPS:
-  build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True,debug_path=debug_dir/(name+'.elf'),low_battery=profile=='low-battery')
+  build_clock(launcher=True,returning=name=='clock',alarm_system=repos['system-apps'],points_utilities=repos['utilities'],paired=True,current=True,debug_path=debug_dir/(name+'.elf'),low_battery=automatic_low_battery(profile),rf_spectrum=profile=='rf-spectrum')
   built=root/'dist/update-launcher';subprocess.run([str(validator),str(built/(name+'.uncompacted.elf'))],check=True);subprocess.run([str(validator),str(built/(name+'.elf'))],check=True)
   for ext in ('.elf','.json'):
    b=(built/(name+ext)).read_bytes();(files_dir/(name+ext)).write_bytes(b);clock_record['files'][name+ext]=metadata(b)
   meta=json.loads((built/'build-record.json').read_text())
-  require(sorted(meta.get('defines',[]))==sorted(definitions(name,c['app_versions'][name],profile=='low-battery')),'Actual Clock compiler flags differ from current profile: '+name)
+  require(sorted(meta.get('defines',[]))==sorted(definitions(name,c['app_versions'][name],automatic_low_battery(profile),rf_spectrum=profile=='rf-spectrum')),'Actual Clock compiler flags differ from current profile: '+name)
   record['apps'][name]={**meta,'repository':'watch','repository_sha':record['watch_source']}
  record['clock']=clock_record
  for name,path in repos.items():clean(path,c['sources'][name]['commit'])
@@ -250,12 +262,13 @@ def build(system,utilities,productivity,runtime,baseline,out,root=ROOT,baseline_
  verify(out,record['watch_source'],root,profile=profile)
  print(f'Current final cohort:{len(APPS)} rebuilt apps + alarm service +2 update providers + BLE sensor/telemetry providers; exact pins and strict targets verified')
  return record
-if __name__=='__main__':
+def main(default_profile='current'):
  p=argparse.ArgumentParser()
  for n in ('system-apps','utilities','productivity','runtime','baseline','output'):p.add_argument('--'+n,type=Path,required=True)
- p.add_argument('--profile',choices=['current','low-battery'],default='current')
+ p.add_argument('--profile',choices=PROFILES,default=default_profile)
  p.add_argument('--baseline-root',type=Path)
  p.add_argument('--drivers',type=Path,required=True)
  p.add_argument('--motion-model',choices=['bma423','bma456h'],required=True)
  p.add_argument('--radio-model',choices=RADIO_MODELS,default='selectable')
  a=p.parse_args();build(a.system_apps,a.utilities,a.productivity,a.runtime,a.baseline,a.output,baseline_root=a.baseline_root,motion_model=a.motion_model,radio_model=a.radio_model,drivers=a.drivers,profile=a.profile)
+if __name__=='__main__':main()

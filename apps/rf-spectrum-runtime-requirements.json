@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "source_sha": "4a0891fc0ec10dcd100c6248768cabecaafec888",
+  "firmware_version": "0.1.41",
+  "required_behavior": {
+    "spi_max_hz": 40000000,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "scheduler_waits_per_yield": 1,
+    "owned_deep_sleep": true,
+    "static_output_hold": true,
+    "namespaced_key_value": true,
+    "retained_app_unload_barrier": true,
+    "owned_timed_light_sleep": true,
+    "owned_timed_deep_sleep": true,
+    "provider_bound_key_value": true,
+    "app_policy_capacity": 24,
+    "native_i2s_tx_cleanup": true,
+    "native_station_radio": true,
+    "bounded_asynchronous_radio_scan": true,
+    "radio_cleanup_sleep_barrier": true,
+    "explicit_multiple_key_value_namespaces": true,
+    "ambiguous_key_value_instance_zero_denied": true,
+    "provider_only_https": true,
+    "provider_only_bank_store": true,
+    "paired_firmware_store": true,
+    "immutable_active_bank": true,
+    "exact_app_authority_preservation": true,
+    "default_app_health_confirmation": true,
+    "rollback_until_health_confirmation": true,
+    "store_abi": 2,
+    "paired_metadata_psram_only": true,
+    "independent_graph_provider_registry": true,
+    "explicit_key_value_v2": true,
+    "native_i2s_pdm_rx": true,
+    "audio_input_cleanup_barrier": true,
+    "app_grant_capacity": 12,
+    "app_requirement_capacity": 12,
+    "native_bounded_hci": true,
+    "nonconsuming_hci_status": true,
+    "hci_cleanup_sleep_barrier": true,
+    "provider_bound_key_capacity": 9,
+    "owned_wake_sets": true,
+    "mixed_polarity_rtc_wake": true,
+    "read_only_installed_files": true,
+    "scoped_native_radio_spi_gpio": true,
+    "selected_provider_capacity": 24,
+    "selectable_radio_config_v2": true,
+    "explicit_app_data_namespaces": true,
+    "atomic_app_data_replacement": true,
+    "app_data_retention_barrier": true,
+    "native_i2s_rx_deadline_nonterminal": true,
+    "paired_cohort_updates": true,
+    "cohort_graph_elf_admission": true,
+    "persistent_namespace_ownership_preserved": true,
+    "reserved_iq_sram": true,
+    "exclusive_iq_modem_lease": true,
+    "explicit_shared_preferences_migration": true,
+    "retained_sleep_reset_diagnostics": true
+  },
+  "abi_changed": false,
+  "reason": "Watch 1.0.8 retains the accepted Runtime 0.1.41 and paired ABI2 layout. The complete RF application adds private key-value API2 namespace13 and app-data API1 namespace3, retaining shared preferences namespace1 and every accepted app/provider. Its 12 grants/requirements fit existing bounds. Two RF event banks and one neural checkpoint require 129004 of 131072 namespace bytes. New private namespaces need no shared-preferences migration. The obsolete 1.0.4-to-1.0.7 HID migration record must not be carried into the 1.0.8 candidate.",
+  "deployment": {
+    "target": "esp32s3-16mb-appdata-iq",
+    "layout": "riscrte-paired-appdata-v2",
+    "flash_bytes": 16777216,
+    "store_abi": 2,
+    "migration": "Candidate from accepted 1.0.7; paired update validation and packaging remain separate from this application profile. No preserving OTA or full-image release is published by the app builder.",
+    "existing_8MiB_ota_compatible": false,
+    "partitions": {
+      "app0": {
+        "offset": 65536,
+        "size": 2490368
+      },
+      "bootfs0": {
+        "offset": 3080192,
+        "size": 5308416
+      },
+      "app1": {
+        "offset": 8388608,
+        "size": 2490368
+      },
+      "bootfs1": {
+        "offset": 11403264,
+        "size": 5308416
+      },
+      "otadata": {
+        "offset": 16711680,
+        "size": 8192
+      },
+      "bank_state": {
+        "offset": 16719872,
+        "size": 8192
+      },
+      "appdata": {
+        "offset": 2555904,
+        "size": 524288
+      }
+    },
+    "ordinary_ota_includes_appdata": false,
+    "radio_iq": true
+  },
+  "public_runtime_api_prefix_changed": false,
+  "rf_storage": {
+    "key_value_api": 2,
+    "key_value_instance": 13,
+    "app_data_api": 1,
+    "app_data_instance": 3,
+    "required_bytes": 129004,
+    "quota_bytes": 131072,
+    "shared_preferences_api": 1,
+    "shared_preferences_instance": 1
+  }
+}

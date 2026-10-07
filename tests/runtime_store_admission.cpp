@@ -6,8 +6,23 @@
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
-#ifdef STORE_ADMISSION_COHORT
+#if defined(STORE_ADMISSION_COHORT) && !defined(STORE_ADMISSION_COHORT_POLICY)
 #include "cohort_elf_admission.h"
+#endif
+#ifdef STORE_ADMISSION_COHORT_POLICY
+// The RF profile test reuses already verified accepted target bytes. This
+// callback checks inventory only; it does not qualify future rebuilt ELFs.
+namespace CohortElf {
+static bool file(void* context,const char* path,bool) {
+  FILE* input=fopen(path,"rb");if(!input)return false;
+  const bool present=fgetc(input)!=EOF;const bool closed=fclose(input)==0;
+  if(present && closed)++*static_cast<unsigned*>(context);
+  return present && closed;
+}
+}
+static_assert(RiscBoot::Runtime::MaxAppPolicyGrants==12,"RF grant bound changed");
+static_assert(RISC_APP_DATA_NAMESPACE_MAX==131072,"RF namespace quota changed");
+static_assert(RISC_APP_DATA_FILE_MAX==65536 && RISC_APP_DATA_FILES_MAX>=3,"RF file bounds changed");
 #endif
 #ifdef STORE_ADMISSION_APP_DATA
 #include "app_data_admission_backend.h"
