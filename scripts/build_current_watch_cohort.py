@@ -379,7 +379,7 @@ def prepare(previous_bundle, apps_dir, runtime, native_dir, output, source_root=
     firmware, elf, native = read_native(native_dir, runtime)
     require(configuration['sources']['runtime']['commit'] == native['source_sha'],
             'Watch configuration differs from exact candidate Runtime source')
-    requirements_bytes = (source_root / 'apps/current-runtime-requirements.json').read_bytes()
+    requirements_bytes = (source_root / 'apps/apex-runtime-requirements.json').read_bytes()
     requirements = check_requirements(document(requirements_bytes), native)
     files, apps = overlay.verify(Path(apps_dir), head, source_root)
     full, previous, old_identity, old_firmware, old_elf, old_native = read_previous(
