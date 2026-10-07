@@ -1,0 +1,64 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "semtech,sx1262",
+      "config_type": "radio.lora",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    },
+    {
+      "compatible": "semtech,sx1280",
+      "config_type": "radio.lora",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    },
+    {
+      "compatible": "semtech,sx1262-sx1280-selectable",
+      "config_type": "radio.lora",
+      "config_version": 2,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "twatch-lora",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 2,
+      "capability": "radio.lora"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "platform.gpio"
+    },
+    {
+      "api": 1,
+      "capability": "spi.bus"
+    },
+    {
+      "api": 1,
+      "capability": "platform.clock"
+    },
+    {
+      "api": 1,
+      "capability": "board.battery"
+    }
+  ],
+  "status": "software-only-hardware-qualification-pending",
+  "type": "driver",
+  "version": "0.3.0"
+}

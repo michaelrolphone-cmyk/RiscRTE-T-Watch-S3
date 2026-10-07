@@ -1,0 +1,390 @@
+{
+  "board_id": "lilygo-t-watch-s3",
+  "buses": [
+    {
+      "controller": 0,
+      "controller_namespace": "esp32.peripheral",
+      "frequency_hz": 100000,
+      "instance_id": 101,
+      "kind": "i2c",
+      "mode": 0,
+      "physical_controller": 0,
+      "pins": {
+        "miso": -1,
+        "mosi": -1,
+        "scl": 11,
+        "sclk": -1,
+        "sda": 10
+      }
+    },
+    {
+      "controller": 1,
+      "controller_namespace": "esp32.peripheral",
+      "frequency_hz": 100000,
+      "instance_id": 102,
+      "kind": "i2c",
+      "mode": 0,
+      "physical_controller": 1,
+      "pins": {
+        "miso": -1,
+        "mosi": -1,
+        "scl": 40,
+        "sclk": -1,
+        "sda": 39
+      }
+    },
+    {
+      "controller": 0,
+      "controller_namespace": "riscrte.logical",
+      "frequency_hz": 40000000,
+      "instance_id": 103,
+      "kind": "spi",
+      "mode": 0,
+      "physical_controller": 2,
+      "pins": {
+        "miso": -1,
+        "mosi": 13,
+        "scl": -1,
+        "sclk": 18,
+        "sda": -1
+      }
+    },
+    {
+      "controller": 1,
+      "controller_namespace": "riscrte.logical",
+      "frequency_hz": 2000000,
+      "instance_id": 104,
+      "kind": "spi",
+      "mode": 0,
+      "physical_controller": 3,
+      "pins": {
+        "miso": 4,
+        "mosi": 1,
+        "scl": -1,
+        "sclk": 3,
+        "sda": -1
+      }
+    }
+  ],
+  "devices": [
+    {
+      "bindings": {},
+      "chip": {
+        "model": "esp32s3-gpio",
+        "revision": "unspecified",
+        "vendor": "espressif"
+      },
+      "compatible": "espressif,esp32s3-gpio",
+      "config": {
+        "features": 0,
+        "unit": 0
+      },
+      "config_type": "controller.gpio",
+      "config_version": 1,
+      "instance_id": 1
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "esp32s3-i2c",
+        "revision": "unspecified",
+        "vendor": "espressif"
+      },
+      "compatible": "espressif,esp32s3-i2c",
+      "config": {
+        "bus_instance_id": 101
+      },
+      "config_type": "controller.i2c",
+      "config_version": 1,
+      "instance_id": 2
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "esp32s3-i2c",
+        "revision": "unspecified",
+        "vendor": "espressif"
+      },
+      "compatible": "espressif,esp32s3-i2c",
+      "config": {
+        "bus_instance_id": 102
+      },
+      "config_type": "controller.i2c",
+      "config_version": 1,
+      "instance_id": 3
+    },
+    {
+      "bindings": {
+        "gpio.bank": 1,
+        "i2c.bus": 2
+      },
+      "chip": {
+        "model": "axp2101",
+        "revision": "unspecified",
+        "vendor": "x-powers"
+      },
+      "compatible": "x-powers,axp2101",
+      "config": {
+        "charge_ma": 100,
+        "device": {
+          "address": 52,
+          "bus_instance_id": 101,
+          "chip_id": 74,
+          "irq": 21,
+          "irq_active_high": false,
+          "irq_pull_up": true
+        },
+        "rails": [
+          {
+            "id": 1,
+            "millivolts": 3300
+          },
+          {
+            "id": 2,
+            "millivolts": 3300
+          },
+          {
+            "id": 5,
+            "millivolts": 3300
+          }
+        ]
+      },
+      "config_type": "power.axp2101",
+      "config_version": 1,
+      "instance_id": 4
+    },
+    {
+      "bindings": {
+        "board.battery": 4
+      },
+      "chip": {
+        "model": "st7789v3",
+        "revision": "unspecified",
+        "vendor": "sitronix"
+      },
+      "compatible": "sitronix,st7789v3",
+      "config": {
+        "backlight": 45,
+        "backlight_active_high": true,
+        "bus_instance_id": 103,
+        "busy": -1,
+        "busy_active_high": false,
+        "cs": 12,
+        "dc": 38,
+        "height": 240,
+        "offset_x": 0,
+        "offset_y": 0,
+        "power_active_high": [],
+        "power_pins": [],
+        "reset": -1,
+        "reset_active_high": false,
+        "reset_assert_ms": 0,
+        "reset_recovery_ms": 0,
+        "rotation": 2,
+        "width": 240
+      },
+      "config_type": "display.spi",
+      "config_version": 1,
+      "instance_id": 5
+    },
+    {
+      "bindings": {
+        "board.battery": 4,
+        "gpio.bank": 1,
+        "i2c.bus": 3
+      },
+      "chip": {
+        "model": "ft6336u",
+        "revision": "unspecified",
+        "vendor": "focaltech"
+      },
+      "compatible": "focaltech,ft6336u",
+      "config": {
+        "address": 56,
+        "bus_instance_id": 102,
+        "height": 240,
+        "irq": 16,
+        "irq_active_high": false,
+        "irq_pull_up": true,
+        "reset": -1,
+        "reset_active_high": false,
+        "reset_assert_ms": 0,
+        "reset_recovery_ms": 0,
+        "width": 240
+      },
+      "config_type": "touch.i2c",
+      "config_version": 1,
+      "instance_id": 6
+    },
+    {
+      "bindings": {
+        "gpio.bank": 1,
+        "i2c.bus": 2
+      },
+      "chip": {
+        "model": "pcf8563",
+        "revision": "unspecified",
+        "vendor": "nxp"
+      },
+      "compatible": "nxp,pcf8563",
+      "config": {
+        "address": 81,
+        "bus_instance_id": 101,
+        "chip_id": 0,
+        "irq": 17,
+        "irq_active_high": false,
+        "irq_pull_up": true
+      },
+      "config_type": "peripheral.i2c",
+      "config_version": 1,
+      "instance_id": 8
+    },
+    {
+      "bindings": {
+        "board.battery": 4,
+        "i2c.bus": 2
+      },
+      "chip": {
+        "model": "drv2605",
+        "revision": "unspecified",
+        "vendor": "ti"
+      },
+      "compatible": "ti,drv2605",
+      "config": {
+        "address": 90,
+        "bus_instance_id": 101,
+        "chip_id": 0,
+        "irq": -1,
+        "irq_active_high": false,
+        "irq_pull_up": true
+      },
+      "config_type": "peripheral.i2c",
+      "config_version": 1,
+      "instance_id": 9
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "max98357a",
+        "revision": "unspecified",
+        "vendor": "maxim"
+      },
+      "compatible": "maxim,max98357a",
+      "config": {
+        "bclk": 48,
+        "controller": 1,
+        "data": 46,
+        "pdm_rx": false,
+        "ws": 15
+      },
+      "config_type": "audio.i2s",
+      "config_version": 1,
+      "instance_id": 12
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "spm1423",
+        "revision": "unspecified",
+        "vendor": "knowles"
+      },
+      "compatible": "knowles,spm1423",
+      "config": {
+        "bclk": 44,
+        "controller": 0,
+        "data": 47,
+        "pdm_rx": true,
+        "ws": -1
+      },
+      "config_type": "audio.i2s",
+      "config_version": 1,
+      "instance_id": 13
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "esp32s3-wifi",
+        "revision": "unspecified",
+        "vendor": "espressif"
+      },
+      "compatible": "espressif,esp32s3-wifi",
+      "config": {
+        "features": 3,
+        "unit": 0
+      },
+      "config_type": "radio.integrated",
+      "config_version": 1,
+      "instance_id": 15
+    },
+    {
+      "bindings": {},
+      "chip": {
+        "model": "esp32s3-ble",
+        "revision": "unspecified",
+        "vendor": "espressif"
+      },
+      "compatible": "espressif,esp32s3-ble",
+      "config": {
+        "features": 1,
+        "unit": 0
+      },
+      "config_type": "radio.integrated",
+      "config_version": 1,
+      "instance_id": 16
+    },
+    {
+      "bindings": {
+        "gpio.bank": 1,
+        "i2c.bus": 2
+      },
+      "chip": {
+        "model": "bma423",
+        "revision": "unspecified",
+        "vendor": "bosch"
+      },
+      "compatible": "bosch,bma4xx",
+      "config": {
+        "address": 25,
+        "bus_instance_id": 101,
+        "chip_id": 19,
+        "irq": 14,
+        "irq_active_high": true,
+        "irq_pull_up": false
+      },
+      "config_type": "peripheral.i2c",
+      "config_version": 1,
+      "instance_id": 7
+    },
+    {
+      "bindings": {
+        "board.battery": 4
+      },
+      "chip": {
+        "model": "sx1262-sx1280-selectable",
+        "revision": "unspecified",
+        "vendor": "semtech"
+      },
+      "compatible": "semtech,sx1262-sx1280-selectable",
+      "config": {
+        "allowed_profiles": 15,
+        "bus_instance_id": 104,
+        "busy": 7,
+        "busy_active_high": true,
+        "cs": 5,
+        "irq": 9,
+        "irq_active_high": true,
+        "maximum_hz": 2500000000,
+        "minimum_hz": 430000000,
+        "reset": 8,
+        "reset_active_high": false,
+        "tcxo_voltage": 0
+      },
+      "config_type": "radio.lora",
+      "config_version": 2,
+      "instance_id": 11
+    }
+  ],
+  "revision": "audio-tools-common",
+  "schema": "riscrte.board-hardware",
+  "schema_version": 1
+}
