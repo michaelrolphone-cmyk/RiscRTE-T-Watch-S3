@@ -78,7 +78,7 @@ class CurrentExecutionSources(unittest.TestCase):
   for enabled in (False,True):
    with self.subTest(enabled=enabled),tempfile.TemporaryDirectory() as temp:
     root=Path(temp);header=root/'src/runtime/provisioning/StoreFiles.h'
-    fixture=root/'test/native_bank_test.cpp';fixture.parent.mkdir();fixture.write_text('__wrap_fclose' if enabled else '')
+    fixture=root/'test/run_native_bank_test.sh';fixture.parent.mkdir();fixture.write_text('--wrap=fclose' if enabled else '')
     if enabled:header.parent.mkdir(parents=True);header.touch()
     with patch.object(upgrade,'run') as run:
      upgrade.compile_transaction(root,root/'build','0.1.37')

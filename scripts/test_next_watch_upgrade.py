@@ -43,7 +43,7 @@ def compile_transaction(runtime, build, version, fixture=None):
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
         '-rdynamic', '-no-pie', '-Wl,--wrap=fopen,--wrap=opendir,--wrap=stat,--wrap=lstat',
-        *(['-Wl,--wrap=fclose'] if '__wrap_fclose' in (runtime/'test/native_bank_test.cpp').read_text() else []),
+        *(['-Wl,--wrap=fclose'] if '--wrap=fclose' in (runtime/'test/run_native_bank_test.sh').read_text() else []),
         *inc, *sources, fixture or ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
         '-lcrypto', '-ldl', '-o', executable)
     return executable
