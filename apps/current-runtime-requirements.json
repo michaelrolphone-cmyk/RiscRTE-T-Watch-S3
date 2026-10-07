@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
-  "source_sha": "c56e20c9c02c9a9c2061050757add1c6597f1403",
-  "firmware_version": "0.1.37",
+  "source_sha": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158",
+  "firmware_version": "0.1.35",
   "required_behavior": {
     "spi_max_hz": 40000000,
     "provider_poll_max_quantum_ms": 8,
@@ -60,7 +60,7 @@
     "retained_sleep_reset_diagnostics": true
   },
   "abi_changed": true,
-  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier. Complete native+bootfs cohort updates preserve NVS and app-data while admitting new apps/providers in the inactive pair. This requires the optional bank-store cohort suffix and full graph/ELF/persistent-authority validation before readiness, with 24 app/provider slots. SDR adds one lazy CPU resource-backed provider and Waterfall, for 20 app policies and 18 providers. The optional IQ target reserves its entire capture SRAM bank before heap setup. The board and ABI2 geometry stay unchanged. Install the native Runtime stage first, then the explicitly version-bound SDR cohort; ordinary stages preserve NVS and app-data. The later 1.0.5 cohort has 22 app policies and 19 provider instances. Runtime 0.1.35 retains the IQ and migration changes and adds retained sleep/reset diagnostics. The installed 0.1.34 validator admits this native+bootfs cohort before activation; no second native bridge is required. Runtime 0.1.36 preserves the accepted 0.1.35 IQ and retained-diagnostics lineage as an ancestor and adds owner-profile provisioning without changing the Watch paired ABI2 layout. Runtime 0.1.37 performs the required native ESP32-S3 PHY calibration before each IQ lease and disables the PHY after the driver restores the calibrated state.",
+  "reason": "The explicit app-data cohort adds Timecard and Spectrum temporal examples with separate native app-data namespaces. It requires 19 app policies, 12 requirements and the incompatible paired store ABI2 layout; existing runtime API prefixes remain unchanged. Continuous Spectrum capture also requires bounded empty/partial I2S RX reads to remain nonterminal while genuine I2S errors retain the existing cleanup barrier. Complete native+bootfs cohort updates preserve NVS and app-data while admitting new apps/providers in the inactive pair. This requires the optional bank-store cohort suffix and full graph/ELF/persistent-authority validation before readiness, with 24 app/provider slots. SDR adds one lazy CPU resource-backed provider and Waterfall, for 20 app policies and 18 providers. The optional IQ target reserves its entire capture SRAM bank before heap setup. The board and ABI2 geometry stay unchanged. Install the native Runtime stage first, then the explicitly version-bound SDR cohort; ordinary stages preserve NVS and app-data. The later 1.0.5 cohort has 22 app policies and 19 provider instances. Runtime 0.1.35 retains the IQ and migration changes and adds retained sleep/reset diagnostics. The installed 0.1.34 validator admits this native+bootfs cohort before activation; no second native bridge is required.",
   "deployment": {
     "target": "esp32s3-16mb-appdata-iq",
     "layout": "riscrte-paired-appdata-v2",
