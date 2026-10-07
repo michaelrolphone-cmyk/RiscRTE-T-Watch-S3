@@ -6,6 +6,9 @@
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
+#ifdef STORE_ADMISSION_RETAINED_WAKE
+#include "runtime/sleep/RetainedWake.h"
+#endif
 #ifdef STORE_ADMISSION_COHORT
 #include "cohort_elf_admission.h"
 #endif
@@ -132,7 +135,7 @@ int main(int argc, char** argv) {
 #ifdef STORE_ADMISSION_APP_DATA
   const auto appData=admissionAppData(&storageCalls);
 #endif
-  RiscBoot::Runtime runtime({owner, [](risc_runtime_health_v1*) { return true; },
+  RiscBoot::Port runtimePort{owner, [](risc_runtime_health_v1*) { return true; },
 #ifdef STORE_ADMISSION_COHORT
                             [](uint32_t) { ++cooperativeYields; },
 #else
@@ -142,7 +145,15 @@ int main(int argc, char** argv) {
 #ifdef STORE_ADMISSION_APP_DATA
                             ,nullptr,nullptr,nullptr,&appData
 #endif
-                            });
+                            };
+#ifdef STORE_ADMISSION_RETAINED_WAKE
+  // A RAM-only canonical backend makes metadata availability match native
+  // Runtime. Admission never boots, reads, stages or commits this store.
+  RiscRetainedWake::Image retainedImage{};
+  RiscRetainedWake::Store retainedStore(retainedImage);
+  runtimePort.retainedWake=&retainedStore;
+#endif
+  RiscBoot::Runtime runtime(runtimePort);
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {
     fprintf(stderr, "ADMISSION platforms=%zu drivers=%zu\n", runtime.platformCount_, runtime.driverCount_);

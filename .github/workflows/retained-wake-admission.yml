@@ -1,0 +1,30 @@
+name: Retained wake store admission
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 3c39aa7ac50ecd7f6da0296a62a2d7af066f82d1
+          path: .retained-runtime
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 2317b4fca374bb2b9cfe8dd204aa22244d1db609
+          path: .legacy-runtime
+      - name: Exact policy and historical backend compatibility
+        run: python3 scripts/test_retained_wake_store_admission.py --runtime .retained-runtime --legacy-runtime .legacy-runtime
+      - name: Sanitized policy and historical backend compatibility
+        env:
+          SANITIZE: '1'
+        run: python3 scripts/test_retained_wake_store_admission.py --runtime .retained-runtime --legacy-runtime .legacy-runtime
