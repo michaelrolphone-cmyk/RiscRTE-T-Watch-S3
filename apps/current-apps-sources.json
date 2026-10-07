@@ -4,11 +4,11 @@
   "sources": {
     "system-apps": {
       "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
-      "commit": "f146d82d4c2bc4d4b6ac97f7be83b04035ad7d60"
+      "commit": "1c82933488292be1064336aa592f7b2f7c378902"
     },
     "utilities": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
-      "commit": "21d5ba316abd30a33141353a50f48c926c5c5f4c"
+      "commit": "e6444bb4887d4254a6985eee8e6f9124f1fa7a02"
     },
     "productivity": {
       "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
@@ -16,12 +16,12 @@
     },
     "runtime": {
       "repository": "michaelrolphone-cmyk/RiscRTE",
-      "commit": "c56e20c9c02c9a9c2061050757add1c6597f1403"
+      "commit": "146ee7fed8ba97e4de5bfafb1ad745f1eee48158"
     }
   },
   "app_versions": {
     "springboard": "1.5.0",
-    "settings": "1.3.1",
+    "settings": "1.3.0",
     "wifi_settings": "1.1.4",
     "ota_update": "1.1.3",
     "app_store": "1.1.3",
@@ -31,13 +31,13 @@
     "alarms": "0.2.2",
     "countdown": "0.1.5",
     "frequency_generator": "0.1.4",
-    "audio_spectrum": "0.4.5",
+    "audio_spectrum": "0.4.4",
     "points_in_time": "0.4.4",
     "default": "0.10.2",
     "clock": "0.10.2",
     "file_browser": "1.4.1",
     "lora_messages": "0.1.2",
-    "ble_scanner": "0.2.0",
+    "ble_scanner": "0.1.1",
     "timecard": "0.1.1",
     "waterfall": "0.1.3",
     "ble_touchpad": "0.1.0",
@@ -46,32 +46,14 @@
   "service_version": "0.4.2",
   "sdr": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
     "id": "s3-radio-iq-v1",
     "version": "0.1.1"
   },
   "hid": {
     "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
+    "commit": "46ac508172d62a59dcf6b23cce49cc64a69799b2",
     "id": "ble-hid",
-    "version": "0.1.1"
-  },
-  "ble_sensors": {
-    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
-    "id": "ble-sensors",
-    "version": "0.1.0"
-  },
-  "ble_telemetry": {
-    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
-    "id": "ble-telemetry",
-    "version": "0.1.0"
-  },
-  "telemetry_battery": {
-    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
-    "commit": "925db8d9249538fba6e5be6ecc3bb37c0177a530",
-    "id": "telemetry-battery",
     "version": "0.1.0"
   }
 }
