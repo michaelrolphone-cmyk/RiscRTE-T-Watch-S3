@@ -86,6 +86,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_
     native_kv=runtime/'src/ports/esp32s3/NvsKeyValue.h'
     if native_kv.is_file() and 'RISC_KEY_VALUE_V2_BLOB_MAX' in native_kv.read_text():
         command += ['-DSTORE_ADMISSION_KV_V2']
+    if 'realtimeRead' in cpu_header and (runtime/'sdk/app/RiscRetainedWakeV1.h').is_file():
+        command += ['-DSTORE_ADMISSION_RUNTIME_FEATURES']
     if 'radioIqReady' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO_IQ']
     if 'radioIqPrepare' in cpu_header and 'radioIqCleanup' in cpu_header:

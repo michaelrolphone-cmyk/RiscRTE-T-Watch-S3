@@ -20,7 +20,11 @@ static bool file(void* context,const char* path,bool) {
   return present && closed;
 }
 }
+#ifdef STORE_ADMISSION_RUNTIME_FEATURES
+static_assert(RiscBoot::Runtime::MaxAppPolicyGrants==16,"Runtime feature grant bound changed");
+#else
 static_assert(RiscBoot::Runtime::MaxAppPolicyGrants==12,"RF grant bound changed");
+#endif
 static_assert(RISC_APP_DATA_NAMESPACE_MAX==131072,"RF namespace quota changed");
 static_assert(RISC_APP_DATA_FILE_MAX==65536 && RISC_APP_DATA_FILES_MAX>=3,"RF file bounds changed");
 #endif
@@ -79,6 +83,10 @@ RiscCpu::Hardware hardware() {
   h.hciReceive=[](uint8_t*,uint8_t*,size_t,size_t*,uint32_t){++hardwareCalls;return false;};
   h.hciClose=[](){++hardwareCalls;return false;};
   h.hciIdle=[](){++hardwareCalls;return false;};h.hciSafe=[](){++hardwareCalls;return false;};
+#endif
+#ifdef STORE_ADMISSION_RUNTIME_FEATURES
+  h.realtimeRead=[](risc_realtime_snapshot_v1*)->int32_t{++hardwareCalls;return RISC_REALTIME_IO;};
+  h.realtimeSeed=[](int64_t,uint32_t)->int32_t{++hardwareCalls;return RISC_REALTIME_IO;};
 #endif
   h.owner = owner;
 #ifdef STORE_ADMISSION_RADIO_IQ
@@ -147,7 +155,7 @@ int main(int argc, char** argv) {
 #ifdef STORE_ADMISSION_APP_DATA
   const auto appData=admissionAppData(&storageCalls);
 #endif
-  RiscBoot::Runtime runtime({owner, [](risc_runtime_health_v1*) { return true; },
+  RiscBoot::Port runtimePort{owner, [](risc_runtime_health_v1*) { return true; },
 #ifdef STORE_ADMISSION_COHORT
                             [](uint32_t) { ++cooperativeYields; },
 #else
@@ -157,7 +165,12 @@ int main(int argc, char** argv) {
 #ifdef STORE_ADMISSION_APP_DATA
                             ,nullptr,nullptr,nullptr,&appData
 #endif
-                            });
+                            };
+#ifdef STORE_ADMISSION_RUNTIME_FEATURES
+  RiscRetainedWake::Image rtcImage{};
+  RiscRetainedWake::Store wake(rtcImage);runtimePort.retainedWake=&wake;
+#endif
+  RiscBoot::Runtime runtime(runtimePort);
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {
     fprintf(stderr, "ADMISSION platforms=%zu drivers=%zu\n", runtime.platformCount_, runtime.driverCount_);

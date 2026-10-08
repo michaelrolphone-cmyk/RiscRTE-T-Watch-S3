@@ -14,6 +14,38 @@
 static char sleep_status[32];
 
 static const risc_runtime_api_v1 *rt;
+#ifdef WATCH_RUNTIME_FEATURES
+#include "../runtime_features/clock_runtime.h"
+static watch_clock_runtime native_clock;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+#include "PortableBroadcastClient.h"
+static portable_broadcast_client clock_broadcast;
+static bool clock_broadcast_uncertain,clock_handoff;
+static bool clock_broadcast_step(void) {
+    if(clock_broadcast_uncertain)return false;
+    if(!clock_broadcast.api)return true;
+    if(!portable_broadcast_step(&clock_broadcast,true)) {
+        clock_broadcast_uncertain=true;
+#ifdef WATCH_RUNTIME_FEATURES
+        watch_runtime_retain(rt);
+#endif
+        return false;
+    }
+    return true;
+}
+static bool clock_broadcast_pause(void) {
+    if(clock_broadcast_uncertain)return false;
+    if(!portable_broadcast_pause(&clock_broadcast)) {
+        clock_broadcast_uncertain=true;
+#ifdef WATCH_RUNTIME_FEATURES
+        watch_runtime_retain(rt);
+#endif
+        return false;
+    }
+    return true;
+}
+#endif
 #ifdef WATCH_CLOCK_ALARMS
 #ifndef WATCH_CLOCK_LAUNCHER
 #error Alarm Clock requires its normal touch launcher deployment
@@ -188,7 +220,13 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
      * edge anchors the fractional hand within one 100ms sampling interval. */
     if (!sampled_rtc || (uint32_t)(now-rtc_sampled_at)>=100u) {
         twatch_rtc_time_v1 date={0};
+        #ifdef WATCH_RUNTIME_FEATURES
+        uint16_t native_fraction=0;
+        bool valid=watch_runtime_read(&native_clock,&date,&native_fraction);
+        if(native_clock.halted)return false;
+#else
         bool valid=rtc && rtc->read(rtc->context,&date);
+#endif
 #ifdef WATCH_CLOCK_POINTS
         uint32_t raw_seconds=0;
         bool raw_valid=valid&&alarm_calendar_seconds(date.year,date.month,date.day,date.hour,date.minute,date.second,&raw_seconds);
@@ -200,7 +238,12 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
         face.points=&clock_points_view;
 #endif
         valid=valid&&watch_display_time(&date,&date);
+        #ifdef WATCH_RUNTIME_FEATURES
+        if(valid && !native_clock.fallback)rtc_second_at=now-native_fraction;
+        else if(valid && (!face.time_valid || !same_second(&date,&face.time)))rtc_second_at=now;
+#else
         if (valid && (!face.time_valid || !same_second(&date,&face.time))) rtc_second_at=now;
+#endif
         face.time=date; face.time_valid=valid;
         rtc_sampled_at=now; sampled_rtc=true;
     }
@@ -235,6 +278,9 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
 #endif
 }
 static bool pace_frame(uint32_t began) {
+#ifdef WATCH_BLE_BROADCAST
+    if(!clock_broadcast_step())return false;
+#endif
 #ifdef WATCH_CLOCK_LAUNCHER
     if (launcher_swipe_pending) return true;
 #endif
@@ -284,6 +330,12 @@ static bool logo_to_clock(void) {
         if (alpha==256u) {ok=true;break;}
     }
 done:
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return false;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+    if(clock_broadcast_uncertain)return false;
+#endif
     free(scratch);free(old);return ok;
 }
 #ifdef WATCH_CLOCK_RETURN
@@ -328,6 +380,12 @@ static bool return_to_clock(void) {
         if (!pace_frame(now)) goto done;
     }
 done:
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return false;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+    if(clock_broadcast_uncertain)return false;
+#endif
     free(scratch);free(old);return ok;
 }
 #endif
@@ -348,8 +406,17 @@ static bool clock_low_battery_poll(uint32_t now) {
     clock_low_battery_sampled=true;clock_low_battery_at=now;
     risc_battery_sample_v1 sample={0,255,RISC_BATTERY_PROFILE_MISSING};
     if(!pmu->base.read||!pmu->base.read(pmu->base.context,&sample))return true;
+#ifdef WATCH_BLE_BROADCAST
+    if(portable_low_battery_sample_valid(&sample) && sample.percent<PORTABLE_LOW_BATTERY_THRESHOLD &&
+       (!clock_low_battery.observed || !clock_low_battery.low) && !clock_broadcast_pause())return false;
+#endif
     unsigned result=portable_low_battery_update(&clock_low_battery,rt,&sample);
-    if(result&PORTABLE_LOW_BATTERY_RETAINED)return false;
+    if(result&PORTABLE_LOW_BATTERY_RETAINED) {
+#ifdef WATCH_RUNTIME_FEATURES
+        watch_runtime_halt(&native_clock);
+#endif
+        return false;
+    }
     if(result&PORTABLE_LOW_BATTERY_ERROR)rt->diagnostic("LOW_BATTERY settings=unconfirmed");
     if(!(result&PORTABLE_LOW_BATTERY_ENTERED))return true;
     pqa_cancel(&clock_quick.ui);(void)pqa_take_action(&clock_quick.ui);
@@ -381,8 +448,19 @@ static bool startup(void) {
 #include "watch_motion_client.h"
 #endif
 #endif
+#if defined(WATCH_RUNTIME_FEATURES) && !defined(WATCH_CLOCK_RETURN)
+static bool resume_from_deep(void) {
+    risc_display_surface_v1 fresh={0};uint32_t now;
+    return display->set_brightness(display->context,0,100) && alive(&now) &&
+        frame(&fresh) && draw_clock(now,&fresh) && present() &&
+        display->set_brightness(display->context,(uint16_t)clock_brightness(),100);
+}
+#endif
 static int sleep_cycle(void) {
     sleep_status[0]=0;
+#ifdef WATCH_BLE_BROADCAST
+    if(!clock_broadcast_pause())return WATCH_SLEEP_RETAINED;
+#endif
 #ifdef PORTABLE_LOW_BATTERY
     watch_sleep_light_ms=clock_quick.deep_ms;
 #endif
@@ -457,6 +535,9 @@ static int sleep_cycle(void) {
 }
 __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
+#if defined(WATCH_RUNTIME_FEATURES) && defined(WATCH_CLOCK_RETURN)
+    (void)watch_runtime_promote;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
     clock_alarm=(portable_alarm_client){0};clock_display_settled=true;
     clock_alarm_modal=clock_alarm_failed_cleaned=clock_alarm_error_seen=false;
@@ -476,11 +557,27 @@ __attribute__((visibility("default"))) void app_main(void) {
     picker_selection_pending=0;
 #endif
     held=0;rtc=NULL;display=NULL;pmu=NULL;panel=NULL;
+#ifdef WATCH_BLE_BROADCAST
+    clock_broadcast=(portable_broadcast_client){0};clock_broadcast_uncertain=clock_handoff=false;
+#endif
     reset_telemetry();
     if (!rt || rt->api_version!=1 || rt->struct_size<RISC_RUNTIME_CAPABILITIES_V1_SIZE ||
         !rt->health || !rt->yield_ms || !rt->diagnostic || !rt->acquire || !rt->release) return;
     risc_runtime_capability_v1 dg={.struct_size=sizeof(dg)},rg={.struct_size=sizeof(rg)},pg={.struct_size=sizeof(pg)};
-    bool have_d=rt->acquire("display.output",1,0,&dg),have_r=false,have_p=false;
+    bool have_d=false,have_r=false,have_p=false;
+#ifdef WATCH_RUNTIME_FEATURES
+    if(!watch_runtime_open(&native_clock,rt,
+#ifdef WATCH_CLOCK_RETURN
+        false
+#else
+        true
+#endif
+        ))goto done;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+    if(!portable_broadcast_open(&clock_broadcast,rt))goto done;
+#endif
+    have_d=rt->acquire("display.output",1,0,&dg);
     if (!have_d) goto done;
     display=dg.api;
     if (!display || display->api_version!=1 || display->struct_size<TWATCH_PANEL_LIGHT_SLEEP_SIZE ||
@@ -501,6 +598,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
+#ifdef WATCH_RUNTIME_FEATURES
+    if(!watch_runtime_seed(&native_clock,rtc))goto done;
+#endif
     #ifdef WATCH_CLOCK_LAUNCHER
     /* Load before the first sharp Clock frame on fresh boot and normal return.
      * This is the existing shared app-settings namespace, never a driver write. */
@@ -532,7 +632,11 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_RETURN
         !return_to_clock() ||
 #else
+#ifdef WATCH_RUNTIME_FEATURES
+        !(native_clock.resume?resume_from_deep():startup()) ||
+#else
         !startup() ||
+#endif
 #endif
         !pmu->key_events(pmu->base.context,&discarded) || !alive(&armed_at)) goto done;
 #ifdef WATCH_CLOCK_LAUNCHER
@@ -560,12 +664,22 @@ __attribute__((visibility("default"))) void app_main(void) {
     /* Startup has presented a complete frame and admitted all startup services.
      * A pending native/store pair must remain unconfirmed on every earlier
      * failure, intentional exit, queued handoff or native-retained path. */
+#ifdef WATCH_RUNTIME_FEATURES
+    int promoted=watch_runtime_promote(&native_clock);
+    if(promoted==RISC_PROVIDER_PROMOTION_RETAINED)return;
+    if(promoted!=RISC_PROVIDER_PROMOTION_OK && promoted!=RISC_PROVIDER_PROMOTION_ALREADY_READY) {
+        rt->diagnostic("WATCH_CLOCK error=provider-promotion");goto done;
+    }
+#endif
     if(!watch_confirm_paired_boot(rt)) {
         rt->diagnostic("WATCH_CLOCK error=paired-boot-confirm");goto done;
     }
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
     while(alive(&now)) {
+#ifdef WATCH_BLE_BROADCAST
+        if(!clock_broadcast_step())return;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
         if(!clock_alarm_foreground() || !alive(&now))break;
 #endif
@@ -586,6 +700,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         uint32_t quick_actions=pqa_take_action(&clock_quick.ui);bool volume_changed=false;
         if(!pqa_session_apply(&clock_quick,rt,display,quick_actions,&volume_changed))break;
 #ifdef WATCH_QUICK_RADIOS
+#ifdef WATCH_BLE_BROADCAST
+        if((quick_actions&(PQA_WIFI|PQA_BLUETOOTH|PQA_AIRPLANE)) && !clock_broadcast_pause())return;
+#endif
         if(!pqa_radios_apply(&clock_radios,&clock_quick.ui,rt,quick_actions))break;
 #endif
 #ifdef WATCH_CLOCK_ALARMS
@@ -594,7 +711,12 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(!clock_quick.ui.radio_controls && (quick_actions&PQA_WIFI)) {
             pqa_cancel(&clock_quick.ui);
             if(!pqa_session_restore(&clock_quick,display) || !launcher_touch_close(&touch))break;
-            if(rt->request_launch("wifi_settings.elf"))break;
+            if(rt->request_launch("wifi_settings.elf")) {
+#ifdef WATCH_BLE_BROADCAST
+                clock_handoff=true;
+#endif
+                break;
+            }
             clock_quick.ui.error_flags|=PQA_ERROR_WIFI;
             if(!launcher_touch_open(&touch))break;
         }
@@ -631,7 +753,12 @@ __attribute__((visibility("default"))) void app_main(void) {
              * Incoming Springboard owns the single blur/crossfade and adopts
              * the still-held contact as drag-only; never fade through black. */
             if(!launcher_touch_close(&touch)) break;
-            if(rt->request_launch("springboard.elf")) break;
+            if(rt->request_launch("springboard.elf")) {
+#ifdef WATCH_BLE_BROADCAST
+                clock_handoff=true;
+#endif
+                break;
+            }
             rt->diagnostic("WATCH_CLOCK error=launcher-request");
             if(!launcher_touch_open(&touch) || !alive(&now)) break;
             last_activity=now;
@@ -654,8 +781,20 @@ __attribute__((visibility("default"))) void app_main(void) {
             watch_face_close(&picker);free(picker_scratch);picker_scratch=NULL;
             picker_open_pending=picker_select_pending=picker_save_failed=false;
 #endif
+#ifdef WATCH_RUNTIME_FEATURES
+            if(!watch_runtime_stage(&native_clock)) {
+                if(native_clock.halted)return;
+                break;
+            }
+#endif
             int sleep_result=sleep_cycle();
             if(sleep_result==WATCH_SLEEP_RETAINED)return; /* Runtime retains before fini. */
+#ifdef WATCH_RUNTIME_FEATURES
+            if(!watch_runtime_abandon(&native_clock)) {
+                if(native_clock.halted)return;
+                break;
+            }
+#endif
             if (!sleep_result || !alive(&armed_at)) break;
             /* A refused/held-key attempt also starts a new bounded interval;
              * it must not turn an expired timeout into a busy retry loop. */
@@ -669,6 +808,23 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
     }
 done:
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+    if(clock_broadcast_uncertain)return;
+    if(!clock_handoff && !clock_broadcast_pause())return;
+    if(!portable_broadcast_close(&clock_broadcast,rt)) {
+#ifdef WATCH_RUNTIME_FEATURES
+        watch_runtime_retain(rt);
+#endif
+        return;
+    }
+#endif
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return;
+    if(!watch_runtime_close(&native_clock))return;
+#endif
 #ifdef WATCH_QUICK_ACTIONS
     if(clock_quick.ui.torch && display && !pqa_session_restore(&clock_quick,display))rt->diagnostic("QUICK brightness-restore-failed");
 #endif

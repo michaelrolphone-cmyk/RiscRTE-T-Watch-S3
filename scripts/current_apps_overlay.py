@@ -7,9 +7,10 @@ ROOT=Path(__file__).resolve().parents[1]
 PROFILE='watch-current-apps-v1'
 LOW_BATTERY_PROFILE='watch-low-battery-apps-v1'
 RF_SPECTRUM_PROFILE='watch-rf-spectrum-apps-v1'
-PROFILES=('current','low-battery','rf-spectrum','power-repair')
-def rf_enabled(profile):return profile in ('rf-spectrum','power-repair')
-def automatic_low_battery(profile):return profile in ('low-battery','rf-spectrum','power-repair')
+PROFILES=('current','low-battery','rf-spectrum','power-repair','runtime-features')
+def power_enabled(profile):return profile in ('power-repair','runtime-features')
+def rf_enabled(profile):return profile in ('rf-spectrum','power-repair','runtime-features')
+def automatic_low_battery(profile):return profile in ('low-battery','rf-spectrum','power-repair','runtime-features')
 SYSTEM_APPS=('springboard','settings','wifi_settings','ota_update','app_store','file_browser')
 UTILITY_APPS=('battery','calculator','stopwatch','alarms','countdown','frequency_generator','audio_spectrum','lora_messages','ble_scanner','waterfall','ble_touchpad','ble_buttons')
 PRODUCTIVITY_APPS=('points_in_time','timecard')
@@ -23,7 +24,7 @@ ADDED_PAYLOADS={folder+'/'+name for folder in ('ble','imu','lora','s3-radio-iq',
 PAYLOADS=ADDED_PAYLOADS|{'board.json'}|{folder+'/'+name for folder in ('gpio','pmu') for name in ('driver.elf','manifest.json')}|{n+suffix for n in APPS for suffix in ('.elf','.json')}|{n+'/'+suffix for n in PROVIDERS for suffix in ('driver.elf','manifest.json')}
 ALLOWED=PAYLOADS|{'boot.json'}
 def payloads(profile='current'):
- return PAYLOADS|({'touch/driver.elf','touch/manifest.json'} if automatic_low_battery(profile) else set())|({'panel/driver.elf','panel/manifest.json'} if profile=='power-repair' else set())
+ return PAYLOADS|({'touch/driver.elf','touch/manifest.json'} if automatic_low_battery(profile) else set())|({'panel/driver.elf','panel/manifest.json'} if power_enabled(profile) else set())|({'broadcast/driver.elf','broadcast/manifest.json'} if profile=='runtime-features' else set())
 ALARM_VOLUME={'key':'alarm_volume','namespace':1,'access':'read'}
 ALARM_DND={'key':'alert_dnd','namespace':1,'access':'read'}
 ALARM_PREFERENCES={'capability':'storage.key-value','api':1,'instance_id':1}
@@ -34,11 +35,14 @@ def require(ok,message):
 def metadata(b):return {'size_bytes':len(b),'sha256':sha(b)}
 def config(root=ROOT,profile='current',*,allow_pending=False):
  require(profile in PROFILES,'Unknown application profile')
- path='apps/power-repair-sources.json' if profile=='power-repair' else 'apps/rf-spectrum-sources.json' if profile=='rf-spectrum' else 'apps/low-battery-sources.json' if profile=='low-battery' else 'apps/apex-apps-sources.json'
+ path='apps/runtime-features-sources.json' if profile=='runtime-features' else 'apps/power-repair-sources.json' if profile=='power-repair' else 'apps/rf-spectrum-sources.json' if profile=='rf-spectrum' else 'apps/low-battery-sources.json' if profile=='low-battery' else 'apps/apex-apps-sources.json'
  c=json.loads((Path(root)/path).read_text())
- require(c.get('schema')==1 and c.get('profile')==('watch-power-repair-apps-v1' if profile=='power-repair' else RF_SPECTRUM_PROFILE if profile=='rf-spectrum' else LOW_BATTERY_PROFILE if profile=='low-battery' else PROFILE),'Wrong current-app profile')
+ require(c.get('schema')==1 and c.get('profile')==('watch-runtime-features-apps-v1' if profile=='runtime-features' else 'watch-power-repair-apps-v1' if profile=='power-repair' else RF_SPECTRUM_PROFILE if profile=='rf-spectrum' else LOW_BATTERY_PROFILE if profile=='low-battery' else PROFILE),'Wrong current-app profile')
  if profile=='rf-spectrum':
   from rf_spectrum_profile import validate_configuration
+  validate_configuration(c,root,allow_pending=allow_pending)
+ if profile=='runtime-features':
+  from runtime_features_profile import validate_configuration
   validate_configuration(c,root,allow_pending=allow_pending)
  if profile=='power-repair':
   from power_repair_profile import validate_configuration
@@ -161,6 +165,9 @@ def configure_boot(original,profile='current'):
  if rf_enabled(profile):
   from rf_spectrum_profile import upgrade_boot
   b=upgrade_boot(b)
+ if profile=='runtime-features':
+  from runtime_features_profile import upgrade_boot as add_runtime_features
+  b=add_runtime_features(b)
  return b
 
 def verify(artifact,head,root=ROOT,profile='current'):
@@ -224,6 +231,9 @@ def verify(artifact,head,root=ROOT,profile='current'):
   require(witness.get('sha256')==sha(files['touch/driver.elf']) and witness.get('source_sha256')==sha((source/'driver.c').read_bytes()),'Current touch source/binary custody differs')
  require(json.loads(files['alarm-service/manifest.json'])['version']==c['service_version'],'Current alarm version mismatch')
  require(r['service']['defines']==['-DPOINTS_IN_TIME_SERVICE','-DPORTABLE_RTC_UTC8_DENVER','-DALARM_VOLUME_CONTROL','-DALARM_DND_CONTROL'],'Wrong current service profile')
+ if profile=='runtime-features':
+  from runtime_features_profile import verify_profile
+  verify_profile(files,r,root)
  if profile=='power-repair':
   from power_repair_profile import verify_profile
   verify_profile(files,r,root)
