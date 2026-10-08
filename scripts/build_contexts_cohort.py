@@ -16,6 +16,8 @@ from compact_current_elf import compact
 from current_cohort import encode as encode_cohort
 from contexts_profile import (APPS, PRIOR_APPS, PROFILE, VERSION, SERVICE_MANIFEST,
     configuration, baseline_inputs, baseline_contract, catalog, upgrade_boot, app_manifest, check_policy)
+SECTION_FLAGS = ['-ffunction-sections', '-fdata-sections']
+LINK_FLAGS = ['-Wl,--gc-sections']
 
 def git(path, *args):
     return subprocess.check_output(['git', '-C', str(path), *args], text=True).strip()
@@ -82,7 +84,7 @@ class Compiler:
         subprocess.run([self.cc, '-std=c11', '-Os', '-fPIC', '-mtext-section-literals', '-mlongcalls',
             '-fvisibility=hidden', '-ffreestanding', '-fno-builtin', '-nostdlib', '-nostartfiles', '-shared',
             '-Wl,--no-relax', '-Wl,--hash-style=sysv', '-Wl,--version-script=' + str(mapping),
-            '-Wall', '-Wextra', '-Werror', *flags, *['-I' + str(p) for p in includes],
+            '-Wall', '-Wextra', '-Werror', *SECTION_FLAGS, *LINK_FLAGS, *flags, *['-I' + str(p) for p in includes],
             *map(str, sources), '-lgcc', '-o', str(elf)], check=True)
         subprocess.run([str(self.validator), str(elf)], check=True)
         proof = compact(elf, self.cc, debug_path=self.out / 'debug' / (name + '.elf')) if compact_app else None
@@ -95,6 +97,7 @@ class Compiler:
         require(raw[:7] == b'\x7fELF\x01\x01\x01' and raw[16:20] == b'\x03\x00\x5e\x00', 'Wrong Contexts target architecture')
         sizes = subprocess.check_output([self.cc.removesuffix('gcc') + 'size', str(elf)], text=True).splitlines()[1].split()
         return raw, {**metadata(raw), 'defines': flags, 'imports': sorted(imports), 'exports': sorted(actual),
+            'section_gc': {'compile_flags': SECTION_FLAGS, 'link_flags': LINK_FLAGS, 'export_roots': sorted(exports)},
             'compaction': proof, 'sections_bytes': {k: int(v) for k, v in zip(('text', 'data', 'bss'), sizes[:3])},
             'target_dependencies': deps, 'host_fixture_excluded': True}
 
@@ -139,6 +142,7 @@ def verify_build(directory, baseline, root=ROOT):
         require(metadata(files[name + '.elf']) == {k: proof[k] for k in ('sha256', 'size_bytes')}, 'Context target proof differs: ' + name)
         require(proof['defines'] == definitions(name, record['configuration']['app_versions'][name], root), 'Context target flags differ: ' + name)
         require(proof['host_fixture_excluded'] and proof['target_dependencies'], 'Context target source closure absent: ' + name)
+        require(proof['section_gc'] == {'compile_flags': SECTION_FLAGS, 'link_flags': LINK_FLAGS, 'export_roots': proof['exports']}, 'Context section-GC roots differ: ' + name)
         debug = directory / 'debug' / (name + '.elf')
         require(proof['compaction']['before_sha256'] == hashlib.sha256(debug.read_bytes()).hexdigest() and
                 proof['compaction']['after_sha256'] == metadata(files[name + '.elf'])['sha256'], 'Context compaction custody differs: ' + name)
@@ -206,7 +210,7 @@ def build(system, utilities, productivity, runtime, drivers, baseline, out, *, r
     effect = out / 'boot-effect.o'
     subprocess.run([cc.removesuffix('gcc') + 'g++', '-std=c++11', '-Os', '-fPIC', '-mtext-section-literals', '-mlongcalls',
         '-fvisibility=hidden', '-fno-exceptions', '-fno-rtti', '-fno-threadsafe-statics', '-ffreestanding', '-fno-builtin',
-        '-Wall', '-Wextra', '-Werror', '-I' + str(root / 'sdk/driver'), '-c', str(root / 'apps/clock/effects/boot.cpp'), '-o', str(effect)], check=True)
+        '-Wall', '-Wextra', '-Werror', *SECTION_FLAGS, '-I' + str(root / 'sdk/driver'), '-c', str(root / 'apps/clock/effects/boot.cpp'), '-o', str(effect)], check=True)
     effect_deps = compiler.dependencies([root / 'apps/clock/effects/boot.cpp'], [], [root / 'sdk/driver'], cxx=True)
     clock_sidecar = root / 'apps/clock/contexts-manifest.json'
     clock_source_manifest = json.loads(clock_sidecar.read_text())

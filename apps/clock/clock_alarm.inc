@@ -32,6 +32,7 @@ static bool clock_alarm_failure(void) {
     }
     return false;
 }
+#ifdef WATCH_CONTEXTS_CLIENT
 static bool clock_alarm_pump_checked(void) {
 #ifdef WATCH_CONTEXTS_CLIENT
     if(!portable_alarm_status(&clock_alarm))return false;
@@ -45,6 +46,9 @@ static bool clock_alarm_pump_checked(void) {
 #endif
     return true;
 }
+#else
+#define clock_alarm_pump_checked() portable_alarm_pump(&clock_alarm)
+#endif
 static bool clock_alarm_foreground(void) {
     (void)portable_touch_open;(void)portable_touch_close;
     if(!clock_display_settled || held)return clock_alarm_failure();
