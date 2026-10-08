@@ -16,7 +16,32 @@ typedef struct {
 #define MUTED 0x6bf0u
 #define ORANGE 0xfce3u
 
-typedef struct { uint8_t *pixels; uint32_t stride; } canvas;
+typedef struct { uint8_t *pixels; uint32_t stride;
+#ifdef WATCH_CONTEXTS_CLIENT
+    bool (*capture)(void *);void *context;unsigned operations;bool failed;uint8_t sink[2];
+#endif
+} canvas;
+#ifdef WATCH_CONTEXTS_CLIENT
+#define CANVAS_INIT(s,state) {(uint8_t*)(s)->pixels,(s)->stride_bytes,(state)?(state)->capture_audio:NULL,(state)?(state)->capture_context:NULL,0,false,{0,0}}
+#define CANVAS_OK(c) (!(c).failed)
+static bool canvas_checkpoint(canvas*c) {
+    if(c->failed)return false;
+    if(c->capture&&!c->capture(c->context))c->failed=true;
+    return !c->failed;
+}
+static bool canvas_clear(canvas*c) {
+    for(unsigned y=0;y<240;y++){
+        if(!(y&7u)&&!canvas_checkpoint(c))return false;
+        memset(c->pixels+y*c->stride,0,480);
+    }
+    return true;
+}
+#define CANVAS_CLEAR(c) do {if(!canvas_clear(&(c)))return false;}while(0)
+#else
+#define CANVAS_INIT(s,state) {(uint8_t*)(s)->pixels,(s)->stride_bytes}
+#define CANVAS_OK(c) true
+#define CANVAS_CLEAR(c) for(unsigned y=0;y<240;y++)memset(at(&(c),0,y),0,480)
+#endif
 static void two(char *s, unsigned n) { s[0]=(char)('0'+n/10); s[1]=(char)('0'+n%10); }
 void nova_watch_format(const nova_watch_state *s, nova_watch_labels *out) {
     if (!out) return;
@@ -45,9 +70,18 @@ void nova_watch_format(const nova_watch_state *s, nova_watch_labels *out) {
         else { out->battery[0]=(char)('0'+n);out->battery[1]='%';out->battery[2]=0; }
     }
 }
-static uint8_t *at(canvas *c, unsigned x, unsigned y) { return c->pixels+y*c->stride+2*x; }
+static uint8_t *at(canvas *c, unsigned x, unsigned y) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(c->failed||(!(++c->operations&255u)&&!canvas_checkpoint(c)))return c->sink;
+#endif
+    return c->pixels+y*c->stride+2*x;
+}
 static uint8_t *indexed(canvas *c, unsigned i) {
+    #ifdef WATCH_CONTEXTS_CLIENT
+    return at(c,i%240,i/240);
+#else
     return c->stride==480 ? c->pixels+2*i : at(c,i%240,i/240);
+#endif
 }
 static void put(uint8_t *p, uint16_t color) { p[0]=(uint8_t)color;p[1]=(uint8_t)(color>>8); }
 static void blend(uint8_t *p, uint16_t color, unsigned alpha) {
@@ -142,11 +176,16 @@ bool nova_watch_render(risc_display_surface_v1 *s,const nova_watch_state *state)
         s->stride_bytes>UINT32_MAX/240 || s->size_bytes<s->stride_bytes*240) return false;
     nova_watch_state empty={0};if (!state) state=&empty;
     nova_watch_labels labels;nova_watch_format(state,&labels);
-    canvas c={(uint8_t*)s->pixels,s->stride_bytes};
-    for (unsigned y=0;y<240;y++) memset(at(&c,0,y),0,480);
+    canvas c=CANVAS_INIT(s,state);
+    CANVAS_CLEAR(c);
     for (unsigned i=0;i<COUNT(nova_base_spans);i++) {
-        const nova_span *span=nova_base_spans+i;uint8_t *p=indexed(&c,span->pixel);
-        for (unsigned j=0;j<span->count;j++) put(p+2*j,nova_base_pixels[span->data+j]);
+        const nova_span *span=nova_base_spans+i;
+#ifdef WATCH_CONTEXTS_CLIENT
+        for(unsigned j=0;j<span->count;j++)put(indexed(&c,span->pixel+j),nova_base_pixels[span->data+j]);
+#else
+        uint8_t *p=indexed(&c,span->pixel);
+        for(unsigned j=0;j<span->count;j++)put(p+2*j,nova_base_pixels[span->data+j]);
+#endif
     }
     unsigned rot82=(state->animation_ms%90000u)*32768u/45000u;
     unsigned rot76=0u-(state->animation_ms%40000u)*65536u/40000u;
@@ -175,7 +214,7 @@ bool nova_watch_render(risc_display_surface_v1 *s,const nova_watch_state *state)
             fill=fill>=100?fill-100:0;
         }
     }
-    return true;
+    return CANVAS_OK(c);
 }
 
 #include "../faces/render.inc"
@@ -185,7 +224,7 @@ bool nova_watch_sleep_status(risc_display_surface_v1 *s,const char *label){
     if(!s||!s->pixels||s->width!=240||s->height!=240||s->stride_bytes<480||
        s->stride_bytes>UINT32_MAX/240u||s->size_bytes<s->stride_bytes*240u||!label)return false;
     for(unsigned n=0;label[n];n++)if(n==31)return false;
-    canvas c={(uint8_t*)s->pixels,s->stride_bytes};
+    canvas c=CANVAS_INIT(s,((const nova_watch_state*)NULL));
     for(unsigned y=203;y<231;y++)for(unsigned x=10;x<230;x++)put(at(&c,x,y),0);
     centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),label,222,128,ORANGE);return true;
 }

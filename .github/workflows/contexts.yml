@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 1b57a8060f6a9833d0ecdd27bb2bb1bd4b5cb876
+          ref: 851f389d72672f1ff33825940306b1a4e9931062
           path: .dependencies/system
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -38,6 +38,7 @@ jobs:
           python3 scripts/test_contexts_clock.py --system-apps .dependencies/system
           python3 scripts/test_context_face.py
           python3 scripts/test_contexts_packaging.py --baseline .dependencies/baseline/accepted-store.zip
+          python3 scripts/test_contexts_initial.py
       - uses: actions/upload-artifact@v4
         with:
           name: contexts-face-${{ github.sha }}

@@ -23,7 +23,9 @@ typedef struct {
     bool hour_24;           /* false is the accepted Settings12-hour policy. */
     const nova_points_state *points; /* NULL is explicitly unavailable. */
 #ifdef WATCH_CONTEXTS_CLIENT
-    nova_context_state contexts; /* Copied fresh observations; no provider calls. */
+    nova_context_state contexts; /* Copied fresh observations. */
+    bool (*capture_audio)(void *); /* Optional bounded owner callback; capture only. */
+    void *capture_context;
 #endif
 } nova_watch_state;
 typedef struct {
@@ -32,7 +34,9 @@ typedef struct {
 } nova_watch_labels;
 bool nova_watch_sleep_status(risc_display_surface_v1 *surface,const char *label);
 void nova_watch_format(const nova_watch_state *state, nova_watch_labels *labels);
-/* Pure, bounded 240x240 little-endian RGB565 face output. No allocation, I/O,
+/* Bounded 240x240 little-endian RGB565 face output. With a NULL capture
+ * callback this is pure. The opt-in owner callback may only drain already-owned
+ * audio; false stops frame writes and propagates failure. No allocation,
  * mutable globals, floating point, trig, or runtime SVG/font engine. The picker
  * alone uses its explicit caller-owned cache below.
  * Writes only active pixels. Stride padding and caller guards are preserved. */

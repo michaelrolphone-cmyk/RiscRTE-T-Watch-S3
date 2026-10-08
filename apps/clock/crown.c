@@ -22,6 +22,17 @@ static watch_clock_runtime native_clock;
 #include "PortableContextsClient.h"
 static portable_contexts_client clock_contexts;
 static bool clock_contexts_uncertain,clock_contexts_handoff;
+static bool clock_contexts_capture_checkpoint(void *context) {
+    (void)context;
+    if(clock_contexts_uncertain)return false;
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return false;
+#endif
+    if(portable_contexts_capture(&clock_contexts))return true;
+    clock_contexts_uncertain=true;
+    if(!portable_contexts_retain(&clock_contexts))for(;;)rt->yield_ms(50);
+    return false;
+}
 static bool clock_contexts_pause(void) {
     if(clock_contexts_uncertain)return false;
     if(portable_contexts_pause(&clock_contexts))return true;
@@ -110,6 +121,9 @@ static uint32_t launcher_sampled_at;
 /* Sampling must not wait for a whole 240-row presentation. Latch the first
  * qualified swipe, but let the accepted frame finish before handing it off. */
 static void sample_launcher_touch(uint32_t now, bool force) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
     if(clock_alarm_modal)return;
 #endif
@@ -177,6 +191,9 @@ static uint32_t rtc_sampled_at, rtc_second_at, battery_sampled_at;
 static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
+#ifdef WATCH_CONTEXTS_CLIENT
+    face.capture_audio=clock_contexts_capture_checkpoint;
+#endif
 #ifdef WATCH_CLOCK_POINTS
     clock_points_sampled=false;face.points=&clock_points_view;
 #endif
@@ -203,6 +220,9 @@ static bool alive(uint32_t *ms) {
     *ms=h.uptime_ms; return true;
 }
 static bool present(void) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
     risc_display_present_token_v1 token=0;
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -214,6 +234,9 @@ static bool present(void) {
     if (!display->submit(display->context,held,NULL,0,&opts,&token)) return false;
     held=0;
     for(unsigned n=0;n<=10000;n++) {
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
         risc_display_present_status_v1 s={0};
         if (!display->present_status(display->context,token,&s)) return false;
         if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) {
@@ -227,6 +250,9 @@ static bool present(void) {
             if ((uint32_t)(now-start)>=10000) return false;
 #ifdef WATCH_CLOCK_LAUNCHER
             sample_launcher_touch(now,false);
+#ifdef WATCH_CONTEXTS_CLIENT
+            if(clock_contexts_uncertain)return false;
+#endif
 #endif
         } else healthy=false;
         /* A lost health sample must not abandon an already accepted transfer.
@@ -236,6 +262,9 @@ static bool present(void) {
     return false;
 }
 static bool frame(risc_display_surface_v1 *surface) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
     if (!display->acquire(display->context,RISC_DISPLAY_FORMAT_RGB565,surface)) return false;
     held=surface->frame;return held!=0;
 }
@@ -313,7 +342,12 @@ static bool pace_frame(uint32_t began) {
     if (!alive(&now)) return false;
     uint32_t spent = now - began;
     /* Presentation time already counts toward the 20ms animation interval. */
+    #ifdef WATCH_CONTEXTS_CLIENT
+    uint32_t remaining=spent<20u?20u-spent:0;
+    while(remaining){uint32_t slice=remaining>8?8:remaining;rt->yield_ms(slice);remaining-=slice;if(!clock_contexts_capture_checkpoint(NULL))return false;}
+#else
     if (spent < 20u) rt->yield_ms(20u - spent);
+#endif
     return true;
 }
 static bool hold_boot_frame(void) {
@@ -734,6 +768,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (events&3u) last_activity=now;
 #ifdef WATCH_CLOCK_LAUNCHER
         sample_launcher_touch(now,true);
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(clock_contexts_uncertain)break;
+#endif
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
 #ifdef WATCH_QUICK_ACTIONS

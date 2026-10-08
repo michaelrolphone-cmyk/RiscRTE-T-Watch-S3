@@ -22,7 +22,11 @@ static bool ctx_finish(void*c,uint32_t source,uint32_t result){(void)c;ctx_calls
 static int32_t ctx_label(void*c,uint32_t s,uint32_t i,contexts_label_v1*out){(void)c;(void)s;(void)i;(void)out;return 0;}
 static bool ctx_claim(void*c,uint32_t s,uint32_t i,const char*n,uint32_t g){(void)c;(void)s;(void)i;(void)n;(void)g;return false;}
 static bool ctx_result(void*c,uint32_t s,uint32_t g,uint32_t r){(void)c;(void)s;(void)g;(void)r;return true;}
-static const contexts_service_v1 ctx_api={1,sizeof(ctx_api),NULL,ctx_step,ctx_pause,ctx_status,ctx_request,ctx_begin,ctx_export,ctx_finish,ctx_label,ctx_claim,ctx_result};
+static unsigned ctx_captures,ctx_capture_last,ctx_capture_gap,ctx_retains;
+static bool ctx_capture_ok=true,ctx_refuse_pending;
+static bool ctx_capture(void*c){(void)c;ctx_captures++;unsigned gap=clock_ms-ctx_capture_last;if(gap>ctx_capture_gap)ctx_capture_gap=gap;ctx_capture_last=clock_ms;return ctx_capture_ok&&!(ctx_refuse_pending&&pending);}
+static bool ctx_retain(void){ctx_retains++;return true;}
+static const contexts_service_v1 ctx_api={1,sizeof(ctx_api),NULL,ctx_step,ctx_pause,ctx_status,ctx_request,ctx_begin,ctx_export,ctx_finish,ctx_label,ctx_claim,ctx_result,ctx_capture};
 static int32_t ctx_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){
     if(!strcmp(k,PORTABLE_CONTEXT_ENABLED_KEY)){assert(n>=4);uint8_t bytes[]={'C',1,ctx_enabled?1:0,(uint8_t)((ctx_enabled?1:0)^0xa5)};memcpy(b,bytes,4);*z=4;return 0;}
     return face_get(c,k,b,n,z);
@@ -43,7 +47,8 @@ static bool ctx_acquire(const char*n,uint32_t version,uint64_t instance,risc_run
     return acquire_cap(n,version,instance,g);
 }
 static bool ctx_launch(const char*path){assert(!held&&!pending&&!ctx_capturing);assert(!strcmp(path,"audio_spectrum.elf")||!strcmp(path,"waterfall.elf"));strcpy(ctx_launched,path);return ctx_launch_ok;}
-static const risc_runtime_api_v1 ctx_runtime={1,sizeof(ctx_runtime),health,yield,diagnostic,ctx_launch,ctx_acquire,release_cap};
+static const struct {risc_runtime_api_v1 prefix;bool(*confirm)(void);bool(*retain)(void);} ctx_runtime_extended={{1,sizeof(ctx_runtime_extended),health,yield,diagnostic,ctx_launch,ctx_acquire,release_cap},NULL,ctx_retain};
+#define ctx_runtime ctx_runtime_extended.prefix
 int main(void) {
     scenario=30;rt=&ctx_runtime;clock_display_settled=true;display=&da.base;pmu=&pa;rtc=&ra;panel=&da;submitted=last_complete=1;
     pqa_session_init(&clock_quick);clock_quick.ui.neutral_gate=false;clock_alarm.api=&ctx_alarm_api;
@@ -71,6 +76,22 @@ int main(void) {
     assert(clock_contexts_tick()&&ctx_capturing);clock_quick.ui.position_q8=PQA_OPEN_Q8;assert(clock_contexts_tick()&&!ctx_capturing);clock_quick.ui.position_q8=0;
     assert(clock_contexts_tick()&&ctx_capturing);sleep_mode=PORTABLE_SLEEP_LIGHT;
     assert(sleep_cycle()>=0&&!ctx_capturing&&sleeps==1);
+    /* Long presentation and intentional frame waits service only capture. */
+    ctx_capture_last=clock_ms;ctx_capture_gap=0;assert(pace_frame(clock_ms));assert(ctx_capture_gap<=8);
+    unsigned captures=ctx_captures;reset_telemetry();risc_display_surface_v1 capture_surface={0};
+    assert(frame(&capture_surface)&&draw_clock(clock_ms,&capture_surface));assert(ctx_captures>captures+30);
+    scenario=14;ctx_capture_last=clock_ms;ctx_capture_gap=0;assert(present());assert(ctx_capture_gap<=8);scenario=30;
+    /* Failure during rasterization retains its borrowed frame and prevents all later capability work. */
+    assert(frame(&capture_surface));ctx_capture_ok=false;unsigned submit_before=submitted,release_before=released,polls_before=polls;
+    assert(!draw_clock(clock_ms,&capture_surface)&&clock_contexts_uncertain&&ctx_retains==1&&held);
+    captures=ctx_captures;assert(!present());sample_launcher_touch(clock_ms,true);assert(!frame(&capture_surface));
+    assert(ctx_captures==captures&&submitted==submit_before&&released==release_before&&polls==polls_before);
+    /* Fixture reset is outside the held invocation. */
+    held=0;owned=false;clock_contexts_uncertain=false;ctx_capture_ok=true;
+    assert(frame(&capture_surface)&&draw_clock(clock_ms,&capture_surface));ctx_refuse_pending=true;
+    assert(!present()&&clock_contexts_uncertain&&ctx_retains==2&&pending&&!held);
+    captures=ctx_captures;assert(!present());sample_launcher_touch(clock_ms,true);assert(ctx_captures==captures);
+    pending=false;clock_display_settled=true;clock_contexts_uncertain=false;ctx_refuse_pending=false;
     assert(clock_contexts_pause());assert(portable_contexts_close(&clock_contexts));
     assert(grants==ungrants);
     assert(portable_contexts_open(&clock_contexts,rt));ctx_pause_ok=false;

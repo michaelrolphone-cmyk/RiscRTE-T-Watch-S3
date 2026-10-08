@@ -66,3 +66,60 @@ These are development store artifacts. This builder does not rebuild Runtime,
 produce an erase image, publish a release/catalog, or operate a device. Actual
 installed-to-candidate Runtime admission, paired-update transaction proofs,
 whole-cohort memory/cadence and physical Watch qualification are later gates.
+
+## Native Runtime execution proof
+
+`scripts/test_contexts_runtime.py` executes the production Runtime, CpuPort,
+provider graph, provider sources and Clock over the existing lowest-hardware
+fixture. It requires the exact candidate store and clean pinned sources. Host
+app/provider modules use the same function/data section removal policy as the
+new target builder; production JSON and granted namespaces remain unchanged.
+
+Run once with `SANITIZE=0 ADDRESS_SANITIZE=0` and once with
+`SANITIZE=1 ADDRESS_SANITIZE=1 ASAN_OPTIONS=detect_leaks=0`, both with and without
+`--enabled`:
+
+```
+python scripts/test_contexts_runtime.py --watch . --runtime /source/runtime \
+  --system /source/system --utilities /source/utilities --drivers /source/drivers \
+  --store /new/contexts-build/files --output /new/runtime-proof --enabled
+```
+
+The enabled lane launches Clock, both real model-owner apps and Clock again.
+It verifies private model reads only while each owner is active, empty saved
+models, unknown input, ordinary cleanup, sleep acceptance/refusal and retained
+sleep/capture cleanup failures. The disabled lane preserves the seven existing
+startup/health/retention scenarios. These tests do not execute Xtensa
+instructions or claim microphone/RF recognition on hardware.
+
+Each run writes schema 2 `contexts-graph-proof.json`, binding the scenario
+results to the candidate cohort, exact store digest and file inventory, source
+commits/trees, source file hashes, fixture/runner hashes, sanitizer selection
+and section removal flags. A source change during execution rejects the proof.
+
+## Initial image gate
+
+`scripts/build_contexts_initial.py` requires the target build, exact published
+1.0.12 accepted store/provenance, verified 0.1.55 native inputs and all four
+schema 2 execution reports. It checks the current target dependency closure
+and proof source hashes, reruns actual installed-to-candidate and self admission
+in ordinary and ASan/UBSan modes, and only then assembles an initial image.
+The original native candidate/provenance is included without rebuilding it.
+
+```
+python scripts/test_contexts_initial.py
+python scripts/build_contexts_initial.py --build /new/contexts-build \
+  --accepted /published/firmware-v1.0.12 --runtime /source/runtime \
+  --native /verified/runtime-0.1.55 --system /source/system \
+  --utilities /source/utilities --productivity /source/productivity \
+  --drivers /source/drivers --runtime-report /proof/disabled-normal.json \
+  --runtime-report /proof/disabled-sanitized.json \
+  --runtime-report /proof/enabled-normal.json \
+  --runtime-report /proof/enabled-sanitized.json --output /new/initial-candidate
+```
+
+This separate packager has no OTA mode. The explicitly named 16 MiB image at
+offset zero erases saved settings, credentials, bonds, alarms, Points, all
+app-data and both banks. Its output is an offline development candidate with
+physical qualification pending; no release publication or device action is
+performed. Output appears atomically after every required check passes.

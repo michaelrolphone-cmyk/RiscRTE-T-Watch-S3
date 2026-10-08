@@ -11,6 +11,8 @@ static void face_text_test(const face_font *font,const char *text,int x,int y,in
     if(!strcmp(text,"DOOR CHIME")||!strcmp(text,"TRANSMITTER"))saw_event=true;
     if(!strcmp(text,"NO CURRENT ROOM"))saw_unknown=true;
 }
+static unsigned checkpoint_count,checkpoint_fail;
+static bool raster_checkpoint(void *c){(void)c;checkpoint_count++;return !checkpoint_fail||checkpoint_count<checkpoint_fail;}
 int main(int argc,char **argv) {
     uint8_t guarded[240*488+32];memset(guarded,0xa5,sizeof(guarded));
     risc_display_surface_v1 surface={1,guarded+16,240,240,488,240*488,RISC_DISPLAY_FORMAT_RGB565};
@@ -33,6 +35,16 @@ int main(int argc,char **argv) {
         for(unsigned y=0;y<240;y++)for(unsigned x=480;x<488;x++)assert(guarded[16+y*488+x]==0xa5);
         if(argc>1){char path[512];snprintf(path,sizeof(path),"%s/context-%u.rgb565",argv[1],scenario);FILE*f=fopen(path,"wb");assert(f);for(unsigned y=0;y<240;y++)assert(fwrite(guarded+16+y*488,1,480,f)==480);assert(!fclose(f));}
     }
+    /* Every production face services long raster work and stops after a failed
+     * owner callback. Padding/guards are unchanged, including after failure. */
+    state.capture_audio=raster_checkpoint;
+    for(unsigned id=0;id<WATCH_FACE_COUNT;id++) {
+        checkpoint_count=checkpoint_fail=0;assert(nova_watch_face_render(&surface,&state,id));assert(checkpoint_count>30);
+        checkpoint_count=0;checkpoint_fail=35;assert(!nova_watch_face_render(&surface,&state,id));assert(checkpoint_count==35);
+        for(unsigned i=0;i<16;i++)assert(guarded[i]==0xa5&&guarded[sizeof(guarded)-1-i]==0xa5);
+        for(unsigned y=0;y<240;y++)for(unsigned x=480;x<488;x++)assert(guarded[16+y*488+x]==0xa5);
+    }
+    checkpoint_count=0;checkpoint_fail=35;assert(!nova_watch_render(&surface,&state)&&checkpoint_count==35);
     surface.size_bytes--;assert(!nova_watch_face_render(&surface,&state,33));
     assert(!strcmp(nova_watch_face_name(33),"CONTEXTS"));
     puts("Context face: off/loading/paused/audio/RF/ambiguous/malformed/stale, exact text and guarded pixels PASS");return 0;

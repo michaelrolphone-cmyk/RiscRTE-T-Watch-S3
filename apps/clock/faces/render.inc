@@ -1,3 +1,9 @@
+/* Historical custody supplies the original canvas renderer. */
+#ifndef CANVAS_INIT
+#define CANVAS_INIT(s,state) {(uint8_t*)(s)->pixels,(s)->stride_bytes}
+#define CANVAS_OK(c) true
+#define CANVAS_CLEAR(c) for(unsigned y=0;y<240;y++)memset(at(&(c),0,y),0,480)
+#endif
 /* Schedule and attachment-derived faces. Included by nova.c to reuse its validated
  * RGB565 canvas, blending, RTC formatter and integer sine table. */
 typedef struct { uint8_t ch; int8_t left,top; uint8_t width,height; uint16_t advance; uint32_t data; } face_glyph;
@@ -192,7 +198,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
     int sec=l.time_valid?(int)(state->time.second*1000u+sub)*1536/1000:0;
     int min=l.time_valid?(int)state->time.minute*1536+sec/60:0;
     int hour=l.time_valid?(int)(state->time.hour%12)*7680+min/12:0;
-    canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
+    canvas c=CANVAS_INIT(s,state);CANVAS_CLEAR(c);
     char hms[9];memcpy(hms,l.hour_minute,5);hms[5]=':';memcpy(hms+6,l.seconds,3);
 #ifdef WATCH_CONTEXTS_CLIENT
     if(id==33)fcontexts(&c,state,&l);
@@ -257,7 +263,7 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
         ftext(&c,&ff_o10,"B C D",120,50,1536,0,FAMBER,0);ftext(&c,&ff_o9,"HH",62,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"MM",122,178,0,0,FMUTED,0);ftext(&c,&ff_o9,"SS",182,178,0,0,FMUTED,0);ftext(&c,&ff_o14,hms,120,198,0,0,FWHITE,0);char bat[10]="BAT ";unsigned i=0;while(l.battery[i]){bat[4+i]=l.battery[i];i++;}bat[4+i]=0;ftext(&c,&ff_o9,bat,120,216,512,0,FGREEN,0);
     }
     if(id<24&&l.time_valid&&!state->hour_24)ftext(&c,&ff_r9,l.meridiem,217,233,128,0,FMUTED,0);
-    return true;
+    return CANVAS_OK(c);
 }
 /* Rendered previews are the exact same production face function. Scratch is
  * app-owned, allocated only while browsing, and never a provider frame lease.
@@ -298,7 +304,7 @@ static bool picker_layers_render(risc_display_surface_v1*s,const nova_watch_stat
         for(unsigned k=0;k<6;k++)if(cache->face_ids[k]>=24)cache->valid_mask&=(uint8_t)~(1u<<k);
     cache->points_revision=revision;cache->points_next_rtc=next_rtc;cache->points_status=points_status;cache->points_phase=phase;
     cache->stamp=*state;
-    canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
+    canvas c=CANVAS_INIT(s,state);CANVAS_CLEAR(c);
 
     struct card { int size,x,y,scale; bool visible; } cards[WATCH_FACE_COUNT]={0};
     for(unsigned l=0;l<layer_count;l++) {
@@ -350,7 +356,7 @@ static bool picker_layers_render(risc_display_surface_v1*s,const nova_watch_stat
     for(unsigned i=0;i<page->count;i++)fcirc(&c,(240-(int)(page->count-1)*11+(int)i*22)*8,(222+dy)*16+8,40,0,(int)i==near?FCYAN:FC(31,42,45));
     if(page->name){ftext(&c,&ff_rp11,page->name,120,15+dy,384,0,FMUTED,0);fline(&c,36*16,(12+dy)*16,39*16,(9+dy)*16,16,FMUTED);fline(&c,39*16,(9+dy)*16,42*16,(12+dy)*16,16,FMUTED);fline(&c,198*16,(9+dy)*16,201*16,(12+dy)*16,16,FMUTED);fline(&c,201*16,(12+dy)*16,204*16,(9+dy)*16,16,FMUTED);}
     }
-    return true;
+    return CANVAS_OK(c);
 }
 
 bool nova_watch_picker_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned selected,int position,const watch_face_page*page,const char*status,unsigned pulse_face,unsigned pulse_scale,nova_watch_picker_cache*cache) {
@@ -383,8 +389,8 @@ bool nova_watch_alarm_label_render(risc_display_surface_v1*s,const char*label,bo
         bool rtc_error,bool dismissing,bool uncertain,bool occurrence) {
     if(!s || !s->pixels || s->width!=240 || s->height!=240 || s->pixel_format!=RISC_DISPLAY_FORMAT_RGB565 ||
        s->stride_bytes<480 || s->stride_bytes>UINT32_MAX/240 || s->size_bytes<s->stride_bytes*240)return false;
-    canvas c={(uint8_t*)s->pixels,s->stride_bytes};
-    for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
+    canvas c=CANVAS_INIT(s,((const nova_watch_state*)NULL));
+    CANVAS_CLEAR(c);
     char title[24];unsigned title_length=0;
     if(label)while(title_length<23&&label[title_length]){char ch=label[title_length];title[title_length++]=ch>='a'&&ch<='z'?(char)(ch-'a'+'A'):ch;}
     title[title_length]=0;
@@ -395,7 +401,7 @@ bool nova_watch_alarm_label_render(risc_display_surface_v1*s,const char*label,bo
     frect(&c,24,154,192,1,FCYAN);frect(&c,24,193,192,1,FCYAN);
     ftext(&c,&ff_o13,occurrence?"DISMISS":"BACK",120,179,256,0,FWHITE,0);
     if(blocked)ftext(&c,&ff_r12,"RETRY",120,220,256,0,FCYAN,0);
-    return true;
+    return CANVAS_OK(c);
 }
 
 bool nova_watch_alarm_render(risc_display_surface_v1*s,bool countdown,bool blocked,
