@@ -18,6 +18,31 @@ static const risc_runtime_api_v1 *rt;
 #include "../runtime_features/clock_runtime.h"
 static watch_clock_runtime native_clock;
 #endif
+#ifdef WATCH_CONTEXTS_CLIENT
+#include "PortableContextsClient.h"
+static portable_contexts_client clock_contexts;
+static bool clock_contexts_uncertain,clock_contexts_handoff;
+static bool clock_contexts_capture_checkpoint(void *context) {
+    (void)context;
+    if(clock_contexts_uncertain)return false;
+#ifdef WATCH_RUNTIME_FEATURES
+    if(native_clock.halted)return false;
+#endif
+    if(portable_contexts_capture(&clock_contexts))return true;
+    clock_contexts_uncertain=true;
+    if(!portable_contexts_retain(&clock_contexts))for(;;)rt->yield_ms(50);
+    return false;
+}
+static bool clock_contexts_pause(void) {
+    if(clock_contexts_uncertain)return false;
+    if(portable_contexts_pause(&clock_contexts))return true;
+    clock_contexts_uncertain=true;
+#ifdef WATCH_RUNTIME_FEATURES
+    watch_runtime_retain(rt);
+#endif
+    return false;
+}
+#endif
 #ifdef WATCH_BLE_BROADCAST
 #include "PortableBroadcastClient.h"
 static portable_broadcast_client clock_broadcast;
@@ -43,6 +68,17 @@ static bool clock_broadcast_pause(void) {
 #endif
         return false;
     }
+    return true;
+}
+#endif
+#if defined(WATCH_CONTEXTS_CLIENT) || defined(WATCH_BLE_BROADCAST)
+static bool clock_background_pause(void) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_pause())return false;
+#endif
+#ifdef WATCH_BLE_BROADCAST
+    if(!clock_broadcast_pause())return false;
+#endif
     return true;
 }
 #endif
@@ -85,6 +121,9 @@ static uint32_t launcher_sampled_at;
 /* Sampling must not wait for a whole 240-row presentation. Latch the first
  * qualified swipe, but let the accepted frame finish before handing it off. */
 static void sample_launcher_touch(uint32_t now, bool force) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return;
+#endif
 #ifdef WATCH_CLOCK_ALARMS
     if(clock_alarm_modal)return;
 #endif
@@ -152,6 +191,9 @@ static uint32_t rtc_sampled_at, rtc_second_at, battery_sampled_at;
 static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
+#ifdef WATCH_CONTEXTS_CLIENT
+    face.capture_audio=clock_contexts_capture_checkpoint;
+#endif
 #ifdef WATCH_CLOCK_POINTS
     clock_points_sampled=false;face.points=&clock_points_view;
 #endif
@@ -178,6 +220,9 @@ static bool alive(uint32_t *ms) {
     *ms=h.uptime_ms; return true;
 }
 static bool present(void) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
     risc_display_present_token_v1 token=0;
     uint32_t start,now;
     if (!alive(&start)) return false;
@@ -189,6 +234,9 @@ static bool present(void) {
     if (!display->submit(display->context,held,NULL,0,&opts,&token)) return false;
     held=0;
     for(unsigned n=0;n<=10000;n++) {
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
         risc_display_present_status_v1 s={0};
         if (!display->present_status(display->context,token,&s)) return false;
         if (s.state==RISC_DISPLAY_PRESENT_COMPLETE) {
@@ -202,6 +250,9 @@ static bool present(void) {
             if ((uint32_t)(now-start)>=10000) return false;
 #ifdef WATCH_CLOCK_LAUNCHER
             sample_launcher_touch(now,false);
+#ifdef WATCH_CONTEXTS_CLIENT
+            if(clock_contexts_uncertain)return false;
+#endif
 #endif
         } else healthy=false;
         /* A lost health sample must not abandon an already accepted transfer.
@@ -211,6 +262,9 @@ static bool present(void) {
     return false;
 }
 static bool frame(risc_display_surface_v1 *surface) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_capture_checkpoint(NULL))return false;
+#endif
     if (!display->acquire(display->context,RISC_DISPLAY_FORMAT_RGB565,surface)) return false;
     held=surface->frame;return held!=0;
 }
@@ -288,7 +342,12 @@ static bool pace_frame(uint32_t began) {
     if (!alive(&now)) return false;
     uint32_t spent = now - began;
     /* Presentation time already counts toward the 20ms animation interval. */
+    #ifdef WATCH_CONTEXTS_CLIENT
+    uint32_t remaining=spent<20u?20u-spent:0;
+    while(remaining){uint32_t slice=remaining>8?8:remaining;rt->yield_ms(slice);remaining-=slice;if(!clock_contexts_capture_checkpoint(NULL))return false;}
+#else
     if (spent < 20u) rt->yield_ms(20u - spent);
+#endif
     return true;
 }
 static bool hold_boot_frame(void) {
@@ -406,9 +465,9 @@ static bool clock_low_battery_poll(uint32_t now) {
     clock_low_battery_sampled=true;clock_low_battery_at=now;
     risc_battery_sample_v1 sample={0,255,RISC_BATTERY_PROFILE_MISSING};
     if(!pmu->base.read||!pmu->base.read(pmu->base.context,&sample))return true;
-#ifdef WATCH_BLE_BROADCAST
+#if defined(WATCH_BLE_BROADCAST) || defined(WATCH_CONTEXTS_CLIENT)
     if(portable_low_battery_sample_valid(&sample) && sample.percent<PORTABLE_LOW_BATTERY_THRESHOLD &&
-       (!clock_low_battery.observed || !clock_low_battery.low) && !clock_broadcast_pause())return false;
+       (!clock_low_battery.observed || !clock_low_battery.low) && !clock_background_pause())return false;
 #endif
     unsigned result=portable_low_battery_update(&clock_low_battery,rt,&sample);
     if(result&PORTABLE_LOW_BATTERY_RETAINED) {
@@ -448,6 +507,9 @@ static bool startup(void) {
 #include "watch_motion_client.h"
 #endif
 #endif
+#ifdef WATCH_CONTEXTS_CLIENT
+#include "clock_contexts.inc"
+#endif
 #if defined(WATCH_RUNTIME_FEATURES) && !defined(WATCH_CLOCK_RETURN)
 static bool resume_from_deep(void) {
     risc_display_surface_v1 fresh={0};uint32_t now;
@@ -458,8 +520,8 @@ static bool resume_from_deep(void) {
 #endif
 static int sleep_cycle(void) {
     sleep_status[0]=0;
-#ifdef WATCH_BLE_BROADCAST
-    if(!clock_broadcast_pause())return WATCH_SLEEP_RETAINED;
+#if defined(WATCH_BLE_BROADCAST) || defined(WATCH_CONTEXTS_CLIENT)
+    if(!clock_background_pause())return WATCH_SLEEP_RETAINED;
 #endif
 #ifdef PORTABLE_LOW_BATTERY
     watch_sleep_light_ms=clock_quick.deep_ms;
@@ -560,6 +622,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_BLE_BROADCAST
     clock_broadcast=(portable_broadcast_client){0};clock_broadcast_uncertain=clock_handoff=false;
 #endif
+#ifdef WATCH_CONTEXTS_CLIENT
+    clock_contexts=(portable_contexts_client){0};clock_contexts_uncertain=clock_contexts_handoff=false;
+#endif
     reset_telemetry();
     if (!rt || rt->api_version!=1 || rt->struct_size<RISC_RUNTIME_CAPABILITIES_V1_SIZE ||
         !rt->health || !rt->yield_ms || !rt->diagnostic || !rt->acquire || !rt->release) return;
@@ -576,6 +641,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_BLE_BROADCAST
     if(!portable_broadcast_open(&clock_broadcast,rt))goto done;
+#endif
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!portable_contexts_open(&clock_contexts,rt)||!clock_contexts_pause())goto done;
 #endif
     have_d=rt->acquire("display.output",1,0,&dg);
     if (!have_d) goto done;
@@ -676,6 +744,9 @@ __attribute__((visibility("default"))) void app_main(void) {
     }
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_recover_export())goto done;
+#endif
     while(alive(&now)) {
 #ifdef WATCH_BLE_BROADCAST
         if(!clock_broadcast_step())return;
@@ -686,6 +757,10 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef PORTABLE_LOW_BATTERY
         if(!clock_low_battery_poll(now))break;
 #endif
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(!clock_contexts_tick())break;
+        if(clock_contexts_handoff)break;
+#endif
         uint32_t events=0;
         if (!pmu->key_events(pmu->base.context,&events)) break;
         /* The clock closure currently exposes only PMU short/long key events.
@@ -693,11 +768,17 @@ __attribute__((visibility("default"))) void app_main(void) {
         if (events&3u) last_activity=now;
 #ifdef WATCH_CLOCK_LAUNCHER
         sample_launcher_touch(now,true);
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(clock_contexts_uncertain)break;
+#endif
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
 #ifdef WATCH_QUICK_ACTIONS
         if(events&3u)pqa_close(&clock_quick.ui);
         uint32_t quick_actions=pqa_take_action(&clock_quick.ui);bool volume_changed=false;
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(quick_actions&&!clock_contexts_pause())return;
+#endif
         if(!pqa_session_apply(&clock_quick,rt,display,quick_actions,&volume_changed))break;
 #ifdef WATCH_QUICK_RADIOS
 #ifdef WATCH_BLE_BROADCAST
@@ -810,6 +891,15 @@ __attribute__((visibility("default"))) void app_main(void) {
 done:
 #ifdef WATCH_RUNTIME_FEATURES
     if(native_clock.halted)return;
+#endif
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(clock_contexts_uncertain||!clock_contexts_pause())return;
+    if(!portable_contexts_close(&clock_contexts)) {
+#ifdef WATCH_RUNTIME_FEATURES
+        watch_runtime_retain(rt);
+#endif
+        return;
+    }
 #endif
 #ifdef WATCH_BLE_BROADCAST
     if(clock_broadcast_uncertain)return;
