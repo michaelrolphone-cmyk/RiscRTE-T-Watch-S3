@@ -22,6 +22,9 @@ static void clock_alarm_cancel_input(void) {
 }
 static bool clock_alarm_failure(void) {
     if(clock_alarm_failed_cleaned)return false;
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!clock_contexts_pause())return false;
+#endif
     clock_alarm_failed_cleaned=true;
     if(!portable_alarm_failure_stop(&clock_alarm)) {
         rt->diagnostic("ALARM clock-failed output-stop-unconfirmed; invocation retained");
@@ -29,20 +32,33 @@ static bool clock_alarm_failure(void) {
     }
     return false;
 }
+static bool clock_alarm_pump_checked(void) {
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(!portable_alarm_status(&clock_alarm))return false;
+    if((portable_alarm_owned(&clock_alarm)||clock_alarm.status.state==ALARM_STATE_BLOCKED)&&
+       !clock_contexts_pause())return false;
+#endif
+    if(!portable_alarm_pump(&clock_alarm))return false;
+#ifdef WATCH_CONTEXTS_CLIENT
+    if((portable_alarm_owned(&clock_alarm)||clock_alarm.status.state==ALARM_STATE_BLOCKED)&&
+       !clock_contexts_pause())return false;
+#endif
+    return true;
+}
 static bool clock_alarm_foreground(void) {
     (void)portable_touch_open;(void)portable_touch_close;
     if(!clock_display_settled || held)return clock_alarm_failure();
 #ifdef WATCH_BLE_BROADCAST
     if(!clock_broadcast_step())return false;
 #endif
-    if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+    if(!clock_alarm_pump_checked())return clock_alarm_failure();
 #ifdef ALARM_STATUS_CUE_SUPPORTED
     bool cue_seen=false;
     for(unsigned n=0;clock_alarm.status.state==ALARM_STATE_LOADING || portable_alarm_cue(&clock_alarm);n++) {
         if(n>=64)return clock_alarm_failure();
         if(portable_alarm_cue(&clock_alarm))cue_seen=true;
         rt->yield_ms(portable_alarm_cue(&clock_alarm)?20:1);
-        if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+        if(!clock_alarm_pump_checked())return clock_alarm_failure();
         if(cue_seen && !portable_alarm_cue(&clock_alarm)) {
             clock_alarm_cancel_input();
             if(clock_alarm.status.state!=ALARM_STATE_BLOCKED)return true;
@@ -53,7 +69,7 @@ static bool clock_alarm_foreground(void) {
     for(unsigned n=0;clock_alarm.status.state==ALARM_STATE_LOADING;n++) {
         if(n>=64)return clock_alarm_failure();
         rt->yield_ms(1);
-        if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+        if(!clock_alarm_pump_checked())return clock_alarm_failure();
     }
 #endif
     bool error=clock_alarm.status.state==ALARM_STATE_BLOCKED;
@@ -99,7 +115,7 @@ static bool clock_alarm_foreground(void) {
             }
         }
         uint32_t old=clock_alarm.status.state;int32_t old_error=clock_alarm.status.error;
-        if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
+        if(!clock_alarm_pump_checked())return clock_alarm_failure();
         if(memcmp(&shown,&clock_alarm.status.occurrence,sizeof(shown))) {
             shown=clock_alarm.status.occurrence;alert_touch.neutral=alert_touch.down=false;redraw=true;
         }

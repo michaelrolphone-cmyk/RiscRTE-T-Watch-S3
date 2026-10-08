@@ -9,6 +9,11 @@ extern "C" {
 /* RTC fields are already the selected wall time. No timezone, host clock,
  * capability lookup, or synchronization claim is made by this renderer. */
 typedef struct {
+    char room[17],event[17];
+    bool enabled,ready,paused,ambiguous,room_valid,event_valid;
+    uint8_t source;
+} nova_context_state;
+typedef struct {
     twatch_rtc_time_v1 time;
     bool time_valid;
     bool battery_valid;
@@ -17,6 +22,9 @@ typedef struct {
     uint32_t animation_ms;   /* Monotonic elapsed animation time, not civil time. */
     bool hour_24;           /* false is the accepted Settings12-hour policy. */
     const nova_points_state *points; /* NULL is explicitly unavailable. */
+#ifdef WATCH_CONTEXTS_CLIENT
+    nova_context_state contexts; /* Copied fresh observations; no provider calls. */
+#endif
 } nova_watch_state;
 typedef struct {
     char hour_minute[6], meridiem[3], seconds[3], date[11], status[6], battery[5];

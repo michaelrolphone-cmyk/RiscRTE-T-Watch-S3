@@ -16,7 +16,8 @@ typedef struct { const face_glyph *glyphs; unsigned count; } face_font;
 #define FAMBER FC(255,176,32)
 #define FORANGE FC(255,122,26)
 #define FMUTED FC(125,140,144)
-static const char *const face_names[]={"NOVA","ANALOG","RADAR","HEX","TERMINAL","MINIMAL","BINARY","CHRONO","AURORA","HORIZON","GIANT","MOON","TOPO","ORRERY","FLIP","MATRIX","GRID","RIBBON","YEAR","24H","AGENDA","DATE","DOTS","PROGRESS","NEXT","RING","LADDER","DAYLINE","TRIPLE","STATUS","BOARD","WORKDAY","UP NEXT"};
+static const char *const face_names[]={WATCH_FACE_NAMES};
+_Static_assert(sizeof(face_names)/sizeof(*face_names)==WATCH_FACE_COUNT,"Stable face names");
 const char *nova_watch_face_name(unsigned id) {return id<WATCH_FACE_COUNT?face_names[id]:face_names[0];}
 static const face_glyph *fglyph(const face_font *font,char ch) {
     for(unsigned i=0;i<font->count;i++)if(font->glyphs[i].ch==(uint8_t)ch)return font->glyphs+i;
@@ -143,6 +144,38 @@ static void fbattery(canvas*c,const nova_watch_state*s,const nova_watch_labels*l
 static bool face_surface_valid(const risc_display_surface_v1*s) {
     return s&&s->pixels&&s->pixel_format==5&&s->width==240&&s->height==240&&s->stride_bytes>=480&&s->stride_bytes<=UINT32_MAX/240&&s->size_bytes>=s->stride_bytes*240;
 }
+#ifdef WATCH_CONTEXTS_CLIENT
+static const char *fcontext_text(const char value[17],char out[17],const char *missing) {
+    for(unsigned i=0;i<17;i++) {
+        unsigned ch=(unsigned char)value[i];
+        if(!ch){if(!i)return missing;out[i]=0;return out;}
+        if(i==16||ch<32||ch>126)return missing;
+        out[i]=(char)(ch>='a'&&ch<='z'?ch-'a'+'A':ch);
+    }
+    return missing;
+}
+static int fcontext_fit(const face_font *font,const char *value,int spacing) {
+    int width=0;for(const char *p=value;*p;p++){const face_glyph *g=fglyph(font,*p);if(g)width+=g->advance+spacing;}
+    return width-spacing>198*256?198:0;
+}
+static void fcontexts(canvas *c,const nova_watch_state *state,const nova_watch_labels *labels) {
+    const nova_context_state *v=&state->contexts;char room[17],event[17];
+    bool current=v->enabled&&v->ready&&!v->paused;
+    const char *room_label=current&&!v->ambiguous&&v->room_valid&&(v->source==1||v->source==2)?
+        fcontext_text(v->room,room,"NO CURRENT ROOM"):"NO CURRENT ROOM";
+    const char *event_label=current&&v->event_valid?fcontext_text(v->event,event,"NO RECENT EVENT"):"NO RECENT EVENT";
+    bool room_ok=room_label==room,event_ok=event_label==event;
+    const char *mode=!v->enabled?"CONTEXTS OFF":!v->ready?"LOAD SAVED MODELS":v->paused?"MONITOR PAUSED":v->ambiguous?"ROOM UNCERTAIN":"AWAKE CONTEXT";
+    ftext(c,&ff_r12,mode,120,33,256,0,v->ambiguous?FAMBER:FCYAN,0);
+    ftext(c,&ff_o40,labels->hour_minute,120,85,0,148,FWHITE,FCYAN);
+    ftext(c,&ff_r10,labels->date,120,106,128,0,FMUTED,0);
+    frect(c,22,118,196,1,FC(14,79,92));
+    ftext(c,&ff_o14,room_label,120,147,64,fcontext_fit(&ff_o14,room_label,64),room_ok?FWHITE:FMUTED,0);
+    ftext(c,&ff_r10,room_ok?(v->source==1?"AUDIO ROOM":"RADIO ROOM"):"",120,165,128,0,FCYAN,0);
+    ftext(c,&ff_r12,event_label,120,193,128,0,event_ok?FGREEN:FMUTED,0);
+    ftext(c,&ff_r10,labels->battery,120,220,0,0,labels->battery_valid?FGREEN:FMUTED,0);
+}
+#endif
 bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*state,unsigned id) {
     if(!face_surface_valid(s))return false;
 #ifdef WATCH_FACE_RENDER_TEST
@@ -161,6 +194,10 @@ bool nova_watch_face_render(risc_display_surface_v1*s,const nova_watch_state*sta
     int hour=l.time_valid?(int)(state->time.hour%12)*7680+min/12:0;
     canvas c={(uint8_t*)s->pixels,s->stride_bytes};for(unsigned y=0;y<240;y++)memset(at(&c,0,y),0,480);
     char hms[9];memcpy(hms,l.hour_minute,5);hms[5]=':';memcpy(hms+6,l.seconds,3);
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(id==33)fcontexts(&c,state,&l);
+    else
+#endif
     if(id>=24)fpoints_collection(&c,state,&l,id-24);
     else if(id>=16)fcalendar_collection(&c,state,&l,id-16,sec,min,hour,sub);
     else if(id>=8)fcollection_two(&c,state,&l,id-8,sec,min,hour,sub);
@@ -246,6 +283,10 @@ static bool picker_layers_render(risc_display_surface_v1*s,const nova_watch_stat
         old->battery_percent!=state->battery_percent||old->time.year!=state->time.year||
         old->time.month!=state->time.month||old->time.day!=state->time.day||
         old->time.hour!=state->time.hour||old->time.minute!=state->time.minute))cache->valid_mask=0;
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(memcmp(&old->contexts,&state->contexts,sizeof(state->contexts)))
+        for(unsigned k=0;k<6;k++)if(cache->face_ids[k]==33)cache->valid_mask&=(uint8_t)~(1u<<k);
+#endif
     /* Capture schedule keys by value: state->points may refer to the same
      * mutable caller object as the previous frame. Countdown seconds remain
      * focused-only; semantic changes refresh only schedule cards. */
