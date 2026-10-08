@@ -1,0 +1,20 @@
+name: Preserving proof source
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preserving-proof-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check exact qualified proof source closure
+        run: python scripts/check_preserving_source_custody.py
+      - name: Reject ignored and untracked compiler inputs
+        run: python -m unittest discover -s tests -p test_preserving_verifier_guards.py -v
