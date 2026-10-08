@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import zipfile
 import board_baseline as board
+import accepted_touch_release as accepted_touch
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)'
@@ -44,7 +45,7 @@ def sources(root=ROOT):
         if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', identity) or identity in result:
             raise ValueError(f'Invalid or duplicate driver ID: {identity}')
         version(m['version'])
-        result[identity] = m['version']
+        result[identity] = (accepted_touch.source_version(root) if identity == accepted_touch.IDENTITY else m['version'])
     if not result:
         raise ValueError('No source manifests found')
     baseline = json.loads((root / board.MANIFEST).read_text())
@@ -237,6 +238,7 @@ def main():
         repo = os.environ['GITHUB_REPOSITORY']
         existing = releases(repo)
         verify_board_version(repo, existing)
+        accepted_touch.verify_published(repo, existing, gh, ROOT)
         plan = {'schema': 1, 'repository': repo, 'source_sha': sha,
                 'packages': candidates(sources(), existing)}
         args.plan.parent.mkdir(parents=True, exist_ok=True)
@@ -262,6 +264,7 @@ def main():
         # Prevent stale lower-version plans even when invoked outside workflow concurrency.
         existing = releases(plan['repository'])
         verify_board_version(plan['repository'], existing)
+        accepted_touch.verify_published(plan['repository'], existing, gh, ROOT)
         candidates(current, existing)
         for record in staged['packages']:
             publish_one(plan['repository'], record)
