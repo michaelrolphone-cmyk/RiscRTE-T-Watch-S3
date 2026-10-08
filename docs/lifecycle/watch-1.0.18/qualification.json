@@ -1,0 +1,45 @@
+{
+  "apps": 23,
+  "catalog_deployed": false,
+  "empty_spiffs_blocks": 10,
+  "exact_hardened_app_provider_bytes_equal": true,
+  "full_verifier_mutations": 6,
+  "graph_cases": 36,
+  "hardened_store_only_cohort_identity_differs": true,
+  "hardware_qualified": false,
+  "independent_review_passed": true,
+  "kind": "watch18-source-checkpoint-evidence",
+  "package_mutations": 13,
+  "preserving_matrices": "in progress; separate exact-source receipts required",
+  "proof_receipts": {
+    "compiler-input-custody": {
+      "sha256": "efab3cedd7f2abb1255e71ae9eead6003131da34b60c792f21aedc6f1fe02563",
+      "size_bytes": 39361
+    },
+    "hardened-rebuild-comparison": {
+      "sha256": "a00c38b8a029224ddc406258b25d990d539c92c1e8b3e3883f76364250799e5e",
+      "size_bytes": 572
+    },
+    "hardened-verifier-regressions": {
+      "sha256": "9695111b448db74192880986713c8a8009bcec18ff1f0874a91ad55edf6d1cff",
+      "size_bytes": 1238
+    },
+    "lifecycle-checkpoint": {
+      "sha256": "482e92eb418815a9ae92a3edc96c49f6f3d757d2a99dc6153edcebb7c6b7c38a",
+      "size_bytes": 4370
+    },
+    "package-mutations": {
+      "sha256": "448ef8c80e358358963a97eb75a528bbcd4dcd1ed0e9d7d9b79e9828cbd425cc",
+      "size_bytes": 2294
+    },
+    "provider-cxx17-inputs": {
+      "sha256": "c7a831fa9782541660e532c20d158d0584f240f7788665ecb8404dbeb344939b",
+      "size_bytes": 2358
+    }
+  },
+  "release_published": false,
+  "schema": 1,
+  "source_guard_regressions": 10,
+  "source_route_cases": 72,
+  "target_elves": 46
+}

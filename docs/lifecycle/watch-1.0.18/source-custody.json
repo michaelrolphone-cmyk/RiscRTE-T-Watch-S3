@@ -1,0 +1,76 @@
+{
+  "app_rebuild_limit": "The separately pinned System model-client header remains pending publication; this Watch-only bundle does not include or republish it.",
+  "bundle": {
+    "file": "watch-sources.bundle",
+    "sha256": "99c45a7fcff4673f37d3620c11f2f0532be2a7ee70dfd625fb2097cc9b39ca41",
+    "size_bytes": 124088
+  },
+  "dependency_sources_included": false,
+  "heads": {
+    "app-build": {
+      "bundle_ref": "refs/watch-custody/1.0.18/app-build",
+      "commit": "65d6307f7c89193402f9bdf60dbbd15d436e1457",
+      "tree": "01c72cdcf936c9d1e5c4a99a1f6472ed2e8a6e31"
+    },
+    "graph-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.18/graph-tests",
+      "commit": "3eaf9e2b096ef5fe5303444043f68c55c39104ec",
+      "tree": "4f67e207a9712c32ab9661ec9efad60a83d44938"
+    },
+    "hardened-build": {
+      "bundle_ref": "refs/watch-custody/1.0.18/hardened-build",
+      "commit": "96aa4452a1e4ff2a636de14e7affeb842e9687a9",
+      "tree": "f5797a11b3b6598a664ba759bcde69e09a8ff717"
+    },
+    "package": {
+      "bundle_ref": "refs/watch-custody/1.0.18/package",
+      "commit": "014f3e7e4566d4e87f0ab4a1c9e538e557224faa",
+      "tree": "da321b00a66e1130361b3d1c02889871d72e651e"
+    },
+    "package-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.18/package-tests",
+      "commit": "cd065aca31dd3903ef1fdc9a7bc69372b6a134dc",
+      "tree": "736c944bae4b45d8c793df8cc2421a6a5d70d85d"
+    },
+    "preserving-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.18/preserving-tests",
+      "commit": "c1f78c7c057dc1d7560c1484a292b73c0c069254",
+      "tree": "d52a5d1adb4b307ea31c44a78e09c362b72853d3"
+    }
+  },
+  "new_object_count": 233,
+  "provisioning_payloads_included": false,
+  "public_prerequisite": "a0f2894bb3513d024653e71ce7e52733804e19e8",
+  "schema": 1,
+  "scope": "Watch-only original source commits for the frozen18 apps, packaging and software checks",
+  "selected_source_files": {
+    "apps/lifecycle-packaging-118.json": "package-tests",
+    "apps/lifecycle-routes-sources.json": "hardened-build",
+    "docs/lifecycle-source-custody.md": "hardened-build",
+    "scripts/build_lifecycle_routes.py": "hardened-build",
+    "scripts/lifecycle_source_custody.py": "hardened-build",
+    "scripts/package_lifecycle_routes.py": "package-tests",
+    "scripts/qualified_source_custody.py": "hardened-build",
+    "scripts/test_contexts_model_runtime.py": "graph-tests",
+    "scripts/test_contexts_runtime.py": "graph-tests",
+    "scripts/test_lifecycle_package.py": "package-tests",
+    "tests/test_lifecycle_source_custody.py": "hardened-build"
+  },
+  "separate_model_header_or_provisioning_payloads_included": false,
+  "target_watch_inputs": {
+    "apps/clock/PortableSleepPolicy.h": "15e94bdeabe34ac8a3e0b836a7cc59b00b9c4b3c22f3b2592919ce347ce3bbb1",
+    "apps/clock/faces/ContextsFaces.h": "e75de6b17b85e1d7fa2ebc4b89514ac7345f671027c3b15dfdbd98f9b06b5ea2",
+    "apps/clock/faces/names.h": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16",
+    "apps/clock/portable_navigation.c": "b0d1729346d4b808395766c1c7f1800866d02a54a9e3e39baa8dd425854da84e",
+    "apps/clock/portable_sleep.c": "12ffccad27b7739014770a88fc0c8663676e32aec6597a7e614d6a50697406a8",
+    "apps/clock/watch_alarm_sleep.h": "df0e93850176f4c975456a72c2dc518a7215b35662bb4a9a7d9f864a58cec42a",
+    "apps/clock/watch_motion_client.h": "dac16968094a2fca04863038dabfc94b4b8c7a0f32f02016b5ae98b50aa776f5",
+    "apps/clock/watch_sleep.h": "ea1948c880ca2f340b2e63650ef7f52641bce6b1851c6d1992fffa7100e7db91",
+    "include/PortableMotionTap.h": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50",
+    "include/twatch_caps.h": "88bf36643ca8ae431ef4757debd36c8b2e07212916835c6d7dbf37fca699eade",
+    "include/twatch_power.h": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d",
+    "sdk/driver/RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "sdk/driver/RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "sdk/driver/RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34"
+  }
+}
