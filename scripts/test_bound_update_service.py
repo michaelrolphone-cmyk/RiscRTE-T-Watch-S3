@@ -12,10 +12,10 @@ def main():
     for name in ('system-apps','origin-image','target','output'):p.add_argument('--'+name,required=True,type=Path)
     p.add_argument('--origin-version',choices=ORIGINS,required=True)
     a=p.parse_args();head=clean(ROOT)
-    bound=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)
+    bound=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)
     origin=read_origin(a.origin_image,a.origin_version)
     proof=prove_service(a.system_apps,origin,a.target,a.output,expected_target=bound[0]['cohort'])
-    require(verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)==bound and clean(ROOT)==head,
+    require(verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)==bound and clean(ROOT)==head,
             'Bound service proof source or bytes changed')
     proof['native_binding']=bound[0];proof['qualification_source']=head
     a.output.write_bytes(encoded(proof))

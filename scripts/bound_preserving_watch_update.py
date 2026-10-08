@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package the verified Watch17 native binding as paired OTA and erasing initial bytes."""
-import argparse,json,subprocess,sys
+import argparse,json,re,subprocess,sys
 from pathlib import Path
 from build_preserving_watch_update import clean,profile,write_files
 from current_apps_overlay import ROOT,encoded,metadata,require
@@ -12,6 +12,7 @@ from rf_watch_candidate import module
 BINDING_SOURCE='b6abe35ed3049174e53c89c8adb85edd3860da34'
 RUNTIME_SOURCE='b587df55298e0bb8e676b3d59ca13679c0267bf7'
 ORIGINS=('1.0.13','1.0.14','1.0.15')
+FROZEN_PACKAGER_SOURCE='7cba7a150f907ed773c0c883a7c8b439141b603c'
 
 
 def inputs(binding_repository,binding,runtime,native):
@@ -54,14 +55,17 @@ def initial_bytes(native_input,bootfs,runtime,files):
     return initial,placement
 
 
-def verify_package(directory,binding_repository,binding,runtime,native):
+def verify_package(directory,binding_repository,binding,runtime,native,*,expected_packager_source=FROZEN_PACKAGER_SOURCE):
+    require(isinstance(expected_packager_source,str) and re.fullmatch('[0-9a-f]{40}',expected_packager_source),
+            'Independently pinned packager source required')
     directory=Path(directory)
     require(directory.is_dir() and not directory.is_symlink() and
             not any(p.is_symlink() for p in directory.rglob('*')), 'Package input links are forbidden')
     result=inputs(binding_repository,binding,runtime,native)
     receipt,files,bootfs,payload,ota,native_input=result
     proof=json.loads((directory/'package-proof.json').read_bytes())
-    require(proof['native_binding']==receipt and proof['target_cohort']==receipt['cohort'] and
+    require(proof['watch_packager_source']==expected_packager_source and
+            proof['native_binding']==receipt and proof['target_cohort']==receipt['cohort'] and
             proof['payload']==metadata(payload) and proof['files']==receipt['files'] and
             proof['compatible_origins']==list(ORIGINS),'Bound package receipt differs')
     actual={p.relative_to(directory/'files').as_posix():p.read_bytes() for p in (directory/'files').rglob('*') if p.is_file()}
@@ -75,7 +79,8 @@ def verify_package(directory,binding_repository,binding,runtime,native):
                      'size':len(expected_image),'sha256':metadata(expected_image)['sha256'],'ota':ota}
     require(record==expected_record,'Bound release record differs')
     image=(directory/initial_name).read_bytes()
-    require(len(image)==record['size']==0x1000000 and metadata(image)['sha256']==record['sha256']==proof['initial_image']['sha256'],
+    require(len(image)==record['size']==0x1000000 and metadata(image)['sha256']==record['sha256'] and
+            proof['initial_image']==metadata(expected_image),
             'Outer initial artifact differs')
     require(image==expected_image and proof['initial_component_placement']==placement,
             'Outer initial image or placement differs from verified components')
@@ -120,16 +125,19 @@ def build(binding_repository,binding,runtime,native,output):
            'LICENSES.zip':(Path(binding)/'LICENSES.zip').read_bytes()}
     write_files(output,parts)
     (output/'SHA256SUMS').write_text(''.join(metadata(v)['sha256']+'  '+n+'\n' for n,v in sorted(parts.items())))
-    verify_package(output,binding_repository,binding,runtime,native)
+    verify_package(output,binding_repository,binding,runtime,native,expected_packager_source=head)
     return proof
 
 
-def arguments(parser):
+def arguments(parser,*,include_packager_source=True):
     for name in ('binding-repository','binding','runtime','native'):parser.add_argument('--'+name,required=True,type=Path)
+    if include_packager_source:
+        parser.add_argument('--packager-source',default=FROZEN_PACKAGER_SOURCE,
+                            help='Independently selected package-builder commit; defaults to the frozen qualified package')
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);arguments(p);p.add_argument('--output',required=True,type=Path)
+    p=argparse.ArgumentParser(description=__doc__);arguments(p,include_packager_source=False);p.add_argument('--output',required=True,type=Path)
     a=p.parse_args();r=build(a.binding_repository,a.binding,a.runtime,a.native,a.output)
     print(json.dumps({k:r[k] for k in ('watch_packager_source','target_cohort','payload','initial_image')}))
 

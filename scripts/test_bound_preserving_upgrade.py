@@ -14,12 +14,12 @@ def main():
     p.add_argument('--origin-version',choices=ORIGINS,required=True)
     a=p.parse_args();require(not a.output.exists(),'Proof output must be new')
     head=clean(ROOT);clean(a.installed_runtime,profile()['runtime_source'])
-    bound=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)
+    bound=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)
     receipt,files,bootfs,payload,ota,native=bound
     origin=read_origin(a.origin_image,a.origin_version)
     installed=read_native(a.installed_native,a.installed_runtime,ROOT)
     proof=prove(origin,native,files,payload,a.runtime,installed_runtime=a.installed_runtime,installed_native=installed,apps_dir=a.target)
-    require(verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)==bound and clean(ROOT)==head,
+    require(verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)==bound and clean(ROOT)==head,
             'Bound proof source or exact bytes changed')
     proof['qualification_source']=head
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_bytes(encoded(proof))

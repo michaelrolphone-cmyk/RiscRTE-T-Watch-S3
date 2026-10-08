@@ -185,17 +185,18 @@ def prove(origin, native, following, payload, runtime, *, installed_runtime, ins
     with tempfile.TemporaryDirectory(prefix='watch-rf-transaction-') as temporary, host_sanitizer_environment():
         root = Path(temporary)
         graph_dir = root / 'graph';graph_dir.mkdir()
-        graph = compile_harness(installed_runtime, graph_dir / 'admit', True, installed_native['blobs']['firmware.elf'])
+        graph = compile_harness(installed_runtime, graph_dir / 'admit', True, installed_native['blobs']['firmware.elf'],
+                                source_revision=INSTALLED_RUNTIME_SOURCE)
         target_graph_dir = root / 'target-graph';target_graph_dir.mkdir()
-        target_graph = compile_harness(runtime, target_graph_dir / 'admit', True, elf)
+        target_graph = compile_harness(runtime, target_graph_dir / 'admit', True, elf, source_revision=RUNTIME_SOURCE)
         installed = admission(graph, origin['store'], following)
         candidate_self = admission(target_graph, following, following)
         for label, bad in negative_stores(origin['store'], following):
             rejections.append({'scenario': label, **admission(graph, origin['store'], bad, False)})
         transaction = compile_transaction(installed_runtime, root / 'installed-transaction-build', INSTALLED_RUNTIME_VERSION,
-                                          fixture=TRANSACTION_FIXTURE)
+                                          fixture=TRANSACTION_FIXTURE, source_revision=INSTALLED_RUNTIME_SOURCE)
         target_transaction = compile_transaction(runtime, root / 'target-transaction-build', RUNTIME_VERSION,
-                                                 fixture=TRANSACTION_FIXTURE)
+                                                 fixture=TRANSACTION_FIXTURE, source_revision=RUNTIME_SOURCE)
         original = bytearray(origin['full'])
         if not origin.get('preserve_existing_data',False):
             for start, length, salt in ((0x9000, 0x6000, 37), (0x270000, 0x80000, 173)):

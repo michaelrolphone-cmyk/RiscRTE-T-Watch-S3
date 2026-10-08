@@ -16,6 +16,7 @@ import tempfile
 import zipfile
 from read_only_spiffs import read_image
 from pmu_sleep_custody import PMU_FILES, current_pmu_custody
+from qualified_source_custody import run_qualified, source_head
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTFS_OFFSET = 0x310000
@@ -51,10 +52,12 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_policy=False):
+def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_policy=False, source_revision=None):
     if cohort_policy and (not app_data or native_elf is not None):
         raise ValueError('Policy-only cohort admission requires app-data and no native ELF')
     runtime, output = Path(runtime).resolve(), Path(output)
+    custody_sources = {runtime: source_head(runtime, source_revision), ROOT: source_head(ROOT)}
+    generated = {}
     includes = [runtime / p for p in ('src', 'sdk/app', 'sdk/driver', 'sdk/hardware',
                                      'lib/ArduinoJson/src', 'test/drivers/stubs')]
     sources = [runtime / p for p in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp',
@@ -83,13 +86,17 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_
     if native_elf is not None:
         from verify_update_elf import cohort_admission_header
         output = output.resolve()
-        (output.parent / 'cohort_elf_admission.h').write_text(cohort_admission_header(runtime, native_elf))
+        header = output.parent / 'cohort_elf_admission.h'
+        header.write_text(cohort_admission_header(runtime, native_elf))
+        generated[header] = header.read_bytes()
         includes += [output.parent, runtime / 'lib/elf_loader/include', runtime / 'test/native_bank_stubs']
         command += ['-DSTORE_ADMISSION_COHORT', '-Wno-misleading-indentation']
         obj = output.parent / 'cohort-validate.o'
         cflags = ['-fsanitize=address,undefined', '-fno-sanitize-recover=all'] if os.environ.get('SANITIZE') == '1' else []
-        subprocess.run(['cc', '-std=c11', *cflags, *['-I' + str(p) for p in includes],
-                        '-c', str(runtime / 'lib/elf_loader/src/esp_elf_validate.c'), '-o', str(obj)], check=True)
+        run_qualified(['cc', '-std=c11', *cflags, *['-I' + str(p) for p in includes],
+                       '-c', str(runtime / 'lib/elf_loader/src/esp_elf_validate.c'), '-o', str(obj)],
+                      sources=custody_sources, generated=generated)
+        generated[obj] = obj.read_bytes()
         command += [str(obj)]
     cpu_header=(runtime / 'src/ports/esp32s3/CpuPort.h').read_text()
     # Match the selected native backend's advertised bound, including API2.
@@ -114,7 +121,7 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_
     command += ['-I' + str(p) for p in includes]
     command += [str(p) for p in sources]
     command += [str(ROOT / 'tests/runtime_store_admission.cpp'), '-ldl', '-o', str(output)]
-    subprocess.run(command, check=True, timeout=180)
+    run_qualified(command, sources=custody_sources, generated=generated)
     return output
 
 

@@ -13,6 +13,7 @@ from build_current_watch_cohort import (ROOT, RUNTIME, RUNTIME_VERSION, VERSION,
 from current_cohort import parse, verify, package
 from check_runtime_store_admission import compile_harness, store_digest
 from read_only_spiffs import read_image
+from qualified_source_custody import run_qualified, source_head
 
 SCENARIOS = ('power-begin', 'power-native', 'power-store', 'cancel', 'corrupt-native',
              'corrupt-store', 'wrong-runtime-request', 'power-verify-native', 'power-verify-store', 'power-ready',
@@ -23,15 +24,19 @@ def run(*args, **kwargs):
     return subprocess.run(list(map(str, args)), check=True, **kwargs)
 
 
-def compile_transaction(runtime, build, version, fixture=None):
+def compile_transaction(runtime, build, version, fixture=None, *, source_revision=None):
     runtime, build = Path(runtime).resolve(), Path(build).resolve()
     build.mkdir(parents=True)
     (build / 'RiscBuildIdentity.h').write_text('#pragma once\n#define RISC_BUILD_VERSION "' + version + '"\n')
+    custody_sources = {runtime: source_head(runtime, source_revision), ROOT: source_head(ROOT)}
+    generated = {build / 'RiscBuildIdentity.h': (build / 'RiscBuildIdentity.h').read_bytes()}
     includes = [build] + [runtime / p for p in ('test', 'test/native_bank_stubs', 'test/drivers/stubs',
         'lib/elf_loader/include', 'src', 'sdk/app', 'sdk/driver', 'sdk/hardware', 'lib/ArduinoJson/src')]
     flags = ['-fsanitize=address,undefined', '-fno-sanitize-recover=all', '-fno-omit-frame-pointer'] if os.environ.get('SANITIZE') == '1' else []
     inc = ['-I' + str(p) for p in includes]
-    run('cc', *flags, '-std=c11', *inc, '-c', runtime / 'lib/elf_loader/src/esp_elf_validate.c', '-o', build / 'validate.o')
+    run_qualified(['cc', *flags, '-std=c11', *inc, '-c', runtime / 'lib/elf_loader/src/esp_elf_validate.c', '-o', build / 'validate.o'],
+                  sources=custody_sources, generated=generated)
+    generated[build / 'validate.o'] = (build / 'validate.o').read_bytes()
     sources = [runtime / p for p in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp', 'src/bootstrap/Runtime.cpp',
         'src/runtime/drivers/ProviderGraphV2.cpp', 'src/runtime/drivers/ProviderModuleV2.cpp',
         'src/runtime/update/PairedBank.cpp', 'src/runtime/update/StoreAudit.cpp')]
@@ -45,12 +50,12 @@ def compile_transaction(runtime, build, version, fixture=None):
         require(all(path.is_file() for path in streams), 'Incomplete Runtime stream implementation')
         sources += streams
     executable = build / 'transaction'
-    run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
+    run_qualified(['c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
         '-rdynamic', '-no-pie', '-Wl,--wrap=fopen,--wrap=opendir,--wrap=stat,--wrap=lstat',
         *(['-Wl,--wrap=fclose'] if '--wrap=fclose' in (runtime/'test/run_native_bank_test.sh').read_text() else []),
         *inc, *sources, fixture or ROOT / 'tests/next_watch_upgrade/native_transaction.cpp', build / 'validate.o',
-        '-lcrypto', '-ldl', '-o', executable)
+        '-lcrypto', '-ldl', '-o', executable], sources=custody_sources, generated=generated)
     return executable
 
 

@@ -106,10 +106,11 @@ claim that separate direct routes establish a tested two-hop sequence.
 
 This isolated branch carries the preserving tools on the public Watch1.0.13
 source lineage. It changes no selected product version, app inventory, driver
-pin, release index or provisioning payload. The loaded Python dependency
-closure, native fixtures and selected profiles are byte-identical to the
-original tested source8e5c332. Their hashes are recorded in
-`docs/evidence/watch117-preserving/source-custody.json`.
+pin, release index or provisioning payload. The original loaded Python
+dependency closure, native fixtures and selected profiles matched tested
+source8e5c332. Their historical hashes remain recorded in
+`docs/evidence/watch117-preserving/source-custody.json`; explicitly listed
+verifier follow-up files now supersede the relevant source hashes.
 
 The recorded final result is1,590 fresh-process executions and160 negative
 native admissions, covering all direct13/14/15→17 routes and the actual
@@ -127,3 +128,31 @@ provisioning source bundle. Use `--help` on the bound package, transaction,
 service and chain scripts for their explicit path arguments. Watch PR53 owns
 the initial provisioning wrapper. Source pins and embedded build identities
 remain the originals; this checkpoint does not relabel the binaries.
+
+## Verifier admission follow-up
+
+The original 1,590-process and 160-negative-admission receipts above remain
+historical evidence. The verifier hardening does not claim a new run of that
+matrix, change any native or product bytes, or qualify physical execution.
+Its source changes are listed separately under `verifier_followup` in the
+source-custody record. The full loaded closure additionally includes the
+dynamic ELF admission helper and two import-time baseline JSON inputs.
+
+Package verification now requires an independently selected package-builder
+commit and the exact complete initial-image metadata object. The proof runners'
+`--packager-source` defaults to the frozen package's builder7cba7a1. Supply the
+actual, independently known builder commit when qualifying a newly built
+package; never select it from that package's untrusted receipt. Building a new
+package checks it against the current clean builder commit automatically.
+
+Graph and transaction compilation use the compiler's non-system dependency
+closure and compare every consumed repository input with its pinned Git blob
+before and after compilation. This rejects untracked or ignored headers that
+shadow tracked inputs. Freshly generated headers and previously checked object
+files are allowed only with exact expected bytes. Host compiler/system headers
+remain the toolchain boundary. Compiler-selected precompiled headers are
+rejected because their contents can differ from the tracked textual header.
+The focused compiler-custody regressions run in
+ordinary PR CI; the expanded package-mutation runner requires the separately
+supplied frozen artifacts. These follow-up checks are distinct from the
+historical preserving matrix.

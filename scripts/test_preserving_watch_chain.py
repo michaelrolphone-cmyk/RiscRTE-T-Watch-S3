@@ -22,7 +22,7 @@ def main():
     middle_payload,middle_ota=package(bridge['identity'],installed['blobs']['firmware.bin'],bridge['full'][0x2f0000:0x800000])
     require(files_at(a.bridge/'files')==bridge['store'] and (a.bridge/middle_ota['asset']).read_bytes()==middle_payload,
             'Bridge differs from exact delivered15 bytes')
-    final=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)
+    final=verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)
     binding,files,bootfs,payload,ota,native=final
     a.output.mkdir(parents=True)
     middle_path=a.output/'model-bank1-after-bridge.bin'
@@ -55,7 +55,7 @@ def main():
             result[FIRMWARE_OFFSETS[0]:FIRMWARE_OFFSETS[0]+len(native['blobs']['firmware.bin'])]==native['blobs']['firmware.bin'],
             'Final bank0 differs from the bound17 pair')
     require(middle_path.read_bytes()==snapshot and clean(ROOT)==head and
-            verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native)==final,'Chain input or source changed')
+            verify_package(a.target,a.binding_repository,a.binding,a.runtime,a.native,expected_packager_source=a.packager_source)==final,'Chain input or source changed')
     record={'schema':1,'kind':'actual-modeled-watch12-to15-to17-chain','qualification_source':head,
             'origin':origin['identity'],'intermediate':identity,'target':binding['cohort'],
             'bank_path':[0,1,0],'first_hop':metadata((a.output/'first-hop.json').read_bytes()),

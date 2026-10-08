@@ -16,3 +16,5 @@ jobs:
           python-version: '3.11'
       - name: Check exact qualified proof source closure
         run: python scripts/check_preserving_source_custody.py
+      - name: Reject ignored and untracked compiler inputs
+        run: python -m unittest discover -s tests -p test_preserving_verifier_guards.py -v
