@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install host fixture dependencies
-        run: python3 -m pip install Pillow pyelftools
+        run: python3 -m pip install -r scripts/requirements.txt
       - name: Download the immutable accepted baseline
         run: |
           mkdir -p .dependencies/baseline
