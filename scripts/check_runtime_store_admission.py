@@ -62,6 +62,17 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_
                'src/runtime/drivers/ProviderModuleV2.cpp', 'src/ports/esp32s3/CpuPort.cpp')]
     command = ['c++', '-std=c++17', '-Wall', '-Wextra', '-Werror',
                '-Wno-missing-field-initializers', '-rdynamic']
+    # Shared production-stream linkage correction from X4 admission 03c2d295.
+    streams = [runtime / 'src/runtime/streams' / name for name in
+               ('AppStreamSessions.cpp', 'ProviderQueueHost.cpp')]
+    if any(path.is_file() for path in streams):
+        if not all(path.is_file() for path in streams):
+            raise ValueError('Incomplete Runtime stream implementation')
+        sources += streams
+    if (runtime / 'src/bootstrap/AppPolicyLimits.h').is_file():
+        command += ['-DRISC_APP_POLICY_ROWS=16']
+        if native_elf is not None and b'RISC_APP_POLICY_ROWS:16\0' not in native_elf:
+            raise ValueError('Watch admission requires the compiled policy16 marker')
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']

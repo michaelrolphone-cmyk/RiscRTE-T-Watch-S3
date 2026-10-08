@@ -39,6 +39,11 @@ def compile_transaction(runtime, build, version, fixture=None):
         sources += [runtime / p for p in ('src/ports/esp32s3/CpuPort.cpp',
             'src/runtime/provisioning/BootstrapInput.cpp', 'src/runtime/provisioning/Coordinator.cpp',
             'src/runtime/provisioning/StoreFiles.cpp', 'src/runtime/provisioning/Profile.cpp')]
+    streams = [runtime / 'src/runtime/streams' / name for name in
+               ('AppStreamSessions.cpp', 'ProviderQueueHost.cpp')]
+    if any(path.is_file() for path in streams):
+        require(all(path.is_file() for path in streams), 'Incomplete Runtime stream implementation')
+        sources += streams
     executable = build / 'transaction'
     run('c++', *flags, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-missing-field-initializers',
         '-Wno-deprecated-declarations', '-DRISC_PAIRED_BANKS=1', '-DRISC_PAIRED_APP_DATA=1',
