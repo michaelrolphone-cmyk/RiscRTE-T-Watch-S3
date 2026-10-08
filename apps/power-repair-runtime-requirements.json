@@ -1,0 +1,115 @@
+{
+  "abi_changed": false,
+  "deployment": {
+    "existing_8MiB_ota_compatible": false,
+    "flash_bytes": 16777216,
+    "layout": "riscrte-paired-appdata-v2",
+    "migration": "Separate exact-byte host proof from accepted Watch 1.0.7; initial images erase data and are never preserving updates.",
+    "ordinary_ota_includes_appdata": false,
+    "partitions": {
+      "app0": {
+        "offset": 65536,
+        "size": 2490368
+      },
+      "app1": {
+        "offset": 8388608,
+        "size": 2490368
+      },
+      "appdata": {
+        "offset": 2555904,
+        "size": 524288
+      },
+      "bank_state": {
+        "offset": 16719872,
+        "size": 8192
+      },
+      "bootfs0": {
+        "offset": 3080192,
+        "size": 5308416
+      },
+      "bootfs1": {
+        "offset": 11403264,
+        "size": 5308416
+      },
+      "otadata": {
+        "offset": 16711680,
+        "size": 8192
+      }
+    },
+    "radio_iq": true,
+    "store_abi": 2,
+    "target": "esp32s3-16mb-appdata-iq"
+  },
+  "firmware_version": "0.1.54",
+  "public_runtime_api_prefix_changed": false,
+  "reason": "Watch 1.0.11 open cutoff staging selects the reviewed Runtime0.1.54 generic union and Watch USB sleep repair. Exact public/local provenance is separate. The full22-app RF/power profile and paired ABI2 layout/NVS/app-data ownership remain required.",
+  "repository": "https://github.com/michaelrolphone-cmyk/RiscRTE",
+  "required_behavior": {
+    "ambiguous_key_value_instance_zero_denied": true,
+    "app_data_retention_barrier": true,
+    "app_grant_capacity": 12,
+    "app_policy_capacity": 24,
+    "app_requirement_capacity": 12,
+    "atomic_app_data_replacement": true,
+    "audio_input_cleanup_barrier": true,
+    "bounded_asynchronous_radio_scan": true,
+    "cohort_graph_elf_admission": true,
+    "default_app_health_confirmation": true,
+    "exact_app_authority_preservation": true,
+    "exclusive_iq_modem_lease": true,
+    "explicit_app_data_namespaces": true,
+    "explicit_key_value_v2": true,
+    "explicit_multiple_key_value_namespaces": true,
+    "explicit_shared_preferences_migration": true,
+    "hci_cleanup_sleep_barrier": true,
+    "immutable_active_bank": true,
+    "independent_graph_provider_registry": true,
+    "mixed_polarity_rtc_wake": true,
+    "namespaced_key_value": true,
+    "native_bounded_hci": true,
+    "native_i2s_pdm_rx": true,
+    "native_i2s_rx_deadline_nonterminal": true,
+    "native_i2s_tx_cleanup": true,
+    "native_station_radio": true,
+    "nonconsuming_hci_status": true,
+    "owned_deep_sleep": true,
+    "owned_timed_deep_sleep": true,
+    "owned_timed_light_sleep": true,
+    "owned_wake_sets": true,
+    "paired_cohort_updates": true,
+    "paired_firmware_store": true,
+    "paired_metadata_psram_only": true,
+    "persistent_namespace_ownership_preserved": true,
+    "provider_bound_key_capacity": 9,
+    "provider_bound_key_value": true,
+    "provider_only_bank_store": true,
+    "provider_only_https": true,
+    "provider_poll_max_quantum_ms": 8,
+    "provider_poll_total_budget_ms": 10,
+    "radio_cleanup_sleep_barrier": true,
+    "read_only_installed_files": true,
+    "reserved_iq_sram": true,
+    "retained_app_unload_barrier": true,
+    "retained_sleep_reset_diagnostics": true,
+    "rollback_until_health_confirmation": true,
+    "scheduler_waits_per_yield": 1,
+    "scoped_native_radio_spi_gpio": true,
+    "selectable_radio_config_v2": true,
+    "selected_provider_capacity": 24,
+    "spi_max_hz": 40000000,
+    "static_output_hold": true,
+    "store_abi": 2
+  },
+  "rf_storage": {
+    "app_data_api": 1,
+    "app_data_instance": 3,
+    "key_value_api": 2,
+    "key_value_instance": 13,
+    "quota_bytes": 131072,
+    "required_bytes": 129004,
+    "shared_preferences_api": 1,
+    "shared_preferences_instance": 1
+  },
+  "schema": 1,
+  "source_sha": "5426ade43dbe74a45e85577d087035099a1abf1b"
+}

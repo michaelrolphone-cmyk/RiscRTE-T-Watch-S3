@@ -1,0 +1,33 @@
+{
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "commit": "273b58d64ccc9a7dd66f0659271a942f244edcdf",
+  "purpose": "Byte-exact panel 0.4.1 for immutable historical deployment lanes; current builds use the live panel source",
+  "files": {
+    "drivers/twatch_panel/driver.c": "fffbdecc7a916c3c9757667dd904ff26b2cd35329778cc1a06bab6eef20b6b5b",
+    "drivers/twatch_panel/manifest.json": "d616460fc0302b014c789dae45ff152e913fd2828db111c5522cfe3b2b20e055",
+    "exports.map": "24930856885793bf03ca7d744d4bfffbcb37682a6068a92e40ae5aa63d0cadc6",
+    "include/common/dependency.h": "438ecdaaefe7610366cbba5bb38f01ad6c15220f9e6cb409c6f1853c5583ed13",
+    "include/common/display.h": "950531a8f7b61a3f099e8501e685436f7a3dff544f4d4cb94c891b89f27cd423",
+    "include/common/gpio.h": "4a9d80486570d58a6a24c6d3c637da9fd8e72e4c52836592ee36aaba9597df40",
+    "include/common/spi.h": "028131ce826cd652e5b41f3c511aeb12cd82bdc4119ec9b9ff27962eba15e469",
+    "include/twatch_hardware.h": "3393199de17e48910d136c3685eb41342221ae8ea732d212ab501898472d326c",
+    "include/twatch_power.h": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d",
+    "include/twatch_support.h": "2be79a3e294f53dc22231eafd45e33aad5901f9c6670ea2a91d3f909fa53c91d",
+    "include/twatch_util.h": "8303bef501c6638953c66318bb6df84e416aaa38b2718079609b2e167765cc04",
+    "sdk/driver/GardenPlatformV1.h": "771b2819b602afa3d1120f54717277756e35e161d279307c2d1080433a35ab71",
+    "sdk/driver/RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "sdk/driver/RiscDisplayOutputV1.h": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+    "sdk/driver/RiscGpioBankV1.h": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c",
+    "sdk/driver/RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+    "sdk/driver/RiscI2cBusV1.h": "a6b769efbbf7f3837a6a348689b0aee84bf687ae8e18a31d0296f3bfa6ac2004",
+    "sdk/driver/RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "sdk/driver/RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+    "sdk/driver/RiscProviderV2.h": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+    "sdk/driver/RiscRadioScanV1.h": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+    "sdk/driver/RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+    "sdk/driver/RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+    "sdk/driver/RiscWakeSetV1.h": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375",
+    "sdk/driver/TWatchHardwareV1.h": "ca48ca21a944565ae185f7c4e8cc0e73bcc18871d79b966f7e7da916e7ab2c99",
+    "sdk/driver/TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd"
+  }
+}

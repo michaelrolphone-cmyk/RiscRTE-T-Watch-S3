@@ -151,6 +151,9 @@ static bool panel_resume(void *context) {
     (void)context;
     if (!enter()) return false;
     bool ok = running && !deep_retained;
+    /* Restoration may partly wake the controller even when a later write
+     * fails. Preserve cleanup custody, but never reuse the old armed state. */
+    if (ok && (asleep || deep_held)) sleep_prepared=false;
     if (ok && deep_held) {
         int32_t rc=gpio->deep_sleep_hold(gpio->context,pins[config->backlight],false);
         if (rc==RISC_DEEP_SLEEP_RETAINED) deep_retained=true;
@@ -179,7 +182,7 @@ static int32_t panel_prepare_deep_sleep(void *context) {
     if (deep_retained) return RISC_DEEP_SLEEP_RETAINED;
     if (!gpio || gpio->struct_size<GARDEN_GPIO_DEEP_SLEEP_HOLD_V1_SIZE ||
         !gpio->deep_sleep_hold) return RISC_DEEP_SLEEP_UNSUPPORTED;
-    if (deep_held) return 0;
+    if (deep_held) return sleep_prepared ? 0 : RISC_DEEP_SLEEP_PLATFORM;
     if (!panel_prepare_sleep(context)) return RISC_DEEP_SLEEP_PLATFORM;
     if (!enter()) return RISC_DEEP_SLEEP_BUSY;
     int32_t rc=RISC_DEEP_SLEEP_PLATFORM;

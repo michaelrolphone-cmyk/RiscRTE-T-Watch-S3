@@ -1,0 +1,50 @@
+{
+  "assets": {
+    "appdata-image.json": {
+      "sha256": "518da93e321701682210ef5794c388849732281b5946488afaaacf25223b7838",
+      "size_bytes": 1248
+    },
+    "appdata.bin": {
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "size_bytes": 524288
+    },
+    "bootloader.bin": {
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
+      "size_bytes": 15104
+    },
+    "firmware.bin": {
+      "sha256": "776748a2331f6f6c5de0fc769bd13c8731c503a026217a767a18e86bac37dc3b",
+      "size_bytes": 1238288
+    },
+    "firmware.elf": {
+      "sha256": "426b85cdfd68b21a8acbbf20c489bed67b2b7f2b234549fb9944f4ff2518085f",
+      "size_bytes": 19806564
+    },
+    "partitions-paired-appdata.csv": {
+      "sha256": "31f6e41e2acc48df13ee30ad91e55928b2c2093b6916080235a833dd69f3b844",
+      "size_bytes": 630
+    },
+    "partitions.bin": {
+      "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9",
+      "size_bytes": 3072
+    },
+    "platformio.ini": {
+      "sha256": "fd471102e837c159ba5cdb45e9881b0151800145392afc7b0623ac3a3bffe2ca",
+      "size_bytes": 5322
+    },
+    "radio-iq-proof.json": {
+      "sha256": "efe18658868f47e1ca19a28fcdf127bd049f152b2e0d8527374a0034c4dd5c68",
+      "size_bytes": 2174
+    },
+    "requirements-ci.txt": {
+      "sha256": "1b5f9a84f4862cb05fc918850fc8ab2516d5c39fb3087747e7df1aba2c7a7600",
+      "size_bytes": 52
+    }
+  },
+  "candidate_sha256": "2d9dc26eecc81eb74b9357b6972913a753c4db840a5f8bab4566b02447af805b",
+  "firmware_version": "0.1.41",
+  "schema": 1,
+  "scope": "Exact accepted Watch 1.0.7 native inputs, reused without rebuilding for the separate RF candidate.",
+  "source_sha": "4a0891fc0ec10dcd100c6248768cabecaafec888",
+  "target": "esp32s3-16mb-appdata-iq"
+}

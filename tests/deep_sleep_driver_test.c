@@ -190,6 +190,16 @@ int main(int argc,char **argv) {
             assert(!a->resume(NULL) && deep_retained && !d->quiesce());
             puts("deep panel retained unhold blocks I/O and teardown");return 0;
         }
+        if(!strcmp(mode,"resume-pwm-error")) {
+            m_fail_pwm=true;
+            assert(a->resume_status(NULL)==RISC_LIGHT_SLEEP_PLATFORM && !deep_held && !deep_retained);
+            assert(asleep && !sleep_prepared);
+            unsigned before=m_panel_exchanges, holds=hold_calls;
+            assert(!a->prepare_sleep(NULL));
+            assert(a->prepare_deep_sleep(NULL)==RISC_DEEP_SLEEP_PLATFORM);
+            assert(m_panel_exchanges==before && hold_calls==holds);
+            m_fail_pwm=false;
+        }
         if(!strcmp(mode,"resume-spi-error")) {
             m_fail_io=true;
             assert(a->resume_status(NULL)==RISC_LIGHT_SLEEP_PLATFORM && !deep_held && !deep_retained);

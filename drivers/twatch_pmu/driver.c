@@ -166,6 +166,10 @@ static bool resume_sleep(void *context) {
     (void)context;
     if (!started) return false;
     if (!sleep_changed) return true;
+    /* A restore can partially replace the sleep masks before failing. The
+     * previous admission proof is no longer valid, even if cleanup is retried
+     * after transport recovery. Keep the snapshot until every write succeeds. */
+    sleep_prepared=false;
     bool ok = true;
     for (unsigned i=0;i<3;i++) {
         if (!write_reg((uint8_t)(0x40+i),sleep_irq[i])) ok=false;

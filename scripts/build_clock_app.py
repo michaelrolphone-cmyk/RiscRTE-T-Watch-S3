@@ -11,15 +11,19 @@ from build_legacy_sleep import legacy_inputs, legacy_clock
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def clock_manifest(paired=False, current=False, low_battery=False):
+def clock_manifest(paired=False, current=False, low_battery=False, rf_spectrum=False, power_repair=False,runtime_features=False):
+    if power_repair and not rf_spectrum:raise ValueError('Power-repair Clock requires the full RF profile')
+    if rf_spectrum and not low_battery:raise ValueError('RF Clock requires automatic low battery')
     if low_battery and not current:raise ValueError('Low-battery Clock requires the new current-based profile')
     if current and not paired:
         raise ValueError('Current Clock requires the paired final profile')
-    path = 'apps/clock/low-battery-manifest.json' if low_battery else 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
+    path = 'apps/clock/runtime-features-manifest.json' if runtime_features else 'apps/clock/power-repair-manifest.json' if power_repair else 'apps/clock/rf-spectrum-manifest.json' if rf_spectrum else 'apps/clock/low-battery-manifest.json' if low_battery else 'apps/clock/current-manifest.json' if current else ('apps/clock/paired-manifest.json' if paired else 'apps/clock/manifest.json')
     return json.loads((ROOT/path).read_text())
 
 
-def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None, low_battery=False):
+def build(launcher=False, returning=False, alarm_system=None, points_utilities=None, wifi=False, paired=False, current=False, debug_path=None, low_battery=False, rf_spectrum=False, power_repair=False,runtime_features=False):
+    if power_repair and not rf_spectrum:raise ValueError('Power-repair Clock requires the full RF profile')
+    if rf_spectrum and not low_battery:raise ValueError('RF Clock requires automatic low battery')
     if low_battery and not current:raise ValueError("Low-battery Clock requires the new current-based profile")
     if current and not (paired and launcher and alarm_system and points_utilities):
         raise ValueError('Current Clock requires the complete paired CUE cohort')
@@ -39,6 +43,11 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     for name,source in sources.items():
         if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Canonical app SDK hash mismatch')
+    if runtime_features:
+        feature_sdk=json.loads((ROOT/'apps/runtime_features/sdk/SOURCES.json').read_text())
+        for name,source in feature_sdk.items():
+            if hashlib.sha256((ROOT/'apps/runtime_features/sdk'/name).read_bytes()).hexdigest()!=source['sha256']:
+                raise ValueError('Runtime features SDK hash mismatch: '+name)
     out = ROOT/('dist/update-launcher' if paired else 'dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
     clock_source = ROOT/'apps/clock' if current else legacy_clock(ROOT)
@@ -55,6 +64,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
                     *([] if current_points else ['-DWATCH_POINTS_LEGACY_PRESENTATION']),
                     *(['-DPORTABLE_LOW_BATTERY'] if low_battery else []),
+                    *(['-DWATCH_RUNTIME_FEATURES','-DWATCH_BLE_BROADCAST'] if runtime_features else []),
                     *(['-DWATCH_CLOCK_LAUNCHER'] if launcher else []),
                     *(['-DWATCH_CLOCK_RETURN'] if returning else []),
                     *(['-DWATCH_PAIRED_BOOT_CONFIRM'] if paired else []),
@@ -81,7 +91,7 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                if len(line.split())>=3 and line.split()[-2] in ('T','D','B','R')}
     assert imports <= {'risc_runtime_get_api','memcpy','memset','malloc','free'} | ({'memcmp'} if alarm_system else set()), imports
     assert 'risc_runtime_get_api' in imports and exports == {'app_main'}, (imports,exports)
-    manifest = clock_manifest(paired=paired, current=current, low_battery=low_battery)
+    manifest = clock_manifest(paired=paired, current=current, low_battery=low_battery, rf_spectrum=rf_spectrum, power_repair=power_repair,runtime_features=runtime_features)
     if returning:
         manifest['id']='twatch-clock-return';manifest['file_name']='clock.elf'
     if launcher:
@@ -89,6 +99,9 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
         manifest['requires'].append({'capability':'storage.key-value','api':1})
     if alarm_system:manifest['requires'].append({'capability':'alarm.service','api':1})
     if current:manifest['requires']+=[{'capability':'net.wifi','api':1},{'capability':'bluetooth.hci','api':1},{'capability':'motion.accel','api':1}]
+    if runtime_features:
+        from runtime_features_profile import requirements
+        requirements('clock' if returning else 'default',manifest)
     (out/('clock.json' if returning else 'default.json')).write_text(json.dumps(manifest,indent=2)+'\n')
     (out/'build-record.json').write_text(json.dumps({'schema':1,'id':manifest['id'],
         'version':manifest['version'],'architecture':'xtensa-esp32s3','artifact':elf.name,

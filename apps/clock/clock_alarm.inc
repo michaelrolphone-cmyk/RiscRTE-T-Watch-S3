@@ -32,6 +32,9 @@ static bool clock_alarm_failure(void) {
 static bool clock_alarm_foreground(void) {
     (void)portable_touch_open;(void)portable_touch_close;
     if(!clock_display_settled || held)return clock_alarm_failure();
+#ifdef WATCH_BLE_BROADCAST
+    if(!clock_broadcast_step())return false;
+#endif
     if(!portable_alarm_pump(&clock_alarm))return clock_alarm_failure();
 #ifdef ALARM_STATUS_CUE_SUPPORTED
     bool cue_seen=false;
@@ -74,6 +77,9 @@ static bool clock_alarm_foreground(void) {
         }
         uint32_t now,events=0;
         if(!clock_display_settled || held || !alive(&now))return clock_alarm_failure();
+#ifdef WATCH_BLE_BROADCAST
+        if(!clock_broadcast_step())return false;
+#endif
         rt->yield_ms(20);
         if(!pmu->key_events(pmu->base.context,&events))return clock_alarm_failure();
         portable_touch_sample sample;portable_touch_read(&alert_touch,&sample);

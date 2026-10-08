@@ -1,0 +1,127 @@
+{
+  "app_versions": {
+    "alarms": "0.2.7",
+    "app_store": "1.1.8",
+    "audio_spectrum": "0.4.10",
+    "battery": "1.1.5",
+    "ble_buttons": "0.1.7",
+    "ble_scanner": "0.2.5",
+    "ble_touchpad": "0.1.7",
+    "calculator": "0.1.11",
+    "clock": "0.10.7",
+    "countdown": "0.1.10",
+    "default": "0.10.7",
+    "file_browser": "1.4.6",
+    "frequency_generator": "0.1.9",
+    "lora_messages": "0.1.7",
+    "ota_update": "1.1.8",
+    "points_in_time": "0.4.9",
+    "settings": "1.3.6",
+    "springboard": "1.5.5",
+    "stopwatch": "0.1.11",
+    "timecard": "0.1.6",
+    "waterfall": "0.2.3",
+    "wifi_settings": "1.1.9"
+  },
+  "ble_sensors": {
+    "commit": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "id": "ble-sensors",
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "version": "0.1.0"
+  },
+  "ble_telemetry": {
+    "commit": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "id": "ble-telemetry",
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "version": "0.1.0"
+  },
+  "features": {
+    "low_battery": true,
+    "power_repair": true,
+    "rf_spectrum": true,
+    "runtime_features": true
+  },
+  "hid": {
+    "commit": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "id": "ble-hid",
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "version": "0.1.2"
+  },
+  "power_drivers": {
+    "imu": "0.4.2",
+    "panel": "0.4.2",
+    "pmu": "0.6.2"
+  },
+  "product_version": "1.0.12",
+  "profile": "watch-runtime-features-apps-v1",
+  "rf_storage": {
+    "app_data_api": 1,
+    "app_data_instance": 3,
+    "key_value_api": 2,
+    "key_value_instance": 13,
+    "quota_bytes": 131072,
+    "required_bytes": 129004,
+    "shared_preferences_api": 1,
+    "shared_preferences_instance": 1
+  },
+  "schema": 1,
+  "sdr": {
+    "commit": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "id": "s3-radio-iq-v1",
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "version": "0.2.0"
+  },
+  "service_version": "0.4.2",
+  "source_app_versions": {
+    "alarms": "0.2.2",
+    "app_store": "1.1.3",
+    "audio_spectrum": "0.4.5",
+    "battery": "1.1.5",
+    "ble_buttons": "0.1.2",
+    "ble_scanner": "0.2.0",
+    "ble_touchpad": "0.1.2",
+    "calculator": "0.1.6",
+    "clock": "0.10.2",
+    "countdown": "0.1.5",
+    "default": "0.10.2",
+    "file_browser": "1.4.1",
+    "frequency_generator": "0.1.4",
+    "lora_messages": "0.1.2",
+    "ota_update": "1.1.3",
+    "points_in_time": "0.4.4",
+    "settings": "1.3.1",
+    "springboard": "1.5.0",
+    "stopwatch": "0.1.6",
+    "timecard": "0.1.6",
+    "waterfall": "0.2.0",
+    "wifi_settings": "1.1.4"
+  },
+  "sources": {
+    "productivity": {
+      "commit": "6fc3c6d367aa26ab0b35e2b7f8da0bcc1ced0f0c",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Productivity"
+    },
+    "runtime": {
+      "commit": "2abc312217fadb04ac0d9c994ecb38edc15edf6a",
+      "repository": "michaelrolphone-cmyk/RiscRTE"
+    },
+    "system-apps": {
+      "commit": "3d95c712ed458d3e5092fc8725a16d495dca9e22",
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps"
+    },
+    "utilities": {
+      "commit": "31ae4f9a22fc82d5a2a47e303940c57dc50b14d7",
+      "repository": "michaelrolphone-cmyk/RiscRTE-Utilities"
+    }
+  },
+  "telemetry_battery": {
+    "commit": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "id": "telemetry-battery",
+    "repository": "michaelrolphone-cmyk/RiscRTE-Drivers",
+    "version": "0.1.0"
+  },
+  "telemetry_broadcast": {
+    "id": "telemetry-broadcast",
+    "version": "0.1.0"
+  }
+}

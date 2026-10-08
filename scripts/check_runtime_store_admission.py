@@ -51,7 +51,9 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output, app_data=False, native_elf=None):
+def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_policy=False):
+    if cohort_policy and (not app_data or native_elf is not None):
+        raise ValueError('Policy-only cohort admission requires app-data and no native ELF')
     runtime, output = Path(runtime).resolve(), Path(output)
     includes = [runtime / p for p in ('src', 'sdk/app', 'sdk/driver', 'sdk/hardware',
                                      'lib/ArduinoJson/src', 'test/drivers/stubs')]
@@ -65,6 +67,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None):
                     '-fno-omit-frame-pointer', '-no-pie']
     if app_data:
         command += ['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1']
+    if cohort_policy:
+        command += ['-DSTORE_ADMISSION_COHORT', '-DSTORE_ADMISSION_COHORT_POLICY']
     if native_elf is not None:
         from verify_update_elf import cohort_admission_header
         output = output.resolve()
@@ -82,6 +86,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None):
     native_kv=runtime/'src/ports/esp32s3/NvsKeyValue.h'
     if native_kv.is_file() and 'RISC_KEY_VALUE_V2_BLOB_MAX' in native_kv.read_text():
         command += ['-DSTORE_ADMISSION_KV_V2']
+    if 'realtimeRead' in cpu_header and (runtime/'sdk/app/RiscRetainedWakeV1.h').is_file():
+        command += ['-DSTORE_ADMISSION_RUNTIME_FEATURES']
     if 'radioIqReady' in cpu_header:
         command += ['-DSTORE_ADMISSION_RADIO_IQ']
     if 'radioIqPrepare' in cpu_header and 'radioIqCleanup' in cpu_header:
