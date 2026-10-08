@@ -1,0 +1,212 @@
+{
+  "changed_apps": [
+    "audio_spectrum",
+    "waterfall"
+  ],
+  "files": {
+    "alarms.elf": {
+      "sha256": "f434f694e97def99b2493e8d991e1bd7aebcc6672685c6b18d30a6743901c836",
+      "size_bytes": 103856
+    },
+    "alarms.json": {
+      "sha256": "a204574b274ebb997c83e23b2c8f37e08a8676055a4d92654178e779f8ee5677",
+      "size_bytes": 898
+    },
+    "app_store.elf": {
+      "sha256": "75b822dbb11e3e533545048c85ad6778a97417330f4672c6b2ebc0dfbd6f99da",
+      "size_bytes": 103712
+    },
+    "app_store.json": {
+      "sha256": "5cfb9ce54c7f1e2ef9adf4174f5e37f22a7f097edcd665cff3f45859fb8871b3",
+      "size_bytes": 975
+    },
+    "battery.elf": {
+      "sha256": "292f232ef2209a2a414f71ae16aa7435d78f5232e853beb94334df1990dd1cdf",
+      "size_bytes": 99904
+    },
+    "battery.json": {
+      "sha256": "d14ebe181217745e2891c0429b41b15a9ab9674803ccaf4f3d5fa97fcf33eb9a",
+      "size_bytes": 899
+    },
+    "ble_buttons.elf": {
+      "sha256": "9b24a2dfab6db052ea615d0bd501d3d4bad3b45ef86bf5412f32853297a53915",
+      "size_bytes": 108488
+    },
+    "ble_buttons.json": {
+      "sha256": "a859a8925fefb23933a62f9a1c6fcb3d78914154b26d2bf9b0a9715d53fa7a6d",
+      "size_bytes": 973
+    },
+    "ble_scanner.elf": {
+      "sha256": "fd2ce2357b7c9ab77baf73060e1e5b72211ddf49fb157f3f5a9b2b718c851c67",
+      "size_bytes": 101020
+    },
+    "ble_scanner.json": {
+      "sha256": "e3625adb3b2d7a11becc96c891d4fecf2bcd06603ae2d0a1587184f11a48703d",
+      "size_bytes": 977
+    },
+    "ble_touchpad.elf": {
+      "sha256": "024566a53a9c5cabf9357d39004bcdf82b11c331b1b510eafd1a31e53772eaed",
+      "size_bytes": 106408
+    },
+    "ble_touchpad.json": {
+      "sha256": "8f7c1659acba0c1daf95a95a634779711c83ef6be5ffd6f0dcecdbff4c9eca1d",
+      "size_bytes": 975
+    },
+    "calculator.elf": {
+      "sha256": "ec41efd89291652f46f3dcda47be9bb54267786a7f285fcbddbb55deb5e18199",
+      "size_bytes": 96212
+    },
+    "calculator.json": {
+      "sha256": "a56c9a7ae6657bf6b1e6003428370f522266f22f8e4a76120fac984d514bac77",
+      "size_bytes": 906
+    },
+    "clock.elf": {
+      "sha256": "26022fa2c72f893a513814fdbcc3a67614082d5284ee2e5f63aafc1f45a00da9",
+      "size_bytes": 854636
+    },
+    "clock.json": {
+      "sha256": "3c69cd2233f872848bee114de6349259ab458c5c77b90af546ca4d2a777a6165",
+      "size_bytes": 986
+    },
+    "contexts.elf": {
+      "sha256": "d8ab1eba35630476e704088dee923f127ab99b526edc36dbcb7394b914006096",
+      "size_bytes": 99600
+    },
+    "contexts.json": {
+      "sha256": "f0920d68f0c4092842ce822b174f576c515c7a04b21924b8b160b0bc2b7015c4",
+      "size_bytes": 901
+    },
+    "countdown.elf": {
+      "sha256": "6fee218caa230aacd05515b050686a6679ad9b96e7986f20feeeea4dc8ed97c2",
+      "size_bytes": 98760
+    },
+    "countdown.json": {
+      "sha256": "20bc384ca8dcf6c52d85538409a591ce2dd8a035da47e46fecce1ac9420747ca",
+      "size_bytes": 904
+    },
+    "default.elf": {
+      "sha256": "0f031c1ba8c908d6ab4bce74829efcb5bffe5bf2648995f582e64b5dfb4a6df4",
+      "size_bytes": 854636
+    },
+    "default.json": {
+      "sha256": "9f426191d170c261ba5cd4de09f097ef051984937787f29c24306498246063dd",
+      "size_bytes": 1132
+    },
+    "file_browser.elf": {
+      "sha256": "6ed495380886608dd477b8297443f9b61f315e397111d140d0d66fa0974e677c",
+      "size_bytes": 105132
+    },
+    "file_browser.json": {
+      "sha256": "529c3155e5fe00a9cee36f0f9940edb8e03ac257eff5a317251b096e2f2904f6",
+      "size_bytes": 985
+    },
+    "frequency_generator.elf": {
+      "sha256": "7f5d1c1bc34eac0b47ad5f4accd38558927b2563e71245594d640aad26611923",
+      "size_bytes": 92988
+    },
+    "frequency_generator.json": {
+      "sha256": "5cf938999a0aa33a0d2663ecc02bf7f5395a1eed4b974ea897ebaf8e0d41f939",
+      "size_bytes": 988
+    },
+    "lora_messages.elf": {
+      "sha256": "210fcb1908ec745b534f4b82a2ebfa5dcf1c3091aef5f421e5e72f4cd0af55e6",
+      "size_bytes": 108076
+    },
+    "lora_messages.json": {
+      "sha256": "b7aee8a95d8dbd8d045eec506ce731ea53cb0ae3d31a5aad94eb48adb4017e3f",
+      "size_bytes": 973
+    },
+    "ota_update.elf": {
+      "sha256": "8dc3dba3905d531ad422c52de37071d82c6317d1254b6269545f96a4571e6789",
+      "size_bytes": 103712
+    },
+    "ota_update.json": {
+      "sha256": "a2834e46be8251f8a618c1026164fe19024a24e4c9af866faca22811d307883f",
+      "size_bytes": 981
+    },
+    "points_in_time.elf": {
+      "sha256": "bc9461908fc06b8a98d04ee7c4a6035a8f0df895c40952320cd5c6d70c0415d3",
+      "size_bytes": 126636
+    },
+    "points_in_time.json": {
+      "sha256": "7316ae09ab82c406e9f27bfb48efc261cf98456ce218a83f537404f1111acea8",
+      "size_bytes": 913
+    },
+    "settings.elf": {
+      "sha256": "d6ced19419568c6a02f0925ccf6d2e510d8feb117574d56b99c4880ed0a05a1c",
+      "size_bytes": 116132
+    },
+    "settings.json": {
+      "sha256": "7963b44ac360080d8e0d5b5b03cbdcec4852f4e23d9139145924f6e116414d9c",
+      "size_bytes": 902
+    },
+    "springboard.elf": {
+      "sha256": "c0c34b4765cac19a5e3a57de6e04dbfefb45a32bd38971a3427aed09287f3d30",
+      "size_bytes": 126956
+    },
+    "springboard.json": {
+      "sha256": "e505cbbbaaf91b47e5a984fe1a45c8f78a922881159bcc9cf26cad83a8621dee",
+      "size_bytes": 908
+    },
+    "stopwatch.elf": {
+      "sha256": "9d98f76c7784810bd8a78c2e92191ecbf6945f106ff799b981f431467c6e0a66",
+      "size_bytes": 97504
+    },
+    "stopwatch.json": {
+      "sha256": "fa0398a6e38179eb67e7c9f00375613ff774084aec68324bdd898216537ff243",
+      "size_bytes": 904
+    },
+    "timecard.elf": {
+      "sha256": "a48dc8f1da2138665c3f2f827f8194b0039248f2ea6b5a79c63b8b3dfea652e9",
+      "size_bytes": 116412
+    },
+    "timecard.json": {
+      "sha256": "60b24661ce01da3269a83f7f24d536771f6ec21b9420c6bcebde20795fddc5ea",
+      "size_bytes": 969
+    },
+    "wifi_settings.elf": {
+      "sha256": "0361dbb176167a00f3a7104e85446a56abf678f1c1110cedafcfbfc0b4cec57c",
+      "size_bytes": 107964
+    },
+    "wifi_settings.json": {
+      "sha256": "2e5c00e84411f82e281a449e4a229ab903f34cfc6689750083998ff4b388a078",
+      "size_bytes": 912
+    }
+  },
+  "preserved_apps": [
+    "alarms",
+    "app_store",
+    "battery",
+    "ble_buttons",
+    "ble_scanner",
+    "ble_touchpad",
+    "calculator",
+    "clock",
+    "contexts",
+    "countdown",
+    "default",
+    "file_browser",
+    "frequency_generator",
+    "lora_messages",
+    "ota_update",
+    "points_in_time",
+    "settings",
+    "springboard",
+    "stopwatch",
+    "timecard",
+    "wifi_settings"
+  ],
+  "providers": {
+    "contexts/driver.elf": {
+      "sha256": "51a26c9ff3a13dcbc57ed16dde6ac5a1658f8d0f69bc2c96c1491f932fbe3b1c",
+      "size_bytes": 59468
+    },
+    "contexts/manifest.json": {
+      "sha256": "f918e877d9e2d067d9899467cca665b361a71dddaa6c8c903148755572a84d2a",
+      "size_bytes": 656
+    }
+  },
+  "schema": 1,
+  "source_revision": "02f0225b1858ed4d3586891a9b22dd9af36ef210",
+  "source_version": "1.0.15"
+}

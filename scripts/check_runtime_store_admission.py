@@ -51,7 +51,7 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_policy=False):
+def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy_rows=16, *, cohort_policy=False):
     if cohort_policy and (not app_data or native_elf is not None):
         raise ValueError('Policy-only cohort admission requires app-data and no native ELF')
     runtime, output = Path(runtime).resolve(), Path(output)
@@ -62,6 +62,23 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, *, cohort_
                'src/runtime/drivers/ProviderModuleV2.cpp', 'src/ports/esp32s3/CpuPort.cpp')]
     command = ['c++', '-std=c++17', '-Wall', '-Wextra', '-Werror',
                '-Wno-missing-field-initializers', '-rdynamic']
+    if type(app_policy_rows) is not int or app_policy_rows not in (16, 17):
+        raise ValueError('App policy rows must be exactly 16 or 17')
+    marker = b'RISC_APP_POLICY_ROWS:' + str(app_policy_rows).encode() + b'\0'
+    if app_policy_rows == 17:
+        if not (runtime / 'src/bootstrap/AppPolicyLimits.h').is_file() or native_elf is None or marker not in native_elf:
+            raise ValueError('Policy17 admission requires the matching compiled native marker')
+    if native_elf is not None and b'RISC_APP_POLICY_ROWS:' in native_elf and marker not in native_elf:
+        raise ValueError('Native and admission app policy row bounds differ')
+    if (runtime / 'src/bootstrap/AppPolicyLimits.h').is_file():
+        command += ['-DRISC_APP_POLICY_ROWS=' + str(app_policy_rows)]
+    streams = [runtime / 'src/runtime/streams' / name for name in
+               ('AppStreamSessions.cpp', 'ProviderQueueHost.cpp')]
+    if any(path.is_file() for path in streams):
+        if not all(path.is_file() for path in streams):
+            raise ValueError('Incomplete Runtime stream implementation')
+        sources += streams
+
     if os.environ.get('SANITIZE') == '1':
         command += ['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie']
@@ -188,12 +205,12 @@ def admit_many(runtime, stores, expected_error=None, app_data=False):
     return results
 
 
-def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True):
+def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True, app_policy_rows=16):
     """Use the real Runtime comparison and native ELF checks without native I/O."""
     validate_paths(active); validate_paths(candidate)
     with tempfile.TemporaryDirectory(prefix='risc-cohort-admission-') as temporary:
         root = Path(temporary)
-        harness = compile_harness(runtime, root / 'admit', True, native_elf)
+        harness = compile_harness(runtime, root / 'admit', True, native_elf, app_policy_rows)
         for label, files in [('active', active), ('candidate', candidate)]:
             for name, data in files.items():
                 path = root / label / name
@@ -208,7 +225,7 @@ def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True):
     if not outcome['prepared'] or outcome['cohort_validated'] is not expected_valid or outcome['hardware_calls'] or outcome['storage_calls']:
         raise ValueError('Production cohort admission failed: ' + str(outcome))
     return dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
-                native_elf_sha256=sha(native_elf), target_instructions_executed=False)
+                native_elf_sha256=sha(native_elf), app_policy_rows=app_policy_rows, target_instructions_executed=False)
 
 
 def main():

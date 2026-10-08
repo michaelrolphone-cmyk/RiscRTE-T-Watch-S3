@@ -1,0 +1,222 @@
+{
+  "app_rebuild_dependency_limit": "The separately pinned new Contexts model-client System header is not included or republished here. Remote-only full app rebuild requires that dependency publication.",
+  "app_stage_source": "e879b30c1eeb92eed75d3a234e56874e1f01a018",
+  "assets": {
+    "qualification.zip": {
+      "bytes": 320668,
+      "sha256": "67b4a2ab9a4fadfe779fe6ec2b1cb71f9afcbf51da0281195f70335b2102fc2c"
+    },
+    "watch-original-sources.bundle": {
+      "bytes": 78943,
+      "sha256": "d3a76ecfd44909ff6ef0688a490a29b3f1a438c01a604d0b9acc0a4f7960619c"
+    }
+  },
+  "binding_source": "b6abe35ed3049174e53c89c8adb85edd3860da34",
+  "lifecycle_source": "79ac1b2f2abdf252ca26a5384d76ec3e064d5f0b",
+  "original_commits": [
+    {
+      "parents": [
+        "a0f2894bb3513d024653e71ce7e52733804e19e8"
+      ],
+      "sha": "fa4729fc3bdd5d6fd61842ae114ad027fcd92add",
+      "tree": "160532248973eb9020b3846a1e7371fa28c7ec9e"
+    },
+    {
+      "parents": [
+        "fa4729fc3bdd5d6fd61842ae114ad027fcd92add"
+      ],
+      "sha": "8e70dd4046e4e7af3cf9e690ada6730fa0781134",
+      "tree": "1e350ab7f7e1f7ab3af85952634f3d7ade2a291e"
+    },
+    {
+      "parents": [
+        "8e70dd4046e4e7af3cf9e690ada6730fa0781134"
+      ],
+      "sha": "ede5ece3bcdc80b775f0f9f59d194409646a4fee",
+      "tree": "fb87f364ec8a31500a4c23ddd9f516430bf8454d"
+    },
+    {
+      "parents": [
+        "ede5ece3bcdc80b775f0f9f59d194409646a4fee"
+      ],
+      "sha": "a6bd73d8d99b72f016174fd41f0684315a19ed90",
+      "tree": "ef9c29cff12db2938eea465002bfb46be4f1ed2d"
+    },
+    {
+      "parents": [
+        "a6bd73d8d99b72f016174fd41f0684315a19ed90"
+      ],
+      "sha": "77652dfd071d1255b60bb7446c991c11081324cd",
+      "tree": "82a2b2ec51bc69e2b53eb62c2856aa2b2324cd9a"
+    },
+    {
+      "parents": [
+        "77652dfd071d1255b60bb7446c991c11081324cd"
+      ],
+      "sha": "a860c7d1992c0e5a35fc2df34af3fb86ef404343",
+      "tree": "3c9e8120f924ea0e948b602313577d6b6235e80b"
+    },
+    {
+      "parents": [
+        "a860c7d1992c0e5a35fc2df34af3fb86ef404343"
+      ],
+      "sha": "69dfbf14ff1736d73a2a74a3aa9830c61b96e2f6",
+      "tree": "20260d39ea66e44ebc9834c559d423eab27ef42c"
+    },
+    {
+      "parents": [
+        "69dfbf14ff1736d73a2a74a3aa9830c61b96e2f6"
+      ],
+      "sha": "6e3a2a4f079d1b233ead5c5f25d844b56d945a38",
+      "tree": "576e6dec769191b7a3abfd917bffd5d2aaff5c82"
+    },
+    {
+      "parents": [
+        "6e3a2a4f079d1b233ead5c5f25d844b56d945a38"
+      ],
+      "sha": "02f0225b1858ed4d3586891a9b22dd9af36ef210",
+      "tree": "3f4192d709726d7441a8f1a8fe64b4deabbe763d"
+    },
+    {
+      "parents": [
+        "02f0225b1858ed4d3586891a9b22dd9af36ef210"
+      ],
+      "sha": "fd82188631375b85fd6eb887bf92ea31f55719b1",
+      "tree": "8801d5bb8ea28d1036efe12018a8325575972c1e"
+    },
+    {
+      "parents": [
+        "fd82188631375b85fd6eb887bf92ea31f55719b1"
+      ],
+      "sha": "f849a1d15ba3aebbf5e6be182c191e8eb31e0424",
+      "tree": "8dba8a8f54a721aa5ed288d29376d22c57f7821f"
+    },
+    {
+      "parents": [
+        "f849a1d15ba3aebbf5e6be182c191e8eb31e0424"
+      ],
+      "sha": "e879b30c1eeb92eed75d3a234e56874e1f01a018",
+      "tree": "e00b30b51c921db93f4ec3548aae75f0839da950"
+    },
+    {
+      "parents": [
+        "e879b30c1eeb92eed75d3a234e56874e1f01a018"
+      ],
+      "sha": "298d577439af4dc04ba61fc52ecc9749d432a919",
+      "tree": "82ce6251a0c0dce22ea5b1838e5911802cec5516"
+    },
+    {
+      "parents": [
+        "298d577439af4dc04ba61fc52ecc9749d432a919"
+      ],
+      "sha": "b6abe35ed3049174e53c89c8adb85edd3860da34",
+      "tree": "a01689265f18c4cf40c94c2f04a6a28aee0fa3a5"
+    },
+    {
+      "parents": [
+        "298d577439af4dc04ba61fc52ecc9749d432a919"
+      ],
+      "sha": "39e602a9329747cccb886757cc9baf4ee4963921",
+      "tree": "fb5b79370fd7c974697c494626cb99dd0ff4d7de"
+    },
+    {
+      "parents": [
+        "39e602a9329747cccb886757cc9baf4ee4963921"
+      ],
+      "sha": "07e35afda0d3f0440a3c00be6fdf377ec1845c55",
+      "tree": "42097eff44a8a50c086d5bcc1600d5616ca5ceda"
+    },
+    {
+      "parents": [
+        "07e35afda0d3f0440a3c00be6fdf377ec1845c55"
+      ],
+      "sha": "d902d85526a71a7ae9ed290d1fd73f6eeb9326bc",
+      "tree": "c4f90ced478a20752f1a757f890625b76a222466"
+    },
+    {
+      "parents": [
+        "d902d85526a71a7ae9ed290d1fd73f6eeb9326bc"
+      ],
+      "sha": "7634bc7ef089bd821c34d5ab3a879482b3c522fc",
+      "tree": "32a2551403e43688d457d51721ca9f0c2e214b62"
+    },
+    {
+      "parents": [
+        "7634bc7ef089bd821c34d5ab3a879482b3c522fc"
+      ],
+      "sha": "6f2204f87c41c4a13e237d678e394e6e7d0182f5",
+      "tree": "3864cc6f92ba20da41d2fcc2a6ab67c4b68a00c2"
+    },
+    {
+      "parents": [
+        "6f2204f87c41c4a13e237d678e394e6e7d0182f5"
+      ],
+      "sha": "548577cd8f1e6887807b230292a3752bf9a95f05",
+      "tree": "1d6a5f432b874e3b2462a8b7f429042eabeba22d"
+    },
+    {
+      "parents": [
+        "548577cd8f1e6887807b230292a3752bf9a95f05"
+      ],
+      "sha": "6ac567f8f111628cfb86684c5769fdc5eb29b867",
+      "tree": "3628fe5490dc01714b77e0c16f391e0e4fb7cd2e"
+    },
+    {
+      "parents": [
+        "6ac567f8f111628cfb86684c5769fdc5eb29b867"
+      ],
+      "sha": "68bf99140b9d4ff2c9a72ab13a92f9df23548c8b",
+      "tree": "79fd1869ddf64c6715a3482a8cd5511b5bd76215"
+    },
+    {
+      "parents": [
+        "68bf99140b9d4ff2c9a72ab13a92f9df23548c8b"
+      ],
+      "sha": "0261ff6cca8b926b21b95b781701330e910bed9a",
+      "tree": "1335dafbeae3b29e2e272d6efdfbbf7f1622fdbe"
+    },
+    {
+      "parents": [
+        "e879b30c1eeb92eed75d3a234e56874e1f01a018"
+      ],
+      "sha": "7ad71849619cfbc8812f7b263132cd2f8bd07827",
+      "tree": "e2b0adad45baa474c3ffae53ea1916c7f3c048a7"
+    },
+    {
+      "parents": [
+        "7ad71849619cfbc8812f7b263132cd2f8bd07827"
+      ],
+      "sha": "e688122208489f514b43e47dcbaa55d404bc4063",
+      "tree": "5fe355331b9cabbab30e5db7a2f726163ff2712a"
+    },
+    {
+      "parents": [
+        "e688122208489f514b43e47dcbaa55d404bc4063"
+      ],
+      "sha": "7df37973b8440ea4ef67ffa1d51d7bdfe7328d78",
+      "tree": "d7e0c4a3122cd2fbda5a7db1f98a80fa6b1e1b9b"
+    },
+    {
+      "parents": [
+        "7df37973b8440ea4ef67ffa1d51d7bdfe7328d78"
+      ],
+      "sha": "79ac1b2f2abdf252ca26a5384d76ec3e064d5f0b",
+      "tree": "3b61ea689b57ef82aec74dfdcd8879ccfd51b402"
+    },
+    {
+      "parents": [
+        "0261ff6cca8b926b21b95b781701330e910bed9a",
+        "79ac1b2f2abdf252ca26a5384d76ec3e064d5f0b"
+      ],
+      "sha": "7e86a4620dd283ac399c0fa90d5fdaff52947ea7",
+      "tree": "58415efed729e7df6c3a26db2f5106288643a86e"
+    }
+  ],
+  "public_prerequisite": "a0f2894bb3513d024653e71ce7e52733804e19e8",
+  "recipe_source": "7e86a4620dd283ac399c0fa90d5fdaff52947ea7",
+  "recipe_tree": "58415efed729e7df6c3a26db2f5106288643a86e",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "schema": 1,
+  "scope": "Watch-only original Git history and qualification. No dependency source bundle is added. Canonical publication can restore these unchanged IDs before verifying frozen native/app custody."
+}

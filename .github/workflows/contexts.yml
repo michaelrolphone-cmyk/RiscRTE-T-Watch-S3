@@ -39,6 +39,7 @@ jobs:
           python3 scripts/test_context_face.py
           python3 scripts/test_contexts_packaging.py --baseline .dependencies/baseline/accepted-store.zip
           python3 scripts/test_contexts_initial.py
+          python3 scripts/test_contexts_model_proof.py
       - uses: actions/upload-artifact@v4
         with:
           name: contexts-face-${{ github.sha }}

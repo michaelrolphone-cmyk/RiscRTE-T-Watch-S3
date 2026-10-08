@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Execute actual Contexts graph/Clock over the existing lowest-hardware fixture."""
+"""Prove owner AppData model import over actual Runtime/Clock/provider graph.
+
+--watch binds production source and candidate; this script's worktree owns only
+the additional canonical fixture. It emits no product or target binary.
+"""
 import argparse, hashlib, json, os, shutil, sys
 from pathlib import Path
 p=argparse.ArgumentParser()
@@ -7,14 +11,16 @@ for key in ('watch','runtime','system','utilities','drivers','store','output'):p
 p.add_argument('--runtime-candidate-sha',help='Early source-compatibility probe only; never final artifact qualification')
 for key in ('binding-repository','binding','native-candidate'):p.add_argument('--'+key,type=Path)
 p.add_argument('--binding-source')
-p.add_argument('--enabled',action='store_true')
-a=p.parse_args()
+fixture_root=Path(__file__).resolve().parents[1]
+a=p.parse_args();a.enabled=True
 a.watch=a.watch.resolve();sys.path.insert(0,str(a.watch/'scripts'))
 import runtime_features_store as base
 _original_flags=base._flags
 base._flags=lambda:[*_original_flags(),'-ffunction-sections','-fdata-sections','-Wl,--gc-sections']
 from contexts_profile import configuration
 from build_contexts_cohort import clean, optimization_policy, COMPILER_HELPERS
+from contexts_model_proof import source_hashes as model_source_hashes, MODEL_CASES, FIXTURE_INPUTS
+clean(fixture_root)
 paths={k:getattr(a,k).resolve() for k in ('runtime','system','utilities','drivers')}
 runtime,system,utilities,drivers=[paths[k] for k in ('runtime','system','utilities','drivers')]
 stream_sources=('src/runtime/streams/AppStreamSessions.cpp','src/runtime/streams/ProviderQueueHost.cpp')
@@ -45,21 +51,20 @@ if bound_receipt:
                  'Executed store differs from the exact native/app binding')
 else:
     base.require(candidate_cohort['source_revision']==watch_head,'Candidate is not bound to this Watch source')
-source_states={name:base.source_state(path) for name,path in {'watch':a.watch,**paths}.items()}
-if a.enabled:base.HERE=a.watch/'tests/contexts_store'
+source_roots={'watch':a.watch,**paths,'test_fixture':fixture_root}
+source_states={name:base.source_state(path) for name,path in source_roots.items()}
+base.HERE=fixture_root/'tests/contexts_models_store'
 def source_hashes():
-    result=base._source_hashes(runtime,system,utilities)
-    result.update(base.external_source_hashes(drivers))
-    roots=[utilities/'Apps',utilities/'lib',utilities/'Services/contexts',
-           a.watch/'tests/contexts_store',a.watch/'scripts']
-    for root in roots:
-        for path in root.rglob('*'):
-            if path.is_file() and path.suffix in ('.c','.cpp','.h','.inc','.json','.py','.sh'):
-                result[str(path)]=base.sha(path)
-    result[str(a.watch/'apps/contexts-sources.json')]=base.sha(a.watch/'apps/contexts-sources.json')
-    return result
+    return model_source_hashes({'watch':a.watch,**paths},fixture_root)
 before_sources=source_hashes()
+model_object=out/'models.o'
+base.command([os.environ.get('CC','cc'),'-std=c11',*base._flags(),'-I'+str(utilities/'Apps'),'-I'+str(utilities/'tests'),'-c',base.HERE/'models.c','-o',model_object])
+_model_flags=base._flags
+base._flags=lambda:[*_model_flags(),'-I'+str(utilities/'lib/Contexts/include')]
+original_runtime_sources=base.RUNTIME_SOURCES
+base.RUNTIME_SOURCES=(*original_runtime_sources,str(model_object))
 host=base._host(runtime,out,utilities,True,True)
+base.RUNTIME_SOURCES=original_runtime_sources
 destination=out/'host-store';base._write_store(destination,content)
 modules=out/'modules';modules.mkdir()
 includes=['-I'+str(a.watch/part) for part in ('sdk/app','sdk/driver','include')]
@@ -118,23 +123,23 @@ if a.enabled:
         flags=definitions(name,c['app_versions'][name],a.watch)
         base.command([cc,'-std=c11',*base._flags(),'-fPIC','-shared','-fvisibility=hidden',*flags,*['-I'+str(i) for i in inc],*sources,'-lm','-o',destination/(name+'.elf')],timeout=180)
 results=[]
-for scenario in (('enabled-handoff','enabled-sleep','enabled-sleep-refused','enabled-sleep-retained','enabled-close-retained','enabled-capture-retained') if a.enabled else base.SCENARIOS):
+for scenario in MODEL_CASES:
     output=base.command([host,destination,scenario],timeout=90)
-    prefix='CONTEXTS_ENABLED_RESULT ' if a.enabled else 'UPDATE_CLOCK_RESULT '
+    prefix='CONTEXTS_MODELS_RESULT '
     marker=next(line.removeprefix(prefix) for line in output.splitlines() if line.startswith(prefix))
     results.append({**json.loads(marker),'output':output});print(scenario,'PASS',flush=True)
 assert {n:b for n,b in base._files(destination).items() if n.endswith('.json')}=={n:b for n,b in content.items() if n.endswith('.json')}
 base.require(source_hashes()==before_sources,'Qualification sources changed during execution')
-base.require(source_states=={name:base.source_state(path) for name,path in {'watch':a.watch,**paths}.items()},'Qualification source state changed during execution')
-record={'schema':2,'mode':'actual Runtime/CpuPort/ProviderGraph and source-compiled providers/Clock over existing lowest-hardware fixture',
+base.require(source_states=={name:base.source_state(path) for name,path in source_roots.items()},'Qualification source state changed during execution')
+record={'schema':1,'kind':'contexts-owner-model-runtime-proof','mode':'actual Runtime/CpuPort/ProviderGraph and source-compiled providers/Clock/owners over canonical bounded AppData model storage',
         'monitoring_enabled':a.enabled,
-        'sanitizer':{'undefined':os.environ.get('SANITIZE','1')!='0','address':os.environ.get('ADDRESS_SANITIZE')=='1'},
+        'sanitizer':{'undefined':os.environ.get('SANITIZE','1')!='0','address':os.environ.get('ADDRESS_SANITIZE')=='1','asan_options':os.environ.get('ASAN_OPTIONS','')},
         'runtime_candidate_override':a.runtime_candidate_sha,'native_binding':bound_receipt,'final_artifact_qualification':a.runtime_candidate_sha is None,'candidate_cohort':candidate_cohort,'candidate_store_sha256':base.store_digest(content),
         'candidate_files':{name:{'sha256':hashlib.sha256(raw).hexdigest(),'size_bytes':len(raw)} for name,raw in sorted(content.items())},
-        'watch_source':watch_head,'source_pins':c['sources'],'drivers_pin':c['drivers'],'source_states':source_states,
+        'watch_source':watch_head,'test_fixture_source':source_states['test_fixture']['commit'],'test_fixture_clean':not source_states['test_fixture']['tracked_changes'],'source_pins':c['sources'],'drivers_pin':c['drivers'],'source_states':source_states,
         'source_hashes':before_sources,'runner_sha256':base.sha(Path(__file__)),
         'fixture_sha256':base.sha(base.HERE/'host.cpp'),
         'section_gc':{'compile_flags':['-ffunction-sections','-fdata-sections'],'link_flags':['-Wl,--gc-sections']},
         'optimization':optimization_policy(),'provider_artifacts':len(targets),'provider_selections':len(json.loads(content['boot.json'])['drivers']),
-        'startup_monitoring':'enabled with original owner exports and empty native PCM reads' if a.enabled else 'disabled virtual preference; no capture fabricated','scenarios':results,'production_json_substitutions':0,'target_instructions_executed':False,'hardware_qualified':False}
-(out/'contexts-graph-proof.json').write_text(json.dumps(record,indent=2)+'\n')
+        'fixture_inputs':FIXTURE_INPUTS,'retained_scope':'stat/read return true AppData RETAINED; actual Runtime keeps the owner and providers mapped, and the fixture checks no subsequent hardware, storage, display, load or unload activity. It does not resume a retained Runtime invocation.', 'startup_monitoring':'enabled with canonical owner AppData models and empty native PCM reads','scenarios':results,'production_json_substitutions':0,'target_instructions_executed':False,'hardware_qualified':False}
+(out/'contexts-models-proof.json').write_text(json.dumps(record,indent=2)+'\n')
