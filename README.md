@@ -1,4 +1,27 @@
-# RiscRTE T-Watch-S3 hardware packages
+# RiscRTE T-Watch-S3
+
+## Stable Watch 1.0.12
+
+The owner accepted this integrated Watch build as stable and reliable. It contains
+Runtime 0.1.55, all 22 apps, RF analysis, the power repairs, native realtime and
+retained wake, awake-background BLE telemetry, and capture-active idle handling.
+
+- [Stable release and exact accepted image](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/tag/firmware-v1.0.12)
+- [Reconstruct the original sources and compile the complete image](release/complete-1.0.12/REPRODUCING.md)
+- [Accepted release custody and publication checks](release/complete-1.0.12/README.md)
+
+The full BMA423 image is a 16 MiB initial flash at offset `0x0` and erases saved
+data. Its SHA-256 is
+`af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff`.
+A clean reconstruction of the original pinned sources reproduced these bytes.
+The separate paired-update proof does not publish an OTA installation route.
+Generic firmware mechanisms remain in the separately pinned RiscRTE runtime.
+
+## Historical driver-package reference
+
+The following reference records the earlier standalone driver bring-up and its
+original version/qualification statements. Use the stable release and complete
+source reconstruction links above for the integrated Watch product.
 
 External driver/application packages for the **non-Plus LILYGO T-Watch-S3**.
 The owner physically accepted the 0.4.5 GUI increment. The delivered 0.5.0 sleep

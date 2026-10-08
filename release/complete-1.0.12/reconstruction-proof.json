@@ -1,0 +1,10 @@
+{
+  "accepted_image_sha256": "af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff",
+  "app_and_provider_sources_rebuilt": true,
+  "built_image_sha256": "af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff",
+  "byte_identical": true,
+  "native_rebuilt": true,
+  "preserving_update_retested": false,
+  "release_modified": false,
+  "schema": 1
+}
