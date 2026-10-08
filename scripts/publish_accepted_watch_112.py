@@ -36,7 +36,7 @@ BASE_SHA = '898adb71b8038d93b6f6cd64883cc86f2e9644ce3331a44c9e651cdfd65e231b'
 # reconstruction ZIP is restored from the pinned, bounded Git transport parts.
 INPUT_HASHES = {
     "LICENSES.zip": "02afaf55a27ae12b30e9f088b7cb3aeceff30a6fb21a275047f487cd128799e8",
-    "REPRODUCING.md": "fb4952425339b8400848610c3994e47f695cf70e677354d7284422091a686e96",
+    "REPRODUCING.md": "380873b4ab75b1a42e44ac47e4cb66d09c614f051c80ed616e88769cc7abb272",
     "accepted-app-evidence.zip": "dcb8e18d1bb3ba69c8533a72593b8564e5f4028fe6dcb675536cb8fd835b07b6",
     "accepted.bin.gz": "cf6e157c1ab39e15c3ab890ee84f2b2e103813bdfe4668bb4fc2b60a93db4f6a",
     "existing-new-driver-records.json": "0feaddd0af559c23140f4419bb94db44b03103f70f8ae4de534e6971a7549fd4",
@@ -45,7 +45,7 @@ INPUT_HASHES = {
     "owner-acceptance.json": "f59981d2ee182c7d4fb4ed5f3149d2a826fe31aae4d6f87139b5378e4857371d",
     "predecessor-commit.txt": "c98dfe08712906d52f0eab1612967aeaddda67a32309eec6fef5613783592422",
     "predecessor-index.json": "898adb71b8038d93b6f6cd64883cc86f2e9644ce3331a44c9e651cdfd65e231b",
-    "reconstruct_watch_112_sources.py": "f663608cf4c20b21d0c0adb00f0a7cee3c1b383c82b68162ab9b6719e82077b6",
+    "reconstruct_watch_112_sources.py": "2b7ef4baed724b787966bd2d5a181987ec1bcab721f974a9d869cb8f902527ca",
     "reconstruction-inputs.zip": "a65b56c15461807c197c7dbbc8b0eb585a9d1a242f5063f96f011c6829670be3",
     "reconstruction-proof.json": "c67caa54f477eb1f5f0da7f1417608d0496d2651ee9bfb05a0e94703d3793a4b",
     "source-custody.zip": "73f36c7057dbe71525518fe5e80aa018a4ee03621f618fcf9c38aaef50c441d8"

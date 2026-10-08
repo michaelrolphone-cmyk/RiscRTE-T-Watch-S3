@@ -24,6 +24,9 @@ BUILD_INPUTS_GZIP_SIZE = 12992847
 BUILD_INPUT_PART_NAMES = ('reconstruction-inputs.zip.gz.part1', 'reconstruction-inputs.zip.gz.part2')
 IMAGE_SHA = 'af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff'
 DRIVERS_SHA = '4088b6892c2e2654b0342f04a7d191068e4a8e2e'
+# Six Arduino assertion/log strings retain this original package prefix.
+# This is a compiler string mapping, not a required filesystem location.
+ACCEPTED_PACKAGE_PREFIX = '/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages'
 REPOSITORIES = {'RiscRTE-T-Watch-S3', 'RiscRTE', 'RiscRTE-System-Apps', 'RiscRTE-Utilities', 'RiscRTE-Productivity'}
 
 
@@ -148,6 +151,20 @@ def hydrate(output, custody_path, build_inputs_path):
     print('Restored all five original source identities, public Drivers and pinned LittleFS:', output)
 
 
+def native_environment(runtime):
+    environment = dict(os.environ)
+    core = Path(environment.get('PLATFORMIO_CORE_DIR', str(Path.home() / '.platformio'))).expanduser().absolute()
+    package_prefixes = {str(core / 'packages'), str((core / 'packages').resolve())}
+    # PlatformIO's multiple build_flags option adds this environment value to
+    # the source flags. Repeating source flags changes DWARF producer strings.
+    mapped = [environment['PLATFORMIO_BUILD_FLAGS']] if environment.get('PLATFORMIO_BUILD_FLAGS') else []
+    for prefix in sorted(package_prefixes):
+        mapped.append('-ffile-prefix-map=' + prefix + '=' + ACCEPTED_PACKAGE_PREFIX)
+    environment['PLATFORMIO_BUILD_FLAGS'] = '\n'.join(mapped)
+    print('Original native flags retained; Arduino diagnostic paths mapped to accepted prefix.', flush=True)
+    return environment
+
+
 def build(output, cc=None):
     custody = members(output / 'source-custody.zip', CUSTODY_SHA)
     mapping = validate_mapping(custody)
@@ -169,7 +186,8 @@ def build(output, cc=None):
     else:
         run(sys.executable, 'scripts/app_data_image.py', '--littlefs-source', 'build/littlefs-source/src/littlefs',
             '--output', 'build/appdata-initial', cwd=runtime)
-    run(sys.executable, '-m', 'platformio', 'run', '-e', 'esp32s3-16mb-appdata-iq', '-j', '1', cwd=runtime)
+    run(sys.executable, '-m', 'platformio', 'run', '-e', 'esp32s3-16mb-appdata-iq', '-j', '1',
+        cwd=runtime, env=native_environment(runtime))
     source = git(runtime, 'rev-parse', 'HEAD')
     run(sys.executable, 'scripts/paired_candidate.py', '--app-data', '--radio-iq',
         '--app-data-image', 'build/appdata-initial', '--source-sha', source, cwd=runtime)
@@ -193,6 +211,13 @@ def build(output, cc=None):
               'byte_identical': sha(image.read_bytes()) == IMAGE_SHA, 'release_modified': False,
               'native_rebuilt': True, 'app_and_provider_sources_rebuilt': True,
               'preserving_update_retested': False}
+    accepted = json.loads(custody['proof/runtime-features-watch-build-proof.json'])
+    fresh = json.loads((product / 'runtime-features-watch-build-proof.json').read_text())
+    report['native_firmware_sha256'] = sha((runtime / 'dist/esp32s3-16mb-appdata-iq/firmware.bin').read_bytes())
+    report['accepted_native_firmware_sha256'] = accepted['native_custody']['assets']['firmware.bin']['sha256']
+    report['changed_store_files'] = sorted(name for name in set(accepted['files']) | set(fresh['files'])
+        if accepted['files'].get(name) != fresh['files'].get(name))
+    report['package_path_mapping'] = ACCEPTED_PACKAGE_PREFIX
     (output / 'reconstruction-result.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
     print(json.dumps(report, indent=2, sort_keys=True))
     require(report['byte_identical'], 'Reconstructed full image differs from the accepted bytes; inspect fresh evidence')

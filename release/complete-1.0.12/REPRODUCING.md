@@ -95,3 +95,9 @@ This initial-image reconstruction does not repeat the preserving-update
 transaction suite or establish physical sleep, RF, or power measurements.
 The release preserves those historical host proofs and the owner's later
 acceptance of the delivered integrated build without expanding either claim.
+
+The original Arduino framework embeds six absolute source paths in diagnostic
+strings. The helper preserves original target flags and maps the local package
+prefix to that original literal during compilation. No directory at that literal
+path is required, and no Runtime source file is modified. This makes different
+PlatformIO cache locations reproduce the same accepted native bytes.

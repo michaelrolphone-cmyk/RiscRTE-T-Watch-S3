@@ -92,10 +92,12 @@ jobs:
       - name: Compile original Runtime, all apps and assemble a separate initial image
         run: python scripts/reconstruct_watch_112_sources.py build --output "$RUNNER_TEMP/watch112-reconstructed"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: watch112-reconstruction-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             ${{ runner.temp }}/watch112-reconstructed/reconstruction-result.json
+            ${{ runner.temp }}/watch112-reconstructed/RiscRTE/dist/esp32s3-16mb-appdata-iq/
             ${{ runner.temp }}/watch112-reconstructed/RiscRTE-T-Watch-S3/dist/reconstructed-1.0.12-initial/
           if-no-files-found: error
   publish:
