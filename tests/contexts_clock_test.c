@@ -26,7 +26,7 @@ static unsigned ctx_captures,ctx_capture_last,ctx_capture_gap,ctx_retains;
 static bool ctx_capture_ok=true,ctx_refuse_pending;
 static bool ctx_capture(void*c){(void)c;ctx_captures++;unsigned gap=clock_ms-ctx_capture_last;if(gap>ctx_capture_gap)ctx_capture_gap=gap;ctx_capture_last=clock_ms;return ctx_capture_ok&&!(ctx_refuse_pending&&pending);}
 static bool ctx_retain(void){ctx_retains++;return true;}
-static const contexts_service_v1 ctx_api={1,sizeof(ctx_api),NULL,ctx_step,ctx_pause,ctx_status,ctx_request,ctx_begin,ctx_export,ctx_finish,ctx_label,ctx_claim,ctx_result,ctx_capture};
+static const contexts_service_v1 ctx_api={.api_version=1,.struct_size=sizeof(ctx_api),.step=ctx_step,.pause=ctx_pause,.status=ctx_status,.request_export=ctx_request,.begin_export=ctx_begin,.export_record=ctx_export,.finish_export=ctx_finish,.label=ctx_label,.claim_preset=ctx_claim,.preset_result=ctx_result,.capture_audio=ctx_capture};
 static int32_t ctx_get(void*c,const char*k,void*b,uint32_t n,uint32_t*z){
     if(!strcmp(k,PORTABLE_CONTEXT_ENABLED_KEY)){assert(n>=4);uint8_t bytes[]={'C',1,ctx_enabled?1:0,(uint8_t)((ctx_enabled?1:0)^0xa5)};memcpy(b,bytes,4);*z=4;return 0;}
     return face_get(c,k,b,n,z);

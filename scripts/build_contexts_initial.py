@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Qualify and assemble only an explicitly erasing Watch 1.0.13 initial image."""
+"""Qualify and assemble only an explicitly erasing Watch 1.0.17 initial image."""
 import argparse
 import contextlib
 import json
@@ -8,7 +8,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-from build_contexts_cohort import clean, verify_build, SECTION_FLAGS, LINK_FLAGS
+from build_contexts_cohort import clean, verify_build, SECTION_FLAGS, LINK_FLAGS, optimization_policy
 from build_wifi_common import zip_bytes
 from check_runtime_store_admission import admit_cohort, store_digest
 from contexts_profile import baseline_contract, baseline_inputs, configuration, VERSION, RUNTIME_VERSION
@@ -19,11 +19,12 @@ from read_only_spiffs import read_image
 from rf_watch_candidate import module
 from runtime_features_watch_candidate import read_native
 import runtime_features_store as runtime_test
+from contexts_model_proof import reports as model_runtime_reports
 
 ENABLED_CASES = ('enabled-handoff', 'enabled-sleep', 'enabled-sleep-refused',
                  'enabled-sleep-retained', 'enabled-close-retained', 'enabled-capture-retained')
 DISABLED_CASES = runtime_test.SCENARIOS
-IMAGE_NAME = 'twatch-s3-1.0.13-FULL-INITIAL-ERASES-DATA-bma423.bin'
+IMAGE_NAME = 'twatch-s3-1.0.17-FULL-INITIAL-ERASES-DATA-bma423.bin'
 DATA_EFFECTS = ('Full 16 MiB initial image at offset 0x0. Erases NVS settings, Wi-Fi credentials, '
                 'Bluetooth bonds, alarms, Points, all app-data and both banks. '
                 'Never use this image for a preserving update.')
@@ -71,7 +72,7 @@ def validate_runtime_report(record, files, config, head, states, hashes, runner_
             record['source_states'] == states, 'Runtime proof source identity differs')
     require(record['source_hashes'] == hashes and record['runner_sha256'] == runner_sha and
             record['fixture_sha256'] == fixture_sha, 'Runtime proof source/fixture bytes differ')
-    require(record['section_gc'] == {'compile_flags': SECTION_FLAGS, 'link_flags': LINK_FLAGS}, 'Runtime section policy differs')
+    require(record['section_gc'] == {'compile_flags': SECTION_FLAGS, 'link_flags': LINK_FLAGS} and record['optimization']==optimization_policy(), 'Runtime compiler policy differs')
     require(record['provider_artifacts'] == 23 and record['provider_selections'] == 24 and
             record['production_json_substitutions'] == 0 and record['target_instructions_executed'] is False and
             record['hardware_qualified'] is False, 'Runtime proof scope differs')
@@ -149,7 +150,9 @@ def build_snapshot(directory, build, files):
     provider = build['providers'].get('contexts-service')
     require(set(build['providers']) == {'contexts-service'} and provider and
             metadata(files['contexts/driver.elf']) == {k:provider[k] for k in ('sha256','size_bytes')} and
-            provider['exports'] == ['t5_driver_get'] and provider['compaction'] is None and
+            provider['exports'] == ['t5_driver_get'] and provider['compaction'] is not None and provider['compaction']['retained_loader_sections_symbols_relocations_unchanged'] is True and
+            provider['compaction']['before_sha256']==metadata(members['debug/contexts-service.elf'])['sha256'] and
+            provider['compaction']['after_sha256']==metadata(files['contexts/driver.elf'])['sha256'] and
             provider['defines'] == [] and set(provider['imports']) <= {'memcpy','memset','memcmp','memchr','strcmp','strlen'} and
             provider['section_gc'] == {'compile_flags':SECTION_FLAGS,'link_flags':LINK_FLAGS,'export_roots':['t5_driver_get']},
             'New provider target proof differs')
@@ -182,7 +185,8 @@ def initial_image(native, bootfs, runtime, identity, qualified_files):
     return image, parts
 
 
-def prepare(build_dir, accepted_dir, runtime, native_dir, system, utilities, productivity, drivers, reports, output, root=ROOT):
+def prepare(build_dir, accepted_dir, runtime, native_dir, system, utilities, productivity, drivers, reports, output, root=ROOT,
+            model_reports=None):
     root,build_dir,accepted_dir,output = map(lambda p:Path(p).resolve(), (root,build_dir,accepted_dir,output))
     require(not output.exists(), 'Initial output must be new')
     repos = {k:Path(v).resolve() for k,v in {'runtime':runtime,'system-apps':system,'utilities':utilities,
@@ -198,6 +202,7 @@ def prepare(build_dir, accepted_dir, runtime, native_dir, system, utilities, pro
     validate_target_sources(build,root,build_dir,repos)
     paths = {'watch':root,'runtime':repos['runtime'],'system':repos['system-apps'],'utilities':repos['utilities'],'drivers':repos['drivers']}
     qualified = runtime_reports(reports,files,config,head,paths)
+    qualified.update(model_runtime_reports(model_reports,files,config,head,paths))
     provenance_raw = (accepted_dir/'product-provenance.json').read_bytes()
     require(metadata(provenance_raw) == baseline_contract(root)['artifacts']['product-provenance.json'], 'Accepted provenance differs')
     provenance = json.loads(provenance_raw)
@@ -217,7 +222,9 @@ def prepare(build_dir, accepted_dir, runtime, native_dir, system, utilities, pro
                 'installed_to_candidate':admit_cohort(repos['runtime'],native['blobs']['firmware.elf'],previous,files),
                 'candidate_self':admit_cohort(repos['runtime'],native['blobs']['firmware.elf'],files,files)}
     # Recheck sources and exact report bytes before the first full image is assembled.
-    require(qualified == runtime_reports(reports,files,config,head,paths), 'Runtime reports changed during qualification')
+    require(qualified == {**runtime_reports(reports,files,config,head,paths),
+                          **model_runtime_reports(model_reports,files,config,head,paths)},
+            'Runtime reports changed during qualification')
     validate_target_sources(build,root,build_dir,repos);clean(root,head)
     require(build == verify_build(build_dir,baseline,root) and files == files_at(build_dir/'files') and
             snapshots == build_snapshot(build_dir,build,files), 'Target build changed during qualification')
@@ -230,7 +237,7 @@ def prepare(build_dir, accepted_dir, runtime, native_dir, system, utilities, pro
               'accepted-baseline.json':encoded(baseline_contract(root)),
               'accepted-product-provenance.json':provenance_raw,
               'runtime-requirements.json':(root/'apps/runtime-features-runtime-requirements.json').read_bytes(),
-              'INSTALL.txt':('Watch 1.0.13 Contexts development candidate.\n' + DATA_EFFECTS +
+              'INSTALL.txt':('Watch 1.0.17 Nova navigation development candidate.\n' + DATA_EFFECTS +
                   '\nNo publication or device installation was performed.\n'
                   'Runtime 0.1.55 and the 22 prior provider artifacts are reused byte-for-byte.\n'
                   'Host execution/admission passed; physical Watch qualification remains pending.\n').encode()}
@@ -260,9 +267,10 @@ def main():
     for name in ('build','accepted','runtime','native','system','utilities','productivity','drivers','output'):
         parser.add_argument('--'+name,required=True,type=Path)
     parser.add_argument('--runtime-report',required=True,action='append',type=Path)
+    parser.add_argument('--model-runtime-report',required=True,action='append',type=Path)
     args = parser.parse_args()
     result = prepare(args.build,args.accepted,args.runtime,args.native,args.system,args.utilities,
-                     args.productivity,args.drivers,args.runtime_report,args.output)
+                     args.productivity,args.drivers,args.runtime_report,args.output,model_reports=args.model_runtime_report)
     print('Qualified initial development image:',result['initial']['sha256'])
 
 if __name__ == '__main__':main()
