@@ -1,0 +1,32 @@
+{
+  "device_accessed": false,
+  "hardware_status": "UNRUN",
+  "inventory_sha256": "b3dd29d17752ac9e8b4eedc52957710405e3a5158acd3f68a113c7232bc18295",
+  "network_credentials_tested": false,
+  "owner_credentials_used": false,
+  "payload_revision": "ddbc8552c528f5f7bfc1e16c70ebb32a936f942b",
+  "result": "passed",
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "schema": "watch17.private-composition-validation",
+  "schema_version": 1,
+  "tests": [
+    {
+      "file_count": 95,
+      "fixture": "normal-test-fixture",
+      "full_image_bytes": 16777216,
+      "nvs_readback_passed": true,
+      "private_output_removed_after_test": true,
+      "profile_bytes": 11602,
+      "profile_schema": 3
+    },
+    {
+      "file_count": 95,
+      "fixture": "maximum-escaped-test-fixture",
+      "full_image_bytes": 16777216,
+      "nvs_readback_passed": true,
+      "private_output_removed_after_test": true,
+      "profile_bytes": 12130,
+      "profile_schema": 3
+    }
+  ]
+}

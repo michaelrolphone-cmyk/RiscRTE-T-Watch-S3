@@ -17,6 +17,14 @@ existing conservative streaming limit; this dense store uses additive schema3.
 
 ## Public inputs and source custody
 
+The completed immutable payload is commit
+`ddbc8552c528f5f7bfc1e16c70ebb32a936f942b`. The owner deployment inventory is in
+`provisioning/watch-1.0.17-deployment/`. All six HTTPS downloads were checked
+without redirects and passed full native/store admission. Normal and maximum
+escaped Wi-Fi test inputs also passed the production parser, official NVS
+generator and 16 MiB image readback; no owner credentials or device were used.
+The verification receipts are beside the source receipt.
+
 The payload directory is `provisioning/watch-1.0.17/`. Its six files are:
 
 - `image.bin`: exact compact product SPIFFS image
