@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -38,6 +39,14 @@ def require(condition,message):
 def meta(data):return {'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
 def encoded(value):return (json.dumps(value,sort_keys=True,indent=2)+'\n').encode()
 def exact(left,right):return encoded(left)==encoded(right)
+
+
+def directory_names(directory,maximum):
+    names=set()
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            require(len(names)<maximum,'Directory inventory bound');names.add(entry.name)
+    return names
 
 
 def runtime_tools(runtime):
@@ -128,11 +137,12 @@ def unpack(raw,profile):
 
 def read_seed(directory,profile):
     directory=profile.safe_path(directory);files={};total=0
-    for path in directory.iterdir():
-        require(len(files)<64,'Seed directory inventory bound')
-        profile.relative(path.name,192)
-        data=profile.read(path,min(32*1024*1024,64*1024*1024-total))
-        total+=len(data);files[path.name]=data
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            require(len(files)<64,'Seed directory inventory bound')
+            profile.relative(entry.name,192)
+            data=profile.read(Path(entry.path),min(32*1024*1024,64*1024*1024-total))
+            total+=len(data);files[entry.name]=data
     require(files,'Empty seed directory')
     return files
 
@@ -160,9 +170,42 @@ def checked_seed(seed_files,runtime,device,profile,work):
     return record,blobs,native_path
 
 
-def checked_product(binding_dir,runtime,native,source,inspect):
+def snapshot_product(binding_dir,destination,profile):
+    """Bound untrusted inputs before the original exact-byte binder reads them."""
+    directory=profile.safe_path(binding_dir);names=directory_names(directory,4)
+    require(names=={'store','bootfs.bin','binding.json','LICENSES.zip'},'Binding directory inventory differs')
+    fixed={name:profile.read(directory/name,bound) for name,bound in
+           (('bootfs.bin',0x510000),('binding.json',512*1024),('LICENSES.zip',2*1024*1024))}
+    # The canonical binder accepts only its deterministic stored license ZIP.
+    # Refuse compressed inputs before that older verifier can expand a member.
+    with zipfile.ZipFile(io.BytesIO(fixed['LICENSES.zip'])) as archive:
+        entries=archive.infolist();members=[item.filename for item in entries]
+        require(0<len(entries)<=256 and len(members)==len(set(members)) and
+                sum(item.file_size for item in entries)<=2*1024*1024,'License ZIP inventory bound')
+        for item in entries:
+            profile.relative(item.filename,192)
+            require(not item.is_dir() and item.external_attr>>28 in (0,8) and not item.flag_bits&1 and
+                    item.compress_type==zipfile.ZIP_STORED and 0<item.file_size<=1024*1024,'License ZIP member refused')
+    store=profile.safe_path(directory/'store');require(store.is_dir(),'Binding store directory required')
+    files={};total=0;paths=0;pending=[store]
+    while pending:
+        with os.scandir(pending.pop()) as entries:
+            for entry in entries:
+                paths+=1;require(paths<=256,'Binding store path count bound')
+                path=profile.safe_path(Path(entry.path));name=profile.relative(path.relative_to(store).as_posix(),192)
+                if path.is_dir():pending.append(path);continue
+                require(len(files)<95,'Binding store file count bound')
+                raw=profile.read(path,min(1024*1024,0x510000-total));total+=len(raw);files[name]=raw
+    require(len(files)==95,'Complete binding store required')
+    write_files(destination,fixed);write_files(destination/'store',files)
+    return destination
+
+
+def checked_product(binding_dir,runtime,native,source,inspect,profile):
     pinned_binding_source(source)
-    receipt,files,image,licenses=binding.verify(binding_dir,runtime,native,source)
+    with tempfile.TemporaryDirectory(prefix='watch17-binding-') as temp:
+        frozen=snapshot_product(binding_dir,Path(temp)/'binding',profile)
+        receipt,files,image,licenses=binding.verify(frozen,runtime,native,source)
     require(len(files)==95 and sum(name.endswith('.elf') for name in files)==46 and receipt['cohort']['version']==VERSION,'Complete Watch17 store required')
     capacity=inspect(image,0x510000)
     admission=admit_cohort(runtime,(native/'firmware.elf').read_bytes(),files,files)
@@ -188,7 +231,7 @@ def freeze(runtime,binding_dir,binding_source,seed,output,source):
     seed_files=read_seed(seed,profile)
     with tempfile.TemporaryDirectory(prefix='watch17-provision-') as temp:
         record,blobs,native=checked_seed(seed_files,runtime,device,profile,Path(temp))
-        product,files,image,licenses,capacity,admission=checked_product(binding_dir,runtime,native,binding_source,inspect)
+        product,files,image,licenses,capacity,admission=checked_product(binding_dir,runtime,native,binding_source,inspect,profile)
     seed_zip=archive_bytes(seed_files)
     receipt=receipt_for(source,binding_source,product,files,image,licenses,record,blobs,seed_zip,capacity,admission)
     payload={'image.bin':image,'seed.zip':seed_zip,'LICENSES.zip':licenses,
@@ -199,7 +242,7 @@ def freeze(runtime,binding_dir,binding_source,seed,output,source):
 
 def verify_payload(runtime,payload):
     runtime,device,profile,inspect=runtime_tools(runtime);payload=profile.safe_path(payload)
-    require({path.name for path in payload.iterdir()}==PAYLOAD_NAMES,'Payload inventory differs')
+    require(directory_names(payload,len(PAYLOAD_NAMES))==PAYLOAD_NAMES,'Payload inventory differs')
     frozen={name:profile.read(payload/name,32*1024*1024) for name in PAYLOAD_NAMES}
     require(frozen['COMPLETE']==PAYLOAD_MARKER,'Incomplete payload')
     receipt=profile.decode(frozen['payload.json']);pinned_packaging_source(receipt['source_revision'])
@@ -209,7 +252,7 @@ def verify_payload(runtime,payload):
         record,blobs,native=checked_seed(seed_files,runtime,device,profile,work)
         product_path=work/'binding';write_files(product_path/'store',files)
         write_files(product_path,{'bootfs.bin':frozen['image.bin'],'binding.json':frozen['binding.json'],'LICENSES.zip':frozen['LICENSES.zip']})
-        product,files,image,licenses,capacity,admission=checked_product(product_path,runtime,native,receipt['binding_source'],inspect)
+        product,files,image,licenses,capacity,admission=checked_product(product_path,runtime,native,receipt['binding_source'],inspect,profile)
     expected=receipt_for(receipt['source_revision'],receipt['binding_source'],product,files,image,licenses,
                          record,blobs,frozen['seed.zip'],capacity,admission)
     require(exact(receipt,expected),'Payload receipt differs')
@@ -249,7 +292,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 def verify_endpoints(runtime,deployment):
     _,_,profile,_=runtime_tools(runtime);deployment=profile.safe_path(deployment)
-    require({path.name for path in deployment.iterdir()}=={'inventory.json','deployment.json','COMPLETE'} and
+    require(directory_names(deployment,3)=={'inventory.json','deployment.json','COMPLETE'} and
             profile.read(deployment/'COMPLETE',64)==DEPLOYMENT_MARKER,'Deployment inventory differs')
     raw=profile.read(deployment/'inventory.json',128*1024);inventory=profile.decode(raw);profile.validate_inventory(inventory)
     record=profile.decode(profile.read(deployment/'deployment.json',65536))

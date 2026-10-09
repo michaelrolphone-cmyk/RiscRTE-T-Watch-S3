@@ -36,6 +36,55 @@ class Bounds(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
 
+    def binding_input(self):
+        directory=self.root/'binding';store=directory/'store';store.mkdir(parents=True)
+        for number in range(95):(store/(str(number)+'.json')).write_bytes(b'{}')
+        for name in ('bootfs.bin','binding.json'):(directory/name).write_bytes(b'fixture')
+        output=io.BytesIO()
+        with zipfile.ZipFile(output,'w',zipfile.ZIP_STORED) as archive:archive.writestr('LICENSE',b'notice')
+        (directory/'LICENSES.zip').write_bytes(output.getvalue())
+        return directory
+
+    def test_binding_snapshot_is_frozen_and_inventory_bounded(self):
+        directory=self.binding_input();output=self.root/'snapshot'
+        w.snapshot_product(directory,output,profile)
+        (directory/'store/0.json').write_bytes(b'changed')
+        self.assertEqual((output/'store/0.json').read_bytes(),b'{}')
+        (directory/'extra').write_bytes(b'x')
+        with self.assertRaisesRegex(ValueError,'inventory'):w.snapshot_product(directory,self.root/'bad',profile)
+        self.assertFalse((self.root/'bad').exists())
+
+    def test_binding_license_expansion_refused_before_binder(self):
+        directory=self.binding_input();output=io.BytesIO()
+        with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr('LICENSE',b'A'*(8*1024*1024))
+        (directory/'LICENSES.zip').write_bytes(output.getvalue())
+        with patch.object(w,'pinned_binding_source'),patch.object(w.binding,'verify') as binder,\
+                self.assertRaisesRegex(ValueError,'License ZIP'):
+            w.checked_product(directory,self.root,self.root,'fixture',None,profile)
+        binder.assert_not_called();self.assertFalse((self.root/'bad').exists())
+
+    def test_binding_store_links_counts_and_file_bounds(self):
+        directory=self.binding_input();store=directory/'store'
+        (store/'0.json').unlink();(store/'0.json').symlink_to(store/'1.json')
+        with self.assertRaisesRegex(ValueError,'symlink'):w.snapshot_product(directory,self.root/'link',profile)
+        (store/'0.json').unlink();(store/'0.json').write_bytes(b'{}');(store/'extra.json').write_bytes(b'{}')
+        with self.assertRaisesRegex(ValueError,'file count'):w.snapshot_product(directory,self.root/'count',profile)
+        (store/'extra.json').unlink()
+        with (store/'0.json').open('wb') as stream:stream.truncate(1024*1024+1)
+        with self.assertRaisesRegex(ValueError,'bounds'):w.snapshot_product(directory,self.root/'large',profile)
+
+    def test_binding_path_count_and_aggregate_bounds(self):
+        directory=self.binding_input();store=directory/'store'
+        for number in range(162):(store/('empty'+str(number))).mkdir()
+        with self.assertRaisesRegex(ValueError,'path count'):w.snapshot_product(directory,self.root/'paths',profile)
+        for path in store.iterdir():
+            if path.is_dir():path.rmdir()
+        for number in range(6):
+            with (store/(str(number)+'.json')).open('wb') as stream:stream.truncate(1024*1024)
+        with self.assertRaisesRegex(ValueError,'bounds'):w.snapshot_product(directory,self.root/'total',profile)
+        self.assertFalse((self.root/'total').exists())
+
     def test_directory_limits_and_symlink_refusal(self):
         for number in range(64):(self.root/str(number)).write_bytes(b'x')
         self.assertEqual(len(w.read_seed(self.root,profile)),64)

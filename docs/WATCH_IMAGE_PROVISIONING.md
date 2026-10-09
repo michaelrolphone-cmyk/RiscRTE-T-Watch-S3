@@ -40,6 +40,15 @@ their exact source trees without changing the firmware or cohort identity.
 Executable helpers and native admission fixtures must match the frozen recipe;
 only publication payloads, documentation and workflow records may be added.
 
+The final bounded-input recipe was reconstructed and requalified on the public
+`c0f730445c772f14b38ace627784e36a30795de7` checkpoint after its unpublished source
+archive was lost. Its new source revision is recorded in `payload.json`; it does
+not claim to reproduce the unavailable `f2eae968c8c34e238188159cb567dda2ca21087c`
+commit or archive. The published native seed, product image, binding and licenses
+retain their exact original bytes. The reconstructed wrapper snapshots bounded
+binding inputs before invoking the original binder, including refusing compressed
+license entries and limiting store paths, files, individual sizes and total bytes.
+
 Recompiling the app stage also requires its exact separately pinned System,
 Utilities, Productivity and Drivers sources. At preparation time the new
 Contexts model-client header dependency had not yet been published. The checked
