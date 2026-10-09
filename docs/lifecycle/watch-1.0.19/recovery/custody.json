@@ -1,0 +1,34 @@
+{
+  "bundle": {
+    "file": "watch-recovery.bundle",
+    "sha256": "3477c4a45ac0693816a98f64441d1e22317e8962daf2cc0467c92fb7b9fc4138",
+    "size_bytes": 10031
+  },
+  "hardware_qualified": false,
+  "heads": {
+    "preservation": {
+      "bundle_ref": "refs/watch-recovery/preservation",
+      "commit": "d0884e9902e03033d681514e3ba68d6402f78c52",
+      "tree": "7237b669317a45b3910f0893ef9fdaa95efe8cc2"
+    },
+    "recipe": {
+      "bundle_ref": "refs/watch-recovery/recipe",
+      "commit": "896663b6bbe4a1a5b5d4183fadd83a2602444adb",
+      "tree": "c61f66bcb9fc961cbeabc0cd69f030fdcbd392bb"
+    }
+  },
+  "historical_receipts_recreated": false,
+  "matrices": [
+    "watch118-recovered-from14-san.json",
+    "watch118-recovered-from15-normal.json",
+    "watch119-recovered-from17-san.json",
+    "watch119-recovered-chain-normal.json"
+  ],
+  "qualification": {
+    "file": "fresh-qualification.zip",
+    "sha256": "3e2368946f36a6ef574851ecdae22d83ee755710d95e431ddc1f15bf76362a77",
+    "size_bytes": 96148
+  },
+  "schema": 1,
+  "scope": "Fresh recovery source and qualification; delivered product bytes unchanged"
+}
