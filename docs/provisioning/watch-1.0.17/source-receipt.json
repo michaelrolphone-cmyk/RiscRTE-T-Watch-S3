@@ -6,9 +6,17 @@
       "bytes": 320668,
       "sha256": "67b4a2ab9a4fadfe779fe6ec2b1cb71f9afcbf51da0281195f70335b2102fc2c"
     },
+    "reconstructed-wrapper-tests.log": {
+      "bytes": 2263,
+      "sha256": "633f8b69970d528c024698a7458edb969c6ef41fe7828b8c9dbaecdc591ed0ca"
+    },
     "watch-original-sources.bundle": {
       "bytes": 78943,
       "sha256": "d3a76ecfd44909ff6ef0688a490a29b3f1a438c01a604d0b9acc0a4f7960619c"
+    },
+    "watch-recipe-sources.bundle": {
+      "bytes": 8464,
+      "sha256": "e32329dafd1670cf9347382b99cd483cb5e021aad5ed757f60612211eadf76fa"
     }
   },
   "binding_source": "b6abe35ed3049174e53c89c8adb85edd3860da34",
@@ -212,9 +220,42 @@
       "tree": "58415efed729e7df6c3a26db2f5106288643a86e"
     }
   ],
+  "original_recipe_source": "7e86a4620dd283ac399c0fa90d5fdaff52947ea7",
+  "original_recipe_tree": "58415efed729e7df6c3a26db2f5106288643a86e",
   "public_prerequisite": "a0f2894bb3513d024653e71ce7e52733804e19e8",
-  "recipe_source": "7e86a4620dd283ac399c0fa90d5fdaff52947ea7",
-  "recipe_tree": "58415efed729e7df6c3a26db2f5106288643a86e",
+  "recipe_source": "ec8a2c78ebe8a4ea32efab895d5d7e25d7128e4d",
+  "recipe_tree": "7d4db1b0d513d77f78c36ec17a86f3d08ffdf088",
+  "reconstruction": {
+    "canonical_source": "ec8a2c78ebe8a4ea32efab895d5d7e25d7128e4d",
+    "exact_tree": "7d4db1b0d513d77f78c36ec17a86f3d08ffdf088",
+    "frozen_public_assets": {
+      "LICENSES.zip": {
+        "bytes": 776066,
+        "sha256": "3502f13485ab20dc8f986e614cf29ef0a08a8a94102b08d26d448f54a0baddfa"
+      },
+      "binding.json": {
+        "bytes": 24705,
+        "sha256": "cea32cb5db95fe1937fddd5a33c50f3329aa0d92d2a8595d163bb7c0ca998336"
+      },
+      "image.bin": {
+        "bytes": 5308416,
+        "sha256": "f7b43befc8e0b24347ef3bafc48c5f2c729f99c0b4f2f4956700b5cbec81e851"
+      },
+      "seed.zip": {
+        "bytes": 8488153,
+        "sha256": "98491912a77f28cb3506d0561a9d84660e4cb7c402024d4476c6e51eb5b4c0fb"
+      }
+    },
+    "hardware_status": "UNRUN",
+    "independent_review": "directory allocation and binder-ordering findings corrected and closure verified",
+    "local_tested_source": "4025f20d034c9642bc6e3eb93102385ab2a6e820",
+    "native_or_application_bytes_rebuilt": false,
+    "public_base": "c0f730445c772f14b38ace627784e36a30795de7",
+    "status": "newly reconstructed and qualified; not an exact recovery of the lost source",
+    "unavailable_prior_bundle_sha256": "134e0abb9b11543610d362945bfaa69c1c30e5063bf26f986829f0273b8df1c6",
+    "unavailable_prior_source": "f2eae968c8c34e238188159cb567dda2ca21087c",
+    "wrapper_regressions": 18
+  },
   "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
   "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
   "schema": 1,
