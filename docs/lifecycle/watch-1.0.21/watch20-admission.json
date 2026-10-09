@@ -1,0 +1,64 @@
+{
+  "actual_full_image": {
+    "sha256": "bda601dad85ebb8e9c824edcb97827bd818a9eacf684c38c271e1aa27e6d378a",
+    "size_bytes": 16777216
+  },
+  "hardware_qualified": false,
+  "leak_detection": false,
+  "leak_detection_reason": "LeakSanitizer unsupported under executor ptrace",
+  "results": {
+    "normal": {
+      "cohort": {
+        "active_store_sha256": "505e4446062ffddc35c0aa1422aa646c602a56f52a16b3caf60ed2702eecd6ad",
+        "app_policy_rows": 16,
+        "candidate_store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc",
+        "cohort_validated": true,
+        "cooperative_yields": 142,
+        "elf_count": 46,
+        "error": "",
+        "hardware_calls": 0,
+        "native_elf_sha256": "f92e83ca6c7850fbba844ac7a647e5e3bc1d13f1c16c1a2b8ae0fcd4f4d67859",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "whole_store": {
+        "error": "",
+        "hardware_calls": 0,
+        "i2s_tables": 2,
+        "prepared": true,
+        "storage_calls": 0,
+        "store_files": 95,
+        "store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc"
+      }
+    },
+    "sanitized": {
+      "cohort": {
+        "active_store_sha256": "505e4446062ffddc35c0aa1422aa646c602a56f52a16b3caf60ed2702eecd6ad",
+        "app_policy_rows": 16,
+        "candidate_store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc",
+        "cohort_validated": true,
+        "cooperative_yields": 142,
+        "elf_count": 46,
+        "error": "",
+        "hardware_calls": 0,
+        "native_elf_sha256": "f92e83ca6c7850fbba844ac7a647e5e3bc1d13f1c16c1a2b8ae0fcd4f4d67859",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "whole_store": {
+        "error": "",
+        "hardware_calls": 0,
+        "i2s_tables": 2,
+        "prepared": true,
+        "storage_calls": 0,
+        "store_files": 95,
+        "store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc"
+      }
+    }
+  },
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "source_revision": "15624cb108c2ba65b35cd6b20283a2edff2bb415",
+  "target_instructions_executed": false
+}
