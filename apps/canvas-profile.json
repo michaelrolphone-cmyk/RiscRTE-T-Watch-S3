@@ -24,6 +24,16 @@
       "repository": "michaelrolphone-cmyk/RiscRTE",
       "commit": "e96f2affc691b929e89b624a998f0687a2746fd6",
       "tree": "3aa15af65246a6491110f01f4bb4bf9a51b4bd56"
+    },
+    "scene-system": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+      "commit": "d0998415c742878b604462ce8277984c1889bc96",
+      "tree": "48e50e9ba93539d099d89a0052fcb9d886546a4f"
     }
+  },
+  "scene_host": {
+    "version": "0.3.1",
+    "profile": "raw-touch-only",
+    "navigation_provider": false
   }
 }

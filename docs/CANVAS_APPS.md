@@ -5,6 +5,10 @@ Watch app set, including the corrected Contexts scene app and Lists. Hollow
 Trail is intentionally selected only in the X4 product. Accepted release
 metadata and historical build lanes are unchanged.
 
+Build `scripts/build_canvas_scene.py` against the pinned scene-system source
+for the Watch scene host 0.3.1 (four dependencies; no navigation provider).
+Its real touch checkbox, toolbar Back and cleanup paths are sanitizer-tested.
+
 Run Utilities' `build_canvas_apps.py --target watch` and this repository's
 `scripts/build_canvas_launchers.py`. The launcher catalogue contains 23
 visible entries; clock/default/Springboard bookkeeping leaves 25 app policies.
