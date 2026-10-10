@@ -1,0 +1,2 @@
+first same-report edge: seq=3 event_ms=2 dispatch_ms=3 cancelled=0 down=1
+order-0-1: /workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c:36: main: Assertion `sample.cancelled&&!sample.down' failed.

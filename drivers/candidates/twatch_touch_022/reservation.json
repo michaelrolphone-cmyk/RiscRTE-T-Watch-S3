@@ -1,0 +1,268 @@
+{
+  "checked_at": "2026-10-10T16:50:33Z",
+  "source_base": "db5f6c5ba1a71ed3fcc22ff29847397a050b7ee4",
+  "reserved": "0.2.2",
+  "branches": [
+    {
+      "branch": "codex/versioned-driver-releases",
+      "version": null
+    },
+    {
+      "branch": "codex/watch-launcher",
+      "version": null
+    },
+    {
+      "branch": "codex/watch-040-touch-direction",
+      "version": null
+    },
+    {
+      "branch": "codex/watch-crown-clock",
+      "version": null
+    },
+    {
+      "branch": "codex/twatch-complete-drivers",
+      "version": null
+    },
+    {
+      "branch": "codex/versioned-board-baselines",
+      "version": null
+    },
+    {
+      "branch": "codex/watch-clock-app",
+      "version": null
+    },
+    {
+      "branch": "codex/watch-contexts-1013",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/lora-profile-selection",
+      "version": null
+    },
+    {
+      "branch": "feat/next-watch-cohort-proof",
+      "version": null
+    },
+    {
+      "branch": "feat/alarm-output-drivers",
+      "version": null
+    },
+    {
+      "branch": "feat/audio-tools-current",
+      "version": null
+    },
+    {
+      "branch": "feat/nova7-quick-controls",
+      "version": null
+    },
+    {
+      "branch": "feat/motion-double-tap-wake",
+      "version": null
+    },
+    {
+      "branch": "feat/immutable-watch-provisioning",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/declarative-alarms",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-appdata-cohort",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-alarm-lifecycle",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-1.0.5-integration",
+      "version": null
+    },
+    {
+      "branch": "feat/points-nova7-ux",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-app-store",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-daily-apps",
+      "version": null
+    },
+    {
+      "branch": "feat/temporal-contexts-integration-20261010",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-demand-retained-119-public",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-frequency-generator",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-firmware-update",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-file-browser",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-face-picker",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-lifecycle-routes-118-public",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-hid-increments-120-121",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-low-battery-mode",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-image-provisioning-117",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-points-in-time",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-tap-calibration",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-sdr-test-integration",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-power-status",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-sdr-staged-publication",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-provisioning-036",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-rf-spectrum-108",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-runtime-features-112",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "fix/current-system-apps-icons",
+      "version": null
+    },
+    {
+      "branch": "fix/latest-main-image-deps",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-usb-reuse-compatibility",
+      "version": null
+    },
+    {
+      "branch": "feat/wifi-provider-021-async-20261010",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "fix/complete-release-queue",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "feat/watch-wifi-settings",
+      "version": null
+    },
+    {
+      "branch": "feat/watch-update-services",
+      "version": null
+    },
+    {
+      "branch": "fix/latest-main-builds",
+      "version": null
+    },
+    {
+      "branch": "main",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "fix/watch-runtime-admission",
+      "version": null
+    },
+    {
+      "branch": "fix/latest-main-output-newlines",
+      "version": null
+    },
+    {
+      "branch": "fix/watch-product-publish-deps",
+      "version": null
+    },
+    {
+      "branch": "fix/native-publication-dependencies",
+      "version": null
+    },
+    {
+      "branch": "release/watch-1.0.0",
+      "version": null
+    },
+    {
+      "branch": "fix/watch-provider-startup",
+      "version": null
+    },
+    {
+      "branch": "fix/watch-power-sleep-lifecycle",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "release-index",
+      "version": null
+    },
+    {
+      "branch": "test/watch40-apex-bin",
+      "version": null
+    },
+    {
+      "branch": "release/watch-112-touch-custody",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "release/watch-112-accepted",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "test/retained-wake-store-admission",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "release/watch-1.0.7-complete",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "test/preserving-watch-upgrades",
+      "version": "0.2.1"
+    },
+    {
+      "branch": "release/watch-112-board-custody",
+      "version": "0.2.1"
+    }
+  ],
+  "published_touch_tags": [
+    "driver-twatch-touch-v0.2.0",
+    "driver-twatch-touch-v0.2.1"
+  ],
+  "accepted_current_sha256": "01b5247d473f3bc7ce34a6de79d259854902637bf78547ce3cbe53a4e407fbc6"
+}

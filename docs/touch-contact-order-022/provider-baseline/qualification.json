@@ -1,0 +1,685 @@
+{
+  "source_sha256": {
+    "/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c": "01b5247d473f3bc7ce34a6de79d259854902637bf78547ce3cbe53a4e407fbc6",
+    "/workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c": "3d518f17a2b9c0c7c572a42199a58c48416f07560ce9f7793031381fdf4188ea",
+    "/workspace/shared/watch-touch-contact-order-022/tests/driver_test.c": "40df097722720c1e6a6f31c555e4dfdcdaf27409aa4fcfc321955f2456634d94",
+    "/workspace/shared/watch-touch-contact-order-022/tests/mock.h": "76393fc11691b144e4bef66fa08e0361fe91ac63e43d459afa861bb2ac15c0bd",
+    "/workspace/shared/watch-touch-contact-order-022/scripts/test_touch_contact_order.py": "5cb2cf1e693a75a59b5d6964fe6a7286c7c3c388f051f0cd87d8bcd17ae4b17f",
+    "/workspace/shared/watch-touch-order-audit-20261010/baseline/include/PortableTouch.h": "817d5bde4d3a3c4634512503d283d0c7e731744a65e743305038294b58205004",
+    "/workspace/shared/watch-touch-order-audit-20261010/baseline/include/RiscRuntimeV1.h": "90411ef3271f19b5c3613e5e41aa20e6c9e284d7804aec0309c2b072a68894d4"
+  },
+  "records": [
+    {
+      "case": "original",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "contract-original-0-0.log"
+    },
+    {
+      "case": "same-report",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-same-report-0-0.log"
+    },
+    {
+      "case": "unchanged-report",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-unchanged-report-0-0.log"
+    },
+    {
+      "case": "all-released",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-all-released-0-0.log"
+    },
+    {
+      "case": "earlier-move",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-earlier-move-0-0.log"
+    },
+    {
+      "case": "replacement",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-replacement-0-0.log"
+    },
+    {
+      "case": "rapid-same-tick",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-rapid-same-tick-0-0.log"
+    },
+    {
+      "case": "unchanged-moves",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-unchanged-moves-0-0.log"
+    },
+    {
+      "case": "two-subscribers",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-two-subscribers-0-0.log"
+    },
+    {
+      "case": "overflow",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-overflow-0-0.log"
+    },
+    {
+      "case": "read-failure",
+      "alternate": false,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-read-failure-0-0.log"
+    },
+    {
+      "case": "original",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "contract-original-0-1.log"
+    },
+    {
+      "case": "same-report",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-same-report-0-1.log"
+    },
+    {
+      "case": "unchanged-report",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-unchanged-report-0-1.log"
+    },
+    {
+      "case": "all-released",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-all-released-0-1.log"
+    },
+    {
+      "case": "earlier-move",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-earlier-move-0-1.log"
+    },
+    {
+      "case": "replacement",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-replacement-0-1.log"
+    },
+    {
+      "case": "rapid-same-tick",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-rapid-same-tick-0-1.log"
+    },
+    {
+      "case": "unchanged-moves",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-unchanged-moves-0-1.log"
+    },
+    {
+      "case": "two-subscribers",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-two-subscribers-0-1.log"
+    },
+    {
+      "case": "overflow",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-overflow-0-1.log"
+    },
+    {
+      "case": "read-failure",
+      "alternate": false,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-read-failure-0-1.log"
+    },
+    {
+      "case": "original",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "contract-original-1-0.log"
+    },
+    {
+      "case": "same-report",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-same-report-1-0.log"
+    },
+    {
+      "case": "unchanged-report",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-unchanged-report-1-0.log"
+    },
+    {
+      "case": "all-released",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-all-released-1-0.log"
+    },
+    {
+      "case": "earlier-move",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-earlier-move-1-0.log"
+    },
+    {
+      "case": "replacement",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-replacement-1-0.log"
+    },
+    {
+      "case": "rapid-same-tick",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-rapid-same-tick-1-0.log"
+    },
+    {
+      "case": "unchanged-moves",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-unchanged-moves-1-0.log"
+    },
+    {
+      "case": "two-subscribers",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": -6,
+      "log": "order-two-subscribers-1-0.log"
+    },
+    {
+      "case": "overflow",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-overflow-1-0.log"
+    },
+    {
+      "case": "read-failure",
+      "alternate": true,
+      "sanitized": false,
+      "exit_code": 0,
+      "log": "order-read-failure-1-0.log"
+    },
+    {
+      "case": "original",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "contract-original-1-1.log"
+    },
+    {
+      "case": "same-report",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-same-report-1-1.log"
+    },
+    {
+      "case": "unchanged-report",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-unchanged-report-1-1.log"
+    },
+    {
+      "case": "all-released",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-all-released-1-1.log"
+    },
+    {
+      "case": "earlier-move",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-earlier-move-1-1.log"
+    },
+    {
+      "case": "replacement",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-replacement-1-1.log"
+    },
+    {
+      "case": "rapid-same-tick",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-rapid-same-tick-1-1.log"
+    },
+    {
+      "case": "unchanged-moves",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-unchanged-moves-1-1.log"
+    },
+    {
+      "case": "two-subscribers",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": -6,
+      "log": "order-two-subscribers-1-1.log"
+    },
+    {
+      "case": "overflow",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-overflow-1-1.log"
+    },
+    {
+      "case": "read-failure",
+      "alternate": true,
+      "sanitized": true,
+      "exit_code": 0,
+      "log": "order-read-failure-1-1.log"
+    }
+  ],
+  "commands": [
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "/workspace/shared/watch-touch-contact-order-022/tests/driver_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-0-0"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-0-0"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "/workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "same-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "unchanged-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "all-released"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "earlier-move"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "replacement"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "rapid-same-tick"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "unchanged-moves"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "two-subscribers"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "overflow"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-0",
+      "read-failure"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "/workspace/shared/watch-touch-contact-order-022/tests/driver_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-0-1"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-0-1"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "/workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "same-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "unchanged-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "all-released"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "earlier-move"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "replacement"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "rapid-same-tick"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "unchanged-moves"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "two-subscribers"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "overflow"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-0-1",
+      "read-failure"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "/workspace/shared/watch-touch-contact-order-022/tests/driver_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-1-0"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-1-0"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "/workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "same-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "unchanged-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "all-released"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "earlier-move"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "replacement"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "rapid-same-tick"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "unchanged-moves"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "two-subscribers"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "overflow"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-0",
+      "read-failure"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "/workspace/shared/watch-touch-contact-order-022/tests/driver_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-1-1"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/contract-1-1"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-O1",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-Wno-unused-variable",
+      "-Wno-missing-field-initializers",
+      "-DTEST_KIND=6",
+      "-DDRIVER_SOURCE=\"/workspace/shared/watch-touch-contact-order-022/drivers/current/twatch_touch/driver.c\"",
+      "-I/workspace/shared/watch-touch-order-audit-20261010/baseline/include",
+      "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+      "-I/workspace/shared/watch-touch-contact-order-022/include",
+      "-I/workspace/shared/watch-touch-contact-order-022",
+      "-no-pie",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "/workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c",
+      "-o",
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "same-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "unchanged-report"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "all-released"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "earlier-move"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "replacement"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "rapid-same-tick"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "unchanged-moves"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "two-subscribers"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "overflow"
+    ],
+    [
+      "/workspace/shared/watch-touch-order-audit-20261010/baseline/order-1-1",
+      "read-failure"
+    ]
+  ],
+  "baseline": true,
+  "hardware_tested": false
+}

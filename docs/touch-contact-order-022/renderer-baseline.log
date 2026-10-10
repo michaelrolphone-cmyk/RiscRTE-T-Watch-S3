@@ -1,0 +1,625 @@
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 31 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 5 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=reject x=50 y=218 contacts=1 armed=1
+HID pairing response action=reject requested
+HID pairing response action=reject result=ok
+HID stop reason=Pairing rejected
+HID suspend status=1 state=4 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=moved
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=2 armed=1
+HID pairing touch ignored reason=multiple-contacts
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=event-gap
+HID pairing touch ignored reason=not-armed
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID suspend status=1 state=2 flags=16 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID state from=2 to=5 flags=29 error=0 generation=2
+HID state from=5 to=5 flags=31 error=0 generation=2
+HID suspend status=1 state=5 flags=31 error=0 generation=2
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 3 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Bluetooth error - reconnect
+HID suspend status=1 state=6 flags=16 error=12 generation=1
+HID closed status=1 state=0 flags=16 error=12 generation=1
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 3 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+LOW_BATTERY crossing=applied-once
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+PORTABLE_APP sleep=idle
+PORTABLE_APP sleep=refused
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 92 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID cleanup pending; retaining invocation
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 31 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/2 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=reject x=50 y=218 contacts=1 armed=1
+HID pairing response action=reject requested
+HID pairing response action=reject result=ok
+HID stop reason=Pairing rejected
+HID suspend status=1 state=4 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=moved
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=2 armed=1
+HID pairing touch ignored reason=multiple-contacts
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=event-gap
+HID pairing touch ignored reason=not-armed
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID suspend status=1 state=2 flags=16 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/2 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+LOW_BATTERY crossing=applied-once
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+PORTABLE_APP sleep=idle
+PORTABLE_APP sleep=refused
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 240 polls; 0 mouse/1 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/1 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 51 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 92 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID cleanup pending; retaining invocation
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 8 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 31 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 5 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=reject x=50 y=218 contacts=1 armed=1
+HID pairing response action=reject requested
+HID pairing response action=reject result=ok
+HID stop reason=Pairing rejected
+HID suspend status=1 state=4 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=moved
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=2 armed=1
+HID pairing touch ignored reason=multiple-contacts
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=event-gap
+HID pairing touch ignored reason=not-armed
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID suspend status=1 state=2 flags=16 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 2 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID state from=2 to=5 flags=29 error=0 generation=2
+HID state from=5 to=5 flags=31 error=0 generation=2
+HID suspend status=1 state=5 flags=31 error=0 generation=2
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 3 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Bluetooth error - reconnect
+HID suspend status=1 state=6 flags=16 error=12 generation=1
+HID closed status=1 state=0 flags=16 error=12 generation=1
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 3 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+LOW_BATTERY crossing=applied-once
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+PORTABLE_APP sleep=idle
+PORTABLE_APP sleep=refused
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 92 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID cleanup pending; retaining invocation
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 1 frames, 31 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/2 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=reject x=50 y=218 contacts=1 armed=1
+HID pairing response action=reject requested
+HID pairing response action=reject result=ok
+HID stop reason=Pairing rejected
+HID suspend status=1 state=4 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=moved
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=2 armed=1
+HID pairing touch ignored reason=multiple-contacts
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=event-gap
+HID pairing touch ignored reason=not-armed
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID suspend status=1 state=2 flags=16 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/2 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+LOW_BATTERY crossing=applied-once
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+PORTABLE_APP sleep=idle
+PORTABLE_APP sleep=refused
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 240 polls; 0 mouse/1 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 3 frames, 240 polls; 0 mouse/1 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 51 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 92 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID cleanup pending; retaining invocation
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 32 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+launch=default.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 4 frames, 100 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 8 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID production adapter: pairing, raw touches, gaps, disconnect, edits, Back and quick controls passed normally and under address,undefined
