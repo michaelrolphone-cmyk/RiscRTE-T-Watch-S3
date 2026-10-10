@@ -23,8 +23,13 @@ shared reducer. It includes original driver contracts and ten ordered-input
 cases on nominal and alternate wiring, normally and with ASan/UBSan.
 `--baseline` records the preserved 0.2.1 failures separately.
 
-Higher-level Watch keyboard, gesture and secure HID qualification is being
-sealed separately. These are software/provider tests, not physical hardware
+Higher-level Watch keyboard, gesture and secure HID qualification passed.
+See docs/touch-contact-order-022/qualification.json and CONSUMER_QUALIFICATION.md.
+A full app regression reproduces unwanted Quick Controls on .2.1 and safe
+cancellation on .2.2. The source-bound target is 13,240 bytes, SHA256
+28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368.
+Build only this candidate with scripts/build_touch_candidate.py; target imports
+are memcpy/memset, export is t5_driver_get, and 74 relative targets validate. These are software/provider tests, not physical hardware
 qualification or a rebuilt/selected Watch product. See `reservation.json` for
 live branch/tag version custody. Target compilation uses the existing current
 provider flags and explicit source selection; no accepted build is replaced.

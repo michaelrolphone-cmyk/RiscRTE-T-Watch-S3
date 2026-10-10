@@ -1,0 +1,2 @@
+Watch contact order PASS: unchanged-report
+first same-report edge: seq=3 event_ms=2 dispatch_ms=4 cancelled=1 down=0

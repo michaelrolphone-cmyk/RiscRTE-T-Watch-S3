@@ -1,0 +1,21 @@
+{
+  "transactions": [
+    [
+      "1b140005004c0000000000",
+      "1b14000000000000000000"
+    ],
+    [
+      "1b140005004c0000000000",
+      "1b14000000000000000000"
+    ]
+  ],
+  "protocol": "report",
+  "expected_baseline_loss": false,
+  "hardware_tested": false,
+  "source_or_binary_sha256": {
+    "/workspace/shared/ble-buttons-report-recovery-20261010/drivers/test/ble_hid_protocol_test.py": "22537059b007a91883360cc41b98bf0fda08567c02d80a90dd777838dc172061",
+    "/workspace/shared/ble-buttons-report-recovery-20261010/drivers/build/ble-hid-host/driver.so": "b0352dca653def594a12bff9fc9ef98327b509c3d9db4cf474bc95cfad694e92",
+    "/workspace/shared/watch-contact-order-qualification/hid-wire-seam/app-seam.so": "4c3ea30d6faf95841a5def4d916c9cdfd4e643310bb9771ed5890833973a3c2e",
+    "/workspace/shared/ble-buttons-report-recovery-20261010/utilities/scripts/test_hid_buttons_wire.py": "d409878ddf5da101fbd642237b9b8e517887ed80572ec2c30577e1cba5e5137a"
+  }
+}

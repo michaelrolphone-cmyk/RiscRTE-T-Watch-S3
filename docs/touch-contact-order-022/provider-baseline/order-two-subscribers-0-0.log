@@ -1,0 +1,1 @@
+order-0-0: /workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c:54: main: Assertion `a.kind==kinds[i]&&!memcmp(&a,&b,sizeof(a))' failed.

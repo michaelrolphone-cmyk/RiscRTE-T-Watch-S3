@@ -1,0 +1,1 @@
+order-0-0: /workspace/shared/watch-touch-contact-order-022/tests/touch_contact_order_test.c:44: main: Assertion `step()&&tap()&&sample.contact_id==3' failed.

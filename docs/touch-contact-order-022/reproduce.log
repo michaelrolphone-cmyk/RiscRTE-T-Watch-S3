@@ -1,0 +1,2 @@
+Watch .2.1 dispatch sequence=3 event_ms=20 contacts=2 snapshot_sequence=4 snapshot_ms=21 down=1 moved=1 cancelled=0 x=140
+reproduce: /workspace/shared/watch-touch-order-audit-20261010/reproduce.c:23: main: Assertion `sample.cancelled&&!sample.down' failed.
