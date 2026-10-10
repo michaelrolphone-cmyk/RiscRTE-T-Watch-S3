@@ -32,6 +32,7 @@ typedef struct {
     char hour_minute[6], meridiem[3], seconds[3], date[11], status[6], battery[5];
     bool time_valid, battery_valid;
 } nova_watch_labels;
+bool nova_watch_context_message(risc_display_surface_v1 *surface,const char *message);
 bool nova_watch_sleep_status(risc_display_surface_v1 *surface,const char *label);
 void nova_watch_format(const nova_watch_state *state, nova_watch_labels *labels);
 /* Bounded 240x240 little-endian RGB565 face output. With a NULL capture

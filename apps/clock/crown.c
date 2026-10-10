@@ -22,6 +22,7 @@ static watch_clock_runtime native_clock;
 #include "PortableContextsClient.h"
 static portable_contexts_client clock_contexts;
 static bool clock_contexts_uncertain,clock_contexts_handoff;
+static char clock_context_message[33];
 static bool clock_contexts_capture_checkpoint(void *context) {
     (void)context;
     if(clock_contexts_uncertain)return false;
@@ -317,6 +318,9 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
         picker.category_positions[picker.category]=picker.position;
         return nova_watch_picker_collections_render(surface,&face,picker.selected,picker.category_position,picker.category_positions,picker_save_failed?"SAVE FAILED":NULL,picker.pulse_face,picker.pulse_active?nova_watch_picker_pulse(now-picker.pulse_started):256u,picker_scratch);
     }
+#ifdef WATCH_CONTEXTS_CLIENT
+    if(clock_context_message[0])return nova_watch_context_message(surface,clock_context_message);
+#endif
     bool rendered=nova_watch_face_render(surface,&face,picker.selected);
 #ifdef WATCH_QUICK_ACTIONS
     pqa_animate(&clock_quick.ui,now);
@@ -623,7 +627,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     clock_broadcast=(portable_broadcast_client){0};clock_broadcast_uncertain=clock_handoff=false;
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT
-    clock_contexts=(portable_contexts_client){0};clock_contexts_uncertain=clock_contexts_handoff=false;
+    clock_contexts=(portable_contexts_client){0};clock_contexts_uncertain=clock_contexts_handoff=false;clock_context_message[0]=0;
 #endif
     reset_telemetry();
     if (!rt || rt->api_version!=1 || rt->struct_size<RISC_RUNTIME_CAPABILITIES_V1_SIZE ||
@@ -771,6 +775,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CONTEXTS_CLIENT
         if(clock_contexts_uncertain)break;
 #endif
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(clock_context_message[0]&&(launcher_activity_pending||(events&3u))){clock_context_message[0]=0;clock_alarm_cancel_input();events=0;}
+#endif
         if(launcher_activity_pending) last_activity=now;
         launcher_activity_pending=false;
 #ifdef WATCH_QUICK_ACTIONS
@@ -851,6 +858,9 @@ __attribute__((visibility("default"))) void app_main(void) {
             clock_quick.idle_ms;
 #else
             60000u;
+#endif
+#ifdef PORTABLE_LOW_BATTERY
+        idle=idle&&clock_quick.idle_ms!=0;
 #endif
         if (manual || idle) {
 #ifdef WATCH_CLOCK_LAUNCHER
