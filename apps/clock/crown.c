@@ -787,6 +787,9 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(quick_actions&&!clock_contexts_pause())return;
 #endif
         if(!pqa_session_apply(&clock_quick,rt,display,quick_actions,&volume_changed))break;
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(quick_actions&PQA_CONTEXTS)portable_contexts_settings_changed(&clock_contexts,clock_quick.ui.contexts_valid);
+#endif
 #ifdef WATCH_QUICK_RADIOS
 #ifdef WATCH_BLE_BROADCAST
         if((quick_actions&(PQA_WIFI|PQA_BLUETOOTH|PQA_AIRPLANE)) && !clock_broadcast_pause())return;
