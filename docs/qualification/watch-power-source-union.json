@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "purpose": "Watch power/source selection reconciliation; no production change",
+  "watch_local": "a5dae2bd17945d7927f3758e5f8714111f45daab",
+  "system_public": "8a75862929e4e83c8f66b3d58cc1c36d44830c84",
+  "runtime_public": "67e0dbe1a5f519fd96d8f88797ff91b9e1a3096c",
+  "alarm_public": "e80172353fcb9e6519ca9d9b2a4d43c69c1bc91d",
+  "selected_programs": [
+    {
+      "name": "sleep-0-0-0",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-0-0-1",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-0-1-0",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-0-1-1",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "clock-0",
+      "passed": true,
+      "output": "Low-battery real Clock: crossings, manual controls, reboot, unknown/charging and configured sleep timer passed\n"
+    },
+    {
+      "name": "sleep-1-0-0",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-1-0-1",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-1-1-0",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "sleep-1-1-1",
+      "passed": true,
+      "output": "Portable sleep lifecycle: repeated native statuses, unexpected Deep return, retained preparation/unhold, old ABI, crown priority and exact app image custody PASS\n"
+    },
+    {
+      "name": "clock-1",
+      "passed": true,
+      "output": "Low-battery real Clock: crossings, manual controls, reboot, unknown/charging and configured sleep timer passed\n"
+    }
+  ],
+  "header_sha256": {
+    "PortableSleepPolicy.h": "70fa8ff8f63270b2a04d591bdbc61cd7e16d6483421121a96fe22f2855966d9d",
+    "RiscRuntimeV1.h": "90411ef3271f19b5c3613e5e41aa20e6c9e284d7804aec0309c2b072a68894d4",
+    "RiscKeyValueV1.h": "0e73bf29c402be030baf52f5b2b324f5b872549cdf58aa31f45b72bd70977179",
+    "AlarmServiceV1.h": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5",
+    "WatchSelectedSleepPolicy.h": "267c001a7f604836458f11bdad196128e6297d8172fe87d2db5c3dd2bcc53539"
+  },
+  "power_targets": {
+    "twatch-pmu": {
+      "version": "0.6.2",
+      "bytes": 9892,
+      "sha256": "a68118f88842150ce0ebe250dfadd92be300a57d5acd1395e4ee2ef677ff8ab5",
+      "source_sha256": "2a6121cdaf47d331af3e8352a9b6d6ec9c3aebfd8a23b2b5b02e9322625a0eba"
+    },
+    "twatch-imu": {
+      "version": "0.4.2",
+      "bytes": 54404,
+      "sha256": "e5d1ffaff961c1e04bb04856aa59921f1bea8753599c32c987114f2fc715c556",
+      "source_sha256": "60220706d9a28dab7b134a059f4942304e374f69291e1e821c99c13c3aeabb49"
+    },
+    "twatch-panel": {
+      "version": "0.4.2",
+      "bytes": 12672,
+      "sha256": "8fbe4ba4ff33919029c20402fbd05f27fd32af10ec71572c2c04f54445a06d82",
+      "source_sha256": "b7f5fb4cb5f7829cf861ab9df8f7791f1312fae189ce2a0e807eb50cd64e0ce5"
+    }
+  },
+  "clock_object_sha256": "c01f276881e47e5b612cc9aadeaad5cd009ef3a7b407552b681ee207dc173320",
+  "logs": {
+    "watch-target-drivers.log": "68b7093065df354d766f6a86ca6c99dba65810fc273708d0f89a8507aae4a42a",
+    "selected-power-sealed.log": "c854e10aa6ceaa129380f17051f247baa21a2058fd3688b23efa26081d76053e",
+    "test_deep_sleep.py.log": "1910466562dbf74aa82e005ef6fe3bc49c5abc91c455912fb4f11686041c530e",
+    "test_hybrid_sleep.py.log": "cf29c144f27987d0ed62331e02c9117c93fbb4f07eb21cfa317f32169b7a8c80",
+    "test_motion_wake.py.log": "d6c233cc4b6bb789e5a62e7430e2095f957e44ce451ab2957d76f4ed360fb01b",
+    "clock-selected-target.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diagnostic-sanitized.log": "8c0511e7e13a9782c6dda0e53fef4b40404edf0178bb796b1609f79a66ab8733",
+    "run_deep_sleep_test.sh.log": "4fd529c6c229a576aa4e0145c56a362970a41ca0a1498c1d69d2c98f0be6a17f",
+    "test_pmu_charge_status.py.log": "d5049b2496bedd5a8744a0744aa81e1e66cfe4e1841c6b194820dbb5dedbeae0",
+    "run_diagnostic_journal_test.sh.log": "8c0511e7e13a9782c6dda0e53fef4b40404edf0178bb796b1609f79a66ab8733",
+    "run_light_sleep_test.sh.log": "693801ee8058fc3fba699d9978ed890aa13bf9dd22a140e08a3386d884066dba",
+    "selected-power-union.log": "c854e10aa6ceaa129380f17051f247baa21a2058fd3688b23efa26081d76053e",
+    "test_pmu_cold_boot_sleep.py.log": "aa79427cfdc38e46a61f7d2353bb75ff921ab68ab4c4e9413ee1aecf9fcf6296",
+    "portable-sleep-current-system.log": "8e142d540fb4c1bea72078792339a75500384434565511ad6285a9b6a7b81e1f",
+    "clock-runtime-selected-target.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "independent_audit_sha256": "56e2342c58d03ee1c4c5788281dea6cdcc0f407f18a68cdcd191a47228c75b48",
+  "product_composed": false,
+  "hardware_tested": false,
+  "clock_runtime_contexts_broadcast_object_sha256": "f97c19cccab4f8a69a92a04ba6e0da08ec7669e810abccf755f72e7089929bb4"
+}
