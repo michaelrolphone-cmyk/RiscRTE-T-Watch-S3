@@ -36,3 +36,17 @@ typedef struct {
 /* The append-only v1 extension is declared in the structure above; IPv4 values
  * are byte arrays in network order. SSIDs max 32, WPA passwords 8..63 (or empty
  * for an explicitly requested open AP). Callers serialize link operations. */
+
+#include "RiscRadioAsyncV1.h"
+/* Opt in only after checking the whole size, tag/version and all callbacks.
+ * The complete wifi_api_v1 prefix and its semantics remain unchanged. */
+typedef struct {
+    wifi_api_v1 base;
+    uint32_t async_tag, async_version;
+    int32_t (*begin)(void*,const risc_radio_request_v1*,uint32_t*);
+    int32_t (*poll)(void*,uint32_t,risc_radio_progress_v1*);
+    int32_t (*cancel)(void*,uint32_t);
+    int32_t (*service_begin)(void*,uint32_t*);
+    int32_t (*service_end)(void*,uint32_t);
+} wifi_async_v1;
+#define WIFI_ASYNC_V1_SIZE sizeof(wifi_async_v1)
