@@ -1,0 +1,11 @@
+# Watch 1.0.18 and 1.0.19 recovery qualification
+
+Both full images and paired payloads were reconstructed byte for byte after the workspace reset. The Watch 1.0.19 full image was delivered for an erasing hardware test on 2026-10-09. Its SHA256 remains `1838520f1e13eea16ead49720417c002b494e9be3fe663db2090483489aff2e6`.
+
+`watch-recovery.bundle` preserves the reconstruction recipe and fresh proof source with their actual commit identities. Run `python scripts/check_recovery_source_snapshot.py` from this repository to restore and verify those references. Then check out `896663b6bbe4a1a5b5d4183fadd83a2602444adb` and use `scripts/reconstruct_held_watch.py --help` for the explicit input paths. Run new transaction proofs from `d0884e9902e03033d681514e3ba68d6402f78c52` using `scripts/test_reconstructed_watch_upgrade.py --help`.
+
+The original embedded source identities remain unchanged. The reconstruction receipt has new provenance and does not recreate missing historical receipts. Recovered System tree `8a3337a96c6b78b1e39421424a61ea4bdda82091` exactly matches the original recorded tree. Recovered Utilities `f6215dc1e24b80cb378ad7cc355f5bf6c0bb53eb` matches all 135 recorded production inputs; equality of its complete ancillary tree to the lost original is not claimed. Dependency custody is published in the respective repositories; this bundle contains only Watch history.
+
+`fresh-qualification.zip` contains the sealed reconstruction record, 16 package-mutation refusals, and four newly completed preservation matrices: 14→18 ASan/UBSan, 15→18 normal, 17→19 ASan/UBSan, and the actual selected-bank 18→19 normal continuation. Each matrix covers 31 scenarios, 159 process cases and 16 invalid-candidate refusals. All 636 processes preserve NVS/app-data and the previous pair. The two-hop chain uses the successful first hop's actual bank-1 snapshot as its next input.
+
+Host qualification does not execute physical flash, TLS, sensors or target instructions, and does not establish hardware acceptance or measured peak heap. No live preserving feed is deployed. The full initial image erases user data; the paired payload is not a serial-flash image. Original historical proof observations remain distinct from these fresh archived receipts.
