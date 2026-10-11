@@ -1,0 +1,18 @@
+HID model: left/right tap, second-contact motion, bounds, gaps, wrap and atomic persistence passed
+Touchpad gestures: drag/double-tap, neutral/cancel, identity, XY rails, hysteresis, diagonal/pinch, density and wrap PASS
+HID application: scoped grants, touch, secure pairing, holds, interruptions, close retries, persistence and navigation passed
+HID application: scoped grants, touch, secure pairing, holds, interruptions, close retries, persistence and navigation passed
+HID model: left/right tap, second-contact motion, bounds, gaps, wrap and atomic persistence passed
+Touchpad gestures: drag/double-tap, neutral/cancel, identity, XY rails, hysteresis, diagonal/pinch, density and wrap PASS
+HID application: scoped grants, touch, secure pairing, holds, interruptions, close retries, persistence and navigation passed
+HID application: scoped grants, touch, secure pairing, holds, interruptions, close retries, persistence and navigation passed
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/tests/hid_app_test.c:71:13: error: unused function 'np_pixel' [-Werror,-Wunused-function]
+   71 | static void np_pixel(int x,int y,uint32_t rgb,unsigned alpha){(void)x;(void)y;(void)rgb;(void)alpha;assert(0);}
+      |             ^~~~~~~~
+1 error generated.
+Traceback (most recent call last):
+  File "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/scripts/test_hid_apps.py", line 16, in <module>
+    subprocess.run([*base,'-Wno-unused-variable','-DHID_RENDER',f'-DHID_TOUCHPAD={pad}',str(ROOT/'tests/hid_app_test.c'),'-o',str(exe)],check=True)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cc', '-std=c11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/Apps', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/lib/Bluetooth/include', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/include', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/NativeApps/include', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src', '-Wno-unused-variable', '-DHID_RENDER', '-DHID_TOUCHPAD=0', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/tests/hid_app_test.c', '-o', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/build/hid-apps/render-0']' returned non-zero exit status 1.

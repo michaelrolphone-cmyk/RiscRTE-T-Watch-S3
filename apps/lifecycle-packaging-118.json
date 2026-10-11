@@ -1,0 +1,21 @@
+{
+  "binding_source": "b6abe35ed3049174e53c89c8adb85edd3860da34",
+  "bootfs": {
+    "sha256": "56d8958896130e8712617c824e331085c65de315c95b900cab6b369973b44167",
+    "size_bytes": 5308416
+  },
+  "build_receipt": {
+    "sha256": "161d486e07444d3d38a96134b6427ba64f2e1edd13fad9b0a8779e8f5aa18841",
+    "size_bytes": 456386
+  },
+  "build_source": "65d6307f7c89193402f9bdf60dbbd15d436e1457",
+  "catalog_deployed": false,
+  "licenses": {
+    "sha256": "3502f13485ab20dc8f986e614cf29ef0a08a8a94102b08d26d448f54a0baddfa",
+    "size_bytes": 776066
+  },
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "runtime_version": "0.1.73",
+  "schema": 1,
+  "version": "1.0.18"
+}

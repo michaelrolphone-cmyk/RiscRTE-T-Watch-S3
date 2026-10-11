@@ -1,0 +1,48 @@
+name: Contexts Clock and cohort policy
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contexts-clock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ASAN_OPTIONS: detect_leaks=0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 851f389d72672f1ff33825940306b1a4e9931062
+          path: .dependencies/system
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install host fixture dependencies
+        run: python3 -m pip install -r scripts/requirements.txt
+      - name: Download the immutable accepted baseline
+        run: |
+          mkdir -p .dependencies/baseline
+          curl --fail --location --retry 3 'https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.12/accepted-store.zip' -o .dependencies/baseline/accepted-store.zip
+          echo 'b8e6612d11b72ef8f8cac2fbd569d86e82b1f2f9ae0c1b3093911720b4bd1a11  .dependencies/baseline/accepted-store.zip' | sha256sum --check
+      - name: Test production Clock handoff, cleanup and context face
+        run: |
+          python3 scripts/test_contexts_clock.py --system-apps .dependencies/system
+          python3 scripts/test_context_face.py
+          python3 scripts/test_contexts_packaging.py --baseline .dependencies/baseline/accepted-store.zip
+          python3 scripts/test_contexts_initial.py
+          python3 scripts/test_contexts_model_proof.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contexts-face-${{ github.sha }}
+          path: dist/context-face/*.png
+          if-no-files-found: error
+          retention-days: 14

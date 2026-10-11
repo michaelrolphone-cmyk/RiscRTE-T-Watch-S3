@@ -74,7 +74,8 @@ def cohort_admission_header(runtime, native_elf):
     exported = public_exports(ELFFile(io.BytesIO(native_elf)))
     text = (Path(runtime) / 'src/ports/esp32s3/NativeBankStore.cpp').read_text()
     function, provider_role, _ = admission_source(text)
-    return '''#include <cstring>
+    policy_header = '#include "runtime/drivers/NativeProviderPolicyValidationV1.h"\n' if 'nativeProviderImageValid' in function else ''
+    return policy_header + '''#include <cstring>
 #include <fstream>
 #include <iterator>
 #include <vector>

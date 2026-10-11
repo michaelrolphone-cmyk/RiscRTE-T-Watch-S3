@@ -1,0 +1,25 @@
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/test/hid_renderer_test.c:182:14: error: unknown type name 'alarm_service_outputs_v1'; did you mean 'alarm_service_sleep_v1'?
+  182 | static const alarm_service_outputs_v1 alarm_api={.service={1,sizeof(alarm_api),NULL,fake_alarm_status,fake_alarm_step,fake_alarm_step,fake_alarm_ack,fake_alarm_prepare,fake_alarm_step},
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~
+      |              alarm_service_sleep_v1
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/include/AlarmServiceV1.h:84:3: note: 'alarm_service_sleep_v1' declared here
+   84 | } alarm_service_sleep_v1;
+      |   ^
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/test/hid_renderer_test.c:182:51: error: field designator 'service' does not refer to any field in type 'const alarm_service_sleep_v1'
+  182 | static const alarm_service_outputs_v1 alarm_api={.service={1,sizeof(alarm_api),NULL,fake_alarm_status,fake_alarm_step,fake_alarm_step,fake_alarm_ack,fake_alarm_prepare,fake_alarm_step},
+      |                                                  ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/test/hid_renderer_test.c:186:2: error: field designator 'output_modes' does not refer to any field in type 'const alarm_service_sleep_v1'
+  186 | .output_modes=ALARM_MODE_BOTH
+      | ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3 errors generated.
+In file included from /Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/Apps/ble_touchpad.c:2:
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/Apps/ble_hid_app.inc:12:10: fatal error: 'PaperPresentation.h' file not found
+   12 | #include "PaperPresentation.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+Traceback (most recent call last):
+  File "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/scripts/test_hid_renderer_isolated.py", line 106, in <module>
+    subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O1','-g','-Wall','-Wextra','-Werror',*flags,*['-I'+str(i) for i in [system/'Apps',ROOT/'Apps',ROOT/'lib/Bluetooth/include',system/'lib/PortableApps/include',system/'lib/NativeApps/include']],*extra,*map(str,sources),*(['-lstdc++'] if a.runtime else []),'-o',str(exe)],check=True)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['cc', '-std=c11', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-DPORTABLE_NOVA_UI', '-DPORTABLE_APP_OWNS_TOUCH_CHROME', '-DPORTABLE_RADIO_SESSION', '-DPORTABLE_ALARM_CLIENT', '-DPORTABLE_FORCE_FULL_FRAMES', '-DPORTABLE_APP_SLEEP_LOCAL', '-DPORTABLE_INPUT_NAVIGATION', '-DPORTABLE_INPUT_NAVIGATION_LOCAL', '-DPORTABLE_QUICK_ACTIONS', '-DPORTABLE_QUICK_RADIOS', '-DPORTABLE_RETURN_APP="springboard.elf"', '-DPORTABLE_PAPER_HID', '-DPORTABLE_HOME_APP="default.elf"', '-DPORTABLE_LOW_BATTERY', '-DHID_RENDER_WATCH_TOUCH', '-DHID_RENDER_RUNTIME_DIAGNOSTICS', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/Apps', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/Apps', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/lib/Bluetooth/include', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/include', '-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/NativeApps/include', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/test/hid_renderer_test.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/Apps/ble_touchpad.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src/adapter.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/catalog.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src/quick_actions.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src/quick_render.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src/quick_session.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system/lib/PortableApps/src/quick_radios.c', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/watch-touch-0.o', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/watch-touch-1.o', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/diagnostics-0.o', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/diagnostics-1.o', '-lstdc++', '-o', '/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/renderer/0/ble_touchpad/renderer']' returned non-zero exit status 1.

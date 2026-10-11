@@ -1,0 +1,830 @@
+{
+  "schema": 1,
+  "baseline_version": "1.1.0",
+  "baseline_receipt_sha256": "89756dafbe731ac8cf045cc808bd5d018ad131c6b4c40b1c107209e12f83817e",
+  "baseline_bin_sha256": "c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a",
+  "baseline_bin_bytes": 16777216,
+  "independently_decoded_store_files": 105,
+  "baseline_files": {
+    "points_in_time.json": "8743f91794d068f3d91c6d84548e579ea90540b0e5cc67fc91066153c1239ee5",
+    "wifi_settings.elf": "98af430f575ea8242b0a8f6bdc13942871108ccaa213c6212c833d1004d179ba",
+    "timecard.json": "050c0627aefd909296276fcdf1a6e42f9354c9cde58cf56666cb679f1e68799f",
+    "ble_touchpad.elf": "56681b5674dc777076766ee0c61c1a7b2a5197a30c147e4aff86fd07d1185ba5",
+    "audio_spectrum.elf": "da3151a8518879b71bb0682aa19b04c5666fa654a637cd8471dffec5cd6529bc",
+    "ble_scanner.elf": "c10ad00d4867270d10c5543d9c4ad094bc8c8e8630a8f36e15ade559856fe5c5",
+    "clock.json": "cd01cc5bfc38ae45ba004789c4ebf86f5b0a706b87c27983553a6b6ee3f0d89c",
+    "boot.json": "9b992fd603902e14085eee1f82f10c930d990961ea018b15406095e041083c5b",
+    "waterfall.elf": "2db976471fcf0b0595f77a74bf9e6d4d093a99480b7654f25545de204e0e8c3d",
+    "calculator.elf": "dff055f2e64e3e3e3039201ff589fbce4d99de9b0a06408a6b891f94f5cc5772",
+    "ble_buttons.elf": "e656294f25592b1c661362d223f399939a15360b7c0d505e6f3e50b3d071a910",
+    "ota_update.json": "812c1aa1a75553a904f5a7efec35ea2b06cffbcb54a5f9710db053d3a9ded4f5",
+    "lists.elf": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+    "settings.json": "50bd41797e226bc45912bf88ea6a1291755b61030528db3a091fe3bbfa5e1938",
+    "springboard.json": "871bf0ad196586c138fda1d1e799edf68f7531a6fbff181a73e946ee3464582f",
+    "clock.elf": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+    "contexts.elf": "4d575160dca09bcefb55c3844150df08ba05ad29042749eafe90da6a7fb2a42e",
+    "calculator.json": "51807947428d1956404f6a7abb47c5b88fe672260657780bba9cae7f34cddcb3",
+    "ble_touchpad.json": "afbba5d4ec73f03a68ccb7278b1f26f866ce39497273ece8c66798dc26004762",
+    "cohort.json": "a15c09685e4dd8ea8112458016f39cea908607c761fd22ef1d46a9d0f1556d20",
+    "app_store.json": "27dfa6c6f7eda35962bb572b09e6f66fe38e679cb4c9ab4d22d38413c709cbb4",
+    "board.json": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+    "frequency_generator.elf": "db6f79780303402fe750a057042d9b04aa9556c68642018b52a7e63326140f6b",
+    "default.elf": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2",
+    "countdown.json": "5348bdd2ecf4efc11de4eadda4b336d642358e6f4b4b7e907e7c53d318f92192",
+    "app_store.elf": "c77270c1ca9e97205bcef7fe7f372f6121c82170c745437db340d11ad73efef9",
+    "ble_buttons.json": "0fb06d9784b25d47b2fb9a67755b8327987425d8db82b33b1521346a5a62723d",
+    "file_browser.elf": "fbc5424084526871559bc738f1b5df4e2ab980e5bdd1fd5b67ef08fde19c362d",
+    "alarms.elf": "de78c79b1df6a6ea0db532906c66f6351fd78636cf2f76ade89a471adfee418c",
+    "springboard.elf": "8c97414a58e35901349a31a59a09e1e12dccbcbae1c6a362642fba2604045cc9",
+    "ota_update.elf": "d0ede8a9671c25d32c3747ab6be3981a6581e54e4945bceb0b422931641039ae",
+    "lists.json": "2a7b4b0401320e8b6fa98631bf96005c8efbeaea47e99223b8c91d0096bb6bf9",
+    "contexts.json": "c0ae7a751dcf850ef0b78595a9f0d83287665394289d6dd31b6df867fa2dba24",
+    "battery.elf": "e4088bb0a9232c63643c4d903df78daf541b9c021d06dac1284bf770375a213e",
+    "frequency_generator.json": "d269a72122e6df64a717d131e037f4a82f03bbcb62ee18ab083a544f2b64cab7",
+    "settings.elf": "f4be4acfb2ac2e267b189a7c151ee64c4036eb0adbff6d9e387ccc88cdac2eaf",
+    "stopwatch.elf": "0d0bcf3273ce9ddc521e179629f62139ffc7626fad0bb6c509b2457401b70768",
+    "ble_scanner.json": "6224d5042ef92be0baf0575eea44c6cc5cc5bfa60971756eef4a9d4df2321d13",
+    "waterfall.json": "9b4442b89001f404839a48fe3c179bc64cf33c2fa6d38148462dc6a3bca8e954",
+    "lora_messages.json": "f4d4eb72c26bc0db78af904dd906e7b284e93b514a5284466cb73f7c3a4c9ea8",
+    "stopwatch.json": "243ae2fdc320ecbfeb3ffdbc659da3e008939b036eddef544d6286a0c13c55ef",
+    "points_in_time.elf": "c8eb8fa7ea81ea0a9b44bce6c1a88e53b5230325d9a6c3e35b497ba29baf86ad",
+    "alarms.json": "5f6b480fc65088c9cf8d4b9f7117d63a0cf1bc15915e7f6629fb5a946346dcca",
+    "battery.json": "26c0c7c395c16999ad2865c78ddd7a51b1ba8ebf8582eed00c3b8eb411070e89",
+    "countdown.elf": "68e8dd5196dc047ee36beee11b54bc7ccb20e0065514d2fcc435d87b2ba8f5d4",
+    "default.json": "0fa1bf863a8ae202f57d6cb2322e2153eedda940fa6c2b0995b10342b7cd1895",
+    "audio_spectrum.json": "607fcb836f247529203b9ec5cd1cc944e17c91785c852b7fbd195974a9c2c163",
+    "wifi_settings.json": "997ed7be8bfd019a86418ef9a034a57a66a758ba59159828d05328fa04ff9a5f",
+    "lora_messages.elf": "409f636bf62049cba5b12cef267422773599fb478e46bbd8cf939fe8555f82f4",
+    "timecard.elf": "9a2a215b60446565c05d7ef9fab8d8a7804985148626b86da38cf4dc87e90e10",
+    "model_viewer.json": "8a6addf7d89da6d3135497c8ec22b16280e093c68915a8546a36902346d2cffc",
+    "file_browser.json": "5938d11e6b572918a5d8c86b8ffa164e5ffa2d2d4a6c01f85dc942ff26d50664",
+    "model_viewer.elf": "24b73fff728355ab88e5b34f9eae1caeb9442bbbc36240bd6bc8c29f0708fed0",
+    "update-fw/manifest.json": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7",
+    "update-fw/driver.elf": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3",
+    "wifi/manifest.json": "1d127070ae492e36d910e4c4807ab5478eca7f7f2e09c1bad1ae5e103354431c",
+    "wifi/driver.elf": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592",
+    "ble-telemetry/manifest.json": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973",
+    "ble-telemetry/driver.elf": "677ac910f378af62dc3e0163c9dfdc3bc497e6d9ec990c13d8b3be52d96025de",
+    "contexts/manifest.json": "a7b2efbf73be1da173e688882fdf964d089f143057c51a4e8bf3e0102045a090",
+    "contexts/driver.elf": "a01fe77c71ff4516e7933e1197df764459d159f69ed27fc76c9367dbed97eee7",
+    "ble/manifest.json": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c",
+    "ble/driver.elf": "128354d7d632340d9ca0ae405f03e2d255e378a5ce7d511064475e322a63c4a1",
+    "panel/manifest.json": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75",
+    "panel/driver.elf": "8fbe4ba4ff33919029c20402fbd05f27fd32af10ec71572c2c04f54445a06d82",
+    "touch/manifest.json": "e516d1bf0cb428190d66cafe32ad3f04f0e660d88d1a076d6326cddd80cbc548",
+    "touch/driver.elf": "892b89e1edc41903237b12ae815e463cabc5a73123a3b85131340d439fa1da45",
+    "speaker/manifest.json": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0",
+    "speaker/driver.elf": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e",
+    "ui-scene/manifest.json": "95e9f0bb92511d11fff4fd6f9a0684ad06d63e53c5ae59c6e35afe3582917d21",
+    "ui-scene/driver.elf": "ea156bb5e074d14ab3a4cdbc47c8670f67ff6f219bf790ca3b5fac392f2cf572",
+    "alarm-service/manifest.json": "3110194fc33a0786aa8a97e1ed5e727f0d5d6a3ef57cba3f8bb80bc61b62c746",
+    "alarm-service/driver.elf": "1ebe6061cab0e3a030a9dd1cdd519e9771f9b482adfc84f48c8327165d6f9f23",
+    "i2c/manifest.json": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+    "i2c/driver.elf": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+    "pmu/manifest.json": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e",
+    "pmu/driver.elf": "a68118f88842150ce0ebe250dfadd92be300a57d5acd1395e4ee2ef677ff8ab5",
+    "mic/manifest.json": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875",
+    "mic/driver.elf": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077",
+    "ble-sensors/manifest.json": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5",
+    "ble-sensors/driver.elf": "ecbf3532d20263a9eba89a1d235a766b94185d09990a7016edf0a308d968a047",
+    "battery-telem/manifest.json": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335",
+    "battery-telem/driver.elf": "2d588612bd7c0e4764d7b995ffd5cde3b9d76d2a1af74c0cce0ae77855dd1cd7",
+    "ui-profile/manifest.json": "6f3f1205b23e745ed7011bf0b9e99f5eccc1a247512639bc21c8c5a0fd642884",
+    "ui-profile/driver.elf": "4556ce0cb7a660712b3a032e77e0589a1e20edf78a9f90417894e1fd8bb77a5b",
+    "imu/manifest.json": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd",
+    "imu/driver.elf": "e5d1ffaff961c1e04bb04856aa59921f1bea8753599c32c987114f2fc715c556",
+    "civil-clock/manifest.json": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4",
+    "civil-clock/driver.elf": "ba8e0b60c7694defb4674fdae532a9d0bf1ace7b7b251bbce2bb420c89463256",
+    "s3-radio-iq/manifest.json": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77",
+    "s3-radio-iq/driver.elf": "448f63fa06f2320b85ea56fcf10b49008a90eacc782729e9a5f28d1f6bf2df50",
+    "rtc/manifest.json": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+    "rtc/driver.elf": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+    "update-apps/manifest.json": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5",
+    "update-apps/driver.elf": "b1e3d4c2b1e7b9720388a3ee8d18ab183319ccad30d66e695a2c2ccaab166641",
+    "haptic/manifest.json": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1",
+    "haptic/driver.elf": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30",
+    "lora/manifest.json": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c",
+    "lora/driver.elf": "640f206f64afeab69eeaeec2d20594b5286b29489be98c6f6dc8450ef8196f6a",
+    "gpio/manifest.json": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8",
+    "gpio/driver.elf": "cd83cf4235ef697e91b94c3b10ece447282d8895f35c806cf1f590b8a0d39efb",
+    "ble-hid/manifest.json": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49",
+    "ble-hid/driver.elf": "5db0e3dd59a12cfd33f0934777d8ed32e6a24768ca6bb667212aa3649aeb59f7",
+    "broadcast/manifest.json": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154",
+    "broadcast/driver.elf": "fd4b59e912b931dabf9b91a617ce728116d8f43d38da42eff98b6d54b0cf322d"
+  },
+  "stage_files": {
+    "points_in_time.json": "8743f91794d068f3d91c6d84548e579ea90540b0e5cc67fc91066153c1239ee5",
+    "wifi_settings.elf": "98af430f575ea8242b0a8f6bdc13942871108ccaa213c6212c833d1004d179ba",
+    "timecard.json": "050c0627aefd909296276fcdf1a6e42f9354c9cde58cf56666cb679f1e68799f",
+    "ble_touchpad.elf": "56681b5674dc777076766ee0c61c1a7b2a5197a30c147e4aff86fd07d1185ba5",
+    "audio_spectrum.elf": "da3151a8518879b71bb0682aa19b04c5666fa654a637cd8471dffec5cd6529bc",
+    "ble_scanner.elf": "c10ad00d4867270d10c5543d9c4ad094bc8c8e8630a8f36e15ade559856fe5c5",
+    "clock.json": "cd01cc5bfc38ae45ba004789c4ebf86f5b0a706b87c27983553a6b6ee3f0d89c",
+    "boot.json": "9b992fd603902e14085eee1f82f10c930d990961ea018b15406095e041083c5b",
+    "waterfall.elf": "2db976471fcf0b0595f77a74bf9e6d4d093a99480b7654f25545de204e0e8c3d",
+    "calculator.elf": "dff055f2e64e3e3e3039201ff589fbce4d99de9b0a06408a6b891f94f5cc5772",
+    "ble_buttons.elf": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002",
+    "ota_update.json": "812c1aa1a75553a904f5a7efec35ea2b06cffbcb54a5f9710db053d3a9ded4f5",
+    "lists.elf": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+    "settings.json": "50bd41797e226bc45912bf88ea6a1291755b61030528db3a091fe3bbfa5e1938",
+    "springboard.json": "871bf0ad196586c138fda1d1e799edf68f7531a6fbff181a73e946ee3464582f",
+    "clock.elf": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+    "contexts.elf": "4d575160dca09bcefb55c3844150df08ba05ad29042749eafe90da6a7fb2a42e",
+    "calculator.json": "51807947428d1956404f6a7abb47c5b88fe672260657780bba9cae7f34cddcb3",
+    "ble_touchpad.json": "afbba5d4ec73f03a68ccb7278b1f26f866ce39497273ece8c66798dc26004762",
+    "cohort.json": "a15c09685e4dd8ea8112458016f39cea908607c761fd22ef1d46a9d0f1556d20",
+    "app_store.json": "27dfa6c6f7eda35962bb572b09e6f66fe38e679cb4c9ab4d22d38413c709cbb4",
+    "board.json": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157",
+    "frequency_generator.elf": "db6f79780303402fe750a057042d9b04aa9556c68642018b52a7e63326140f6b",
+    "default.elf": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2",
+    "countdown.json": "5348bdd2ecf4efc11de4eadda4b336d642358e6f4b4b7e907e7c53d318f92192",
+    "app_store.elf": "c77270c1ca9e97205bcef7fe7f372f6121c82170c745437db340d11ad73efef9",
+    "ble_buttons.json": "fb818dbd76a67dde3a4a2bb14706a1a729a5c75a06d9b9a0fab1a3ba60ab010e",
+    "file_browser.elf": "fbc5424084526871559bc738f1b5df4e2ab980e5bdd1fd5b67ef08fde19c362d",
+    "alarms.elf": "de78c79b1df6a6ea0db532906c66f6351fd78636cf2f76ade89a471adfee418c",
+    "springboard.elf": "8c97414a58e35901349a31a59a09e1e12dccbcbae1c6a362642fba2604045cc9",
+    "ota_update.elf": "d0ede8a9671c25d32c3747ab6be3981a6581e54e4945bceb0b422931641039ae",
+    "lists.json": "2a7b4b0401320e8b6fa98631bf96005c8efbeaea47e99223b8c91d0096bb6bf9",
+    "contexts.json": "c0ae7a751dcf850ef0b78595a9f0d83287665394289d6dd31b6df867fa2dba24",
+    "battery.elf": "e4088bb0a9232c63643c4d903df78daf541b9c021d06dac1284bf770375a213e",
+    "frequency_generator.json": "d269a72122e6df64a717d131e037f4a82f03bbcb62ee18ab083a544f2b64cab7",
+    "settings.elf": "f4be4acfb2ac2e267b189a7c151ee64c4036eb0adbff6d9e387ccc88cdac2eaf",
+    "stopwatch.elf": "0d0bcf3273ce9ddc521e179629f62139ffc7626fad0bb6c509b2457401b70768",
+    "ble_scanner.json": "6224d5042ef92be0baf0575eea44c6cc5cc5bfa60971756eef4a9d4df2321d13",
+    "waterfall.json": "9b4442b89001f404839a48fe3c179bc64cf33c2fa6d38148462dc6a3bca8e954",
+    "lora_messages.json": "f4d4eb72c26bc0db78af904dd906e7b284e93b514a5284466cb73f7c3a4c9ea8",
+    "stopwatch.json": "243ae2fdc320ecbfeb3ffdbc659da3e008939b036eddef544d6286a0c13c55ef",
+    "points_in_time.elf": "c8eb8fa7ea81ea0a9b44bce6c1a88e53b5230325d9a6c3e35b497ba29baf86ad",
+    "alarms.json": "5f6b480fc65088c9cf8d4b9f7117d63a0cf1bc15915e7f6629fb5a946346dcca",
+    "battery.json": "26c0c7c395c16999ad2865c78ddd7a51b1ba8ebf8582eed00c3b8eb411070e89",
+    "countdown.elf": "68e8dd5196dc047ee36beee11b54bc7ccb20e0065514d2fcc435d87b2ba8f5d4",
+    "default.json": "0fa1bf863a8ae202f57d6cb2322e2153eedda940fa6c2b0995b10342b7cd1895",
+    "audio_spectrum.json": "607fcb836f247529203b9ec5cd1cc944e17c91785c852b7fbd195974a9c2c163",
+    "wifi_settings.json": "997ed7be8bfd019a86418ef9a034a57a66a758ba59159828d05328fa04ff9a5f",
+    "lora_messages.elf": "409f636bf62049cba5b12cef267422773599fb478e46bbd8cf939fe8555f82f4",
+    "timecard.elf": "9a2a215b60446565c05d7ef9fab8d8a7804985148626b86da38cf4dc87e90e10",
+    "model_viewer.json": "8a6addf7d89da6d3135497c8ec22b16280e093c68915a8546a36902346d2cffc",
+    "file_browser.json": "5938d11e6b572918a5d8c86b8ffa164e5ffa2d2d4a6c01f85dc942ff26d50664",
+    "model_viewer.elf": "24b73fff728355ab88e5b34f9eae1caeb9442bbbc36240bd6bc8c29f0708fed0",
+    "update-fw/manifest.json": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7",
+    "update-fw/driver.elf": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3",
+    "wifi/manifest.json": "1d127070ae492e36d910e4c4807ab5478eca7f7f2e09c1bad1ae5e103354431c",
+    "wifi/driver.elf": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592",
+    "ble-telemetry/manifest.json": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973",
+    "ble-telemetry/driver.elf": "677ac910f378af62dc3e0163c9dfdc3bc497e6d9ec990c13d8b3be52d96025de",
+    "contexts/manifest.json": "a7b2efbf73be1da173e688882fdf964d089f143057c51a4e8bf3e0102045a090",
+    "contexts/driver.elf": "a01fe77c71ff4516e7933e1197df764459d159f69ed27fc76c9367dbed97eee7",
+    "ble/manifest.json": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c",
+    "ble/driver.elf": "128354d7d632340d9ca0ae405f03e2d255e378a5ce7d511064475e322a63c4a1",
+    "panel/manifest.json": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75",
+    "panel/driver.elf": "8fbe4ba4ff33919029c20402fbd05f27fd32af10ec71572c2c04f54445a06d82",
+    "touch/manifest.json": "80c6926125db8f40793e1b40bc015ec724f7f189260ce17eab8938591a6db5de",
+    "touch/driver.elf": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368",
+    "speaker/manifest.json": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0",
+    "speaker/driver.elf": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e",
+    "ui-scene/manifest.json": "95e9f0bb92511d11fff4fd6f9a0684ad06d63e53c5ae59c6e35afe3582917d21",
+    "ui-scene/driver.elf": "ea156bb5e074d14ab3a4cdbc47c8670f67ff6f219bf790ca3b5fac392f2cf572",
+    "alarm-service/manifest.json": "3110194fc33a0786aa8a97e1ed5e727f0d5d6a3ef57cba3f8bb80bc61b62c746",
+    "alarm-service/driver.elf": "1ebe6061cab0e3a030a9dd1cdd519e9771f9b482adfc84f48c8327165d6f9f23",
+    "i2c/manifest.json": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+    "i2c/driver.elf": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+    "pmu/manifest.json": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e",
+    "pmu/driver.elf": "a68118f88842150ce0ebe250dfadd92be300a57d5acd1395e4ee2ef677ff8ab5",
+    "mic/manifest.json": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875",
+    "mic/driver.elf": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077",
+    "ble-sensors/manifest.json": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5",
+    "ble-sensors/driver.elf": "ecbf3532d20263a9eba89a1d235a766b94185d09990a7016edf0a308d968a047",
+    "battery-telem/manifest.json": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335",
+    "battery-telem/driver.elf": "2d588612bd7c0e4764d7b995ffd5cde3b9d76d2a1af74c0cce0ae77855dd1cd7",
+    "ui-profile/manifest.json": "6f3f1205b23e745ed7011bf0b9e99f5eccc1a247512639bc21c8c5a0fd642884",
+    "ui-profile/driver.elf": "4556ce0cb7a660712b3a032e77e0589a1e20edf78a9f90417894e1fd8bb77a5b",
+    "imu/manifest.json": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd",
+    "imu/driver.elf": "e5d1ffaff961c1e04bb04856aa59921f1bea8753599c32c987114f2fc715c556",
+    "civil-clock/manifest.json": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4",
+    "civil-clock/driver.elf": "ba8e0b60c7694defb4674fdae532a9d0bf1ace7b7b251bbce2bb420c89463256",
+    "s3-radio-iq/manifest.json": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77",
+    "s3-radio-iq/driver.elf": "448f63fa06f2320b85ea56fcf10b49008a90eacc782729e9a5f28d1f6bf2df50",
+    "rtc/manifest.json": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+    "rtc/driver.elf": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+    "update-apps/manifest.json": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5",
+    "update-apps/driver.elf": "b1e3d4c2b1e7b9720388a3ee8d18ab183319ccad30d66e695a2c2ccaab166641",
+    "haptic/manifest.json": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1",
+    "haptic/driver.elf": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30",
+    "lora/manifest.json": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c",
+    "lora/driver.elf": "640f206f64afeab69eeaeec2d20594b5286b29489be98c6f6dc8450ef8196f6a",
+    "gpio/manifest.json": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8",
+    "gpio/driver.elf": "cd83cf4235ef697e91b94c3b10ece447282d8895f35c806cf1f590b8a0d39efb",
+    "ble-hid/manifest.json": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49",
+    "ble-hid/driver.elf": "5db0e3dd59a12cfd33f0934777d8ed32e6a24768ca6bb667212aa3649aeb59f7",
+    "broadcast/manifest.json": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154",
+    "broadcast/driver.elf": "fd4b59e912b931dabf9b91a617ce728116d8f43d38da42eff98b6d54b0cf322d"
+  },
+  "changed_paths": [
+    "ble_buttons.elf",
+    "ble_buttons.json",
+    "touch/driver.elf",
+    "touch/manifest.json"
+  ],
+  "app_count": 25,
+  "provider_count": 27,
+  "elf_count": 51,
+  "buttons_build": {
+    "size_bytes": 113900,
+    "sha256": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002",
+    "defines": [
+      "-DPORTABLE_LOW_BATTERY",
+      "-DPORTABLE_BLE_BROADCAST",
+      "-DPORTABLE_TOUCH_ROTATION=0",
+      "-DPORTABLE_RTC_UTC8_DENVER",
+      "-DPORTABLE_FORCE_FULL_FRAMES",
+      "-DPORTABLE_INPUT_NAVIGATION",
+      "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+      "-DPORTABLE_APP_SLEEP_LOCAL",
+      "-DPORTABLE_ALARM_CLIENT",
+      "-DPORTABLE_QUICK_ACTIONS",
+      "-DPORTABLE_QUICK_RADIOS",
+      "-DPORTABLE_MOTION_WAKE",
+      "-DWATCH_ALARM_SLEEP_RESUME",
+      "-DPORTABLE_NOVA_UI",
+      "-DPORTABLE_BLE_FOREGROUND",
+      "-DPORTABLE_RADIO_SESSION",
+      "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+      "-DPORTABLE_RETURN_APP=\"springboard.elf\"",
+      "-DPORTABLE_CONTEXTS_CLIENT",
+      "-include",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/apps/clock/faces/ContextsFaces.h"
+    ],
+    "imports": [
+      "free",
+      "malloc",
+      "memcmp",
+      "memcpy",
+      "memset",
+      "risc_runtime_get_api",
+      "snprintf",
+      "strcmp"
+    ],
+    "exports": [
+      "app_main",
+      "app_module_fini",
+      "app_module_init"
+    ],
+    "section_gc": {
+      "compile_flags": [
+        "-ffunction-sections",
+        "-fdata-sections"
+      ],
+      "link_flags": [
+        "-Wl,--gc-sections"
+      ],
+      "export_roots": [
+        "app_main",
+        "app_module_fini",
+        "app_module_init"
+      ]
+    },
+    "compaction": {
+      "profile": "loader-metadata-v3",
+      "before_bytes": 170172,
+      "after_bytes": 113900,
+      "before_sha256": "967b12d8422ccb244510de4486f3129013a97ef8ed4d97e5945fd3251cabeeb3",
+      "after_sha256": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002",
+      "removed_sections": [
+        ".xt.lit",
+        ".xt.prop"
+      ],
+      "retained_loader_sections_symbols_relocations_unchanged": true,
+      "original_elf_retained": true,
+      "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+      "options": [
+        "--remove-section=.xt.lit",
+        "--remove-section=.xt.prop",
+        "--discard-all"
+      ]
+    },
+    "sections_bytes": {
+      "text": 103565,
+      "data": 8324,
+      "bss": 82504
+    },
+    "target_dependencies": {
+      "utilities:Apps/ble_buttons.c": {
+        "size_bytes": 50,
+        "sha256": "8ec2eb9c3c45f88472de8eb81ed559dd82a1d4500e952d271fc5b67a148bc009"
+      },
+      "watch:apps/clock/faces/ContextsFaces.h": {
+        "size_bytes": 232,
+        "sha256": "e75de6b17b85e1d7fa2ebc4b89514ac7345f671027c3b15dfdbd98f9b06b5ea2"
+      },
+      "watch:apps/clock/faces/names.h": {
+        "size_bytes": 641,
+        "sha256": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16"
+      },
+      "utilities:Apps/ble_hid_app.inc": {
+        "size_bytes": 31315,
+        "sha256": "5cb9cfcc7350d4c2723e0d7f4e3110026a0044ab3203dc925e606cd8353bfaa7"
+      },
+      "system-apps:lib/NativeApps/include/T5AppApi.h": {
+        "size_bytes": 10544,
+        "sha256": "eb0acebe0b1a151916b9f05afd98025e8e516c251337b8fe48fd3961bd58a981"
+      },
+      "utilities:Apps/utility_frame.h": {
+        "size_bytes": 849,
+        "sha256": "9eb5120642d00cb9bcf6cfa64f342b77028e5dfefed938678432de5c9a29e29b"
+      },
+      "system-apps:lib/PortableApps/include/RiscRuntimeV1.h": {
+        "size_bytes": 2494,
+        "sha256": "6fbfacaa46d532bfef083e8c7dd3bbe36613e557279fdda887d814d53915526b"
+      },
+      "utilities:lib/Bluetooth/include/RiscBluetoothHidV1.h": {
+        "size_bytes": 4231,
+        "sha256": "24cabbace06d6817eea9f67e1ade21b06a4cece2a265fc730f246fb6cb485cb9"
+      },
+      "system-apps:lib/PortableApps/include/RiscProviderV2.h": {
+        "size_bytes": 3302,
+        "sha256": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17"
+      },
+      "system-apps:lib/PortableApps/include/RiscStreamProviderV1.h": {
+        "size_bytes": 1411,
+        "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432"
+      },
+      "system-apps:lib/PortableApps/include/RiscTouchV1.h": {
+        "size_bytes": 2703,
+        "sha256": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d"
+      },
+      "system-apps:lib/PortableApps/include/PortableRadioSession.h": {
+        "size_bytes": 677,
+        "sha256": "b31446fd160037b6a136fefc1b656ab99f423521d186760da9ab0cf66e2d44e1"
+      },
+      "system-apps:lib/PortableApps/include/PortableRadioPolicy.h": {
+        "size_bytes": 1852,
+        "sha256": "d2a32cec2554bf1681e0c61cfc391515aed3886b67f117481c25bd592f9fed93"
+      },
+      "system-apps:lib/PortableApps/include/PortableQuickPreferences.h": {
+        "size_bytes": 2808,
+        "sha256": "775e4bb34c12e118810b9a271acbfc90a7018454a69e975a8bb4d677af16bae0"
+      },
+      "system-apps:lib/PortableApps/include/RiscKeyValueV1.h": {
+        "size_bytes": 2248,
+        "sha256": "5d5524ffd27b164f31505c5f538f528b39b35e356922e03e2eb59a9c68677b56"
+      },
+      "system-apps:lib/PortableApps/include/PortableNovaUi.h": {
+        "size_bytes": 1624,
+        "sha256": "7301c01a0bdeee5888b518bfb19aefeec65403caf52c589b41eb4e1dfc628291"
+      },
+      "system-apps:lib/PortableApps/include/PortableAppSleep.h": {
+        "size_bytes": 1702,
+        "sha256": "65a8b815980aa9c8be4f84c3062a2b54ce89a8a01b3db9148622bcd9bb463474"
+      },
+      "system-apps:lib/PortableApps/include/RiscDisplayOutputV1.h": {
+        "size_bytes": 4478,
+        "sha256": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726"
+      },
+      "system-apps:lib/PortableApps/include/RiscBatteryGaugeV1.h": {
+        "size_bytes": 535,
+        "sha256": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86"
+      },
+      "system-apps:lib/PortableApps/include/PortableBackgroundServices.h": {
+        "size_bytes": 575,
+        "sha256": "f1291afed98c321a81550e7648234d478652f81299cbad9c44814218a384e5b8"
+      },
+      "system-apps:lib/PortableApps/include/AlarmServiceV1.h": {
+        "size_bytes": 5105,
+        "sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5"
+      },
+      "utilities:Apps/ble_hid_model.h": {
+        "size_bytes": 4831,
+        "sha256": "f106d4cdd9f4301c4e20646f4015d646b9e00590b6b1b1978472ac230371fae6"
+      },
+      "utilities:Apps/ble_touchpad_gesture.h": {
+        "size_bytes": 5829,
+        "sha256": "9a69a37ee4b1c9db96d3ba43ad775eefb297d129652e4f43f6e07bc73542ee73"
+      },
+      "system-apps:lib/PortableApps/src/adapter.c": {
+        "size_bytes": 50841,
+        "sha256": "7f502dac28b6ba1000cf601fa18eb0a11e43ada5793ced52cf17a2c34fc38e42"
+      },
+      "system-apps:lib/PortableApps/include/PortableApps.h": {
+        "size_bytes": 727,
+        "sha256": "e882a2cd0da6315d74a8758e49df94a33e1c1a4a6c9dbae2acbc27bfb4a1f0c5"
+      },
+      "system-apps:lib/PortableApps/include/PortableTouch.h": {
+        "size_bytes": 4664,
+        "sha256": "c54a408ceda99210367e7798978c9b6614ebba4991015d37253bf37134862790"
+      },
+      "system-apps:lib/PortableApps/include/T5BatteryApi.h": {
+        "size_bytes": 2322,
+        "sha256": "f939c924102099de4ed746519791ce2b68eb2bac79bc212caeaad1366dc8c9a5"
+      },
+      "system-apps:lib/NativeApps/include/T5StorageApi.h": {
+        "size_bytes": 1717,
+        "sha256": "be0d63a89943a75a58723b703284992e8c6e95956c7cb39a9b3523af2c5d23ba"
+      },
+      "system-apps:lib/NativeApps/include/T5UiApi.h": {
+        "size_bytes": 3565,
+        "sha256": "88dbfde2a45ab385c69ee0b8192e8025446c9872711e4810f799251479b1057a"
+      },
+      "system-apps:lib/NativeApps/include/T5VideoApi.h": {
+        "size_bytes": 2901,
+        "sha256": "af3f2318e53e20efb4e8e9e98d93abae11f1788fe14640c7b02392c22d08c6a4"
+      },
+      "system-apps:lib/PortableApps/include/PortableContextsClient.h": {
+        "size_bytes": 12608,
+        "sha256": "9c4e3f0ab12027d922a1af1e9def1bdacb71e7c5205752af11e819d49faa133e"
+      },
+      "system-apps:lib/PortableApps/include/ContextsServiceV1.h": {
+        "size_bytes": 6542,
+        "sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d"
+      },
+      "system-apps:lib/PortableApps/include/PortableContextPreferences.h": {
+        "size_bytes": 7561,
+        "sha256": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826"
+      },
+      "system-apps:lib/PortableApps/include/PortableSleepPolicy.h": {
+        "size_bytes": 4511,
+        "sha256": "8d4b92e1f230bf13ad885dbc3f6a51f7a459d229703301d433124ccb428e557a"
+      },
+      "system-apps:lib/PortableApps/include/PortableAlarmSettings.h": {
+        "size_bytes": 2392,
+        "sha256": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284"
+      },
+      "system-apps:lib/PortableApps/include/PortableLowBattery.h": {
+        "size_bytes": 4103,
+        "sha256": "0d7ba85a84cda3330f2ec8221fce90888deb67052778f79ad9d6f398c50258e1"
+      },
+      "system-apps:lib/PortableApps/include/PortablePowerStatus.h": {
+        "size_bytes": 1039,
+        "sha256": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4"
+      },
+      "system-apps:lib/PortableApps/include/PortableContextFingerprints.h": {
+        "size_bytes": 3906,
+        "sha256": "76bfffa6336aa1caa10a0c479c6d67f6792847083a32da6b2910c3ec675d381c"
+      },
+      "system-apps:lib/PortableApps/include/ContextFingerprintService.h": {
+        "size_bytes": 2956,
+        "sha256": "778ece8ba2064df59cb0fa3452b878406475deaca9b25c208463dbbb1e386308"
+      },
+      "system-apps:lib/PortableApps/include/ContextsRules.h": {
+        "size_bytes": 8405,
+        "sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89"
+      },
+      "system-apps:lib/PortableApps/include/RiscAppDataV1.h": {
+        "size_bytes": 3785,
+        "sha256": "df4e31c71ad360c856aa24388548feee07097126e380c081bc35a82c5b71f248"
+      },
+      "system-apps:lib/PortableApps/include/PortableFingerprintClock.h": {
+        "size_bytes": 1143,
+        "sha256": "adee78a399282377feb15c7964d9816cca17bb1e6fda9cec23bfffea1366b1f9"
+      },
+      "system-apps:lib/PortableApps/include/PortableRtcClock.h": {
+        "size_bytes": 1813,
+        "sha256": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c"
+      },
+      "system-apps:lib/PortableApps/include/PortableContextRules.h": {
+        "size_bytes": 5667,
+        "sha256": "c5dc73ff50bdd59b2011a61a3a04a0f6949287cd8ec051bc4b898aeafef3f3cf"
+      },
+      "system-apps:lib/PortableApps/include/PortableBroadcastClient.h": {
+        "size_bytes": 4644,
+        "sha256": "caa6f6a246e3a7a2ac9983e4914ba4854712e0cd51300775bee131b2acfdef36"
+      },
+      "system-apps:lib/PortableApps/include/TelemetryBroadcastV1.h": {
+        "size_bytes": 2202,
+        "sha256": "986a52b5a3ddd361189d204e33624ce6275d953bca6a94a6e6dd5c136a89e2d5"
+      },
+      "system-apps:lib/PortableApps/include/RiscTelemetryV1.h": {
+        "size_bytes": 1107,
+        "sha256": "8ef64c586e8392c1d7521498c25cfdaccefd53242530e2dda9116e9cc12a5d48"
+      },
+      "system-apps:lib/PortableApps/include/PortableQuickSession.h": {
+        "size_bytes": 991,
+        "sha256": "7c13c14be6975babbb97acf516fa5d6651f0817e13ef062db452b748be30c2a3"
+      },
+      "system-apps:lib/PortableApps/include/PortableQuickActions.h": {
+        "size_bytes": 4014,
+        "sha256": "984cfad9015a2d3bb115c24b403a050e1036ceb67c3907e3464565be55d2deb9"
+      },
+      "system-apps:lib/PortableApps/include/PortableQuickRender.h": {
+        "size_bytes": 833,
+        "sha256": "94dbca40cd488438c4e6c76c8a3c29089e1ed6089f8ecfcdd691a38214d096da"
+      },
+      "system-apps:lib/PortableApps/include/PortableQuickRadios.h": {
+        "size_bytes": 488,
+        "sha256": "676fbb46d0eae28fef515672a20c380088f69b3389a14ae44b5a67b9f014c44b"
+      },
+      "system-apps:lib/PortableApps/include/PortableBluetoothControl.h": {
+        "size_bytes": 601,
+        "sha256": "777f0c7f92092d05a428c04255b6df1b3e9510a36c7425fc95092b3321e67a2c"
+      },
+      "system-apps:lib/PortableApps/include/WifiApi.h": {
+        "size_bytes": 1919,
+        "sha256": "aca1437adcbe8a99bd6a76332a4543657b6440d98f622972c9f599fa21c5322a"
+      },
+      "system-apps:lib/PortableApps/include/RiscRadioScanV1.h": {
+        "size_bytes": 1750,
+        "sha256": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b"
+      },
+      "system-apps:lib/PortableApps/include/PortableNavigation.h": {
+        "size_bytes": 773,
+        "sha256": "f3b9623d1e97d6a18df565aef0d9c934f18a1b97b701fbbc208de3bf0a344e6d"
+      },
+      "system-apps:lib/PortableApps/include/RiscInputNavigationV1.h": {
+        "size_bytes": 1713,
+        "sha256": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26"
+      },
+      "system-apps:lib/PortableApps/src/nova.inc": {
+        "size_bytes": 8010,
+        "sha256": "750048274665279aefb3e3df26d88701f3ce81c1431e2b214dcfbaf037acfa98"
+      },
+      "system-apps:Apps/SpringboardPresentation.h": {
+        "size_bytes": 953,
+        "sha256": "af80cd3f66de0ca0ca7077a926e196a14de2c79263d449f90e501090aa55031b"
+      },
+      "system-apps:lib/PortableApps/fonts/icons.inc": {
+        "size_bytes": 34763,
+        "sha256": "df8c293fd11b3f9f55a0627fad79863d26d7e98944f17fa8113d8f6068d5c920"
+      },
+      "system-apps:lib/PortableApps/fonts/text.inc": {
+        "size_bytes": 22659,
+        "sha256": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42"
+      },
+      "system-apps:lib/PortableApps/include/PortableTime.h": {
+        "size_bytes": 2920,
+        "sha256": "350b8c5255dafa9e25c4a20cfb458cdcda3439da929dab05e0de0c82e981ff6e"
+      },
+      "system-apps:lib/PortableApps/time/denver/display_time.h": {
+        "size_bytes": 2710,
+        "sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03"
+      },
+      "system-apps:lib/PortableApps/time/denver/twatch_calendar.h": {
+        "size_bytes": 553,
+        "sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733"
+      },
+      "system-apps:lib/PortableApps/time/denver/twatch_caps.h": {
+        "size_bytes": 217,
+        "sha256": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e"
+      },
+      "system-apps:lib/PortableApps/src/nova_ui.inc": {
+        "size_bytes": 6096,
+        "sha256": "9e572d3fe15e7d3655030c32539ef65334c1a04cf49c6ee1240efea8d6cee5e9"
+      },
+      "system-apps:lib/PortableApps/settings_fonts/text.inc": {
+        "size_bytes": 56340,
+        "sha256": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+      },
+      "system-apps:lib/PortableApps/src/quick_adapter.inc": {
+        "size_bytes": 8923,
+        "sha256": "902fa76e9bd5619fbf47e5daf8dc93e1d3e0b8ee66b7d9e7c4db21edc065b061"
+      },
+      "system-apps:lib/PortableApps/src/contexts_rules_adapter.inc": {
+        "size_bytes": 5253,
+        "sha256": "6fb2211559966b01399a45a023f9d343aa2060cbb102ec48b1b0aedb9b29f946"
+      },
+      "system-apps:lib/PortableApps/include/PortableContextActions.h": {
+        "size_bytes": 2692,
+        "sha256": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c"
+      },
+      "system-apps:lib/PortableApps/include/alarm_writer.h": {
+        "size_bytes": 1792,
+        "sha256": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0"
+      },
+      "system-apps:lib/PortableApps/include/AlarmRecords.h": {
+        "size_bytes": 4663,
+        "sha256": "7f998d150be1619697756fd5f98ec5e82880c544e6e9d2cee742a2012e4f016b"
+      },
+      "system-apps:lib/PortableApps/src/alarm.inc": {
+        "size_bytes": 13212,
+        "sha256": "1c7ae192e3bddd0c36d7e3c5197508215671ad4209175877f0ef27f1afdb355e"
+      },
+      "system-apps:lib/PortableApps/include/PortableAlarmClient.h": {
+        "size_bytes": 2499,
+        "sha256": "f039a90b50f1173baa4ad3e77baa81ea0af2451f491152a0c0994e2e6f87f932"
+      },
+      "generated:empty_catalog.c": {
+        "size_bytes": 134,
+        "sha256": "b777404301a5286ce19a95f4099bac47d93a46d3f86190b51b6c78665bbce23c"
+      },
+      "watch:apps/clock/portable_navigation.c": {
+        "size_bytes": 3524,
+        "sha256": "b0d1729346d4b808395766c1c7f1800866d02a54a9e3e39baa8dd425854da84e"
+      },
+      "watch:include/twatch_caps.h": {
+        "size_bytes": 6169,
+        "sha256": "88bf36643ca8ae431ef4757debd36c8b2e07212916835c6d7dbf37fca699eade"
+      },
+      "watch:sdk/driver/RiscLightSleepV1.h": {
+        "size_bytes": 1307,
+        "sha256": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94"
+      },
+      "watch:sdk/driver/RiscDeepSleepV1.h": {
+        "size_bytes": 1880,
+        "sha256": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161"
+      },
+      "watch:include/PortableMotionTap.h": {
+        "size_bytes": 2591,
+        "sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50"
+      },
+      "watch:apps/clock/portable_sleep.c": {
+        "size_bytes": 5049,
+        "sha256": "12ffccad27b7739014770a88fc0c8663676e32aec6597a7e614d6a50697406a8"
+      },
+      "watch:apps/clock/watch_sleep.h": {
+        "size_bytes": 7340,
+        "sha256": "ea1948c880ca2f340b2e63650ef7f52641bce6b1851c6d1992fffa7100e7db91"
+      },
+      "watch:include/twatch_power.h": {
+        "size_bytes": 1270,
+        "sha256": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d"
+      },
+      "watch:apps/clock/PortableSleepPolicy.h": {
+        "size_bytes": 4437,
+        "sha256": "15e94bdeabe34ac8a3e0b836a7cc59b00b9c4b3c22f3b2592919ce347ce3bbb1"
+      },
+      "watch:apps/clock/watch_alarm_sleep.h": {
+        "size_bytes": 8305,
+        "sha256": "df0e93850176f4c975456a72c2dc518a7215b35662bb4a9a7d9f864a58cec42a"
+      },
+      "watch:sdk/driver/RiscTimedSleepV1.h": {
+        "size_bytes": 1359,
+        "sha256": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34"
+      },
+      "watch:apps/clock/watch_motion_client.h": {
+        "size_bytes": 2646,
+        "sha256": "dac16968094a2fca04863038dabfc94b4b8c7a0f32f02016b5ae98b50aa776f5"
+      },
+      "system-apps:lib/PortableApps/include/PortableTapSettings.h": {
+        "size_bytes": 3198,
+        "sha256": "f6ff75e400224f2285f131d2088bd32985f9d18feefac64aa408f8b63c764132"
+      },
+      "system-apps:lib/PortableApps/include/PortableMotionTap.h": {
+        "size_bytes": 2591,
+        "sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50"
+      },
+      "system-apps:lib/PortableApps/src/quick_actions.c": {
+        "size_bytes": 11190,
+        "sha256": "fe06a7a5d55249bdf6353e1ba1d0f4fca00bccfc83db2ee485fd55ca49546a27"
+      },
+      "system-apps:lib/PortableApps/src/quick_render.c": {
+        "size_bytes": 9484,
+        "sha256": "15180cd5449b11baefdf93c1c70558a4509644792bfc4942cefb80ac261ec9c1"
+      },
+      "system-apps:lib/PortableApps/src/quick_actions_assets.inc": {
+        "size_bytes": 31324,
+        "sha256": "6e0eadad1387eee501f4524d3b21d86fac61e9051822c368070468b9c41d896c"
+      },
+      "system-apps:lib/PortableApps/src/quick_session.c": {
+        "size_bytes": 4907,
+        "sha256": "fb0d01f3fba45b8add8767972d019b54127b85e51e1d8d9b238fec45071b8104"
+      },
+      "system-apps:lib/PortableApps/include/PortableTimeFormat.h": {
+        "size_bytes": 2574,
+        "sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867"
+      },
+      "system-apps:lib/PortableApps/src/quick_radios.c": {
+        "size_bytes": 4622,
+        "sha256": "b0946e9cc136c005cbd73df64fb785f41f46a7187860443642f1e88476e38316"
+      }
+    },
+    "host_fixture_excluded": true,
+    "version": "0.1.22",
+    "source_pins": {
+      "utilities": {
+        "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+        "commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+        "tree": "c2f1092b7d07ae9eb639e0d40141b2d84658fbbe"
+      },
+      "watch-system": {
+        "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+        "commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+        "tree": "647b523b197de59f36b6db4101854635557c4843"
+      },
+      "runtime": {
+        "repository": "michaelrolphone-cmyk/RiscRTE",
+        "commit": "e96f2affc691b929e89b624a998f0687a2746fd6",
+        "tree": "3aa15af65246a6491110f01f4bb4bf9a51b4bd56"
+      },
+      "scene-system": {
+        "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+        "commit": "d0998415c742878b604462ce8277984c1889bc96",
+        "tree": "48e50e9ba93539d099d89a0052fcb9d886546a4f"
+      }
+    },
+    "watch_commit": "5f074de3fc41de1d55c2445ee04eafb58c58f774",
+    "hardware_tested": false,
+    "whole_cohort_qualified": false
+  },
+  "touch_build": {
+    "source_commit": "5f074de3fc41de1d55c2445ee04eafb58c58f774",
+    "source_dirty": false,
+    "driver_sha256": "abeaf6783c61f1adc3eab0448077d4453fc057233b0746bb3dfc169fcbdb517f",
+    "source_closure_sha256": {
+      "drivers/candidates/twatch_touch_022/driver.c": "abeaf6783c61f1adc3eab0448077d4453fc057233b0746bb3dfc169fcbdb517f",
+      "sdk/driver/RiscGpioBankV1.h": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c",
+      "sdk/driver/RiscProviderV2.h": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+      "sdk/driver/RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+      "sdk/driver/RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+      "sdk/driver/RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+      "sdk/driver/RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+      "sdk/driver/RiscWakeSetV1.h": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375",
+      "sdk/driver/RiscI2cBusV1.h": "a6b769efbbf7f3837a6a348689b0aee84bf687ae8e18a31d0296f3bfa6ac2004",
+      "sdk/driver/RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+      "sdk/driver/RiscTouchV1.h": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+      "include/twatch_support.h": "2be79a3e294f53dc22231eafd45e33aad5901f9c6670ea2a91d3f909fa53c91d",
+      "sdk/driver/TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd",
+      "sdk/driver/GardenPlatformV1.h": "771b2819b602afa3d1120f54717277756e35e161d279307c2d1080433a35ab71",
+      "sdk/driver/RiscRadioScanV1.h": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+      "sdk/driver/RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+      "include/twatch_util.h": "8303bef501c6638953c66318bb6df84e416aaa38b2718079609b2e167765cc04",
+      "include/twatch_hardware.h": "3393199de17e48910d136c3685eb41342221ae8ea732d212ab501898472d326c",
+      "sdk/driver/TWatchHardwareV1.h": "ca48ca21a944565ae185f7c4e8cc0e73bcc18871d79b966f7e7da916e7ab2c99"
+    },
+    "command": [
+      "/Users/micahelbyrns/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+      "-std=c11",
+      "-Os",
+      "-fPIC",
+      "-mtext-section-literals",
+      "-mlongcalls",
+      "-fvisibility=hidden",
+      "-ffreestanding",
+      "-fno-builtin",
+      "-nostdlib",
+      "-nostartfiles",
+      "-shared",
+      "-Wl,--no-relax",
+      "-Wl,--hash-style=sysv",
+      "-Wl,--version-script=/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/exports.map",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/sdk/driver",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/include",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/drivers/candidates/twatch_touch_022/driver.c",
+      "-lgcc",
+      "-o",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/touch-checkpoint/driver.elf"
+    ],
+    "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+    "bytes": 13240,
+    "sha256": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368",
+    "imports": [
+      "memcpy",
+      "memset"
+    ],
+    "exports": [
+      "t5_driver_get"
+    ],
+    "manifest": {
+      "type": "driver",
+      "id": "twatch-touch",
+      "version": "0.2.2",
+      "driver_abi": 2,
+      "architecture": "xtensa-esp32s3",
+      "file_name": "driver.elf",
+      "requires": [
+        {
+          "capability": "hardware.device",
+          "api": 1
+        },
+        {
+          "capability": "i2c.bus",
+          "api": 1
+        },
+        {
+          "capability": "gpio.bank",
+          "api": 1
+        },
+        {
+          "capability": "platform.clock",
+          "api": 1
+        },
+        {
+          "capability": "board.battery",
+          "api": 1
+        }
+      ],
+      "provides": [
+        {
+          "capability": "input.touch.raw",
+          "api": 1
+        }
+      ],
+      "status": "software-only-runtime-backfill-required",
+      "hardware_compatibility": [
+        {
+          "compatible": "focaltech,ft6336u",
+          "revisions": [
+            "unspecified"
+          ],
+          "config_type": "touch.i2c",
+          "config_version": 1
+        }
+      ],
+      "physical_verification": "pending"
+    },
+    "hardware_tested": false,
+    "default_selection_changed": false
+  },
+  "whole_cohort_qualified": false,
+  "hardware_tested": false
+}
