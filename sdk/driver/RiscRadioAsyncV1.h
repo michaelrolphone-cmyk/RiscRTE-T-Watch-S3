@@ -6,6 +6,12 @@
 #define RISC_RADIO_ASYNC_VERSION 1u
 #define RISC_RADIO_REQUEST_SCAN 1u
 #define RISC_RADIO_REQUEST_JOIN 2u
+/* Additive kind; unsupported implementations reject INVALID. Same copied ABI.
+ * AP requires WPA2 credentials; progress.station carries its local IPv4 tuple. */
+#define RISC_RADIO_REQUEST_AP 3u
+/* Suspend only a healthy copied JOIN; cancel restores it before QUIESCENT.
+ * No saved-profile writes. Nested overrides and outstanding services refuse. */
+#define RISC_RADIO_TEMPORARY 1u
 #define RISC_RADIO_ACCEPTED 0
 #define RISC_RADIO_PENDING 1
 #define RISC_RADIO_QUIESCENT 2
@@ -44,7 +50,10 @@ typedef struct {
 } risc_radio_progress_v1;
 /* Fixed size/tag native table. provision() occurs before admission is exposed,
  * never inside begin/poll/cancel. sharedReady is a copied readiness predicate
- * for PHY-sensitive lifecycle changes and entropy, not a storage-context gate. */
+ * for PHY-sensitive lifecycle changes and entropy, not a storage-context gate.
+ * Native owner adapters also report phase readiness while their reentrant
+ * tryShared lease is held. Callers must acquire that lease before relying on
+ * readiness for SDK lifecycle calls, and end it on every return path. */
 typedef struct {
     uint32_t struct_size, tag, version;
     int32_t (*begin)(const risc_radio_request_v1*,uint32_t*);

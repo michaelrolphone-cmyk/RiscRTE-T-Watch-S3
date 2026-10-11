@@ -7,7 +7,7 @@ static risc_hw_radio_v1 hardware;
 static const garden_radio_v1 *radio;
 static uint64_t claim;
 static bool running;
-static uint32_t operation, completed, service_lease;
+static uint32_t operation, completed, suspended_operation, service_lease;
 static const garden_radio_async_v1 *async_radio;
 static bool bounded(const char *s, size_t maximum) {
     if (!s)
@@ -20,9 +20,10 @@ static bool bounded(const char *s, size_t maximum) {
 static int32_t async_begin(void *c,const risc_radio_request_v1 *request,uint32_t *out) {
     (void)c;if(out)*out=0;
     if(!running || !async_radio || !(hardware.features&1))return RISC_RADIO_UNAVAILABLE;
-    if(operation)return RISC_RADIO_BUSY;
+    if(request && request->kind==RISC_RADIO_REQUEST_AP && !(hardware.features&2))return RISC_RADIO_UNAVAILABLE;
+    if(!request || ((request->flags&RISC_RADIO_TEMPORARY) && service_lease) || suspended_operation || (operation && !(request->flags&RISC_RADIO_TEMPORARY)))return RISC_RADIO_BUSY;
     int32_t result=async_radio->begin(radio->context,claim,request,out);
-    if(result==RISC_RADIO_ACCEPTED && out && *out){operation=*out;completed=0;}
+    if(result==RISC_RADIO_ACCEPTED && out && *out){suspended_operation=operation;operation=*out;completed=0;}
     return result;
 }
 static int32_t async_poll(void *c,uint32_t id,risc_radio_progress_v1 *out) {
@@ -30,7 +31,7 @@ static int32_t async_poll(void *c,uint32_t id,risc_radio_progress_v1 *out) {
     if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
     if(!id || (id!=operation && id!=completed))return RISC_RADIO_STALE;
     int32_t result=async_radio->poll(radio->context,claim,id,out);
-    if(result==RISC_RADIO_QUIESCENT){operation=0;completed=id;}
+    if(result==RISC_RADIO_QUIESCENT && id==operation){operation=suspended_operation;suspended_operation=0;completed=id;}
     return result;
 }
 static int32_t async_cancel(void *c,uint32_t id) {
@@ -38,7 +39,7 @@ static int32_t async_cancel(void *c,uint32_t id) {
     if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
     if(!id || (id!=operation && id!=completed))return RISC_RADIO_STALE;
     int32_t result=async_radio->cancel(radio->context,claim,id);
-    if(result==RISC_RADIO_QUIESCENT){operation=0;completed=id;}
+    if(result==RISC_RADIO_QUIESCENT && id==operation){operation=suspended_operation;suspended_operation=0;completed=id;}
     return result;
 }
 static int32_t service_begin(void *c,uint32_t *out) {
