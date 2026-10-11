@@ -67,7 +67,7 @@ source_pins = {name: clean(path) for name, path in repos.items()}
 assert clean(W) == PROFILE
 assert source_pins['watch-keyboard-utilities'] == KEYBOARD
 assert source_pins['system-apps'] == '14762601b3fa7bbeeac5ed565a6825534bf74dca'
-assert source_pins['shared-system-sdk'] == 'b40ca2a7e08aad0b5d9ab820b9e9b392c29d46dd'
+assert source_pins['shared-system-sdk'] == '1aaf53e23ca9651a5cf9d1debe44941c9d7d0e58'
 source_pins['watch-profile'] = PROFILE
 source_pins['product'] = clean(ROOT)
 assert sha(a.baseline_image) == BASE_IMAGE, 'Wrong delivered full image'
@@ -287,7 +287,7 @@ assert (store / 'boot.json').read_bytes() == (B / 'boot.json').read_bytes()
 for name in PRESERVED_APPS:
     assert (store / (name + '.elf')).read_bytes() == (B / (name + '.elf')).read_bytes()
 write(O / 'recovery-overlay.json', {
-    'schema': 1, 'product': 'twatch-s3', 'version': '1.1.9', 'baseline_version': '1.1.5',
+    'schema': 1, 'product': 'twatch-s3', 'version': '1.1.10', 'baseline_version': '1.1.5',
     'baseline_image_sha256': BASE_IMAGE, 'baseline_store_sha256': actual,
     'source_pins': source_pins, 'builder_sha256': sha(Path(__file__)),
     'complete_store_contract': contract, 'compiler': compiler, 'changed_store_files': changed,
