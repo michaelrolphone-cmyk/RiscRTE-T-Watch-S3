@@ -90,6 +90,21 @@ bool bind(RiscBoot::Runtime& runtime) {
 }
 RiscCpu::Hardware hardware() {
   RiscCpu::Hardware h{};
+#ifdef STORE_ADMISSION_CROWN_PROFILE
+  // Present only for the source/ELF-witnessed sharing composition. Admission
+  // may inspect these interfaces but must never perform native I/O.
+  static RiscBoot::EntropyBackend entropy{nullptr,
+    [](void*,uint64_t,void*,uint32_t)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t){return true;},[](void*){return true;}};
+  static RiscBoot::TcpListenerBackend tcp{nullptr,
+    [](void*,uint64_t,const risc_tcp_listen_v1*,uint64_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,uint64_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,void*,uint32_t,uint32_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,const void*,uint32_t,uint32_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t){return true;},[](void*){return true;}};
+  h.entropy=&entropy;h.tcpListener=&tcp;
+#endif
 #ifdef STORE_ADMISSION_USB_PHY
   h.usbPhyIdle=[](){++hardwareCalls;return false;};
   h.usbPhySuspend=[](){++hardwareCalls;return false;};
@@ -191,6 +206,10 @@ int main(int argc, char** argv) {
 #ifdef STORE_ADMISSION_COLD_BOOT
   // prepare/admission must never ask for a boot cause or activate providers.
   runtimePort.coldBoot=[](){++hardwareCalls;return false;};
+#endif
+#ifdef STORE_ADMISSION_CROWN_PROFILE
+  runtimePort.memoryHeap=[](risc_memory_heap_snapshot_v1*)->int32_t{++hardwareCalls;return -1;};
+  runtimePort.randomBytes=[](void*,uint32_t)->int32_t{++hardwareCalls;return -1;};
 #endif
   RiscBoot::Runtime runtime(runtimePort);
   const bool prepared = runtime.prepare(argv[1]);

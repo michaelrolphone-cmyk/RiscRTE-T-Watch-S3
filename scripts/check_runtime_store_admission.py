@@ -6,10 +6,12 @@ It does not run target instructions or qualify physical hardware. The separate
 production-store execution test covers actual app/provider source and lifecycle.
 """
 import argparse
+import configparser
 import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 import subprocess
 import tempfile
@@ -51,7 +53,82 @@ def preserve_store(store, baseline, *, current_pmu=False, root=ROOT):
         raise ValueError('Delivered store changed: ' + ', '.join(changed))
 
 
-def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy_rows=16, *, cohort_policy=False):
+def native_symbol_bytes(native_elf, symbol_name):
+    """Read an allocated native symbol, not an incidental debug/string match."""
+    from elftools.elf.elffile import ELFFile
+    elf = ELFFile(io.BytesIO(native_elf))
+    if elf.elfclass != 32 or not elf.little_endian:
+        raise ValueError('Unexpected native ELF word layout')
+    table = elf.get_section_by_name('.symtab')
+    matches = table.get_symbol_by_name(symbol_name) if table else None
+    if not matches or len(matches) != 1 or not isinstance(matches[0]['st_shndx'], int):
+        raise ValueError('Missing or ambiguous native row marker: ' + symbol_name)
+    symbol = matches[0]
+    section = elf.get_section(symbol['st_shndx'])
+    offset, size = symbol['st_value'] - section['sh_addr'], symbol['st_size']
+    if not section['sh_flags'] & 2 or section['sh_type'] == 'SHT_NOBITS' or offset < 0 or not 0 < size <= 64 or offset + size > section['sh_size']:
+        raise ValueError('Invalid native row marker: ' + symbol_name)
+    return section.data()[offset:offset + size]
+
+
+def native_composition(runtime, native_elf, native_profile, app_policy_rows):
+    """Bind the explicit crown profile to source identity and compiled row bounds.
+
+    Provider/app capacities have no retained native marker in this generation;
+    those two values are witnessed by the exact source-bound build profile.
+    """
+    if native_elf is None or app_policy_rows != 24:
+        raise ValueError('Crown composition requires a native ELF and 24 policy rows')
+    runtime, native_profile = Path(runtime).resolve(), Path(native_profile)
+    profile_bytes = native_profile.read_bytes()
+    profile = configparser.ConfigParser(interpolation=None)
+    profile.read_string(profile_bytes.decode())
+    section = 'env:crown-recovery-qualification'
+    parent = 'env:esp32s3-16mb-appdata-iq-sharing'
+    expected_flags = ['${' + parent + '.build_flags}', '-DRISC_NATIVE_RECOVERY_AXP2101=1',
+                      '-DRISC_RECOVERY_I2C_PORT=0', '-DRISC_RECOVERY_SDA=10',
+                      '-DRISC_RECOVERY_SCL=11']
+    lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
+    if (profile.defaults() or set(profile.sections()) != {'platformio', section} or
+            dict(profile['platformio']) != {'extra_configs': 'platformio.ini'} or
+            set(profile[section]) != {'extends', 'build_flags'} or
+            profile[section]['extends'] != parent or
+            lines(profile[section]['build_flags']) not in (expected_flags, expected_flags + ['-fstack-usage'])):
+        raise ValueError('Unsupported or modified native crown build profile')
+    head = subprocess.check_output(['git', '-C', str(runtime), 'rev-parse', 'HEAD'], text=True).strip()
+    if (not re.fullmatch('[0-9a-f]{40}', head) or
+            set(re.findall(rb'RTE_SOURCE=([^\x00\s]+)', native_elf)) != {head.encode()}):
+        raise ValueError('Native RTE_SOURCE does not match selected Runtime source')
+    if subprocess.check_output(['git', '-C', str(runtime), 'status', '--porcelain', '--untracked-files=no'], text=True).strip():
+        raise ValueError('Native composition requires unchanged Runtime source')
+    source_bytes = (runtime / 'platformio.ini').read_bytes()
+    if source_bytes != subprocess.check_output(['git', '-C', str(runtime), 'show', head + ':platformio.ini']):
+        raise ValueError('Runtime build profile differs from the source identity')
+    source = configparser.ConfigParser(interpolation=None)
+    source.read_string(source_bytes.decode())
+    bounds = {'RISC_INSTALLED_APP_CAPACITY': 64, 'RISC_PROVIDER_CAPACITY': 32,
+              'RISC_APP_POLICY_ROWS': 24, 'RISC_APP_REQUIREMENT_ROWS': 24}
+    inherited = 'env:esp32s3-16mb-appdata-iq-tcp-entropy'
+    expected = ['${' + inherited + '.build_flags}'] + ['-D' + key + '=' + str(value) for key, value in bounds.items()]
+    if (source.defaults() or parent not in source or
+            dict(source[parent]) != {'extends': inherited, 'build_flags': source[parent].get('build_flags', '')} or
+            lines(source[parent].get('build_flags', '')) != expected):
+        raise ValueError('Runtime sharing profile has unsupported composition bounds')
+    for name, value in [('risc_app_policy_rows', b'RISC_APP_POLICY_ROWS:24\0'),
+                        ('risc_app_requirement_rows', b'RISC_APP_REQUIREMENT_ROWS:24\0')]:
+        if native_symbol_bytes(native_elf, name) != value:
+            raise ValueError('Native row bounds differ from the source build profile')
+    for name in ('risc_tcp_listener_abi', 'risc_entropy_abi'):
+        if native_symbol_bytes(native_elf, name) != b'\x01\0\0\0':
+            raise ValueError('Native sharing backend selection differs from the source build profile')
+    return {'profile': section, 'runtime_commit': head, 'bounds': bounds,
+            'crown_profile_sha256': sha(profile_bytes), 'runtime_profile_sha256': sha(source_bytes),
+            'capacity_evidence': 'explicit source-bound build profile; no native capacity marker',
+            'row_evidence': 'allocated native policy and requirement marker symbols',
+            'sharing_evidence': 'allocated native TCP listener and entropy ABI-1 symbols'}
+
+
+def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy_rows=16, *, cohort_policy=False, native_profile=None):
     if cohort_policy and (not app_data or native_elf is not None):
         raise ValueError('Policy-only cohort admission requires app-data and no native ELF')
     runtime, output = Path(runtime).resolve(), Path(output)
@@ -72,6 +149,11 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy
         raise ValueError('Native and admission app policy row bounds differ')
     if (runtime / 'src/bootstrap/AppPolicyLimits.h').is_file():
         command += ['-DRISC_APP_POLICY_ROWS=' + str(app_policy_rows)]
+    if native_profile is not None:
+        composition = native_composition(runtime, native_elf, native_profile, app_policy_rows)
+        command += ['-D' + key + '=' + str(value) for key, value in composition['bounds'].items()
+                    if key != 'RISC_APP_POLICY_ROWS']
+        command += ['-DSTORE_ADMISSION_CROWN_PROFILE']
     streams = [runtime / 'src/runtime/streams' / name for name in
                ('AppStreamSessions.cpp', 'ProviderQueueHost.cpp')]
     if any(path.is_file() for path in streams):
@@ -232,12 +314,12 @@ def admit_many(runtime, stores, expected_error=None, app_data=False):
     return results
 
 
-def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True, app_policy_rows=16):
+def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True, app_policy_rows=16, *, native_profile=None):
     """Use the real Runtime comparison and native ELF checks without native I/O."""
     validate_paths(active); validate_paths(candidate)
     with tempfile.TemporaryDirectory(prefix='risc-cohort-admission-') as temporary:
         root = Path(temporary)
-        harness = compile_harness(runtime, root / 'admit', True, native_elf, app_policy_rows)
+        harness = compile_harness(runtime, root / 'admit', True, native_elf, app_policy_rows, native_profile=native_profile)
         for label, files in [('active', active), ('candidate', candidate)]:
             for name, data in files.items():
                 path = root / label / name
@@ -251,8 +333,11 @@ def admit_cohort(runtime, native_elf, active, candidate, expected_valid=True, ap
             if after != files: raise ValueError('Cohort validation changed ' + label + ' files')
     if not outcome['prepared'] or outcome['cohort_validated'] is not expected_valid or outcome['hardware_calls'] or outcome['storage_calls']:
         raise ValueError('Production cohort admission failed: ' + str(outcome) + '\n' + result.stderr)
-    return dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
-                native_elf_sha256=sha(native_elf), app_policy_rows=app_policy_rows, target_instructions_executed=False)
+    proof = dict(outcome, active_store_sha256=store_digest(active), candidate_store_sha256=store_digest(candidate),
+                 native_elf_sha256=sha(native_elf), app_policy_rows=app_policy_rows, target_instructions_executed=False)
+    if native_profile is not None:
+        proof['native_composition'] = native_composition(runtime, native_elf, native_profile, app_policy_rows)
+    return proof
 
 
 def main():

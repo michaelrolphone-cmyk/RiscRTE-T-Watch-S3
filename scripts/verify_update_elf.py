@@ -69,13 +69,24 @@ def admission_source(text):
     raise ValueError('Native candidate source lacks provider ELF admission')
 
 
+def admission_includes(text):
+    """Use canonical dependencies of the extracted production wrappers."""
+    function = extract(text, 'bool admitElf(')
+    imports = extract(text, 'bool allowedImport(')
+    headers = []
+    if 'nativeProviderImageValid' in function:
+        headers.append('runtime/drivers/NativeProviderPolicyValidationV1.h')
+    if 'RiscPackages::admitElf' in function or 'RiscPackages::ordinaryImport' in imports:
+        headers.append('runtime/packages/ElfAdmission.h')
+    return ''.join('#include "' + header + '"\n' for header in headers)
+
+
 def cohort_admission_header(runtime, native_elf):
     """Compile the production admission function against actual native exports."""
     exported = public_exports(ELFFile(io.BytesIO(native_elf)))
     text = (Path(runtime) / 'src/ports/esp32s3/NativeBankStore.cpp').read_text()
     function, provider_role, _ = admission_source(text)
-    policy_header = '#include "runtime/drivers/NativeProviderPolicyValidationV1.h"\n' if 'nativeProviderImageValid' in function else ''
-    return policy_header + '''#include <cstring>
+    return admission_includes(text) + '''#include <cstring>
 #include <fstream>
 #include <iterator>
 #include <vector>
@@ -114,7 +125,7 @@ def verify(runtime, native_elf, app_elf, provider=False):
     driver_role = None
     if 'bool provider=' in function or 'ElfRole role=' in function:
         function, _, driver_role = admission_source(text)
-    source='''#include <cassert>
+    source=admission_includes(text)+'''#include <cassert>
 #include <cstring>
 #include <fstream>
 #include <iterator>
@@ -146,7 +157,7 @@ int main(int argc,char**argv){
         source=source.replace('admitElf(data.data(),data.size())','admitElf(data.data(),data.size(),'+driver_role+')')
     with tempfile.TemporaryDirectory(prefix='watch-update-elf-') as directory:
         root=Path(directory);(root/'check.cpp').write_text(source);(root/'app.elf').write_bytes(app_elf)
-        includes=['-I'+str(runtime/'test/native_bank_stubs'),'-I'+str(runtime/'lib/elf_loader/include'),'-I'+str(runtime/'sdk/driver')]
+        includes=['-I'+str(runtime/'src'),'-I'+str(runtime/'test/native_bank_stubs'),'-I'+str(runtime/'lib/elf_loader/include'),'-I'+str(runtime/'sdk/driver')]
         subprocess.run(['cc','-std=c11',*includes,'-c',str(runtime/'lib/elf_loader/src/esp_elf_validate.c'),'-o',str(root/'validate.o')],check=True)
         subprocess.run(['c++','-std=c++17','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*includes,str(root/'check.cpp'),str(root/'validate.o'),'-o',str(root/'check')],check=True)
         subprocess.run([str(root/'check'),str(root/'app.elf')],check=True)

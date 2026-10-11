@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "product": "twatch-s3",
+  "version": "1.1.6",
+  "status": "local preflight; common System source publication pending",
+  "sources": {
+    "runtime": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
+    "watch_canvas_system": "6ea07eb27488c2736b398fde1fb2915a392cfa68",
+    "modern_system": "6213aa7ae4256a0e639bcfb4a88de32ab2565e3e",
+    "utilities": "9e8705fb98c61cc89f21068b97c5e2512f0083e4",
+    "watch_scanner_utilities": "377d471d284cf18e13927481362d011bc981dfee",
+    "productivity": "0b8667d64e76a6b4bbd325a1c963405f3af57404",
+    "watch_build_profile": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "baseline": {
+    "version": "1.1.5",
+    "product_source": "7c19552e4b73ae550513931a429bdadb5fb5c5c9",
+    "evidence_source": "2d4415e550414b8471182df4aaa88bba1a669110",
+    "full_image_sha256": "376f5f57a2692e16d93180ad9cf6604ec32c6d53f794bb83c5d405731548da4c"
+  },
+  "native": {
+    "runtime_commit": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
+    "firmware_source": "GitHub Actions exact-head crown recovery qualification",
+    "run_url": "https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/38157107090",
+    "artifact_id": 11708661889,
+    "artifact_sha256": "533a5737576e8789c73f35912e96489071fb13eb1e25bab3eedd1a9bd31eae60",
+    "boot_components": "Identical in delivered 1.1.5 and local exact-source rebuild; retained unchanged",
+    "files": {
+      "crown-build.ini": {
+        "bytes": 306,
+        "sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5"
+      },
+      "bootloader.bin": {
+        "bytes": 15104,
+        "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+      },
+      "crown-runtime-source.tar.gz": {
+        "bytes": 2415927,
+        "sha256": "26799cdb00278ca84b9dec4d08ad590823fb8ed0e09fd6c399cd766597e65fae"
+      },
+      "firmware.elf": {
+        "bytes": 23784492,
+        "sha256": "a1305d128ffd1e023413dc9188e5811c612351bcf3cd558be45ba0af1fa82278"
+      },
+      "partitions.bin": {
+        "bytes": 3072,
+        "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+      },
+      "firmware.bin": {
+        "bytes": 1417312,
+        "sha256": "1221955ef6f5900c6be4e86c51b3196d9290d6a0322f3de75421e367174f2526"
+      }
+    }
+  },
+  "layout": {
+    "apps": 25,
+    "providers": 30,
+    "store_files": 111,
+    "store_bytes": 5308416,
+    "initial_flash_erases_internal_data": true,
+    "shared_settings_opt_in": false
+  },
+  "physical_qualification": false
+}
