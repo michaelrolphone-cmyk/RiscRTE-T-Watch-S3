@@ -47,11 +47,12 @@ def validate_overlay(baseline, candidate):
         raise ValueError('Overlay added or removed store files')
     rebuilt = set(apps) - PRESERVED_APPS
     allowed = {name + suffix for name in rebuilt for suffix in ('.elf', '.json')}
-    allowed |= {'ui-scene/driver.elf', 'ui-scene/manifest.json'}
+    allowed |= {'ui-scene/driver.elf', 'ui-scene/manifest.json',
+                'contexts/driver.elf', 'contexts/manifest.json'}
     for name in baseline:
         if name not in allowed and candidate[name] != baseline[name]:
             raise ValueError('Changed preserved authority or content: ' + name)
-    for name in [app + '.json' for app in rebuilt] + ['ui-scene/manifest.json']:
+    for name in [app + '.json' for app in rebuilt] + ['ui-scene/manifest.json', 'contexts/manifest.json']:
         old, new = json.loads(baseline[name]), json.loads(candidate[name])
         if version(new['version']) <= version(old['version']):
             raise ValueError('Rebuilt version did not advance: ' + name)

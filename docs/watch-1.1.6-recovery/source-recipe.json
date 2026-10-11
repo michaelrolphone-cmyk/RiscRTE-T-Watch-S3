@@ -7,10 +7,11 @@
     "runtime": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
     "watch_canvas_system": "6ea07eb27488c2736b398fde1fb2915a392cfa68",
     "modern_system": "6213aa7ae4256a0e639bcfb4a88de32ab2565e3e",
-    "utilities": "9e8705fb98c61cc89f21068b97c5e2512f0083e4",
+    "utilities": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
     "watch_scanner_utilities": "377d471d284cf18e13927481362d011bc981dfee",
     "productivity": "0b8667d64e76a6b4bbd325a1c963405f3af57404",
-    "watch_build_profile": "089868395268b696c05651c33816345bfe0425df"
+    "watch_build_profile": "089868395268b696c05651c33816345bfe0425df",
+    "drivers_sdk": "aac1cb342696e96345d4546e2c69023834c6c8d4"
   },
   "baseline": {
     "version": "1.1.5",
@@ -60,5 +61,13 @@
     "initial_flash_erases_internal_data": true,
     "shared_settings_opt_in": false
   },
-  "physical_qualification": false
+  "physical_qualification": false,
+  "runtime_test_fixture_union": "a935b4574070955da5332faca9a1c4c7e76add38",
+  "contexts": {
+    "application": "0.4.2",
+    "service": "0.3.2",
+    "completed_learning_source": "cabbfe191821bb666e9d79c0e5bf79bc36500eb1",
+    "crown_exits_preserved": true,
+    "service_authority_unchanged": true
+  }
 }

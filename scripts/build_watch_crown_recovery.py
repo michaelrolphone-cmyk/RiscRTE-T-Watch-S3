@@ -50,7 +50,7 @@ def load(name, path):
 
 parser = argparse.ArgumentParser(description=__doc__)
 for name in ('system', 'watch-canvas-system', 'utilities', 'watch-keyboard-utilities', 'productivity',
-             'runtime', 'watch-profile', 'baseline', 'baseline-image',
+             'runtime', 'drivers', 'watch-profile', 'baseline', 'baseline-image',
              'baseline-receipt', 'output'):
     parser.add_argument('--' + name, type=Path, required=True)
 a = parser.parse_args()
@@ -61,7 +61,7 @@ U = a.utilities.resolve()
 O = a.output.resolve()
 B = a.baseline.resolve()
 repos = {'system-apps': C, 'shared-system-sdk': S, 'utilities': U, 'runtime': a.runtime.resolve(),
-         'productivity': a.productivity.resolve(),
+         'productivity': a.productivity.resolve(), 'drivers-sdk': a.drivers.resolve(),
          'watch-keyboard-utilities': a.watch_keyboard_utilities.resolve()}
 source_pins = {name: clean(path) for name, path in repos.items()}
 assert clean(W) == PROFILE
@@ -223,7 +223,9 @@ with tempfile.TemporaryDirectory(prefix='watch-crown-sdk-') as temporary:
     subprocess.run([comp.validator, scene_elf], check=True)
     for name in ('driver.elf', 'manifest.json'):
         shutil.copyfile(build / 'ui-scene' / name, store / 'ui-scene' / name)
-    manifest = dict(manifests['contexts'], version=increment(manifests['contexts']['version']))
+    context_version = json.loads((U / 'Apps/contexts-scene.json').read_text())['version']
+    assert tuple(map(int, context_version.split('.'))) >= (0, 4, 2), 'Qualified learning+crown Contexts required'
+    manifest = dict(manifests['contexts'], version=context_version)
     proof['contexts'] = scene.build(cc, include, build / 'contexts', manifest,
         [U / 'Apps/contexts.c', build / 'catalog.c'],
         defines=['-include', str(W / 'apps/clock/faces/ContextsFaces.h')],
@@ -234,6 +236,28 @@ with tempfile.TemporaryDirectory(prefix='watch-crown-sdk-') as temporary:
     subprocess.run([comp.validator, contexts_elf], check=True)
     for name in ('contexts.elf', 'contexts.json'):
         shutil.copyfile(build / 'contexts' / name, store / name)
+write(O / 'clients.json', proof)
+
+# Reuse the qualified ordinary Contexts service builder, including the completed
+# bounded-learning correction. Its existing full Watch authority stays exact.
+subprocess.run([sys.executable, str(U / 'scripts/build_contexts_service.py'),
+                '--system-apps', str(S), '--drivers', str(repos['drivers-sdk']),
+                '--runtime', str(repos['runtime']), '--profile', 'full'], check=True)
+service_build = U / 'dist/contexts-service'
+service_manifest = json.loads((service_build / 'manifest.json').read_text())
+old_service = json.loads((B / 'contexts/manifest.json').read_text())
+assert service_manifest['version'] == '0.3.2'
+for field in ('type', 'id', 'driver_abi', 'architecture', 'file_name', 'requires', 'provides'):
+    assert service_manifest[field] == old_service[field], 'Changed Contexts service authority: ' + field
+shutil.copytree(service_build, build / 'contexts-service')
+service_elf = build / 'contexts-service/driver.elf'
+proof['contexts-service'] = json.loads((service_build / 'build-evidence.json').read_text())
+proof['contexts-service']['compaction'] = compact(service_elf, cc, build / 'debug/contexts-service.elf')
+proof['contexts-service'].update(size_bytes=service_elf.stat().st_size, elf_sha256=sha(service_elf))
+subprocess.run([comp.validator, service_elf], check=True)
+shutil.copyfile(service_elf, store / 'contexts/driver.elf')
+# Keep the delivered descriptive metadata and authority; advance the code version.
+write(store / 'contexts/manifest.json', dict(old_service, version=service_manifest['version']))
 write(O / 'clients.json', proof)
 
 # Preserve the specialized direct Files build and exact authority independently.

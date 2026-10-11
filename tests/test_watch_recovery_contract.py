@@ -15,7 +15,9 @@ def stores():
             'drivers': [{'manifest': 'driver' + str(i)} for i in range(30)]}
     base = {'boot.json': encoded(boot), 'cohort.json': encoded({'product': 'twatch-s3', 'version': '1.1.5'}),
             'ui-scene/manifest.json': encoded({'id': 'scene', 'version': '0.3.1', 'requires': []}),
-            'ui-scene/driver.elf': b'provider', 'board.json': b'board'}
+            'ui-scene/driver.elf': b'provider', 'board.json': b'board',
+            'contexts/manifest.json': encoded({'id':'contexts-service','version':'0.3.0','requires':[]}),
+            'contexts/driver.elf': b'context-service'}
     for n in names:
         base[n + '.elf'] = n.encode()
         base[n + '.json'] = encoded({'id': n, 'file_name': n + '.elf', 'version': '1.0.0', 'requires': []})
@@ -26,6 +28,8 @@ def stores():
             candidate[n + '.json'] = encoded(m); candidate[n + '.elf'] += b'rebuilt'
     m = json.loads(candidate['ui-scene/manifest.json']); m['version'] = '0.3.2'
     candidate['ui-scene/manifest.json'] = encoded(m)
+    m = json.loads(candidate['contexts/manifest.json']); m['version'] = '0.3.2'
+    candidate['contexts/manifest.json'] = encoded(m)
     return base, candidate
 
 class ContractTests(unittest.TestCase):
