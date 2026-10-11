@@ -18,6 +18,9 @@ p = argparse.ArgumentParser(description=__doc__)
 for name in ('system', 'runtime', 'alarm-source', 'output'):
     p.add_argument('--' + name, type=Path, required=True)
 p.add_argument('--watch', type=Path, help='Explicit recovered Watch checkout; defaults to this repository')
+p.add_argument('--canonical-runtime-sdk', action='store_true', help='Explicitly bind the staged ABI to the selected native Runtime, retaining its complete suffix')
+p.add_argument('--policy-source', type=Path, help='Explicit diagnostic policy checkout; no production selection is implied')
+p.add_argument('--sanitizers', choices=('address,undefined', 'undefined'), default='address,undefined')
 a = p.parse_args()
 watch = (a.watch or Path(__file__).resolve().parents[1]).resolve()
 system, runtime, alarm = a.system.resolve(), a.runtime.resolve(), a.alarm_source.resolve()
@@ -29,7 +32,11 @@ alarm_header = alarm / 'lib/Alarm/include/AlarmServiceV1.h'
 assert b'ALARM_SERVICE_SLEEP_RESUME_SUPPORTED' in alarm_header.read_bytes()
 shutil.copy2(alarm_header, sdk / 'AlarmServiceV1.h')
 for name in ('RiscRuntimeV1.h', 'RiscKeyValueV1.h'):
+    if a.canonical_runtime_sdk:
+        shutil.copy2(runtime / 'sdk/app' / name, sdk / name)
     assert (sdk / name).read_bytes() == (runtime / 'sdk/app' / name).read_bytes(), name
+if a.policy_source:
+    shutil.copy2(a.policy_source / 'lib/PortableApps/include/PortableSleepPolicy.h', sdk / 'PortableSleepPolicy.h')
 policy = sdk / 'PortableSleepPolicy.h'
 assert b'portable_sleep_load_profile' in policy.read_bytes()
 prefix = sdk / 'WatchSelectedSleepPolicy.h'
@@ -45,14 +52,14 @@ base = ['-O1', '-g', '-Wall', '-Wextra', '-Werror', '-include', str(prefix),
 
 def command(args):
     commands.append(args)
-    r = subprocess.run(args, capture_output=True, text=True, env=env)
+    r = subprocess.run(args, capture_output=True, text=True, env=env, timeout=45)
     (out / ('command-%03d.log' % len(commands))).write_text(r.stdout + r.stderr)
     if r.returncode:
         raise RuntimeError((args, r.returncode, r.stdout, r.stderr))
     return r
 
 for sanitized in (False, True):
-    flags = base + (['-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+    flags = base + (['-fsanitize=' + a.sanitizers, '-fno-sanitize-recover=all',
                     '-fno-omit-frame-pointer', '-no-pie'] if sanitized else [])
     for alarms in (False, True):
         for battery in (False, True):
@@ -83,7 +90,7 @@ for sanitized in (False, True):
     r = command([str(exe)])
     results.append({'name': exe.name, 'passed': True, 'output': r.stdout})
 
-inputs = [Path(__file__).resolve(), alarm_header]
+inputs = [Path(__file__).resolve(), alarm_header, *[x for x in sdk.rglob('*') if x.is_file()]]
 for root in (watch / 'apps/clock', watch / 'include', watch / 'sdk',
              system / 'lib/PortableApps/include', system / 'lib/PortableApps/src'):
     inputs.extend(x for x in root.rglob('*') if x.is_file())
@@ -91,6 +98,9 @@ inputs.extend(watch / 'tests' / n for n in ('portable_sleep_lifecycle_test.c', '
 def pin(root):
     return subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
 receipt = {'watch': pin(watch), 'system': pin(system), 'runtime': pin(runtime),
+           'canonical_runtime_sdk': a.canonical_runtime_sdk,
+           'policy_source': pin(a.policy_source) if a.policy_source else pin(system),
+           'sanitizers': a.sanitizers,
            'commands': commands, 'results': results,
            'source_sha256': {str(x): hashlib.sha256(x.read_bytes()).hexdigest() for x in inputs},
            'hardware_tested': False, 'leak_sanitizer': False,

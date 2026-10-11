@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 """Real HID apps + production adapter + Nova pixels over copied peripheral APIs."""
-import argparse,os,subprocess,gzip
+import argparse,os,subprocess,gzip,json,hashlib
 from pathlib import Path
 ROOT=None
 HERE=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument("--utilities",required=True,type=Path);p.add_argument("--output",required=True,type=Path);p.add_argument('--system-apps',required=True,type=Path);p.add_argument('--paper',action='store_true');p.add_argument('--watch',type=Path,help='Link the production Watch FT6336U driver over simulated I2C reports');p.add_argument('--runtime',type=Path,help='Link the production Runtime serial logger with its existing USB host shim');p.add_argument('--watch-touch-source',type=Path,help='Explicit Watch touch source, relative to --watch (defaults to the current provider if present)');p.add_argument('--low-battery',action='store_true',help='Use the delivered low-battery lifecycle policy');p.add_argument('--scene',action='append',help='Run only the named scene (repeatable)');a=p.parse_args();ROOT=a.utilities.resolve();system=a.system_apps.resolve();watch=a.watch.resolve() if a.watch else None
+p=argparse.ArgumentParser();p.add_argument("--utilities",required=True,type=Path);p.add_argument("--output",required=True,type=Path);p.add_argument('--system-apps',required=True,type=Path);p.add_argument('--paper',action='store_true');p.add_argument('--watch',type=Path,help='Link the production Watch FT6336U driver over simulated I2C reports');p.add_argument('--runtime',type=Path,help='Link the production Runtime serial logger with its existing USB host shim');p.add_argument('--watch-touch-source',type=Path,help='Explicit Watch touch source, relative to --watch (defaults to the current provider if present)');p.add_argument('--low-battery',action='store_true',help='Use the delivered low-battery lifecycle policy');p.add_argument('--scene',action='append',help='Run only the named scene (repeatable)');p.add_argument('--canvas-buttons',action='store_true',help='Use exact canvas Buttons defines and the pinned legacy Alarm fixture');p.add_argument('--keep-going',action='store_true',help='Record every assertion result, then fail if any case failed');a=p.parse_args();records=[];ROOT=a.utilities.resolve();system=a.system_apps.resolve();watch=a.watch.resolve() if a.watch else None
 if a.watch_touch_source and not watch:p.error('--watch-touch-source requires --watch')
+if a.canvas_buttons:
+ if a.paper or not watch or not a.runtime:p.error('--canvas-buttons requires Watch and Runtime and excludes paper mode')
+ profile=json.loads((HERE/'apps/canvas-profile.json').read_text())
+ for label,path in [('utilities',ROOT),('watch-system',system),('runtime',a.runtime.resolve())]:
+  assert subprocess.check_output(['git','-C',str(path),'rev-parse','HEAD'],text=True).strip()==profile['sources'][label]['commit'],label
+  assert not subprocess.check_output(['git','-C',str(path),'status','--porcelain','--untracked-files=no']),label
+
 touch_source=(watch/a.watch_touch_source if a.watch_touch_source else watch/'drivers/current/twatch_touch/driver.c') if watch else None
 if watch and not a.watch_touch_source and not touch_source.is_file():touch_source=watch/'drivers/twatch_touch/driver.c'
 scenes={
@@ -63,6 +70,15 @@ if a.paper:
  scenes={name:(paper_actions(name,actions),checks) for name,(actions,checks) in scenes.items()}
  # Alarm acknowledgement belongs to the adapter's 480x800 modal.
  scenes['alarm']=(scenes['alarm'][0][:-1]+[(60,240,650)],scenes['alarm'][1])
+excluded=[]
+if a.canvas_buttons:
+ # The selected canvas adapter masks navigation to Back/Confirm/arrows and
+ # does not advertise Home. Retain the earlier mismatch evidence separately.
+ for unsupported in ('home','edit-home'):
+  scenes.pop(unsupported,None);excluded.append({'scene':unsupported,'reason':'canvas adapter has no Home navigation mapping'})
+ # Contexts adds a row and shifts the radio tiles up by 30 pixels. Exercise
+ # actual Wi-Fi/Bluetooth tiles, then the handle; preserve original assertions.
+ scenes['quick-controls']=([(3,50,218),(30,120,5),(31,120,60),(32,120,140),(90,50,150),(110,120,150),(130,120,225)],['ACTIVE','QUICK'])
 if not a.low_battery:del scenes['low-battery']
 if a.scene:
  unknown=set(a.scene)-scenes.keys()
@@ -70,13 +86,16 @@ if a.scene:
  scenes={name:scene for name,scene in scenes.items() if name in a.scene}
 # FT6336U is touch-only; raw-home is an impossible controller button report.
 # Keep real navigation Home and all touch gestures. Do not fabricate a button.
-if watch:del scenes['raw-home']
+if watch:scenes.pop('raw-home',None)
 for san in (False,True):
- for name in ('ble_touchpad','ble_buttons'):
+ for name in (('ble_buttons',) if a.canvas_buttons else ('ble_touchpad','ble_buttons')):
   out=a.output.resolve()/str(int(san))/name;out.mkdir(parents=True,exist_ok=True)
   catalog=out/'catalog.c';catalog.write_text('#include "PortableApps.h"\nconst t5_app_manifest_t portable_catalog[1]={{.compatible=false}};\nconst unsigned portable_catalog_count=0;\n')
   flags=['-DPORTABLE_NOVA_UI','-DPORTABLE_APP_OWNS_TOUCH_CHROME','-DPORTABLE_RADIO_SESSION','-DPORTABLE_ALARM_CLIENT','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_APP_SLEEP_LOCAL','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_QUICK_ACTIONS','-DPORTABLE_QUICK_RADIOS','-DPORTABLE_RETURN_APP="springboard.elf"']
-  flags+=['-DPORTABLE_PAPER_HID','-DPORTABLE_HOME_APP="default.elf"']
+  if a.canvas_buttons:
+   from build_contexts_cohort import definitions
+   flags=definitions(name,'0.1.22',HERE)+['-DHID_RENDER_CANVAS']
+  else:flags+=['-DPORTABLE_PAPER_HID','-DPORTABLE_HOME_APP="default.elf"']
   if a.paper:
    flags.remove('-DPORTABLE_QUICK_RADIOS');flags.remove('-DPORTABLE_FORCE_FULL_FRAMES');flags+=['-DHID_RENDER_PAPER','-DPORTABLE_DISPLAY_ROTATION=90']
   if a.low_battery:flags+=['-DPORTABLE_LOW_BATTERY']
@@ -103,16 +122,21 @@ for san in (False,True):
   # Resolve shared application ABI headers from the System adapter first. A
   # separate Watch SDK copy is not the same file for #pragma once, even when
   # its bytes match; checkout timestamps must not determine host compilation.
-  subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O1','-g','-Wall','-Wextra','-Werror',*flags,*['-I'+str(i) for i in [system/'Apps',ROOT/'Apps',ROOT/'lib/Bluetooth/include',system/'lib/PortableApps/include',system/'lib/NativeApps/include']],*extra,*map(str,sources),*(['-lstdc++'] if a.runtime else []),'-o',str(exe)],check=True)
+  subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O1','-g','-Wall','-Wextra','-Werror',*flags,*['-I'+str(i) for i in [system/'Apps',ROOT/'Apps',ROOT/'lib/Bluetooth/include',system/'lib/PortableApps/include',system/'lib/NativeApps/include']+([ROOT/'lib/Contexts/include',HERE/'sdk/app',HERE/'sdk/driver',HERE/'include'] if a.canvas_buttons else [])],*extra,*map(str,sources),*(['-lstdc++'] if a.runtime else []),'-o',str(exe)],check=True)
   for scene,(actions,checks) in scenes.items():
    if name=='ble_touchpad' and scene in ('keys','nested-back','edit-save','edit-home','edit-cancel','save-retry','quick-edit'):continue
    if name=='ble_buttons' and scene in ('left-tap','right-tap','mouse-reconnect','transport-reconnect','tap-drag','scroll-x','scroll-y','scroll-free'):continue
    folder=out/scene;folder.mkdir(exist_ok=True)
    for f in folder.glob('frame-*.*'):f.unlink()
    path=folder/'actions.txt';path.write_text(''.join(f'{n} {x} {y}\n' for n,x,y in actions));env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0',**{'HID_RENDER_'+c:'1' for c in checks})
-   subprocess.run([str(exe),str(folder),str(path)],check=True,env=env,timeout=30)
+   result=subprocess.run([str(exe),str(folder),str(path)],capture_output=True,text=True,env=env,timeout=30)
+   (folder/'replay.log').write_text(result.stdout+result.stderr)
+   records.append({'app':name,'scene':scene,'sanitizers':os.environ.get('HID_SANITIZERS','address,undefined') if san else 'none','exit_code':result.returncode,'defines':flags,'log':str(folder/'replay.log')})
+   if result.returncode and not a.keep_going:raise RuntimeError((name,scene,result.returncode,result.stderr))
    frames=sorted(folder.glob('frame-*.*'));assert frames,scene
    for frame in frames:
     raw=frame.read_bytes();header=b'P4\n480 800\n' if a.paper else b'P6\n240 240\n255\n';assert raw.startswith(header) and len(raw)==len(header)+(480*800//8 if a.paper else 240*240*3)
     packed=frame.with_suffix(frame.suffix+'.gz');packed.write_bytes(gzip.compress(raw,mtime=0));assert gzip.decompress(packed.read_bytes())==raw;frame.unlink()
+(a.output/'qualification.json').write_text(json.dumps({'records':records,'excluded':excluded,'canvas_buttons':a.canvas_buttons,'source_pins':{str(root):subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip() for root in [HERE,ROOT,system]+([a.runtime.resolve()] if a.runtime else [])},'fixture_sha256':{str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in [Path(__file__).resolve(),HERE/'test/hid_renderer_test.c',HERE/'test/canvas_background_fixture.h']},'hardware_tested':False},indent=2)+'\n')
+assert all(r['exit_code']==0 for r in records),[(r['scene'],r['sanitizers']) for r in records if r['exit_code']]
 print('HID production adapter: pairing, raw touches, gaps, disconnect, edits, Back and quick controls passed normally and under '+os.environ.get('HID_SANITIZERS','address,undefined'))

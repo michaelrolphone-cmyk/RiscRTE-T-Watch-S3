@@ -1,6 +1,8 @@
 # Watch 1.1.0 touch and Buttons successor checkpoint
 
 This is a blocked source/component checkpoint, **not a qualified full BIN**.
+The [continuation report](continuation/PROGRESS.md) supersedes the earlier host
+test blockers below; baseline custody and full-image admission remain blocked.
 The Library baseline resolved, but its supported transfer failed on this Mac
 twice. No ZIP bytes, original manifests, native ELF, store inventory or source
 receipt were recovered here. The 25 policies / 27 providers / 51 ELFs are

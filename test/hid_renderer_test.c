@@ -179,6 +179,9 @@ static int32_t fake_alarm_status(void*c,alarm_status_v1*s){(void)c;*s=(alarm_sta
 static int32_t fake_alarm_step(void*c){(void)c;return ALARM_OK;}
 static int32_t fake_alarm_ack(void*c,const alarm_token_v1*t){(void)c;assert(t->generation==1&&!hid_owned&&!held_mod&&!held_key&&!held_mouse);alarm_dismissed=true;return ALARM_OK;}
 static int32_t fake_alarm_prepare(void*c,alarm_sleep_v1*s){(void)c;*s=(alarm_sleep_v1){.struct_size=sizeof(*s)};return ALARM_OK;}
+#ifdef HID_RENDER_CANVAS
+static const alarm_service_v1 alarm_api={1,sizeof(alarm_api),NULL,fake_alarm_status,fake_alarm_step,fake_alarm_step,fake_alarm_ack,fake_alarm_prepare,fake_alarm_step};
+#else
 static const alarm_service_outputs_v1 alarm_api={.service={1,sizeof(alarm_api),NULL,fake_alarm_status,fake_alarm_step,fake_alarm_step,fake_alarm_ack,fake_alarm_prepare,fake_alarm_step},
 #ifdef HID_RENDER_PAPER
 .output_modes=ALARM_MODE_VISUAL
@@ -186,6 +189,7 @@ static const alarm_service_outputs_v1 alarm_api={.service={1,sizeof(alarm_api),N
 .output_modes=ALARM_MODE_BOTH
 #endif
 };
+#endif
 static bool fake_nav(void*c,risc_input_navigation_frame_v1*s){(void)c;*s=(risc_input_navigation_frame_v1){0};if(getenv("HID_RENDER_HOME")&&!getenv("HID_RENDER_RAW_HOME")&&polls==100){s->buttons=RISC_NAV_HOME;s->pressed=RISC_NAV_HOME;}return true;}
 static bool fake_foreground(void*c,const risc_input_foreground_v1*s,size_t n){(void)c;(void)s;(void)n;return true;}
 static bool fake_reset(void*c){(void)c;return true;}
@@ -248,7 +252,15 @@ static const risc_bluetooth_hid_scroll_api_v1 hid_api={
  .base={.base={1,sizeof(hid_api),NULL,fake_hid_open,fake_hid_poll,fake_hid_status,fake_hid_confirm,fake_hid_keyboard,fake_hid_mouse,fake_hid_release,fake_hid_close,fake_hid_forget,fake_hid_battery}},
  .mouse_scroll=fake_hid_scroll
 };
-static bool fake_acquire(const char*n,uint32_t v,uint64_t id,risc_runtime_capability_v1*g){(void)id;assert(g->struct_size==sizeof(*g));if(!strcmp(n,"display.output")&&v==1)g->api=&display_api;else if(!strcmp(n,"input.touch.raw")&&v==1){assert(id==0||id==(paper_profile?4:6));g->api=&touch_api;}else if(!strcmp(n,"board.battery")&&v==1)g->api=&battery_api;else if(!strcmp(n,"rtc.clock")&&v==2)g->api=&rtc_api;else if(!strcmp(n,"storage.key-value")&&v==1)g->api=&kv_api;else if(!strcmp(n,"bluetooth.hci")&&v==1)g->api=&radio_api;else if(!strcmp(n,"bluetooth.hid")&&v==1){assert(id==0);g->api=&hid_api;}else if(!strcmp(n,"net.wifi")&&v==1)g->api=&wifi_api;else if(!strcmp(n,"alarm.service")&&v==1)g->api=&alarm_api;else return false;grants++;return true;}
+#ifdef HID_RENDER_CANVAS
+#include "canvas_background_fixture.h"
+#endif
+static bool fake_acquire(const char*n,uint32_t v,uint64_t id,risc_runtime_capability_v1*g){(void)id;assert(g->struct_size==sizeof(*g));if(!strcmp(n,"display.output")&&v==1)g->api=&display_api;else if(!strcmp(n,"input.touch.raw")&&v==1){assert(id==0||id==(paper_profile?4:6));g->api=&touch_api;}else if(!strcmp(n,"board.battery")&&v==1)g->api=&battery_api;else if(!strcmp(n,"rtc.clock")&&v==2)g->api=&rtc_api;else if(!strcmp(n,"storage.key-value")&&v==1)g->api=&kv_api;else if(!strcmp(n,"bluetooth.hci")&&v==1)g->api=&radio_api;else if(!strcmp(n,"bluetooth.hid")&&v==1){assert(id==0);g->api=&hid_api;}else if(!strcmp(n,"net.wifi")&&v==1)g->api=&wifi_api;else if(!strcmp(n,"alarm.service")&&v==1)g->api=&alarm_api;
+#ifdef HID_RENDER_CANVAS
+else if(!strcmp(n,"contexts.service")&&v==1)g->api=&canvas_ctx;
+else if(!strcmp(n,"telemetry.broadcast")&&v==1)g->api=&canvas_bt;
+#endif
+else return false;grants++;return true;}
 static bool fake_release(risc_runtime_capability_v1*g){assert(g->api&&grants);if(g->api==&hid_api&&getenv("HID_RENDER_CLEANUP")&&++release_attempts==1)return false;*g=(risc_runtime_capability_v1){.struct_size=sizeof(*g)};grants--;return true;}
 #ifdef HID_RENDER_RESIDENT
 static int32_t resident_checkpoint_fixture(uint64_t invocation,const risc_resident_request_v1 *q,risc_resident_reply_v1 *r){
