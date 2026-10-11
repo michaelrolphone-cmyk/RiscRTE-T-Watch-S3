@@ -2,11 +2,11 @@
   "schema": 1,
   "product": "twatch-s3",
   "version": "1.1.6",
-  "status": "local preflight; common System source publication pending",
+  "status": "all selected source published; final exact-source software qualification pending",
   "sources": {
     "runtime": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
     "watch_canvas_system": "6ea07eb27488c2736b398fde1fb2915a392cfa68",
-    "modern_system": "6213aa7ae4256a0e639bcfb4a88de32ab2565e3e",
+    "modern_system": "c0d821baef2b4b409e3d36031949b39f1ed0cbed",
     "utilities": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
     "watch_scanner_utilities": "377d471d284cf18e13927481362d011bc981dfee",
     "productivity": "0b8667d64e76a6b4bbd325a1c963405f3af57404",
@@ -69,5 +69,11 @@
     "completed_learning_source": "cabbfe191821bb666e9d79c0e5bf79bc36500eb1",
     "crown_exits_preserved": true,
     "service_authority_unchanged": true
+  },
+  "reviewed_source_equivalence": {
+    "modern_system_local_checkpoint": "6213aa7ae4256a0e639bcfb4a88de32ab2565e3e",
+    "modern_system_tree": "420a0dbfdb3f74b13a9ea2f87b85c04ca2f37691",
+    "contexts_recipe_local_checkpoint": "602c88e543971ca982bf19315944d93ff4d95af2",
+    "contexts_recipe_published_checkpoint": "d752af4dd5de01db11edc56676378112bcf3ce2a"
   }
 }

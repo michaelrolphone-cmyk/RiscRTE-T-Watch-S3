@@ -6,7 +6,7 @@ The complete initial image erases internal data. General settings and Wi-Fi pers
 
 ## Source composition
 
-See `source-recipe.json` for exact source IDs and status. The baseline image is the delivered Watch 1.1.5 diagnostic; its SHA-256 and per-file store receipt are mandatory inputs to the builder. Source publication and final exact-source admission must complete before a successor binary is delivered.
+See `source-recipe.json` for exact source IDs and status. The baseline image is the delivered Watch 1.1.5 diagnostic; its SHA-256 and per-file store receipt are mandatory inputs to the builder. All selected source is now published. The common System head c0d821ba has exactly the reviewed 6213aa7 source tree; Watch d752af4d has exactly the reviewed 602c88e recipe tree. Final builds and admission use the public source IDs recorded in the receipt. Exact-source software qualification must complete before a successor binary is delivered.
 
 Nineteen generic applications use the delivered compact Watch canvas adapter lineage plus the native crown hook (`System Apps 6ea07eb`). Replacing that adapter with the newer shared X4-era adapter would exceed the unchanged boot partition. The compact adapter retains Watch NOVA drawing, local navigation/sleep, Quick Controls, BLE broadcast, motion wake, low-battery behavior, alarm/cue lifecycle, and Contexts capture/workflows/face catalogue. It does not claim newer X4 shared-keyboard, resident-shell or paper UI behavior.
 
