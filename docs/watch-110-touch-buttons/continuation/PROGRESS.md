@@ -1,3 +1,5 @@
+> Superseded by ../DELIVERY.md: authenticated custody and full software-qualified 1.1.1 packaging now pass. The original native ELF remains unavailable; an independently verified pinned Runtime rebuild is delivered. Earlier blockers below are historical.
+
 # Continuing qualification; full image remains blocked
 
 ## Authoritative baseline comparison update
