@@ -9,7 +9,7 @@ on:
       - 'tests/test_*admission*'
       - '.github/workflows/watch-recovery-contract.yml'
   push:
-    branches: [integrate/watch-1.1.6-recovery]
+    branches: [integrate/watch-1.1.6-recovery, integrate/watch-1.1.7-scrolling]
   workflow_dispatch:
 permissions:
   contents: read

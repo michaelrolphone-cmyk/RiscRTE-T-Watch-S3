@@ -66,7 +66,7 @@ repos = {'system-apps': C, 'shared-system-sdk': S, 'utilities': U, 'runtime': a.
 source_pins = {name: clean(path) for name, path in repos.items()}
 assert clean(W) == PROFILE
 assert source_pins['watch-keyboard-utilities'] == KEYBOARD
-assert source_pins['system-apps'] == '6ea07eb27488c2736b398fde1fb2915a392cfa68'
+assert source_pins['system-apps'] == 'f1d8d5d53f80611520feb705f2250295ec07c195'
 source_pins['watch-profile'] = PROFILE
 source_pins['product'] = clean(ROOT)
 assert sha(a.baseline_image) == BASE_IMAGE, 'Wrong delivered full image'
@@ -181,12 +181,14 @@ for name, manifest in manifests.items():
     # Never silently remove name editing or add a new capability to the store.
     if name == 'ble_scanner':
         source = repos['watch-keyboard-utilities'] / 'Apps/ble_scanner.c'
-    version = increment(manifest['version'])
+    # Scrolling clients advance once beyond the complete 1.1.6 recovery cohort.
+    version = increment(increment(manifest['version']))
     flags = [f for f in definitions(name, version, W) if f != '-flto']
     if name == 'springboard':
         flags = [f for f in flags if not f.startswith('-DPORTABLE_CATALOG_LIMIT=')]
         flags += ['-DPORTABLE_CATALOG_LIMIT=23']
-    flags += ['-include', str(alarm)]
+    # Opt in only on the qualified compact 240x240 non-retaining RGB565 lineage.
+    flags += ['-DPORTABLE_ASYNC_RGB565', '-include', str(alarm)]
     sources, includes, allowed = application_inputs(name, source, repos, W, build, 'runtime-features')
     includes += [U / 'lib/Contexts/include', repos['runtime'] / 'sdk/app',
                  S / 'lib/PortableApps/include', build]
@@ -284,7 +286,7 @@ assert (store / 'boot.json').read_bytes() == (B / 'boot.json').read_bytes()
 for name in PRESERVED_APPS:
     assert (store / (name + '.elf')).read_bytes() == (B / (name + '.elf')).read_bytes()
 write(O / 'recovery-overlay.json', {
-    'schema': 1, 'product': 'twatch-s3', 'version': '1.1.6', 'baseline_version': '1.1.5',
+    'schema': 1, 'product': 'twatch-s3', 'version': '1.1.7', 'baseline_version': '1.1.5',
     'baseline_image_sha256': BASE_IMAGE, 'baseline_store_sha256': actual,
     'source_pins': source_pins, 'builder_sha256': sha(Path(__file__)),
     'complete_store_contract': contract, 'compiler': compiler, 'changed_store_files': changed,
