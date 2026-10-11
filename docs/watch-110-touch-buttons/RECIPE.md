@@ -62,13 +62,19 @@ admission against the missing delivered native firmware.
 
 Recover and independently verify the requested Library ZIP. Retain its hash,
 full 16 MiB BIN hash, build custody, native ELF and exact extracted store.
+The authoritative BIN is `Watch/TWatch-S3-1.1.0-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin`,
+16,777,216 bytes, SHA-256
+`c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a`.
+The stage independently decodes and checks all 105 store files against both
+the extracted files and the custody receipt before writing output.
 The baseline receipt consumed below must carry `version: "1.1.0"` and the
 verified `store_files` SHA-256 mapping. Do not fabricate a receipt from an
 unverified directory to bypass this gate.
 
 ```sh
 python3 "$W/scripts/stage_canvas_touch_buttons.py" \
-  --baseline "$BASELINE_STORE" --baseline-receipt "$BASELINE_RECEIPT" \
+  --baseline "$BASELINE_STORE" --baseline-bin "$BASELINE_BIN" \
+  --baseline-receipt "$BASELINE_RECEIPT" \
   --touch "$OUT/touch" --buttons "$OUT/buttons" --output "$OUT/stage"
 ```
 

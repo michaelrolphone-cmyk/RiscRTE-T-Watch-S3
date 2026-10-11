@@ -1,0 +1,7 @@
+{
+  "test": "reject equal-sized wrong BIN before reading receipt or creating stage",
+  "exit_code": 1,
+  "output_absent": true,
+  "stderr": "Traceback (most recent call last):\n  File \"/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/scripts/stage_canvas_touch_buttons.py\", line 30, in <module>\n    assert hashlib.sha256(raw).hexdigest() == BASELINE_SHA256, 'Authoritative Watch 1.1.0 full BIN hash differs'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Authoritative Watch 1.1.0 full BIN hash differs\n",
+  "passed": true
+}

@@ -1,5 +1,22 @@
 # Continuing qualification; full image remains blocked
 
+## Authoritative baseline comparison update
+
+The parent subsequently supplied the authoritative full BIN SHA-256
+`c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a`,
+size 16,777,216 bytes, original member
+`Watch/TWatch-S3-1.1.0-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin`.
+None of the ten previously hashed local candidates matches. The staging script
+now requires this exact full BIN and independently decodes all 105 store files
+before comparing the extracted store and custody receipt. An equal-sized wrong
+BIN is verified to fail before receipt access or output creation. Positive
+staging remains unexecuted because the authentic bytes are still unavailable.
+Await the confirmed ID of the parent-prepared Watch-only Library input; no
+exhausted transfer route has been repeated and no substitute has been accepted.
+
+The earlier search report below is retained as history; the authoritative hash
+is no longer missing, but baseline custody remains unverified locally.
+
 No new production source was changed. Runtime stays at
 `e96f2affc691b929e89b624a998f0687a2746fd6` (0.2.4), System at
 `63532e4611749acad2060d0437a883b7c4ac8fd5`, Utilities at

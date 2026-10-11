@@ -9,6 +9,10 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+from read_only_spiffs import read_image
+
+BASELINE_SHA256 = 'c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a'
+BASELINE_BYTES = 16777216
 
 def digest(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -17,15 +21,21 @@ def read(p):
     return json.loads(p.read_text())
 
 p = argparse.ArgumentParser(description=__doc__)
-for name in ('baseline', 'baseline-receipt', 'touch', 'buttons', 'output'):
+for name in ('baseline', 'baseline-bin', 'baseline-receipt', 'touch', 'buttons', 'output'):
     p.add_argument('--' + name, type=Path, required=True)
 a = p.parse_args()
 base = a.baseline.resolve()
+raw = a.baseline_bin.read_bytes()
+assert len(raw) == BASELINE_BYTES, 'Authoritative full BIN size differs'
+assert hashlib.sha256(raw).hexdigest() == BASELINE_SHA256, 'Authoritative Watch 1.1.0 full BIN hash differs'
+decoded = read_image(raw[0x2f0000:0x800000], 0x510000)
+assert len(decoded) == 105, 'Authoritative store file count differs'
 # The receipt must come from independently verified delivery custody, not a
 # generated inventory used as a substitute for missing baseline bytes.
 custody = read(a.baseline_receipt)
 assert custody['version'] == '1.1.0'
 inventory = {str(f.relative_to(base)): digest(f) for f in base.rglob('*') if f.is_file()}
+assert inventory == {n: hashlib.sha256(b).hexdigest() for n, b in decoded.items()}, 'Extracted store differs from independently decoded full BIN'
 assert inventory == {n: r['sha256'] for n, r in custody['store_files'].items()}
 boot = read(base / 'boot.json')
 assert len(boot['app_capabilities']) == 25 and len(boot['drivers']) == 27
@@ -60,6 +70,8 @@ changed = {n for n in inventory if inventory[n] != after[n]}
 expected = {str(touch_manifest), str(touch_manifest.parent / 'driver.elf'), 'ble_buttons.json', 'ble_buttons.elf'}
 assert set(after) == set(inventory) and changed == expected
 receipt = {'schema': 1, 'baseline_version': '1.1.0', 'baseline_receipt_sha256': digest(a.baseline_receipt),
+           'baseline_bin_sha256': BASELINE_SHA256, 'baseline_bin_bytes': BASELINE_BYTES,
+           'independently_decoded_store_files': len(decoded),
            'baseline_files': inventory, 'stage_files': after, 'changed_paths': sorted(changed),
            'app_count': 25, 'provider_count': 27, 'elf_count': 51,
            'buttons_build': buttons, 'touch_build': read(a.touch / 'qualification.json'),
