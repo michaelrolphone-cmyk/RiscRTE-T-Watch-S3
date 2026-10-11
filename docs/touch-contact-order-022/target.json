@@ -1,0 +1,112 @@
+{
+  "source_commit": "14e94d85db4f6e7e00396272e2c37bfdf89a6fee",
+  "source_dirty": false,
+  "driver_sha256": "abeaf6783c61f1adc3eab0448077d4453fc057233b0746bb3dfc169fcbdb517f",
+  "source_closure_sha256": {
+    "drivers/candidates/twatch_touch_022/driver.c": "abeaf6783c61f1adc3eab0448077d4453fc057233b0746bb3dfc169fcbdb517f",
+    "sdk/driver/RiscGpioBankV1.h": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c",
+    "sdk/driver/RiscProviderV2.h": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+    "sdk/driver/RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+    "sdk/driver/RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "sdk/driver/RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "sdk/driver/RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+    "sdk/driver/RiscWakeSetV1.h": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375",
+    "sdk/driver/RiscI2cBusV1.h": "a6b769efbbf7f3837a6a348689b0aee84bf687ae8e18a31d0296f3bfa6ac2004",
+    "sdk/driver/RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+    "sdk/driver/RiscTouchV1.h": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+    "include/twatch_support.h": "2be79a3e294f53dc22231eafd45e33aad5901f9c6670ea2a91d3f909fa53c91d",
+    "sdk/driver/TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd",
+    "sdk/driver/GardenPlatformV1.h": "771b2819b602afa3d1120f54717277756e35e161d279307c2d1080433a35ab71",
+    "sdk/driver/RiscRadioScanV1.h": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+    "sdk/driver/RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+    "include/twatch_util.h": "8303bef501c6638953c66318bb6df84e416aaa38b2718079609b2e167765cc04",
+    "include/twatch_hardware.h": "3393199de17e48910d136c3685eb41342221ae8ea732d212ab501898472d326c",
+    "sdk/driver/TWatchHardwareV1.h": "ca48ca21a944565ae185f7c4e8cc0e73bcc18871d79b966f7e7da916e7ab2c99"
+  },
+  "command": [
+    "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+    "-std=c11",
+    "-Os",
+    "-fPIC",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-fvisibility=hidden",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-nostdlib",
+    "-nostartfiles",
+    "-shared",
+    "-Wl,--no-relax",
+    "-Wl,--hash-style=sysv",
+    "-Wl,--version-script=/workspace/shared/watch-touch-contact-order-022/exports.map",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-I/workspace/shared/watch-touch-contact-order-022/sdk/driver",
+    "-I/workspace/shared/watch-touch-contact-order-022/include",
+    "/workspace/shared/watch-touch-contact-order-022/drivers/candidates/twatch_touch_022/driver.c",
+    "-lgcc",
+    "-o",
+    "/workspace/shared/watch-touch-order-audit-20261010/target-recipe/driver.elf"
+  ],
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "bytes": 13240,
+  "sha256": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368",
+  "imports": [
+    "memcpy",
+    "memset"
+  ],
+  "exports": [
+    "t5_driver_get"
+  ],
+  "manifest": {
+    "type": "driver",
+    "id": "twatch-touch",
+    "version": "0.2.2",
+    "driver_abi": 2,
+    "architecture": "xtensa-esp32s3",
+    "file_name": "driver.elf",
+    "requires": [
+      {
+        "capability": "hardware.device",
+        "api": 1
+      },
+      {
+        "capability": "i2c.bus",
+        "api": 1
+      },
+      {
+        "capability": "gpio.bank",
+        "api": 1
+      },
+      {
+        "capability": "platform.clock",
+        "api": 1
+      },
+      {
+        "capability": "board.battery",
+        "api": 1
+      }
+    ],
+    "provides": [
+      {
+        "capability": "input.touch.raw",
+        "api": 1
+      }
+    ],
+    "status": "software-only-runtime-backfill-required",
+    "hardware_compatibility": [
+      {
+        "compatible": "focaltech,ft6336u",
+        "revisions": [
+          "unspecified"
+        ],
+        "config_type": "touch.i2c",
+        "config_version": 1
+      }
+    ],
+    "physical_verification": "pending"
+  },
+  "hardware_tested": false,
+  "default_selection_changed": false
+}
