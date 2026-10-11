@@ -1,0 +1,2512 @@
+{
+  "changed_store_paths": [
+    "ble_buttons.elf",
+    "ble_buttons.json",
+    "cohort.json",
+    "touch/driver.elf",
+    "touch/manifest.json"
+  ],
+  "cohort": {
+    "firmware_sha256": "8ff4a6f244f267724e5002feb1f202833b036a094621cc2b79a78671a6277194",
+    "firmware_size": 1332928,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.2.4",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "a1d785edb3a58cebe51aa47ae43b3f06d3ebe19c",
+    "store_abi": 2,
+    "version": "1.1.1"
+  },
+  "cohort_admission": [
+    {
+      "active_store_sha256": "959737f9b3d6e6ab05a15323c732360594250f1fdaa5513591a9143b0769a9b0",
+      "app_policy_rows": 24,
+      "candidate_store_sha256": "959737f9b3d6e6ab05a15323c732360594250f1fdaa5513591a9143b0769a9b0",
+      "cohort_validated": true,
+      "cooperative_yields": 158,
+      "elf_count": 51,
+      "error": "",
+      "hardware_calls": 0,
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "prepared": true,
+      "sanitized": false,
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    },
+    {
+      "active_store_sha256": "959737f9b3d6e6ab05a15323c732360594250f1fdaa5513591a9143b0769a9b0",
+      "app_policy_rows": 24,
+      "candidate_store_sha256": "959737f9b3d6e6ab05a15323c732360594250f1fdaa5513591a9143b0769a9b0",
+      "cohort_validated": true,
+      "cooperative_yields": 158,
+      "elf_count": 51,
+      "error": "",
+      "hardware_calls": 0,
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "prepared": true,
+      "sanitized": true,
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    }
+  ],
+  "data_preserving_update_qualified": false,
+  "exports": {
+    "elf_used_for_candidate": false,
+    "esp_checksum_and_appended_sha256": true,
+    "exports": {
+      "__divdf3": 1073750608,
+      "__errno": 1108136044,
+      "__fixunsdfsi": 1073750776,
+      "__floatunsidf": 1073750884,
+      "__getreent": 1077428988,
+      "__gtdf2": 1073750944,
+      "__ltdf2": 1073751004,
+      "_ctype_": 1007823328,
+      "calloc": 1077448920,
+      "clock_gettime": 1107703220,
+      "free": 1077448828,
+      "getopt_long": 1108142280,
+      "malloc": 1077448796,
+      "memchr": 1073746756,
+      "memcmp": 1073746444,
+      "memcpy": 1073746420,
+      "memmove": 1073746432,
+      "memset": 1073746408,
+      "optarg": 1070244444,
+      "opterr": 1070244436,
+      "optind": 1070244440,
+      "optopt": 1070244432,
+      "realloc": 1077448808,
+      "risc_runtime_get_api": 1107337944,
+      "snprintf": 1108144264,
+      "strchr": 1073746828,
+      "strcmp": 1073746480,
+      "strcpy": 1073746456,
+      "strcspn": 1073746840,
+      "strerror": 1108145264,
+      "strftime": 1108148344,
+      "strlen": 1073746504,
+      "strncat": 1073746912,
+      "strncmp": 1073746492,
+      "strncpy": 1073746468,
+      "strrchr": 1073746948,
+      "strstr": 1073746516,
+      "strtod": 1108151796,
+      "strtol": 1073747176
+    },
+    "firmware_sha256": "8ff4a6f244f267724e5002feb1f202833b036a094621cc2b79a78671a6277194",
+    "segments": [
+      {
+        "address": 1007616032,
+        "offset": 32,
+        "size": 252352
+      },
+      {
+        "address": 1070182576,
+        "offset": 252392,
+        "size": 9776
+      },
+      {
+        "address": 1107296288,
+        "offset": 262176,
+        "size": 960620
+      },
+      {
+        "address": 1070192352,
+        "offset": 1222804,
+        "size": 15656
+      },
+      {
+        "address": 1077362688,
+        "offset": 1238468,
+        "size": 94372
+      },
+      {
+        "address": 1611653120,
+        "offset": 1332848,
+        "size": 44
+      }
+    ],
+    "tables": [
+      {
+        "address": 1007638136,
+        "bytes": 312,
+        "file_offset": 22136,
+        "rows": [
+          {
+            "address": 1108145264,
+            "name": "strerror",
+            "name_address": 1007632160
+          },
+          {
+            "address": 1073746408,
+            "name": "memset",
+            "name_address": 1007632169
+          },
+          {
+            "address": 1073746420,
+            "name": "memcpy",
+            "name_address": 1007632176
+          },
+          {
+            "address": 1073746432,
+            "name": "memmove",
+            "name_address": 1007632183
+          },
+          {
+            "address": 1073746444,
+            "name": "memcmp",
+            "name_address": 1007632191
+          },
+          {
+            "address": 1073746756,
+            "name": "memchr",
+            "name_address": 1007632198
+          },
+          {
+            "address": 1073746504,
+            "name": "strlen",
+            "name_address": 1007632205
+          },
+          {
+            "address": 1073746456,
+            "name": "strcpy",
+            "name_address": 1007632212
+          },
+          {
+            "address": 1073746468,
+            "name": "strncpy",
+            "name_address": 1007632219
+          },
+          {
+            "address": 1073746480,
+            "name": "strcmp",
+            "name_address": 1007632227
+          },
+          {
+            "address": 1073746492,
+            "name": "strncmp",
+            "name_address": 1007632234
+          },
+          {
+            "address": 1073746828,
+            "name": "strchr",
+            "name_address": 1007632242
+          },
+          {
+            "address": 1073746948,
+            "name": "strrchr",
+            "name_address": 1007632249
+          },
+          {
+            "address": 1073746516,
+            "name": "strstr",
+            "name_address": 1007632257
+          },
+          {
+            "address": 1108151796,
+            "name": "strtod",
+            "name_address": 1007632264
+          },
+          {
+            "address": 1073747176,
+            "name": "strtol",
+            "name_address": 1007632271
+          },
+          {
+            "address": 1073746840,
+            "name": "strcspn",
+            "name_address": 1007632278
+          },
+          {
+            "address": 1073746912,
+            "name": "strncat",
+            "name_address": 1007632286
+          },
+          {
+            "address": 1108144264,
+            "name": "snprintf",
+            "name_address": 1007632294
+          },
+          {
+            "address": 1077448796,
+            "name": "malloc",
+            "name_address": 1007631527
+          },
+          {
+            "address": 1077448920,
+            "name": "calloc",
+            "name_address": 1007637430
+          },
+          {
+            "address": 1077448808,
+            "name": "realloc",
+            "name_address": 1007631509
+          },
+          {
+            "address": 1077448828,
+            "name": "free",
+            "name_address": 1007740939
+          },
+          {
+            "address": 1107703220,
+            "name": "clock_gettime",
+            "name_address": 1007632303
+          },
+          {
+            "address": 1108148344,
+            "name": "strftime",
+            "name_address": 1007632317
+          },
+          {
+            "address": 1108136044,
+            "name": "__errno",
+            "name_address": 1007632326
+          },
+          {
+            "address": 1077428988,
+            "name": "__getreent",
+            "name_address": 1007632334
+          },
+          {
+            "address": 1007823328,
+            "name": "_ctype_",
+            "name_address": 1007632364
+          },
+          {
+            "address": 1073751004,
+            "name": "__ltdf2",
+            "name_address": 1007632372
+          },
+          {
+            "address": 1073750776,
+            "name": "__fixunsdfsi",
+            "name_address": 1007632380
+          },
+          {
+            "address": 1073750944,
+            "name": "__gtdf2",
+            "name_address": 1007632393
+          },
+          {
+            "address": 1073750884,
+            "name": "__floatunsidf",
+            "name_address": 1007632401
+          },
+          {
+            "address": 1073750608,
+            "name": "__divdf3",
+            "name_address": 1007632415
+          },
+          {
+            "address": 1108142280,
+            "name": "getopt_long",
+            "name_address": 1007632424
+          },
+          {
+            "address": 1070244440,
+            "name": "optind",
+            "name_address": 1007632436
+          },
+          {
+            "address": 1070244436,
+            "name": "opterr",
+            "name_address": 1007632443
+          },
+          {
+            "address": 1070244444,
+            "name": "optarg",
+            "name_address": 1007632450
+          },
+          {
+            "address": 1070244432,
+            "name": "optopt",
+            "name_address": 1007632457
+          }
+        ],
+        "sha256": "e068fa3398014aa19af06922fe8d166f06e7ac0500d5d4db1f1b615eeb7bbda1",
+        "table": "g_esp_libc_elfsyms"
+      },
+      {
+        "address": 1007630588,
+        "bytes": 16,
+        "file_offset": 14588,
+        "rows": [
+          {
+            "address": 1107337944,
+            "name": "risc_runtime_get_api",
+            "name_address": 1007630100
+          }
+        ],
+        "sha256": "ad860f2c7a25b28651ed90c1ecf2e21079e32feb339a4d7a9831e8176b27427c",
+        "table": "_ZZN8RiscBoot7Runtime3runEvE7symbols"
+      }
+    ]
+  },
+  "hardware_tested": false,
+  "image": {
+    "bytes": 16777216,
+    "flash_offset": 0,
+    "name": "TWatch-S3-1.1.1-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin",
+    "sha256": "799eb39937a380ac5d11eb5eaf1eaf0e8416edddd2ad5fa8e02030db6785f356"
+  },
+  "inputs": {
+    "address_sanitizer_qualified": false,
+    "app_count": 25,
+    "baseline": {
+      "bytes": 16777216,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/baseline-watch-only/extracted/Watch/TWatch-S3-1.1.0-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin",
+      "sha256": "c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a"
+    },
+    "baseline_version": "1.1.0",
+    "bootloader": {
+      "bytes": 15104,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/bootloader.bin",
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+    },
+    "changed_paths": [
+      "ble_buttons.elf",
+      "ble_buttons.json",
+      "touch/driver.elf",
+      "touch/manifest.json",
+      "cohort.json"
+    ],
+    "compiled_inputs": {
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/host-tools/c++": "a2326150b0177d1c68a75e3111f6c5fdf6286a7609307ede28fc65d33b2b9164",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/host-tools/cc": "2fc38f18c302d13241e6b9abfc9392c2a306dc152ed9aee7489a00a786994294",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/scripts/package_canvas_cohort.py": "c0f7851834edac79b3162b4c2e800f9dba563cebad1a75435e7d2b756ec7dd84"
+    },
+    "firmware": {
+      "bytes": 1332928,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.bin",
+      "sha256": "8ff4a6f244f267724e5002feb1f202833b036a094621cc2b79a78671a6277194"
+    },
+    "host_sanitizers": "undefined",
+    "mkspiffs": "/Users/micahelbyrns/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino",
+    "mkspiffs_sha256": "c6705f8dfc0b0a51a91ed35e1f8a83a312395a36ba872ed2268d3d60b24cefe2",
+    "native_elf": {
+      "bytes": 21782668,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf",
+      "sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc"
+    },
+    "native_rebuilt": true,
+    "original_native_elf_recovered": false,
+    "partitions": {
+      "bytes": 3072,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/partitions.bin",
+      "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+    },
+    "product_revision": "a1d785edb3a58cebe51aa47ae43b3f06d3ebe19c",
+    "qualifications": [
+      {
+        "bytes": 60416,
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/continuation/canvas-correct-profile/qualification.json",
+        "sha256": "7c7f4258b16c798592149f9790227aedf278c86c27f01b400d6d91ce35eb97f9"
+      },
+      {
+        "bytes": 985,
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/continuation/wire-report-ubsan.json",
+        "sha256": "ffb4fb0a3577958e2472c0c455956366592edf34256409d47645de53242ba5ba"
+      },
+      {
+        "bytes": 44095,
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/clock-reproduction/build.json",
+        "sha256": "12785d225ea7aec2669f0a2e653eff9d9ac105e0d86907cba119cd562c01933e"
+      }
+    ],
+    "recovery_tools": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/recovery-source/minimal/recovery_tools",
+    "runtime": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime",
+    "runtime_version": "0.2.4",
+    "sources": {
+      "product": {
+        "commit": "a1d785edb3a58cebe51aa47ae43b3f06d3ebe19c",
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch",
+        "tree": "a2c6d9404d7aaeb3cce766a9f8d9ec1b5a0a08f3"
+      },
+      "recovery-tools": {
+        "commit": "dfa5ebddfbbbb1d43d4e8bb5457d97e98ed8965d",
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/recovery-source",
+        "tree": "b1449744de28cf540821cce00e36d713612c45aa"
+      },
+      "runtime": {
+        "commit": "e96f2affc691b929e89b624a998f0687a2746fd6",
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime",
+        "tree": "3aa15af65246a6491110f01f4bb4bf9a51b4bd56"
+      },
+      "system": {
+        "commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system",
+        "tree": "647b523b197de59f36b6db4101854635557c4843"
+      },
+      "utilities": {
+        "commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+        "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities",
+        "tree": "c2f1092b7d07ae9eb639e0d40141b2d84658fbbe"
+      }
+    },
+    "stage": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/successor-stage",
+    "stage_receipt": {
+      "bytes": 45447,
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/successor-stage-stage.json",
+      "sha256": "1a0cf52ae896ea50ef1cc1b23614809f0f72ee54104b61ef4300cbcfa8845e5e"
+    },
+    "target": "TWatch-S3",
+    "version": "1.1.1",
+    "watch_tools": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch"
+  },
+  "native": {
+    "bundle_bytes": 63739,
+    "bundle_certificates": 136,
+    "bundle_sha256": "b62829db28e499f001c1eac071921f6708ef0b562c141d88fb050b2ef23286af",
+    "iq": {
+      "allocated_sections": [
+        {
+          "address": 1611653120,
+          "bytes": 33,
+          "name": ".rtc.text"
+        },
+        {
+          "address": 1611653120,
+          "bytes": 33,
+          "name": ".rtc.dummy"
+        },
+        {
+          "address": 1611653156,
+          "bytes": 8,
+          "name": ".rtc.force_fast"
+        },
+        {
+          "address": 1342177280,
+          "bytes": 2144,
+          "name": ".rtc_noinit"
+        },
+        {
+          "address": 1077362688,
+          "bytes": 1027,
+          "name": ".iram0.vectors"
+        },
+        {
+          "address": 1077363716,
+          "bytes": 93343,
+          "name": ".iram0.text"
+        },
+        {
+          "address": 1070104576,
+          "bytes": 77988,
+          "name": ".dram0.dummy"
+        },
+        {
+          "address": 1070182576,
+          "bytes": 25432,
+          "name": ".dram0.data"
+        },
+        {
+          "address": 1070208008,
+          "bytes": 39544,
+          "name": ".dram0.bss"
+        },
+        {
+          "address": 1107296288,
+          "bytes": 960619,
+          "name": ".flash.text"
+        },
+        {
+          "address": 1006632992,
+          "bytes": 983040,
+          "name": ".flash_rodata_dummy"
+        },
+        {
+          "address": 1007616032,
+          "bytes": 256,
+          "name": ".flash.appdesc"
+        },
+        {
+          "address": 1007616288,
+          "bytes": 252096,
+          "name": ".flash.rodata"
+        },
+        {
+          "address": 1007868384,
+          "bytes": 15988,
+          "name": ".flash.rodata_noload"
+        },
+        {
+          "address": 1077457059,
+          "bytes": 1,
+          "name": ".iram0.data"
+        }
+      ],
+      "bank_base": 1070268416,
+      "bank_bytes": 65536,
+      "elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "heap_start": 1070247552,
+      "iram_alias": 1077542912,
+      "iram_end": 1077457060,
+      "reservation_table": [
+        [
+          1070268416,
+          1070333952
+        ],
+        [
+          1611661296,
+          1611661312
+        ],
+        [
+          1611653120,
+          1611653164
+        ],
+        [
+          1023410176,
+          1040187392
+        ],
+        [
+          1077362688,
+          1077457060
+        ],
+        [
+          1070088192,
+          1070182564
+        ],
+        [
+          1070182576,
+          1070247552
+        ]
+      ],
+      "reservation_table_address": 1007868328,
+      "schema": 1,
+      "scope": "Pre-heap reservation and final linked static-memory proof only; no hardware or RF qualification."
+    },
+    "required_symbols": [
+      "verifyRollbackLater",
+      "esp_ota_mark_app_valid_cancel_rollback",
+      "esp_ota_mark_app_invalid_rollback_and_reboot",
+      "esp_tls_conn_new_async",
+      "esp_crt_bundle_attach",
+      "http_parser_execute",
+      "_binary_x509_crt_bundle_start",
+      "_binary_x509_crt_bundle_end"
+    ],
+    "rollback_hook_hex": "3641000c121df0",
+    "static_dram_bytes": 64976,
+    "static_dram_sections": {
+      ".dram0.bss": 39544,
+      ".dram0.data": 25432
+    }
+  },
+  "paired_sha_crc_verified": true,
+  "preserved_regions": [
+    {
+      "bytes": 65536,
+      "offset": 0,
+      "sha256": "8b0acf5a00e25c3c4395cf8568c84cc6859939ffd1069591d792171db6f31e98"
+    },
+    {
+      "bytes": 524288,
+      "offset": 2555904,
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0"
+    },
+    {
+      "bytes": 8323072,
+      "offset": 8388608,
+      "sha256": "79bbe7fe9d6937bdf73a4326fbb2e87295dadbc72c5519f44a3781f270af2d24"
+    },
+    {
+      "bytes": 49152,
+      "offset": 16728064,
+      "sha256": "abd8e2a70d51a53287941838446e6ed141005d401faf597fd7c6de0bbc8c329d"
+    }
+  ],
+  "schema": "riscrte.canvas-cohort",
+  "store_files": {
+    "alarm-service/driver.elf": {
+      "bytes": 32888,
+      "sha256": "1ebe6061cab0e3a030a9dd1cdd519e9771f9b482adfc84f48c8327165d6f9f23"
+    },
+    "alarm-service/manifest.json": {
+      "bytes": 689,
+      "sha256": "3110194fc33a0786aa8a97e1ed5e727f0d5d6a3ef57cba3f8bb80bc61b62c746"
+    },
+    "alarms.elf": {
+      "bytes": 117440,
+      "sha256": "de78c79b1df6a6ea0db532906c66f6351fd78636cf2f76ade89a471adfee418c"
+    },
+    "alarms.json": {
+      "bytes": 969,
+      "sha256": "5f6b480fc65088c9cf8d4b9f7117d63a0cf1bc15915e7f6629fb5a946346dcca"
+    },
+    "app_store.elf": {
+      "bytes": 112116,
+      "sha256": "c77270c1ca9e97205bcef7fe7f372f6121c82170c745437db340d11ad73efef9"
+    },
+    "app_store.json": {
+      "bytes": 1046,
+      "sha256": "27dfa6c6f7eda35962bb572b09e6f66fe38e679cb4c9ab4d22d38413c709cbb4"
+    },
+    "audio_spectrum.elf": {
+      "bytes": 225320,
+      "sha256": "da3151a8518879b71bb0682aa19b04c5666fa654a637cd8471dffec5cd6529bc"
+    },
+    "audio_spectrum.json": {
+      "bytes": 1184,
+      "sha256": "607fcb836f247529203b9ec5cd1cc944e17c91785c852b7fbd195974a9c2c163"
+    },
+    "battery-telem/driver.elf": {
+      "bytes": 4344,
+      "sha256": "2d588612bd7c0e4764d7b995ffd5cde3b9d76d2a1af74c0cce0ae77855dd1cd7"
+    },
+    "battery-telem/manifest.json": {
+      "bytes": 409,
+      "sha256": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335"
+    },
+    "battery.elf": {
+      "bytes": 113504,
+      "sha256": "e4088bb0a9232c63643c4d903df78daf541b9c021d06dac1284bf770375a213e"
+    },
+    "battery.json": {
+      "bytes": 971,
+      "sha256": "26c0c7c395c16999ad2865c78ddd7a51b1ba8ebf8582eed00c3b8eb411070e89"
+    },
+    "ble-hid/driver.elf": {
+      "bytes": 233272,
+      "sha256": "5db0e3dd59a12cfd33f0934777d8ed32e6a24768ca6bb667212aa3649aeb59f7"
+    },
+    "ble-hid/manifest.json": {
+      "bytes": 537,
+      "sha256": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49"
+    },
+    "ble-sensors/driver.elf": {
+      "bytes": 13708,
+      "sha256": "ecbf3532d20263a9eba89a1d235a766b94185d09990a7016edf0a308d968a047"
+    },
+    "ble-sensors/manifest.json": {
+      "bytes": 470,
+      "sha256": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5"
+    },
+    "ble-telemetry/driver.elf": {
+      "bytes": 14712,
+      "sha256": "677ac910f378af62dc3e0163c9dfdc3bc497e6d9ec990c13d8b3be52d96025de"
+    },
+    "ble-telemetry/manifest.json": {
+      "bytes": 542,
+      "sha256": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973"
+    },
+    "ble/driver.elf": {
+      "bytes": 6140,
+      "sha256": "128354d7d632340d9ca0ae405f03e2d255e378a5ce7d511064475e322a63c4a1"
+    },
+    "ble/manifest.json": {
+      "bytes": 703,
+      "sha256": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c"
+    },
+    "ble_buttons.elf": {
+      "bytes": 113900,
+      "sha256": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002"
+    },
+    "ble_buttons.json": {
+      "bytes": 973,
+      "sha256": "fb818dbd76a67dde3a4a2bb14706a1a729a5c75a06d9b9a0fab1a3ba60ab010e"
+    },
+    "ble_scanner.elf": {
+      "bytes": 111352,
+      "sha256": "c10ad00d4867270d10c5543d9c4ad094bc8c8e8630a8f36e15ade559856fe5c5"
+    },
+    "ble_scanner.json": {
+      "bytes": 1048,
+      "sha256": "6224d5042ef92be0baf0575eea44c6cc5cc5bfa60971756eef4a9d4df2321d13"
+    },
+    "ble_touchpad.elf": {
+      "bytes": 108456,
+      "sha256": "56681b5674dc777076766ee0c61c1a7b2a5197a30c147e4aff86fd07d1185ba5"
+    },
+    "ble_touchpad.json": {
+      "bytes": 975,
+      "sha256": "afbba5d4ec73f03a68ccb7278b1f26f866ce39497273ece8c66798dc26004762"
+    },
+    "board.json": {
+      "bytes": 8688,
+      "sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157"
+    },
+    "boot.json": {
+      "bytes": 46793,
+      "sha256": "9b992fd603902e14085eee1f82f10c930d990961ea018b15406095e041083c5b"
+    },
+    "broadcast/driver.elf": {
+      "bytes": 8016,
+      "sha256": "fd4b59e912b931dabf9b91a617ce728116d8f43d38da42eff98b6d54b0cf322d"
+    },
+    "broadcast/manifest.json": {
+      "bytes": 533,
+      "sha256": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154"
+    },
+    "calculator.elf": {
+      "bytes": 109812,
+      "sha256": "dff055f2e64e3e3e3039201ff589fbce4d99de9b0a06408a6b891f94f5cc5772"
+    },
+    "calculator.json": {
+      "bytes": 977,
+      "sha256": "51807947428d1956404f6a7abb47c5b88fe672260657780bba9cae7f34cddcb3"
+    },
+    "civil-clock/driver.elf": {
+      "bytes": 37464,
+      "sha256": "ba8e0b60c7694defb4674fdae532a9d0bf1ace7b7b251bbce2bb420c89463256"
+    },
+    "civil-clock/manifest.json": {
+      "bytes": 321,
+      "sha256": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4"
+    },
+    "clock.elf": {
+      "bytes": 1232,
+      "sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1"
+    },
+    "clock.json": {
+      "bytes": 187,
+      "sha256": "cd01cc5bfc38ae45ba004789c4ebf86f5b0a706b87c27983553a6b6ee3f0d89c"
+    },
+    "cohort.json": {
+      "bytes": 435,
+      "sha256": "8f4d330a18ab2828ce88b3295e602814ef26e0e01b145d9e62277f307d01684f"
+    },
+    "contexts.elf": {
+      "bytes": 76952,
+      "sha256": "4d575160dca09bcefb55c3844150df08ba05ad29042749eafe90da6a7fb2a42e"
+    },
+    "contexts.json": {
+      "bytes": 755,
+      "sha256": "c0ae7a751dcf850ef0b78595a9f0d83287665394289d6dd31b6df867fa2dba24"
+    },
+    "contexts/driver.elf": {
+      "bytes": 147328,
+      "sha256": "a01fe77c71ff4516e7933e1197df764459d159f69ed27fc76c9367dbed97eee7"
+    },
+    "contexts/manifest.json": {
+      "bytes": 668,
+      "sha256": "a7b2efbf73be1da173e688882fdf964d089f143057c51a4e8bf3e0102045a090"
+    },
+    "countdown.elf": {
+      "bytes": 112344,
+      "sha256": "68e8dd5196dc047ee36beee11b54bc7ccb20e0065514d2fcc435d87b2ba8f5d4"
+    },
+    "countdown.json": {
+      "bytes": 975,
+      "sha256": "5348bdd2ecf4efc11de4eadda4b336d642358e6f4b4b7e907e7c53d318f92192"
+    },
+    "default.elf": {
+      "bytes": 863504,
+      "sha256": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2"
+    },
+    "default.json": {
+      "bytes": 1203,
+      "sha256": "0fa1bf863a8ae202f57d6cb2322e2153eedda940fa6c2b0995b10342b7cd1895"
+    },
+    "file_browser.elf": {
+      "bytes": 120216,
+      "sha256": "fbc5424084526871559bc738f1b5df4e2ab980e5bdd1fd5b67ef08fde19c362d"
+    },
+    "file_browser.json": {
+      "bytes": 1056,
+      "sha256": "5938d11e6b572918a5d8c86b8ffa164e5ffa2d2d4a6c01f85dc942ff26d50664"
+    },
+    "frequency_generator.elf": {
+      "bytes": 103348,
+      "sha256": "db6f79780303402fe750a057042d9b04aa9556c68642018b52a7e63326140f6b"
+    },
+    "frequency_generator.json": {
+      "bytes": 1059,
+      "sha256": "d269a72122e6df64a717d131e037f4a82f03bbcb62ee18ab083a544f2b64cab7"
+    },
+    "gpio/driver.elf": {
+      "bytes": 6044,
+      "sha256": "cd83cf4235ef697e91b94c3b10ece447282d8895f35c806cf1f590b8a0d39efb"
+    },
+    "gpio/manifest.json": {
+      "bytes": 689,
+      "sha256": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8"
+    },
+    "haptic/driver.elf": {
+      "bytes": 4516,
+      "sha256": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30"
+    },
+    "haptic/manifest.json": {
+      "bytes": 738,
+      "sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1"
+    },
+    "i2c/driver.elf": {
+      "bytes": 4968,
+      "sha256": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579"
+    },
+    "i2c/manifest.json": {
+      "bytes": 694,
+      "sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b"
+    },
+    "imu/driver.elf": {
+      "bytes": 54404,
+      "sha256": "e5d1ffaff961c1e04bb04856aa59921f1bea8753599c32c987114f2fc715c556"
+    },
+    "imu/manifest.json": {
+      "bytes": 801,
+      "sha256": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd"
+    },
+    "lists.elf": {
+      "bytes": 33192,
+      "sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582"
+    },
+    "lists.json": {
+      "bytes": 415,
+      "sha256": "2a7b4b0401320e8b6fa98631bf96005c8efbeaea47e99223b8c91d0096bb6bf9"
+    },
+    "lora/driver.elf": {
+      "bytes": 13120,
+      "sha256": "640f206f64afeab69eeaeec2d20594b5286b29489be98c6f6dc8450ef8196f6a"
+    },
+    "lora/manifest.json": {
+      "bytes": 1218,
+      "sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c"
+    },
+    "lora_messages.elf": {
+      "bytes": 118416,
+      "sha256": "409f636bf62049cba5b12cef267422773599fb478e46bbd8cf939fe8555f82f4"
+    },
+    "lora_messages.json": {
+      "bytes": 1045,
+      "sha256": "f4d4eb72c26bc0db78af904dd906e7b284e93b514a5284466cb73f7c3a4c9ea8"
+    },
+    "mic/driver.elf": {
+      "bytes": 4436,
+      "sha256": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077"
+    },
+    "mic/manifest.json": {
+      "bytes": 673,
+      "sha256": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875"
+    },
+    "model_viewer.elf": {
+      "bytes": 39284,
+      "sha256": "24b73fff728355ab88e5b34f9eae1caeb9442bbbc36240bd6bc8c29f0708fed0"
+    },
+    "model_viewer.json": {
+      "bytes": 508,
+      "sha256": "8a6addf7d89da6d3135497c8ec22b16280e093c68915a8546a36902346d2cffc"
+    },
+    "ota_update.elf": {
+      "bytes": 112120,
+      "sha256": "d0ede8a9671c25d32c3747ab6be3981a6581e54e4945bceb0b422931641039ae"
+    },
+    "ota_update.json": {
+      "bytes": 1052,
+      "sha256": "812c1aa1a75553a904f5a7efec35ea2b06cffbcb54a5f9710db053d3a9ded4f5"
+    },
+    "panel/driver.elf": {
+      "bytes": 12672,
+      "sha256": "8fbe4ba4ff33919029c20402fbd05f27fd32af10ec71572c2c04f54445a06d82"
+    },
+    "panel/manifest.json": {
+      "bytes": 876,
+      "sha256": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75"
+    },
+    "pmu/driver.elf": {
+      "bytes": 9892,
+      "sha256": "a68118f88842150ce0ebe250dfadd92be300a57d5acd1395e4ee2ef677ff8ab5"
+    },
+    "pmu/manifest.json": {
+      "bytes": 805,
+      "sha256": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e"
+    },
+    "points_in_time.elf": {
+      "bytes": 139332,
+      "sha256": "c8eb8fa7ea81ea0a9b44bce6c1a88e53b5230325d9a6c3e35b497ba29baf86ad"
+    },
+    "points_in_time.json": {
+      "bytes": 984,
+      "sha256": "8743f91794d068f3d91c6d84548e579ea90540b0e5cc67fc91066153c1239ee5"
+    },
+    "rtc/driver.elf": {
+      "bytes": 6108,
+      "sha256": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756"
+    },
+    "rtc/manifest.json": {
+      "bytes": 731,
+      "sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e"
+    },
+    "s3-radio-iq/driver.elf": {
+      "bytes": 43692,
+      "sha256": "448f63fa06f2320b85ea56fcf10b49008a90eacc782729e9a5f28d1f6bf2df50"
+    },
+    "s3-radio-iq/manifest.json": {
+      "bytes": 373,
+      "sha256": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77"
+    },
+    "settings.elf": {
+      "bytes": 129360,
+      "sha256": "f4be4acfb2ac2e267b189a7c151ee64c4036eb0adbff6d9e387ccc88cdac2eaf"
+    },
+    "settings.json": {
+      "bytes": 973,
+      "sha256": "50bd41797e226bc45912bf88ea6a1291755b61030528db3a091fe3bbfa5e1938"
+    },
+    "speaker/driver.elf": {
+      "bytes": 5244,
+      "sha256": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e"
+    },
+    "speaker/manifest.json": {
+      "bytes": 689,
+      "sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0"
+    },
+    "springboard.elf": {
+      "bytes": 136104,
+      "sha256": "8c97414a58e35901349a31a59a09e1e12dccbcbae1c6a362642fba2604045cc9"
+    },
+    "springboard.json": {
+      "bytes": 979,
+      "sha256": "871bf0ad196586c138fda1d1e799edf68f7531a6fbff181a73e946ee3464582f"
+    },
+    "stopwatch.elf": {
+      "bytes": 111108,
+      "sha256": "0d0bcf3273ce9ddc521e179629f62139ffc7626fad0bb6c509b2457401b70768"
+    },
+    "stopwatch.json": {
+      "bytes": 975,
+      "sha256": "243ae2fdc320ecbfeb3ffdbc659da3e008939b036eddef544d6286a0c13c55ef"
+    },
+    "timecard.elf": {
+      "bytes": 130076,
+      "sha256": "9a2a215b60446565c05d7ef9fab8d8a7804985148626b86da38cf4dc87e90e10"
+    },
+    "timecard.json": {
+      "bytes": 1040,
+      "sha256": "050c0627aefd909296276fcdf1a6e42f9354c9cde58cf56666cb679f1e68799f"
+    },
+    "touch/driver.elf": {
+      "bytes": 13240,
+      "sha256": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368"
+    },
+    "touch/manifest.json": {
+      "bytes": 871,
+      "sha256": "80c6926125db8f40793e1b40bc015ec724f7f189260ce17eab8938591a6db5de"
+    },
+    "ui-profile/driver.elf": {
+      "bytes": 2276,
+      "sha256": "4556ce0cb7a660712b3a032e77e0589a1e20edf78a9f90417894e1fd8bb77a5b"
+    },
+    "ui-profile/manifest.json": {
+      "bytes": 281,
+      "sha256": "6f3f1205b23e745ed7011bf0b9e99f5eccc1a247512639bc21c8c5a0fd642884"
+    },
+    "ui-scene/driver.elf": {
+      "bytes": 285028,
+      "sha256": "ea156bb5e074d14ab3a4cdbc47c8670f67ff6f219bf790ca3b5fac392f2cf572"
+    },
+    "ui-scene/manifest.json": {
+      "bytes": 525,
+      "sha256": "95e9f0bb92511d11fff4fd6f9a0684ad06d63e53c5ae59c6e35afe3582917d21"
+    },
+    "update-apps/driver.elf": {
+      "bytes": 29156,
+      "sha256": "b1e3d4c2b1e7b9720388a3ee8d18ab183319ccad30d66e695a2c2ccaab166641"
+    },
+    "update-apps/manifest.json": {
+      "bytes": 552,
+      "sha256": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5"
+    },
+    "update-fw/driver.elf": {
+      "bytes": 22208,
+      "sha256": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3"
+    },
+    "update-fw/manifest.json": {
+      "bytes": 560,
+      "sha256": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7"
+    },
+    "waterfall.elf": {
+      "bytes": 229480,
+      "sha256": "2db976471fcf0b0595f77a74bf9e6d4d093a99480b7654f25545de204e0e8c3d"
+    },
+    "waterfall.json": {
+      "bytes": 1171,
+      "sha256": "9b4442b89001f404839a48fe3c179bc64cf33c2fa6d38148462dc6a3bca8e954"
+    },
+    "wifi/driver.elf": {
+      "bytes": 6080,
+      "sha256": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592"
+    },
+    "wifi/manifest.json": {
+      "bytes": 689,
+      "sha256": "1d127070ae492e36d910e4c4807ab5478eca7f7f2e09c1bad1ae5e103354431c"
+    },
+    "wifi_settings.elf": {
+      "bytes": 120124,
+      "sha256": "98af430f575ea8242b0a8f6bdc13942871108ccaa213c6212c833d1004d179ba"
+    },
+    "wifi_settings.json": {
+      "bytes": 983,
+      "sha256": "997ed7be8bfd019a86418ef9a034a57a66a758ba59159828d05328fa04ff9a5f"
+    }
+  },
+  "store_generator": {
+    "config": {
+      "aligned": true,
+      "aligned_obj_ix_tables": false,
+      "block_ix_len": 2,
+      "block_size": 4096,
+      "endianness": "little",
+      "meta_len": 4,
+      "obj_id_len": 2,
+      "obj_name_len": 32,
+      "packed": true,
+      "page_ix_len": 2,
+      "page_size": 256,
+      "span_ix_len": 2,
+      "use_magic": true,
+      "use_magic_len": true
+    },
+    "empty_blocks": 27,
+    "file_count": 105,
+    "generator": "esp-idf-spiffsgen",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "image_bytes": 5308416,
+    "independent_round_trip_verified": true,
+    "metadata": "zero",
+    "occupied_blocks": 1269,
+    "order": "sorted ASCII path names",
+    "payload_bytes": 4705104,
+    "sha256": "75640c7ee9cce389c27ac5eb1411cf124cb94045c92372f961f0217bfeb1292e",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3"
+  },
+  "strict_admission": [
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "1ebe6061cab0e3a030a9dd1cdd519e9771f9b482adfc84f48c8327165d6f9f23",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memset",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "alarm-service/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "de78c79b1df6a6ea0db532906c66f6351fd78636cf2f76ade89a471adfee418c",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "alarms.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "c77270c1ca9e97205bcef7fe7f372f6121c82170c745437db340d11ad73efef9",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "app_store.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "da3151a8518879b71bb0682aa19b04c5666fa654a637cd8471dffec5cd6529bc",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "audio_spectrum.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "2d588612bd7c0e4764d7b995ffd5cde3b9d76d2a1af74c0cce0ae77855dd1cd7",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "battery-telem/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "e4088bb0a9232c63643c4d903df78daf541b9c021d06dac1284bf770375a213e",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "battery.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "5db0e3dd59a12cfd33f0934777d8ed32e6a24768ca6bb667212aa3649aeb59f7",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memmove": "0x40001200",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memmove",
+        "memset",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble-hid/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "ecbf3532d20263a9eba89a1d235a766b94185d09990a7016edf0a308d968a047",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memset",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble-sensors/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "677ac910f378af62dc3e0163c9dfdc3bc497e6d9ec990c13d8b3be52d96025de",
+      "compiled_public_exports": {
+        "memchr": "0x40001344",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memchr",
+        "memcpy",
+        "memset",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble-telemetry/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "128354d7d632340d9ca0ae405f03e2d255e378a5ce7d511064475e322a63c4a1",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble_buttons.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "c10ad00d4867270d10c5543d9c4ad094bc8c8e8630a8f36e15ade559856fe5c5",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble_scanner.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "56681b5674dc777076766ee0c61c1a7b2a5197a30c147e4aff86fd07d1185ba5",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ble_touchpad.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "fd4b59e912b931dabf9b91a617ce728116d8f43d38da42eff98b6d54b0cf322d",
+      "compiled_public_exports": {
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "broadcast/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "dff055f2e64e3e3e3039201ff589fbce4d99de9b0a06408a6b891f94f5cc5772",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "strcmp",
+        "strcpy",
+        "strlen",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "calculator.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "ba8e0b60c7694defb4674fdae532a9d0bf1ace7b7b251bbce2bb420c89463256",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "civil-clock/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "clock.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "4d575160dca09bcefb55c3844150df08ba05ad29042749eafe90da6a7fb2a42e",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "contexts.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "a01fe77c71ff4516e7933e1197df764459d159f69ed27fc76c9367dbed97eee7",
+      "compiled_public_exports": {
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "contexts/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "68e8dd5196dc047ee36beee11b54bc7ccb20e0065514d2fcc435d87b2ba8f5d4",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "countdown.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "strcmp": "0x40001230",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "strcmp",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "default.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "fbc5424084526871559bc738f1b5df4e2ab980e5bdd1fd5b67ef08fde19c362d",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248",
+        "strncmp": "0x4000123c",
+        "strrchr": "0x40001404"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen",
+        "strncmp",
+        "strrchr"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "file_browser.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "db6f79780303402fe750a057042d9b04aa9556c68642018b52a7e63326140f6b",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "frequency_generator.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "cd83cf4235ef697e91b94c3b10ece447282d8895f35c806cf1f590b8a0d39efb",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "gpio/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "7a61325f1a241054be7b86d633c6d3188db127dcb679dc2bbdefc94457355f30",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "haptic/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "d582c67ccb153e6c9bdc73cafc4d795befd40fbc6e92d2c7a55868a3daf69579",
+      "compiled_public_exports": {
+        "memset": "0x400011e8"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memset"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "i2c/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "e5d1ffaff961c1e04bb04856aa59921f1bea8753599c32c987114f2fc715c556",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "imu/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+      "compiled_public_exports": {
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "lists.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "640f206f64afeab69eeaeec2d20594b5286b29489be98c6f6dc8450ef8196f6a",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "lora/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "409f636bf62049cba5b12cef267422773599fb478e46bbd8cf939fe8555f82f4",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "lora_messages.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "1a042b08a8a549afeb5448d3addfa83e3233afe82a5ff600a1a680717c510077",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "mic/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "24b73fff728355ab88e5b34f9eae1caeb9442bbbc36240bd6bc8c29f0708fed0",
+      "compiled_public_exports": {
+        "calloc": "0x403890d8",
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248",
+        "strncmp": "0x4000123c",
+        "strrchr": "0x40001404",
+        "strstr": "0x40001254"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "calloc",
+        "free",
+        "malloc",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen",
+        "strncmp",
+        "strrchr",
+        "strstr"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "model_viewer.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "d0ede8a9671c25d32c3747ab6be3981a6581e54e4945bceb0b422931641039ae",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ota_update.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "8fbe4ba4ff33919029c20402fbd05f27fd32af10ec71572c2c04f54445a06d82",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "panel/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "a68118f88842150ce0ebe250dfadd92be300a57d5acd1395e4ee2ef677ff8ab5",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "pmu/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "c8eb8fa7ea81ea0a9b44bce6c1a88e53b5230325d9a6c3e35b497ba29baf86ad",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strlen",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "points_in_time.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "28f7235841466a7028627c27460c31ce8c43520f55cf44650b26307e60371756",
+      "compiled_public_exports": {
+        "memset": "0x400011e8"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memset"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "rtc/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "448f63fa06f2320b85ea56fcf10b49008a90eacc782729e9a5f28d1f6bf2df50",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strcmp": "0x40001230"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset",
+        "strcmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "s3-radio-iq/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "f4be4acfb2ac2e267b189a7c151ee64c4036eb0adbff6d9e387ccc88cdac2eaf",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "settings.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "b8c5f0c801b55015575f7813c667b91e203f562616fcd8ada5dfc2cdd7d3d12e",
+      "compiled_public_exports": {
+        "memset": "0x400011e8"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memset"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "speaker/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "8c97414a58e35901349a31a59a09e1e12dccbcbae1c6a362642fba2604045cc9",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "springboard.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "0d0bcf3273ce9ddc521e179629f62139ffc7626fad0bb6c509b2457401b70768",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "strcmp": "0x40001230",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "strcmp",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "stopwatch.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "9a2a215b60446565c05d7ef9fab8d8a7804985148626b86da38cf4dc87e90e10",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strncmp": "0x4000123c"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strncmp"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "timecard.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "touch/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "4556ce0cb7a660712b3a032e77e0589a1e20edf78a9f90417894e1fd8bb77a5b",
+      "compiled_public_exports": {},
+      "each_missing_import_rejected": true,
+      "imports": [],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ui-profile/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "ea156bb5e074d14ab3a4cdbc47c8670f67ff6f219bf790ca3b5fac392f2cf572",
+      "compiled_public_exports": {
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "ui-scene/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "b1e3d4c2b1e7b9720388a3ee8d18ab183319ccad30d66e695a2c2ccaab166641",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memset",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "update-apps/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3",
+      "compiled_public_exports": {
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcmp",
+        "memcpy",
+        "memset",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "update-fw/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "2db976471fcf0b0595f77a74bf9e6d4d093a99480b7654f25545de204e0e8c3d",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memchr": "0x40001344",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "waterfall.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "7751bbc19fc2367f5b1a13060b775b1a1b16bb3a68208194d7dc5dfdb2644592",
+      "compiled_public_exports": {
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "strlen": "0x40001248"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "memcpy",
+        "memset",
+        "strlen"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "wifi/driver.elf",
+      "production_native_admission": true,
+      "provider": true,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    },
+    {
+      "all_imports_defined_in_native_candidate": true,
+      "app_elf_sha256": "98af430f575ea8242b0a8f6bdc13942871108ccaa213c6212c833d1004d179ba",
+      "compiled_public_exports": {
+        "free": "0x4038907c",
+        "malloc": "0x4038905c",
+        "memcmp": "0x4000120c",
+        "memcpy": "0x400011f4",
+        "memset": "0x400011e8",
+        "risc_runtime_get_api": "0x4200a2d8",
+        "snprintf": "0x420cf088",
+        "strcmp": "0x40001230",
+        "strcpy": "0x40001218"
+      },
+      "each_missing_import_rejected": true,
+      "imports": [
+        "free",
+        "malloc",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "risc_runtime_get_api",
+        "snprintf",
+        "strcmp",
+        "strcpy"
+      ],
+      "native_bank_source_sha256": "d68d00d3b3c811b77bc24d07f910c25d33080e6578f056f7d07ede1e80db05f4",
+      "native_elf_sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc",
+      "path": "wifi_settings.elf",
+      "production_native_admission": true,
+      "provider": false,
+      "target_instructions_executed": false,
+      "target_symbol_resolver_host_executed": false
+    }
+  ],
+  "version": "1.1.1",
+  "warning": "Full 16 MiB image at 0x0 overwrites internal settings and AppData. Back up first. SD is not included."
+}

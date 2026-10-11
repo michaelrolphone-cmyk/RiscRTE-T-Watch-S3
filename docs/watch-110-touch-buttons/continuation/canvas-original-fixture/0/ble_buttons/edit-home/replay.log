@@ -1,0 +1,2 @@
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+Assertion failed: (launches==1&&!save_attempts), function main, file hid_renderer_test.c, line 333.

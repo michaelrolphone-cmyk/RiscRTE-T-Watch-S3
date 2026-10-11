@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+import os,sys
+args=[]
+for a in sys.argv[1:]:
+ if a=='-lgcc':continue
+ if a=='-Wl,--gc-sections':a='-Wl,-dead_strip'
+ if a.startswith('-Wl,--version-script='):a='-Wl,-exported_symbol,_t5_driver_get'
+ args.append(a)
+os.execv('/usr/bin/clang',['/usr/bin/clang',*args])
