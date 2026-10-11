@@ -40,8 +40,11 @@ assert inventory == {n: r['sha256'] for n, r in custody['store_files'].items()}
 boot = read(base / 'boot.json')
 assert len(boot['app_capabilities']) == 25 and len(boot['drivers']) == 27
 assert len([n for n in inventory if n.endswith('.elf')]) == 51
-for name in ('default', 'clock'):
-    assert read(base / (name + '.json'))['version'] == '0.11.2'
+assert read(base / 'default.json')['id'] == 'twatch-clock'
+assert read(base / 'default.json')['version'] == '0.11.2'
+# The separate return launcher has its own version; it is not the Clock app.
+assert read(base / 'clock.json')['id'] == 'twatch-clock-return'
+assert read(base / 'clock.json')['version'] == '0.11.0'
 for name in ('model_viewer', 'lists', 'contexts'):
     assert name + '.elf' in inventory
 assert read(base / 'ble_buttons.json')['version'] == '0.1.14'
