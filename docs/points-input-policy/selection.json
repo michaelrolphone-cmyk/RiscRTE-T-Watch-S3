@@ -4,9 +4,9 @@
   "version": "0.6.14",
   "source_publication": "public-exact-commit",
   "sources": {
-    "system-apps": "66282802bb498590fcbab4eba871ff40cc3ddafd",
+    "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
     "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
-    "productivity": "99d706798d58399751e0df08439fb34c041272e9",
+    "productivity": "3c5930ba5715844055bb7853dd4fe9a02cbde4db",
     "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
     "watch": "089868395268b696c05651c33816345bfe0425df"
   },
@@ -39,14 +39,22 @@
     "tonight_sealed_at_files": true,
     "x4_points_0_6_17_provenance_unresolved": true,
     "rf_0_3_5_excluded": true,
-    "rf_product_recipe_publication_stopped": true
+    "rf_product_recipe_publication_stopped": false
   },
-  "productivity_tree": "f9bd352d50fb45056a595df16fb54ed56dc05db0",
+  "productivity_tree": "41bade4fe8cd08ef10579b8e691a8017b65762cc",
   "source_host_evidence": {
-    "path": "/workspace/shared/points-input-policy-evidence-20261012/full-home-fixed/result.json",
-    "sha256": "9078a39b4764e04447331566df660051c3c339a1f682c405caf16b0e835a5d88",
+    "path": "/workspace/shared/points-input-policy-evidence-20261012/watch-binding-exact/result.json",
+    "sha256": "32f6dd1cd560b41dd1b523a3e9f5183ef61cd5c6f4fae65f64aff66c45875977",
     "normal_workflows": 46,
     "sanitized_workflows": 46,
     "matched_frame_files": 1742
-  }
+  },
+  "watch_scene_dependencies": [
+    "display.output",
+    "input.touch.raw",
+    "platform.clock",
+    "ui.presentation-profile"
+  ],
+  "watch_local_navigation_restored": true,
+  "superseded_five_dependency_recipe": "854266b28fdfca9aeca58a37f76454def6bd1500"
 }
