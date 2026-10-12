@@ -140,6 +140,21 @@ static unsigned picker_selection_pending;
 static watch_launcher_touch touch;
 static bool launcher_swipe_pending, launcher_activity_pending;
 static uint32_t launcher_sampled_at;
+#ifdef WATCH_CONTEXTS_CLIENT
+/* Bounded raster-only journal. No recognizer/UI state changes while pixels are
+ * being written. Overflow cancels the complete journal until fresh neutral. */
+#define CLOCK_RASTER_OBSERVATIONS 128u
+static watch_launcher_observation clock_raster_observations[CLOCK_RASTER_OBSERVATIONS];
+static unsigned clock_raster_count;
+static bool clock_rendering,clock_raster_overflow,clock_raster_activity;
+static bool clock_render_checkpoint(void *context);
+#endif
+static void launcher_touch_latch(unsigned action,bool activity) {
+    if(action==WATCH_FACE_LAUNCHER)launcher_swipe_pending=true;
+    if(action==WATCH_FACE_OPEN)picker_open_pending=true;
+    if(action==WATCH_FACE_SELECT){picker_selection_pending=watch_face_page_for(picker.category)->ids[picker.target];picker_select_pending=true;}
+    if(activity)launcher_activity_pending=true;
+}
 /* Sampling must not wait for a whole 240-row presentation. Latch the first
  * qualified swipe, but let the accepted frame finish before handing it off. */
 static void sample_launcher_touch(uint32_t now, bool force) {
@@ -154,10 +169,7 @@ static void sample_launcher_touch(uint32_t now, bool force) {
     bool activity=false;
     launcher_sampled_at=now;
     unsigned action=launcher_touch_sample(&touch,&picker,now,&activity);
-    if(action==WATCH_FACE_LAUNCHER)launcher_swipe_pending=true;
-    if(action==WATCH_FACE_OPEN)picker_open_pending=true;
-    if(action==WATCH_FACE_SELECT){picker_selection_pending=watch_face_page_for(picker.category)->ids[picker.target];picker_select_pending=true;}
-    if (activity) launcher_activity_pending=true;
+    launcher_touch_latch(action,activity);
 }
 #endif
 static const risc_display_output_api_v1 *display;
@@ -214,7 +226,11 @@ static bool sampled_rtc, sampled_battery;
 static void reset_telemetry(void) {
     face=(nova_watch_state){0}; sampled_rtc=false; sampled_battery=false;
 #ifdef WATCH_CONTEXTS_CLIENT
+#ifdef WATCH_CLOCK_LAUNCHER
+    face.capture_audio=clock_render_checkpoint;
+#else
     face.capture_audio=clock_contexts_capture_checkpoint;
+#endif
 #endif
 #ifdef WATCH_CLOCK_POINTS
     clock_points_sampled=false;face.points=&clock_points_view;
@@ -241,6 +257,36 @@ static bool alive(uint32_t *ms) {
     if (!rt->health(&h)) return false;
     *ms=h.uptime_ms; return true;
 }
+#if defined(WATCH_CONTEXTS_CLIENT) && defined(WATCH_CLOCK_LAUNCHER)
+static bool clock_render_checkpoint(void *context) {
+    if(!clock_contexts_capture_checkpoint(context))return false;
+    if(!clock_rendering||!touch.subscription||launcher_swipe_pending)return true;
+#ifdef WATCH_CLOCK_ALARMS
+    if(clock_alarm_modal)return true;
+#endif
+    uint32_t now;
+    if(!alive(&now))return false;
+    if((uint32_t)(now-launcher_sampled_at)<8u)return true;
+    launcher_sampled_at=now;
+    watch_launcher_observation o=launcher_touch_capture(&touch,now);
+    clock_raster_activity|=o.activity;
+    if(clock_raster_count<CLOCK_RASTER_OBSERVATIONS)
+        clock_raster_observations[clock_raster_count++]=o;
+    else clock_raster_overflow=true;
+    return true;
+}
+static void clock_replay_raster_input(void) {
+    if(clock_raster_overflow) {
+        watch_launcher_observation cancelled={.now=launcher_sampled_at};
+        (void)launcher_touch_observe(&picker,&cancelled);
+    } else for(unsigned i=0;i<clock_raster_count&&!launcher_swipe_pending;i++) {
+        const watch_launcher_observation *o=&clock_raster_observations[i];
+        launcher_touch_latch(launcher_touch_observe(&picker,o),o->activity);
+    }
+    launcher_activity_pending|=clock_raster_activity;
+    clock_raster_count=0;clock_raster_overflow=false;clock_raster_activity=false;
+}
+#endif
 static bool present(void) {
 #ifdef WATCH_CONTEXTS_CLIENT
     if(!clock_contexts_capture_checkpoint(NULL))return false;
@@ -290,7 +336,7 @@ static bool frame(risc_display_surface_v1 *surface) {
     if (!display->acquire(display->context,RISC_DISPLAY_FORMAT_RGB565,surface)) return false;
     held=surface->frame;return held!=0;
 }
-static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
+static bool draw_clock_pixels(uint32_t now,risc_display_surface_v1 *surface) {
     /* RTC sampling and fractional phase are independent of the frame cadence.
      * Only a successful RTC sample may advance civil time. The first observed
      * edge anchors the fractional hand within one 100ms sampling interval. */
@@ -355,6 +401,19 @@ static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
 #else
     return nova_watch_render(surface,&face);
 #endif
+}
+static bool draw_clock(uint32_t now,risc_display_surface_v1 *surface) {
+#if defined(WATCH_CONTEXTS_CLIENT) && defined(WATCH_CLOCK_LAUNCHER)
+    clock_raster_count=0;clock_raster_overflow=false;clock_raster_activity=false;
+    clock_rendering=true;
+#endif
+    bool rendered=draw_clock_pixels(now,surface);
+#if defined(WATCH_CONTEXTS_CLIENT) && defined(WATCH_CLOCK_LAUNCHER)
+    clock_rendering=false;
+    if(rendered)clock_replay_raster_input();
+    else {clock_raster_count=0;clock_raster_overflow=false;clock_raster_activity=false;}
+#endif
+    return rendered;
 }
 static bool pace_frame(uint32_t began) {
 #ifdef WATCH_BLE_BROADCAST

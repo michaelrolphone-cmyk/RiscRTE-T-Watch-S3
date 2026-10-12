@@ -1,0 +1,36 @@
+{
+  "allowed_home_source_delta": [
+    "watch:apps/clock/crown.c",
+    "watch:apps/clock/launcher_touch.h",
+    "watch:apps/clock/nova/nova.h"
+  ],
+  "allowed_store_delta": [
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "baseline": {
+    "bank_state_sha256": "24326a915f4a8445263317a5a4c19e10280eb0bb0885765c281d42e1fb4841be",
+    "bootfs_sha256": "37ac411fb8bd187783a8f685f54cfff940d81fd9f3f71de1513a98fc0d86bf79",
+    "elf_count": 55,
+    "full_image_sha256": "fe9fd6bc304de29023c1ac3d485a65af880c38d41ab4da7f963d0985e7da997d",
+    "home_build_receipt_sha256": "c8c4c6bd89291769cbecee8488a0ad036695f7d77154653765bac995dd21053f",
+    "home_bytes": 862880,
+    "home_elf_sha256": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875",
+    "receipt_sha256": "bedf1e6a332bbf9331e39b80adbec810f5a2fd2254d1f11a346946a432a7f5e4",
+    "source": "6260a9d01d409a21b49d600176d591ab919b79d7",
+    "store_files": 113,
+    "store_sha256": "657aaf062e2798f4cc35efb69cfa4ee82183feb94eeca802cb14ffc698cb7590",
+    "tree": "c44c1a96ff5645d3b21b75a98b47dde2fe82bc4d",
+    "version": "1.1.19"
+  },
+  "home_version": "0.11.6",
+  "minimum_free_spiffs_blocks": 2,
+  "native": {
+    "elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "firmware_sha256": "6192fa2113f940c22fc42440bc3f02d0d9855a01e75d461d31050108cc2a7121",
+    "runtime_source": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9"
+  },
+  "schema": "watch.home-swipe.selection.v1",
+  "version": "1.1.20"
+}
