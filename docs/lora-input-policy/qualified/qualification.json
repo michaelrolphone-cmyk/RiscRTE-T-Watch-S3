@@ -1,0 +1,53 @@
+{
+  "schema": "lora.modal-policy.qualified.v1",
+  "compiled_recipe": "5664da64e83a2a006d73773fadf966ef66b66ad7",
+  "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+  "system": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+  "source_qualification": {
+    "normal_and_sanitized_workflows": 74,
+    "focused_policy_workflows": 16,
+    "normal_sanitized_images": 95,
+    "legacy_model_controller_executions": 4,
+    "python_regressions": 86,
+    "preprocessor_token_parity": 4
+  },
+  "recipe_tests": 14,
+  "normal_sanitized_cohort_equal": true,
+  "full_image_materialized": false,
+  "hardware_verified": false,
+  "published_ci": {
+    "source": [
+      38312880206,
+      38312880088
+    ],
+    "recipe": [
+      38313314886
+    ]
+  },
+  "evidence": {
+    "cohort-normal.json": {
+      "bytes": 7636,
+      "sha256": "77ed0e7554300ac5a47ded15d976a43499b250f75fd63458207747c116359756"
+    },
+    "cohort-sanitized.json": {
+      "bytes": 7636,
+      "sha256": "77ed0e7554300ac5a47ded15d976a43499b250f75fd63458207747c116359756"
+    },
+    "flagoff.json": {
+      "bytes": 1421,
+      "sha256": "7937b9f98175804371ccce90556e6cd5438a340f47be3017ca341145c7ccd459"
+    },
+    "lora_messages-build-record.json": {
+      "bytes": 33020,
+      "sha256": "23168363d19bf353cea5f3bc5abb098a5b044500355fae9827a1e8cee0752401"
+    },
+    "packing-recheck.json": {
+      "bytes": 1056,
+      "sha256": "87ee8bb78f6f457f37339dc88ebaf13f6d1d2c7d9d8e70c8a1f8f9d00890bd03"
+    },
+    "stack.json": {
+      "bytes": 2337,
+      "sha256": "d7b3754c914620853145df49ce647a288f0debceb5db1b8cc0a6971a3e8b4085"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "store_files": 113,
+  "elf_count": 55,
+  "byte_identical_files": 98,
+  "changed_paths": [
+    "alarms.json",
+    "app_store.json",
+    "audio_spectrum.json",
+    "battery.json",
+    "ble_buttons.json",
+    "ble_touchpad.json",
+    "calculator.json",
+    "cohort.json",
+    "countdown.json",
+    "frequency_generator.json",
+    "lora_messages.elf",
+    "lora_messages.json",
+    "ota_update.json",
+    "points_in_time.json",
+    "wifi_settings.json"
+  ],
+  "strict_json_files": 58,
+  "ordinary_metadata_compaction": [
+    "alarms.json",
+    "app_store.json",
+    "audio_spectrum.json",
+    "battery.json",
+    "ble_buttons.json",
+    "ble_touchpad.json",
+    "calculator.json",
+    "countdown.json",
+    "frequency_generator.json",
+    "ota_update.json",
+    "points_in_time.json",
+    "wifi_settings.json"
+  ],
+  "metadata_bytes_saved": 4362,
+  "boot_authority_byte_identical": true,
+  "repack_byte_identical": true,
+  "free_blocks": 2,
+  "bootfs_sha256": "c27cfabe7ea2d6224c5d222cd7aa580c1feb554a24d69a69bb11783315c5549a",
+  "hardware_claim": false
+}

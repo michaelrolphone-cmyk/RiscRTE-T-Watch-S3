@@ -1,0 +1,44 @@
+{
+  "schema": "lora.modal-policy.flagoff-target.v1",
+  "device": "watch",
+  "passed": true,
+  "targets": {
+    "predecessor": {
+      "sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5",
+      "bytes": 124724
+    },
+    "candidate": {
+      "sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5",
+      "bytes": 124724
+    }
+  },
+  "linker_attempts": {
+    "predecessor": [
+      {
+        "attempt": 1,
+        "returncode": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "candidate": [
+      {
+        "attempt": 1,
+        "returncode": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "selected_lora_0114_sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5",
+  "selected_lora_0114_byte_equal": true,
+  "sources": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "baseline_system": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "baseline_utilities": "e85eff650e9f748ae162fb725fb6e14eb6df876a",
+  "only_removed_flag": "-DPORTABLE_TEXT_INPUT_POLICY",
+  "hardware_verified": false,
+  "target_instructions_executed": false
+}

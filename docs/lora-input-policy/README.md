@@ -11,3 +11,13 @@ Utilities source is public 4cfe21248f1f81339072c39eba44dbaea3a444b6. No hardware
 The successor manifest uses compact JSON rather than restoring predecessor
 whitespace already removed by the cumulative baseline. Its decoded authority
 and grants are unchanged and its new stored hash is recorded.
+
+## Qualified checkpoint
+
+Compiled public recipe: `5664da64e83a2a006d73773fadf966ef66b66ad7`.
+Receipt-only documentation commits do not change this build identity.
+See `qualified/qualification.json` for source/target/cohort evidence.
+The target is 128,820 bytes, with unchanged selected font closure; policy-off
+output exactly matches selected LoRa 0.1.14. Normal/sanitized complete 55-ELF
+cohorts match. Twelve lossless unsigned manifest compactions save 4,362 bytes
+and retain two free blocks. No hardware execution or full-image delivery.
