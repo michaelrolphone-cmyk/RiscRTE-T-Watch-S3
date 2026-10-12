@@ -1,0 +1,39 @@
+name: Universal integration source inputs
+on:
+  push:
+    branches: [feat/universal-watch-home]
+    paths: ['.github/workflows/universal-source-workspace.yml']
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 628f72b09786880edeafa7c161aedd7114c2d7bc
+          path: watch
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 267aab6d9382ce4921a1536fab1620749b2f5301
+          path: runtime
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/T5S3-Reader
+          ref: master
+          path: reader
+          sparse-checkout: |
+            Drivers/storage_fatfs
+            sdk/driver
+            test/storage_volume
+            LICENSE
+      - name: Record and archive source
+        run: |
+          for d in watch runtime reader; do printf '%s ' "$d"; git -C "$d" rev-parse HEAD; done > SOURCES.txt
+          tar --exclude='.git' -czf universal-integration-inputs.tar.gz watch runtime reader SOURCES.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: universal-integration-inputs
+          path: universal-integration-inputs.tar.gz
+          retention-days: 14
