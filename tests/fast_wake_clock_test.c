@@ -39,6 +39,20 @@ static bool crown_before_alarm;
 static uint32_t prealarm_crown_events;
 static const char *fail_capability;
 static bool fail_frame_acquire,fail_unblank,fail_marker_sample,fail_next_health;
+static unsigned fail_sleep_acquire,refused_cycles,refused_restores,clean_refusal_frames,sleep_acquire_errors;
+static bool sleep_failure_armed;
+static void check_refusal_pixels(void){
+ risc_display_surface_v1 expected={0,expected_pixels,240,240,480,sizeof(expected_pixels),5};
+ assert(nova_watch_face_render(&expected,&face,picker.selected));
+ if(sleep_status[0]){
+  /* A genuine error may change only the existing status strip. */
+  for(unsigned y=0;y<240;y++)for(unsigned x=0;x<240;x++)
+   if(y<203||y>=231||x<10||x>=230)assert(completed_pixels[y*240+x]==expected_pixels[y*240+x]);
+  assert(memcmp(completed_pixels,expected_pixels,sizeof(expected_pixels)));
+  assert(nova_watch_sleep_status(&expected,sleep_status));
+ }
+ assert(!memcmp(completed_pixels,expected_pixels,sizeof(expected_pixels)));
+}
 static unsigned stage_count(const char *name) {
  unsigned found=0;for(unsigned i=0;i<wake_stage_count;i++)found+=!strcmp(name,wake_stages[i]);return found;
 }
@@ -64,6 +78,20 @@ static bool fast_retain(void){retains++;retained_fence=true;return true;}
 static bool fast_confirm(void){check_io();assert(!queued_context_handoff);confirmations++;if(service_acquires<4)confirmed_early=true;return true;}
 static bool fast_health(risc_runtime_health_v1*h){check_io();h->uptime_ms=clock_ms;if(fail_next_health){fail_next_health=false;return false;}return !ended&&clock_ms<30000u;}
 static bool fast_diagnostic(const char*s){
+ if(!strncmp(s,"WATCH_SLEEP error=",18)){
+  const char *expected=fail_sleep_acquire==1?
+   "WATCH_SLEEP error=settings-acquire capability=storage.key-value instance=1":
+   "WATCH_SLEEP error=motion-acquire capability=motion.accel instance=7";
+  assert(fail_sleep_acquire&&!strcmp(s,expected));sleep_acquire_errors++;
+ }
+ if(!strncmp(s,"WATCH_CLOCK sleep=refused",25)){
+  const char *expected=fail_sleep_acquire==1?"WATCH_CLOCK sleep=refused stage=SETTINGS detail=unavailable":
+   "WATCH_CLOCK sleep=refused stage=MOTION detail=unavailable";
+  assert(fail_sleep_acquire&&!strcmp(s,expected));
+  assert(!strcmp(sleep_status,fail_sleep_acquire==1?"SLEEP ERR SETTINGS":"SLEEP ERR MOTION"));
+  assert(!hardware_brightness&&!owned&&!pending&&!touch.subscription);
+  refused_cycles++;
+ }
  if(!strncmp(s,"WATCH_WAKE stage=",17)) {
   assert(wake_stage_count<128);unsigned now,elapsed;
   assert(sscanf(s,"WATCH_WAKE stage=%31s t_ms=%u elapsed_ms=%u",wake_stages[wake_stage_count],&now,&elapsed)==3);
@@ -81,11 +109,13 @@ static bool fast_diagnostic(const char*s){
  }
  if(strstr(s,"stage=first-input-poll")){input_at=clock_ms;input_stages++;assert(touch.subscription&&polls);if(wake_count)resume_input_at=clock_ms;}
  if(strstr(s,"stage=light-resume")){wake_began=clock_ms;assert(!clock_quick.ui.radios_valid&&!clock_radios.valid&&!clock_radios.available);assert(!clock_broadcast_started&&!clock_contexts_started);}
- if(strstr(s,"stage=light-frame")){soft_frames++;soft_latency=clock_ms-wake_began;assert(!pending&&!owned&&hardware_brightness==clock_quick.brightness);}
+ if(strstr(s,"stage=light-frame")){soft_frames++;soft_latency=clock_ms-wake_began;assert(!pending&&!owned&&hardware_brightness==clock_quick.brightness);
+  assert(!sleep_status[0]);if(refused_restores)check_refusal_pixels();
+ }
  if(strstr(s,"stage=radios-begin")){radio_at=clock_ms;assert(input_stages>0);if(wake_count)assert(resume_input_at>=wake_began);assert(frame_at>=(wake_count?wake_began:first_at));}
  if(strstr(s,"stage=broadcast-begin"))broadcast_at=clock_ms;
  if(strstr(s,"stage=contexts-begin"))contexts_at=clock_ms;
- if(strstr(s,"stage=services-ready")){stage_calls++;if(wake_count==requested_wakes&&!early_launch)ended=true;}
+ if(strstr(s,"stage=services-ready")){stage_calls++;if(wake_count+refused_cycles==requested_wakes&&!early_launch)ended=true;}
  return true;
 }
 static bool fast_status(void*c,uint64_t token,risc_display_present_status_v1*out){
@@ -93,18 +123,26 @@ static bool fast_status(void*c,uint64_t token,risc_display_present_status_v1*out
  if(swipe_during_frame&&first_seen&&submitted==2&&clock_ms-frame_started>=10&&!swipe_latched){launcher_swipe_pending=true;swipe_latched=true;swipe_time=clock_ms;}
  if(clock_ms-frame_started<transfer_cost){out->state=RISC_DISPLAY_PRESENT_ACTIVE;return true;}
  pending=false;out->state=fail_display?RISC_DISPLAY_PRESENT_FAILED:RISC_DISPLAY_PRESENT_COMPLETE;
- if(!fail_display){memcpy(completed_pixels,pixels,sizeof(pixels));last_complete=submitted;frame_at=clock_ms;if(clock_alarm_modal)alarm_frames++;}return true;
+ if(!fail_display){memcpy(completed_pixels,pixels,sizeof(pixels));last_complete=submitted;frame_at=clock_ms;if(clock_alarm_modal)alarm_frames++;
+  if(refused_restores&&hardware_brightness){
+   check_refusal_pixels();clean_refusal_frames++;
+  }
+ }return true;
 }
 static bool fast_frame_acquire(void*c,uint32_t format,risc_display_surface_v1*out) {
  check_io();return !fail_frame_acquire&&acquire_frame(c,format,out);
 }
 static bool fast_brightness(void*c,uint16_t level,uint16_t maximum) {
+ if(level&&refused_cycles>refused_restores){
+  assert(!owned&&!pending&&last_complete==submitted&&!hardware_brightness);
+  assert(sleep_status[0]);check_refusal_pixels();refused_restores++;
+ }
  check_io();return !(level&&fail_unblank)&&brightness(c,level,maximum);
 }
 static bool fast_key(void*c,uint32_t*out){check_io();(void)c;*out=0;
  if(crown_before_alarm&&ready&&!alarm_acquires){*out=2;crown_before_alarm=false;prealarm_crown_events++;}
  else if(clock_alarm_modal&&alarm_view.occurrence.generation&&alarm_frames)*out=1;
- else if(first_seen&&(clock_deferred_phase==4||(early_sleep&&clock_deferred_phase==1))&&wake_count<requested_wakes&&clock_ms-ready_time>300)*out=2;
+ else if(first_seen&&(clock_deferred_phase==4||(early_sleep&&clock_deferred_phase==1))&&wake_count+refused_cycles<requested_wakes&&clock_ms-ready_time>300){*out=2;sleep_failure_armed=fail_sleep_acquire!=0&&refused_cycles<2;}
  return true;}
 static int32_t fast_sleep(void*c,risc_light_sleep_result_v1*out){check_io();(void)c;(void)out;assert(!touch.subscription&&!ble_state&&!pending&&!owned);assert(!broadcast_live&&!contexts_live);sleeps++;wake_count++;clock_ms+=500;native_time.epoch_seconds+=3600;if(low_on_wake){low_percent=5;clock_low_battery_sampled=false;}if(alarm_on_wake){alarm_view.state=ALARM_STATE_ALERT;alarm_view.occurrence.generation=1;}return RISC_LIGHT_SLEEP_OK;}
 static int32_t fast_sleep_timed(void*c,uint32_t ms,risc_light_sleep_result_v1*out){(void)ms;return fast_sleep(c,out);}
@@ -155,6 +193,12 @@ static const portable_bluetooth_control_v1 fast_ble;
 static const risc_key_value_v1 fast_kv;
 static bool fast_acquire(const char*n,uint32_t version,uint64_t instance,risc_runtime_capability_v1*g){
  check_io();
+ if(sleep_failure_armed&&((fail_sleep_acquire==1&&!strcmp(n,RISC_KEY_VALUE_CAPABILITY)&&instance==1)||
+    (fail_sleep_acquire==2&&!strcmp(n,TWATCH_MOTION_CAPABILITY)&&instance==7))){
+  assert(!hardware_brightness&&!touch.subscription&&!pending&&!owned&&!broadcast_live&&!contexts_live);
+  for(unsigned pixel=0;pixel<240u*240u;pixel++)assert(!completed_pixels[pixel]);
+  sleep_failure_armed=false;return false;
+ }
  if(fail_capability&&!strcmp(n,fail_capability))return false;
  if(!strcmp(n,"display.output"))clock_ms+=display_load_cost;
  if(!strcmp(n,"rtc.clock"))rtc_acquires++;
@@ -220,6 +264,7 @@ static void reset_case(void){
  alarm_load_cost=alarm_acquires=rtc_acquires=0;
  crown_before_alarm=false;prealarm_crown_events=0;
  fail_capability=NULL;fail_frame_acquire=fail_unblank=fail_marker_sample=fail_next_health=false;
+ fail_sleep_acquire=refused_cycles=refused_restores=clean_refusal_frames=sleep_acquire_errors=0;sleep_failure_armed=false;
  low_percent=55;low_flags=0;low_read_fail=false;memset(low_lengths,0,sizeof(low_lengths));memset(low_writes,0,sizeof(low_writes));
  saved_face=radio_saved=false;ble_state=0;face_writes=face_reads=0;memset(quick_saved,0,sizeof(quick_saved));
  da.base.present_status=fast_status;pa.key_events=fast_key;pa.light_sleep=fast_sleep;pa.light_sleep_for=fast_sleep_timed;ra.read=fast_rtc;
@@ -247,6 +292,27 @@ static void check_boot_stages(void) {
   assert(j<wake_stage_count&&!strcmp(wake_stages[j],expected[i]));
  }
  assert(stage_count("first-frame")==1&&stage_count("entry")==1);
+}
+static char diagnostic_line[80];
+static bool capture_diagnostic(const char *line){assert(strlen(line)<sizeof(diagnostic_line));strcpy(diagnostic_line,line);return false;}
+static void check_refusal_diagnostics(void){
+ static const risc_runtime_api_v1 capture={.diagnostic=capture_diagnostic};
+ static const char *const stages[]={"UNKNOWN","SENSOR","PANEL","PMU","ALARM","LIGHT","DEEP","ACQUIRE","API","SETTINGS","MOTION","RUNTIME","UNKNOWN"};
+ static const int32_t details[]={0,-1,17,INT32_MIN,INT32_MAX};
+ const risc_runtime_api_v1 *saved=rt;rt=&capture;
+ memcpy(expected_pixels,pixels,sizeof(pixels));
+ for(unsigned stage=0;stage<13;stage++)for(unsigned detail=0;detail<5;detail++){
+  watch_sleep_stage=stage;watch_sleep_detail=details[detail];clock_sleep_refused();
+  bool has_detail=stage<9||stage>11;
+  char expected[80];
+  if(has_detail)snprintf(expected,sizeof(expected),"WATCH_CLOCK sleep=refused stage=%s detail=%ld",stages[stage],(long)details[detail]);
+  else snprintf(expected,sizeof(expected),"WATCH_CLOCK sleep=refused stage=%s detail=unavailable",stages[stage]);
+  assert(!strcmp(diagnostic_line,expected)&&!memcmp(pixels,expected_pixels,sizeof(pixels)));
+  if(has_detail)snprintf(expected,sizeof(expected),"SLEEP ERR %s %ld",stages[stage],(long)details[detail]);
+  else snprintf(expected,sizeof(expected),"SLEEP ERR %s",stages[stage]);
+  assert(!strcmp(sleep_status,expected));
+ }
+ watch_sleep_stage=0;watch_sleep_detail=0;sleep_status[0]=0;rt=saved;
 }
 int main(void){
  for(unsigned cause=0;cause<=RISC_BOOT_DEEP_OTHER;cause++)for(unsigned present=0;present<2;present++){
@@ -295,6 +361,18 @@ int main(void){
  for(unsigned fail=3;fail<=4;fail++){reset_case();fail_service=fail;app_main();check_clean();assert(first_seen&&service_acquires==fail&&!confirmations);}
  reset_case();contexts_enabled=true;requested_wakes=2;app_main();check_clean();assert(wake_count==2&&soft_frames==2&&soft_latency==95&&stage_calls==3&&input_stages==3&&broadcast_starts==3&&contexts_starts==3);
  assert(stage_count("first-frame")==1&&stage_count("render-begin")==3&&stage_count("transfer-end")==3&&stage_count("unblank-end")==3);
+ /* Both acquisition refusals must preserve the selected face outside its
+  * explicit error strip, finish the redraw before unblank, survive retries,
+  * and clear the error completely after the next successful sleep/wake. */
+ for(unsigned failure=1;failure<=2;failure++)for(unsigned selected=0;selected<WATCH_FACE_COUNT;selected++){
+  reset_case();fail_sleep_acquire=failure;requested_wakes=3;contexts_enabled=true;
+  saved_face=true;memcpy(saved_blob,(uint8_t[]){0x46,1,(uint8_t)selected,(uint8_t)(selected^0xa5)},4);
+  app_main();check_clean();assert(picker.selected==selected&&first_at==95);
+  assert(refused_cycles==2&&refused_restores==2&&sleep_acquire_errors==2&&clean_refusal_frames>=2);
+  assert(sleeps==1&&wake_count==1&&soft_frames==1&&soft_latency==95&&!sleep_status[0]);
+  assert(stage_calls==4&&input_stages==4&&broadcast_starts==4&&contexts_starts==4);
+ }
+ check_refusal_diagnostics();
  reset_case();contexts_enabled=true;early_sleep=true;requested_wakes=1;app_main();check_clean();assert(wake_count==1&&soft_frames==1&&stage_calls==1&&broadcast_starts==1&&contexts_starts==1&&confirmations==1);
  reset_case();low_percent=5;contexts_enabled=true;app_main();check_clean();assert(first_at==95&&input_at==95&&radio_at==190&&clock_quick.brightness==15&&hardware_brightness==15&&!clock_radios.flags&&low_writes[0]==1);
  reset_case();low_on_wake=true;contexts_enabled=true;requested_wakes=1;app_main();check_clean();assert(wake_count==1&&soft_latency==95&&resume_input_at==wake_began+95&&radio_at==resume_input_at+95&&clock_quick.brightness==15&&!clock_radios.flags&&low_writes[0]==1);
@@ -319,5 +397,6 @@ int main(void){
  puts("Modeled cost only: 95 ms first Clock frame and input, four 700 ms service acquisitions plus 400 ms service starts deferred; 95 ms light-resume frame without an alarm; no physical timing claim.");
  puts("Boot/wake stage timing: ordered essential grants, settings, alarm/touch/reconciliation, render/transfer/unblank; first-frame precedes sleep settings; failure markers stop at failed boundary; light logs bounded per wake PASS");
  puts("Minimal first-frame closure: valid deep native time defers RTC; alarm/output admission follows first frame/input and precedes handoff/radios; 700 ms modeled load deferred; deep due alarms and stale crown cancellation PASS");
+ puts("Sleep refusal: both acquire boundaries, every face unchanged outside explicit error strip, completed redraw before unblank, repeated retry/cleanup, success clears error, and exact stage/signed-detail diagnostics PASS");
  return 0;
 }

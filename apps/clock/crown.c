@@ -660,6 +660,38 @@ static bool clock_deferred_step(uint32_t now) {
     return true;
 }
 #endif
+/* Only actual refusals get a visible error. Preserve the exact stage and
+ * signed provider result in the runtime log as well, including INT32_MIN,
+ * without an allocation, service acquisition or printf dependency. */
+static void clock_sleep_refused(void) {
+    static const char *const stages[]={"UNKNOWN","SENSOR","PANEL","PMU","ALARM","LIGHT","DEEP","ACQUIRE","API","SETTINGS","MOTION","RUNTIME"};
+    const char *name=stages[watch_sleep_stage<12?watch_sleep_stage:0];
+    /* Acquisition is boolean; these stages have no numeric provider error. */
+    bool detail_available=watch_sleep_stage<9 || watch_sleep_stage>11;
+    char line[80];size_t used=0;
+    const char *parts[]={"WATCH_CLOCK sleep=refused stage=",name,
+        detail_available?" detail=":" detail=unavailable"};
+    for(unsigned part=0;part<3;part++) {
+        const char *text=parts[part];
+        while(*text && used+1<sizeof(line))line[used++]=*text++;
+    }
+    const char *label="SLEEP ERR ";size_t label_used=0;
+    while(*label)sleep_status[label_used++]=*label++;
+    while(*name)sleep_status[label_used++]=*name++;
+    if(!detail_available){
+        sleep_status[label_used]=0;line[used]=0;(void)rt->diagnostic(line);return;
+    }
+    sleep_status[label_used++]=' ';
+    uint32_t value=(uint32_t)watch_sleep_detail;
+    if(watch_sleep_detail<0){line[used++]='-';sleep_status[label_used++]='-';value=0u-value;}
+    char digits[10];unsigned count=0;
+    do{digits[count++]=(char)('0'+value%10u);value/=10u;}while(value&&count<sizeof(digits));
+    while(count&&used+1<sizeof(line)&&label_used+1<sizeof(sleep_status)){
+        char digit=digits[--count];line[used++]=digit;sleep_status[label_used++]=digit;
+    }
+    sleep_status[label_used]=0;
+    line[used]=0;(void)rt->diagnostic(line);
+}
 static int sleep_cycle(void) {
     sleep_status[0]=0;
 #if defined(WATCH_BLE_BROADCAST) || defined(WATCH_CONTEXTS_CLIENT)
@@ -739,16 +771,7 @@ static int sleep_cycle(void) {
         if (!display->set_brightness(display->context,0,100) || !startup()) return false;
 #endif
     } else {
-        rt->diagnostic("WATCH_CLOCK sleep=refused");
-        static const char *const stages[]={"UNKNOWN","SENSOR","PANEL","PMU","ALARM","LIGHT","DEEP","ACQUIRE","API"};
-        memcpy(sleep_status,"SLEEP ",6);unsigned count=6;
-        const char *name=stages[watch_sleep_stage<9?watch_sleep_stage:0];
-        while(*name && count<20)sleep_status[count++]=*name++;
-        sleep_status[count++]=' ';uint32_t value=(uint32_t)watch_sleep_detail;
-        if(watch_sleep_detail<0){sleep_status[count++]='-';value=0u-value;}
-        char digits[10];unsigned used=0;do{digits[used++]=(char)('0'+value%10u);value/=10u;}while(value&&used<10);
-        while(used&&count+1<sizeof(sleep_status)){sleep_status[count++]=digits[--used];}
-        sleep_status[count]=0;
+        clock_sleep_refused();
         risc_display_surface_v1 fresh={0};uint32_t now;
         /* The pre-sleep clear also runs before a refused attempt. Replace it
          * with a complete fresh Clock before restoring the previous level. */
