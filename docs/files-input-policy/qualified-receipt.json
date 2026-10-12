@@ -1,0 +1,373 @@
+{
+  "schema": "files.modal-policy.qualified-components.v1",
+  "status": "exact-public-source-and-recipe-qualified-components-with-complete-watch-admission",
+  "version": "1.5.35",
+  "source": {
+    "system_commit": "66282802bb498590fcbab4eba871ff40cc3ddafd",
+    "system_tree": "5d588c4da9e4b5ba4f90021731022656940b87a4",
+    "watch_recipe_commit": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+    "watch_recipe_tree": "b0828e6f3a53f3475bcb745e9f25b9244edc57ad"
+  },
+  "targets": {
+    "watch": {
+      "elf": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/watch/file_browser.elf",
+        "sha256": "915779e0a7098a8df3238b33648a6703e3958eddf736a1acd20169eb01062c47",
+        "bytes": 291468
+      },
+      "manifest": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/watch/file_browser.json",
+        "sha256": "0656ab489a5545e11333ad44c9ef4c33476a303b4d5ee28709b114647a1b3277",
+        "bytes": 986
+      },
+      "build_record": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/watch/file_browser-build-record.json",
+        "sha256": "f821ed678ba8f8011f4d3dcbff708b38b78a1a0b3196e5d20fe50b9254919687",
+        "bytes": 54242
+      },
+      "stack": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-evidence/watch-stack.json",
+        "sha256": "6b6fa414bfebb11b79e11aaf3d7d8464905f7f403fc7a79fb5b0da9d63892850",
+        "bytes": 2017
+      },
+      "flagoff": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-evidence/watch-flagoff.json",
+        "sha256": "c94b16e712fd0d2090fc3f0627dc6d3b528fbe9e3c6d3c987d0479db9706c3f7",
+        "bytes": 2902
+      },
+      "maximum_selected_entry_frame_bytes": 240,
+      "static_modal_storage": {
+        "fb_editor": {
+          "bytes": 128,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 376244
+        },
+        "fb_query": {
+          "bytes": 64,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 374608
+        },
+        "fb_text": {
+          "bytes": 48,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 289824
+        },
+        "fb_text_checkpoint": {
+          "bytes": 8,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 385964
+        },
+        "fb_text_state": {
+          "bytes": 144,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 387860
+        }
+      },
+      "flagoff_raw_byte_equal": true,
+      "flagoff_loader_metadata_compacted_equal": true,
+      "feature_additions": [
+        "-DPORTABLE_TEXT_INPUT_POLICY"
+      ],
+      "all_original_fonts_retained": true,
+      "all_selected_flags_retained": true
+    },
+    "x4": {
+      "elf": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/x4/file_browser.elf",
+        "sha256": "8214b21bc06222ef78b02e13ad39035adc7e7b67d8548ecd3ee173060ca64d7a",
+        "bytes": 496348
+      },
+      "manifest": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/x4/file_browser.json",
+        "sha256": "6bd7735c34dad0d286b075c8f7f11b4854242ceebee35b1b963013e5c3b1efaa",
+        "bytes": 810
+      },
+      "build_record": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-target/x4/file_browser-build-record.json",
+        "sha256": "c0deb3952ebc3f3e6888a47a52587f709e01c8951bf42817ce1ad46286e3a159",
+        "bytes": 105218
+      },
+      "stack": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-evidence/x4-stack.json",
+        "sha256": "742ca0053a961ed655c02bfebe77777fd7afce554d7882f7e3ada2ebbb3cc72f",
+        "bytes": 2092
+      },
+      "flagoff": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-evidence/x4-flagoff.json",
+        "sha256": "5a78b6d393bf4d6114822109964284e134f3504d10f9202bd5088a4027f88c5f",
+        "bytes": 3962
+      },
+      "maximum_selected_entry_frame_bytes": 304,
+      "static_modal_storage": {
+        "fb_editor": {
+          "bytes": 128,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 327045
+        },
+        "fb_query": {
+          "bytes": 64,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 327173
+        },
+        "fb_text": {
+          "bytes": 48,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 331480
+        },
+        "fb_text_checkpoint": {
+          "bytes": 8,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 331304
+        },
+        "fb_text_state": {
+          "bytes": 144,
+          "symbol_kind": "b",
+          "static_storage": true,
+          "address": 331332
+        }
+      },
+      "flagoff_raw_byte_equal": false,
+      "flagoff_loader_metadata_compacted_equal": true,
+      "feature_additions": [
+        "-DPORTABLE_TEXT_INPUT_POLICY"
+      ],
+      "all_original_fonts_retained": true,
+      "all_selected_flags_retained": true
+    }
+  },
+  "watch": {
+    "candidate_directory": "/workspace/shared/files-input-policy-components-20261012/watch/candidate",
+    "normal": {
+      "path": "/workspace/shared/files-input-policy-components-20261012/watch/candidate/receipts/final-normal.json",
+      "sha256": "64b10bce800135ccb1a4305a29aa95ca1ca65aa9528edf02258787848a08383e",
+      "bytes": 7721
+    },
+    "sanitized": {
+      "path": "/workspace/shared/files-input-policy-components-20261012/watch/candidate/receipts/final-sanitized.json",
+      "sha256": "64b10bce800135ccb1a4305a29aa95ca1ca65aa9528edf02258787848a08383e",
+      "bytes": 7721
+    },
+    "normal_sanitized_identical": true,
+    "packing": {
+      "path": "/workspace/shared/files-input-policy-components-20261012/watch/candidate/receipts/packing.json",
+      "sha256": "b0bcca1d1ec6b362ed68debf59fdc8cf668377ea97c159ca076b1ae8e81bf250",
+      "bytes": 4029
+    },
+    "store_files": 113,
+    "elf_count": 55,
+    "free_spiffs_blocks": 2,
+    "required_free_spiffs_blocks": 2,
+    "candidate_store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb",
+    "full_image_sha256": "bbbb843321fe96687946bbf489e8486cb3ce4917a44441aed82eabc1c4cd3317",
+    "full_image_bytes": 16777216,
+    "full_image_materialized": false,
+    "changed_store_paths": [
+      "alarm-service/manifest.json",
+      "ble/manifest.json",
+      "cohort.json",
+      "file_browser.elf",
+      "file_browser.json",
+      "gpio/manifest.json",
+      "haptic/manifest.json",
+      "imu/manifest.json",
+      "panel/manifest.json",
+      "pmu/manifest.json",
+      "rtc/manifest.json",
+      "settings.json",
+      "springboard.json",
+      "stopwatch.json",
+      "touch/manifest.json"
+    ],
+    "lossless_metadata_compaction": [
+      {
+        "after_sha256": "e9a23825cec95421db330d369990324ecab348f0052222a774978b6a94189936",
+        "before_sha256": "8735fc46f447da7ea48278c9078a0123b20f8d3a38d3cc6a5e6af7d11c2d012c",
+        "bytes_saved": 344,
+        "decoded_equal": true,
+        "path": "settings.json"
+      },
+      {
+        "after_sha256": "cf30cc8cc54c6ee54a2662de7816bac66ff76b470d4edfd5e29def642bb4075a",
+        "before_sha256": "60c77d7467e33616f16e408b48720c245cab42090de8f3b7c3a77752fad11b32",
+        "bytes_saved": 344,
+        "decoded_equal": true,
+        "path": "springboard.json"
+      },
+      {
+        "after_sha256": "78a6fa5f81fa1f4762e18559f7c9a0758e089983b90f35cb8684ecb6631154a9",
+        "before_sha256": "f3c41941b160d62672bde6f86701a442b6a4b64d8aa4757f2da566cb61e94d70",
+        "bytes_saved": 344,
+        "decoded_equal": true,
+        "path": "stopwatch.json"
+      },
+      {
+        "after_sha256": "f526f76195fe01709c8417f86f17642502260b280cd84d9ec8ac1d406b524b75",
+        "before_sha256": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75",
+        "bytes_saved": 268,
+        "decoded_equal": true,
+        "path": "panel/manifest.json"
+      },
+      {
+        "after_sha256": "d3bdbb0c80d0ed1ba79464f397cb0de87eb98f440b447171cb2df980f26ae3f0",
+        "before_sha256": "80c6926125db8f40793e1b40bc015ec724f7f189260ce17eab8938591a6db5de",
+        "bytes_saved": 268,
+        "decoded_equal": true,
+        "path": "touch/manifest.json"
+      },
+      {
+        "after_sha256": "05835bfd768a8225d1c4c7df981f13386f9c59dde6579fa0814fbbcd9836a341",
+        "before_sha256": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd",
+        "bytes_saved": 242,
+        "decoded_equal": true,
+        "path": "imu/manifest.json"
+      },
+      {
+        "after_sha256": "56d4a395453d1f50afb87961d1b3e4326968d3a1ed7fceae79d2cb81d7f64c8a",
+        "before_sha256": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e",
+        "bytes_saved": 242,
+        "decoded_equal": true,
+        "path": "pmu/manifest.json"
+      },
+      {
+        "after_sha256": "617ed3919b68f3652c1ad3b002044b9247f2dc668b90f7395efb288d192bcbf0",
+        "before_sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1",
+        "bytes_saved": 216,
+        "decoded_equal": true,
+        "path": "haptic/manifest.json"
+      },
+      {
+        "after_sha256": "b21b63cea5fa2dbb7e5f929a0c4bf669ec7ce91591abb080351d11e21e4622e9",
+        "before_sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e",
+        "bytes_saved": 216,
+        "decoded_equal": true,
+        "path": "rtc/manifest.json"
+      },
+      {
+        "after_sha256": "ce52d02db70ed85ecabb0636598e507a8b9aae5ac5d053573f11b7a1ccc400b8",
+        "before_sha256": "e20df0376ff465585da9519d1a21daa4e44c134b7f8f73d5b7c08e2d03d732cf",
+        "bytes_saved": 203,
+        "decoded_equal": true,
+        "path": "alarm-service/manifest.json"
+      },
+      {
+        "after_sha256": "b0eaac54218995dad421c70c0f90f17fc3ae25db7c13acd3fe807bbf71504edd",
+        "before_sha256": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "ble/manifest.json"
+      },
+      {
+        "after_sha256": "787a9ff3028d56ac121f2171ba036921095c4334031fb3109e81a976abb44ef4",
+        "before_sha256": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "gpio/manifest.json"
+      }
+    ],
+    "native_unchanged": true,
+    "unrelated_elf_bytes_unchanged": true,
+    "boot_json_byte_identical": true,
+    "grant_delta": [],
+    "components": {
+      "bootfs.bin": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/watch/candidate/components/bootfs.bin",
+        "sha256": "a5654085b1a85f745c8ea563c78f8b2b7050206aea28d3345dae0c273b80386b",
+        "bytes": 5308416
+      },
+      "bank_state.bin": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/watch/candidate/components/bank_state.bin",
+        "sha256": "f315603941ae4fbcc0662756ddeb83f6fc92bbfceb201543b70b68e884e31a77",
+        "bytes": 8192
+      }
+    }
+  },
+  "x4": {
+    "overlay": "/workspace/shared/files-input-policy-components-20261012/x4-overlay-public",
+    "receipt": {
+      "path": "/workspace/shared/files-input-policy-components-20261012/x4-overlay-public/overlay-receipt.json",
+      "sha256": "ed9c3360848935158c148ed70dde1f765c2f16dcfd3c36963f90fce3c33f26e7",
+      "bytes": 119927
+    },
+    "status": "awaits-final-cumulative-composer-admission",
+    "native_firmware_and_compile_identity_unchanged": true,
+    "sd_unchanged": true
+  },
+  "checks": {
+    "recipe_regressions": {
+      "path": "/workspace/shared/files-input-policy-components-20261012/recipe-tests-public.log",
+      "sha256": "eb60a5e6c63c7ac4882a991e39f6720f63518b2fd507cd1a85d28076ba76c50e",
+      "bytes": 120
+    },
+    "source_checkpoint": {
+      "path": "/workspace/shared/files-input-policy-evidence-20261012/source-checkpoint.json",
+      "sha256": "83f84bd02e8cdb3d4e3a48c499c846b602e7fbf97129e62621986a0848fdcbab",
+      "bytes": 1476
+    },
+    "independent_review": {
+      "path": "/workspace/shared/files-policy-independent-20261012/review-receipt.json",
+      "sha256": "c8bedbd284978c1a00107d7713ee79adbe45ec237d884bc6f3eeaeeeb0f45563",
+      "bytes": 2017
+    },
+    "source_ci": {
+      "run_id": 38316434394,
+      "status": "success",
+      "commit": "66282802bb498590fcbab4eba871ff40cc3ddafd"
+    },
+    "recipe_ci": {
+      "run_id": 38316575232,
+      "status": "success",
+      "commit": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+      "receipt": {
+        "path": "/workspace/shared/files-input-policy-components-20261012/public-recipe-ci.json",
+        "bytes": 31461,
+        "sha256": "0ad6c83d7f5248b2c7dc8fe41c73309d5df18eb63f03ea7556f9564f8a7fcae3"
+      }
+    }
+  },
+  "flashed": false,
+  "delivered": false,
+  "hardware_verified": false,
+  "target_instructions_executed": false,
+  "full_images_materialized": false,
+  "limits": [
+    "Host and structural qualification does not execute Xtensa instructions or qualify physical behavior.",
+    "Actual target entry frames are measured; dynamic peak call-chain stack is not proved.",
+    "X4 raw flag-off ELF differs only in proven local compiler-name suffixes in non-allocated metadata; all other sections are byte-identical and independently compacted bytes match.",
+    "The independent reviewer reported 114 probes passing; original terminal logs were not saved, and reproduction sources plus the reviewer receipt are preserved.",
+    "X4 cumulative admission is owned by the settings composer and remains a separate required gate."
+  ],
+  "qualified_receipt": {
+    "path": "/workspace/shared/files-input-policy-components-20261012/handoff-qualified.json",
+    "bytes": 13408,
+    "sha256": "949a3d9328c5a7fec90580de0dfbefcdeacb848307a001d042743e56a06b2151"
+  },
+  "wrapper_revision": 2,
+  "supersedes_wrapper": {
+    "path": "/workspace/shared/files-input-policy-components-20261012/handoff-final.json",
+    "bytes": 14308,
+    "sha256": "7d8080669336ac9d21ab53d3a659e2edf01f5f576244eda44711892c4bbaa276"
+  },
+  "predecessor": {
+    "watch_lora_handoff": {
+      "path": "/workspace/shared/lora-input-policy-components-20261012/handoff-final.json",
+      "bytes": 15302,
+      "sha256": "50356c81cc12456bea055f93e9035babe07f3eeaf5939f53d3d99740c2aaafc4"
+    },
+    "recipe_commit": "5664da64e83a2a006d73773fadf966ef66b66ad7",
+    "source_store_sha256": "8d2c5b6c5d80e86d93954a2da3b7fe3bc6ae35f92400384dd299b5fe17f21dfc",
+    "x4_settings_receipt": {
+      "path": "/workspace/shared/x4-settings-test-components-20261012/candidate/receipts/evening-composition.json",
+      "bytes": 2214692,
+      "sha256": "ecebf457500d407241aefe23c7354ca5a92d0b1731933f028b74a290d565747a"
+    }
+  }
+}
