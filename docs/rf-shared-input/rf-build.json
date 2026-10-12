@@ -1,0 +1,846 @@
+{
+  "schema": "rf.shared-input.component.v1",
+  "device": "watch",
+  "version": "0.3.4",
+  "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+  "bytes": 243352,
+  "manifest_sha256": "fe7a8b1d489527bf79623afeed14c403342c53f2cf1f1af9f8a102aeff857fe2",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "command": [
+    "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+    "-std=c11",
+    "-Os",
+    "-fPIC",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-fvisibility=hidden",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-nostdlib",
+    "-nostartfiles",
+    "-shared",
+    "-Wl,--no-relax",
+    "-Wl,--hash-style=sysv",
+    "-Wl,--version-script=/workspace/shared/rf-shared-input-components-20261012/watch-rf/exports.map",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-DPORTABLE_LOW_BATTERY",
+    "-DPORTABLE_BLE_BROADCAST",
+    "-DPORTABLE_TOUCH_ROTATION=0",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DPORTABLE_FORCE_FULL_FRAMES",
+    "-DPORTABLE_INPUT_NAVIGATION",
+    "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+    "-DPORTABLE_APP_SLEEP_LOCAL",
+    "-DPORTABLE_ALARM_CLIENT",
+    "-DPORTABLE_QUICK_ACTIONS",
+    "-DPORTABLE_QUICK_RADIOS",
+    "-DPORTABLE_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DPORTABLE_NOVA_UI",
+    "-DPORTABLE_BLE_FOREGROUND",
+    "-DPORTABLE_RADIO_SESSION",
+    "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+    "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+    "-DRF_STORAGE_INSTANCE=13",
+    "-DRF_APP_DATA_INSTANCE=3",
+    "-DRF_RETURN_APP=\"springboard.elf\"",
+    "-DPORTABLE_APP_LAUNCH_GUARD",
+    "-DPORTABLE_CONTEXTS_CLIENT",
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-Wl,--undefined=__divsf3",
+    "-DPORTABLE_ASYNC_RGB565",
+    "-include",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-alarm-profile.h",
+    "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+    "-DPORTABLE_TEXT_INPUT_CLIENT",
+    "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+    "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+    "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+    "-DPORTABLE_APP_HOME_GUARD",
+    "-flto",
+    "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+    "-DPORTABLE_WATCH_COLOR_ONLY",
+    "-DPORTABLE_WATCH_FROZEN_ICONS",
+    "-mno-target-align",
+    "-include",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-rf-presentation.h",
+    "-I/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/include",
+    "-I/workspace/shared/lora-long-text-system-published-20261012/lib/NativeApps/include",
+    "-I/workspace/shared/lora-long-text-system-published-20261012/Apps",
+    "-I/workspace/shared/rf-shared-input-utilities-published-20261012/Apps",
+    "-I/workspace/shared/rf-shared-input-utilities-published-20261012/lib/Alarm/include",
+    "-I/workspace/shared/watch-scroll-regression-20261011/watch-profile/sdk/app",
+    "-I/workspace/shared/watch-scroll-regression-20261011/watch-profile/sdk/driver",
+    "-I/workspace/shared/watch-scroll-regression-20261011/watch-profile/include",
+    "-I/workspace/shared/rf-shared-input-utilities-published-20261012/lib/Contexts/include",
+    "-I/workspace/shared/watch-runtime-file-source-20261012/sdk/app",
+    "/workspace/shared/rf-shared-input-utilities-published-20261012/Apps/waterfall.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/src/adapter.c",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/empty_catalog.c",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/portable_navigation.c",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/portable_sleep.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/src/quick_actions.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/src/quick_render.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/src/quick_session.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/PortableApps/src/quick_radios.c",
+    "/workspace/shared/lora-long-text-system-published-20261012/lib/NativeApps/src/SingleFloatDivisionCompat.c",
+    "-lgcc",
+    "-o",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/waterfall.elf"
+  ],
+  "defines": [
+    "-DPORTABLE_LOW_BATTERY",
+    "-DPORTABLE_BLE_BROADCAST",
+    "-DPORTABLE_TOUCH_ROTATION=0",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DPORTABLE_FORCE_FULL_FRAMES",
+    "-DPORTABLE_INPUT_NAVIGATION",
+    "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+    "-DPORTABLE_APP_SLEEP_LOCAL",
+    "-DPORTABLE_ALARM_CLIENT",
+    "-DPORTABLE_QUICK_ACTIONS",
+    "-DPORTABLE_QUICK_RADIOS",
+    "-DPORTABLE_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DPORTABLE_NOVA_UI",
+    "-DPORTABLE_BLE_FOREGROUND",
+    "-DPORTABLE_RADIO_SESSION",
+    "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+    "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+    "-DRF_STORAGE_INSTANCE=13",
+    "-DRF_APP_DATA_INSTANCE=3",
+    "-DRF_RETURN_APP=\"springboard.elf\"",
+    "-DPORTABLE_APP_LAUNCH_GUARD",
+    "-DPORTABLE_CONTEXTS_CLIENT",
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-Wl,--undefined=__divsf3",
+    "-DPORTABLE_ASYNC_RGB565",
+    "-include",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-alarm-profile.h",
+    "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+    "-DPORTABLE_TEXT_INPUT_CLIENT",
+    "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+    "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+    "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+    "-DPORTABLE_APP_HOME_GUARD",
+    "-flto",
+    "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+    "-DPORTABLE_WATCH_COLOR_ONLY",
+    "-DPORTABLE_WATCH_FROZEN_ICONS",
+    "-mno-target-align",
+    "-include",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-rf-presentation.h"
+  ],
+  "inherited_defines": [
+    "-DPORTABLE_LOW_BATTERY",
+    "-DPORTABLE_BLE_BROADCAST",
+    "-DPORTABLE_TOUCH_ROTATION=0",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DPORTABLE_FORCE_FULL_FRAMES",
+    "-DPORTABLE_INPUT_NAVIGATION",
+    "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+    "-DPORTABLE_APP_SLEEP_LOCAL",
+    "-DPORTABLE_ALARM_CLIENT",
+    "-DPORTABLE_QUICK_ACTIONS",
+    "-DPORTABLE_QUICK_RADIOS",
+    "-DPORTABLE_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DPORTABLE_NOVA_UI",
+    "-DPORTABLE_BLE_FOREGROUND",
+    "-DPORTABLE_RADIO_SESSION",
+    "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+    "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+    "-DRF_STORAGE_INSTANCE=13",
+    "-DRF_APP_DATA_INSTANCE=3",
+    "-DRF_RETURN_APP=\"springboard.elf\"",
+    "-DPORTABLE_APP_LAUNCH_GUARD",
+    "-DPORTABLE_CONTEXTS_CLIENT",
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-Wl,--undefined=__divsf3",
+    "-DPORTABLE_ASYNC_RGB565",
+    "-include",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-alarm-profile.h"
+  ],
+  "feature_additions": [
+    "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+    "-DPORTABLE_TEXT_INPUT_CLIENT",
+    "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+    "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+    "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+    "-DPORTABLE_APP_HOME_GUARD",
+    "-flto",
+    "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+    "-DPORTABLE_WATCH_COLOR_ONLY",
+    "-DPORTABLE_WATCH_FROZEN_ICONS",
+    "-mno-target-align",
+    "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-rf-presentation.h"
+  ],
+  "sources": {
+    "system-apps": "7fb13b09b4dac275a8111b224784f8a472f39264",
+    "utilities": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "source_roots": {
+    "system-apps": "/workspace/shared/lora-long-text-system-published-20261012",
+    "utilities": "/workspace/shared/rf-shared-input-utilities-published-20261012",
+    "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+    "watch": "/workspace/shared/watch-scroll-regression-20261011/watch-profile",
+    "generated": "/workspace/shared/rf-shared-input-components-20261012/watch-rf"
+  },
+  "product_recipe": "53ed0b0a71965075b98392d78274dae5fd48bf6f",
+  "build_recipe_sha256": "968860bc6f0c5b95f864dadfa7da9d7e2b4a9925bc9f9672b902dc4edf2a4dc6",
+  "target_dependencies": {
+    "utilities:Apps/waterfall.c": {
+      "sha256": "ba04b1499f8de2aeb202664581e86ed39f69a48f85b0efdc87d0999269b8611a",
+      "bytes": 5396
+    },
+    "watch:apps/clock/faces/ContextsFaces.h": {
+      "sha256": "e75de6b17b85e1d7fa2ebc4b89514ac7345f671027c3b15dfdbd98f9b06b5ea2",
+      "bytes": 232
+    },
+    "watch:apps/clock/faces/names.h": {
+      "sha256": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16",
+      "bytes": 641
+    },
+    "generated:watch-alarm-profile.h": {
+      "sha256": "176031054e0dec655e79b1af8e5ba8e2e52beb45d5f9ca7d2d708ef77b06721c",
+      "bytes": 259
+    },
+    "utilities:lib/Alarm/include/AlarmServiceV1.h": {
+      "sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5",
+      "bytes": 5105
+    },
+    "generated:watch-rf-presentation.h": {
+      "sha256": "a3b8fdd7cfefb84e92ab4cee6c61f56ed94b2586085842e10d3626f09ba1f504",
+      "bytes": 121
+    },
+    "system-apps:Apps/PaperPresentation.h": {
+      "sha256": "8d13a8c73187d1e35f67c3208f861b95ceac143b6401e6572c2b4356ef409747",
+      "bytes": 1161
+    },
+    "system-apps:Apps/SpringboardPresentation.h": {
+      "sha256": "af80cd3f66de0ca0ca7077a926e196a14de2c79263d449f90e501090aa55031b",
+      "bytes": 953
+    },
+    "system-apps:lib/NativeApps/include/T5AppApi.h": {
+      "sha256": "23ec6910005343055e71d0a364458824734f52c91a28364e419a85e94aa4ff42",
+      "bytes": 10831
+    },
+    "system-apps:lib/PortableApps/include/RiscRuntimeV1.h": {
+      "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+      "bytes": 7932
+    },
+    "utilities:Apps/daily_draw.h": {
+      "sha256": "756a39ba654efb82eb9a7e66b6c28105d30247143c424f258ded60910104b413",
+      "bytes": 3169
+    },
+    "utilities:Apps/radio_iq_v1.h": {
+      "sha256": "a39169b522f123ad66b70dd392d9d060a9ee47342eccd9c21c76dae11d33f3b9",
+      "bytes": 7704
+    },
+    "system-apps:lib/PortableApps/include/RiscProviderV2.h": {
+      "sha256": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+      "bytes": 3302
+    },
+    "system-apps:lib/PortableApps/include/RiscStreamProviderV1.h": {
+      "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+      "bytes": 1411
+    },
+    "system-apps:lib/PortableApps/include/PortableRadioPolicy.h": {
+      "sha256": "560cf6d492bcf3453b2ee260e6e4dfa102afece7fb1d406a77f2fa32465d1ae3",
+      "bytes": 3224
+    },
+    "system-apps:lib/PortableApps/include/PortableQuickPreferences.h": {
+      "sha256": "bc0de08849d553da4049cee1608d765db1f48d89aa27524094088ea31d8b1b91",
+      "bytes": 3040
+    },
+    "system-apps:lib/PortableApps/include/RiscKeyValueV1.h": {
+      "sha256": "0e73bf29c402be030baf52f5b2b324f5b872549cdf58aa31f45b72bd70977179",
+      "bytes": 2339
+    },
+    "system-apps:lib/PortableApps/include/PortableAppSleep.h": {
+      "sha256": "027f70965663bc86e7f3bbf2733002870e2254ec92d39037def5f42c52fedc62",
+      "bytes": 3195
+    },
+    "system-apps:lib/PortableApps/include/RiscDisplayOutputV1.h": {
+      "sha256": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+      "bytes": 4478
+    },
+    "system-apps:lib/PortableApps/include/RiscBatteryGaugeV1.h": {
+      "sha256": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86",
+      "bytes": 535
+    },
+    "system-apps:lib/PortableApps/include/AlarmServiceV1.h": {
+      "sha256": "19984058bf5ec47f2772cf56acf0d3c41a389b7edc5bd4e41aaddab5a32a017b",
+      "bytes": 4791
+    },
+    "utilities:Apps/rf_application.inc": {
+      "sha256": "aebf8daf8309af5af57ab78a93de96fa15004b7e02b91edc842408f7f2918734",
+      "bytes": 78893
+    },
+    "utilities:Apps/utility_frame.h": {
+      "sha256": "9eb5120642d00cb9bcf6cfa64f342b77028e5dfefed938678432de5c9a29e29b",
+      "bytes": 849
+    },
+    "system-apps:lib/NativeApps/include/T5AppFrame.h": {
+      "sha256": "2a8fd35c485045294a2f9dceaf1b8474226e1475e63849080711601f6b60c8f9",
+      "bytes": 631
+    },
+    "utilities:Apps/rf_dsp.h": {
+      "sha256": "71dad410511bba28991f0e99cb88f2931c6262cabc01dbb5d9659e33a3eeee7c",
+      "bytes": 9236
+    },
+    "utilities:Apps/rf_identity.h": {
+      "sha256": "068428308352e542f0494afd389f3601e867571c3fd9057c4aec693d70abcb57",
+      "bytes": 4522
+    },
+    "utilities:Apps/rf_math.h": {
+      "sha256": "bc5723aa8206249f23e5809d3911009582ba83891b9db597cc15a200bb6d3fc8",
+      "bytes": 17644
+    },
+    "utilities:Apps/rf_presentation.h": {
+      "sha256": "d9989eae6813ae1c5b461d5d77b9d28ed35c6797817e8b06250073dd5fca4c6f",
+      "bytes": 742
+    },
+    "utilities:Apps/rf_store.h": {
+      "sha256": "faff7237d5873e234bd116e931c5398ed4147fc1a5b05a1b696172bcf1d62e44",
+      "bytes": 4376
+    },
+    "utilities:Apps/rf_signature_store.h": {
+      "sha256": "2347b304c85eb2618dfd4b819e4acc372d554ba381ad7e3b9b89fdbaddac5a06",
+      "bytes": 1465
+    },
+    "utilities:Apps/rf_signatures.h": {
+      "sha256": "32cad5efb47468682cabdc0fdb263ecb1c27b701434f691489b1b339b49e9825",
+      "bytes": 9607
+    },
+    "utilities:Apps/rf_temporal_files.h": {
+      "sha256": "6efeee51858e2d0b6cbeb5b30cddaea7ebc1ca81293b35cacf31a43665d558fe",
+      "bytes": 5241
+    },
+    "utilities:Apps/rf_temporal_store.h": {
+      "sha256": "0d76c52c8831879799c4774daae742d99b8a59e1e7d5996bb71aceb602206370",
+      "bytes": 6271
+    },
+    "utilities:Apps/rf_temporal.h": {
+      "sha256": "4f5e42b6928d9af5b49fa5a0455c0c5d8866f2f04410a9432131104a43aa277d",
+      "bytes": 20133
+    },
+    "utilities:Apps/rf_background.h": {
+      "sha256": "6792af20634225de59fdc4c176a471bcbbd6d9f4ff06e9de964261d1f9668cb0",
+      "bytes": 4377
+    },
+    "utilities:Apps/RiscAppDataV1.h": {
+      "sha256": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+      "bytes": 3869
+    },
+    "utilities:Apps/rf_neural_store.h": {
+      "sha256": "306a42bd54d6e162e6acae03bdb9b99942040d0f303ba053b2bc0b2bddd39769",
+      "bytes": 4806
+    },
+    "utilities:Apps/rf_neural.h": {
+      "sha256": "b4c22ab1d48bb1c742dc1e88f0de018a79fdb09fa780262a12f91dfb36680799",
+      "bytes": 11910
+    },
+    "system-apps:lib/PortableApps/include/PortableTextInputClient.h": {
+      "sha256": "f98564291d4b3685c429cdb96fd6edd0a4b5226b6bbde6ab3ea197a832f5746f",
+      "bytes": 8983
+    },
+    "system-apps:lib/PortableApps/include/RiscTextEntryV1.h": {
+      "sha256": "6b3877528f9581394614f906c544fd203cda3de55e52bd0d11a5a4eb5fc3599c",
+      "bytes": 7144
+    },
+    "system-apps:lib/PortableApps/include/PortableTextInputHandoff.h": {
+      "sha256": "ef811b3b7cf805ccdab1fb330e09dd8c533e303d29b8b4693ae5089a85432c36",
+      "bytes": 473
+    },
+    "system-apps:lib/PortableApps/include/PortableNovaUi.h": {
+      "sha256": "7301c01a0bdeee5888b518bfb19aefeec65403caf52c589b41eb4e1dfc628291",
+      "bytes": 1624
+    },
+    "utilities:Apps/rf_signature_app.inc": {
+      "sha256": "cfed71bff2620e6ba36a6bd047b6f6e8e6d3bd403f97de40e6046ffed1a12b59",
+      "bytes": 16555
+    },
+    "utilities:Apps/rf_temporal_app.inc": {
+      "sha256": "be027c03461c64a02997454d40284b9fa729a6adbde00a8d86e9b3cde0b0e48e",
+      "bytes": 29013
+    },
+    "system-apps:lib/PortableApps/include/PortableBroadcastAppData.h": {
+      "sha256": "39623ec4ebb2a1c576398b60be8cceef084ff7d0809d4f8903aaa6b7873bd30d",
+      "bytes": 4420
+    },
+    "system-apps:lib/PortableApps/include/RiscAppDataV1.h": {
+      "sha256": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+      "bytes": 3869
+    },
+    "system-apps:lib/PortableApps/include/PortableBackgroundServices.h": {
+      "sha256": "f1291afed98c321a81550e7648234d478652f81299cbad9c44814218a384e5b8",
+      "bytes": 575
+    },
+    "utilities:Apps/rf_app_data_scope.h": {
+      "sha256": "5b21f23b2505f12ef38ed1fc0e90b3c665066f639f2ccd8ca90e3b8073f69010",
+      "bytes": 3093
+    },
+    "utilities:Apps/context_fingerprint_app.inc": {
+      "sha256": "757ac801d2c2ae66f2f45b9810aec8f52c8f155811d37966bd077c1a7b47b3f1",
+      "bytes": 22488
+    },
+    "utilities:lib/ContextFingerprint/include/ContextFingerprintStore.h": {
+      "sha256": "59f20d1bcd2b213f74db4cd88f4f2d57fae0d880eeff4f3ace677670ceed2350",
+      "bytes": 5899
+    },
+    "utilities:lib/ContextFingerprint/include/ContextFingerprint.h": {
+      "sha256": "7e451353d42a60685abcdf092755c062d51f6479cfc3880b379d24199640ea58",
+      "bytes": 25650
+    },
+    "system-apps:lib/PortableApps/include/PortableContextsClient.h": {
+      "sha256": "791163fe6f944f4b6d4a72611073c43c328dc93275a1bb7d68b09405be9dbe7c",
+      "bytes": 14287
+    },
+    "system-apps:lib/PortableApps/include/ContextsServiceV1.h": {
+      "sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d",
+      "bytes": 6542
+    },
+    "system-apps:lib/PortableApps/include/PortableContextPreferences.h": {
+      "sha256": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826",
+      "bytes": 7561
+    },
+    "system-apps:lib/PortableApps/include/PortableSleepPolicy.h": {
+      "sha256": "70fa8ff8f63270b2a04d591bdbc61cd7e16d6483421121a96fe22f2855966d9d",
+      "bytes": 5753
+    },
+    "system-apps:lib/PortableApps/include/PortableAlarmSettings.h": {
+      "sha256": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284",
+      "bytes": 2392
+    },
+    "system-apps:lib/PortableApps/include/PortableLowBattery.h": {
+      "sha256": "c83b663b1d5676c7eb7a8ec59157f0efc561802cfe2a3b6eb63937e28b0acca3",
+      "bytes": 4554
+    },
+    "system-apps:lib/PortableApps/include/PortablePowerStatus.h": {
+      "sha256": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4",
+      "bytes": 1039
+    },
+    "system-apps:lib/PortableApps/include/PortableContextFingerprints.h": {
+      "sha256": "76bfffa6336aa1caa10a0c479c6d67f6792847083a32da6b2910c3ec675d381c",
+      "bytes": 3906
+    },
+    "system-apps:lib/PortableApps/include/ContextFingerprintService.h": {
+      "sha256": "edbd70bd1542824f58ddd487cf22d7b59ced4bb762361288210a489a01c4f0b7",
+      "bytes": 2978
+    },
+    "system-apps:lib/PortableApps/include/ContextsRules.h": {
+      "sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89",
+      "bytes": 8405
+    },
+    "system-apps:lib/PortableApps/include/PortableFingerprintClock.h": {
+      "sha256": "7e133d788602d27b9332cecda8cc9cf8ee27bd30257f3d7570c886c675aa729b",
+      "bytes": 2046
+    },
+    "system-apps:lib/PortableApps/include/PortableRtcClock.h": {
+      "sha256": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c",
+      "bytes": 1813
+    },
+    "system-apps:lib/PortableApps/include/PortableContextRules.h": {
+      "sha256": "c5dc73ff50bdd59b2011a61a3a04a0f6949287cd8ec051bc4b898aeafef3f3cf",
+      "bytes": 5667
+    },
+    "utilities:Apps/rf_controls.inc": {
+      "sha256": "fd52d7deae54b348ab9c3fbe50b410b049102e38baaaa6db52b135da213f05ee",
+      "bytes": 9706
+    },
+    "utilities:Apps/context_signal_library.inc": {
+      "sha256": "d19380adfc76870d05c9d2da82ee09fe1fd52b8ba563b6b65efab8b777d63d4a",
+      "bytes": 9693
+    },
+    "system-apps:lib/PortableApps/src/adapter.c": {
+      "sha256": "70da59abf9570fa4ba07cb82b7be9a20c965cc647fdfeced43cb0408f84deed7",
+      "bytes": 131985
+    },
+    "system-apps:lib/PortableApps/include/RiscRuntimeHostControlV1.h": {
+      "sha256": "697f710f7512dc724c2986bac0abc86756c9ae0739577b4f4ab20583a2743815",
+      "bytes": 855
+    },
+    "system-apps:lib/PortableApps/include/PortableApps.h": {
+      "sha256": "d8fc1fae3669c439fda7af94568a93bc1d1f35ddc6fe05615eac1cb41ea4a78e",
+      "bytes": 300
+    },
+    "system-apps:lib/PortableApps/include/PortablePerformance.h": {
+      "sha256": "4242d93019235138f6d0a80cd1edc58e55b9c591157d5f90b0d6c2992ce0672e",
+      "bytes": 1808
+    },
+    "system-apps:lib/PortableApps/include/PortableStageLog.h": {
+      "sha256": "b347496d8bbb70cbbc19bd85d4a4a214f57b660d90cfb1ccaab9138fac787f02",
+      "bytes": 871
+    },
+    "system-apps:lib/PortableApps/include/PortableTouch.h": {
+      "sha256": "817d5bde4d3a3c4634512503d283d0c7e731744a65e743305038294b58205004",
+      "bytes": 15111
+    },
+    "system-apps:lib/PortableApps/include/RiscTouchV1.h": {
+      "sha256": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+      "bytes": 2703
+    },
+    "system-apps:lib/PortableApps/include/PortableNativeCustody.h": {
+      "sha256": "9dc7d0fb89bbab8304d829fa63e5baed3c6c348fdf37cc4166f5e8117a2594b6",
+      "bytes": 1046
+    },
+    "system-apps:lib/PortableApps/include/T5BatteryApi.h": {
+      "sha256": "f939c924102099de4ed746519791ce2b68eb2bac79bc212caeaad1366dc8c9a5",
+      "bytes": 2322
+    },
+    "system-apps:lib/NativeApps/include/T5StorageApi.h": {
+      "sha256": "be0d63a89943a75a58723b703284992e8c6e95956c7cb39a9b3523af2c5d23ba",
+      "bytes": 1717
+    },
+    "system-apps:lib/NativeApps/include/T5UiApi.h": {
+      "sha256": "88dbfde2a45ab385c69ee0b8192e8025446c9872711e4810f799251479b1057a",
+      "bytes": 3565
+    },
+    "system-apps:lib/NativeApps/include/T5VideoApi.h": {
+      "sha256": "af3f2318e53e20efb4e8e9e98d93abae11f1788fe14640c7b02392c22d08c6a4",
+      "bytes": 2901
+    },
+    "system-apps:lib/PortableApps/include/PortableRadioSession.h": {
+      "sha256": "8b09b402a8235dbf48826b890a04dbcabe2f7ac6c600b90b42f71ac5997356b2",
+      "bytes": 512
+    },
+    "system-apps:lib/PortableApps/include/PortableAppLaunchGuard.h": {
+      "sha256": "a7da58c80c62ef35cdf4e76aff0d2f66768b66963457c3a00f5e9890ca357558",
+      "bytes": 782
+    },
+    "system-apps:lib/PortableApps/src/performance.inc": {
+      "sha256": "547a1f1902f60b816b8dc25a28821fb0a4c84c21e219c460a6dbb760a8c71db9",
+      "bytes": 6261
+    },
+    "runtime:sdk/app/RiscRealtimeV1.h": {
+      "sha256": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d",
+      "bytes": 2091
+    },
+    "system-apps:lib/PortableApps/include/PortableQuickSession.h": {
+      "sha256": "5229c4bb8730151d15042e6695d44643810c27b85205160cf7bdb0b73349de98",
+      "bytes": 2339
+    },
+    "system-apps:lib/PortableApps/include/PortableQuickActions.h": {
+      "sha256": "e96642f2d3a2056ec6022ef3f03806e5d2a2dfb582d8116480e32696a34c7883",
+      "bytes": 5051
+    },
+    "system-apps:lib/PortableApps/include/PortableQuickRender.h": {
+      "sha256": "a442eff258880584976d81407cef82aac66e86b91d68ee919f477e92f5bef36a",
+      "bytes": 1534
+    },
+    "system-apps:lib/PortableApps/include/PortableQuickRadios.h": {
+      "sha256": "676fbb46d0eae28fef515672a20c380088f69b3389a14ae44b5a67b9f014c44b",
+      "bytes": 488
+    },
+    "system-apps:lib/PortableApps/include/PortableBluetoothControl.h": {
+      "sha256": "777f0c7f92092d05a428c04255b6df1b3e9510a36c7425fc95092b3321e67a2c",
+      "bytes": 601
+    },
+    "system-apps:lib/PortableApps/include/WifiApi.h": {
+      "sha256": "eddb48c2e4284a592f32a540e10e02572bf251e3145783e9083278afd1aa0159",
+      "bytes": 2504
+    },
+    "system-apps:lib/PortableApps/include/RiscRadioScanV1.h": {
+      "sha256": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+      "bytes": 1750
+    },
+    "system-apps:lib/PortableApps/include/RiscRadioAsyncV1.h": {
+      "sha256": "2b5a916cfe9e1fb6520043c2b8f3e8c13ea8e022166fcbdfa6b50ce691ebfe48",
+      "bytes": 2797
+    },
+    "system-apps:lib/PortableApps/src/native_custody_adapter.inc": {
+      "sha256": "f0576be60ad328cb5e42eae00101b1545c7ad4f4d94d81a40b79b0ad4f69e017",
+      "bytes": 14352
+    },
+    "system-apps:lib/PortableApps/src/contexts_adapter.inc": {
+      "sha256": "09772b7aee76f3ff735bf394d10de940979714fc8f1c68f077232e18a30dc84a",
+      "bytes": 5936
+    },
+    "system-apps:lib/PortableApps/include/PortableBroadcastClient.h": {
+      "sha256": "51ed76a5fac542fb2d5ae039797806fd8b1d31f69a072340c0ce91e628cbff2d",
+      "bytes": 5193
+    },
+    "system-apps:lib/PortableApps/include/TelemetryBroadcastV1.h": {
+      "sha256": "986a52b5a3ddd361189d204e33624ce6275d953bca6a94a6e6dd5c136a89e2d5",
+      "bytes": 2202
+    },
+    "system-apps:lib/PortableApps/include/RiscTelemetryV1.h": {
+      "sha256": "8ef64c586e8392c1d7521498c25cfdaccefd53242530e2dda9116e9cc12a5d48",
+      "bytes": 1107
+    },
+    "system-apps:lib/PortableApps/src/broadcast_adapter.inc": {
+      "sha256": "6467b269f727fe3b6cea75e931dfa42c159ed119af9470d364e70f8bb26aa55a",
+      "bytes": 4780
+    },
+    "system-apps:lib/PortableApps/include/PortableNavigation.h": {
+      "sha256": "f3b9623d1e97d6a18df565aef0d9c934f18a1b97b701fbbc208de3bf0a344e6d",
+      "bytes": 773
+    },
+    "system-apps:lib/PortableApps/include/RiscInputNavigationV1.h": {
+      "sha256": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26",
+      "bytes": 1713
+    },
+    "system-apps:lib/PortableApps/src/nova.inc": {
+      "sha256": "6c7d77479d7db74ebefa73160fc21ce06fc7c505bc4f5da4d5ab0b0c7a3ee832",
+      "bytes": 11901
+    },
+    "system-apps:lib/PortableApps/fonts/watch-240-icons.inc": {
+      "sha256": "df8c293fd11b3f9f55a0627fad79863d26d7e98944f17fa8113d8f6068d5c920",
+      "bytes": 34763
+    },
+    "system-apps:lib/PortableApps/fonts/text.inc": {
+      "sha256": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
+      "bytes": 22659
+    },
+    "system-apps:lib/PortableApps/include/PortableTime.h": {
+      "sha256": "350b8c5255dafa9e25c4a20cfb458cdcda3439da929dab05e0de0c82e981ff6e",
+      "bytes": 2920
+    },
+    "system-apps:lib/PortableApps/time/denver/display_time.h": {
+      "sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03",
+      "bytes": 2710
+    },
+    "system-apps:lib/PortableApps/time/denver/twatch_calendar.h": {
+      "sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
+      "bytes": 553
+    },
+    "system-apps:lib/PortableApps/time/denver/twatch_caps.h": {
+      "sha256": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e",
+      "bytes": 217
+    },
+    "system-apps:lib/PortableApps/src/nova_ui.inc": {
+      "sha256": "401b593d2ac604eedbb83132f033e866599d444b8ba69b54bdc413957b76a974",
+      "bytes": 8217
+    },
+    "system-apps:lib/PortableApps/settings_fonts/text.inc": {
+      "sha256": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449",
+      "bytes": 56340
+    },
+    "system-apps:lib/PortableApps/src/paper.inc": {
+      "sha256": "4de7222d1601bcecc60b3f58a689112ca4b278285fd5f2ca03e16f79fa97fdd6",
+      "bytes": 5887
+    },
+    "system-apps:lib/PortableApps/paper_fonts/text.inc": {
+      "sha256": "9ee273df1c27df92d8ab2a985fb474d15b715770984894da4fee40b8cd9f2e4a",
+      "bytes": 30441
+    },
+    "system-apps:lib/PortableApps/src/quick_adapter.inc": {
+      "sha256": "e081c1abc50137b7c1ab12ec2f571dd7d4d36f4203143fcdeb6d53ac423b3814",
+      "bytes": 24736
+    },
+    "system-apps:lib/PortableApps/src/contexts_policy.inc": {
+      "sha256": "0e90782a4f6ac054ce5deb2da29a4b29424cb238fe220df548f4fef41386fc9c",
+      "bytes": 7542
+    },
+    "system-apps:lib/PortableApps/src/contexts_rules_adapter.inc": {
+      "sha256": "6ef74ac5ac2faf93796af6dc4cffe9b2cdcde3e9cd3b566509c1865ac77b0236",
+      "bytes": 5488
+    },
+    "system-apps:lib/PortableApps/include/PortableContextActions.h": {
+      "sha256": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c",
+      "bytes": 2692
+    },
+    "utilities:Apps/alarm_writer.h": {
+      "sha256": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0",
+      "bytes": 1792
+    },
+    "utilities:lib/Alarm/include/AlarmRecords.h": {
+      "sha256": "e04d9cfa6c32a70125ef618b85d048936afad2204fb97d459cda8c36fd0b2066",
+      "bytes": 5040
+    },
+    "system-apps:lib/PortableApps/src/installed_catalog_adapter.inc": {
+      "sha256": "76aabb6052b96cd2925d03d7f5648a1d4d295a08f0f8e108f9334bd314409d4b",
+      "bytes": 1479
+    },
+    "system-apps:lib/PortableApps/src/resident_adapter.inc": {
+      "sha256": "c8086ddb8f773046eb3961d2bb4e20b9916867d3e14351d7231c316c38b2d806",
+      "bytes": 11051
+    },
+    "system-apps:lib/PortableApps/src/resident_shell.inc": {
+      "sha256": "37ccceaa5bcb5b713b2add592655b3d151757951511ab52679d404391eaa4f34",
+      "bytes": 10391
+    },
+    "system-apps:lib/PortableApps/src/alarm.inc": {
+      "sha256": "42295ec01b114235bbd3205b7fca6bf4e9ae56718fb7e27cd361668768a754da",
+      "bytes": 21231
+    },
+    "system-apps:lib/PortableApps/include/PortableAlarmClient.h": {
+      "sha256": "587a85823462e36a2819fe22227b029bcd687fee6d4484a86063b03b4e420aa1",
+      "bytes": 5892
+    },
+    "system-apps:lib/PortableApps/include/PortableAlarmTerminalClient.h": {
+      "sha256": "1aa14ef12171b849c63ad002e9c3b7988379a6fc01f7687da8c1190b3bc79635",
+      "bytes": 6413
+    },
+    "system-apps:lib/PortableApps/src/text_input_handoff.inc": {
+      "sha256": "28c60c75741c8c09f17dfa5b032748a4198f8075b684d027c56607ea26ebe02f",
+      "bytes": 6664
+    },
+    "system-apps:lib/PortableApps/src/foreground_adapter_open.inc": {
+      "sha256": "e367529e73ee2f398e9bc5c5180b017d499cdf7e659c5e17e39beff835cd1caf",
+      "bytes": 5233
+    },
+    "generated:empty_catalog.c": {
+      "sha256": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+      "bytes": 2250
+    },
+    "watch:apps/clock/portable_navigation.c": {
+      "sha256": "b0d1729346d4b808395766c1c7f1800866d02a54a9e3e39baa8dd425854da84e",
+      "bytes": 3524
+    },
+    "watch:include/twatch_caps.h": {
+      "sha256": "88bf36643ca8ae431ef4757debd36c8b2e07212916835c6d7dbf37fca699eade",
+      "bytes": 6169
+    },
+    "watch:sdk/driver/RiscLightSleepV1.h": {
+      "sha256": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+      "bytes": 1307
+    },
+    "watch:sdk/driver/RiscDeepSleepV1.h": {
+      "sha256": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+      "bytes": 1880
+    },
+    "watch:include/PortableMotionTap.h": {
+      "sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50",
+      "bytes": 2591
+    },
+    "watch:apps/clock/portable_sleep.c": {
+      "sha256": "12ffccad27b7739014770a88fc0c8663676e32aec6597a7e614d6a50697406a8",
+      "bytes": 5049
+    },
+    "watch:apps/clock/watch_sleep.h": {
+      "sha256": "ea1948c880ca2f340b2e63650ef7f52641bce6b1851c6d1992fffa7100e7db91",
+      "bytes": 7340
+    },
+    "watch:include/twatch_power.h": {
+      "sha256": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d",
+      "bytes": 1270
+    },
+    "watch:apps/clock/PortableSleepPolicy.h": {
+      "sha256": "15e94bdeabe34ac8a3e0b836a7cc59b00b9c4b3c22f3b2592919ce347ce3bbb1",
+      "bytes": 4437
+    },
+    "watch:apps/clock/watch_alarm_sleep.h": {
+      "sha256": "df0e93850176f4c975456a72c2dc518a7215b35662bb4a9a7d9f864a58cec42a",
+      "bytes": 8305
+    },
+    "watch:sdk/driver/RiscTimedSleepV1.h": {
+      "sha256": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+      "bytes": 1359
+    },
+    "watch:apps/clock/watch_motion_client.h": {
+      "sha256": "dac16968094a2fca04863038dabfc94b4b8c7a0f32f02016b5ae98b50aa776f5",
+      "bytes": 2646
+    },
+    "watch:include/PortableTapSettings.h": {
+      "sha256": "f6ff75e400224f2285f131d2088bd32985f9d18feefac64aa408f8b63c764132",
+      "bytes": 3198
+    },
+    "system-apps:lib/PortableApps/src/quick_actions.c": {
+      "sha256": "5eb885a4940edceefc1d96b8cce977bdfaf7dfaf46a0efca6bf5ea382262f7d8",
+      "bytes": 17760
+    },
+    "system-apps:lib/PortableApps/src/quick_render.c": {
+      "sha256": "d5b02fc2fd6a9eb2e9b2ccfc9848cb786fb2cf9da613d0514eb529c3375337dc",
+      "bytes": 10756
+    },
+    "system-apps:lib/PortableApps/src/quick_actions_assets.inc": {
+      "sha256": "6e0eadad1387eee501f4524d3b21d86fac61e9051822c368070468b9c41d896c",
+      "bytes": 31324
+    },
+    "system-apps:lib/PortableApps/src/quick_session.c": {
+      "sha256": "a1f649cd59652e5e70f29832188c36459e72a3dc2bc31075bfd7f3ee83311f08",
+      "bytes": 12255
+    },
+    "system-apps:lib/PortableApps/include/PortableTimeFormat.h": {
+      "sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867",
+      "bytes": 2574
+    },
+    "system-apps:lib/PortableApps/src/quick_radios.c": {
+      "sha256": "77285cd11aba58869274b3d0684d8a5969dcb0659cec82caac1e12ea078d053b",
+      "bytes": 6032
+    },
+    "system-apps:lib/NativeApps/src/SingleFloatDivisionCompat.c": {
+      "sha256": "e7e54837bbbd6c99be51367729a03b09d6df0553b635e692fad9b4264442befb",
+      "bytes": 5370
+    }
+  },
+  "original_fonts_retained": true,
+  "baseline_features_preserved": true,
+  "rf_models": {
+    "rf_background.h": "6792af20634225de59fdc4c176a471bcbbd6d9f4ff06e9de964261d1f9668cb0",
+    "rf_dsp.h": "71dad410511bba28991f0e99cb88f2931c6262cabc01dbb5d9659e33a3eeee7c",
+    "rf_identity.h": "068428308352e542f0494afd389f3601e867571c3fd9057c4aec693d70abcb57",
+    "rf_math.h": "bc5723aa8206249f23e5809d3911009582ba83891b9db597cc15a200bb6d3fc8",
+    "rf_neural.h": "b4c22ab1d48bb1c742dc1e88f0de018a79fdb09fa780262a12f91dfb36680799",
+    "rf_neural_store.h": "306a42bd54d6e162e6acae03bdb9b99942040d0f303ba053b2bc0b2bddd39769",
+    "rf_presentation.h": "d9989eae6813ae1c5b461d5d77b9d28ed35c6797817e8b06250073dd5fca4c6f",
+    "rf_signature_store.h": "2347b304c85eb2618dfd4b819e4acc372d554ba381ad7e3b9b89fdbaddac5a06",
+    "rf_signatures.h": "32cad5efb47468682cabdc0fdb263ecb1c27b701434f691489b1b339b49e9825",
+    "rf_store.h": "faff7237d5873e234bd116e931c5398ed4147fc1a5b05a1b696172bcf1d62e44",
+    "rf_temporal.h": "4f5e42b6928d9af5b49fa5a0455c0c5d8866f2f04410a9432131104a43aa277d",
+    "rf_temporal_files.h": "6efeee51858e2d0b6cbeb5b30cddaea7ebc1ca81293b35cacf31a43665d558fe",
+    "rf_temporal_store.h": "0d76c52c8831879799c4774daae742d99b8a59e1e7d5996bb71aceb602206370"
+  },
+  "startup_storage_fix_sha256": "5b21f23b2505f12ef38ed1fc0e90b3c665066f639f2ccd8ca90e3b8073f69010",
+  "predecessor_receipt_sha256": "7c8845137975dea9456203f2f64001803d41d22defc8a3cf471d813d3b3ca1cf",
+  "predecessor_elf_sha256": "f05b5ec08db1b1a7f8c7e3133c69b504e8e293d90f76bedcf2d93f0089b1c46b",
+  "imports": [
+    "free",
+    "malloc",
+    "memchr",
+    "memcmp",
+    "memcpy",
+    "memset",
+    "risc_runtime_get_api",
+    "snprintf",
+    "strcmp",
+    "strlen"
+  ],
+  "exports": [
+    "app_main",
+    "app_module_fini",
+    "app_module_init"
+  ],
+  "compaction": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 400716,
+    "after_bytes": 243352,
+    "before_sha256": "b41704b6418dc3bde048439d255aa0a2c2d1898c11b1bdb3dcebc12508d53b2a",
+    "after_sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+    "removed_sections": [
+      ".debug_abbrev",
+      ".debug_aranges",
+      ".debug_frame",
+      ".debug_info",
+      ".debug_line",
+      ".debug_loc",
+      ".debug_ranges",
+      ".debug_str",
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ]
+  },
+  "relocation_normalization": 2,
+  "component_budget_bytes": 249392,
+  "shared_text_input": true,
+  "native_changed": false,
+  "hardware_verified": false,
+  "canonical_paper_contract_selected": true
+}

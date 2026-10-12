@@ -1,0 +1,103 @@
+{
+  "schema": "rf.shared-input.published-device-qualification.v1",
+  "device": "watch",
+  "utilities_commit": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+  "utilities_tree": "d7feca6716ad452d5caeb040d5be83adeb09d861",
+  "compiled_recipe_commit": "53ed0b0a71965075b98392d78274dae5fd48bf6f",
+  "compiled_recipe_tree": "f04c90528c6ab5dc168a42418cdc9a98720c9771",
+  "system_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "selected_rf_version": "0.3.4",
+  "generic_opt_out_rf_version": "0.3.3",
+  "normal_and_asan_ubsan_passed": true,
+  "recipe_tests_passed": 4,
+  "hardware_verified": false,
+  "target_instructions_executed": false,
+  "flashed": false,
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "full_image_materialized": false,
+  "full_initial_image_erases_internal_data": true,
+  "whole_cohort": {
+    "changed_store_paths": [
+      "boot.json",
+      "cohort.json",
+      "waterfall.elf",
+      "waterfall.json"
+    ],
+    "preserved_store_paths": 109,
+    "store_files": 113,
+    "elf_count": 55,
+    "grant_delta": [
+      {
+        "manifest": "waterfall.json",
+        "grant": {
+          "capability": "ui.text-input",
+          "api": 1,
+          "instance_id": 0
+        }
+      }
+    ],
+    "shared_host_profile_paths_verified": [
+      "ui-scene/manifest.json",
+      "ui-profile/manifest.json",
+      "text-input/manifest.json",
+      "text-input/driver.elf",
+      "ui-profile/driver.elf",
+      "ui-scene/driver.elf"
+    ],
+    "free_spiffs_blocks": 3,
+    "minimum_free_blocks": 2,
+    "full_image_sha256": "6b3c894d8d00f19191189459c23f762f3a0da4499f24a6033bb6603f97a06535",
+    "native_and_non_bootfs_bank_partitions_unchanged": true,
+    "full_initial_erases_data": true,
+    "normal_and_sanitized_admission_identical": true,
+    "component_bytes": 243352,
+    "component_budget_bytes": 249392,
+    "component_headroom_bytes": 6040,
+    "target_dependency_files_verified": 144,
+    "font_inputs_verified": {
+      "system-apps:lib/PortableApps/fonts/text.inc": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
+      "system-apps:lib/PortableApps/fonts/watch-240-icons.inc": "df8c293fd11b3f9f55a0627fad79863d26d7e98944f17fa8113d8f6068d5c920",
+      "system-apps:lib/PortableApps/paper_fonts/text.inc": "9ee273df1c27df92d8ab2a985fb474d15b715770984894da4fee40b8cd9f2e4a",
+      "system-apps:lib/PortableApps/settings_fonts/text.inc": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+    },
+    "predecessor_font_inputs_checked": 3,
+    "rf_model_format_files_identical_to_c12781b2": 13,
+    "operation_scoped_storage_helper_unchanged": true,
+    "feature_additions": [
+      "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+      "-DPORTABLE_TEXT_INPUT_CLIENT",
+      "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+      "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+      "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+      "-DPORTABLE_APP_HOME_GUARD",
+      "-flto",
+      "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+      "-DPORTABLE_WATCH_COLOR_ONLY",
+      "-DPORTABLE_WATCH_FROZEN_ICONS",
+      "-mno-target-align",
+      "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-rf-presentation.h"
+    ]
+  },
+  "target": {
+    "path": "/workspace/shared/rf-shared-input-components-20261012/watch-rf/waterfall.elf",
+    "bytes": 243352,
+    "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05"
+  },
+  "manifest": {
+    "path": "/workspace/shared/rf-shared-input-components-20261012/watch-rf/waterfall.json",
+    "bytes": 1236,
+    "sha256": "fe7a8b1d489527bf79623afeed14c403342c53f2cf1f1af9f8a102aeff857fe2"
+  },
+  "source_ci": {
+    "workflow_runs": 0,
+    "check_runs": 0,
+    "statuses": 0,
+    "conclusion": "No runs attached to compiled recipe commit; local recipe and cohort qualification passed."
+  },
+  "limitations": [
+    "Host admission does not execute target instructions.",
+    "Physical capture, touch, crown, SD and sleep remain unverified.",
+    "Apply exact component deltas to the latest authorized union; do not overwrite newer independent work with this baseline."
+  ]
+}

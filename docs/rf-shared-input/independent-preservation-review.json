@@ -1,0 +1,195 @@
+{
+  "schema": "rf.final-authority-preservation-review.v1",
+  "reviewed_at_utc": "2026-10-12T16:40:57Z",
+  "source_changed": false,
+  "hardware_verified": false,
+  "flashed": false,
+  "delivered": false,
+  "hold_until_utc": "2026-10-12T23:30:00Z",
+  "utilities_sha": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+  "recipes": {
+    "watch": "53ed0b0a71965075b98392d78274dae5fd48bf6f",
+    "x4": "38aefe4bcffbebd46ebe7d54c25bd789f47241e7"
+  },
+  "findings": [
+    "PASS: Only Waterfall 0.3.4 gains ui.text-input@1 instance 0; all other grants and boot image selections are unchanged.",
+    "PASS: Existing Watch Spectrum/LoRa union, X4 Files cohort, shared hosts/profiles, fonts, native firmware and non-bootfs/bank partitions are preserved.",
+    "PASS: Original RF model/storage formats and operation-scoped helper are unchanged; no native capacity expansion or save-file migration.",
+    "PASS: Raw SPIFFS lookup-table inspection confirms Watch 3 and X4 128 free blocks, above the two-block floor. Watch has only one block of margin above that floor.",
+    "LIMIT: This is an offline source/component/authority review. It does not demonstrate physical device behavior. Full-initial image installation erases internal data; no image was flashed or delivered."
+  ],
+  "devices": {
+    "watch": {
+      "changed_store_paths": [
+        "boot.json",
+        "cohort.json",
+        "waterfall.elf",
+        "waterfall.json"
+      ],
+      "preserved_store_paths": 109,
+      "store_files": 113,
+      "elf_count": 55,
+      "grant_delta": [
+        {
+          "manifest": "waterfall.json",
+          "grant": {
+            "capability": "ui.text-input",
+            "api": 1,
+            "instance_id": 0
+          }
+        }
+      ],
+      "shared_host_profile_paths_verified": [
+        "ui-scene/manifest.json",
+        "ui-profile/manifest.json",
+        "text-input/manifest.json",
+        "text-input/driver.elf",
+        "ui-profile/driver.elf",
+        "ui-scene/driver.elf"
+      ],
+      "free_spiffs_blocks": 3,
+      "minimum_free_blocks": 2,
+      "full_image_sha256": "6b3c894d8d00f19191189459c23f762f3a0da4499f24a6033bb6603f97a06535",
+      "native_and_non_bootfs_bank_partitions_unchanged": true,
+      "full_initial_erases_data": true,
+      "normal_and_sanitized_admission_identical": true,
+      "component_bytes": 243352,
+      "component_budget_bytes": 249392,
+      "component_headroom_bytes": 6040,
+      "target_dependency_files_verified": 144,
+      "font_inputs_verified": {
+        "system-apps:lib/PortableApps/fonts/text.inc": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
+        "system-apps:lib/PortableApps/fonts/watch-240-icons.inc": "df8c293fd11b3f9f55a0627fad79863d26d7e98944f17fa8113d8f6068d5c920",
+        "system-apps:lib/PortableApps/paper_fonts/text.inc": "9ee273df1c27df92d8ab2a985fb474d15b715770984894da4fee40b8cd9f2e4a",
+        "system-apps:lib/PortableApps/settings_fonts/text.inc": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+      },
+      "predecessor_font_inputs_checked": 3,
+      "rf_model_format_files_identical_to_c12781b2": 13,
+      "operation_scoped_storage_helper_unchanged": true,
+      "feature_additions": [
+        "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_APP_HOME_GUARD",
+        "-flto",
+        "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_WATCH_FROZEN_ICONS",
+        "-mno-target-align",
+        "/workspace/shared/rf-shared-input-components-20261012/watch-rf/watch-rf-presentation.h"
+      ]
+    },
+    "x4": {
+      "changed_store_paths": [
+        "boot.json",
+        "cohort.json",
+        "waterfall.json"
+      ],
+      "changed_sd_paths": [
+        "Apps/waterfall/manifest.json",
+        "Apps/waterfall/waterfall.elf"
+      ],
+      "preserved_store_paths": 103,
+      "preserved_sd_paths": 88,
+      "store_files": 106,
+      "sd_files": 90,
+      "grant_delta": [
+        {
+          "manifest": "waterfall.json",
+          "grant": {
+            "capability": "ui.text-input",
+            "api": 1,
+            "instance_id": 0
+          }
+        }
+      ],
+      "shared_hosts_other_apps_and_image_selections_unchanged": true,
+      "selected_sd_images": 48,
+      "free_spiffs_blocks": 128,
+      "minimum_free_blocks": 2,
+      "changed_flash_components": [
+        "bank_state.bin",
+        "bootfs.bin"
+      ],
+      "native_appdata_other_partitions_unchanged": true,
+      "full_image_sha256": "5bd5d2b565854fde0e66e723fe0801d1ff78eab7774e68e616497a5b0261dc10",
+      "full_initial_erases_data": true,
+      "cumulative_sd_zip_files": 14,
+      "sd_zip_verified": true,
+      "component_bytes": 282160,
+      "component_budget_bytes": 290000,
+      "component_headroom_bytes": 7840,
+      "target_dependency_files_verified": 125,
+      "font_inputs_verified": {
+        "system-apps:lib/PortableApps/fonts/icons.inc": "fbfee54e9dd3fd331bdfc6babf60427ccffa93c4e8956ceb0129d2b6111d411d",
+        "system-apps:lib/PortableApps/fonts/text.inc": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42",
+        "system-apps:lib/PortableApps/paper_fonts/text.inc": "9ee273df1c27df92d8ab2a985fb474d15b715770984894da4fee40b8cd9f2e4a",
+        "system-apps:lib/PortableApps/settings_fonts/text.inc": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+      },
+      "predecessor_font_inputs_checked": 4,
+      "rf_model_format_files_identical_to_c12781b2": 13,
+      "operation_scoped_storage_helper_unchanged": true,
+      "feature_additions": [
+        "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_APP_HOME_GUARD"
+      ],
+      "completed_qualification_review": {
+        "normal": {
+          "receipt": "/workspace/shared/rf-shared-input-x4-published-qualification-20261012/normal/result.json",
+          "sha256": "f0596d5f171ff33ecb737eaf6d18e81bdfc8a3862faf457ccf30f68b625c9813",
+          "internal_elf_count": 43,
+          "selected_sd_elf_count": 48,
+          "cohort_validated": true,
+          "sanitizers": null,
+          "hardware_calls": 0,
+          "storage_calls": 0
+        },
+        "asan-ubsan": {
+          "receipt": "/workspace/shared/rf-shared-input-x4-published-qualification-20261012/asan-ubsan/result.json",
+          "sha256": "c1085cfa2971222c5b61c676a8ef27889a5165d17e4be21183f9d850d4b9bf8a",
+          "internal_elf_count": 43,
+          "selected_sd_elf_count": 48,
+          "cohort_validated": true,
+          "sanitizers": "address,undefined",
+          "hardware_calls": 0,
+          "storage_calls": 0
+        }
+      }
+    }
+  },
+  "receipt_sha256": {
+    "watch/receipts/final-normal.json": "3a84b7eef6765862d4934cff489f1ceffafc90edfa6094d4fdfb1c9a044898fd",
+    "watch/receipts/final-sanitized.json": "3a84b7eef6765862d4934cff489f1ceffafc90edfa6094d4fdfb1c9a044898fd",
+    "watch/receipts/packing.json": "12b954147250f840099472f3869358b9b55c36b81183735e1522ca96a9b497b4",
+    "watch/receipts/rf-build.json": "0ae42ea8a6796a2b0a39b94b38c195d6e1c835ff544eeeba7a97281f9fdb8b15",
+    "x4/receipts/evening-composition.json": "b2389068f0d27ec51bf8e60e8493c5fca838e0b9e1cf33d30b1083e378cd21f2",
+    "x4/receipts/packing.json": "5241425c127ca61f3b9cef8f8a38541b9b2dbbf09939fdba2ffb5b30c95fda85",
+    "x4/receipts/rf-build.json": "548bad40c247a11b5d66b3b7e7d3c79558c5020503f742fa46bfce5a5df51480"
+  },
+  "startup_storage_fix_sources": {
+    "Apps/rf_app_data_scope.h": {
+      "sha256": "5b21f23b2505f12ef38ed1fc0e90b3c665066f639f2ccd8ca90e3b8073f69010",
+      "identical_to_c12781b2": true
+    },
+    "Apps/rf_temporal_app.inc": {
+      "sha256": "be027c03461c64a02997454d40284b9fa729a6adbde00a8d86e9b3cde0b0e48e",
+      "identical_to_c12781b2": true
+    },
+    "Apps/context_fingerprint_app.inc": {
+      "sha256": "757ac801d2c2ae66f2f45b9810aec8f52c8f155811d37966bd077c1a7b47b3f1",
+      "identical_to_c12781b2": true
+    },
+    "test/native_apps/rf_startup_dirty_checkpoint_test.c": {
+      "sha256": "03ae319d46081bf008088ac111d4d945c98c76c01af69b81e0d685d2d4308d0d",
+      "identical_to_c12781b2": true
+    },
+    "test/native_apps/rf_startup_contexts_test.c": {
+      "sha256": "9ea2728123b028ce7cd6940f75a4e5b3cac014744bb88de858094473b10d704f",
+      "identical_to_c12781b2": true
+    }
+  }
+}

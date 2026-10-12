@@ -1,0 +1,14 @@
+{
+  "debug_elf_sha256": "b41704b6418dc3bde048439d255aa0a2c2d1898c11b1bdb3dcebc12508d53b2a",
+  "target_elf_sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+  "method": "Actual target disassembly entry a1 frame operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "portable_app_before_home": 32,
+    "app_main": 208,
+    "rf_data_begin": 32,
+    "rf_data_stat": 48,
+    "rf_data_read": 80,
+    "rf_data_replace": 48
+  },
+  "bounds_passed": true
+}
