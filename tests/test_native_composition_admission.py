@@ -30,6 +30,17 @@ build_flags =
   -DRISC_APP_POLICY_ROWS=24
   -DRISC_APP_REQUIREMENT_ROWS=24
 '''
+WAKE_PROFILE = '''[platformio]
+extra_configs =
+  platformio.ini
+  crown-build.ini
+[env:crown-wake-profile]
+extends = env:crown-recovery-qualification
+build_flags =
+  ${env:crown-recovery-qualification.build_flags}
+  -DRISC_STAGE_LOGS=1
+  -DRISC_PERFORMANCE_TRACE=1
+'''
 MARKERS = {'risc_app_policy_rows': b'RISC_APP_POLICY_ROWS:24\0',
            'risc_app_requirement_rows': b'RISC_APP_REQUIREMENT_ROWS:24\0',
            'risc_tcp_listener_abi': b'\x01\0\0\0', 'risc_entropy_abi': b'\x01\0\0\0'}
@@ -46,6 +57,7 @@ class NativeComposition(unittest.TestCase):
         self.native = b'RTE_SOURCE=' + HEAD.encode() + b'\0RISC_APP_POLICY_ROWS:24\0'
         self.status = ''
         self.git_source = SOURCE.encode()
+        self.git_profiles = {'crown-build.ini': PROFILE.encode(), 'crown-wake-profile.ini': WAKE_PROFILE.encode()}
         self.markers = dict(MARKERS)
         self.git = patch.object(admission.subprocess, 'check_output', side_effect=self.git_output)
         self.git.start()
@@ -60,7 +72,8 @@ class NativeComposition(unittest.TestCase):
         if 'status' in command:
             return self.status
         if 'show' in command:
-            return self.git_source
+            name = command[-1].split(':', 1)[1]
+            return self.git_source if name == 'platformio.ini' else self.git_profiles[name]
         self.fail('Unexpected git command: ' + repr(command))
 
     def check(self, rows=24):
@@ -121,6 +134,44 @@ class NativeComposition(unittest.TestCase):
             self.markers = dict(MARKERS)
             self.markers[name] = b'\0\0\0\0'
             with self.assertRaisesRegex(ValueError, 'sharing backend selection differs'):
+                self.check()
+
+    def wake_profile(self):
+        self.profile = self.root / 'crown-wake-profile.ini'
+        self.profile.write_text(WAKE_PROFILE)
+
+    def test_source_bound_wake_observers_keep_all_original_bounds(self):
+        self.wake_profile()
+        with patch.object(admission, 'native_symbol_allocation', return_value={'address': 0x3fc90000, 'bytes': 128}) as allocation:
+            proof = self.check()
+        self.assertEqual(proof['profile'], 'env:crown-wake-profile')
+        self.assertEqual(proof['diagnostic_flags'], {'RISC_STAGE_LOGS': 1, 'RISC_PERFORMANCE_TRACE': 1})
+        self.assertEqual(proof['bounds']['RISC_PROVIDER_CAPACITY'], 32)
+        self.assertEqual(proof['crown_profile_sha256'], admission.sha(PROFILE.encode()))
+        self.assertEqual(proof['wake_profile_sha256'], admission.sha(WAKE_PROFILE.encode()))
+        self.assertEqual(allocation.call_count, 2)
+
+    def test_wake_profile_rejects_extra_missing_or_changed_flags(self):
+        self.wake_profile()
+        for text in (WAKE_PROFILE + '  -DRISC_PROVIDER_CAPACITY=40\n',
+                     WAKE_PROFILE.replace('RISC_STAGE_LOGS=1', 'RISC_STAGE_LOGS=0'),
+                     WAKE_PROFILE.replace('  -DRISC_PERFORMANCE_TRACE=1\n', ''),
+                     WAKE_PROFILE.replace('extends = env:crown-recovery-qualification', 'extends = env:other'),
+                     WAKE_PROFILE.replace('  crown-build.ini\n', '  unchecked.ini\n')):
+            self.profile.write_text(text)
+            with self.assertRaisesRegex(ValueError, 'Unsupported or modified wake'):
+                self.check()
+
+    def test_wake_profile_requires_committed_inputs_and_enabled_allocations(self):
+        self.wake_profile()
+        for name in ('crown-build.ini', 'crown-wake-profile.ini'):
+            saved = self.git_profiles[name]
+            self.git_profiles[name] = b'other committed profile'
+            with self.assertRaisesRegex(ValueError, 'differs from the source identity'):
+                self.check()
+            self.git_profiles[name] = saved
+        with patch.object(admission, 'native_symbol_allocation', side_effect=ValueError('Missing diagnostic allocation')):
+            with self.assertRaisesRegex(ValueError, 'Missing diagnostic allocation'):
                 self.check()
 
     def test_explicit_profile_flags_and_unchanged_historical_defaults(self):

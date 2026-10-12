@@ -71,6 +71,22 @@ def native_symbol_bytes(native_elf, symbol_name):
     return section.data()[offset:offset + size]
 
 
+def native_symbol_allocation(native_elf, symbol_name):
+    """Prove an enabled diagnostic is linked into allocated target memory."""
+    from elftools.elf.elffile import ELFFile
+    elf = ELFFile(io.BytesIO(native_elf))
+    table = elf.get_section_by_name('.symtab')
+    matches = table.get_symbol_by_name(symbol_name) if table else None
+    if not matches or len(matches) != 1 or not isinstance(matches[0]['st_shndx'], int):
+        raise ValueError('Missing or ambiguous diagnostic allocation: ' + symbol_name)
+    symbol = matches[0]
+    section = elf.get_section(symbol['st_shndx'])
+    offset, size = symbol['st_value'] - section['sh_addr'], symbol['st_size']
+    if not section['sh_flags'] & 2 or offset < 0 or not 0 < size <= 65536 or offset + size > section['sh_size']:
+        raise ValueError('Invalid diagnostic allocation: ' + symbol_name)
+    return {'address': symbol['st_value'], 'bytes': size}
+
+
 def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     """Bind the explicit crown profile to source identity and compiled row bounds.
 
@@ -85,10 +101,25 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     profile.read_string(profile_bytes.decode())
     section = 'env:crown-recovery-qualification'
     parent = 'env:esp32s3-16mb-appdata-iq-sharing'
+    lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
+    wake_section = 'env:crown-wake-profile'
+    wake_profile_bytes = None
+    if wake_section in profile:
+        expected = ['${' + section + '.build_flags}', '-DRISC_STAGE_LOGS=1', '-DRISC_PERFORMANCE_TRACE=1']
+        if (profile.defaults() or set(profile.sections()) != {'platformio', wake_section} or
+                set(profile['platformio']) != {'extra_configs'} or
+                lines(profile['platformio']['extra_configs']) != ['platformio.ini', 'crown-build.ini'] or
+                set(profile[wake_section]) != {'extends', 'build_flags'} or
+                profile[wake_section]['extends'] != section or
+                lines(profile[wake_section]['build_flags']) != expected):
+            raise ValueError('Unsupported or modified wake diagnostic profile')
+        wake_profile_bytes = profile_bytes
+        profile_bytes = (native_profile.parent / 'crown-build.ini').read_bytes()
+        profile = configparser.ConfigParser(interpolation=None)
+        profile.read_string(profile_bytes.decode())
     expected_flags = ['${' + parent + '.build_flags}', '-DRISC_NATIVE_RECOVERY_AXP2101=1',
                       '-DRISC_RECOVERY_I2C_PORT=0', '-DRISC_RECOVERY_SDA=10',
                       '-DRISC_RECOVERY_SCL=11']
-    lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
     if (profile.defaults() or set(profile.sections()) != {'platformio', section} or
             dict(profile['platformio']) != {'extra_configs': 'platformio.ini'} or
             set(profile[section]) != {'extends', 'build_flags'} or
@@ -101,6 +132,14 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
         raise ValueError('Native RTE_SOURCE does not match selected Runtime source')
     if subprocess.check_output(['git', '-C', str(runtime), 'status', '--porcelain', '--untracked-files=no'], text=True).strip():
         raise ValueError('Native composition requires unchanged Runtime source')
+    diagnostics = None
+    if wake_profile_bytes is not None:
+        for name, selected in [('crown-build.ini', profile_bytes), ('crown-wake-profile.ini', wake_profile_bytes)]:
+            committed = subprocess.check_output(['git', '-C', str(runtime), 'show', head + ':' + name])
+            if selected != committed or (runtime / name).read_bytes() != committed:
+                raise ValueError('Wake diagnostic profile differs from the source identity')
+        diagnostics = {name: native_symbol_allocation(native_elf, name) for name in
+                       ('_ZN15RiscDiagnostics11timestampedEPKcz', '_ZN8RiscPerf4dataE')}
     source_bytes = (runtime / 'platformio.ini').read_bytes()
     if source_bytes != subprocess.check_output(['git', '-C', str(runtime), 'show', head + ':platformio.ini']):
         raise ValueError('Runtime build profile differs from the source identity')
@@ -121,11 +160,16 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     for name in ('risc_tcp_listener_abi', 'risc_entropy_abi'):
         if native_symbol_bytes(native_elf, name) != b'\x01\0\0\0':
             raise ValueError('Native sharing backend selection differs from the source build profile')
-    return {'profile': section, 'runtime_commit': head, 'bounds': bounds,
+    proof = {'profile': wake_section if wake_profile_bytes is not None else section, 'runtime_commit': head, 'bounds': bounds,
             'crown_profile_sha256': sha(profile_bytes), 'runtime_profile_sha256': sha(source_bytes),
             'capacity_evidence': 'explicit source-bound build profile; no native capacity marker',
             'row_evidence': 'allocated native policy and requirement marker symbols',
             'sharing_evidence': 'allocated native TCP listener and entropy ABI-1 symbols'}
+    if wake_profile_bytes is not None:
+        proof.update(wake_profile_sha256=sha(wake_profile_bytes),
+                     diagnostic_flags={'RISC_STAGE_LOGS': 1, 'RISC_PERFORMANCE_TRACE': 1},
+                     diagnostic_allocations=diagnostics)
+    return proof
 
 
 def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy_rows=16, *, cohort_policy=False, native_profile=None):
