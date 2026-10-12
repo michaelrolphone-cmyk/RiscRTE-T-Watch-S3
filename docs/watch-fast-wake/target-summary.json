@@ -33,7 +33,7 @@
   },
   "fast_clock": {
     "bytes": 858772,
-    "sha256": "d66be50c97a986dc3bb1e3c3f5a1e9d2a68d2f2f1d5e706386bba619698b7517",
+    "sha256": "17cee5e0ce7bcdfa93749acbe71705cd735c26f31e7e2983d2b6cfcea69a58e1",
     "imports": [
       "free",
       "malloc",

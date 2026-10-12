@@ -42,12 +42,15 @@ After the first frame, each settled foreground turn handles crown/touch and
 renders before admitting at most one startup phase:
 
 1. Existing saved Wi-Fi/Bluetooth policy
-2. Broadcast client
-3. Contexts client, pause and export recovery
+2. Broadcast client and first/resumed service step
+3. Contexts client, pause/export recovery and first/resumed service step
 4. Existing provider promotion and paired-boot confirmation
 
-Radio controls remain unavailable until policy loads. Broadcast and Contexts
-cannot step before wake radio policy is restored. Sleep still pauses background
+Radio controls remain unavailable until policy loads, including after light
+wake. Broadcast and Contexts cannot resume before their explicit phase after
+wake radio policy is restored. A swipe latched during presentation bypasses
+deferred work; a Contexts launch queued during admission returns immediately.
+Low-battery crossings queue radio application through the same phased path. Sleep still pauses background
 services and proves Bluetooth suspension; light wake presents first, then
 restores radio policy. All cleanup/retention paths remain checked. Pair
 confirmation is deferred until all original startup services have been admitted;
@@ -72,11 +75,14 @@ mocked hardware/API boundaries. It passes normal and ASan/UBSan (LeakSanitizer
 disabled). It covers all five boot causes with checkpoint present/absent, due
 alarm, explicit unset time, asynchronous frame failure, deferred admission
 failure, early launcher handoff before deferred work, saved face/24-hour/brightness,
-two light wakes, and failed Contexts pause/release retention. The
-fixture enforces input polling between separate deferred phases.
+production Points/motion/alarm-resume paths, early/repeated light wakes, cold
+and resumed low-battery crossings, radio policy/failure variants, and failed
+Context/Broadcast cleanup retention. The fixture fences I/O after retention
+and enforces input polling and distinct frames between service-start phases.
 
 The deliberately modeled scenario assigns 95 ms to each display transfer and
-700 ms to each of four service acquisitions. First visible Clock and first
+700 ms to each of four service acquisitions plus 400 ms to each service start.
+First visible Clock and first
 input poll occur at 95 ms, ahead of those service costs. Each modeled light
 resume frame takes 95 ms. Neither number is a physical Watch measurement.
 

@@ -16,6 +16,7 @@ static char sleep_status[32];
 /* Selected only by the separately qualified clock-first product build. */
 static unsigned clock_deferred_phase;
 static bool clock_radios_pending,clock_input_reported;
+static bool clock_broadcast_started,clock_contexts_started;
 static uint32_t clock_wake_started;
 #endif
 
@@ -59,7 +60,7 @@ static bool clock_broadcast_step(void) {
 #ifdef WATCH_FAST_WAKE
     /* Neither a retained client nor alarm/presentation pacing may restart BLE
      * before the saved radio policy has been reapplied after wake. */
-    if(clock_radios_pending)return true;
+    if(clock_radios_pending || !clock_broadcast_started)return true;
 #endif
     if(!clock_broadcast.api)return true;
     if(!portable_broadcast_step(&clock_broadcast,true)) {
@@ -496,8 +497,15 @@ static bool clock_low_battery_poll(uint32_t now) {
     if(result&PORTABLE_LOW_BATTERY_ERROR)rt->diagnostic("LOW_BATTERY settings=unconfirmed");
     if(!(result&PORTABLE_LOW_BATTERY_ENTERED))return true;
     pqa_cancel(&clock_quick.ui);(void)pqa_take_action(&clock_quick.ui);
+#ifdef WATCH_FAST_WAKE
+    if(!pqa_session_load(&clock_quick,rt)||!pqa_session_restore(&clock_quick,display))return false;
+    clock_deferred_phase=0;clock_radios_pending=true;
+    clock_broadcast_started=clock_contexts_started=false;
+    clock_radios.valid=clock_radios.available=clock_quick.ui.radios_valid=false;
+#else
     if(!pqa_session_load(&clock_quick,rt)||!pqa_radios_load(&clock_radios,&clock_quick.ui,rt)||
        !pqa_session_restore(&clock_quick,display))return false;
+#endif
     rt->diagnostic(result&PORTABLE_LOW_BATTERY_ERROR?"LOW_BATTERY crossing=partial-once":"LOW_BATTERY crossing=applied-once");return true;
 }
 #endif
@@ -563,7 +571,12 @@ static bool clock_deferred_step(uint32_t now) {
     case 0:
         clock_wake_stage("radios-begin",now);
 #ifdef WATCH_QUICK_RADIOS
-        if(!pqa_radios_load(&clock_radios,&clock_quick.ui,rt))return false;
+        if(!pqa_radios_load(&clock_radios,&clock_quick.ui,rt)) {
+#ifdef WATCH_RUNTIME_FEATURES
+            watch_runtime_halt(&native_clock);
+#endif
+            return false;
+        }
 #endif
         clock_radios_pending=false;completed="radios-end";
         break;
@@ -571,6 +584,8 @@ static bool clock_deferred_step(uint32_t now) {
         clock_wake_stage("broadcast-begin",now);
 #ifdef WATCH_BLE_BROADCAST
         if(!clock_broadcast.api && !portable_broadcast_open(&clock_broadcast,rt))return false;
+        clock_broadcast_started=true;
+        if(!clock_broadcast_step())return false;
 #endif
         completed="broadcast-end";break;
     case 2:
@@ -578,6 +593,9 @@ static bool clock_deferred_step(uint32_t now) {
 #ifdef WATCH_CONTEXTS_CLIENT
         if(!clock_contexts.api && (!portable_contexts_open(&clock_contexts,rt) ||
            !clock_contexts_pause() || !clock_contexts_recover_export()))return false;
+        clock_contexts_started=true;
+        if(!clock_contexts_tick())return false;
+        if(clock_contexts_handoff)return true;
 #endif
         completed="contexts-end";break;
     case 3:
@@ -614,7 +632,14 @@ static int sleep_cycle(void) {
     watch_sleep_light_ms=clock_quick.deep_ms;
 #endif
 #ifdef WATCH_QUICK_RADIOS
-    if(!pqa_radios_suspend(rt)){rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");return false;}
+    if(!pqa_radios_suspend(rt)) {
+        rt->diagnostic("QUICK Bluetooth cleanup-unconfirmed");
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_RUNTIME_FEATURES)
+        watch_runtime_halt(&native_clock);return WATCH_SLEEP_RETAINED;
+#else
+        return false;
+#endif
+    }
 #endif
     /* Clear retained panel RAM before sleep, not merely its PWM. If the
      * platform briefly restores the backlight before the panel resume hook,
@@ -649,6 +674,10 @@ static int sleep_cycle(void) {
     if(rc<0)return false;
 #ifdef WATCH_FAST_WAKE
     clock_deferred_phase=0;clock_radios_pending=true;clock_input_reported=false;
+    clock_broadcast_started=clock_contexts_started=false;
+#ifdef WATCH_QUICK_RADIOS
+    clock_radios.valid=clock_radios.available=clock_quick.ui.radios_valid=false;
+#endif
     if(!alive(&clock_wake_started))return false;
     clock_wake_stage("light-resume",clock_wake_started);
 #elif defined(WATCH_QUICK_RADIOS)
@@ -696,6 +725,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     rt=risc_runtime_get_api(1);
 #ifdef WATCH_FAST_WAKE
     clock_deferred_phase=0;clock_radios_pending=true;clock_input_reported=false;clock_wake_started=0;
+    clock_broadcast_started=clock_contexts_started=false;
 #endif
 #if defined(WATCH_RUNTIME_FEATURES) && defined(WATCH_CLOCK_RETURN)
     (void)watch_runtime_promote;
@@ -875,7 +905,7 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT
 #ifdef WATCH_FAST_WAKE
-        if(clock_contexts.api && !clock_radios_pending && !clock_contexts_tick())break;
+        if(clock_contexts_started && !clock_radios_pending && !clock_contexts_tick())break;
 #else
         if(!clock_contexts_tick())break;
 #endif
@@ -1020,10 +1050,23 @@ __attribute__((visibility("default"))) void app_main(void) {
         risc_display_surface_v1 s={0};
         if (!frame(&s) || !draw_clock(now,&s) || !present() || !pace_frame(now)) break;
 #ifdef WATCH_FAST_WAKE
+        /* present() can latch navigation while a transfer drains. Honor it
+         * before entering any optional synchronous provider work. */
+#ifdef WATCH_CLOCK_LAUNCHER
+        if(launcher_swipe_pending)continue;
+#endif
         if(!alive(&now) || !clock_deferred_step(now))break;
+#ifdef WATCH_CONTEXTS_CLIENT
+        if(clock_contexts_handoff)break;
+#endif
 #endif
     }
 done:
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_BLE_BROADCAST)
+    /* Failed background cleanup has already raised the native retention
+     * fence. Do not perform Contexts I/O before the later broadcast check. */
+    if(clock_broadcast_uncertain)return;
+#endif
 #ifdef WATCH_RUNTIME_FEATURES
     if(native_clock.halted)return;
 #endif
