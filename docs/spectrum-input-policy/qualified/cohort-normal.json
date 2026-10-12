@@ -1,0 +1,170 @@
+{
+  "active_store_sha256": "d5515b1423f955e44bfc5de9335e0c93ffe29d0010c66da65ea72bb03186e85c",
+  "app_policy_rows": 24,
+  "boot_authority_unchanged": true,
+  "boot_json_after_bytes": 27195,
+  "boot_json_before_bytes": 27195,
+  "boot_json_byte_identical": true,
+  "candidate_store_sha256": "9175383025736d455aee3a7009d98b41d0a4ee3cdff5c3cb734ee85319a83b59",
+  "changed_store_paths": [
+    "audio_spectrum.elf",
+    "audio_spectrum.json",
+    "ble_scanner.json",
+    "cohort.json",
+    "default.json",
+    "file_browser.json",
+    "lora/manifest.json",
+    "lora_messages.json",
+    "timecard.json",
+    "waterfall.json"
+  ],
+  "clock_unchanged": true,
+  "cohort_validated": true,
+  "cooperative_yields": 174,
+  "decoded_metadata_unchanged": true,
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "elf_count": 55,
+  "error": "",
+  "existing_apps_and_providers_preserved": true,
+  "free_spiffs_blocks": 2,
+  "full_image_bytes": 16777216,
+  "full_image_materialized": false,
+  "full_image_sha256": "31a67e68998c6043ff7f64ec4dba89b5753e71d6ff3f9de8f53d6546a5ecb0c1",
+  "full_initial_erases_data": true,
+  "grant_delta": [],
+  "hardware_calls": 0,
+  "hardware_verified": false,
+  "lossless_metadata_compaction": [
+    {
+      "after_sha256": "13196c559ecfbfb00ba96f63028a696000b234ee49e7fe14b9b35303a95dd472",
+      "before_sha256": "02aaa7bb7d8cdf24a534acda8993aa2b2156182bdc6acf626c6820e6758f8d64",
+      "bytes_saved": 552,
+      "decoded_equal": true,
+      "path": "file_browser.json"
+    },
+    {
+      "after_sha256": "fcf2cb7868e96b7171f3ffb17ead18719d279e0ed820ced521d1006944349313",
+      "before_sha256": "fe7a8b1d489527bf79623afeed14c403342c53f2cf1f1af9f8a102aeff857fe2",
+      "bytes_saved": 448,
+      "decoded_equal": true,
+      "path": "waterfall.json"
+    },
+    {
+      "after_sha256": "92365485d23fa6125a46e93183827b4cc26b890c3c7f23f7f0b99a53b3a4bf01",
+      "before_sha256": "e270a5229ed4a661d0d8a399ee7df126a144b6bf68e65cadcd46ed0c1e83aa6b",
+      "bytes_saved": 422,
+      "decoded_equal": true,
+      "path": "default.json"
+    },
+    {
+      "after_sha256": "66a1bb53b26d90f7816e9130b7df08aa775f58d3e4d3d1dca12ddbcd97aab5a9",
+      "before_sha256": "8a9f3fe02b17a6b0c8b9d790d466077a63da20c406f2f1e8bb28a072a5c71f9b",
+      "bytes_saved": 396,
+      "decoded_equal": true,
+      "path": "ble_scanner.json"
+    },
+    {
+      "after_sha256": "225a13ab1881bb5f9c7aabfbbfa8f21e7767797578497ac82a48e9e9cf7fb933",
+      "before_sha256": "e791535ec2ceecac46e26b86b66cc375126ecea8263e5c1d609f7af4d402034a",
+      "bytes_saved": 396,
+      "decoded_equal": true,
+      "path": "lora_messages.json"
+    },
+    {
+      "after_sha256": "861553317a3978b746d99e986b17c4f943f1e64ff97fe435262035bce0215a65",
+      "before_sha256": "bdb1edc864058a0d8216abb0fe78238ccddcd78a93a6bfc4560e65b71b9c70e8",
+      "bytes_saved": 396,
+      "decoded_equal": true,
+      "path": "timecard.json"
+    },
+    {
+      "after_sha256": "6d660bb27172e20213b2f40981af516f2f1f4f93c9fd17a503d825d21a9da5ea",
+      "before_sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c",
+      "bytes_saved": 384,
+      "decoded_equal": true,
+      "path": "lora/manifest.json"
+    }
+  ],
+  "modal_policy_successor": true,
+  "native_composition": {
+    "bounds": {
+      "RISC_APP_POLICY_ROWS": 24,
+      "RISC_APP_REQUIREMENT_ROWS": 24,
+      "RISC_INSTALLED_APP_CAPACITY": 64,
+      "RISC_PROVIDER_CAPACITY": 32
+    },
+    "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+    "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+    "diagnostic_allocations": {
+      "_ZN15RiscDiagnostics11timestampedEPKcz": {
+        "address": 1107539120,
+        "bytes": 230
+      },
+      "_ZN8RiscPerf4dataE": {
+        "address": 1070182592,
+        "bytes": 5440
+      }
+    },
+    "diagnostic_flags": {
+      "RISC_PERFORMANCE_TRACE": 1,
+      "RISC_STAGE_LOGS": 1
+    },
+    "file_source_backend_allocations": {
+      "__wrap_esp_littlefs_format": {
+        "address": 1107482652,
+        "bytes": 33
+      },
+      "__wrap_esp_littlefs_format_partition": {
+        "address": 1107482688,
+        "bytes": 24
+      },
+      "__wrap_esp_partition_erase_range": {
+        "address": 1107482584,
+        "bytes": 66
+      },
+      "__wrap_esp_partition_read": {
+        "address": 1107482476,
+        "bytes": 36
+      },
+      "__wrap_esp_partition_write": {
+        "address": 1107482512,
+        "bytes": 69
+      },
+      "__wrap_esp_vfs_register": {
+        "address": 1107481868,
+        "bytes": 535
+      },
+      "__wrap_esp_vfs_unregister": {
+        "address": 1107482404,
+        "bytes": 70
+      }
+    },
+    "file_source_enabled": true,
+    "private_scratch_root": "/appdata/.risc-file-source",
+    "profile": "env:watch-file-source",
+    "row_evidence": "allocated native policy and requirement marker symbols",
+    "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+    "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+    "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+    "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+  },
+  "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+  "native_unchanged": true,
+  "prepared": true,
+  "preserved_store_paths": 103,
+  "product": "Watch",
+  "product_source": "0499a3a3cd3e0461e61c6c93a444090657d41e9e",
+  "product_tree": "ef76347e3aaeca6298ed86eab51154c38a964532",
+  "scene_host_unchanged": true,
+  "shared_text_hosts_unchanged": true,
+  "source_candidate": "e491c63b51f20447aafbdd938c560ec5bae59ae1",
+  "storage_calls": 0,
+  "store_files": 113,
+  "system_source": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+  "system_tree": "dd3e63af9ef4273419dc285bac9fcd214ae1dc3e",
+  "target_instructions_executed": false,
+  "version": "1.1.18",
+  "watch_has_no_native_resident_shell": true
+}

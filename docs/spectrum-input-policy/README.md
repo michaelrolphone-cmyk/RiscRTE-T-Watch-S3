@@ -46,3 +46,15 @@ double-free abort. The recipe retries only that exact signature with unchanged
 command, source, flags, and output path. Every nonzero-exit output is quarantined
 and rejected; only a successful link can enter validation or compaction. Attempt
 counts and log/output hashes are included in the build and flag-off receipts.
+
+## Qualified checkpoint
+
+The compiled public recipe is `0499a3a3cd3e0461e61c6c93a444090657d41e9e`;
+receipt-only documentation commits do not change that build identity. See
+[`qualified/qualification.json`](qualified/qualification.json) for the bound
+source/target/cohort evidence. Source CI and recipe CI passed. The target is
+234,932 bytes; disabled-policy output exactly matches selected Spectrum 0.5.4.
+Normal and ASan/UBSan cohort receipts match across all 55 ELFs. All 58 old/new
+JSON files reject duplicate keys; seven unsigned manifest whitespace-only
+changes save 2,994 bytes and retain the two-block floor. No physical-device
+execution, full-image delivery or flashing is claimed.

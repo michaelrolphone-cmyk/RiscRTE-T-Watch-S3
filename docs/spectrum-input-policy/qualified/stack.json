@@ -1,0 +1,62 @@
+{
+  "schema": "spectrum.target-stack.v1",
+  "device": "watch",
+  "application_source": "b1b2ba9466cc7243570471c0f9e728367dd4bafe",
+  "system_source": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+  "target_elf_sha256": "11ba92394f26ac529bd4687694710b3edd5680e1eb643b1a54be23b8297077e5",
+  "debug_elf_sha256": "57750387e75285251930ece9c6633e320f7544c59c42b0f3c88626bfbcecbea9",
+  "method": "Actual target disassembly entry a1 operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "text_width": 32,
+    "portable_app_before_launch$constprop$17": 32,
+    "text_color$part$43$lto_priv$374": 80,
+    "text_input_neutral$lto_priv$568": 32,
+    "portable_text_client_live$constprop$111": 32,
+    "app_module_fini": 32,
+    "app_module_init": 64,
+    "text_input_alive$lto_priv$565": 32,
+    "portable_text_adapter_policy_capture": 32,
+    "text_input_navigation$lto_priv$567": 32,
+    "text_input_touch_open$lto_priv$566": 32,
+    "portable_text_client_release$constprop$34": 48,
+    "app_main": 208,
+    "text_policy$lto_priv$401": 64,
+    "portable_text_client_request_result$lto_priv$573": 32
+  },
+  "maximum_modal_frame_bytes": 208,
+  "all_entry_frames_maximum_bytes": 3280,
+  "static_modal_storage": {
+    "editing": {
+      "bytes": 22,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 873754
+    },
+    "text_checkpoint": {
+      "bytes": 8,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 873776
+    },
+    "text_client": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 239960
+    },
+    "text_state": {
+      "bytes": 88,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 878484
+    }
+  },
+  "bounded_label_buffer_bytes": 17,
+  "static_editing_record_bytes": 22,
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Inlining folds helper frames into callers; absent symbols are not separate frame measurements.",
+    "Entry frame sizes do not prove dynamic call-chain peak stack use, Runtime allocation, or physical execution."
+  ]
+}

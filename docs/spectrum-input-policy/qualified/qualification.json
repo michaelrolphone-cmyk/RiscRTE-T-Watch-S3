@@ -1,0 +1,55 @@
+{
+  "schema": "spectrum.modal-policy.qualified.v1",
+  "compiled_recipe": "0499a3a3cd3e0461e61c6c93a444090657d41e9e",
+  "utilities": "b1b2ba9466cc7243570471c0f9e728367dd4bafe",
+  "system": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+  "source_qualification": {
+    "normal_and_sanitized_workflows": 196,
+    "focused_policy_workflows": 16,
+    "normal_sanitized_images": 295,
+    "predecessor_non_keyboard_image_comparisons": 36,
+    "legacy_normal_and_sanitized_dsp_controller_executions": 52,
+    "python_regressions": 86,
+    "preprocessor_token_parity": 6
+  },
+  "recipe_tests": 14,
+  "normal_sanitized_cohort_equal": true,
+  "full_image_materialized": false,
+  "hardware_verified": false,
+  "published_ci": {
+    "source": [
+      38310764620,
+      38310764107,
+      38310764048
+    ],
+    "recipe": [
+      38311421958
+    ]
+  },
+  "evidence": {
+    "audio_spectrum-build-record.json": {
+      "bytes": 40711,
+      "sha256": "5b70498f954299c3749f0e7a3581834dbff8275355c76de5247f340f8372cad4"
+    },
+    "cohort-normal.json": {
+      "bytes": 6097,
+      "sha256": "4721c929cbfb712ef0ce7ddd8351609b76032845273942cd01f99d5177c7061d"
+    },
+    "cohort-sanitized.json": {
+      "bytes": 6097,
+      "sha256": "4721c929cbfb712ef0ce7ddd8351609b76032845273942cd01f99d5177c7061d"
+    },
+    "flagoff.json": {
+      "bytes": 2943,
+      "sha256": "2af6aee06fe7d0bbaac283a7c9f1361763fc063ad1cc25299c6296f3e4f5ed61"
+    },
+    "packing-recheck.json": {
+      "bytes": 807,
+      "sha256": "6a359f241172f666b3231773a4bf882b11a7d9d36e21f1afb0117eeafa262fc0"
+    },
+    "stack.json": {
+      "bytes": 2131,
+      "sha256": "298ff55be3f175a316b3a902567c17448b5863822c7fb4aa2f721ee9c993c764"
+    }
+  }
+}

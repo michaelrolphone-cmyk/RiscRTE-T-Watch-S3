@@ -1,0 +1,33 @@
+{
+  "store_files": 113,
+  "elf_count": 55,
+  "byte_identical_files": 103,
+  "changed_paths": [
+    "audio_spectrum.elf",
+    "audio_spectrum.json",
+    "ble_scanner.json",
+    "cohort.json",
+    "default.json",
+    "file_browser.json",
+    "lora/manifest.json",
+    "lora_messages.json",
+    "timecard.json",
+    "waterfall.json"
+  ],
+  "strict_json_files": 58,
+  "ordinary_metadata_compaction": [
+    "ble_scanner.json",
+    "default.json",
+    "file_browser.json",
+    "lora/manifest.json",
+    "lora_messages.json",
+    "timecard.json",
+    "waterfall.json"
+  ],
+  "metadata_bytes_saved": 2994,
+  "boot_authority_byte_identical": true,
+  "repack_byte_identical": true,
+  "free_blocks": 2,
+  "bootfs_sha256": "7a44ce8d6f36bdf8b664f47abaf0777edf834310f0cd461f2badc79cbab1497f",
+  "hardware_claim": false
+}

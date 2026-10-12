@@ -1,0 +1,80 @@
+{
+  "schema": "spectrum.modal-policy.flagoff-target.v1",
+  "device": "watch",
+  "passed": true,
+  "targets": {
+    "predecessor": {
+      "sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a",
+      "bytes": 231204
+    },
+    "candidate": {
+      "sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a",
+      "bytes": 231204
+    }
+  },
+  "linker_attempts": {
+    "predecessor": [
+      {
+        "attempt": 1,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "460e8abe20c59f8b72f929d410f4da79592dad04b0ae071d620630c093ef508a"
+      },
+      {
+        "attempt": 2,
+        "returncode": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "candidate": [
+      {
+        "attempt": 1,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "686def96efe5aa9e7cef9efa0e3b9431b292b68c38e67d78d7781c1fc69e315c"
+      },
+      {
+        "attempt": 2,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "686def96efe5aa9e7cef9efa0e3b9431b292b68c38e67d78d7781c1fc69e315c"
+      },
+      {
+        "attempt": 3,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "686def96efe5aa9e7cef9efa0e3b9431b292b68c38e67d78d7781c1fc69e315c"
+      },
+      {
+        "attempt": 4,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "686def96efe5aa9e7cef9efa0e3b9431b292b68c38e67d78d7781c1fc69e315c"
+      },
+      {
+        "attempt": 5,
+        "returncode": 1,
+        "log_sha256": "fd9db41781a71e1e2e575d94968dcbd6b09c633d7ff830f9aa1af69fb5fe4c81",
+        "rejected_elf_sha256": "686def96efe5aa9e7cef9efa0e3b9431b292b68c38e67d78d7781c1fc69e315c"
+      },
+      {
+        "attempt": 6,
+        "returncode": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "selected_spectrum_054_sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a",
+  "selected_spectrum_054_byte_equal": true,
+  "sources": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "b1b2ba9466cc7243570471c0f9e728367dd4bafe",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "baseline_system": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "baseline_utilities": "82d17d0d902d427938af95aae0e976c8f78041ed",
+  "only_removed_flag": "-DPORTABLE_TEXT_INPUT_POLICY",
+  "hardware_verified": false,
+  "target_instructions_executed": false
+}
