@@ -1,0 +1,37 @@
+{
+  "schema": "files.modal-policy.final-admission.v1",
+  "status": "published_source_recipe_receipts_ci_and_both_cumulative_cohorts_passed",
+  "version": "1.5.35",
+  "frozen_component_handoff": {
+    "path": "/workspace/shared/files-input-policy-components-20261012/handoff-final-with-ci.json",
+    "sha256": "6df57f7a37405f5410fd49bd24f557ee5f8c2543948df1321190ebcb574f50dd"
+  },
+  "receipt_commit": "494f08b7361a41ede71ec70d3fd8d338fe8be9da",
+  "receipt_ci": 38317113938,
+  "x4_cumulative_admission": {
+    "status": "passed",
+    "records": {
+      "settings-qualification.json": {
+        "path": "/workspace/shared/x4-settings-test-components-20261012/qualification-files-final/settings-qualification.json",
+        "sha256": "c5770f5a31d349ef6e41ff66b06e5aff400ec268399d92d413e7560d953e1b3c",
+        "bytes": 1031
+      },
+      "normal/result.json": {
+        "path": "/workspace/shared/x4-settings-test-components-20261012/qualification-files-final/normal/result.json",
+        "sha256": "c7d13baf9577d7d3b5c1b2ece38212cba74bfb930740af63af0b65d54a1a01cd",
+        "bytes": 37087
+      },
+      "asan-ubsan/result.json": {
+        "path": "/workspace/shared/x4-settings-test-components-20261012/qualification-files-final/asan-ubsan/result.json",
+        "sha256": "ce0a5410dceb7e248a2af934e45987b93a081313ddffe21a01c0a16a54fe5ad4",
+        "bytes": 37101
+      }
+    },
+    "internal_elves": 43,
+    "sd_elves": 48,
+    "missing_import_refusals_each": 565,
+    "settings_identity_namespace_refusals_each": 12,
+    "hardware_tested": false
+  },
+  "hardware_verified": false
+}
