@@ -1,0 +1,52 @@
+{
+  "schema": "points.modal-policy.selection.v1",
+  "finalized": true,
+  "version": "0.6.14",
+  "source_publication": "public-exact-commit",
+  "sources": {
+    "system-apps": "66282802bb498590fcbab4eba871ff40cc3ddafd",
+    "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+    "productivity": "99d706798d58399751e0df08439fb34c041272e9",
+    "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "productivity_base": "164ea8c4f8bace10148bcfd9b9dcdd97e9fc8e75",
+  "baseline": {
+    "compiled_recipe_commit": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+    "docs_recipe_commit": "64fb6a87db127e168f8fb535d1f5651e40aacc00",
+    "system_commit": "66282802bb498590fcbab4eba871ff40cc3ddafd",
+    "combined_handoff_sha256": "7826fb67c468673352109cb155e69d8b31ecd8da00eada177b293f4f3f36edbb",
+    "frozen_handoff_sha256": "6df57f7a37405f5410fd49bd24f557ee5f8c2543948df1321190ebcb574f50dd",
+    "receipt_sha256": "64b10bce800135ccb1a4305a29aa95ca1ca65aa9528edf02258787848a08383e",
+    "candidate_store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb",
+    "full_image_sha256": "bbbb843321fe96687946bbf489e8486cb3ce4917a44441aed82eabc1c4cd3317",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0
+  },
+  "predecessor": {
+    "version": "0.6.13",
+    "record_sha256": "8a67fd277c47c0f0b7aec3ea2ef980b7cd548df537a3774ff0cf9938d352aaf3",
+    "elf_sha256": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5",
+    "manifest_sha256": "10e24f699debce227a87b346ce2947e849aa5e41bfea72610d96ec6c4bae93f8",
+    "generated_sha256": {
+      "empty_catalog.c": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+      "watch-alarm-profile.h": "fd9022c3e5d148c6d3d61d1157f2c75f3845aace98dcc012e074c18b1180e54c",
+      "exports.map": "6a4f0306496e7574c02b3c566cfd68edaf8ae11fd19933029134e663ed1ea399"
+    }
+  },
+  "scope": {
+    "watch_only": true,
+    "tonight_sealed_at_files": true,
+    "x4_points_0_6_17_provenance_unresolved": true,
+    "rf_0_3_5_excluded": true,
+    "rf_product_recipe_publication_stopped": true
+  },
+  "productivity_tree": "f9bd352d50fb45056a595df16fb54ed56dc05db0",
+  "source_host_evidence": {
+    "path": "/workspace/shared/points-input-policy-evidence-20261012/full-home-fixed/result.json",
+    "sha256": "9078a39b4764e04447331566df660051c3c339a1f682c405caf16b0e835a5d88",
+    "normal_workflows": 46,
+    "sanitized_workflows": 46,
+    "matched_frame_files": 1742
+  }
+}
