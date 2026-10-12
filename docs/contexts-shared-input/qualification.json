@@ -1,0 +1,208 @@
+{
+  "schema": "contexts.published-device-qualification.v1",
+  "device": "watch",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "branch": "work/contexts-shared-input-20261012",
+  "compiled_recipe_commit": "3cd9faa5e5f0c0d0c0fe6437232ee684fbe030fb",
+  "compiled_recipe_tree": "25c366671f962548b89f7e0e67fd2da599ff83ce",
+  "compiled_recipe_checkout": "/workspace/shared/contexts-shared-input-watch-published-20261012",
+  "compiled_recipe_ci": {
+    "path": "/workspace/shared/contexts-shared-input-profile-evidence-20261012/watch-compiled-recipe-ci.json",
+    "bytes": 857,
+    "sha256": "dfef044201f5eefeb9224ae585f29c3a7a13f1865ff581aae665a059597e5621"
+  },
+  "compiled_recipe_ci_conclusion": "success",
+  "application_source": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+  "sources": {
+    "system-apps": "7fb13b09b4dac275a8111b224784f8a472f39264",
+    "utilities": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "source_roots": {
+    "system-apps": "/workspace/shared/lora-long-text-system-published-20261012",
+    "utilities": "/workspace/shared/contexts-shared-input-utilities-published-20261012",
+    "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+    "watch": "/workspace/shared/watch-scroll-regression-20261011/watch-profile",
+    "generated": "/workspace/shared/contexts-shared-input-components-20261012/watch/contexts"
+  },
+  "candidate_directory": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate",
+  "target_build_directory": "/workspace/shared/contexts-shared-input-components-20261012/watch/contexts",
+  "target_elf": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/contexts/contexts.elf",
+    "bytes": 59348,
+    "sha256": "3fa28b55b4ae690c1c4217dc20dc04b04c6721ab1d4ef7b699b90f29170ef057"
+  },
+  "target_manifest": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/contexts/contexts.json",
+    "bytes": 820,
+    "sha256": "e3f2696fb7f8dfeed46755cb4341b7ac075af2f4f7fe2e3e3404fd21715147a4"
+  },
+  "target_build_record": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/contexts/contexts-build-record.json",
+    "bytes": 32538,
+    "sha256": "7c5b89bd081248cb81798a2e83745ec09d6a9cb37edd6a0c07f78d7287a862b1"
+  },
+  "contexts_version": "0.4.3",
+  "contexts_elf_bytes": 59348,
+  "contexts_elf_sha256": "3fa28b55b4ae690c1c4217dc20dc04b04c6721ab1d4ef7b699b90f29170ef057",
+  "inherited_flags": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h"
+  ],
+  "flags": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT"
+  ],
+  "added_flags": [
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT"
+  ],
+  "target_dependency_count": 44,
+  "target_stack": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/target-stack.json",
+    "bytes": 1998,
+    "sha256": "b6983bef2aa4e06566fd76a42ac0e314fa1cabf9f8921a609384ef2ed3883805"
+  },
+  "flagoff_equivalence": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/flagoff-target.json",
+    "bytes": 3643,
+    "sha256": "9ea501a8849715a4a6b41a575e4251f0c29670a0d5f426847289cccf7f37f324"
+  },
+  "normal_admission": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate/receipts/final-normal.json",
+    "bytes": 3886,
+    "sha256": "64cab9a9427672d66802bbc2beeb463b1861981a650f405f98ac0ca6006b52fe"
+  },
+  "sanitized_admission": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate/receipts/final-sanitized.json",
+    "bytes": 3886,
+    "sha256": "64cab9a9427672d66802bbc2beeb463b1861981a650f405f98ac0ca6006b52fe"
+  },
+  "normal_admission_passed": true,
+  "sanitized_admission_passed": true,
+  "normal_sanitized_admission_identical": true,
+  "packing": {
+    "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate/receipts/packing.json",
+    "bytes": 4029,
+    "sha256": "4c1b5e9d7834b94d413854bc8732ff4e1b7192e5777e6d749f5f6dd59e7ed257"
+  },
+  "free_spiffs_blocks": 5,
+  "required_free_spiffs_blocks": 2,
+  "components": {
+    "bootfs.bin": {
+      "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate/components/bootfs.bin",
+      "bytes": 5308416,
+      "sha256": "2a0b136a10a4bfc266511836052508b17fbc958d79457768c96f12951ff49505"
+    },
+    "bank_state.bin": {
+      "path": "/workspace/shared/contexts-shared-input-components-20261012/watch/candidate/components/bank_state.bin",
+      "bytes": 8192,
+      "sha256": "5f38cf37d2c6d4b0cc713795395a5c20432be224874ee60b70d3c89408a99cd4"
+    }
+  },
+  "full_image_sha256": "4bbeb04b0a777efb42e0bf19afbac111154319bf39764c40fe872c25ba33d214",
+  "full_image_bytes": 16777216,
+  "full_image_materialized": false,
+  "full_initial_erases_internal_data": true,
+  "counts": {
+    "store_files": 113,
+    "elfs": 55,
+    "preserved_store_paths": 109
+  },
+  "grant_delta": [
+    {
+      "manifest": "contexts.json",
+      "grant": {
+        "capability": "ui.text-input",
+        "api": 1,
+        "instance_id": 0
+      }
+    }
+  ],
+  "native_unchanged": true,
+  "all_inherited_defines_and_fonts_retained": true,
+  "fonts_owned_by_unchanged_scene_host": true,
+  "shared_text_hosts_unchanged": true,
+  "unpublished_sd_settings_consumed": false,
+  "hardware_verified": false,
+  "target_instructions_executed": false,
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "local_cohort_sanitizers": "ASan+UBSan with ASAN_OPTIONS=detect_leaks=0 for local ptrace environment",
+  "source_ci_leak_detection": "Shared Contexts suite uses platform defaults; unchanged legacy pipeline scripts retain their existing detect_leaks=0 setting",
+  "source_workflow_runs": 508,
+  "source_inventory_tests": 86,
+  "source_render_storage_parity_comparisons": 152,
+  "source_per_profile_flavor_parity_hashes": 38,
+  "receipt_files": {
+    "target-build.json": {
+      "bytes": 32538,
+      "sha256": "7c5b89bd081248cb81798a2e83745ec09d6a9cb37edd6a0c07f78d7287a862b1"
+    },
+    "normal-admission.json": {
+      "bytes": 3886,
+      "sha256": "64cab9a9427672d66802bbc2beeb463b1861981a650f405f98ac0ca6006b52fe"
+    },
+    "sanitized-admission.json": {
+      "bytes": 3886,
+      "sha256": "64cab9a9427672d66802bbc2beeb463b1861981a650f405f98ac0ca6006b52fe"
+    },
+    "packing.json": {
+      "bytes": 4029,
+      "sha256": "4c1b5e9d7834b94d413854bc8732ff4e1b7192e5777e6d749f5f6dd59e7ed257"
+    },
+    "candidate-custody.json": {
+      "bytes": 3886,
+      "sha256": "64cab9a9427672d66802bbc2beeb463b1861981a650f405f98ac0ca6006b52fe"
+    },
+    "target-stack.json": {
+      "bytes": 1998,
+      "sha256": "b6983bef2aa4e06566fd76a42ac0e314fa1cabf9f8921a609384ef2ed3883805"
+    },
+    "flagoff-target.json": {
+      "bytes": 3643,
+      "sha256": "9ea501a8849715a4a6b41a575e4251f0c29670a0d5f426847289cccf7f37f324"
+    },
+    "compiled-recipe-ci.json": {
+      "bytes": 857,
+      "sha256": "dfef044201f5eefeb9224ae585f29c3a7a13f1865ff581aae665a059597e5621"
+    },
+    "utilities-ci.json": {
+      "bytes": 21944,
+      "sha256": "ff3ddacf021fb17b3960f238b6e32dce522ea0b4b72d9da32b637d1f8c35d1a5"
+    },
+    "results.json": {
+      "bytes": 101732,
+      "sha256": "178b3bc433e2699a0483acb8f0ee8515c80c105b6ff8137320d8afde9dde49ca"
+    },
+    "supplemental-regressions.json": {
+      "bytes": 3714,
+      "sha256": "9e4328551a306000bbf535c1e601699dc2f6f18ffc11c1b9d26c06f7928014b0"
+    },
+    "visual-review.json": {
+      "bytes": 1484,
+      "sha256": "2a014f753e98acd839640966bcdf6726b3113e82b322390abb33e7019c8b5993"
+    },
+    "ci-font-pin-correction.json": {
+      "bytes": 864,
+      "sha256": "21d50e802d1c3b0d6283a46c4f3ccd05ec9296ea0cdf9b0cb22d2cae4d4a107e"
+    },
+    "independent-review.json": {
+      "bytes": 23998,
+      "sha256": "eaa77628f22270da22925842ca7560b470b587308d3db51b11752edadc5b8faf"
+    }
+  },
+  "receipt_commit_changes_build_inputs": false,
+  "reproduction_command": "bash /workspace/shared/contexts-shared-input-components-20261012/run-published-integration.sh watch <fresh-output-root>",
+  "reproduction_script_validated": "Entire reproduction script executed successfully for these canonical artifacts",
+  "changed_store_paths": [
+    "boot.json",
+    "cohort.json",
+    "contexts.elf",
+    "contexts.json"
+  ],
+  "candidate_store_sha256": "4c8c2ef3c88d7b23dfe163fd0205d87f92587967f9cb3670e49c9c1f2582d12f",
+  "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+  "native_candidate_directory": "/workspace/shared/watch-files-shared-input-candidate-20261012"
+}

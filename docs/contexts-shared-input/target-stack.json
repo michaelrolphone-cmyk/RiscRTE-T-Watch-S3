@@ -1,0 +1,62 @@
+{
+  "schema": "contexts.target-stack.v1",
+  "device": "watch",
+  "application_source": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+  "system_source": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "target_elf_sha256": "3fa28b55b4ae690c1c4217dc20dc04b04c6721ab1d4ef7b699b90f29170ef057",
+  "debug_elf_sha256": "c568f3d35f89db54348b079d5e474b2b79d95c90e2c0dd9245319b38a29c3ea5",
+  "method": "Actual target entry a1 disassembly operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "portable_text_client_request_result": 32,
+    "portable_text_client_state_result": 32,
+    "portable_text_client_live$constprop$43": 32,
+    "portable_text_adapter_retained": 32,
+    "portable_text_adapter_retain": 32,
+    "portable_text_adapter_attention": 32,
+    "portable_text_adapter_suspend": 48,
+    "portable_text_adapter_resume": 32,
+    "portable_text_client_release$constprop$42": 48,
+    "portable_text_client_close$constprop$38": 32,
+    "app_main": 320
+  },
+  "maximum_modal_frame_bytes": 320,
+  "all_entry_frames_maximum_bytes": 3808,
+  "static_modal_storage": {
+    "cs_text": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 57856
+    },
+    "cs_text_accepted": {
+      "bytes": 33,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 57740
+    },
+    "cs_text_navigation": {
+      "bytes": 80,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 57776
+    },
+    "cs_text_outcome": {
+      "bytes": 4,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 57736
+    },
+    "cu_name": {
+      "bytes": 33,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 85488
+    }
+  },
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Compiler inlining folds absent helpers into callers.",
+    "Per-frame ceilings do not establish dynamic call-chain peak, Runtime allocation or hardware behavior."
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "contexts.visual-review.v1",
+  "inspected": [
+    {
+      "path": "normal/watch/shared/watch-keyboard.png",
+      "sha256": "8ebfd0e8efa0cce56307cde331da8696c2c389ffe276d9b8203fdcf41fc0f9b6"
+    },
+    {
+      "path": "normal/watch/legacy/watch-keyboard.png",
+      "sha256": "8727aeb96189ffd1c024bab11274665de01ab1ad6c65cbc93ab20454e0e09562"
+    },
+    {
+      "path": "normal/watch/shared/watch-home.png",
+      "sha256": "9343498e1a7965cd457162b29426c6e4ac6e63a8187a252146845c561e3c2b95"
+    },
+    {
+      "path": "normal/paper/shared/paper-keyboard.png",
+      "sha256": "70160f1385f13417eefbff9fe83553f8ddc744e1c2e72804bdecf4a85823663a"
+    },
+    {
+      "path": "normal/paper/legacy/paper-keyboard.png",
+      "sha256": "70160f1385f13417eefbff9fe83553f8ddc744e1c2e72804bdecf4a85823663a"
+    },
+    {
+      "path": "normal/paper/shared/paper-learning.png",
+      "sha256": "f77cbe3b340051ffa2bb6103f0c6b3d3478ea5929905c3c19cb3a88cfa2a0b7d"
+    }
+  ],
+  "findings": [
+    "Watch shared keyboard uses the existing installed common text-host styling; it is not pixel-identical to the former Contexts component keyboard.",
+    "Representative X4 NAME keyboard is pixel-identical to the former keyboard.",
+    "Watch Home and X4 learning screens retain the original component UI and are covered by nonkeyboard parity.",
+    "Labels, controls, input bounds and learning progress are legible with no overlap in the inspected scenes."
+  ],
+  "hardware_verified": false
+}

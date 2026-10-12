@@ -1,0 +1,281 @@
+{
+  "schema": "contexts.github-ci.v1",
+  "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+  "commit": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+  "tree": "87c8bca65f3c2386ad7c10ba843dcfb98397e324",
+  "remote_ref_verified": true,
+  "runs": [
+    {
+      "id": 38289142554,
+      "name": "Contexts shared input",
+      "status": "completed",
+      "conclusion": "success",
+      "commit": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38289142554"
+    },
+    {
+      "id": 38289142560,
+      "name": "Nova7 paper utilities",
+      "status": "completed",
+      "conclusion": "success",
+      "commit": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38289142560"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 114944680966,
+      "name": "host-regressions",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Image evidence dependency",
+          "conclusion": "success"
+        },
+        {
+          "name": "Exact predecessor parity and shared input, normal and ASan/UBSan",
+          "conclusion": "success"
+        },
+        {
+          "name": "Manifest, catalog and build flag contracts",
+          "conclusion": "success"
+        },
+        {
+          "name": "Unchanged capture and learning pipeline regressions",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "workflow_runs": 508,
+  "per_profile_flavor_parity_hashes": 38,
+  "inventory_tests": 86,
+  "source_ci_shared_suite_leak_detection": "platform default; no ASAN_OPTIONS override",
+  "legacy_pipeline_scripts_leak_detection": "disabled by their existing runners",
+  "qualified_font_rasterizer": "Pillow 12.3.0; exact generated font hash enforced",
+  "proof": [
+    "2026-10-12T18:10:47.9241597Z ##[group]Run python -m pip install Pillow==12.3.0",
+    "2026-10-12T18:10:47.9242044Z \u001b[36;1mpython -m pip install Pillow==12.3.0\u001b[0m",
+    "2026-10-12T18:10:50.0177940Z Collecting Pillow==12.3.0",
+    "2026-10-12T18:10:50.0767629Z   Downloading pillow-12.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)",
+    "2026-10-12T18:10:50.0901894Z Downloading pillow-12.3.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)",
+    "2026-10-12T18:10:50.4332529Z Installing collected packages: Pillow",
+    "2026-10-12T18:10:50.7282549Z Successfully installed Pillow-12.3.0",
+    "2026-10-12T18:10:55.1522006Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.1557142Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.1576420Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:10:55.1753584Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.1939835Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.2388196Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.2921138Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:55.2938810Z Contexts native exit: orderly cleanup, no queued launch, mode 1 watch PASS",
+    "2026-10-12T18:10:55.2957764Z Contexts native exit: orderly cleanup, no queued launch, mode 2 watch PASS",
+    "2026-10-12T18:10:55.3215448Z Contexts native exit: orderly cleanup, no queued launch, mode 3 watch PASS",
+    "2026-10-12T18:10:55.3339405Z Contexts native exit: orderly cleanup, no queued launch, mode 4 watch PASS",
+    "2026-10-12T18:10:55.3483069Z Contexts native exit: orderly cleanup, no queued launch, mode 5 watch PASS",
+    "2026-10-12T18:10:58.3514421Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.3551463Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.3572602Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:10:58.3759564Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.3954464Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.4436451Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.4964579Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:10:58.4982360Z Contexts native exit: orderly cleanup, no queued launch, mode 1 watch PASS",
+    "2026-10-12T18:10:58.5002968Z Contexts native exit: orderly cleanup, no queued launch, mode 2 watch PASS",
+    "2026-10-12T18:10:58.5281123Z Contexts native exit: orderly cleanup, no queued launch, mode 3 watch PASS",
+    "2026-10-12T18:10:58.5419665Z Contexts native exit: orderly cleanup, no queued launch, mode 4 watch PASS",
+    "2026-10-12T18:10:58.5569769Z Contexts native exit: orderly cleanup, no queued launch, mode 5 watch PASS",
+    "2026-10-12T18:10:58.8310234Z normal/watch: 38 non-keyboard frame/storage hashes identical",
+    "2026-10-12T18:11:02.3294880Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:02.3460561Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:02.3522919Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:02.4801115Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:02.6140127Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:02.9779057Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:03.3614295Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:03.3632671Z Contexts native exit: orderly cleanup, no queued launch, mode 1 paper PASS",
+    "2026-10-12T18:11:03.3694834Z Contexts native exit: orderly cleanup, no queued launch, mode 2 paper PASS",
+    "2026-10-12T18:11:03.5510095Z Contexts native exit: orderly cleanup, no queued launch, mode 3 paper PASS",
+    "2026-10-12T18:11:03.6337471Z Contexts native exit: orderly cleanup, no queued launch, mode 4 paper PASS",
+    "2026-10-12T18:11:03.7307168Z Contexts native exit: orderly cleanup, no queued launch, mode 5 paper PASS",
+    "2026-10-12T18:11:07.6665733Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:07.6832134Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:07.6896441Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:07.8185029Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:07.9513356Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:08.2885450Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:08.6449907Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:08.6468233Z Contexts native exit: orderly cleanup, no queued launch, mode 1 paper PASS",
+    "2026-10-12T18:11:08.6531228Z Contexts native exit: orderly cleanup, no queued launch, mode 2 paper PASS",
+    "2026-10-12T18:11:08.8365871Z Contexts native exit: orderly cleanup, no queued launch, mode 3 paper PASS",
+    "2026-10-12T18:11:08.9210190Z Contexts native exit: orderly cleanup, no queued launch, mode 4 paper PASS",
+    "2026-10-12T18:11:09.0174638Z Contexts native exit: orderly cleanup, no queued launch, mode 5 paper PASS",
+    "2026-10-12T18:11:09.5647219Z normal/paper: 38 non-keyboard frame/storage hashes identical",
+    "2026-10-12T18:11:16.7436987Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:16.7568381Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:16.7677472Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:16.8138841Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:16.8578467Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:16.9506370Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:17.0469613Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:17.0602721Z Contexts native exit: orderly cleanup, no queued launch, mode 1 watch PASS",
+    "2026-10-12T18:11:17.0720669Z Contexts native exit: orderly cleanup, no queued launch, mode 2 watch PASS",
+    "2026-10-12T18:11:17.1289687Z Contexts native exit: orderly cleanup, no queued launch, mode 3 watch PASS",
+    "2026-10-12T18:11:17.1642861Z Contexts native exit: orderly cleanup, no queued launch, mode 4 watch PASS",
+    "2026-10-12T18:11:17.2006007Z Contexts native exit: orderly cleanup, no queued launch, mode 5 watch PASS",
+    "2026-10-12T18:11:24.6083297Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:24.6230612Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:24.6341241Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:24.6959874Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:24.7441332Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:24.8615682Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:24.9985832Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry watch PASS",
+    "2026-10-12T18:11:25.0081223Z Contexts native exit: orderly cleanup, no queued launch, mode 1 watch PASS",
+    "2026-10-12T18:11:25.0208575Z Contexts native exit: orderly cleanup, no queued launch, mode 2 watch PASS",
+    "2026-10-12T18:11:25.0887587Z Contexts native exit: orderly cleanup, no queued launch, mode 3 watch PASS",
+    "2026-10-12T18:11:25.1267872Z Contexts native exit: orderly cleanup, no queued launch, mode 4 watch PASS",
+    "2026-10-12T18:11:25.1679089Z Contexts native exit: orderly cleanup, no queued launch, mode 5 watch PASS",
+    "2026-10-12T18:11:26.6432765Z sanitized/watch: 38 non-keyboard frame/storage hashes identical",
+    "2026-10-12T18:11:34.8875824Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:34.9367578Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:34.9558017Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:35.2203306Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:35.4797526Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:36.1630728Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:36.8935706Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:36.9034079Z Contexts native exit: orderly cleanup, no queued launch, mode 1 paper PASS",
+    "2026-10-12T18:11:36.9250756Z Contexts native exit: orderly cleanup, no queued launch, mode 2 paper PASS",
+    "2026-10-12T18:11:37.2911961Z Contexts native exit: orderly cleanup, no queued launch, mode 3 paper PASS",
+    "2026-10-12T18:11:37.4723763Z Contexts native exit: orderly cleanup, no queued launch, mode 4 paper PASS",
+    "2026-10-12T18:11:37.6648094Z Contexts native exit: orderly cleanup, no queued launch, mode 5 paper PASS",
+    "2026-10-12T18:11:46.5099996Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:46.5652065Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:46.5847286Z Contexts real launch: terminal presentation loss fences cleanup PASS",
+    "2026-10-12T18:11:46.7911710Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:47.0147053Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:47.5413013Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:48.1093005Z Contexts actual app_main, renderer, touch flows, pending refresh, training, save retry paper PASS",
+    "2026-10-12T18:11:48.1204682Z Contexts native exit: orderly cleanup, no queued launch, mode 1 paper PASS",
+    "2026-10-12T18:11:48.1390608Z Contexts native exit: orderly cleanup, no queued launch, mode 2 paper PASS",
+    "2026-10-12T18:11:48.4348544Z Contexts native exit: orderly cleanup, no queued launch, mode 3 paper PASS",
+    "2026-10-12T18:11:48.5899121Z Contexts native exit: orderly cleanup, no queued launch, mode 4 paper PASS",
+    "2026-10-12T18:11:48.7622133Z Contexts native exit: orderly cleanup, no queued launch, mode 5 paper PASS",
+    "2026-10-12T18:11:50.6602808Z sanitized/paper: 38 non-keyboard frame/storage hashes identical",
+    "2026-10-12T18:11:50.6632454Z 508 Contexts scenarios PASS",
+    "2026-10-12T18:11:50.9580728Z Ran 86 tests in 0.067s",
+    "2026-10-12T18:11:51.0305770Z RF-only Contexts contract: exact public ABI tokens plus two appended state values PASS",
+    "2026-10-12T18:11:51.5829918Z context fingerprints: IQ/PCM extraction, timing, EMD, unknown, events, fusion lifecycle, training, storage PASS",
+    "2026-10-12T18:11:51.7415646Z Contexts rules: persistence CRC, edge-only actions, priority composition, hold, capture pause, unknown, disable PASS",
+    "2026-10-12T18:11:54.8943627Z Fingerprint service: segmented PCM event training/match/unknown, source disable, dirty checkpoint acknowledgment, restart/import and corruption preservation PASS",
+    "2026-10-12T18:11:58.4657639Z Real RF learning mode=0 completed after 30000 ms, 5 windows, state=0 PASS",
+    "2026-10-12T18:11:58.4658814Z Real RF learning mode=1 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:11:58.4659681Z Real RF learning mode=2 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:11:58.4660723Z Real RF learning mode=3 completed after 37000 ms, 3 windows, state=0 PASS",
+    "2026-10-12T18:11:58.4661292Z Real RF learning mode=4 completed after 120000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:00.5748363Z Real RF learning mode=0 completed after 30000 ms, 5 windows, state=0 PASS",
+    "2026-10-12T18:12:00.5749306Z Real RF learning mode=1 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:00.5750187Z Real RF learning mode=2 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:00.5751035Z Real RF learning mode=3 completed after 37000 ms, 3 windows, state=0 PASS",
+    "2026-10-12T18:12:00.5751887Z Real RF learning mode=4 completed after 120000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:01.8584304Z context fingerprints: IQ/PCM extraction, timing, EMD, unknown, events, fusion lifecycle, training, storage PASS",
+    "2026-10-12T18:12:02.3176562Z Contexts rules: persistence CRC, edge-only actions, priority composition, hold, capture pause, unknown, disable PASS",
+    "2026-10-12T18:12:11.4299950Z Fingerprint service: segmented PCM event training/match/unknown, source disable, dirty checkpoint acknowledgment, restart/import and corruption preservation PASS",
+    "2026-10-12T18:12:19.9995697Z Real RF learning mode=0 completed after 30000 ms, 5 windows, state=0 PASS",
+    "2026-10-12T18:12:19.9996619Z Real RF learning mode=1 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:19.9997762Z Real RF learning mode=2 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:19.9998565Z Real RF learning mode=3 completed after 37000 ms, 3 windows, state=0 PASS",
+    "2026-10-12T18:12:19.9999362Z Real RF learning mode=4 completed after 120000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:25.4643735Z Real RF learning mode=0 completed after 30000 ms, 5 windows, state=0 PASS",
+    "2026-10-12T18:12:25.4644448Z Real RF learning mode=1 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:25.4645056Z Real RF learning mode=2 completed after 45000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:25.4645637Z Real RF learning mode=3 completed after 37000 ms, 3 windows, state=0 PASS",
+    "2026-10-12T18:12:25.4646228Z Real RF learning mode=4 completed after 120000 ms, 0 windows, state=4 PASS",
+    "2026-10-12T18:12:28.8981044Z Contexts: actual PCM/IQ room inference, copied owner exports, model identity, ambiguity, staleness, once-per-room presets, no training, exclusive pause and retained cleanup PASS",
+    "2026-10-12T18:12:34.5168722Z RF-only Contexts: exact admission, unavailable Audio, filtered exports, real IQ inference, no Audio owner I/O, retained RF fence and restart PASS",
+    "2026-10-12T18:12:37.2422945Z RF-only temporal/neural: real canonical imports, identity/stale/incomplete/missing gates, bounded matching and no Audio capture PASS",
+    "2026-10-12T18:12:37.8199204Z Contexts owner rendezvous: bounded own-KV reads, virtual defaults, no writes/capture, no normal-launch diversion, invalid/read/retained failures, and explicit refresh PASS",
+    "2026-10-12T18:12:46.7807471Z Contexts: actual PCM/IQ room inference, copied owner exports, model identity, ambiguity, staleness, once-per-room presets, no training, exclusive pause and retained cleanup PASS",
+    "2026-10-12T18:13:02.1808265Z RF-only Contexts: exact admission, unavailable Audio, filtered exports, real IQ inference, no Audio owner I/O, retained RF fence and restart PASS",
+    "2026-10-12T18:13:09.7768354Z RF-only temporal/neural: real canonical imports, identity/stale/incomplete/missing gates, bounded matching and no Audio capture PASS",
+    "2026-10-12T18:13:11.8791230Z Contexts owner rendezvous: bounded own-KV reads, virtual defaults, no writes/capture, no normal-launch diversion, invalid/read/retained failures, and explicit refresh PASS",
+    "2026-10-12T18:13:15.0551191Z Production RF retained storage path holds stack with no background service calls PASS",
+    "2026-10-12T18:13:22.7261438Z Production RF retained storage path holds stack with no background service calls PASS"
+  ],
+  "prior_failed_ci": {
+    "commit": "8645c968cc5fb9cee999d37d093991d8a2678be7",
+    "run": 38288807181,
+    "cause": "Incorrect CI-only Pillow pin; exact font guard caught the mismatch",
+    "corrected_by": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d"
+  },
+  "hardware_tested": false,
+  "verified_at_utc": "2026-10-12T18:14:35.851869+00:00"
+}

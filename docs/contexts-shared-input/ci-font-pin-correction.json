@@ -1,0 +1,15 @@
+{
+  "schema": "contexts.ci-correction.v1",
+  "failed_commit": "8645c968cc5fb9cee999d37d093991d8a2678be7",
+  "failed_run": 38288807181,
+  "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38288807181",
+  "failure": "Paper fixture telemetry.inc exact SHA-256 guard failed after all ordinary Watch scenarios and 38 parity checks passed.",
+  "cause": "CI pinned Pillow 11.3.0; qualified local font fixture is generated with Pillow 12.3.0 / FreeType 2.14.3.",
+  "correction_commit": "2a06ff127e6f7c7d687b1361bed05da97aa05b2d",
+  "only_change": ".github/workflows/contexts-shared-input.yml: Pillow 11.3.0 -> 12.3.0",
+  "guard_preserved": true,
+  "production_source_unchanged": true,
+  "selected_product_fonts_unchanged": true,
+  "rerun": 38289142554,
+  "rerun_shared_input_and_manifest_steps": "PASS; full job receipt recorded separately"
+}

@@ -33,3 +33,11 @@ SANITIZE=1 ASAN_OPTIONS=detect_leaks=0 python scripts/assemble_watch_contexts_sh
   --baseline-components "$TIMECARD_COMPONENTS" --native-candidate "$NATIVE_CANDIDATE" \
   --contexts-build "$TARGET" --runtime "$RUNTIME" --system "$SYSTEM" --output "$CANDIDATE" --verify-only
 ```
+
+## Final public-source qualification
+
+All target and complete-cohort checks passed using the exact public source and recipe commits in [qualification.json](qualification.json). [Target build](target-build.json) records the compiler command and dependency closure; [normal](normal-admission.json) and [ASan/UBSan](sanitized-admission.json) receipts cover the complete installed cohort. [Custody](candidate-custody.json), [packing](packing.json), [target stack](target-stack.json), and [flag-off identity](flagoff-target.json) preserve the boundaries and measured limits.
+
+[Source CI](utilities-ci.json) passed the 508 normal/sanitized scenarios, 86 unit tests and unchanged pipeline regressions. [Detailed source results](results.json) retain 38 paired render/storage hashes for each of four profile/flavor combinations. [Visual review](visual-review.json), [supplemental regressions](supplemental-regressions.json), [CI-only font pin correction](ci-font-pin-correction.json) and the [independent final review](independent-review.json) are recorded without changing any production font payload. [Compiled recipe CI](compiled-recipe-ci.json) is green.
+
+This receipt commit changes documentation and JSON evidence only. Reproduction must use the compiled recipe SHA in qualification.json, which is also embedded in the target and cohort records. Artifacts remain held until 2026-10-12 23:30 UTC; no binary is published by this receipt commit.

@@ -1,0 +1,100 @@
+{
+  "schema": "contexts.supplemental-regressions.v1",
+  "recorded_at_utc": "2026-10-12T17:59:14.239563+00:00",
+  "baseline": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+  "unchanged_pipeline_and_contract_files": {
+    "Apps/contexts_controller.inc": {
+      "bytes": 25081,
+      "sha256": "60a6537ae7d9ea8866a2f45d57ac85211e09a3b126a7baa10e4459c7fc77368f",
+      "baseline_identical": true
+    },
+    "Apps/contexts-scene.json": {
+      "bytes": 872,
+      "sha256": "21f2d7293db01940f5ef387a963c40da156061f868c24c60f9a6adc1d6176cc0",
+      "baseline_identical": true
+    },
+    "Services/contexts/fingerprint.h": {
+      "bytes": 18351,
+      "sha256": "838d4c26bcddd60e9a87e4a5dd774cb6792df79435395aacd432cab88e767781",
+      "baseline_identical": true
+    },
+    "Services/contexts/service.c": {
+      "bytes": 31541,
+      "sha256": "9d650a81e29b3a0f79203165e603e3ed5cbe9a190071fbef0d33427d1f604de8",
+      "baseline_identical": true
+    },
+    "Services/contexts/temporal_models.h": {
+      "bytes": 9894,
+      "sha256": "2d03df41c4ca356c4de169af791d6253f6539c2b5d3e7f2f76588c97b6cc976e",
+      "baseline_identical": true
+    },
+    "Services/contexts/manifest.json": {
+      "bytes": 668,
+      "sha256": "75061bf940ef798eb054fab699ee8e1ac33bc582801e39a3edd0966d55e13a55",
+      "baseline_identical": true
+    },
+    "Services/contexts/source_profile.h": {
+      "bytes": 571,
+      "sha256": "713c4d7befffe469447c5b08f328d6ebc504385bc391c54d2c2cdf03d1aacbb4",
+      "baseline_identical": true
+    },
+    "Services/contexts/rf-only-manifest.json": {
+      "bytes": 605,
+      "sha256": "c7fc62c815cb37db571f9d5018609aedfb9ee1af815ce112431a123ab823113c",
+      "baseline_identical": true
+    },
+    "Services/contexts/temporal_inference.h": {
+      "bytes": 5335,
+      "sha256": "32a55e48b0e2aadf33a923b1ea861eabde657a2244d2d3dbb5c71d2917da201f",
+      "baseline_identical": true
+    },
+    "lib/Contexts/include/ContextsServiceV1.h": {
+      "bytes": 6542,
+      "sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d",
+      "baseline_identical": true
+    },
+    "lib/Contexts/include/ContextsRules.h": {
+      "bytes": 8405,
+      "sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89",
+      "baseline_identical": true
+    },
+    "lib/Contexts/include/ContextFingerprintService.h": {
+      "bytes": 2978,
+      "sha256": "edbd70bd1542824f58ddd487cf22d7b59ced4bb762361288210a489a01c4f0b7",
+      "baseline_identical": true
+    },
+    "lib/ContextFingerprint/README.md": {
+      "bytes": 7501,
+      "sha256": "f49a6e9ee03d618896850483cb3ce57ef1ea3fdf414ff2a9537d3198adc0843f",
+      "baseline_identical": true
+    },
+    "lib/ContextFingerprint/include/ContextFingerprintStore.h": {
+      "bytes": 5899,
+      "sha256": "59f20d1bcd2b213f74db4cd88f4f2d57fae0d880eeff4f3ace677670ceed2350",
+      "baseline_identical": true
+    },
+    "lib/ContextFingerprint/include/ContextFingerprint.h": {
+      "bytes": 25650,
+      "sha256": "7e451353d42a60685abcdf092755c062d51f6479cfc3880b379d24199640ea58",
+      "baseline_identical": true
+    }
+  },
+  "inventory_tests": {
+    "count": 86,
+    "status": "PASS",
+    "log_sha256": "c3f91976c70fc54fb333d9e9e8139c433439304a87ac7f544f3f8d0531f5d120"
+  },
+  "pipeline_tests": {
+    "status": "PASS",
+    "scripts": [
+      "check_contexts_contract.py",
+      "test_context_fingerprints.py",
+      "test_contexts_service.py",
+      "test_contexts_rf_retained.py"
+    ],
+    "normal_and_asan_ubsan": true,
+    "local_leak_detection": "disabled for local ptrace; legacy scripts also explicitly disable it",
+    "log_sha256": "754d885738102c63971ff0a2c204734f06bbfa9d68e0cf5eb2147835ff3bb8bc"
+  },
+  "hardware_verified": false
+}
