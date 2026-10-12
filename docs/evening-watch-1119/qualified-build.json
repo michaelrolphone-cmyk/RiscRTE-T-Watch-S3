@@ -1,0 +1,456 @@
+{
+  "artifact_filename": "WATCH-1.1.19-FULL-INITIAL-ERASES-DATA.bin",
+  "limits": [
+    "No physical Watch test or flash was performed.",
+    "Host admission and structural checks do not execute Xtensa instructions or establish physical keyboard, sleep, audio or radio behavior.",
+    "The full initial BIN at offset 0x0 erases settings and application data."
+  ],
+  "qualification": {
+    "active_store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb",
+    "all_app_and_provider_bytes_unchanged": true,
+    "all_fonts_and_features_preserved": true,
+    "app_policy_rows": 24,
+    "baseline_handoff_sha256": "949a3d9328c5a7fec90580de0dfbefcdeacb848307a001d042743e56a06b2151",
+    "baseline_source": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+    "baseline_store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb",
+    "boot_json_byte_identical": true,
+    "candidate_store_sha256": "657aaf062e2798f4cc35efb69cfa4ee82183feb94eeca802cb14ffc698cb7590",
+    "changed_store_paths": [
+      "cohort.json"
+    ],
+    "cohort_validated": true,
+    "cooperative_yields": 174,
+    "delivered": false,
+    "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+    "elf_count": 55,
+    "error": "",
+    "flash_offset": "0x0",
+    "flashed": false,
+    "free_spiffs_blocks": 2,
+    "full_image_bytes": 16777216,
+    "full_image_materialized": true,
+    "full_image_sha256": "fe9fd6bc304de29023c1ac3d485a65af880c38d41ab4da7f963d0985e7da997d",
+    "full_initial_erases_data": true,
+    "grant_delta": [],
+    "hardware_calls": 0,
+    "hardware_verified": false,
+    "native_composition": {
+      "bounds": {
+        "RISC_APP_POLICY_ROWS": 24,
+        "RISC_APP_REQUIREMENT_ROWS": 24,
+        "RISC_INSTALLED_APP_CAPACITY": 64,
+        "RISC_PROVIDER_CAPACITY": 32
+      },
+      "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+      "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+      "diagnostic_allocations": {
+        "_ZN15RiscDiagnostics11timestampedEPKcz": {
+          "address": 1107539120,
+          "bytes": 230
+        },
+        "_ZN8RiscPerf4dataE": {
+          "address": 1070182592,
+          "bytes": 5440
+        }
+      },
+      "diagnostic_flags": {
+        "RISC_PERFORMANCE_TRACE": 1,
+        "RISC_STAGE_LOGS": 1
+      },
+      "file_source_backend_allocations": {
+        "__wrap_esp_littlefs_format": {
+          "address": 1107482652,
+          "bytes": 33
+        },
+        "__wrap_esp_littlefs_format_partition": {
+          "address": 1107482688,
+          "bytes": 24
+        },
+        "__wrap_esp_partition_erase_range": {
+          "address": 1107482584,
+          "bytes": 66
+        },
+        "__wrap_esp_partition_read": {
+          "address": 1107482476,
+          "bytes": 36
+        },
+        "__wrap_esp_partition_write": {
+          "address": 1107482512,
+          "bytes": 69
+        },
+        "__wrap_esp_vfs_register": {
+          "address": 1107481868,
+          "bytes": 535
+        },
+        "__wrap_esp_vfs_unregister": {
+          "address": 1107482404,
+          "bytes": 70
+        }
+      },
+      "file_source_enabled": true,
+      "private_scratch_root": "/appdata/.risc-file-source",
+      "profile": "env:watch-file-source",
+      "row_evidence": "allocated native policy and requirement marker symbols",
+      "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+      "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+      "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+      "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+      "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+    },
+    "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "native_unchanged": true,
+    "prepared": true,
+    "preserved_store_paths": 112,
+    "product": "Watch",
+    "product_source": "6260a9d01d409a21b49d600176d591ab919b79d7",
+    "product_tree": "c44c1a96ff5645d3b21b75a98b47dde2fe82bc4d",
+    "required_free_spiffs_blocks": 2,
+    "runtime_source": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "storage_calls": 0,
+    "store_files": 113,
+    "target_instructions_executed": false,
+    "version": "1.1.19"
+  },
+  "qualification_normal_sanitized_identical": true,
+  "qualification_receipt_sha256": "bedf1e6a332bbf9331e39b80adbec810f5a2fd2254d1f11a346946a432a7f5e4",
+  "schema": "watch.cumulative.final-test-build.v1",
+  "selected_components": [
+    {
+      "elf_bytes": 234932,
+      "elf_sha256": "11ba92394f26ac529bd4687694710b3edd5680e1eb643b1a54be23b8297077e5",
+      "manifest_sha256": "4ba7c04eaa1df206b3d4cb4a0f385431f0a3872d8fc90ba2efbb100599148fa0",
+      "name": "Spectrum",
+      "recipe": "0499a3a3cd3e0461e61c6c93a444090657d41e9e",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+        "utilities": "b1b2ba9466cc7243570471c0f9e728367dd4bafe",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "audio_spectrum.elf",
+      "store_manifest": "audio_spectrum.json",
+      "version": "0.5.5"
+    },
+    {
+      "elf_bytes": 149156,
+      "elf_sha256": "78323df48ff4fc5a3d1abaaa70c34808159c746cce3fe838d362b6a03537c1a3",
+      "manifest_sha256": "861553317a3978b746d99e986b17c4f943f1e64ff97fe435262035bce0215a65",
+      "name": "Timecard",
+      "recipe": "e491c63b51f20447aafbdd938c560ec5bae59ae1",
+      "sources": {
+        "productivity": "164ea8c4f8bace10148bcfd9b9dcdd97e9fc8e75",
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+        "utilities": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "timecard.elf",
+      "store_manifest": "timecard.json",
+      "version": "0.2.14"
+    },
+    {
+      "elf_bytes": 63444,
+      "elf_sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac",
+      "manifest_sha256": "9c5458f826a61c927e445d0a084c0e4691054fe760ce38a8d38423f9ff5366d6",
+      "name": "Contexts",
+      "recipe": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+        "utilities": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "contexts.elf",
+      "store_manifest": "contexts.json",
+      "version": "0.4.4"
+    },
+    {
+      "elf_bytes": 26584,
+      "elf_sha256": "31be400bcf3dfa6b4c27501c2938316375f3c2b82fdadddbecd426d1f7f049b6",
+      "manifest_sha256": "5eb03ec6147ab4bed28fd9142008fbcf08c5706c38b23b7cb32fa82cb9c92b35",
+      "name": "Lists",
+      "recipe": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+      "sources": {
+        "productivity": "f83d79a0753c2a451730000d2f553aa21fda7830",
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165"
+      },
+      "store_elf": "lists.elf",
+      "store_manifest": "lists.json",
+      "version": "0.1.2"
+    },
+    {
+      "elf_bytes": 243352,
+      "elf_sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+      "manifest_sha256": "fcf2cb7868e96b7171f3ffb17ead18719d279e0ed820ced521d1006944349313",
+      "name": "RF",
+      "recipe": "53ed0b0a71965075b98392d78274dae5fd48bf6f",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "7fb13b09b4dac275a8111b224784f8a472f39264",
+        "utilities": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "waterfall.elf",
+      "store_manifest": "waterfall.json",
+      "version": "0.3.4"
+    },
+    {
+      "elf_bytes": 128820,
+      "elf_sha256": "c223ae04595f8b288d7084bb3804eb30252d6b9ecc0eb0cd4095c006ebc8b14b",
+      "manifest_sha256": "96cc196331931d06bbed2c80b6b5089983893f713c8cfd1f988e153abf20404c",
+      "name": "LoRa Messages",
+      "recipe": "5664da64e83a2a006d73773fadf966ef66b66ad7",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+        "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "lora_messages.elf",
+      "store_manifest": "lora_messages.json",
+      "version": "0.1.15"
+    },
+    {
+      "elf_bytes": 291468,
+      "elf_sha256": "915779e0a7098a8df3238b33648a6703e3958eddf736a1acd20169eb01062c47",
+      "manifest_sha256": "0656ab489a5545e11333ad44c9ef4c33476a303b4d5ee28709b114647a1b3277",
+      "name": "Files",
+      "recipe": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+      "sources": {
+        "system-apps": "66282802bb498590fcbab4eba871ff40cc3ddafd"
+      },
+      "store_elf": "file_browser.elf",
+      "store_manifest": "file_browser.json",
+      "version": "1.5.35"
+    },
+    {
+      "elf_bytes": 155064,
+      "elf_sha256": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5",
+      "manifest_sha256": "a8a1ef3ad67eef7811101a4197ebf47b404c914d023475509cadb1b1be76eac3",
+      "name": "Points",
+      "recipe": "329f1a87a888dfe45a8a9eb694020df3b3a81c3f",
+      "sources": {
+        "product-recipe": "329f1a87a888dfe45a8a9eb694020df3b3a81c3f",
+        "productivity": "519dba53fbfd498da0443f516445450e864c7bc3",
+        "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+        "system-apps": "9550949bab67e820aa19984ef7bc20322756feb3",
+        "utilities": "3385d634db829066e3f7f0d84474df5ed54bf143",
+        "watch": "089868395268b696c05651c33816345bfe0425df"
+      },
+      "store_elf": "points_in_time.elf",
+      "store_manifest": "points_in_time.json",
+      "version": "0.6.13"
+    },
+    {
+      "elf_bytes": 146972,
+      "elf_sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+      "manifest_sha256": "66a1bb53b26d90f7816e9130b7df08aa775f58d3e4d3d1dca12ddbcd97aab5a9",
+      "name": "Scanner",
+      "store_elf": "ble_scanner.elf",
+      "store_manifest": "ble_scanner.json",
+      "version": "0.2.18"
+    },
+    {
+      "elf_bytes": 132140,
+      "elf_sha256": "66221cdc7c54cf0cc5a010e35fafde320b7697ec54cadf7c618eb2975b53ded8",
+      "manifest_sha256": "e9a23825cec95421db330d369990324ecab348f0052222a774978b6a94189936",
+      "name": "Settings RTC first-save",
+      "store_elf": "settings.elf",
+      "store_manifest": "settings.json",
+      "version": "1.3.24"
+    },
+    {
+      "elf_bytes": 22144,
+      "elf_sha256": "e2f761dc24a1c095ce15212a650b3c09fd11855560923af1cc5df193e24774c4",
+      "manifest_sha256": "ce52d02db70ed85ecabb0636598e507a8b9aae5ac5d053573f11b7a1ccc400b8",
+      "name": "Alarm service RTC first-save",
+      "store_elf": "alarm-service/driver.elf",
+      "store_manifest": "alarm-service/manifest.json",
+      "version": "0.4.9"
+    },
+    {
+      "elf_bytes": 11980,
+      "elf_sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35",
+      "manifest_sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1",
+      "name": "Shared text host",
+      "recipe": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165"
+      },
+      "store_elf": "text-input/driver.elf",
+      "store_manifest": "text-input/manifest.json",
+      "version": "0.1.7"
+    },
+    {
+      "elf_bytes": 159504,
+      "elf_sha256": "feb5eff6e568ec18b2570a0ea67f05cb0d786ac8a874358b060b9e5d7a01be38",
+      "manifest_sha256": "2bf411091aa0175206a080abc204fed82cb5ef283941cb4161f90febdfe8aab4",
+      "name": "Scene host",
+      "recipe": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+      "sources": {
+        "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+        "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165"
+      },
+      "store_elf": "ui-scene/driver.elf",
+      "store_manifest": "ui-scene/manifest.json",
+      "version": "0.4.6"
+    }
+  ],
+  "software_verification": {
+    "artifact_hashes": 281,
+    "dependency_hashes": 951,
+    "final_recipe_ci": {
+      "commit": "6260a9d01d409a21b49d600176d591ab919b79d7",
+      "conclusion": "success",
+      "run_id": 38316962303
+    },
+    "image_boundary_probes": 17,
+    "public_commit_tree_checks": 33,
+    "recipe_mutation_tests": 14,
+    "source_chain_stages": 14
+  },
+  "source_chain": [
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "455346c777c51b5ee34dfa7dd565ecd08a848881230aaf76dcec7df3679a29a1",
+      "normal_sanitized_equal": true,
+      "source_revision": "e788a761b092ed2bc54a7b7798875308939ff265",
+      "stage": "Files source / RTC / Scanner",
+      "store_files": 113,
+      "store_sha256": "e3a80c5d9188249683b6ea809a1b7ed302178e922c5fd3de665036e28205f225"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "7968dcf81a873ac95798e28f3c44b5b3fae41191f0a53ad8774f5efec22bb42d",
+      "normal_sanitized_equal": true,
+      "source_revision": "ec667cd39babea571405d501f9f0ac3b5d32191c",
+      "stage": "Points shared keyboard",
+      "store_files": 113,
+      "store_sha256": "1a70bf8c9b81cdbf6cccd3eaa92fcd8e628ef10ccf34a4598c0c7dab4f062b4d"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 4,
+      "full_image_sha256": "779519d2f437ebc9048c7762fa500aec5299c9eac07d29d0ceca3fae6c89e248",
+      "normal_sanitized_equal": true,
+      "source_revision": "d3687db3ea6e6e5c8a36e5d01c5dfd2ba69ed453",
+      "stage": "Files shared keyboard",
+      "store_files": 113,
+      "store_sha256": "e0005698ffa739ee16e302804e3d1ee614ba07622269e2a0772680823d882c04"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 3,
+      "full_image_sha256": "233e9153068ac25a3870f4b9ceeb0c5e2980528f92598adccc0074fb7c13135f",
+      "normal_sanitized_equal": true,
+      "source_revision": "a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+      "stage": "LoRa shared keyboard",
+      "store_files": 113,
+      "store_sha256": "6b82cf31e572210a26153659c38b6f22ce985cf6248bae6f337a7071e046de8c"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 4,
+      "full_image_sha256": "9addab85b6e7d1aa1c349db14e7354efea53a053702d3b3bb674a04d87da0c8b",
+      "normal_sanitized_equal": true,
+      "source_revision": "e9eeefcbaf35eb67a71fc46c8079ede9bccce863",
+      "stage": "Spectrum shared keyboard 0.5.4",
+      "store_files": 113,
+      "store_sha256": "85f8a410b852377c9979b98c67aa1af6d5266919bdfcf3dfbc631e0ac70256f2"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 3,
+      "full_image_sha256": "6b3c894d8d00f19191189459c23f762f3a0da4499f24a6033bb6603f97a06535",
+      "normal_sanitized_equal": true,
+      "source_revision": "53ed0b0a71965075b98392d78274dae5fd48bf6f",
+      "stage": "RF shared keyboard 0.3.4",
+      "store_files": 113,
+      "store_sha256": "3e41c1642d07a4fdbdecdf3780413509435d1e44a6ff26fadd43778111feb451"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 6,
+      "full_image_sha256": "61fe21d1de3666993b9578abc9a6f69daf27543c3b26a145c418360821f76920",
+      "normal_sanitized_equal": true,
+      "source_revision": "9f3669771c75e6d472afd8c8af9861600dcc9e5a",
+      "stage": "Timecard shared keyboard",
+      "store_files": 113,
+      "store_sha256": "b283d927b20e7ba29190f095a3f75407896de15bd1c5b41cc7666ab6f3a4eef0"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 5,
+      "full_image_sha256": "4bbeb04b0a777efb42e0bf19afbac111154319bf39764c40fe872c25ba33d214",
+      "normal_sanitized_equal": true,
+      "source_revision": "3cd9faa5e5f0c0d0c0fe6437232ee684fbe030fb",
+      "stage": "Contexts shared keyboard",
+      "store_files": 113,
+      "store_sha256": "4c8c2ef3c88d7b23dfe163fd0205d87f92587967f9cb3670e49c9c1f2582d12f"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 3,
+      "full_image_sha256": "018eddc6295203f2d817cc8db91d49dd52f40182f29cbaedfc99cddc4f48ac18",
+      "normal_sanitized_equal": true,
+      "source_revision": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+      "stage": "Lists corrected hosts",
+      "store_files": 113,
+      "store_sha256": "f2a347376ce7679a2b6cc5b86cfdfd175e9d046f1255c4b86a5b873d50411536"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "d5d1c52d6c16ccaadfa092934da120d1a618fd2423279f29713f1112e266503d",
+      "normal_sanitized_equal": true,
+      "source_revision": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+      "stage": "Contexts corrected lifecycle",
+      "store_files": 113,
+      "store_sha256": "8a51c7d38bb3868480b4c7266925dcf5d908f4719af40a09c5abc18d818bb60e"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "f5d6682c66fb61765ed5ce299b7a1102734c2aad84cb72d0ae7b0c5f08edf4fc",
+      "normal_sanitized_equal": true,
+      "source_revision": "e491c63b51f20447aafbdd938c560ec5bae59ae1",
+      "stage": "Timecard modal lifecycle",
+      "store_files": 113,
+      "store_sha256": "d5515b1423f955e44bfc5de9335e0c93ffe29d0010c66da65ea72bb03186e85c"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "31a67e68998c6043ff7f64ec4dba89b5753e71d6ff3f9de8f53d6546a5ecb0c1",
+      "normal_sanitized_equal": true,
+      "source_revision": "0499a3a3cd3e0461e61c6c93a444090657d41e9e",
+      "stage": "Spectrum modal lifecycle 0.5.5",
+      "store_files": 113,
+      "store_sha256": "9175383025736d455aee3a7009d98b41d0a4ee3cdff5c3cb734ee85319a83b59"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "ac7812ae97569d13c71c3f36defe4ed5000445bdee86895bf5cadc14a00362c4",
+      "normal_sanitized_equal": true,
+      "source_revision": "5664da64e83a2a006d73773fadf966ef66b66ad7",
+      "stage": "LoRa modal lifecycle 0.1.15",
+      "store_files": 113,
+      "store_sha256": "8d2c5b6c5d80e86d93954a2da3b7fe3bc6ae35f92400384dd299b5fe17f21dfc"
+    },
+    {
+      "elf_count": 55,
+      "free_blocks": 2,
+      "full_image_sha256": "bbbb843321fe96687946bbf489e8486cb3ce4917a44441aed82eabc1c4cd3317",
+      "normal_sanitized_equal": true,
+      "source_revision": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+      "stage": "Files modal lifecycle 1.5.35",
+      "store_files": 113,
+      "store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb"
+    }
+  ]
+}
