@@ -30,6 +30,9 @@ static const risc_runtime_api_v1 *rt;
 #ifdef WATCH_RUNTIME_FEATURES
 #include "../runtime_features/clock_runtime.h"
 static watch_clock_runtime native_clock;
+#ifdef WATCH_FAST_WAKE
+static bool clock_rtc_reconcile_pending;
+#endif
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT
 #include "PortableContextsClient.h"
@@ -802,6 +805,9 @@ static int sleep_cycle(void) {
     if(rc<0)return false;
 #ifdef WATCH_FAST_WAKE
     clock_deferred_phase=0;clock_radios_pending=true;clock_input_reported=false;
+#ifdef WATCH_RUNTIME_FEATURES
+    clock_rtc_reconcile_pending=true;
+#endif
     clock_broadcast_started=clock_contexts_started=false;
 #ifdef WATCH_QUICK_RADIOS
     clock_radios.valid=clock_radios.available=clock_quick.ui.radios_valid=false;
@@ -841,9 +847,12 @@ static int sleep_cycle(void) {
     return pmu->key_events(pmu->base.context,&discard);
 }
 __attribute__((visibility("default"))) void app_main(void) {
-    rt=risc_runtime_get_api(1);
+    sleep_status[0]=0;rt=risc_runtime_get_api(1);
 #ifdef WATCH_FAST_WAKE
     clock_deferred_phase=0;clock_radios_pending=true;clock_input_reported=false;clock_wake_started=0;
+#ifdef WATCH_RUNTIME_FEATURES
+    clock_rtc_reconcile_pending=false;
+#endif
     clock_broadcast_started=clock_contexts_started=false;
     clock_boot_frame_pending=true;
 #endif
@@ -940,6 +949,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         watch_runtime_snapshot(&native_clock,&retained_time) &&
         retained_time.validity==RISC_REALTIME_VALID;
     if(native_clock.halted)goto done;
+    clock_rtc_reconcile_pending=defer_rtc;
     if(!defer_rtc) {
 #endif
     have_r=rt->acquire("rtc.clock",2,0,&rg);
@@ -1101,6 +1111,32 @@ __attribute__((visibility("default"))) void app_main(void) {
             if(clock_alarm_input_cancelled)events=0;
             /* Loading or a visible alarm must not exhaust the idle interval. */
             last_activity=now;
+        }
+#endif
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_RUNTIME_FEATURES)
+        /* Preserve first-frame/input latency. Alarm activation above has
+         * already admitted its RTC dependency; read it before any handoff or
+         * sleep, then replace the provisional retained-time display sample. */
+        if(clock_rtc_reconcile_pending) {
+            if(!have_r) {
+                have_r=rt->acquire("rtc.clock",2,0,&rg);
+                if(!have_r && (rg.api || rg.slot || rg.generation)) {
+                    watch_runtime_halt(&native_clock);break;
+                }
+                rtc=have_r?rg.api:NULL;
+                if(rtc && (rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read))rtc=NULL;
+            }
+            if(!rtc || !watch_runtime_seed(&native_clock,rtc)) {
+                /* An optional accuracy check must not strand visible Home on
+                 * an ordinary RTC refusal. A fresh native read is required:
+                 * Runtime rejects retained/unsafe custody as CONTEXT. */
+                risc_realtime_snapshot_v1 remaining;
+                if(!watch_runtime_snapshot(&native_clock,&remaining) ||
+                   remaining.validity!=RISC_REALTIME_VALID)break;
+                memcpy(sleep_status,"TIME CHECK ERR",sizeof("TIME CHECK ERR"));
+                rt->diagnostic("WATCH_CLOCK rtc-reconcile=unavailable retry=next-wake");
+            }
+            clock_rtc_reconcile_pending=false;sampled_rtc=false;
         }
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT

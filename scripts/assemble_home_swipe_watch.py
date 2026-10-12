@@ -22,7 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SELECTION = strict_json((ROOT / 'docs/home-swipe/selection.json').read_bytes())
 VERSION = '1.1.20'
 CHANGED = {'default.elf', 'default.json', 'cohort.json'}
-HOME_CHANGED = {'watch:apps/clock/crown.c', 'watch:apps/clock/launcher_touch.h', 'watch:apps/clock/nova/nova.h'}
+HOME_CHANGED = {'watch:apps/clock/crown.c', 'watch:apps/clock/launcher_touch.h', 'watch:apps/clock/nova/nova.h',
+                'watch:apps/runtime_features/clock_runtime.h'}
 
 
 def checked(path, digest, label):

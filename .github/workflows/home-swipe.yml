@@ -7,6 +7,7 @@ on:
       - 'apps/clock/crown.c'
       - 'apps/clock/launcher_touch.h'
       - 'apps/clock/nova/nova.h'
+      - 'apps/runtime_features/clock_runtime.h'
       - 'scripts/build_home_swipe.py'
       - 'scripts/assemble_home_swipe_watch.py'
       - 'scripts/test_home_swipe*.py'
@@ -14,7 +15,9 @@ on:
       - 'scripts/test_fast_wake_clock.py'
       - 'tests/home_swipe*'
       - 'tests/clock_raster_gesture_test.c'
+      - 'tests/fast_wake_clock_test.c'
       - 'docs/home-swipe/**'
+      - 'docs/clock-drift/**'
       - '.github/workflows/home-swipe.yml'
   workflow_dispatch:
 permissions:
@@ -47,6 +50,12 @@ jobs:
         run: python3 scripts/test_clock_raster_gestures.py --system-apps .dependencies/system --utilities .dependencies/utilities
       - name: Existing fast-wake production source regression
         run: python3 scripts/test_fast_wake_clock.py --system-apps .dependencies/system --utilities .dependencies/utilities
+      - name: RTC client parity and custody
+        run: |
+          cc -std=c11 -O1 -g -Wall -Wextra -Werror -Wno-missing-field-initializers -Isdk/app -Isdk/driver -Iinclude tests/clock_runtime_features_test.c -o /tmp/watch-rtc-client
+          /tmp/watch-rtc-client
+          cc -std=c11 -O1 -g -Wall -Wextra -Werror -Wno-missing-field-initializers -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -no-pie -Isdk/app -Isdk/driver -Iinclude tests/clock_runtime_features_test.c -o /tmp/watch-rtc-client-san
+          ASAN_OPTIONS=detect_leaks=0 /tmp/watch-rtc-client-san
       - name: Exact Home-only overlay and manifest authority boundaries
         run: python3 scripts/test_home_swipe_assembly.py
       - name: Retained full-image writer and custody boundaries

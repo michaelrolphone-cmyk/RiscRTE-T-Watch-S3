@@ -2,7 +2,8 @@
   "allowed_home_source_delta": [
     "watch:apps/clock/crown.c",
     "watch:apps/clock/launcher_touch.h",
-    "watch:apps/clock/nova/nova.h"
+    "watch:apps/clock/nova/nova.h",
+    "watch:apps/runtime_features/clock_runtime.h"
   ],
   "allowed_store_delta": [
     "cohort.json",

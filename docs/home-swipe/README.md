@@ -11,8 +11,9 @@ the cohort at Watch 1.1.20 with the committed recipe revision.
 - All 54 other ELFs and all other 110 store paths are byte-identical.
 - Native ELF and firmware, boot configuration/grants, font inputs, and Home
   compiler feature flags are retained.
-- Only three of the original Home target's 98 dependencies may change:
-  `apps/clock/crown.c`, `apps/clock/launcher_touch.h`, and `apps/clock/nova/nova.h`.
+- Only four of the original Home target's 98 dependencies may change:
+  `apps/clock/crown.c`, `apps/clock/launcher_touch.h`, `apps/clock/nova/nova.h`,
+  and `apps/runtime_features/clock_runtime.h`.
 - The 1.1.19 Home manifest is already compact. Its exact formatting is preserved;
   only `"version":"0.11.5"` becomes `"version":"0.11.6"`.
 - The ordered SPIFFS build must retain at least two free 4096-byte blocks. There
@@ -24,6 +25,11 @@ the cohort at Watch 1.1.20 with the committed recipe revision.
 This recipe does not publish, deliver, or flash. A full initial image flashed at
 `0x0` erases settings and app data. Host admission does not execute Xtensa target
 instructions and is not physical-device verification.
+
+The combined Home target also includes the displayed-clock
+correction described in [the clock correction notes](../clock-drift/README.md).
+Although its source header is shared, this assembly replaces only Home's ELF;
+the other 54 ELFs and native firmware remain byte-identical to Watch 1.1.19.
 
 ## Behavioral qualification
 
@@ -87,6 +93,7 @@ python "$ROOT/product/scripts/build_home_swipe.py" "${COMMON[@]}" \
   --allow-change watch:apps/clock/crown.c \
   --allow-change watch:apps/clock/launcher_touch.h \
   --allow-change watch:apps/clock/nova/nova.h \
+  --allow-change watch:apps/runtime_features/clock_runtime.h \
   --output "$ROOT/home-build"
 ```
 

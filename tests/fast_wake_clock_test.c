@@ -35,7 +35,7 @@ static char wake_stages[128][32];
 static uint32_t wake_stage_times[128],wake_stage_count;
 static uint32_t display_load_cost,sleep_setting_cost,sleep_setting_reads;
 static uint32_t alarm_load_cost,alarm_acquires,rtc_acquires;
-static bool crown_before_alarm;
+static bool crown_before_alarm,fail_late_rtc_read,late_rtc_retention,native_context_failed;
 static uint32_t prealarm_crown_events;
 static const char *fail_capability;
 static bool fail_frame_acquire,fail_unblank,fail_marker_sample,fail_next_health;
@@ -64,7 +64,7 @@ static void check_io(void){assert(!retained_fence);}
 static risc_realtime_snapshot_v1 native_time;
 static alarm_status_v1 alarm_view;
 static contexts_status_v1 contexts_view;
-static int32_t native_read(void*c,risc_realtime_snapshot_v1*out){check_io();(void)c;*out=native_time;return 0;}
+static int32_t native_read(void*c,risc_realtime_snapshot_v1*out){check_io();(void)c;if(native_context_failed)return RISC_REALTIME_CONTEXT;*out=native_time;return 0;}
 static int32_t native_seed(void*c,int64_t seconds,uint32_t ns){check_io();(void)c;assert(!ns);seed_calls++;native_time.epoch_seconds=seconds;native_time.validity=1;return 0;}
 static int32_t wake_read(void*c,uint32_t type,uint32_t schema,risc_retained_wake_record_v1*out,uint32_t*cause){
  check_io();(void)c;*cause=boot_cause;*out=(risc_retained_wake_record_v1){.struct_size=sizeof(*out),.type=type,.schema_version=schema,.size=1,.payload={1}};return checkpoint_result;}
@@ -146,7 +146,7 @@ static bool fast_key(void*c,uint32_t*out){check_io();(void)c;*out=0;
  return true;}
 static int32_t fast_sleep(void*c,risc_light_sleep_result_v1*out){check_io();(void)c;(void)out;assert(!touch.subscription&&!ble_state&&!pending&&!owned);assert(!broadcast_live&&!contexts_live);sleeps++;wake_count++;clock_ms+=500;native_time.epoch_seconds+=3600;if(low_on_wake){low_percent=5;clock_low_battery_sampled=false;}if(alarm_on_wake){alarm_view.state=ALARM_STATE_ALERT;alarm_view.occurrence.generation=1;}return RISC_LIGHT_SLEEP_OK;}
 static int32_t fast_sleep_timed(void*c,uint32_t ms,risc_light_sleep_result_v1*out){(void)ms;return fast_sleep(c,out);}
-static bool fast_rtc(void*c,twatch_rtc_time_v1*out){if(unset_time){memset(out,0,sizeof(*out));return true;}return rtc_read(c,out);}
+static bool fast_rtc(void*c,twatch_rtc_time_v1*out){if(fail_late_rtc_read){native_context_failed=late_rtc_retention;return false;}if(unset_time){memset(out,0,sizeof(*out));return true;}return rtc_read(c,out);}
 static int32_t alarm_status(void*c,alarm_status_v1*out){check_io();(void)c;*out=alarm_view;return 0;}
 static int32_t alarm_step(void*c){check_io();(void)c;return 0;}
 static int32_t alarm_refresh(void*c){check_io();(void)c;return 0;}
@@ -262,7 +262,7 @@ static void reset_case(void){
  motion_prepares=motion_resumes=motion_sleeps=alarm_resumes=points_loads=broadcast_frame=0;service_start_cost=400;
  wake_stage_count=display_load_cost=sleep_setting_cost=sleep_setting_reads=0;
  alarm_load_cost=alarm_acquires=rtc_acquires=0;
- crown_before_alarm=false;prealarm_crown_events=0;
+ crown_before_alarm=fail_late_rtc_read=late_rtc_retention=native_context_failed=false;prealarm_crown_events=0;
  fail_capability=NULL;fail_frame_acquire=fail_unblank=fail_marker_sample=fail_next_health=false;
  fail_sleep_acquire=refused_cycles=refused_restores=clean_refusal_frames=sleep_acquire_errors=0;sleep_failure_armed=false;
  low_percent=55;low_flags=0;low_read_fail=false;memset(low_lengths,0,sizeof(low_lengths));memset(low_writes,0,sizeof(low_writes));
@@ -315,11 +315,30 @@ static void check_refusal_diagnostics(void){
  watch_sleep_stage=0;watch_sleep_detail=0;sleep_status[0]=0;rt=saved;
 }
 int main(void){
+ /* Inject five-minute errors in both directions at every deep-wake cause.
+  * The first frame/input stays fast; settled display must follow read-only RTC. */
+ for(unsigned cause=RISC_BOOT_DEEP_TIMER;cause<=RISC_BOOT_DEEP_OTHER;cause++)for(int sign=-1;sign<=1;sign+=2) {
+  reset_case();boot_cause=cause;twatch_rtc_time_v1 raw,expected;int64_t hardware_epoch;
+  assert(rtc_read(NULL,&raw)&&watch_runtime_epoch(&raw,&hardware_epoch));
+  native_time.epoch_seconds=hardware_epoch+sign*300;
+  app_main();check_clean();assert(first_at==95&&input_at==95&&seed_calls==1&&rtc_acquires==1);
+  assert(native_time.epoch_seconds==hardware_epoch&&watch_display_time(&raw,&expected));
+  assert(face.time_valid&&!memcmp(&face.time,&expected,sizeof(expected)));
+ }
+ for(unsigned failure=0;failure<2;failure++) {
+  reset_case();boot_cause=RISC_BOOT_DEEP_GPIO;
+  if(failure)fail_late_rtc_read=true;else fail_capability="rtc.clock";
+  int64_t retained_epoch=native_time.epoch_seconds;app_main();check_clean();
+  assert(first_at==95&&input_at==95&&confirmations==1&&service_acquires==4&&!seed_calls);
+  assert(face.time_valid&&native_time.epoch_seconds==retained_epoch&&!strcmp(sleep_status,"TIME CHECK ERR"));
+ }
+ reset_case();boot_cause=RISC_BOOT_DEEP_GPIO;fail_late_rtc_read=late_rtc_retention=true;
+ app_main();assert(retained_fence&&retains==1&&!seed_calls&&!confirmations&&!service_acquires);retained_reset();
  for(unsigned cause=0;cause<=RISC_BOOT_DEEP_OTHER;cause++)for(unsigned present=0;present<2;present++){
   reset_case();boot_cause=cause;checkpoint_result=present?RISC_RETAINED_WAKE_OK:RISC_RETAINED_WAKE_ABSENT;
   app_main();check_clean();assert(first_seen&&first_at==95&&first_frames==1&&input_at==95&&input_stages==1);assert(service_acquires==4&&confirmations==1&&promotions==1&&stage_calls==1);
-  assert(seed_calls==(cause<RISC_BOOT_DEEP_TIMER));assert(face.time_valid);
-  assert(rtc_acquires==(cause<RISC_BOOT_DEEP_TIMER)&&alarm_acquires==1);
+  assert(seed_calls==1);assert(face.time_valid);
+  assert(rtc_acquires==1&&alarm_acquires==1);
   check_boot_stages();
  }
  reset_case();display_load_cost=275;sleep_setting_cost=900;app_main();check_clean();check_boot_stages();
@@ -327,7 +346,7 @@ int main(void){
  assert(wake_stage_times[stage_index("first-frame")]==370&&wake_stage_times[stage_index("sleep-settings-end")]==1270);
  assert(wake_stage_times[stage_index("first-frame")]==wake_stage_times[stage_index("unblank-end")]);
  reset_case();boot_cause=RISC_BOOT_DEEP_GPIO;alarm_load_cost=700;app_main();check_clean();check_boot_stages();
- assert(first_at==95&&input_at==95&&!rtc_acquires&&alarm_acquires==1&&radio_at==890);
+ assert(first_at==95&&input_at==95&&rtc_acquires==1&&alarm_acquires==1&&radio_at==890);
  assert(wake_stage_times[stage_index("alarm-end")]-wake_stage_times[stage_index("alarm-begin")]==700);
  reset_case();fail_marker_sample=true;app_main();check_clean();
  assert(first_seen&&first_at==95&&confirmations==1&&stage_count("display-begin")==1&&!stage_count("display-end"));
@@ -349,7 +368,7 @@ int main(void){
  reset_case();unset_time=true;native_time.validity=RISC_REALTIME_UNSET;native_time.epoch_seconds=0;app_main();check_clean();assert(first_seen&&!face.time_valid&&!seed_calls);
  reset_case();alarm_view.state=ALARM_STATE_ALERT;alarm_view.occurrence.generation=1;app_main();check_clean();assert(alarm_frames&&first_seen&&first_at==95&&service_acquires==4);
  reset_case();boot_cause=RISC_BOOT_DEEP_GPIO;alarm_load_cost=700;alarm_view.state=ALARM_STATE_ALERT;alarm_view.occurrence.generation=1;
- app_main();check_clean();assert(first_at==95&&input_at==95&&alarm_frames&&!rtc_acquires&&alarm_acquires==1&&!alarm_view.occurrence.generation);
+ app_main();check_clean();assert(first_at==95&&input_at==95&&alarm_frames&&rtc_acquires==1&&alarm_acquires==1&&!alarm_view.occurrence.generation);
  assert(stage_index("first-input-poll")<stage_index("alarm-begin")&&stage_index("reconcile-end")<stage_index("radios-begin"));
  reset_case();boot_cause=RISC_BOOT_DEEP_GPIO;alarm_load_cost=700;crown_before_alarm=true;
  alarm_view.state=ALARM_STATE_ALERT;alarm_view.occurrence.generation=1;
@@ -359,7 +378,7 @@ int main(void){
  reset_case();fail_display=true;app_main();check_clean();assert(!first_seen&&!service_acquires&&!confirmations);
  assert(stage_count("transfer-begin")==1&&!stage_count("transfer-end")&&!stage_count("unblank-begin"));
  for(unsigned fail=3;fail<=4;fail++){reset_case();fail_service=fail;app_main();check_clean();assert(first_seen&&service_acquires==fail&&!confirmations);}
- reset_case();contexts_enabled=true;requested_wakes=2;app_main();check_clean();assert(wake_count==2&&soft_frames==2&&soft_latency==95&&stage_calls==3&&input_stages==3&&broadcast_starts==3&&contexts_starts==3);
+ reset_case();contexts_enabled=true;requested_wakes=2;app_main();check_clean();assert(seed_calls==3&&wake_count==2&&soft_frames==2&&soft_latency==95&&stage_calls==3&&input_stages==3&&broadcast_starts==3&&contexts_starts==3);
  assert(stage_count("first-frame")==1&&stage_count("render-begin")==3&&stage_count("transfer-end")==3&&stage_count("unblank-end")==3);
  /* Both acquisition refusals must preserve the selected face outside its
   * explicit error strip, finish the redraw before unblank, survive retries,
@@ -396,7 +415,7 @@ int main(void){
  puts("Fast Watch Clock: production Points/motion/alarm-resume feature paths; 10 cold/deep variants; exact first frame/input; mid-frame navigation; cold/light low-battery; phased service starts; radio policy/failure variants; early/repeated light wake; due alarms; terminal retain fences PASS");
  puts("Modeled cost only: 95 ms first Clock frame and input, four 700 ms service acquisitions plus 400 ms service starts deferred; 95 ms light-resume frame without an alarm; no physical timing claim.");
  puts("Boot/wake stage timing: ordered essential grants, settings, alarm/touch/reconciliation, render/transfer/unblank; first-frame precedes sleep settings; failure markers stop at failed boundary; light logs bounded per wake PASS");
- puts("Minimal first-frame closure: valid deep native time defers RTC; alarm/output admission follows first frame/input and precedes handoff/radios; 700 ms modeled load deferred; deep due alarms and stale crown cancellation PASS");
+ puts("Minimal first-frame closure: valid deep native time defers RTC then reconciles after first input; alarm/output admission follows first frame/input and precedes handoff/radios; 700 ms modeled load deferred; deep due alarms and stale crown cancellation PASS");
  puts("Sleep refusal: both acquire boundaries, every face unchanged outside explicit error strip, completed redraw before unblank, repeated retry/cleanup, success clears error, and exact stage/signed-detail diagnostics PASS");
  return 0;
 }
