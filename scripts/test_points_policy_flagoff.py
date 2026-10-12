@@ -41,7 +41,7 @@ def main():
             current_dependency_unchanged_app_sha256=reference['sha256'],
             current_dependency_unchanged_app_equal=off['sha256']==reference['sha256'],
             unchanged_app_source=prior['sources']['productivity'],
-            inherited_system_attention_delta='System fd4b1e52 removed legacy app-side local navigation poll from portable_text_adapter_attention; this predates Points policy and remains disabled-flag-visible',
+            inherited_system_attention_delta=None if off['sha256']==PINNED['elf_sha256'] else 'Selected predecessor differs; consult source-bound attribution evidence before assigning cause',
             selected_predecessor_sha256=PINNED['elf_sha256'],candidate_flagoff_sha256=off['sha256'],
             candidate_flagoff_bytes=off['bytes'],sources=selected['sources'],
             source_publication=selected['source_publication'],only_removed_flag='-DPORTABLE_TEXT_INPUT_POLICY',
