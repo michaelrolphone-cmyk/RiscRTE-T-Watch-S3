@@ -1,0 +1,20 @@
+name: RF modal policy recipe
+on:
+  push:
+    branches: [work/rf-input-policy-20261012]
+  pull_request:
+    paths: ['**/*rf*policy*', '**/rf-input-policy/**', '.github/workflows/rf-policy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 tests/test_rf_policy_recipe.py
