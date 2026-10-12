@@ -65,3 +65,34 @@ not executed by host admission; hardware capture, PMU and sleep remain
 unverified. There is no flashing or delivery. Delivery remains held until
 2026-10-12 23:30 UTC. Integrate exact components into any newer authorized union,
 preserve unrelated work and grants, and repeat complete-cohort admission.
+
+## Verified checkpoint, 2026-10-12
+
+- Published Utilities: `82d17d0d902d427938af95aae0e976c8f78041ed`.
+- Compiled Watch recipe: `e9eeefcbaf35eb67a71fc46c8079ede9bccce863`.
+- Unchanged System: `7fb13b09b4dac275a8111b224784f8a472f39264`.
+- Spectrum ELF: 231,204 bytes, SHA-256
+  `2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a`.
+- Normal and ASan/UBSan cohort receipts match: 113 files, 55 ELFs,
+  109 unchanged paths and **four** free SPIFFS blocks (minimum two).
+- All 180 real-controller/shared-host workflow runs passed. Eighteen
+  non-keyboard views match the legacy source in each mode; 276 normal/sanitized
+  screenshots are pixel-identical.
+- Focused client/custody safety, four opt-out Audio/Waterfall preprocessing
+  comparisons, 52 legacy Spectrum runs, 82 Python contracts and 28 Watch
+  recipe/regression tests passed.
+- Both Utilities GitHub workflows passed on the exact published source.
+  The Watch recipe branch triggered no workflows or check runs; no CI pass
+  is claimed for that branch.
+
+The local native-sanitizer runs disable LeakSanitizer only because the executor
+cannot run its thread tracer. The dedicated GitHub safety workflow keeps the
+normal sanitizer defaults. The pinned target linker internally aborted once;
+a bounded, unchanged retry succeeded and reproduced the independent target
+hash exactly. The artifact includes this build-reproduction evidence.
+
+`integration-receipt.json` is the source/custody handoff.
+`qualified-components.tar.xz` contains the four-file overlay and supporting
+software evidence; `archive-manifest.json` records each member's hash.
+The archive has no full firmware image. These are held integration components,
+not a hardware-qualified flash delivery.

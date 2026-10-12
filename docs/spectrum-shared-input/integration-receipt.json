@@ -1,0 +1,241 @@
+{
+  "schema": "spectrum.shared-input.integration.v1",
+  "status": "Qualified published-source component overlay; delivery held",
+  "hold_until_utc": "2026-10-12T23:30:00Z",
+  "delivered": false,
+  "hardware_verified": false,
+  "full_image_materialized": false,
+  "source": {
+    "system": {
+      "unchanged": true,
+      "published_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+      "tree": "13e157640f5ba11758ce3177192cb7a9e5f38afb",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-System-Apps/commit/7fb13b09b4dac275a8111b224784f8a472f39264"
+    },
+    "utilities": {
+      "published_commit": "82d17d0d902d427938af95aae0e976c8f78041ed",
+      "tree": "d3ac32ebb70b52771360fa30e3f067fdb8f2e0e7",
+      "branch": "work/spectrum-shared-input-20261012",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/commit/82d17d0d902d427938af95aae0e976c8f78041ed",
+      "published_base": "e85eff650e9f748ae162fb725fb6e14eb6df876a",
+      "local_equivalent": "b67869db4fa8372d40b761924f164e435675d61a"
+    },
+    "watch": {
+      "compiled_recipe_commit": "e9eeefcbaf35eb67a71fc46c8079ede9bccce863",
+      "tree": "9ff7771603a165110c7cfa84d3b27615b550c511",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/e9eeefcbaf35eb67a71fc46c8079ede9bccce863",
+      "published_parent": "1bd35a3f485da889eb114a9aeaeef3597b84aadd",
+      "parent_compiled_recipe": "a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+      "frozen_watch_profile": "089868395268b696c05651c33816345bfe0425df"
+    },
+    "runtime": {
+      "unchanged": true,
+      "commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9"
+    },
+    "unpublished_sd_changes_exported": false,
+    "depends_on_unpublished_sd_changes": false
+  },
+  "scope": {
+    "watch_audio_spectrum": "0.5.3 -> 0.5.4",
+    "editors": [
+      "frequency label",
+      "signature",
+      "temporal event",
+      "shared context signal"
+    ],
+    "system_hosts": "unchanged",
+    "x4": "No packaged Audio Spectrum in the named candidate; unchanged",
+    "other_apps_migrated": []
+  },
+  "behavior": {
+    "name_limit_ascii_characters": 16,
+    "request_capacity_bytes": 17,
+    "done_saves_or_trains": false,
+    "cancel_preserves_draft": true,
+    "accepted_text_committed_only_after_clean_close": true,
+    "home_back_cleanup": true,
+    "rapid_input_independent_of_present": true,
+    "audio_and_analysis_continue_during_editor_and_close_again": true,
+    "coalesced_crown_touch_fenced": true,
+    "shared_crown_targets_independent_of_render": true,
+    "all_original_fonts_retained": true,
+    "opt_out_audio_and_waterfall_token_identical": true
+  },
+  "qualification": {
+    "workflow_runs": 180,
+    "normal_runs": 90,
+    "asan_ubsan_runs": 90,
+    "baseline_non_editor_views": 18,
+    "baseline_pixel_comparisons_normal_and_sanitized": 36,
+    "normal_sanitized_identical_screenshots": 276,
+    "focused_safety_normal_and_sanitized": true,
+    "opt_out_preprocessor_parity_cases": 4,
+    "legacy_spectrum_normal_runs": 26,
+    "legacy_spectrum_asan_ubsan_runs": 26,
+    "python_tests": 82,
+    "watch_recipe_and_regression_tests": 28,
+    "physical_capture_pmu_sleep": "Not tested",
+    "leak_sanitizer": "Local caller override for executor ptrace; dedicated GitHub safety workflow keeps LSan enabled"
+  },
+  "target": {
+    "spectrum": {
+      "version": "0.5.4",
+      "bytes": 231204,
+      "sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a",
+      "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+      "defines": [
+        "-DPORTABLE_LOW_BATTERY",
+        "-DPORTABLE_BLE_BROADCAST",
+        "-DPORTABLE_TOUCH_ROTATION=0",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DPORTABLE_FORCE_FULL_FRAMES",
+        "-DPORTABLE_INPUT_NAVIGATION",
+        "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+        "-DPORTABLE_APP_SLEEP_LOCAL",
+        "-DPORTABLE_ALARM_CLIENT",
+        "-DPORTABLE_QUICK_ACTIONS",
+        "-DPORTABLE_QUICK_RADIOS",
+        "-DPORTABLE_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DPORTABLE_NOVA_UI",
+        "-DPORTABLE_AUDIO_SESSION",
+        "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+        "-DPORTABLE_AUDIO_CONTINUOUS_CAPTURE",
+        "-DPORTABLE_RETURN_APP=\"springboard.elf\"",
+        "-DPORTABLE_CONTEXTS_CLIENT",
+        "-include",
+        "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+        "-DPORTABLE_ASYNC_RGB565",
+        "-include",
+        "/workspace/shared/spectrum-shared-input-components-20261012/spectrum/watch-alarm-profile.h",
+        "-flto",
+        "-Wl,--undefined=__divsf3",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_SPECTRUM_SHARED_TEXT_INPUT",
+        "-DPORTABLE_APP_LAUNCH_GUARD",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_WATCH_FROZEN_ICONS",
+        "-mno-target-align"
+      ],
+      "baseline_feature_flags_preserved": true,
+      "baseline_grants_preserved": true,
+      "full_contexts_catalog_preserved": true,
+      "component_budget_bytes": 238000,
+      "original_fonts_retained": true,
+      "relocation_normalization_proof": {
+        "before_sha256": "460e8abe20c59f8b72f929d410f4da79592dad04b0ae071d620630c093ef508a",
+        "after_sha256": "8220b1759b072d85f5afda8e340bd25e4f2d4bbf7431c08e84e4eec1ac3d21e3",
+        "operation": "Remove only trailing all-zero R_XTENSA_NONE linker padding; no actionable relocations changed"
+      }
+    },
+    "source_models_unchanged": {
+      "spectrum_dsp.h": "6f8c9d47562b91dcc00e37b7130bddcdd26327c4697532de9ea8d7d0b2610f98",
+      "spectrum_neural.h": "fd6bbc9f05d373c0ddfe760c18247781e4d757cdf2374a7d0ca7d87b9e34ea2e",
+      "spectrum_neural_store.h": "110f44e7eba53811d84f2f6ed53ae5ff0f4644d6749881b71a1ae51d2bddebd0",
+      "spectrum_signatures.h": "4b7079f5d53f81b3b64bfe4335397d1151897ee91cf2a6983288fe7df814f741",
+      "spectrum_signature_store.h": "1852a24485b4b0032ca0bc165bd8ea69ca4c80a86e6d7a2806f594ecf323a8f2",
+      "spectrum_temporal.h": "facdf3dda0e4efafc801ab60512edf6923681a86074edc0e2b319594c9a86591",
+      "spectrum_temporal_files.h": "3c686b0b52385d8704bf17a78179ccdd6864116b372edf3b2b51fda0220fffd6",
+      "spectrum_temporal_store.h": "a91e8b044214395f6e3714fd9ba7375179dc9f81b8e0d62d6dbe9091d11b3014",
+      "spectrum_store.h": "e42809c8b7c9cf4319824fa11e344100dc55fcbbf6b7d35bc5acf5fee31631c9"
+    },
+    "prior_bytes": 234144,
+    "bytes_saved": 2940
+  },
+  "cohort": {
+    "product_source": "e9eeefcbaf35eb67a71fc46c8079ede9bccce863",
+    "source_candidate": "a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+    "candidate_store_sha256": "85f8a410b852377c9979b98c67aa1af6d5266919bdfcf3dfbc631e0ac70256f2",
+    "active_store_sha256": "6b82cf31e572210a26153659c38b6f22ce985cf6248bae6f337a7071e046de8c",
+    "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "native_unchanged": true,
+    "elf_count": 55,
+    "changed_store_paths": [
+      "audio_spectrum.elf",
+      "audio_spectrum.json",
+      "boot.json",
+      "cohort.json"
+    ],
+    "preserved_store_paths": 109,
+    "free_spiffs_blocks": 4,
+    "cohort_validated": true,
+    "target_instructions_executed": false,
+    "full_image_sha256": "9addab85b6e7d1aa1c349db14e7354efea53a053702d3b3bb674a04d87da0c8b",
+    "full_image_bytes": 16777216
+  },
+  "cohort_normal_and_sanitized_identical": true,
+  "minimum_reserve_blocks": 2,
+  "store_files": 113,
+  "ci": {
+    "utilities": [
+      {
+        "id": 38272250515,
+        "name": "Nova7 paper utilities",
+        "head_sha": "82d17d0d902d427938af95aae0e976c8f78041ed",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38272250515"
+      },
+      {
+        "id": 38272250627,
+        "name": "Watch Spectrum shared input",
+        "head_sha": "82d17d0d902d427938af95aae0e976c8f78041ed",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38272250627"
+      }
+    ],
+    "watch_recipe": {
+      "run_count": 0,
+      "check_count": 0,
+      "status_count": 0,
+      "no_pass_claimed": true
+    },
+    "system": "Unchanged"
+  },
+  "archive": {
+    "path": "qualified-components.tar.xz",
+    "bytes": 373508,
+    "sha256": "5b1b84b31d183e20759736a5e5c9f9b41558f824094e9d4f6affee20c2ba7c04",
+    "manifest": "archive-manifest.json",
+    "contains": "Four-file component overlay, build/cohort receipts, workflow/action logs and selected screenshots/contact sheets, safety/legacy evidence and read-only remaining inventory; no full firmware image"
+  },
+  "remaining_keyboard_inventory": {
+    "path": "remaining-keyboards.json",
+    "count": 8,
+    "Watch": [
+      "Waterfall",
+      "Timecard",
+      "Contexts",
+      "Lists"
+    ],
+    "X4": [
+      "Waterfall",
+      "Timecard",
+      "Contexts",
+      "Lists"
+    ],
+    "read_only": true,
+    "candidate_not_flash_inventory": true
+  },
+  "integration": {
+    "use_only_exact_components": "Overlay changes only Spectrum ELF/manifest, additive Spectrum text-input grant and cohort identity. Preserve current app/provider payloads and all unrelated grants; recompute identity and bank/store digests, then repeat normal/sanitized complete-cohort admission when integrating with a newer union.",
+    "do_not_overwrite": "Preserve paused local SD branches and newer artifacts. This independent published overlay is not their replacement.",
+    "local_component_root": "/workspace/shared/spectrum-shared-input-components-20261012",
+    "local_evidence_root": "/workspace/shared/spectrum-shared-input-evidence-20261012",
+    "baseline_lora_components": "/workspace/shared/lora-shared-input-components-20261012"
+  },
+  "local_artifacts": {
+    "watch/components/bootfs.bin": {
+      "bytes": 5308416,
+      "sha256": "009756ae001e2ed8b33b5bc081314dc267cc93f9b76cf4e7ec90973fee16795b"
+    },
+    "watch/components/bank_state.bin": {
+      "bytes": 8192,
+      "sha256": "235d69e55c74c729e77c63c1aa2b6b21eb0dcc8091889891c173ad83e4cee9e7"
+    }
+  }
+}
