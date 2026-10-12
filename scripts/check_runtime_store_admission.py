@@ -99,6 +99,24 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     profile_bytes = native_profile.read_bytes()
     profile = configparser.ConfigParser(interpolation=None)
     profile.read_string(profile_bytes.decode())
+    source_profile_bytes = None
+    source_section = 'env:watch-file-source'
+    if source_section in profile:
+        from bind_watch_file_source import FLAGS
+        expected = ['${env:crown-wake-profile.build_flags}', *FLAGS]
+        if (profile.defaults() or set(profile.sections()) != {'platformio', source_section} or
+                set(profile['platformio']) != {'extra_configs'} or
+                [v.strip() for v in profile['platformio']['extra_configs'].splitlines() if v.strip()] !=
+                ['platformio.ini', 'crown-build.ini', 'crown-wake-profile.ini'] or
+                set(profile[source_section]) != {'extends', 'build_flags'} or
+                profile[source_section]['extends'] != 'env:crown-wake-profile' or
+                [v.strip() for v in profile[source_section]['build_flags'].splitlines() if v.strip()] != expected or
+                profile_bytes != (ROOT/'docs/file-source/watch-file-source-profile.ini').read_bytes()):
+            raise ValueError('Unsupported or modified native source profile')
+        source_profile_bytes = profile_bytes
+        profile_bytes = (runtime/'crown-wake-profile.ini').read_bytes()
+        profile = configparser.ConfigParser(interpolation=None)
+        profile.read_string(profile_bytes.decode())
     section = 'env:crown-recovery-qualification'
     parent = 'env:esp32s3-16mb-appdata-iq-sharing'
     lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
@@ -114,7 +132,7 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
                 lines(profile[wake_section]['build_flags']) != expected):
             raise ValueError('Unsupported or modified wake diagnostic profile')
         wake_profile_bytes = profile_bytes
-        profile_bytes = (native_profile.parent / 'crown-build.ini').read_bytes()
+        profile_bytes = ((runtime if source_profile_bytes is not None else native_profile.parent) / 'crown-build.ini').read_bytes()
         profile = configparser.ConfigParser(interpolation=None)
         profile.read_string(profile_bytes.decode())
     expected_flags = ['${' + parent + '.build_flags}', '-DRISC_NATIVE_RECOVERY_AXP2101=1',
@@ -169,6 +187,15 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
         proof.update(wake_profile_sha256=sha(wake_profile_bytes),
                      diagnostic_flags={'RISC_STAGE_LOGS': 1, 'RISC_PERFORMANCE_TRACE': 1},
                      diagnostic_allocations=diagnostics)
+    if source_profile_bytes is not None:
+        wrappers = [flag.removeprefix('-Wl,--wrap=') for flag in FLAGS if flag.startswith('-Wl,--wrap=')]
+        allocations = {name: native_symbol_allocation(native_elf, name) for name in
+                       ['__wrap_'+name for name in wrappers]}
+        if native_symbol_bytes(native_elf, 'risc_file_source_abi') != b'\x01\0\0\0':
+            raise ValueError('Native file-source ABI marker missing or inconsistent')
+        proof.update(profile=source_section, source_profile_sha256=sha(source_profile_bytes),
+                     file_source_backend_allocations=allocations, file_source_enabled=True,
+                     private_scratch_root='/appdata/.risc-file-source')
     return proof
 
 
@@ -198,6 +225,8 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy
         command += ['-D' + key + '=' + str(value) for key, value in composition['bounds'].items()
                     if key != 'RISC_APP_POLICY_ROWS']
         command += ['-DSTORE_ADMISSION_CROWN_PROFILE']
+        if composition.get('file_source_enabled'):
+            command += ['-DSTORE_ADMISSION_FILE_SOURCE']
     streams = [runtime / 'src/runtime/streams' / name for name in
                ('AppStreamSessions.cpp', 'ProviderQueueHost.cpp')]
     if any(path.is_file() for path in streams):
