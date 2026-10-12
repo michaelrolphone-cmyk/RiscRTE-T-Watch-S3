@@ -1,0 +1,27 @@
+{
+  "schema": "timecard.modal-policy.flagoff-target.v1",
+  "device": "watch",
+  "passed": true,
+  "targets": {
+    "predecessor": {
+      "sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+      "bytes": 146272
+    },
+    "candidate": {
+      "sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+      "bytes": 146272
+    }
+  },
+  "source": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+    "productivity": "164ea8c4f8bace10148bcfd9b9dcdd97e9fc8e75",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "baseline_system": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "baseline_productivity": "f83d79a0753c2a451730000d2f553aa21fda7830",
+  "only_removed_flag": "-DPORTABLE_TEXT_INPUT_POLICY",
+  "hardware_verified": false,
+  "target_instructions_executed": false
+}
