@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "receipt_sha256": "12785d225ea7aec2669f0a2e653eff9d9ac105e0d86907cba119cd562c01933e",
+  "changed_dependency_keys": [
+    "watch:apps/clock/crown.c"
+  ],
+  "hardware_verified": false,
+  "image_assembled": false,
+  "clock_return_wrapper_changed": false,
+  "manifest": {
+    "only_version_changed": true,
+    "sha256": "91524205248538e10b09f8b968a6bb820a9dfa6b6cf3a9d8143bde5beeda1818",
+    "version": "0.11.3"
+  },
+  "delivered_reproduction": {
+    "bytes": 863504,
+    "sha256": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2",
+    "imports": [
+      "free",
+      "malloc",
+      "memchr",
+      "memcmp",
+      "memcpy",
+      "memset",
+      "risc_runtime_get_api",
+      "strcmp",
+      "strncmp"
+    ],
+    "exports": [
+      "app_main"
+    ]
+  },
+  "fast_clock": {
+    "bytes": 858772,
+    "sha256": "d66be50c97a986dc3bb1e3c3f5a1e9d2a68d2f2f1d5e706386bba619698b7517",
+    "imports": [
+      "free",
+      "malloc",
+      "memchr",
+      "memcmp",
+      "memcpy",
+      "memset",
+      "risc_runtime_get_api",
+      "strcmp",
+      "strncmp"
+    ],
+    "exports": [
+      "app_main"
+    ]
+  }
+}
