@@ -1,0 +1,482 @@
+{
+  "schema": "points.modal-policy.qualified-components.v1",
+  "version": "0.6.14",
+  "status": "exact_public_source_recipe_ci_host_target_complete_cohort_and_independent_review_passed",
+  "later_build_only": true,
+  "tonight_sealed_at_files": true,
+  "tonight_selectors_and_artifacts_unchanged": true,
+  "sources": {
+    "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+    "productivity": "3c5930ba5715844055bb7853dd4fe9a02cbde4db",
+    "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "source_publication": "public-exact-commit",
+  "recipe_commit": "b47f196b4199ebbdfe9ed74d0d4ef0ea277d8055",
+  "recipe_tree": "c0ca2596546abf5f49aff83e1a1872ed15738030",
+  "predecessor": {
+    "version": "0.6.13",
+    "record_sha256": "8a67fd277c47c0f0b7aec3ea2ef980b7cd548df537a3774ff0cf9938d352aaf3",
+    "elf_sha256": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5",
+    "manifest_sha256": "10e24f699debce227a87b346ce2947e849aa5e41bfea72610d96ec6c4bae93f8",
+    "generated_sha256": {
+      "empty_catalog.c": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+      "watch-alarm-profile.h": "fd9022c3e5d148c6d3d61d1157f2c75f3845aace98dcc012e074c18b1180e54c",
+      "exports.map": "6a4f0306496e7574c02b3c566cfd68edaf8ae11fd19933029134e663ed1ea399"
+    }
+  },
+  "baseline": {
+    "compiled_recipe_commit": "2b1d73a012a2d6cb73d5b2ccb886077c7a70e189",
+    "docs_recipe_commit": "64fb6a87db127e168f8fb535d1f5651e40aacc00",
+    "system_commit": "66282802bb498590fcbab4eba871ff40cc3ddafd",
+    "combined_handoff_sha256": "7826fb67c468673352109cb155e69d8b31ecd8da00eada177b293f4f3f36edbb",
+    "frozen_handoff_sha256": "6df57f7a37405f5410fd49bd24f557ee5f8c2543948df1321190ebcb574f50dd",
+    "receipt_sha256": "64b10bce800135ccb1a4305a29aa95ca1ca65aa9528edf02258787848a08383e",
+    "candidate_store_sha256": "3a0058804de392bc6426ae47251f01a72efcabac7395dab5f7551de263813ceb",
+    "full_image_sha256": "bbbb843321fe96687946bbf489e8486cb3ce4917a44441aed82eabc1c4cd3317",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0
+  },
+  "target": {
+    "elf": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public/points_in_time.elf",
+      "sha256": "7000f58c6f4240de1581982cc137e4091c5b7331eec746649f5e7d2068a7d1da",
+      "bytes": 157484
+    },
+    "manifest": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public/points_in_time.json",
+      "sha256": "4db46a916617c41bca7f5427fca8ca6f5c91678e54db2e3c4a4485db9ca86fe9",
+      "bytes": 680
+    },
+    "build_record": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public/points_in_time-build-record.json",
+      "sha256": "bc7d9393226b3fdf79dab9028f7668081a600ecc59fc59a58a20f614501b2adc",
+      "bytes": 35233
+    },
+    "stack": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/final-binding-public-evidence/watch-stack.json",
+      "sha256": "3a58c65565976cb467bb74d5d195a4d17a7867643dd16ae3b34136f28d4150ba",
+      "bytes": 1848
+    },
+    "flagoff": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/final-binding-public-evidence/watch-flagoff.json",
+      "sha256": "c39bca7c5914c5e5d6648052eb7b0bcd142c07e2ce08222f50b959577afc6e91",
+      "bytes": 1552
+    },
+    "bytes": 157484,
+    "delta_bytes": 2420,
+    "selected_predecessor_raw_equal": true,
+    "current_dependency_unchanged_app_equal": true,
+    "inherited_system_attention_delta": null,
+    "metadata_gap_packing": {
+      "profile": "points-nonallocated-tail-gap-v1",
+      "before_bytes": 159160,
+      "after_bytes": 157484,
+      "bytes_saved": 1676,
+      "before_sha256": "62ea30f2f1e9f642c98a16fabb1e1f12ef205a3094600a6de1dcc47b598135e6",
+      "after_sha256": "7000f58c6f4240de1581982cc137e4091c5b7331eec746649f5e7d2068a7d1da",
+      "gap_start": 145684,
+      "gap_end": 147456,
+      "gap_bytes": 1772,
+      "section_table_before": 158400,
+      "section_table_after": 146600,
+      "metadata_moves": [
+        {
+          "section": ".comment",
+          "before_offset": 157484,
+          "after_offset": 145684,
+          "bytes": 44,
+          "section_alignment": 1
+        },
+        {
+          "section": ".xtensa.info",
+          "before_offset": 157528,
+          "after_offset": 145728,
+          "bytes": 56,
+          "section_alignment": 1
+        },
+        {
+          "section": ".symtab",
+          "before_offset": 157584,
+          "after_offset": 145784,
+          "bytes": 528,
+          "section_alignment": 4
+        },
+        {
+          "section": ".strtab",
+          "before_offset": 158112,
+          "after_offset": 146312,
+          "bytes": 134,
+          "section_alignment": 1
+        },
+        {
+          "section": ".shstrtab",
+          "before_offset": 158246,
+          "after_offset": 146446,
+          "bytes": 152,
+          "section_alignment": 1
+        }
+      ],
+      "retained_loader_evidence_identical": true,
+      "program_headers_byte_identical": true,
+      "allocated_sections_bytes_addresses_alignments_identical": true,
+      "imports_exports_and_relocations_identical": true,
+      "section_inventory_and_order_identical": true,
+      "linker_options_unchanged": true,
+      "section_file_offsets_changed_only_for_nonallocated_metadata": true,
+      "target_instructions_executed": false,
+      "hardware_verified": false
+    },
+    "feature_additions": [
+      "-DPORTABLE_TEXT_INPUT_POLICY"
+    ],
+    "all_original_fonts_retained": true,
+    "all_original_flags_retained": true,
+    "maximum_modal_frame_bytes": 128
+  },
+  "watch": {
+    "candidate_directory": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate",
+    "normal": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/receipts/final-normal.json",
+      "sha256": "0edc36e92d7d4d08c1be34400243125e6a09411bcd97b523fd743da235d8e86a",
+      "bytes": 10177
+    },
+    "sanitized": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/receipts/final-sanitized.json",
+      "sha256": "0edc36e92d7d4d08c1be34400243125e6a09411bcd97b523fd743da235d8e86a",
+      "bytes": 10177
+    },
+    "normal_sanitized_identical": true,
+    "packing": {
+      "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/receipts/packing.json",
+      "sha256": "8353f262409104a23a820f77418c05f233e916a3d76c8e406bf7f892fd3e9530",
+      "bytes": 4029
+    },
+    "elf_count": 55,
+    "store_files": 113,
+    "free_spiffs_blocks": 2,
+    "required_free_spiffs_blocks": 2,
+    "candidate_store_sha256": "f4c554a3df583ab0e3d56f37a491efb28d7fa197fbe5e5607704494dda7d8d92",
+    "full_image_sha256": "4229c0da7b17232421a9b4dea50fd4cebc1221dd9eac839c5551c6922a83d1d0",
+    "full_image_materialized": false,
+    "changed_store_paths": [
+      "battery-telem/manifest.json",
+      "ble-hid/manifest.json",
+      "ble-sensors/manifest.json",
+      "ble-telemetry/manifest.json",
+      "broadcast/manifest.json",
+      "civil-clock/manifest.json",
+      "cohort.json",
+      "contexts/manifest.json",
+      "i2c/manifest.json",
+      "mic/manifest.json",
+      "points_in_time.elf",
+      "points_in_time.json",
+      "s3-radio-iq/manifest.json",
+      "sharing-ble/manifest.json",
+      "sharing-entropy/manifest.json",
+      "sharing-tcp/manifest.json",
+      "speaker/manifest.json",
+      "text-input/manifest.json",
+      "ui-scene/manifest.json",
+      "update-apps/manifest.json",
+      "update-fw/manifest.json",
+      "wifi/manifest.json"
+    ],
+    "lossless_metadata_compaction": [
+      {
+        "after_sha256": "2e7bf7c2fa3be7372e427757df04d2efc6131dd86f0fc86bcd786c583e695024",
+        "before_sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "i2c/manifest.json"
+      },
+      {
+        "after_sha256": "85e9a01d96bf61890e3dce3302a12b45b9293c5d5b05b6b92f57ce7fb60f99c2",
+        "before_sha256": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "mic/manifest.json"
+      },
+      {
+        "after_sha256": "81ca464a2c7659340b3b721fdae215143701048cdbd629d5b945f7545f14de10",
+        "before_sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "speaker/manifest.json"
+      },
+      {
+        "after_sha256": "6fcc5370af830419e4e14c2ea000998e60e035623ba9489c3889bb0286842e99",
+        "before_sha256": "5a788cd30e8f75f38559668b0d7fd09f2b9f8e7026c28091d835d6d2c57a2716",
+        "bytes_saved": 190,
+        "decoded_equal": true,
+        "path": "wifi/manifest.json"
+      },
+      {
+        "after_sha256": "65ff5e856e4fd3f686af981794766a17662d0198f4067683a8bce2302553dd27",
+        "before_sha256": "2bf411091aa0175206a080abc204fed82cb5ef283941cb4161f90febdfe8aab4",
+        "bytes_saved": 169,
+        "decoded_equal": true,
+        "path": "ui-scene/manifest.json"
+      },
+      {
+        "after_sha256": "1cccdeed7a21ff971bc5c93891ea98d51570c70438ac4cddc2833915ba2a8cba",
+        "before_sha256": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49",
+        "bytes_saved": 151,
+        "decoded_equal": true,
+        "path": "ble-hid/manifest.json"
+      },
+      {
+        "after_sha256": "afbfd8b44cdc19f8baf8ed180eeac92168568b2cc16b4c224b924ad72ab9fbe8",
+        "before_sha256": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973",
+        "bytes_saved": 151,
+        "decoded_equal": true,
+        "path": "ble-telemetry/manifest.json"
+      },
+      {
+        "after_sha256": "f37aefdc6424618d19e1e3ea32fb140702f12da29a1f23a7b24b9de0b7b2fcf9",
+        "before_sha256": "05e645ddbfd62a9cc0f37d23ff2a3331bdd124c7c39d3d17260b1c4f7d2f9a79",
+        "bytes_saved": 151,
+        "decoded_equal": true,
+        "path": "contexts/manifest.json"
+      },
+      {
+        "after_sha256": "f5c2bfc2e479dea67874d585eb544c8372fa00c2c6a970c7125b51fcb52f5d5a",
+        "before_sha256": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5",
+        "bytes_saved": 147,
+        "decoded_equal": true,
+        "path": "update-apps/manifest.json"
+      },
+      {
+        "after_sha256": "05c940de10e3dc5323ad54fae5e2c962aa7ccd598ac80e377e4bacf31c037908",
+        "before_sha256": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7",
+        "bytes_saved": 147,
+        "decoded_equal": true,
+        "path": "update-fw/manifest.json"
+      },
+      {
+        "after_sha256": "8f02e39d631b3636d1d1640dd31c271671b758a12dae6126b0e27b0174a581a5",
+        "before_sha256": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5",
+        "bytes_saved": 125,
+        "decoded_equal": true,
+        "path": "ble-sensors/manifest.json"
+      },
+      {
+        "after_sha256": "1a697a5c1e6afd764d1130adfdb8adcd69f217b0124bba753aac1538e4a0f3a8",
+        "before_sha256": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154",
+        "bytes_saved": 125,
+        "decoded_equal": true,
+        "path": "broadcast/manifest.json"
+      },
+      {
+        "after_sha256": "212e85f7d6c18c0bd7150ebb8cfc127acfba1f4a38b05931822fc14a80fb92e0",
+        "before_sha256": "c82509361f8a24e4e0f3ac9cddd6e380e19775b4e222e3e6b9e3308ef147a537",
+        "bytes_saved": 125,
+        "decoded_equal": true,
+        "path": "sharing-ble/manifest.json"
+      },
+      {
+        "after_sha256": "3216e740cc0e5ed79ce22a5bd9a42a3505cdad201c0f90d9bf387ac2115fedcf",
+        "before_sha256": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335",
+        "bytes_saved": 99,
+        "decoded_equal": true,
+        "path": "battery-telem/manifest.json"
+      },
+      {
+        "after_sha256": "1e3b0c25202650cc3c86caf686f33135a37045784c5310f98edf11ebce92690a",
+        "before_sha256": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77",
+        "bytes_saved": 95,
+        "decoded_equal": true,
+        "path": "s3-radio-iq/manifest.json"
+      },
+      {
+        "after_sha256": "270bbfa912dd2a8a7c4814919c74136cb2b78accd66bea8d666d35999a314bf3",
+        "before_sha256": "614db32f01de81e36a9c45aab03cd356ba8ba888b273e7b31f92f68efcbf7ece",
+        "bytes_saved": 95,
+        "decoded_equal": true,
+        "path": "sharing-entropy/manifest.json"
+      },
+      {
+        "after_sha256": "329b65b5cb782f7dfd136e0345ab69938040cd4542b3a47521d6fe183511ed0a",
+        "before_sha256": "ae19d6877303dfb714bab6c8df4edb85bfc5f76d2e954ded6819402ca6610c2a",
+        "bytes_saved": 95,
+        "decoded_equal": true,
+        "path": "sharing-tcp/manifest.json"
+      },
+      {
+        "after_sha256": "4f03fd226d5c95b329934648219aea1ebf7fc92f4e23e8b8696eab97e050a7c3",
+        "before_sha256": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4",
+        "bytes_saved": 91,
+        "decoded_equal": true,
+        "path": "civil-clock/manifest.json"
+      },
+      {
+        "after_sha256": "7a42044b86f4f7ec16af9b319152b6a10c3a02120d730a9aa30f51688cde29d0",
+        "before_sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1",
+        "bytes_saved": 91,
+        "decoded_equal": true,
+        "path": "text-input/manifest.json"
+      }
+    ],
+    "native_unchanged": true,
+    "unrelated_elf_bytes_unchanged": true,
+    "boot_json_byte_identical": true,
+    "grant_delta": [],
+    "components": {
+      "bootfs.bin": {
+        "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/components/bootfs.bin",
+        "sha256": "0d299e9b4e2a49d90c4c6dd0a8d922067af7448e1cdc21926db5e3fc7fca5bc3",
+        "bytes": 5308416
+      },
+      "bank_state.bin": {
+        "path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/components/bank_state.bin",
+        "sha256": "c43b6dc783adf005c110d45a784b21474d13e3971f39b8b39d91995371f93943",
+        "bytes": 8192
+      }
+    }
+  },
+  "x4": {
+    "status": "excluded-provenance-unresolved",
+    "selected_points_version": "0.6.17",
+    "rebuilt": false
+  },
+  "rf": {
+    "selected_version": "0.3.4",
+    "version_0_3_5_excluded": true,
+    "product_recipe_publication_stopped": false
+  },
+  "flashed": false,
+  "delivered": false,
+  "hardware_verified": false,
+  "target_instructions_executed": false,
+  "limits": [
+    "Qualification does not execute Xtensa instructions or establish physical-device behavior.",
+    "Entry frames do not prove peak dynamic call-chain stack use.",
+    "The corrected local-only Watch navigation fallback restores exact selected-predecessor flag-off equality."
+  ],
+  "remaining_capacity": {
+    "object_pages_at_two_block_floor": 19410,
+    "current_object_pages": 19410,
+    "remaining_object_pages_before_floor": 0,
+    "remaining_eligible_json_savings_bytes": 91,
+    "remaining_eligible_json_savings_object_pages": 1,
+    "remaining_object_pages_after_all_eligible_json": 1,
+    "remaining_eligible_json": [
+      {
+        "path": "clock.json",
+        "original_bytes": 187,
+        "compact_bytes": 158,
+        "bytes_saved": 29,
+        "object_pages_saved": 0
+      },
+      {
+        "path": "ui-profile/manifest.json",
+        "original_bytes": 281,
+        "compact_bytes": 219,
+        "bytes_saved": 62,
+        "object_pages_saved": 1
+      }
+    ],
+    "current_page_accounting": {
+      "data_pages": 19162,
+      "index_pages": 248,
+      "used_object_pages": 19410,
+      "occupied_blocks": 1294,
+      "free_blocks": 2,
+      "floor_shortfall_object_pages": 0
+    },
+    "after_all_eligible_json_page_accounting": {
+      "data_pages": 19161,
+      "index_pages": 248,
+      "used_object_pages": 19409,
+      "occupied_blocks": 1294,
+      "free_blocks": 2,
+      "floor_shortfall_object_pages": 0
+    },
+    "target_specific_existing_partial_page_slack_not_included": true
+  },
+  "checks": {
+    "corrected_deployed_binding": {
+      "path": "/workspace/shared/points-input-policy-evidence-20261012/watch-binding-correction.json",
+      "sha256": "76cfeb6c90499b4382bc9a8ab50baadf2557ed1392060d2c23aa05d1318cd836",
+      "bytes": 1431
+    },
+    "host_workflows": {
+      "path": "/workspace/shared/points-input-policy-evidence-20261012/watch-binding-exact/result.json",
+      "sha256": "32f6dd1cd560b41dd1b523a3e9f5183ef61cd5c6f4fae65f64aff66c45875977",
+      "bytes": 630844
+    },
+    "local_attention": {
+      "path": "/workspace/shared/points-input-policy-evidence-20261012/local-navigation-unit/result.json",
+      "sha256": "0ff2f9928df2790a3435607585c65461f6498cc872deed848a1a557c593369b3",
+      "bytes": 5045
+    },
+    "native_pmu_logs": {
+      "normal.log": {
+        "path": "/workspace/shared/points-input-policy-evidence-20261012/local-pmu-bridge/normal.log",
+        "sha256": "0ab5f49f41cb614cda3a5d2b465037c861c3f281f4d8430d1c2eccffc4af07ed",
+        "bytes": 88
+      },
+      "sanitized.log": {
+        "path": "/workspace/shared/points-input-policy-evidence-20261012/local-pmu-bridge/sanitized.log",
+        "sha256": "0ab5f49f41cb614cda3a5d2b465037c861c3f281f4d8430d1c2eccffc4af07ed",
+        "bytes": 88
+      }
+    },
+    "paused_local_back": {
+      "path": "/workspace/shared/points-input-policy-evidence-20261012/paused-local-back/result.json",
+      "sha256": "e648ee774583ec4d0cd743dd4ba7a7b93371edf1d6a9ed821b774497e9fe1f69",
+      "bytes": 2233
+    },
+    "ci": {
+      "productivity": {
+        "run_ids": [
+          38320637231
+        ],
+        "commit": "3c5930ba5715844055bb7853dd4fe9a02cbde4db",
+        "status": "success",
+        "receipt": {
+          "path": "/workspace/shared/points-input-policy-evidence-20261012/github-binding-source-ci.json",
+          "sha256": "7f982bf35ef532d02a504ca419b7cdcfea3a35f90ea1ca81acbe083c5a00ce2e",
+          "bytes": 14692
+        }
+      },
+      "system": {
+        "run_ids": [
+          38320406810
+        ],
+        "commit": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+        "status": "success",
+        "receipt": {
+          "path": "/workspace/shared/points-input-policy-evidence-20261012/github-navigation-system-ci.json",
+          "sha256": "16f2c17007a64fea3b5cafd26b941516b0b08850cd3c0f8a1acf828a6f80a8d6",
+          "bytes": 14611
+        }
+      },
+      "recipe": {
+        "run_ids": [
+          38321230963
+        ],
+        "commit": "b47f196b4199ebbdfe9ed74d0d4ef0ea277d8055",
+        "status": "success",
+        "receipt": {
+          "path": "/workspace/shared/points-input-policy-components-20261012/public-final-binding-recipe-ci.json",
+          "sha256": "ca3adca935afbb2c995671be9ac197e8c12f2d9e16ac9b0c792fdd47731936bc",
+          "bytes": 14538
+        }
+      }
+    }
+  },
+  "independent_corrected_binding_review": {
+    "path": "/workspace/shared/points-policy-independent-review-20261012/four-dependency-binding-review.json",
+    "sha256": "53567758cafab2fa54b15743bc1840061c1f82ca3fd9236cb35b4360511d254e",
+    "bytes": 1265,
+    "outcome": "pass"
+  },
+  "supersedes_held_recipe": "854266b28fdfca9aeca58a37f76454def6bd1500",
+  "supersedes_hold_sha256": "a2e313e467467dfdb2527d095ccb8c83b37f00a062184590a965a412dbe0cb7c",
+  "supersedes_review_pending_handoff_sha256": "0bdbd993d930a81615ee16b9312f796470f99b9417cc373fddeaea9494dfbb69",
+  "receipt_scope": "Public qualification documentation only; compiled recipe, source and selected artifacts are unchanged",
+  "qualified_handoff_sha256": "4a7c7ac95aaebe6f0fd91c30ff0101636a2c569b3b338ff9081e32051b1b52aa"
+}
