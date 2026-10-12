@@ -17,7 +17,13 @@ static char sleep_status[32];
 static unsigned clock_deferred_phase;
 static bool clock_radios_pending,clock_input_reported;
 static bool clock_broadcast_started,clock_contexts_started;
+static bool clock_boot_frame_pending;
 static uint32_t clock_wake_started;
+static void clock_wake_mark(const char *stage);
+static void clock_wake_visible(void);
+#define CLOCK_WAKE_MARK(stage) clock_wake_mark(stage)
+#else
+#define CLOCK_WAKE_MARK(stage) ((void)0)
 #endif
 
 static const risc_runtime_api_v1 *rt;
@@ -100,6 +106,9 @@ static bool clock_background_pause(void) {
 #error Alarm Clock requires its normal touch launcher deployment
 #endif
 static bool clock_alarm_modal,clock_display_settled;
+#ifdef WATCH_FAST_WAKE
+static bool clock_alarm_input_cancelled;
+#endif
 static bool clock_alarm_foreground(void);
 static bool clock_alarm_failure(void);
 #endif
@@ -540,14 +549,28 @@ static bool startup(void) {
 #if defined(WATCH_FAST_WAKE) || (defined(WATCH_RUNTIME_FEATURES) && !defined(WATCH_CLOCK_RETURN))
 static bool resume_from_deep(void) {
     risc_display_surface_v1 fresh={0};uint32_t now;
+#ifdef WATCH_FAST_WAKE
+    if(!display->set_brightness(display->context,0,100) || !alive(&now))return false;
+    clock_wake_mark("render-begin");
+    if(!frame(&fresh) || !draw_clock(now,&fresh))return false;
+    clock_wake_mark("render-end");
+    clock_wake_mark("transfer-begin");
+    if(!present())return false;
+    clock_wake_mark("transfer-end");
+    clock_wake_mark("unblank-begin");
+    if(!display->set_brightness(display->context,(uint16_t)clock_brightness(),100))return false;
+    clock_wake_visible();
+    return true;
+#else
     return display->set_brightness(display->context,0,100) && alive(&now) &&
         frame(&fresh) && draw_clock(now,&fresh) && present() &&
         display->set_brightness(display->context,(uint16_t)clock_brightness(),100);
+#endif
 }
 #endif
 #ifdef WATCH_FAST_WAKE
-/* Fixed stage names and decimal boot-local timestamps only. No health read,
- * storage, allocation or provider activation solely for instrumentation. */
+/* Fixed stage names and decimal boot-local timestamps only. No storage,
+ * allocation or provider activation solely for instrumentation. */
 static void clock_wake_stage(const char *stage,uint32_t now) {
     char line[96];const char *prefix="WATCH_WAKE stage=";size_t used=0;
     while(*prefix && used+1<sizeof(line))line[used++]=*prefix++;
@@ -561,6 +584,20 @@ static void clock_wake_stage(const char *stage,uint32_t now) {
         while(n&&used+1<sizeof(line))line[used++]=digits[--n];
     }
     line[used]=0;(void)rt->diagnostic(line);
+}
+/* One best-effort health sample per boot/wake checkpoint. Failed diagnostic
+ * samples do not change application control flow. Never called per frame. */
+static void clock_wake_mark(const char *stage) {
+    uint32_t now;
+    if(alive(&now))clock_wake_stage(stage,now);
+}
+static void clock_wake_visible(void) {
+    uint32_t shown;
+    if(alive(&shown)) {
+        clock_wake_stage("unblank-end",shown);
+        if(clock_boot_frame_pending)clock_wake_stage("first-frame",shown);
+    }
+    clock_boot_frame_pending=false;
 }
 /* Called once per settled foreground turn, after its input and clock frame.
  * Provider calls remain synchronous; this is phased admission, not threads or
@@ -726,6 +763,7 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_FAST_WAKE
     clock_deferred_phase=0;clock_radios_pending=true;clock_input_reported=false;clock_wake_started=0;
     clock_broadcast_started=clock_contexts_started=false;
+    clock_boot_frame_pending=true;
 #endif
 #if defined(WATCH_RUNTIME_FEATURES) && defined(WATCH_CLOCK_RETURN)
     (void)watch_runtime_promote;
@@ -733,6 +771,9 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifdef WATCH_CLOCK_ALARMS
     clock_alarm=(portable_alarm_client){0};clock_display_settled=true;
     clock_alarm_modal=clock_alarm_failed_cleaned=clock_alarm_error_seen=false;
+#ifdef WATCH_FAST_WAKE
+    clock_alarm_input_cancelled=false;
+#endif
 #endif
 #ifdef WATCH_CLOCK_LAUNCHER
     touch=(watch_launcher_touch){0};
@@ -769,6 +810,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     risc_runtime_capability_v1 dg={.struct_size=sizeof(dg)},rg={.struct_size=sizeof(rg)},pg={.struct_size=sizeof(pg)};
     bool have_d=false,have_r=false,have_p=false;
 #ifdef WATCH_RUNTIME_FEATURES
+    CLOCK_WAKE_MARK("runtime-grants-begin");
     if(!watch_runtime_open(&native_clock,rt,
 #ifdef WATCH_CLOCK_RETURN
         false
@@ -776,6 +818,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         true
 #endif
         ))goto done;
+    CLOCK_WAKE_MARK("runtime-grants-end");
 #endif
 #ifndef WATCH_FAST_WAKE
 #ifdef WATCH_BLE_BROADCAST
@@ -785,6 +828,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     if(!portable_contexts_open(&clock_contexts,rt)||!clock_contexts_pause())goto done;
 #endif
 #endif
+    CLOCK_WAKE_MARK("display-begin");
     have_d=rt->acquire("display.output",1,0,&dg);
     if (!have_d) goto done;
     display=dg.api;
@@ -796,19 +840,39 @@ __attribute__((visibility("default"))) void app_main(void) {
 #ifndef WATCH_CLOCK_RETURN
     if (!display->set_brightness(display->context,0,100)) goto done;
 #endif
+    CLOCK_WAKE_MARK("display-end");
+    CLOCK_WAKE_MARK("battery-begin");
     have_p=rt->acquire("board.battery",1,0,&pg);
     if (!have_p) goto done;
     pmu=pg.api;
     if (!pmu || pmu->base.api_version!=1 || pmu->base.struct_size<TWATCH_PMU_LIGHT_SLEEP_SIZE ||
         !pmu->key_events || !pmu->prepare_sleep || !pmu->resume || !pmu->light_sleep) goto done;
+    CLOCK_WAKE_MARK("battery-end");
+    CLOCK_WAKE_MARK("rtc-begin");
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_RUNTIME_FEATURES)
+    /* Deep wake already has a validated native civil-time snapshot. Avoid
+     * loading the external RTC ELF solely to seed a clock that is valid.
+     * Alarm admission later activates its own declared RTC dependency. */
+    risc_realtime_snapshot_v1 retained_time;
+    bool defer_rtc=native_clock.cause>=RISC_BOOT_DEEP_TIMER &&
+        watch_runtime_snapshot(&native_clock,&retained_time) &&
+        retained_time.validity==RISC_REALTIME_VALID;
+    if(native_clock.halted)goto done;
+    if(!defer_rtc) {
+#endif
     have_r=rt->acquire("rtc.clock",2,0,&rg);
     if (have_r) {
         rtc=rg.api;
         if (!rtc || rtc->api_version!=2 || rtc->struct_size<sizeof(*rtc) || !rtc->read) rtc=NULL;
     }
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_RUNTIME_FEATURES)
+    } else CLOCK_WAKE_MARK("rtc-deferred");
+#endif
 #ifdef WATCH_RUNTIME_FEATURES
     if(!watch_runtime_seed(&native_clock,rtc))goto done;
 #endif
+    CLOCK_WAKE_MARK("rtc-end");
+    CLOCK_WAKE_MARK("settings-begin");
     #ifdef WATCH_CLOCK_LAUNCHER
     /* Load before the first sharp Clock frame on fresh boot and normal return.
      * This is the existing shared app-settings namespace, never a driver write. */
@@ -828,12 +892,23 @@ __attribute__((visibility("default"))) void app_main(void) {
     if(!pqa_radios_load(&clock_radios,&clock_quick.ui,rt))goto done;
 #endif
 #endif
+    CLOCK_WAKE_MARK("settings-end");
 #ifdef WATCH_CLOCK_ALARMS
 #ifdef WATCH_CLOCK_POINTS
+    CLOCK_WAKE_MARK("points-begin");
     if(!clock_points_load())goto done;
+    CLOCK_WAKE_MARK("points-end");
 #endif
-    /* Deep reset and normal return both reconcile before any boot intro. */
+    /* Fast entry needs working input before acquiring the alarm/output closure.
+     * The first settled input turn below reconciles it before any handoff,
+     * sleep, radio or Contexts work. The original entry order is unchanged. */
+#ifdef WATCH_FAST_WAKE
+    CLOCK_WAKE_MARK("touch-begin");
+    if(!launcher_touch_open(&touch))goto done;
+    CLOCK_WAKE_MARK("touch-end");
+#else
     if(!portable_alarm_open(&clock_alarm,rt) || !launcher_touch_open(&touch) || !clock_alarm_foreground())goto done;
+#endif
 #endif
     uint32_t discarded,now,armed_at=0,last_activity=0;
     if (!pmu->key_events(pmu->base.context,&discarded) ||
@@ -861,6 +936,7 @@ __attribute__((visibility("default"))) void app_main(void) {
     /* Read once per fresh Clock invocation, release the grant before sleep.
      * Settings returns through a fresh Clock, and deep wake boots default. */
     sleep_mode=PORTABLE_SLEEP_HYBRID;
+    CLOCK_WAKE_MARK("sleep-settings-begin");
     risc_runtime_capability_v1 sg={.struct_size=sizeof(sg)};
     if(rt->acquire(RISC_KEY_VALUE_CAPABILITY,RISC_KEY_VALUE_API_V1,PORTABLE_SLEEP_STORE_INSTANCE,&sg)) {
         int loaded=portable_sleep_load(sg.api,&sleep_mode);
@@ -868,6 +944,7 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(loaded==PORTABLE_SLEEP_INVALID || loaded==PORTABLE_SLEEP_UNAVAILABLE)
             rt->diagnostic("WATCH_CLOCK settings=unreadable default=hybrid");
     } else rt->diagnostic("WATCH_CLOCK settings=unavailable default=hybrid");
+    CLOCK_WAKE_MARK("sleep-settings-end");
     rt->diagnostic(sleep_mode==PORTABLE_SLEEP_DEEP?"WATCH_CLOCK mode=deep":sleep_mode==PORTABLE_SLEEP_LIGHT?"WATCH_CLOCK mode=light":"WATCH_CLOCK mode=hybrid");
 #endif
 #if defined(WATCH_PAIRED_BOOT_CONFIRM) && !defined(WATCH_CLOCK_RETURN) && !defined(WATCH_FAST_WAKE)
@@ -887,7 +964,6 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_FAST_WAKE
     if(!alive(&now))goto done;
-    clock_wake_stage("first-frame",now);
 #endif
     rt->diagnostic("WATCH_CLOCK ready crown=enabled");
 #if defined(WATCH_CONTEXTS_CLIENT) && !defined(WATCH_FAST_WAKE)
@@ -898,7 +974,11 @@ __attribute__((visibility("default"))) void app_main(void) {
         if(!clock_broadcast_step())return;
 #endif
 #ifdef WATCH_CLOCK_ALARMS
+#ifdef WATCH_FAST_WAKE
+        if(clock_alarm.api && (!clock_alarm_foreground() || !alive(&now)))break;
+#else
         if(!clock_alarm_foreground() || !alive(&now))break;
+#endif
 #endif
 #ifdef PORTABLE_LOW_BATTERY
         if(!clock_low_battery_poll(now))break;
@@ -923,6 +1003,23 @@ __attribute__((visibility("default"))) void app_main(void) {
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT
         if(clock_contexts_uncertain)break;
+#endif
+#if defined(WATCH_FAST_WAKE) && defined(WATCH_CLOCK_ALARMS)
+        if(!clock_alarm.api) {
+            /* First Clock and one real input poll precede synchronous alarm,
+             * haptic and speaker activation. Due/expired occurrences retain
+             * the service's normal reconciliation and failure handling. */
+            CLOCK_WAKE_MARK("alarm-begin");
+            if(!portable_alarm_open(&clock_alarm,rt))break;
+            CLOCK_WAKE_MARK("alarm-end");
+            clock_alarm_input_cancelled=false;
+            CLOCK_WAKE_MARK("reconcile-begin");
+            if(!clock_alarm_foreground() || !alive(&now))break;
+            CLOCK_WAKE_MARK("reconcile-end");
+            if(clock_alarm_input_cancelled)events=0;
+            /* Loading or a visible alarm must not exhaust the idle interval. */
+            last_activity=now;
+        }
 #endif
 #ifdef WATCH_CONTEXTS_CLIENT
         if(clock_context_message[0]&&(launcher_activity_pending||(events&3u))){clock_context_message[0]=0;clock_alarm_cancel_input();events=0;}

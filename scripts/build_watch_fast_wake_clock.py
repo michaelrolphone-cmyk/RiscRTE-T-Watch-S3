@@ -26,7 +26,7 @@ for name,wanted in record['dependencies'].items():
  path=Path(remap(name));actual=sha(path);key=next(owner+':'+str(path.relative_to(folder)) for owner,folder in (('system',S),('utilities',U),('watch',ROOT)) if path.is_relative_to(folder))
  checks[key]={'sha256':actual,'delivered_sha256':wanted}
  if actual!=wanted:changed.append(key)
-assert changed==['watch:apps/clock/crown.c'],changed
+assert sorted(changed)==['watch:apps/clock/clock_alarm.inc','watch:apps/clock/crown.c'],changed
 assert sha(B/'default.elf')==record['sha256'],'Delivered Clock differs'
 assert json.loads((B/'default.json').read_text())['version']=='0.11.2'
 cc=os.environ.get('NATIVE_APP_CC') or shutil.which('xtensa-esp32s3-elf-gcc')
@@ -55,7 +55,7 @@ for fast in (False,True):
   assert sha(target)==record['sha256'],'No-fast build did not reproduce delivered Clock'
   proof['delivered_reproduction']=stage;shutil.copyfile(target,O/'reproduction.elf')
  else:proof['fast_clock']=stage
-manifest=json.loads((B/'default.json').read_text());manifest['version']='0.11.3'
+manifest=json.loads((B/'default.json').read_text());manifest['version']='0.11.4'
 (O/'default.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
 proof['manifest']={'sha256':sha(O/'default.json'),'version':manifest['version'],'only_version_changed':True}
 (O/'build.json').write_text(json.dumps(proof,indent=2,sort_keys=True)+'\n')
