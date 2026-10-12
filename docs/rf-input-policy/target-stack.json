@@ -1,0 +1,64 @@
+{
+  "schema": "rf.target-stack.v1",
+  "device": "watch",
+  "application_source": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+  "system_source": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+  "target_elf_sha256": "0821c2061599307cd24cc7163830cb8e667ac62e0878c33405e6d69e73f49d8e",
+  "debug_elf_sha256": "7ecdb055c25c6ea25dfc1eb2b8815c07b478b45073894836bb2d63d446697cb8",
+  "method": "Actual target disassembly entry a1 frame operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "text_width": 32,
+    "portable_app_before_launch$constprop$17": 32,
+    "text_color$part$43$lto_priv$902": 80,
+    "text_input_neutral$lto_priv$1122": 32,
+    "portable_text_client_live$constprop$93": 32,
+    "app_module_fini": 32,
+    "app_module_init": 64,
+    "text_input_alive$lto_priv$1119": 32,
+    "portable_text_adapter_policy_capture": 32,
+    "text_input_navigation$lto_priv$1121": 32,
+    "text_input_touch_open$lto_priv$1120": 32,
+    "portable_text_client_release$constprop$21": 48,
+    "portable_app_before_home": 32,
+    "app_main": 192,
+    "text_policy$lto_priv$943": 64,
+    "text_width$lto_priv$1142": 32,
+    "portable_text_client_request_result$lto_priv$1127": 32
+  },
+  "maximum_modal_frame_bytes": 192,
+  "all_entry_frames_maximum_bytes": 3440,
+  "static_modal_storage": {
+    "editing": {
+      "bytes": 32,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 245840
+    },
+    "text_checkpoint": {
+      "bytes": 8,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 537572
+    },
+    "text_client": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 246048
+    },
+    "text_state": {
+      "bytes": 88,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 537800
+    }
+  },
+  "bounded_label_buffer_bytes": 17,
+  "static_editing_record_bytes": 32,
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Inlining folds helper frames into their callers; absent standalone symbols are not separate frame measurements.",
+    "Disassembly frame sizes do not prove dynamic call-chain peak stack use, Runtime stack allocation, or physical execution."
+  ]
+}

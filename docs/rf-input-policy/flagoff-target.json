@@ -1,0 +1,28 @@
+{
+  "schema": "rf.modal-policy.flagoff-target.v1",
+  "device": "watch",
+  "passed": true,
+  "targets": {
+    "predecessor": {
+      "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+      "bytes": 243352
+    },
+    "candidate": {
+      "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+      "bytes": 243352
+    }
+  },
+  "selected_rf_034_sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+  "selected_rf_034_byte_equal": true,
+  "source": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "baseline_system": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "baseline_utilities": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+  "only_removed_flag": "-DPORTABLE_TEXT_INPUT_POLICY",
+  "hardware_verified": false,
+  "target_instructions_executed": false
+}

@@ -1,0 +1,274 @@
+{
+  "schema": "rf.modal-policy.public-qualification.v1",
+  "device": "watch",
+  "component": {
+    "device": "watch",
+    "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "branch": "work/rf-input-policy-20261012",
+    "compiled_recipe_commit": "2d005a9c715069b6a3807a956f2055c09c67a546",
+    "compiled_recipe_tree": "72fae103699dd5f5a9156cf8860a6f9835ee5374",
+    "compiled_recipe_checkout": "/workspace/shared/rf-input-policy-watch-public-20261012",
+    "compiled_recipe_published": true,
+    "recipe_publication_status": "published_ref_verified",
+    "compiled_recipe_ci": {
+      "name": "RF modal policy recipe",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38320599689",
+      "id": 38320599689
+    },
+    "all_commit_ci": [
+      {
+        "name": "RF modal policy recipe",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38320599689",
+        "id": 38320599689
+      }
+    ],
+    "candidate_directory": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate",
+    "target_build_directory": "/workspace/shared/rf-input-policy-components-public-20261012/watch-target",
+    "target_elf": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch-target/waterfall.elf",
+      "bytes": 247204,
+      "sha256": "0821c2061599307cd24cc7163830cb8e667ac62e0878c33405e6d69e73f49d8e"
+    },
+    "target_manifest": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch-target/waterfall.json",
+      "bytes": 1236,
+      "sha256": "46fbe76b8e308a095d534dceb3a1cb1d85d4bd8a64ef957c68aff54b6a2888ba"
+    },
+    "target_build_record": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch-target/waterfall-build-record.json",
+      "bytes": 37531,
+      "sha256": "dbbd88f4c0614933c0bf1961eeb0dda4c5d1dbf6481b538830b168c81d25006b"
+    },
+    "waterfall_version": "0.3.5",
+    "sources": {
+      "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "utilities": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+      "watch": "089868395268b696c05651c33816345bfe0425df"
+    },
+    "source_roots": {
+      "system-apps": "/workspace/shared/timecard-input-policy-system-20261012",
+      "utilities": "/workspace/shared/rf-input-policy-utilities-20261012",
+      "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+      "watch": "/workspace/shared/watch-scroll-regression-20261011/watch-profile",
+      "generated": "/workspace/shared/rf-input-policy-components-public-20261012/watch-target"
+    },
+    "flags": [
+      "-DPORTABLE_LOW_BATTERY",
+      "-DPORTABLE_BLE_BROADCAST",
+      "-DPORTABLE_TOUCH_ROTATION=0",
+      "-DPORTABLE_RTC_UTC8_DENVER",
+      "-DPORTABLE_FORCE_FULL_FRAMES",
+      "-DPORTABLE_INPUT_NAVIGATION",
+      "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+      "-DPORTABLE_APP_SLEEP_LOCAL",
+      "-DPORTABLE_ALARM_CLIENT",
+      "-DPORTABLE_QUICK_ACTIONS",
+      "-DPORTABLE_QUICK_RADIOS",
+      "-DPORTABLE_MOTION_WAKE",
+      "-DWATCH_ALARM_SLEEP_RESUME",
+      "-DPORTABLE_NOVA_UI",
+      "-DPORTABLE_BLE_FOREGROUND",
+      "-DPORTABLE_RADIO_SESSION",
+      "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+      "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+      "-DRF_STORAGE_INSTANCE=13",
+      "-DRF_APP_DATA_INSTANCE=3",
+      "-DRF_RETURN_APP=\"springboard.elf\"",
+      "-DPORTABLE_APP_LAUNCH_GUARD",
+      "-DPORTABLE_CONTEXTS_CLIENT",
+      "-include",
+      "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+      "-Wl,--undefined=__divsf3",
+      "-DPORTABLE_ASYNC_RGB565",
+      "-include",
+      "/workspace/shared/rf-input-policy-components-public-20261012/watch-target/watch-alarm-profile.h",
+      "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+      "-DPORTABLE_TEXT_INPUT_CLIENT",
+      "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+      "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+      "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+      "-DPORTABLE_APP_HOME_GUARD",
+      "-flto",
+      "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+      "-DPORTABLE_WATCH_COLOR_ONLY",
+      "-DPORTABLE_WATCH_FROZEN_ICONS",
+      "-mno-target-align",
+      "-include",
+      "/workspace/shared/rf-input-policy-components-public-20261012/watch-target/watch-rf-presentation.h",
+      "-DPORTABLE_TEXT_INPUT_POLICY"
+    ],
+    "all_inherited_defines_and_fonts_retained": true,
+    "sealed_target_elf_byte_identical": true,
+    "normal_admission": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate/receipts/final-normal.json",
+      "bytes": 6396,
+      "sha256": "497262bd93a78e4e137475fcbc259c6c9b234340f82788c9d540895718b44ae7"
+    },
+    "sanitized_admission": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate/receipts/final-sanitized.json",
+      "bytes": 6396,
+      "sha256": "497262bd93a78e4e137475fcbc259c6c9b234340f82788c9d540895718b44ae7"
+    },
+    "normal_admission_passed": true,
+    "sanitized_admission_passed": true,
+    "normal_sanitized_admission_identical": true,
+    "packing": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate/receipts/packing.json",
+      "bytes": 4029,
+      "sha256": "4b957cbb3c5af0ee04baa4ee272f66a74f006c24150488fb14f1b6c9f08c6f0f"
+    },
+    "free_spiffs_blocks": 2,
+    "required_free_spiffs_blocks": 2,
+    "changed_store_paths": [
+      "app_store.json",
+      "audio_spectrum.json",
+      "ble_scanner.json",
+      "cohort.json",
+      "default.json",
+      "file_browser.json",
+      "lora/manifest.json",
+      "lora_messages.json",
+      "timecard.json",
+      "waterfall.elf",
+      "waterfall.json"
+    ],
+    "native_unchanged": true,
+    "shared_text_hosts_unchanged": true,
+    "scene_host_unchanged": true,
+    "grant_delta": [],
+    "target_stack": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch-stack.json",
+      "bytes": 2236,
+      "sha256": "765f26c10a2fffd48b32dea9750dad380591c63992445100218c6fc610027d1a"
+    },
+    "flagoff_equivalence": {
+      "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch-flagoff.json",
+      "bytes": 1027,
+      "sha256": "1125162909154d96e80a1a5547e68d7069eb03307be5a9b36bd7d66ca9280917"
+    },
+    "full_image_sha256": "a997aae2e729447ca809782bea581b9e49779f0a27fc4eada22a47aa5b20f187",
+    "full_image_bytes": 16777216,
+    "full_image_materialized": false,
+    "components": {
+      "bank_state.bin": {
+        "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate/components/bank_state.bin",
+        "bytes": 8192,
+        "sha256": "8da0fbc02440da59e7a445320f2869dad4346325b115e57a17522810f35ca380"
+      },
+      "bootfs.bin": {
+        "path": "/workspace/shared/rf-input-policy-components-public-20261012/watch/candidate/components/bootfs.bin",
+        "bytes": 5308416,
+        "sha256": "13987b2ef3194819044e9d752d5416dea2fc9a304f48b21ccbd7fd5075a3f9cb"
+      }
+    },
+    "hardware_verified": false,
+    "delivered": false,
+    "lossless_metadata_compaction": [
+      {
+        "after_sha256": "13196c559ecfbfb00ba96f63028a696000b234ee49e7fe14b9b35303a95dd472",
+        "before_sha256": "02aaa7bb7d8cdf24a534acda8993aa2b2156182bdc6acf626c6820e6758f8d64",
+        "bytes_saved": 552,
+        "decoded_equal": true,
+        "path": "file_browser.json"
+      },
+      {
+        "after_sha256": "82825df2093ea1562b619ab46a9d505a743a5b6d829c789eb6f43fb6fb0eb956",
+        "before_sha256": "4d6d837a21bdbe2e5d15657fc36c4c3b05c50e0f245a40b77fec6f987cac96b4",
+        "bytes_saved": 448,
+        "decoded_equal": true,
+        "path": "audio_spectrum.json"
+      },
+      {
+        "after_sha256": "92365485d23fa6125a46e93183827b4cc26b890c3c7f23f7f0b99a53b3a4bf01",
+        "before_sha256": "e270a5229ed4a661d0d8a399ee7df126a144b6bf68e65cadcd46ed0c1e83aa6b",
+        "bytes_saved": 422,
+        "decoded_equal": true,
+        "path": "default.json"
+      },
+      {
+        "after_sha256": "66a1bb53b26d90f7816e9130b7df08aa775f58d3e4d3d1dca12ddbcd97aab5a9",
+        "before_sha256": "8a9f3fe02b17a6b0c8b9d790d466077a63da20c406f2f1e8bb28a072a5c71f9b",
+        "bytes_saved": 396,
+        "decoded_equal": true,
+        "path": "ble_scanner.json"
+      },
+      {
+        "after_sha256": "225a13ab1881bb5f9c7aabfbbfa8f21e7767797578497ac82a48e9e9cf7fb933",
+        "before_sha256": "e791535ec2ceecac46e26b86b66cc375126ecea8263e5c1d609f7af4d402034a",
+        "bytes_saved": 396,
+        "decoded_equal": true,
+        "path": "lora_messages.json"
+      },
+      {
+        "after_sha256": "861553317a3978b746d99e986b17c4f943f1e64ff97fe435262035bce0215a65",
+        "before_sha256": "bdb1edc864058a0d8216abb0fe78238ccddcd78a93a6bfc4560e65b71b9c70e8",
+        "bytes_saved": 396,
+        "decoded_equal": true,
+        "path": "timecard.json"
+      },
+      {
+        "after_sha256": "6d660bb27172e20213b2f40981af516f2f1f4f93c9fd17a503d825d21a9da5ea",
+        "before_sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c",
+        "bytes_saved": 384,
+        "decoded_equal": true,
+        "path": "lora/manifest.json"
+      },
+      {
+        "after_sha256": "67f9012dcb5c7edfb35bacbebb6a4b05cae72a78ee1857aa300e657e9594409a",
+        "before_sha256": "02030af2d3d290fd56f83bbb56af7f2c5dc85d618e6fdc06486f7ef7f4c48e3a",
+        "bytes_saved": 370,
+        "decoded_equal": true,
+        "path": "app_store.json"
+      }
+    ],
+    "decoded_metadata_unchanged": true,
+    "store_files": 113,
+    "internal_elfs": 55,
+    "selected_sd_elfs": 0,
+    "common_pmu_modal_back_known_gap": true
+  },
+  "focused_policy_runs": 20,
+  "workflow_regression_runs": 492,
+  "predecessor_frame_comparisons": 152,
+  "normal_sanitized_image_comparisons": 773,
+  "source": {
+    "utilities": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-Utilities",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "path": "/workspace/shared/rf-input-policy-utilities-20261012",
+      "published": true
+    },
+    "system": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+      "commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "path": "/workspace/shared/timecard-input-policy-system-20261012",
+      "published": true
+    }
+  },
+  "baseline": {
+    "path": "/workspace/shared/timecard-input-policy-components-20261012/handoff-published.json",
+    "bytes": 22428,
+    "sha256": "f9709fecdee7ea86d2be79e5c00c9c0cd1bafa73c9495f180cb9fe826965cb09"
+  },
+  "limits": [
+    "Common Watch PMU modal Back inherits a known gap being repaired separately. These RF artifacts do not claim to repair or qualify that path.",
+    "Deterministic host/backend fixtures and target disassembly do not prove physical RF, touch, PMU, sleep or radio hardware behavior.",
+    "Per-function target frames are measured; dynamic peak call-chain stack usage is not proved.",
+    "Local ASan/UBSan cohorts use detect_leaks=0 for the ptrace executor; explicit resource-accounting checks remain enabled.",
+    "These standalone recipes compose over the frozen Timecard union. They must be applied additively to any later cumulative selection, without replacing newer components."
+  ],
+  "previous_sealed_handoff": {
+    "path": "/workspace/shared/rf-input-policy-components-20261012/handoff-local-qualified.json",
+    "bytes": 21054,
+    "sha256": "b1059b00514e7d50ba40f3ebe80333f740a2daa7a79ac3b5882a6e860b98aca5"
+  },
+  "later_cumulative_selections_modified": false,
+  "delivered": false,
+  "flashed": false,
+  "hardware_verified": false
+}

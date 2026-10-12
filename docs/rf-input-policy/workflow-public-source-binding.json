@@ -1,0 +1,143 @@
+{
+  "schema": "rf.workflow-public-source-binding.v1",
+  "passed": true,
+  "workflow_receipt_sha256": "3a2dcc15b493d5cd8ac69d5ef4db2ead9b746e557b83ff0c8260c0732c2e19de",
+  "verified_public_source_files": [
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/scripts/test_rf_shared_input.py",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "9124405823910db448eb7b55655ff5e09e0d5cdb0cca99df57585ebd5d1a94e0"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/test/rf_shared_input/renderer.c",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "a3b4f5e8d11953c6b1f90772d39ad5dc8f0f69c5e3b5d66ec1bdd0a3ea1f1e2d"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_app_data_scope.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "5b21f23b2505f12ef38ed1fc0e90b3c665066f639f2ccd8ca90e3b8073f69010"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_application.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "7986394d3a615fcea398e3d079b5650c2431c0de22c55dba23300707f3e872b9"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_background.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "6792af20634225de59fdc4c176a471bcbbd6d9f4ff06e9de964261d1f9668cb0"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_controls.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "fd52d7deae54b348ab9c3fbe50b410b049102e38baaaa6db52b135da213f05ee"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_dsp.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "71dad410511bba28991f0e99cb88f2931c6262cabc01dbb5d9659e33a3eeee7c"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_identity.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "068428308352e542f0494afd389f3601e867571c3fd9057c4aec693d70abcb57"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_math.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "bc5723aa8206249f23e5809d3911009582ba83891b9db597cc15a200bb6d3fc8"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_neural.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "b4c22ab1d48bb1c742dc1e88f0de018a79fdb09fa780262a12f91dfb36680799"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_neural_store.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "306a42bd54d6e162e6acae03bdb9b99942040d0f303ba053b2bc0b2bddd39769"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_presentation.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "d9989eae6813ae1c5b461d5d77b9d28ed35c6797817e8b06250073dd5fca4c6f"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_signature_app.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "cfed71bff2620e6ba36a6bd047b6f6e8e6d3bd403f97de40e6046ffed1a12b59"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_signature_store.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "2347b304c85eb2618dfd4b819e4acc372d554ba381ad7e3b9b89fdbaddac5a06"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_signatures.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "32cad5efb47468682cabdc0fdb263ecb1c27b701434f691489b1b339b49e9825"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_store.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "faff7237d5873e234bd116e931c5398ed4147fc1a5b05a1b696172bcf1d62e44"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_temporal.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "4f5e42b6928d9af5b49fa5a0455c0c5d8866f2f04410a9432131104a43aa277d"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_temporal_app.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "be027c03461c64a02997454d40284b9fa729a6adbde00a8d86e9b3cde0b0e48e"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_temporal_files.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "6efeee51858e2d0b6cbeb5b30cddaea7ebc1ca81293b35cacf31a43665d558fe"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/rf_temporal_store.h",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "0d76c52c8831879799c4774daae742d99b8a59e1e7d5996bb71aceb602206370"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/waterfall.c",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "ba04b1499f8de2aeb202664581e86ed39f69a48f85b0efdc87d0999269b8611a"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/context_signal_library.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "d19380adfc76870d05c9d2da82ee09fe1fd52b8ba563b6b65efab8b777d63d4a"
+    },
+    {
+      "source": "/workspace/shared/rf-input-policy-utilities-20261012/Apps/context_fingerprint_app.inc",
+      "commit": "52157660ec573cf4639ffe3eefcad5b7b3115c4e",
+      "sha256": "757ac801d2c2ae66f2f45b9810aec8f52c8f155811d37966bd077c1a7b47b3f1"
+    },
+    {
+      "source": "/workspace/shared/timecard-input-policy-system-20261012/Services/scene_host/host.c",
+      "commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "sha256": "2110ecf4de15d299dfca0e12d461e48abddf9f43ae956df4c97a6a482d9516cf"
+    },
+    {
+      "source": "/workspace/shared/timecard-input-policy-system-20261012/Services/text_input/host.c",
+      "commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "sha256": "a35225f8afc149c55d2d15caf3671def4f0b631aecd267eb6c01085689556904"
+    },
+    {
+      "source": "/workspace/shared/timecard-input-policy-system-20261012/Services/scene_profile/profile.c",
+      "commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "sha256": "ae72dc5de62ca7d212b46194406d4b4ce8a1be4767682efd8a4dce9ea2476c17"
+    },
+    {
+      "source": "/workspace/shared/timecard-input-policy-system-20261012/scripts/generate_telemetry_fonts.py",
+      "commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+      "sha256": "718ed123fa468da46f451020d0e8e96c213a08a23d6dfa815d5c920f4a9bbfd0"
+    }
+  ],
+  "note": "Workflow run began from a dirty pre-commit checkout; every recorded application and System source byte above equals the subsequently published exact commits."
+}
