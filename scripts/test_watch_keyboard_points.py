@@ -34,12 +34,12 @@ def scenarios():
   result['loss-'+boundary]=name+key+done+save
  return result
 
-def qualify(build,output):
+def qualify(build,output,provider_system=None):
  record_path=build/'points_in_time-build-record.json';r=json.loads(record_path.read_text());roots={k:Path(v) for k,v in r['source_roots'].items()}
  for k,v in r['source_sha256'].items():
   owner,relative=k.split(':',1);assert sha(roots[owner]/relative)==v,k
  assert sha(build/'points_in_time.elf')==r['sha256'];output.mkdir(parents=True,exist_ok=False)
- system=roots['system-apps'];runtime=roots['runtime']
+ system=provider_system or roots['system-apps'];runtime=roots['runtime']
  defines=[x for x in r['defines'] if x not in ('-flto','-mno-target-align')];includes=[x for x in r['command'] if x.startswith('-I')]
  app_sources=[Path(x) for x in r['command'] if x.endswith('.c') and not x.endswith(('portable_navigation.c','portable_sleep.c'))]
  fixture=ROOT/'tests/shared_keyboard/watch_points_host.c'
@@ -82,4 +82,4 @@ def qualify(build,output):
  evidence['target_only_flags_omitted_for_host']=['-flto','-mno-target-align']
  (output/'receipt.json').write_text(json.dumps(evidence,indent=2)+'\n')
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();qualify(a.build.resolve(),a.output.resolve())
+ p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--provider-system',type=Path);a=p.parse_args();qualify(a.build.resolve(),a.output.resolve(),a.provider_system.resolve() if a.provider_system else None)

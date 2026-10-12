@@ -22,12 +22,12 @@ def scenarios():
   result['name-loss-'+boundary]=name+key+done
  return result
 
-def qualify(build,drivers,output):
+def qualify(build,drivers,output,provider_system=None):
  record_path=build/'ble_scanner-build-record.json';r=json.loads(record_path.read_text());roots={k:Path(v) for k,v in r['source_roots'].items()}
  for k,v in r['source_sha256'].items():
   owner,relative=k.split(':',1);assert sha(roots[owner]/relative)==v,k
  assert sha(build/'ble_scanner.elf')==r['sha256'];output.mkdir(parents=True,exist_ok=False)
- system=roots['system-apps'];runtime=roots['runtime']
+ system=provider_system or roots['system-apps'];runtime=roots['runtime']
  defines=[x for x in r['defines'] if x!='-flto'];includes=[x for x in r['command'] if x.startswith('-I')]
  app_sources=[Path(x) for x in r['command'] if x.endswith('.c') and not x.endswith(('portable_navigation.c','portable_sleep.c'))]
  fixture=ROOT/'tests/shared_keyboard/watch_scanner_host.c'
@@ -67,4 +67,4 @@ def qualify(build,drivers,output):
  evidence=dict(schema=1,elf_sha256=r['sha256'],build_record_sha256=sha(record_path),actual_watch_defines=r['defines'],cases=results,commands=commands,source_sha256=dependencies,hardware_verified=False,scope='Production Watch Scanner, adapter, compact scene host, text host and BLE sensor driver; copied hardware transports and local navigation/sleep bridge boundaries')
  (output/'receipt.json').write_text(json.dumps(evidence,indent=2)+'\n')
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--drivers',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();qualify(a.build.resolve(),a.drivers.resolve(),a.output.resolve())
+ p=argparse.ArgumentParser();p.add_argument('--build',type=Path,required=True);p.add_argument('--drivers',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--provider-system',type=Path);a=p.parse_args();qualify(a.build.resolve(),a.drivers.resolve(),a.output.resolve(),a.provider_system.resolve() if a.provider_system else None)
