@@ -1,0 +1,82 @@
+{
+  "schema": "contexts.lifecycle-target-stack.v1",
+  "device": "watch",
+  "application_source": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+  "system_source": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "target_elf_sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac",
+  "debug_elf_sha256": "b8cb23c4686a753ce9aeabec321f8675418a7b0cbc8cc7a243ea84eec921f6a7",
+  "method": "Actual target entry a1 disassembly operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "portable_text_client_request_result": 32,
+    "portable_text_client_state_result": 32,
+    "portable_text_client_live$constprop$50": 32,
+    "cs_text_policy": 80,
+    "cs_resident_step": 160,
+    "portable_text_adapter_retained": 32,
+    "portable_text_adapter_retain": 32,
+    "portable_text_adapter_attention": 32,
+    "portable_text_adapter_suspend": 48,
+    "portable_text_adapter_resume": 32,
+    "portable_text_client_release$constprop$48": 48,
+    "portable_text_client_close$constprop$44": 32,
+    "app_main": 288
+  },
+  "maximum_modal_frame_bytes": 288,
+  "all_entry_frames_maximum_bytes": 3808,
+  "static_modal_storage": {
+    "cs_text": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61968
+    },
+    "cs_text_accepted": {
+      "bytes": 33,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61836
+    },
+    "cs_text_checkpoint": {
+      "bytes": 8,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61956
+    },
+    "cs_text_navigation": {
+      "bytes": 80,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61872
+    },
+    "cs_text_outcome": {
+      "bytes": 4,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61832
+    },
+    "cs_text_policy_continuity": {
+      "bytes": 1,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61952
+    },
+    "cs_text_unavailable": {
+      "bytes": 1,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 61953
+    },
+    "cu_name": {
+      "bytes": 33,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 89600
+    }
+  },
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Compiler inlining folds absent helpers into callers.",
+    "Per-frame ceilings do not establish dynamic call-chain peak, Runtime allocation or hardware behavior."
+  ]
+}

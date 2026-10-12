@@ -1,0 +1,15 @@
+{
+  "schema": "contexts.lifecycle.pipeline-regressions.v1",
+  "result": "PASS",
+  "utilities_commit": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+  "system_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "commands": [
+    "python scripts/check_contexts_contract.py --system-apps <published-system>",
+    "python scripts/test_context_fingerprints.py --drivers <selected-drivers> --runtime <selected-watch-runtime>",
+    "python scripts/test_contexts_service.py --drivers <selected-drivers> --runtime <selected-watch-runtime> --system-apps <published-system>",
+    "python scripts/test_contexts_rf_retained.py --system-apps <published-system>"
+  ],
+  "exit_code": 0,
+  "log_sha256": "391d2676a92258ece96f2c325dab360030ad20c25dbf1fa1392c7c875924fde2",
+  "hardware_verified": false
+}

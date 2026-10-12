@@ -1,0 +1,936 @@
+{
+  "schema": "contexts.lifecycle-exact-delta.v1",
+  "device": "watch",
+  "baseline_handoff": {
+    "path": "/workspace/shared/lists-shared-input-components-20261012/handoff-qualified-published-20261012T200947Z.json",
+    "bytes": 28853,
+    "sha256": "b174cba70ab88df294a48e53611bf0fecb2f0e2c8976bd6ab56e7f5e22cf3065"
+  },
+  "baseline_compiled_recipe": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+  "candidate_compiled_recipe": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+  "store_inventory_before": {
+    "alarm-service/driver.elf": {
+      "bytes": 22144,
+      "sha256": "e2f761dc24a1c095ce15212a650b3c09fd11855560923af1cc5df193e24774c4"
+    },
+    "alarm-service/manifest.json": {
+      "bytes": 689,
+      "sha256": "e20df0376ff465585da9519d1a21daa4e44c134b7f8f73d5b7c08e2d03d732cf"
+    },
+    "alarms.elf": {
+      "bytes": 118580,
+      "sha256": "8a4b0487652642f33f8979e714c7b52829edc8649c263e2ebd31e698815e6cc3"
+    },
+    "alarms.json": {
+      "bytes": 969,
+      "sha256": "079a1ef865d79d3bce28007494a5e25f3a74b29632649841025247d10aa17be6"
+    },
+    "app_store.elf": {
+      "bytes": 115748,
+      "sha256": "98dbf0078a3288e66b5517b99b38709b4e5739f041cbeaf0ea87a1d0e9941c4f"
+    },
+    "app_store.json": {
+      "bytes": 1047,
+      "sha256": "02030af2d3d290fd56f83bbb56af7f2c5dc85d618e6fdc06486f7ef7f4c48e3a"
+    },
+    "audio_spectrum.elf": {
+      "bytes": 231204,
+      "sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a"
+    },
+    "audio_spectrum.json": {
+      "bytes": 1249,
+      "sha256": "4d6d837a21bdbe2e5d15657fc36c4c3b05c50e0f245a40b77fec6f987cac96b4"
+    },
+    "battery-telem/driver.elf": {
+      "bytes": 3048,
+      "sha256": "f0cab9a3eb32c9f0f351cc4f52ee5a4e9830d7ad26c012fa5c248fd791ac06da"
+    },
+    "battery-telem/manifest.json": {
+      "bytes": 409,
+      "sha256": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335"
+    },
+    "battery.elf": {
+      "bytes": 116004,
+      "sha256": "5ac9fc4aff75b5d8431a4f312863c18a75de0236c783a208b08c663ebbf9173c"
+    },
+    "battery.json": {
+      "bytes": 971,
+      "sha256": "d35fe2b8999f369067c76db9931d1d980e633d31f5c776352289e6d1ec443999"
+    },
+    "ble-hid/driver.elf": {
+      "bytes": 125480,
+      "sha256": "6290d9cdfae051b9f2f2c83060f1c4000a62f727d47b680c67cd77b0d9e0c555"
+    },
+    "ble-hid/manifest.json": {
+      "bytes": 537,
+      "sha256": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49"
+    },
+    "ble-sensors/driver.elf": {
+      "bytes": 9820,
+      "sha256": "cf34fa23f8a6086c7dbeb022a5ddc252088207eb0773251d183873bf1737d998"
+    },
+    "ble-sensors/manifest.json": {
+      "bytes": 470,
+      "sha256": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5"
+    },
+    "ble-telemetry/driver.elf": {
+      "bytes": 9824,
+      "sha256": "86e36ad3ec31ba1e4f639c1110cecfdd07e9bfc7695dcceba42672303f01f4a2"
+    },
+    "ble-telemetry/manifest.json": {
+      "bytes": 542,
+      "sha256": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973"
+    },
+    "ble/driver.elf": {
+      "bytes": 3792,
+      "sha256": "80253ef0e3cbd39df67d4b5e66d53762702383ec77f193b0d041fdb47baf9007"
+    },
+    "ble/manifest.json": {
+      "bytes": 703,
+      "sha256": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c"
+    },
+    "ble_buttons.elf": {
+      "bytes": 121384,
+      "sha256": "d661beb925257bfa1e39a77a1026fc49ce66d1907ed53bded8e5fbec83f3b2e9"
+    },
+    "ble_buttons.json": {
+      "bytes": 973,
+      "sha256": "2a3e1854f76bbec6151e0c23db2b093ce7a0cf34391ba41866f97ab2d31f1e90"
+    },
+    "ble_scanner.elf": {
+      "bytes": 146972,
+      "sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57"
+    },
+    "ble_scanner.json": {
+      "bytes": 1113,
+      "sha256": "8a9f3fe02b17a6b0c8b9d790d466077a63da20c406f2f1e8bb28a072a5c71f9b"
+    },
+    "ble_touchpad.elf": {
+      "bytes": 121124,
+      "sha256": "d0f9545d7b439ea174f45b8eabf234920b96b966cd8a460bcd942d95f0209630"
+    },
+    "ble_touchpad.json": {
+      "bytes": 975,
+      "sha256": "c0d74878959c6956b729846f2bca10ea0f8668453d30d99cfb1256bffddbdaaa"
+    },
+    "board.json": {
+      "bytes": 8688,
+      "sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157"
+    },
+    "boot.json": {
+      "bytes": 27195,
+      "sha256": "b32ac9b2b2f723fa3ad888191fb3ea30f53936597dbb1f8820ef2809386a5038"
+    },
+    "broadcast/driver.elf": {
+      "bytes": 5308,
+      "sha256": "b2b8f55baa39a798873daff31b4878f64e91adf444e81b243d1c84080e5fd35a"
+    },
+    "broadcast/manifest.json": {
+      "bytes": 533,
+      "sha256": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154"
+    },
+    "calculator.elf": {
+      "bytes": 115864,
+      "sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df"
+    },
+    "calculator.json": {
+      "bytes": 977,
+      "sha256": "947b8fd0b20efd23ee56ebd220b561b1e00102512a2ad8175019a659b7499e9b"
+    },
+    "civil-clock/driver.elf": {
+      "bytes": 31656,
+      "sha256": "e9158f0572d1d1402cee42ae5f4c43b9c7c009531f97b0a1be84d1376ef35862"
+    },
+    "civil-clock/manifest.json": {
+      "bytes": 321,
+      "sha256": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4"
+    },
+    "clock.elf": {
+      "bytes": 1232,
+      "sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1"
+    },
+    "clock.json": {
+      "bytes": 187,
+      "sha256": "cd01cc5bfc38ae45ba004789c4ebf86f5b0a706b87c27983553a6b6ee3f0d89c"
+    },
+    "cohort.json": {
+      "bytes": 437,
+      "sha256": "1c57965dac99c3d22ae49582da1c36895dd7df47b9f1b7a1a4585b885a852a47"
+    },
+    "contexts.elf": {
+      "bytes": 59348,
+      "sha256": "3fa28b55b4ae690c1c4217dc20dc04b04c6721ab1d4ef7b699b90f29170ef057"
+    },
+    "contexts.json": {
+      "bytes": 820,
+      "sha256": "e3f2696fb7f8dfeed46755cb4341b7ac075af2f4f7fe2e3e3404fd21715147a4"
+    },
+    "contexts/driver.elf": {
+      "bytes": 83764,
+      "sha256": "bce4f7f82480765595758c8f5c63436d0f5b39473ebac3c033bb9e8cd7bc896c"
+    },
+    "contexts/manifest.json": {
+      "bytes": 668,
+      "sha256": "05e645ddbfd62a9cc0f37d23ff2a3331bdd124c7c39d3d17260b1c4f7d2f9a79"
+    },
+    "countdown.elf": {
+      "bytes": 114600,
+      "sha256": "335431931522c5ea40658404c1c3ae80f9614ac2a43dcc566eb14a2f0600dc73"
+    },
+    "countdown.json": {
+      "bytes": 975,
+      "sha256": "c1bd3dfa01e263b178841760462141c7e2324433606b9b0ca5df21d8e8d50f73"
+    },
+    "default.elf": {
+      "bytes": 862880,
+      "sha256": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875"
+    },
+    "default.json": {
+      "bytes": 1203,
+      "sha256": "e270a5229ed4a661d0d8a399ee7df126a144b6bf68e65cadcd46ed0c1e83aa6b"
+    },
+    "file_browser.elf": {
+      "bytes": 289312,
+      "sha256": "2265a75e0f1226f9b885207dfd176d335593703aa5721f1581dee08dfa87c583"
+    },
+    "file_browser.json": {
+      "bytes": 1538,
+      "sha256": "02aaa7bb7d8cdf24a534acda8993aa2b2156182bdc6acf626c6820e6758f8d64"
+    },
+    "frequency_generator.elf": {
+      "bytes": 107524,
+      "sha256": "b0d6b3a83280b694a1987f815df962c4e358c9b9ece41ff5ce858c4c8df15b20"
+    },
+    "frequency_generator.json": {
+      "bytes": 1059,
+      "sha256": "f745e383e2491202eb18506fc8704c1f14993b73fc0c757c3757c0963b7039ba"
+    },
+    "gpio/driver.elf": {
+      "bytes": 3980,
+      "sha256": "a2b4b27df7e4893267cbbc69197fc1c0e6ad54ef7b059a12b3117485907bfa78"
+    },
+    "gpio/manifest.json": {
+      "bytes": 689,
+      "sha256": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8"
+    },
+    "haptic/driver.elf": {
+      "bytes": 3164,
+      "sha256": "61e31dffb174c950f936f9bef917705b13b31e010ab4a380a5d4c5c4aff9786d"
+    },
+    "haptic/manifest.json": {
+      "bytes": 738,
+      "sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1"
+    },
+    "i2c/driver.elf": {
+      "bytes": 3428,
+      "sha256": "9ae372bab72c4f49b791bc3eb6724a725c3598cda373e005f1af058254a61ada"
+    },
+    "i2c/manifest.json": {
+      "bytes": 694,
+      "sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b"
+    },
+    "imu/driver.elf": {
+      "bytes": 35036,
+      "sha256": "de08cd62fae7a5094e03aa6b84cf51e2dc216c55ee5ac1fc41228acd6e07f67a"
+    },
+    "imu/manifest.json": {
+      "bytes": 801,
+      "sha256": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd"
+    },
+    "lists.elf": {
+      "bytes": 26584,
+      "sha256": "31be400bcf3dfa6b4c27501c2938316375f3c2b82fdadddbecd426d1f7f049b6"
+    },
+    "lists.json": {
+      "bytes": 480,
+      "sha256": "5eb03ec6147ab4bed28fd9142008fbcf08c5706c38b23b7cb32fa82cb9c92b35"
+    },
+    "lora/driver.elf": {
+      "bytes": 8240,
+      "sha256": "877120b94f302ded76d13cffd050452bf95d9ca597ac8e8438ac75c67203e4bc"
+    },
+    "lora/manifest.json": {
+      "bytes": 1218,
+      "sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c"
+    },
+    "lora_messages.elf": {
+      "bytes": 124724,
+      "sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5"
+    },
+    "lora_messages.json": {
+      "bytes": 1110,
+      "sha256": "e791535ec2ceecac46e26b86b66cc375126ecea8263e5c1d609f7af4d402034a"
+    },
+    "mic/driver.elf": {
+      "bytes": 2956,
+      "sha256": "bacc1daeb9e9be64e1e5527939fb045e7458563fb415481951d72411c9d1bcfe"
+    },
+    "mic/manifest.json": {
+      "bytes": 673,
+      "sha256": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875"
+    },
+    "model_viewer.elf": {
+      "bytes": 43300,
+      "sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050"
+    },
+    "model_viewer.json": {
+      "bytes": 576,
+      "sha256": "d40502bf1f77cb5234a35f973cb23ab7556fa528c40ed3e4fe52ed716d619bbb"
+    },
+    "ota_update.elf": {
+      "bytes": 115748,
+      "sha256": "73c4989e43d2a66d7b7595672ce903ce11f43c454fa4cdf97486e99c52e49919"
+    },
+    "ota_update.json": {
+      "bytes": 1053,
+      "sha256": "33b106c4857a168c0c1d2f299d296b0bb4fa7533dae6b3f69edf7b7af7a1e321"
+    },
+    "panel/driver.elf": {
+      "bytes": 7768,
+      "sha256": "1a927a37f91000317519790474920d5467f7ed4a86fbecad03ed1a3524a098cd"
+    },
+    "panel/manifest.json": {
+      "bytes": 876,
+      "sha256": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75"
+    },
+    "pmu/driver.elf": {
+      "bytes": 6364,
+      "sha256": "26e695eade9d0d3164f308fdef6d74921066c679c047b6f7b97cf5d2b4c61616"
+    },
+    "pmu/manifest.json": {
+      "bytes": 805,
+      "sha256": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e"
+    },
+    "points_in_time.elf": {
+      "bytes": 155064,
+      "sha256": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5"
+    },
+    "points_in_time.json": {
+      "bytes": 1050,
+      "sha256": "10e24f699debce227a87b346ce2947e849aa5e41bfea72610d96ec6c4bae93f8"
+    },
+    "rtc/driver.elf": {
+      "bytes": 4236,
+      "sha256": "c39b7f6fb6ca4bbc403ea556ea3ebd0d649abb717a0f9692d1094f43f991705a"
+    },
+    "rtc/manifest.json": {
+      "bytes": 731,
+      "sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e"
+    },
+    "s3-radio-iq/driver.elf": {
+      "bytes": 12772,
+      "sha256": "e42951a6122ee5e43e7167ebdd0066febeb590a40229c269687706223e54a44e"
+    },
+    "s3-radio-iq/manifest.json": {
+      "bytes": 373,
+      "sha256": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77"
+    },
+    "settings.elf": {
+      "bytes": 132140,
+      "sha256": "66221cdc7c54cf0cc5a010e35fafde320b7697ec54cadf7c618eb2975b53ded8"
+    },
+    "settings.json": {
+      "bytes": 973,
+      "sha256": "8735fc46f447da7ea48278c9078a0123b20f8d3a38d3cc6a5e6af7d11c2d012c"
+    },
+    "sharing-ble/driver.elf": {
+      "bytes": 140516,
+      "sha256": "3ad68e94751f049a4da43461368a5b3aec3557028009e390dfadb01bf57ac378"
+    },
+    "sharing-ble/manifest.json": {
+      "bytes": 482,
+      "sha256": "c82509361f8a24e4e0f3ac9cddd6e380e19775b4e222e3e6b9e3308ef147a537"
+    },
+    "sharing-entropy/driver.elf": {
+      "bytes": 2816,
+      "sha256": "8ba3adbc17a8cb2a6ed3977119d39f8adc8d435cc4735f77fad32d5a2acd9c84"
+    },
+    "sharing-entropy/manifest.json": {
+      "bytes": 411,
+      "sha256": "614db32f01de81e36a9c45aab03cd356ba8ba888b273e7b31f92f68efcbf7ece"
+    },
+    "sharing-tcp/driver.elf": {
+      "bytes": 5752,
+      "sha256": "5e7e9ff32b1804a14427280abe27277dc7ebbb0c692dae87798e57b5f6859efc"
+    },
+    "sharing-tcp/manifest.json": {
+      "bytes": 439,
+      "sha256": "ae19d6877303dfb714bab6c8df4edb85bfc5f76d2e954ded6819402ca6610c2a"
+    },
+    "speaker/driver.elf": {
+      "bytes": 3572,
+      "sha256": "a8ed14e1af402943136bd92d9b585e6413f1d8f79e979b5c9f9d01de6fba3fd1"
+    },
+    "speaker/manifest.json": {
+      "bytes": 689,
+      "sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0"
+    },
+    "springboard.elf": {
+      "bytes": 138616,
+      "sha256": "1ddb0613f6b98623ac4b18a720581dc7f0319c6fe94f169538a2e8d9ee97483d"
+    },
+    "springboard.json": {
+      "bytes": 979,
+      "sha256": "60c77d7467e33616f16e408b48720c245cab42090de8f3b7c3a77752fad11b32"
+    },
+    "stopwatch.elf": {
+      "bytes": 115756,
+      "sha256": "e3c729575a527be64cc3a905a8a699312a461392e0c02fd759b86adfbb6dfb0a"
+    },
+    "stopwatch.json": {
+      "bytes": 975,
+      "sha256": "f3c41941b160d62672bde6f86701a442b6a4b64d8aa4757f2da566cb61e94d70"
+    },
+    "text-input/driver.elf": {
+      "bytes": 11980,
+      "sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35"
+    },
+    "text-input/manifest.json": {
+      "bytes": 321,
+      "sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1"
+    },
+    "timecard.elf": {
+      "bytes": 146272,
+      "sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03"
+    },
+    "timecard.json": {
+      "bytes": 1106,
+      "sha256": "b1c4b271c7523de85c875053906e85ae8e90364141ce275c361118d8022fcea3"
+    },
+    "touch/driver.elf": {
+      "bytes": 9828,
+      "sha256": "6fdd785ef67bb5cf923918fa6fe8caab2b02d580e71169e167d1693a468658b2"
+    },
+    "touch/manifest.json": {
+      "bytes": 871,
+      "sha256": "80c6926125db8f40793e1b40bc015ec724f7f189260ce17eab8938591a6db5de"
+    },
+    "ui-profile/driver.elf": {
+      "bytes": 1788,
+      "sha256": "8df161bca238bf03b7533cfb02317d0a574def0b096d568f455e8061caa4ebb4"
+    },
+    "ui-profile/manifest.json": {
+      "bytes": 281,
+      "sha256": "6f3f1205b23e745ed7011bf0b9e99f5eccc1a247512639bc21c8c5a0fd642884"
+    },
+    "ui-scene/driver.elf": {
+      "bytes": 159504,
+      "sha256": "feb5eff6e568ec18b2570a0ea67f05cb0d786ac8a874358b060b9e5d7a01be38"
+    },
+    "ui-scene/manifest.json": {
+      "bytes": 525,
+      "sha256": "2bf411091aa0175206a080abc204fed82cb5ef283941cb4161f90febdfe8aab4"
+    },
+    "update-apps/driver.elf": {
+      "bytes": 18072,
+      "sha256": "46a656b3e1b3fe3ddb295e2b9edcabaa22ad8f4c582b702d00866ca0af83420c"
+    },
+    "update-apps/manifest.json": {
+      "bytes": 552,
+      "sha256": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5"
+    },
+    "update-fw/driver.elf": {
+      "bytes": 22208,
+      "sha256": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3"
+    },
+    "update-fw/manifest.json": {
+      "bytes": 560,
+      "sha256": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7"
+    },
+    "waterfall.elf": {
+      "bytes": 243352,
+      "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05"
+    },
+    "waterfall.json": {
+      "bytes": 1236,
+      "sha256": "fe7a8b1d489527bf79623afeed14c403342c53f2cf1f1af9f8a102aeff857fe2"
+    },
+    "wifi/driver.elf": {
+      "bytes": 4928,
+      "sha256": "e071dab745633ad812c828590463cc7d2fc33f0ca35d06185d119c2908bfb40c"
+    },
+    "wifi/manifest.json": {
+      "bytes": 703,
+      "sha256": "5a788cd30e8f75f38559668b0d7fd09f2b9f8e7026c28091d835d6d2c57a2716"
+    },
+    "wifi_settings.elf": {
+      "bytes": 186104,
+      "sha256": "e39c23a8c287fa61eecedef89fea40d85e1b99fbef302c0ad3f2b71d3ef5a4fb"
+    },
+    "wifi_settings.json": {
+      "bytes": 1048,
+      "sha256": "5c85f03e837cbf64859e09769fe9f7645ea037c1fff3b428677d9a9fd48b3790"
+    }
+  },
+  "store_inventory_after": {
+    "alarm-service/driver.elf": {
+      "bytes": 22144,
+      "sha256": "e2f761dc24a1c095ce15212a650b3c09fd11855560923af1cc5df193e24774c4"
+    },
+    "alarm-service/manifest.json": {
+      "bytes": 689,
+      "sha256": "e20df0376ff465585da9519d1a21daa4e44c134b7f8f73d5b7c08e2d03d732cf"
+    },
+    "alarms.elf": {
+      "bytes": 118580,
+      "sha256": "8a4b0487652642f33f8979e714c7b52829edc8649c263e2ebd31e698815e6cc3"
+    },
+    "alarms.json": {
+      "bytes": 969,
+      "sha256": "079a1ef865d79d3bce28007494a5e25f3a74b29632649841025247d10aa17be6"
+    },
+    "app_store.elf": {
+      "bytes": 115748,
+      "sha256": "98dbf0078a3288e66b5517b99b38709b4e5739f041cbeaf0ea87a1d0e9941c4f"
+    },
+    "app_store.json": {
+      "bytes": 1047,
+      "sha256": "02030af2d3d290fd56f83bbb56af7f2c5dc85d618e6fdc06486f7ef7f4c48e3a"
+    },
+    "audio_spectrum.elf": {
+      "bytes": 231204,
+      "sha256": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a"
+    },
+    "audio_spectrum.json": {
+      "bytes": 1249,
+      "sha256": "4d6d837a21bdbe2e5d15657fc36c4c3b05c50e0f245a40b77fec6f987cac96b4"
+    },
+    "battery-telem/driver.elf": {
+      "bytes": 3048,
+      "sha256": "f0cab9a3eb32c9f0f351cc4f52ee5a4e9830d7ad26c012fa5c248fd791ac06da"
+    },
+    "battery-telem/manifest.json": {
+      "bytes": 409,
+      "sha256": "1f96c3af1e949bf6aff5e554f7a362b02467289f2984338aa7414605a5131335"
+    },
+    "battery.elf": {
+      "bytes": 116004,
+      "sha256": "5ac9fc4aff75b5d8431a4f312863c18a75de0236c783a208b08c663ebbf9173c"
+    },
+    "battery.json": {
+      "bytes": 971,
+      "sha256": "d35fe2b8999f369067c76db9931d1d980e633d31f5c776352289e6d1ec443999"
+    },
+    "ble-hid/driver.elf": {
+      "bytes": 125480,
+      "sha256": "6290d9cdfae051b9f2f2c83060f1c4000a62f727d47b680c67cd77b0d9e0c555"
+    },
+    "ble-hid/manifest.json": {
+      "bytes": 537,
+      "sha256": "bf2f68ebfb13aba3d48050813453872885286ef5f0fe73c3fd3cb6faaabd3b49"
+    },
+    "ble-sensors/driver.elf": {
+      "bytes": 9820,
+      "sha256": "cf34fa23f8a6086c7dbeb022a5ddc252088207eb0773251d183873bf1737d998"
+    },
+    "ble-sensors/manifest.json": {
+      "bytes": 470,
+      "sha256": "e1cbdd0a2490a88cd8984404e37b6ef059403d31f87f47be9c7756fb0133b0b5"
+    },
+    "ble-telemetry/driver.elf": {
+      "bytes": 9824,
+      "sha256": "86e36ad3ec31ba1e4f639c1110cecfdd07e9bfc7695dcceba42672303f01f4a2"
+    },
+    "ble-telemetry/manifest.json": {
+      "bytes": 542,
+      "sha256": "3a9658800cfdbd7d1111020b198e212d98793f6fb949aafaf45943bd263ca973"
+    },
+    "ble/driver.elf": {
+      "bytes": 3792,
+      "sha256": "80253ef0e3cbd39df67d4b5e66d53762702383ec77f193b0d041fdb47baf9007"
+    },
+    "ble/manifest.json": {
+      "bytes": 703,
+      "sha256": "461396b7d9521c773f58ee3cbe45a5614d8ad5b9595d263773ee5ccd791c529c"
+    },
+    "ble_buttons.elf": {
+      "bytes": 121384,
+      "sha256": "d661beb925257bfa1e39a77a1026fc49ce66d1907ed53bded8e5fbec83f3b2e9"
+    },
+    "ble_buttons.json": {
+      "bytes": 973,
+      "sha256": "2a3e1854f76bbec6151e0c23db2b093ce7a0cf34391ba41866f97ab2d31f1e90"
+    },
+    "ble_scanner.elf": {
+      "bytes": 146972,
+      "sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57"
+    },
+    "ble_scanner.json": {
+      "bytes": 1113,
+      "sha256": "8a9f3fe02b17a6b0c8b9d790d466077a63da20c406f2f1e8bb28a072a5c71f9b"
+    },
+    "ble_touchpad.elf": {
+      "bytes": 121124,
+      "sha256": "d0f9545d7b439ea174f45b8eabf234920b96b966cd8a460bcd942d95f0209630"
+    },
+    "ble_touchpad.json": {
+      "bytes": 975,
+      "sha256": "c0d74878959c6956b729846f2bca10ea0f8668453d30d99cfb1256bffddbdaaa"
+    },
+    "board.json": {
+      "bytes": 8688,
+      "sha256": "6a076527a9f4a0dce1190b20ac57d8a2685d2e1a51d6d9266db77313c07b8157"
+    },
+    "boot.json": {
+      "bytes": 27195,
+      "sha256": "b32ac9b2b2f723fa3ad888191fb3ea30f53936597dbb1f8820ef2809386a5038"
+    },
+    "broadcast/driver.elf": {
+      "bytes": 5308,
+      "sha256": "b2b8f55baa39a798873daff31b4878f64e91adf444e81b243d1c84080e5fd35a"
+    },
+    "broadcast/manifest.json": {
+      "bytes": 533,
+      "sha256": "8543494796b356f3159324175d80a02f5f2678952e7436663e324ebc6f858154"
+    },
+    "calculator.elf": {
+      "bytes": 115864,
+      "sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df"
+    },
+    "calculator.json": {
+      "bytes": 977,
+      "sha256": "947b8fd0b20efd23ee56ebd220b561b1e00102512a2ad8175019a659b7499e9b"
+    },
+    "civil-clock/driver.elf": {
+      "bytes": 31656,
+      "sha256": "e9158f0572d1d1402cee42ae5f4c43b9c7c009531f97b0a1be84d1376ef35862"
+    },
+    "civil-clock/manifest.json": {
+      "bytes": 321,
+      "sha256": "683f4f52646cf72471c17824e22d5b3940223ea4380a9707b948e5d772d431c4"
+    },
+    "clock.elf": {
+      "bytes": 1232,
+      "sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1"
+    },
+    "clock.json": {
+      "bytes": 187,
+      "sha256": "cd01cc5bfc38ae45ba004789c4ebf86f5b0a706b87c27983553a6b6ee3f0d89c"
+    },
+    "cohort.json": {
+      "bytes": 437,
+      "sha256": "5490bb2697e43a8b2d769587e400e1e144c4e14d529b7a77a3d19b0856dc2caf"
+    },
+    "contexts.elf": {
+      "bytes": 63444,
+      "sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac"
+    },
+    "contexts.json": {
+      "bytes": 820,
+      "sha256": "9c5458f826a61c927e445d0a084c0e4691054fe760ce38a8d38423f9ff5366d6"
+    },
+    "contexts/driver.elf": {
+      "bytes": 83764,
+      "sha256": "bce4f7f82480765595758c8f5c63436d0f5b39473ebac3c033bb9e8cd7bc896c"
+    },
+    "contexts/manifest.json": {
+      "bytes": 668,
+      "sha256": "05e645ddbfd62a9cc0f37d23ff2a3331bdd124c7c39d3d17260b1c4f7d2f9a79"
+    },
+    "countdown.elf": {
+      "bytes": 114600,
+      "sha256": "335431931522c5ea40658404c1c3ae80f9614ac2a43dcc566eb14a2f0600dc73"
+    },
+    "countdown.json": {
+      "bytes": 975,
+      "sha256": "c1bd3dfa01e263b178841760462141c7e2324433606b9b0ca5df21d8e8d50f73"
+    },
+    "default.elf": {
+      "bytes": 862880,
+      "sha256": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875"
+    },
+    "default.json": {
+      "bytes": 1203,
+      "sha256": "e270a5229ed4a661d0d8a399ee7df126a144b6bf68e65cadcd46ed0c1e83aa6b"
+    },
+    "file_browser.elf": {
+      "bytes": 289312,
+      "sha256": "2265a75e0f1226f9b885207dfd176d335593703aa5721f1581dee08dfa87c583"
+    },
+    "file_browser.json": {
+      "bytes": 1538,
+      "sha256": "02aaa7bb7d8cdf24a534acda8993aa2b2156182bdc6acf626c6820e6758f8d64"
+    },
+    "frequency_generator.elf": {
+      "bytes": 107524,
+      "sha256": "b0d6b3a83280b694a1987f815df962c4e358c9b9ece41ff5ce858c4c8df15b20"
+    },
+    "frequency_generator.json": {
+      "bytes": 1059,
+      "sha256": "f745e383e2491202eb18506fc8704c1f14993b73fc0c757c3757c0963b7039ba"
+    },
+    "gpio/driver.elf": {
+      "bytes": 3980,
+      "sha256": "a2b4b27df7e4893267cbbc69197fc1c0e6ad54ef7b059a12b3117485907bfa78"
+    },
+    "gpio/manifest.json": {
+      "bytes": 689,
+      "sha256": "74e6e1d09fb58376ab49ebbccea7015aaa72d80a28b4d386989433274a759ea8"
+    },
+    "haptic/driver.elf": {
+      "bytes": 3164,
+      "sha256": "61e31dffb174c950f936f9bef917705b13b31e010ab4a380a5d4c5c4aff9786d"
+    },
+    "haptic/manifest.json": {
+      "bytes": 738,
+      "sha256": "8102705a3250d57be535f88534cf1f6d0abb7dc61f104f91cda735ea80fa64c1"
+    },
+    "i2c/driver.elf": {
+      "bytes": 3428,
+      "sha256": "9ae372bab72c4f49b791bc3eb6724a725c3598cda373e005f1af058254a61ada"
+    },
+    "i2c/manifest.json": {
+      "bytes": 694,
+      "sha256": "79962342b52365e83925b79bd9291712a9d9a5d0c9fb29d764abf8989efae91b"
+    },
+    "imu/driver.elf": {
+      "bytes": 35036,
+      "sha256": "de08cd62fae7a5094e03aa6b84cf51e2dc216c55ee5ac1fc41228acd6e07f67a"
+    },
+    "imu/manifest.json": {
+      "bytes": 801,
+      "sha256": "42194d03caca677e00ecd466b5de8628ba3379bebca470c2af6a0557f3362ffd"
+    },
+    "lists.elf": {
+      "bytes": 26584,
+      "sha256": "31be400bcf3dfa6b4c27501c2938316375f3c2b82fdadddbecd426d1f7f049b6"
+    },
+    "lists.json": {
+      "bytes": 480,
+      "sha256": "5eb03ec6147ab4bed28fd9142008fbcf08c5706c38b23b7cb32fa82cb9c92b35"
+    },
+    "lora/driver.elf": {
+      "bytes": 8240,
+      "sha256": "877120b94f302ded76d13cffd050452bf95d9ca597ac8e8438ac75c67203e4bc"
+    },
+    "lora/manifest.json": {
+      "bytes": 1218,
+      "sha256": "150f4cac94876552dc2bd1b6091f7b2239ad870f4f3c38c973ce33b3a3ca2a4c"
+    },
+    "lora_messages.elf": {
+      "bytes": 124724,
+      "sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5"
+    },
+    "lora_messages.json": {
+      "bytes": 1110,
+      "sha256": "e791535ec2ceecac46e26b86b66cc375126ecea8263e5c1d609f7af4d402034a"
+    },
+    "mic/driver.elf": {
+      "bytes": 2956,
+      "sha256": "bacc1daeb9e9be64e1e5527939fb045e7458563fb415481951d72411c9d1bcfe"
+    },
+    "mic/manifest.json": {
+      "bytes": 673,
+      "sha256": "7570fc395657102f2fa517ee95e818b652bec1db1ba52002a1da70ea582da875"
+    },
+    "model_viewer.elf": {
+      "bytes": 43300,
+      "sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050"
+    },
+    "model_viewer.json": {
+      "bytes": 576,
+      "sha256": "d40502bf1f77cb5234a35f973cb23ab7556fa528c40ed3e4fe52ed716d619bbb"
+    },
+    "ota_update.elf": {
+      "bytes": 115748,
+      "sha256": "73c4989e43d2a66d7b7595672ce903ce11f43c454fa4cdf97486e99c52e49919"
+    },
+    "ota_update.json": {
+      "bytes": 1053,
+      "sha256": "33b106c4857a168c0c1d2f299d296b0bb4fa7533dae6b3f69edf7b7af7a1e321"
+    },
+    "panel/driver.elf": {
+      "bytes": 7768,
+      "sha256": "1a927a37f91000317519790474920d5467f7ed4a86fbecad03ed1a3524a098cd"
+    },
+    "panel/manifest.json": {
+      "bytes": 876,
+      "sha256": "134f31e4bb4c942575cb6eb30402d7e0c9c30bc4cf3b3ca2206b4ad37d58ff75"
+    },
+    "pmu/driver.elf": {
+      "bytes": 6364,
+      "sha256": "26e695eade9d0d3164f308fdef6d74921066c679c047b6f7b97cf5d2b4c61616"
+    },
+    "pmu/manifest.json": {
+      "bytes": 805,
+      "sha256": "ca1a5e1785ea55ba940265e2b9efef373a38a80a6967e14f9fd94376fb6f6e7e"
+    },
+    "points_in_time.elf": {
+      "bytes": 155064,
+      "sha256": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5"
+    },
+    "points_in_time.json": {
+      "bytes": 1050,
+      "sha256": "10e24f699debce227a87b346ce2947e849aa5e41bfea72610d96ec6c4bae93f8"
+    },
+    "rtc/driver.elf": {
+      "bytes": 4236,
+      "sha256": "c39b7f6fb6ca4bbc403ea556ea3ebd0d649abb717a0f9692d1094f43f991705a"
+    },
+    "rtc/manifest.json": {
+      "bytes": 731,
+      "sha256": "bad28495ea921e9fb8d14204ef3ad81022cf8c4c64cbe8ea88509d02ff16e78e"
+    },
+    "s3-radio-iq/driver.elf": {
+      "bytes": 12772,
+      "sha256": "e42951a6122ee5e43e7167ebdd0066febeb590a40229c269687706223e54a44e"
+    },
+    "s3-radio-iq/manifest.json": {
+      "bytes": 373,
+      "sha256": "373677d2e548ec5b32a0cb5d9b01021cbe199f0a9a421707fdae4f6acd44fe77"
+    },
+    "settings.elf": {
+      "bytes": 132140,
+      "sha256": "66221cdc7c54cf0cc5a010e35fafde320b7697ec54cadf7c618eb2975b53ded8"
+    },
+    "settings.json": {
+      "bytes": 973,
+      "sha256": "8735fc46f447da7ea48278c9078a0123b20f8d3a38d3cc6a5e6af7d11c2d012c"
+    },
+    "sharing-ble/driver.elf": {
+      "bytes": 140516,
+      "sha256": "3ad68e94751f049a4da43461368a5b3aec3557028009e390dfadb01bf57ac378"
+    },
+    "sharing-ble/manifest.json": {
+      "bytes": 482,
+      "sha256": "c82509361f8a24e4e0f3ac9cddd6e380e19775b4e222e3e6b9e3308ef147a537"
+    },
+    "sharing-entropy/driver.elf": {
+      "bytes": 2816,
+      "sha256": "8ba3adbc17a8cb2a6ed3977119d39f8adc8d435cc4735f77fad32d5a2acd9c84"
+    },
+    "sharing-entropy/manifest.json": {
+      "bytes": 411,
+      "sha256": "614db32f01de81e36a9c45aab03cd356ba8ba888b273e7b31f92f68efcbf7ece"
+    },
+    "sharing-tcp/driver.elf": {
+      "bytes": 5752,
+      "sha256": "5e7e9ff32b1804a14427280abe27277dc7ebbb0c692dae87798e57b5f6859efc"
+    },
+    "sharing-tcp/manifest.json": {
+      "bytes": 439,
+      "sha256": "ae19d6877303dfb714bab6c8df4edb85bfc5f76d2e954ded6819402ca6610c2a"
+    },
+    "speaker/driver.elf": {
+      "bytes": 3572,
+      "sha256": "a8ed14e1af402943136bd92d9b585e6413f1d8f79e979b5c9f9d01de6fba3fd1"
+    },
+    "speaker/manifest.json": {
+      "bytes": 689,
+      "sha256": "006da389776564f0ca4b391c8b6cd89d23ba8a0e5f4518f9cf45e08ac39c17f0"
+    },
+    "springboard.elf": {
+      "bytes": 138616,
+      "sha256": "1ddb0613f6b98623ac4b18a720581dc7f0319c6fe94f169538a2e8d9ee97483d"
+    },
+    "springboard.json": {
+      "bytes": 979,
+      "sha256": "60c77d7467e33616f16e408b48720c245cab42090de8f3b7c3a77752fad11b32"
+    },
+    "stopwatch.elf": {
+      "bytes": 115756,
+      "sha256": "e3c729575a527be64cc3a905a8a699312a461392e0c02fd759b86adfbb6dfb0a"
+    },
+    "stopwatch.json": {
+      "bytes": 975,
+      "sha256": "f3c41941b160d62672bde6f86701a442b6a4b64d8aa4757f2da566cb61e94d70"
+    },
+    "text-input/driver.elf": {
+      "bytes": 11980,
+      "sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35"
+    },
+    "text-input/manifest.json": {
+      "bytes": 321,
+      "sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1"
+    },
+    "timecard.elf": {
+      "bytes": 146272,
+      "sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03"
+    },
+    "timecard.json": {
+      "bytes": 1106,
+      "sha256": "b1c4b271c7523de85c875053906e85ae8e90364141ce275c361118d8022fcea3"
+    },
+    "touch/driver.elf": {
+      "bytes": 9828,
+      "sha256": "6fdd785ef67bb5cf923918fa6fe8caab2b02d580e71169e167d1693a468658b2"
+    },
+    "touch/manifest.json": {
+      "bytes": 871,
+      "sha256": "80c6926125db8f40793e1b40bc015ec724f7f189260ce17eab8938591a6db5de"
+    },
+    "ui-profile/driver.elf": {
+      "bytes": 1788,
+      "sha256": "8df161bca238bf03b7533cfb02317d0a574def0b096d568f455e8061caa4ebb4"
+    },
+    "ui-profile/manifest.json": {
+      "bytes": 281,
+      "sha256": "6f3f1205b23e745ed7011bf0b9e99f5eccc1a247512639bc21c8c5a0fd642884"
+    },
+    "ui-scene/driver.elf": {
+      "bytes": 159504,
+      "sha256": "feb5eff6e568ec18b2570a0ea67f05cb0d786ac8a874358b060b9e5d7a01be38"
+    },
+    "ui-scene/manifest.json": {
+      "bytes": 525,
+      "sha256": "2bf411091aa0175206a080abc204fed82cb5ef283941cb4161f90febdfe8aab4"
+    },
+    "update-apps/driver.elf": {
+      "bytes": 18072,
+      "sha256": "46a656b3e1b3fe3ddb295e2b9edcabaa22ad8f4c582b702d00866ca0af83420c"
+    },
+    "update-apps/manifest.json": {
+      "bytes": 552,
+      "sha256": "f383c3a8a9393ec45451bfb3948183edda588ce46e7966e86f36c9cefd8501d5"
+    },
+    "update-fw/driver.elf": {
+      "bytes": 22208,
+      "sha256": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3"
+    },
+    "update-fw/manifest.json": {
+      "bytes": 560,
+      "sha256": "89cba210fd031f36fa0b8b318fc4eba7e5f996ddf19451b0f19dcc37d4367ed7"
+    },
+    "waterfall.elf": {
+      "bytes": 243352,
+      "sha256": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05"
+    },
+    "waterfall.json": {
+      "bytes": 1236,
+      "sha256": "fe7a8b1d489527bf79623afeed14c403342c53f2cf1f1af9f8a102aeff857fe2"
+    },
+    "wifi/driver.elf": {
+      "bytes": 4928,
+      "sha256": "e071dab745633ad812c828590463cc7d2fc33f0ca35d06185d119c2908bfb40c"
+    },
+    "wifi/manifest.json": {
+      "bytes": 703,
+      "sha256": "5a788cd30e8f75f38559668b0d7fd09f2b9f8e7026c28091d835d6d2c57a2716"
+    },
+    "wifi_settings.elf": {
+      "bytes": 186104,
+      "sha256": "e39c23a8c287fa61eecedef89fea40d85e1b99fbef302c0ad3f2b71d3ef5a4fb"
+    },
+    "wifi_settings.json": {
+      "bytes": 1048,
+      "sha256": "5c85f03e837cbf64859e09769fe9f7645ea037c1fff3b428677d9a9fd48b3790"
+    }
+  },
+  "changed_store_paths": [
+    "cohort.json",
+    "contexts.elf",
+    "contexts.json"
+  ],
+  "all_other_store_bytes_identical": true,
+  "sd_inventory_before": {},
+  "sd_inventory_after": {},
+  "all_existing_sd_bytes_identical": true,
+  "added_sd_paths": [],
+  "manifest_only_version_changed": true,
+  "capabilities_and_grants_identical": true,
+  "boot_byte_identical": true,
+  "boot_only_contexts_image_selection_changed": false,
+  "native_components_unchanged": true,
+  "all_inherited_host_and_font_bytes_identical": true,
+  "native_resident_owner": "Watch has no native resident shell; Clock unchanged"
+}

@@ -1,0 +1,5898 @@
+{
+  "physical_testing": "not performed",
+  "scenarios": [
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-old-host",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-token",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-acquire-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-revision",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-state",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-unterminated",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-control",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-close-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-close-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-release-fail",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-release-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-resume-fault",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-acquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-open",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-attention",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-presenting",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-input-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-inhibit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-paused",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-again",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-activity-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-touch-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-denied",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-config",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-redraw",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-paused-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-layer",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-caps",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-held-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-fingerprint-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-rules-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-no-marker",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-unknown-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-sleep-admission",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-continuity-violation",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-retry",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-reopen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-prior-edit-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-learn-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-old-host",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-token",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-acquire-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-revision",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-state",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-unterminated",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-control",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-close-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-close-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-release-fail",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-release-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-resume-fault",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-acquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-open",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-attention",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-presenting",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-input-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-inhibit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-paused",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-again",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-activity-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-touch-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-denied",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-config",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-redraw",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-paused-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-layer",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-caps",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-held-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-fingerprint-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-rules-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-no-marker",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-unknown-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-sleep-admission",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-continuity-violation",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-retry",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-reopen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-prior-edit-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-learn-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "normal",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "legacy",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-old-host",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-open-token",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-acquire-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-revision",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-state",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-unterminated",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-poll-control",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-close-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-close-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-release-fail",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-release-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-resume-fault",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-acquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-open",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-attention",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-presenting",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-input-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-inhibit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-paused",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-again",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-activity-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-touch-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-denied",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-config",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-redraw",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-paused-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-layer",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-caps",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-held-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-fingerprint-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-rules-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-no-marker",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-unknown-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-sleep-admission",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-continuity-violation",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-1-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-retry",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-reopen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-prior-edit-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-0-learn-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-2-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-3-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "watch",
+      "implementation": "shared",
+      "case": "text-4-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "legacy",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "normal",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "storage",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "event-no-input",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "save-failure",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-keyboard",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-learning",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "exit-saving",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-done",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-header-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-header-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-native-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-limit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-empty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-delayed",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-frozen-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-hardware",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-old-host",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-open-token",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-acquire-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-revision",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-state",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-unterminated",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-poll-control",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-close-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-close-error",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-release-fail",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-release-dirty",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-resume-fault",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-acquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-open",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-attention",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-close",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-post-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-presenting",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-input-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-inhibit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-missing",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-unavailable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-enable-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-snapshot-paused",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-pause-again",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-activity-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-touch-race",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-invalid",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-busy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-denied",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-config",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-redraw",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-paused-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-resume-touch",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-home",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-policy-nav-back",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-policy",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-enable",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-snapshot",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-exit",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-poll-size",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-poll",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-layer",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-caps",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-held-usb",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-fingerprint-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-backend-rules-retained",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-no-marker",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-unknown-poll-flags",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-sleep-admission",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-checkpoint-continuity-violation",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-loss-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-pause",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-release",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-home-checkpoint-backend-reacquire",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-1-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-checkpoint-idle",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-home-checkpoint-resume",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-retry",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-reopen",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-prior-edit-cancel",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-0-learn-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-2-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-3-explicit-save",
+      "result": "PASS"
+    },
+    {
+      "flavor": "sanitized",
+      "profile": "paper",
+      "implementation": "shared",
+      "case": "text-4-explicit-save",
+      "result": "PASS"
+    }
+  ],
+  "parity": {
+    "normal/watch": {
+      "matched": [
+        "watch-new-event.ppm",
+        "watch-retained.ctx",
+        "watch-exit-home.ctx",
+        "watch-intro.ppm",
+        "watch-workflow.ppm",
+        "watch-exit-busy.ctx",
+        "watch-triggers.ppm",
+        "watch-learned.ppm",
+        "watch-home.ppm",
+        "watch-event-no-input.ctx",
+        "watch-add-step.ppm",
+        "watch-saving.ppm",
+        "watch-place-details.ppm",
+        "watch-finishing.ppm",
+        "watch-event-learning.ppm",
+        "watch-delayed.ctx",
+        "watch-rule.ppm",
+        "watch-storage.ctx",
+        "watch-event-intro.ppm",
+        "watch-exit-learning.ctx",
+        "watch-save-failed.ppm",
+        "watch-normal.ctx",
+        "watch-contexts.ppm",
+        "watch-learning.ppm",
+        "watch-exit-saving.ctx",
+        "watch-settings.ppm",
+        "watch-battery.ppm",
+        "watch-capture-failed.ppm",
+        "watch-events.ppm",
+        "watch-places.ppm",
+        "watch-save-failure.ctx",
+        "watch-unavailable.ppm",
+        "watch-delete.ppm",
+        "watch-exit-keyboard.ctx",
+        "watch-discard.ppm",
+        "watch-no-input.ctx",
+        "watch-timer.ppm",
+        "watch-auto-on.ppm"
+      ],
+      "sha256": {
+        "watch-new-event.ppm": "b00bda31ada59ee644ecaf16be3347ac401e57593f0d5096702825ce7fbccb38",
+        "watch-retained.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-exit-home.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-intro.ppm": "a93c12e6225b48dd765d169cf6cc8cdffaeab747d9d63992903a63d44596b22a",
+        "watch-workflow.ppm": "9d32bb0a027da3402b69da30120d935033b32521d63bbe5dbe6b12b2e0bfc3ed",
+        "watch-exit-busy.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-triggers.ppm": "f6c6668a0d50e3cab5b00156e0a5a30563ffbcba273d9de46d226014938bb10b",
+        "watch-learned.ppm": "d5bd28b4223ad70c3abfd5e34e00b0dc65908db5dc4ffb53ec6f35027187a0e8",
+        "watch-home.ppm": "8fd69d24f0fd58e9a9b999b4329d7048564a473f1583edd44bb28d08d116605e",
+        "watch-event-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-add-step.ppm": "1516e5d553165d7c2d7a9e6d874271b200a6bff7579990cfcc9e4ae0a46ab401",
+        "watch-saving.ppm": "4d76ca9fff1b005007f3938406a55edd831a304346798297b7b93b38ecbaea7a",
+        "watch-place-details.ppm": "ab2d06df074a4817ffdd2764e3b02636f2304cd7eb68af958dfd90df0f8870e1",
+        "watch-finishing.ppm": "d551204a6bbb953be56e0d7ec47c462fbb7536dafedcd805e9da027dbe2bbafa",
+        "watch-event-learning.ppm": "f36a36835510a4b33ed8e90930948e455117f988c8eb7b67c647910dd69b663c",
+        "watch-delayed.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-rule.ppm": "92897955bd4d2518511626b2ef3175585dc65e3be04d2917a9870819a31fe1f4",
+        "watch-storage.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-event-intro.ppm": "40cf6dc79633f882f631b93cedd4a1cd4278681968a18346fef20b79d9eae380",
+        "watch-exit-learning.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-save-failed.ppm": "7bb10f650af4351e4eeb9a973002f8d5b1fd2c3e819d75a75649d5d30f039150",
+        "watch-normal.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-contexts.ppm": "97ad7f2e3c575f468fe35e0c5368b47c64297474d54c1de562333046ad6fc5d4",
+        "watch-learning.ppm": "22787a1144a1d8cbb6354c5c8a769ff2867e977bf21a5f1089dfeaa11869d00a",
+        "watch-exit-saving.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-settings.ppm": "7b4dd310cd7edfc37035fa2000c05e54cc95d6622058af2ca33e639c0cabb9cd",
+        "watch-battery.ppm": "248c105775fe2dc4a45fe696b30e583be624884042a774b3ab01c9cf4190e01a",
+        "watch-capture-failed.ppm": "3def32a0e5387425155f329351e8842417505c556c7f32986059f6340324ed60",
+        "watch-events.ppm": "871c0a3439c39fea994fae4a81c55445efdf4df46d319263c98e9b430aa58c46",
+        "watch-places.ppm": "9031259b1f1201bbefa36f5aefb03b9590a41dab08ecf4c8c583459ab7402618",
+        "watch-save-failure.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-unavailable.ppm": "8fd69d24f0fd58e9a9b999b4329d7048564a473f1583edd44bb28d08d116605e",
+        "watch-delete.ppm": "59ef66e746ca7c353347d52c789ec27d3fc6b3cbd91ebbe0657f2f9887a7f049",
+        "watch-exit-keyboard.ctx": "7a8e94ddbc0cba011d2dad9530d77e3a30e0d6b910bb4a121f616ec83365c171",
+        "watch-discard.ppm": "d446e65386f5583b9546a6383f8ddd64d8d4f0263d88545ad29dbcee3d364608",
+        "watch-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-timer.ppm": "7e7a4ecde939268ccb1ed18634efda0fff4c8899925ac4b488d9e5f2264d71ce",
+        "watch-auto-on.ppm": "340be472b801a0cf6c10787cc9c182fa1763402e0bd13fa0e23c83e470beec01"
+      }
+    },
+    "normal/paper": {
+      "matched": [
+        "paper-exit-busy.ctx",
+        "paper-event-no-input.ctx",
+        "paper-events.ppm",
+        "paper-saving.ppm",
+        "paper-storage.ctx",
+        "paper-timer.ppm",
+        "paper-exit-home.ctx",
+        "paper-battery.ppm",
+        "paper-learning.ppm",
+        "paper-settings.ppm",
+        "paper-retained.ctx",
+        "paper-triggers.ppm",
+        "paper-place-details.ppm",
+        "paper-places.ppm",
+        "paper-add-step.ppm",
+        "paper-unavailable.ppm",
+        "paper-save-failed.ppm",
+        "paper-capture-failed.ppm",
+        "paper-discard.ppm",
+        "paper-new-event.ppm",
+        "paper-exit-learning.ctx",
+        "paper-save-failure.ctx",
+        "paper-contexts.ppm",
+        "paper-rule.ppm",
+        "paper-home.ppm",
+        "paper-delete.ppm",
+        "paper-delayed.ctx",
+        "paper-auto-on.ppm",
+        "paper-exit-keyboard.ctx",
+        "paper-exit-saving.ctx",
+        "paper-intro.ppm",
+        "paper-workflow.ppm",
+        "paper-normal.ctx",
+        "paper-event-intro.ppm",
+        "paper-event-learning.ppm",
+        "paper-no-input.ctx",
+        "paper-learned.ppm",
+        "paper-finishing.ppm"
+      ],
+      "sha256": {
+        "paper-exit-busy.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-event-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-events.ppm": "be87e223eea9f7b81593af52e5a16770ba4cb93e2a89fca8a131a94091fbd42e",
+        "paper-saving.ppm": "ce0ae7a8d5ba4fba67a47fe377bfea599c4d0242dacab04ad5a8cd7872910fec",
+        "paper-storage.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-timer.ppm": "1fed4e04ef45177314ba138d7887bdb20705b563a26c035514bb488179c51fed",
+        "paper-exit-home.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-battery.ppm": "fc0d65325481e878a0c82c646475a6180cbee011d6616782995aba4445c0eda9",
+        "paper-learning.ppm": "d6564e218990c8b0a89d7c0a5710b65c54710ac79cf34f9777f236f260dae473",
+        "paper-settings.ppm": "bb32d38d86c907fd8d8a8f944eb02897078c7f7c35f3c0cd70af415efa12cdb5",
+        "paper-retained.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-triggers.ppm": "fcb8fc8acd46912a6ad291f2aa19abc35ed4e27676300ba173223e784b2cc77a",
+        "paper-place-details.ppm": "b92927a4f2f8746fc2fc60e29c21e8a9624af68cd53a1d025d7ebfe7bf5fb12d",
+        "paper-places.ppm": "3ce7ffcce51ca3bc7acdf62b4835e16e7b76b1835b4b7bea741c42f9536519dc",
+        "paper-add-step.ppm": "40a27c341b1a6f9f948824cc6ca860b358360f0a18d0c4ded5778844c9ce18eb",
+        "paper-unavailable.ppm": "4caf459dec77f4fa4ac5ecbfb059a6579246b01e2b0278bc419e8df632d2d33e",
+        "paper-save-failed.ppm": "387bfbb2b658dd6df0c7eb0eeaa1cb5c7727129716d75791111734282e6cdce4",
+        "paper-capture-failed.ppm": "d371407fa68344e6c2e17841451e8114a0dfb5c2d009552f481d6f41c6b93d76",
+        "paper-discard.ppm": "b92fe073c1a1871769737543144b65f0163701c7a2d4637c153f83978d0f82c2",
+        "paper-new-event.ppm": "8e5ea9ecd33411b0009a109b2a1236ebbd32a8ec1863ae399a4f7df2a58bd8c3",
+        "paper-exit-learning.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-save-failure.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-contexts.ppm": "1460c843e0b18e8e745bf8f82f4ccd08e76e0af99986fc76e4a0ab55b84e38d8",
+        "paper-rule.ppm": "33f286c23e9b6229a9ef5c42fbf5574a790e451952914f238a3874d0de36baa1",
+        "paper-home.ppm": "4caf459dec77f4fa4ac5ecbfb059a6579246b01e2b0278bc419e8df632d2d33e",
+        "paper-delete.ppm": "6a5515241dea192c85bc36428ea099a3e1bce4daacb5aa2130073b5cc6121b74",
+        "paper-delayed.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-auto-on.ppm": "01b8efba568c2698a08ae57c47f569b61077d0649947cbede0191b08f17a7327",
+        "paper-exit-keyboard.ctx": "7a8e94ddbc0cba011d2dad9530d77e3a30e0d6b910bb4a121f616ec83365c171",
+        "paper-exit-saving.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-intro.ppm": "340f253559841f2c3d21d85be24a7591a94e577ed338e38dd04f672bb20e229f",
+        "paper-workflow.ppm": "502b88050ff9163a0ab7ff47fa9b27501183415138e6702f233e848e412b696b",
+        "paper-normal.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-event-intro.ppm": "e80a0e2f5d097715c5bc0114b2fdc58f68757e64287356446d4e3db9da3829c0",
+        "paper-event-learning.ppm": "c0002f2d74f0fb03eb0e201cd3f657535f65579cbfa5208d754d99acc2beb894",
+        "paper-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-learned.ppm": "c2391c556921508a80937e34cb8214d5a9aad63aa718fd2ab9c69f4ece7b21bf",
+        "paper-finishing.ppm": "ab86b16bf8a0d6843e998d3075b6b2a9429cef5f2304f6b755e0dd389d82c109"
+      }
+    },
+    "sanitized/watch": {
+      "matched": [
+        "watch-new-event.ppm",
+        "watch-retained.ctx",
+        "watch-exit-home.ctx",
+        "watch-intro.ppm",
+        "watch-workflow.ppm",
+        "watch-exit-busy.ctx",
+        "watch-triggers.ppm",
+        "watch-learned.ppm",
+        "watch-home.ppm",
+        "watch-event-no-input.ctx",
+        "watch-add-step.ppm",
+        "watch-saving.ppm",
+        "watch-place-details.ppm",
+        "watch-finishing.ppm",
+        "watch-event-learning.ppm",
+        "watch-delayed.ctx",
+        "watch-rule.ppm",
+        "watch-storage.ctx",
+        "watch-event-intro.ppm",
+        "watch-exit-learning.ctx",
+        "watch-save-failed.ppm",
+        "watch-normal.ctx",
+        "watch-contexts.ppm",
+        "watch-learning.ppm",
+        "watch-exit-saving.ctx",
+        "watch-settings.ppm",
+        "watch-battery.ppm",
+        "watch-capture-failed.ppm",
+        "watch-events.ppm",
+        "watch-places.ppm",
+        "watch-save-failure.ctx",
+        "watch-unavailable.ppm",
+        "watch-delete.ppm",
+        "watch-exit-keyboard.ctx",
+        "watch-discard.ppm",
+        "watch-no-input.ctx",
+        "watch-timer.ppm",
+        "watch-auto-on.ppm"
+      ],
+      "sha256": {
+        "watch-new-event.ppm": "b00bda31ada59ee644ecaf16be3347ac401e57593f0d5096702825ce7fbccb38",
+        "watch-retained.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-exit-home.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-intro.ppm": "a93c12e6225b48dd765d169cf6cc8cdffaeab747d9d63992903a63d44596b22a",
+        "watch-workflow.ppm": "9d32bb0a027da3402b69da30120d935033b32521d63bbe5dbe6b12b2e0bfc3ed",
+        "watch-exit-busy.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-triggers.ppm": "f6c6668a0d50e3cab5b00156e0a5a30563ffbcba273d9de46d226014938bb10b",
+        "watch-learned.ppm": "d5bd28b4223ad70c3abfd5e34e00b0dc65908db5dc4ffb53ec6f35027187a0e8",
+        "watch-home.ppm": "8fd69d24f0fd58e9a9b999b4329d7048564a473f1583edd44bb28d08d116605e",
+        "watch-event-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-add-step.ppm": "1516e5d553165d7c2d7a9e6d874271b200a6bff7579990cfcc9e4ae0a46ab401",
+        "watch-saving.ppm": "4d76ca9fff1b005007f3938406a55edd831a304346798297b7b93b38ecbaea7a",
+        "watch-place-details.ppm": "ab2d06df074a4817ffdd2764e3b02636f2304cd7eb68af958dfd90df0f8870e1",
+        "watch-finishing.ppm": "d551204a6bbb953be56e0d7ec47c462fbb7536dafedcd805e9da027dbe2bbafa",
+        "watch-event-learning.ppm": "f36a36835510a4b33ed8e90930948e455117f988c8eb7b67c647910dd69b663c",
+        "watch-delayed.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-rule.ppm": "92897955bd4d2518511626b2ef3175585dc65e3be04d2917a9870819a31fe1f4",
+        "watch-storage.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "watch-event-intro.ppm": "40cf6dc79633f882f631b93cedd4a1cd4278681968a18346fef20b79d9eae380",
+        "watch-exit-learning.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-save-failed.ppm": "7bb10f650af4351e4eeb9a973002f8d5b1fd2c3e819d75a75649d5d30f039150",
+        "watch-normal.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-contexts.ppm": "97ad7f2e3c575f468fe35e0c5368b47c64297474d54c1de562333046ad6fc5d4",
+        "watch-learning.ppm": "22787a1144a1d8cbb6354c5c8a769ff2867e977bf21a5f1089dfeaa11869d00a",
+        "watch-exit-saving.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-settings.ppm": "7b4dd310cd7edfc37035fa2000c05e54cc95d6622058af2ca33e639c0cabb9cd",
+        "watch-battery.ppm": "248c105775fe2dc4a45fe696b30e583be624884042a774b3ab01c9cf4190e01a",
+        "watch-capture-failed.ppm": "3def32a0e5387425155f329351e8842417505c556c7f32986059f6340324ed60",
+        "watch-events.ppm": "871c0a3439c39fea994fae4a81c55445efdf4df46d319263c98e9b430aa58c46",
+        "watch-places.ppm": "9031259b1f1201bbefa36f5aefb03b9590a41dab08ecf4c8c583459ab7402618",
+        "watch-save-failure.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "watch-unavailable.ppm": "8fd69d24f0fd58e9a9b999b4329d7048564a473f1583edd44bb28d08d116605e",
+        "watch-delete.ppm": "59ef66e746ca7c353347d52c789ec27d3fc6b3cbd91ebbe0657f2f9887a7f049",
+        "watch-exit-keyboard.ctx": "7a8e94ddbc0cba011d2dad9530d77e3a30e0d6b910bb4a121f616ec83365c171",
+        "watch-discard.ppm": "d446e65386f5583b9546a6383f8ddd64d8d4f0263d88545ad29dbcee3d364608",
+        "watch-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "watch-timer.ppm": "7e7a4ecde939268ccb1ed18634efda0fff4c8899925ac4b488d9e5f2264d71ce",
+        "watch-auto-on.ppm": "340be472b801a0cf6c10787cc9c182fa1763402e0bd13fa0e23c83e470beec01"
+      }
+    },
+    "sanitized/paper": {
+      "matched": [
+        "paper-exit-busy.ctx",
+        "paper-event-no-input.ctx",
+        "paper-events.ppm",
+        "paper-saving.ppm",
+        "paper-storage.ctx",
+        "paper-timer.ppm",
+        "paper-exit-home.ctx",
+        "paper-battery.ppm",
+        "paper-learning.ppm",
+        "paper-settings.ppm",
+        "paper-retained.ctx",
+        "paper-triggers.ppm",
+        "paper-place-details.ppm",
+        "paper-places.ppm",
+        "paper-add-step.ppm",
+        "paper-unavailable.ppm",
+        "paper-save-failed.ppm",
+        "paper-capture-failed.ppm",
+        "paper-discard.ppm",
+        "paper-new-event.ppm",
+        "paper-exit-learning.ctx",
+        "paper-save-failure.ctx",
+        "paper-contexts.ppm",
+        "paper-rule.ppm",
+        "paper-home.ppm",
+        "paper-delete.ppm",
+        "paper-delayed.ctx",
+        "paper-auto-on.ppm",
+        "paper-exit-keyboard.ctx",
+        "paper-exit-saving.ctx",
+        "paper-intro.ppm",
+        "paper-workflow.ppm",
+        "paper-normal.ctx",
+        "paper-event-intro.ppm",
+        "paper-event-learning.ppm",
+        "paper-no-input.ctx",
+        "paper-learned.ppm",
+        "paper-finishing.ppm"
+      ],
+      "sha256": {
+        "paper-exit-busy.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-event-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-events.ppm": "be87e223eea9f7b81593af52e5a16770ba4cb93e2a89fca8a131a94091fbd42e",
+        "paper-saving.ppm": "ce0ae7a8d5ba4fba67a47fe377bfea599c4d0242dacab04ad5a8cd7872910fec",
+        "paper-storage.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-timer.ppm": "1fed4e04ef45177314ba138d7887bdb20705b563a26c035514bb488179c51fed",
+        "paper-exit-home.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-battery.ppm": "fc0d65325481e878a0c82c646475a6180cbee011d6616782995aba4445c0eda9",
+        "paper-learning.ppm": "d6564e218990c8b0a89d7c0a5710b65c54710ac79cf34f9777f236f260dae473",
+        "paper-settings.ppm": "bb32d38d86c907fd8d8a8f944eb02897078c7f7c35f3c0cd70af415efa12cdb5",
+        "paper-retained.ctx": "2b558327f3c5074ac58b92c86cacc9bcf3fe4646ad6e8ef3444aeb9b9f683c13",
+        "paper-triggers.ppm": "fcb8fc8acd46912a6ad291f2aa19abc35ed4e27676300ba173223e784b2cc77a",
+        "paper-place-details.ppm": "b92927a4f2f8746fc2fc60e29c21e8a9624af68cd53a1d025d7ebfe7bf5fb12d",
+        "paper-places.ppm": "3ce7ffcce51ca3bc7acdf62b4835e16e7b76b1835b4b7bea741c42f9536519dc",
+        "paper-add-step.ppm": "40a27c341b1a6f9f948824cc6ca860b358360f0a18d0c4ded5778844c9ce18eb",
+        "paper-unavailable.ppm": "4caf459dec77f4fa4ac5ecbfb059a6579246b01e2b0278bc419e8df632d2d33e",
+        "paper-save-failed.ppm": "387bfbb2b658dd6df0c7eb0eeaa1cb5c7727129716d75791111734282e6cdce4",
+        "paper-capture-failed.ppm": "d371407fa68344e6c2e17841451e8114a0dfb5c2d009552f481d6f41c6b93d76",
+        "paper-discard.ppm": "b92fe073c1a1871769737543144b65f0163701c7a2d4637c153f83978d0f82c2",
+        "paper-new-event.ppm": "8e5ea9ecd33411b0009a109b2a1236ebbd32a8ec1863ae399a4f7df2a58bd8c3",
+        "paper-exit-learning.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-save-failure.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-contexts.ppm": "1460c843e0b18e8e745bf8f82f4ccd08e76e0af99986fc76e4a0ab55b84e38d8",
+        "paper-rule.ppm": "33f286c23e9b6229a9ef5c42fbf5574a790e451952914f238a3874d0de36baa1",
+        "paper-home.ppm": "4caf459dec77f4fa4ac5ecbfb059a6579246b01e2b0278bc419e8df632d2d33e",
+        "paper-delete.ppm": "6a5515241dea192c85bc36428ea099a3e1bce4daacb5aa2130073b5cc6121b74",
+        "paper-delayed.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-auto-on.ppm": "01b8efba568c2698a08ae57c47f569b61077d0649947cbede0191b08f17a7327",
+        "paper-exit-keyboard.ctx": "7a8e94ddbc0cba011d2dad9530d77e3a30e0d6b910bb4a121f616ec83365c171",
+        "paper-exit-saving.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-intro.ppm": "340f253559841f2c3d21d85be24a7591a94e577ed338e38dd04f672bb20e229f",
+        "paper-workflow.ppm": "502b88050ff9163a0ab7ff47fa9b27501183415138e6702f233e848e412b696b",
+        "paper-normal.ctx": "ec6cf8164cbbc8794fad10c80bc70136d79bc0d872baa78185dcbd497cf783c0",
+        "paper-event-intro.ppm": "e80a0e2f5d097715c5bc0114b2fdc58f68757e64287356446d4e3db9da3829c0",
+        "paper-event-learning.ppm": "c0002f2d74f0fb03eb0e201cd3f657535f65579cbfa5208d754d99acc2beb894",
+        "paper-no-input.ctx": "bd94596b369d6c98a4fd96ce5f3a515ad0cae151ff279902e0a2aa9a51a4deac",
+        "paper-learned.ppm": "c2391c556921508a80937e34cb8214d5a9aad63aa718fd2ab9c69f4ece7b21bf",
+        "paper-finishing.ppm": "ab86b16bf8a0d6843e998d3075b6b2a9429cef5f2304f6b755e0dd389d82c109"
+      }
+    }
+  },
+  "sources": {
+    "utilities": {
+      "commit": "6aae1d5bbd8c4f08033087710688369def70f2ad",
+      "tree": "03593973801a56c40be7f4e781ba52b628a1fb87",
+      "working_tree_status": [
+        " M Apps/contexts.c",
+        " M Apps/contexts_text_input.inc",
+        " M docs/CONTEXTS_SHARED_TEXT_INPUT.md",
+        " M scripts/test_contexts_shared_input.py",
+        " M test/contexts/app_test.c",
+        " M test/contexts/shared_input_fixture.h",
+        " M test/contexts/shared_input_fixture.inc"
+      ]
+    },
+    "system": {
+      "commit": "d04117a1601b6a8eccd1499e15608b7a5352ed7d",
+      "tree": "f89c7e713961a48b13dacd42ee2df2f90fdb2423",
+      "working_tree_status": []
+    },
+    "watch_runtime": {
+      "commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+      "tree": "b73e52ea3b6082f1d4aa9a2e67219eebb241ae33",
+      "working_tree_status": []
+    },
+    "x4_runtime": {
+      "commit": "1c1ed8661ea30d47e7e9707c41d492ce3a2b4d70",
+      "tree": "f5b403c185b18d2ac89f2e0d2d8783b9369a44b0",
+      "working_tree_status": []
+    },
+    "baseline_utilities": {
+      "commit": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+      "tree": "d7feca6716ad452d5caeb040d5be83adeb09d861",
+      "working_tree_status": []
+    }
+  },
+  "source_sha256": {
+    "Apps/contexts.c": "9470cf0a6a8925e32583a99c66b7516275d36af3ac91b73fdc683340f4be71e0",
+    "Apps/contexts_scene_view.inc": "e786ac025ea34777cab22b4c4b56419e096a3435c67f862f3ac7aca9303e062e",
+    "Apps/contexts_controller.inc": "60a6537ae7d9ea8866a2f45d57ac85211e09a3b126a7baa10e4459c7fc77368f",
+    "Apps/contexts_text_input.inc": "5397e921b786e74f0dab2c9d0804c0a1ab31a7fdc5e51cfe7f6b27fd614ae7c5",
+    "scripts/test_contexts_shared_input.py": "961763bdf3d8df336b4827ef12bf6bf275120573dd715f1e05b0759496dd773a",
+    "test/contexts/app_test.c": "3eccaff72403e9bae4208656f245969a20ba6a9d9a107f54ff731b0287665e75",
+    "test/contexts/host_probe.c": "96d945a4d93042dbfc35e50308a3da6dc385241f87177c9eb72387b0e64e9598",
+    "test/contexts/shared_input_fixture.h": "ba397abf20764dd2aa67aa199c142a88cb1beb9e0b621ab737763267d3c6be23",
+    "test/contexts/shared_input_fixture.inc": "6c6b8cee345add7c70bc31aa689a16aa87187031cec6c69671da9b563dd38254"
+  },
+  "sanitizer_options": "detect_leaks=0"
+}

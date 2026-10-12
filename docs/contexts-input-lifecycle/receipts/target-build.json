@@ -1,0 +1,523 @@
+{
+  "schema": "contexts.lifecycle.component.v1",
+  "device": "watch",
+  "version": "0.4.4",
+  "sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac",
+  "bytes": 63444,
+  "manifest_sha256": "9c5458f826a61c927e445d0a084c0e4691054fe760ce38a8d38423f9ff5366d6",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "compiler_path": "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+  "command": [
+    "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+    "-std=c11",
+    "-Os",
+    "-fPIC",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-fvisibility=hidden",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-nostdlib",
+    "-nostartfiles",
+    "-shared",
+    "-Wl,--no-relax",
+    "-Wl,--hash-style=sysv",
+    "-Wl,--version-script=/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/exports.map",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-I/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/sdk/include",
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT",
+    "/workspace/shared/contexts-input-lifecycle-utilities-20261012/Apps/contexts.c",
+    "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/catalog.c",
+    "-o",
+    "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/contexts.elf"
+  ],
+  "scene_builder_sha256": "afd4fbdcbb7b0907af564cbe1048805bdd5ae53fa1f4d88d087f57d49340be0a",
+  "defines": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT"
+  ],
+  "inherited_defines": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h"
+  ],
+  "feature_additions": [
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT"
+  ],
+  "sources": {
+    "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+    "utilities": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "source_roots": {
+    "system-apps": "/workspace/shared/lists-shared-input-system-published-20261012",
+    "utilities": "/workspace/shared/contexts-input-lifecycle-utilities-20261012",
+    "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+    "watch": "/workspace/shared/watch-scroll-regression-20261011/watch-profile",
+    "generated": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts"
+  },
+  "product_recipe": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+  "build_recipe_sha256": "74311905b5643f177fa3bb18e81ccfeeef11010f5e59de93e7eb728b366aa805",
+  "target_dependencies": {
+    "utilities:Apps/contexts.c": {
+      "sha256": "9470cf0a6a8925e32583a99c66b7516275d36af3ac91b73fdc683340f4be71e0",
+      "bytes": 22464
+    },
+    "watch:apps/clock/faces/ContextsFaces.h": {
+      "sha256": "e75de6b17b85e1d7fa2ebc4b89514ac7345f671027c3b15dfdbd98f9b06b5ea2",
+      "bytes": 232
+    },
+    "watch:apps/clock/faces/names.h": {
+      "sha256": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16",
+      "bytes": 641
+    },
+    "generated:sdk/include/RiscSceneComponentsV1.h": {
+      "sha256": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+      "bytes": 5604
+    },
+    "generated:sdk/include/RiscSceneLifecycleV1.h": {
+      "sha256": "52a3d5dcfc6a9be8d598e0c93bf9bf6c6f824674280ef03ee0c0043a01eb31f5",
+      "bytes": 2153
+    },
+    "generated:sdk/include/RiscSceneV1.h": {
+      "sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+      "bytes": 3641
+    },
+    "generated:sdk/include/RiscSceneResidentV1.h": {
+      "sha256": "145ef678f3330e4fab85430395b5799dde8dd05ce056f7b2f02ad5a9f58d0414",
+      "bytes": 3504
+    },
+    "generated:sdk/include/RiscRuntimeV1.h": {
+      "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+      "bytes": 7932
+    },
+    "generated:sdk/include/RiscResidentShellV1.h": {
+      "sha256": "1a84715c03fcc7fae7f75cb72c0daf875e761567dda5d1b39ec0dc8b14fba8bd",
+      "bytes": 6957
+    },
+    "generated:sdk/include/RiscCivilClockV1.h": {
+      "sha256": "b3ef7e49bdfdedf6f5100b85587ad6714826feb3af69cc09a0811a8afd67022b",
+      "bytes": 563
+    },
+    "generated:sdk/include/RiscRuntimeHostControlV1.h": {
+      "sha256": "697f710f7512dc724c2986bac0abc86756c9ae0739577b4f4ab20583a2743815",
+      "bytes": 855
+    },
+    "generated:sdk/include/PortableContextsClient.h": {
+      "sha256": "00519e55164c81cca72e97d9b8f42058e66428ef759a82be76e6c7b19b64ad64",
+      "bytes": 15054
+    },
+    "generated:sdk/include/ContextsServiceV1.h": {
+      "sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d",
+      "bytes": 6542
+    },
+    "generated:sdk/include/PortableContextPreferences.h": {
+      "sha256": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826",
+      "bytes": 7561
+    },
+    "generated:sdk/include/PortableQuickPreferences.h": {
+      "sha256": "bc0de08849d553da4049cee1608d765db1f48d89aa27524094088ea31d8b1b91",
+      "bytes": 3040
+    },
+    "generated:sdk/include/RiscKeyValueV1.h": {
+      "sha256": "0e73bf29c402be030baf52f5b2b324f5b872549cdf58aa31f45b72bd70977179",
+      "bytes": 2339
+    },
+    "generated:sdk/include/PortableSleepPolicy.h": {
+      "sha256": "70fa8ff8f63270b2a04d591bdbc61cd7e16d6483421121a96fe22f2855966d9d",
+      "bytes": 5753
+    },
+    "generated:sdk/include/PortableAlarmSettings.h": {
+      "sha256": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284",
+      "bytes": 2392
+    },
+    "generated:sdk/include/PortableRadioPolicy.h": {
+      "sha256": "560cf6d492bcf3453b2ee260e6e4dfa102afece7fb1d406a77f2fa32465d1ae3",
+      "bytes": 3224
+    },
+    "generated:sdk/include/PortableLowBattery.h": {
+      "sha256": "c83b663b1d5676c7eb7a8ec59157f0efc561802cfe2a3b6eb63937e28b0acca3",
+      "bytes": 4554
+    },
+    "generated:sdk/include/PortablePowerStatus.h": {
+      "sha256": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4",
+      "bytes": 1039
+    },
+    "generated:sdk/include/RiscBatteryGaugeV1.h": {
+      "sha256": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86",
+      "bytes": 535
+    },
+    "generated:sdk/include/RiscProviderV2.h": {
+      "sha256": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+      "bytes": 4145
+    },
+    "generated:sdk/include/RiscStreamProviderV1.h": {
+      "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+      "bytes": 1411
+    },
+    "generated:sdk/include/PortableContextFingerprints.h": {
+      "sha256": "11493f75a58e83a67189c24c33bbd9657fdfd86da19266e4d8c56e98342a3d18",
+      "bytes": 4432
+    },
+    "generated:sdk/include/ContextFingerprintService.h": {
+      "sha256": "edbd70bd1542824f58ddd487cf22d7b59ced4bb762361288210a489a01c4f0b7",
+      "bytes": 2978
+    },
+    "generated:sdk/include/ContextsRules.h": {
+      "sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89",
+      "bytes": 8405
+    },
+    "generated:sdk/include/RiscAppDataV1.h": {
+      "sha256": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+      "bytes": 3869
+    },
+    "generated:sdk/include/PortableFingerprintClock.h": {
+      "sha256": "26ec2a7c36f6a795d466c2cf2c4fafe37c03c24fa41060096676913b4c3a059d",
+      "bytes": 2306
+    },
+    "generated:sdk/include/PortableRtcClock.h": {
+      "sha256": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c",
+      "bytes": 1813
+    },
+    "generated:sdk/include/PortableContextRules.h": {
+      "sha256": "b259780f2366e80f9e818e63da659cc7cd8883dd73c22d2192f1452efa87e510",
+      "bytes": 5896
+    },
+    "generated:sdk/include/PortableApps.h": {
+      "sha256": "d8fc1fae3669c439fda7af94568a93bc1d1f35ddc6fe05615eac1cb41ea4a78e",
+      "bytes": 300
+    },
+    "generated:sdk/include/T5AppApi.h": {
+      "sha256": "23ec6910005343055e71d0a364458824734f52c91a28364e419a85e94aa4ff42",
+      "bytes": 10831
+    },
+    "generated:sdk/include/PortableContextActions.h": {
+      "sha256": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c",
+      "bytes": 2692
+    },
+    "generated:sdk/include/alarm_writer.h": {
+      "sha256": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0",
+      "bytes": 1792
+    },
+    "generated:sdk/include/AlarmRecords.h": {
+      "sha256": "e04d9cfa6c32a70125ef618b85d048936afad2204fb97d459cda8c36fd0b2066",
+      "bytes": 5040
+    },
+    "generated:sdk/include/AlarmServiceV1.h": {
+      "sha256": "19984058bf5ec47f2772cf56acf0d3c41a389b7edc5bd4e41aaddab5a32a017b",
+      "bytes": 4791
+    },
+    "utilities:Apps/contexts_controller.inc": {
+      "sha256": "60a6537ae7d9ea8866a2f45d57ac85211e09a3b126a7baa10e4459c7fc77368f",
+      "bytes": 25081
+    },
+    "utilities:Apps/contexts_scene_view.inc": {
+      "sha256": "e786ac025ea34777cab22b4c4b56419e096a3435c67f862f3ac7aca9303e062e",
+      "bytes": 21140
+    },
+    "utilities:Apps/contexts_text_input.inc": {
+      "sha256": "5397e921b786e74f0dab2c9d0804c0a1ab31a7fdc5e51cfe7f6b27fd614ae7c5",
+      "bytes": 8287
+    },
+    "generated:sdk/include/PortableTextInputResidentCheckpoint.h": {
+      "sha256": "827ef461207082700ef01dba563bd46e69394f7749d3694031016cf478fb390a",
+      "bytes": 2339
+    },
+    "generated:sdk/include/PortableTextInputCheckpointClient.h": {
+      "sha256": "1c5c1dd7c1e47cc9844d1838e85c09fdd8949c9c43006e99205d0cc4f2059de0",
+      "bytes": 3881
+    },
+    "generated:sdk/include/PortableTextInputClient.h": {
+      "sha256": "f98564291d4b3685c429cdb96fd6edd0a4b5226b6bbde6ab3ea197a832f5746f",
+      "bytes": 8983
+    },
+    "generated:sdk/include/RiscTextEntryV1.h": {
+      "sha256": "a5733f06b1d8caf86f21d730abcd9ff833b603807c8b028a49544c997b6cdba3",
+      "bytes": 9556
+    },
+    "generated:sdk/include/PortableTextInputHandoff.h": {
+      "sha256": "ef811b3b7cf805ccdab1fb330e09dd8c533e303d29b8b4693ae5089a85432c36",
+      "bytes": 473
+    },
+    "generated:sdk/include/PortableResidentPolicyInput.h": {
+      "sha256": "58063d5b10c848c09a1340e297c6aeb8fc7b9b4d7aed32e813d6c1904fbc5c0e",
+      "bytes": 658
+    },
+    "generated:catalog.c": {
+      "sha256": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+      "bytes": 2250
+    }
+  },
+  "staged_sdk_sha256": {
+    "AlarmClockChangeV1.h": "2e2d474327faccb9aea25085073e0e71df30cb96dd1984d183f876a153cb7302",
+    "AlarmDnd.h": "719233156a13d08ec0113670a2a5a6d8cddf7fca120a36244a95575127bebd95",
+    "AlarmOutputV1.h": "b19cbe20602aa4fd3b184910e781e944c28fe30e72dcf919701d9b8eeab750c2",
+    "AlarmRecords.h": "e04d9cfa6c32a70125ef618b85d048936afad2204fb97d459cda8c36fd0b2066",
+    "AlarmServiceV1.h": "19984058bf5ec47f2772cf56acf0d3c41a389b7edc5bd4e41aaddab5a32a017b",
+    "AlarmServiceV2.h": "d7e750a8093e1b5e698483254edc38533b7242a3446d0bca5866c9dfd6ad07a1",
+    "AlarmVolume.h": "7010a97ce2b2d21ac35d50e52e1f419e14c46e06fe9c73151efb7c4ae651fdf6",
+    "ContextFingerprintService.h": "edbd70bd1542824f58ddd487cf22d7b59ced4bb762361288210a489a01c4f0b7",
+    "ContextsRules.h": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89",
+    "ContextsServiceV1.h": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d",
+    "CrashReportSd.h": "779e02c23c190439a7683b0cc827012e3fbe781085a118e2722ec22604d5f6ba",
+    "CrashReportSpool.h": "73937a89c3b6000ceb3db51664d3677be5fa13886b3deb8898baff85732b78ec",
+    "FailureEvidenceReport.h": "4e82c61315936c04ee75f61f6a375b2f568fdd6aacc58487127a11f0932c4a67",
+    "FileBrowserModel.h": "67e60d2df09ca3f7e85d1dbed83a1c4ebc028b0d62ca7e0529a20caabb9c55bd",
+    "GardenPlatformV1.h": "2e8e32f52554b706fafce1af27a5fbaf99187f67ecb55dc0cf333144b48ef9d2",
+    "GardenRadioAsyncV1.h": "2cd46090528452cdb1f9d8368fa3f4afc568c0403f7acb38613fe63c6ac3b6aa",
+    "InstalledAppsV1.h": "0575bfdc3d54ca9430cc9689ca536384013a0e40b24c9002c28abfe2cc3f5d00",
+    "PointsCatalog.h": "de18146b3e2694c370be364e169603c12eb333346c7ed5d3cbdb3cce004e80a4",
+    "PointsCatalogLedger.h": "7ef0280b2b9d28db56dc77931336a6386255b6e1481f3b2dad469418b7c5a1d1",
+    "PointsCatalogLedgerStorage.h": "fb233640ba004a25ef63598cdf0b61a62422670d52c7273578bed774dd5d3055",
+    "PointsCatalogProjection.h": "df15444df2afdb7e202be1feee03154353523fd12ab781417ada4a3f0661bfea",
+    "PointsCatalogSchedule.h": "cef89783a87ac52fbb81d8e146dd126a0c823a8b18a35e90836b7e9745bf3aa9",
+    "PointsCatalogStorage.h": "46e03ffebc97df202422627bdcb67ec76401dc1a37a1cf6faa47a2f5b394c195",
+    "PointsRecords.h": "ee59148062a39b2973e70c9c4816c1109686df0440d0ffd0d56ef0bff8820332",
+    "PointsSchedule.h": "9e34d32dbf989ee28f287813744748ab2d3193857a71bcab66e1f9b41749306c",
+    "PointsServiceProjection.h": "42710361e60a6f644377302d1492ef24bbfd392aebe72acac3b8c5414702977a",
+    "PointsUtcSchedule.h": "b1ff4460410ec793d2fe7711562412c0e735e80c7fc4b881d761dab4e973e188",
+    "PortableAlarmClient.h": "587a85823462e36a2819fe22227b029bcd687fee6d4484a86063b03b4e420aa1",
+    "PortableAlarmSettings.h": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284",
+    "PortableAlarmTerminalClient.h": "1aa14ef12171b849c63ad002e9c3b7988379a6fc01f7687da8c1190b3bc79635",
+    "PortableAppCustody.h": "820c05033c78cb29d8b0ca42c6b633966f7123ae4179ef9f0d4e8aca1655bb1b",
+    "PortableAppLaunchGuard.h": "a7da58c80c62ef35cdf4e76aff0d2f66768b66963457c3a00f5e9890ca357558",
+    "PortableAppSleep.h": "027f70965663bc86e7f3bbf2733002870e2254ec92d39037def5f42c52fedc62",
+    "PortableApps.h": "d8fc1fae3669c439fda7af94568a93bc1d1f35ddc6fe05615eac1cb41ea4a78e",
+    "PortableAudioSession.h": "2f3d9cdd59005d44201f52005c7c88c8a9b2d9e816853338e4254196fad36f47",
+    "PortableBackgroundServices.h": "f1291afed98c321a81550e7648234d478652f81299cbad9c44814218a384e5b8",
+    "PortableBluetoothControl.h": "777f0c7f92092d05a428c04255b6df1b3e9510a36c7425fc95092b3321e67a2c",
+    "PortableBroadcastAppData.h": "39623ec4ebb2a1c576398b60be8cceef084ff7d0809d4f8903aaa6b7873bd30d",
+    "PortableBroadcastClient.h": "51ed76a5fac542fb2d5ae039797806fd8b1d31f69a072340c0ce91e628cbff2d",
+    "PortableContextActions.h": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c",
+    "PortableContextFingerprints.h": "11493f75a58e83a67189c24c33bbd9657fdfd86da19266e4d8c56e98342a3d18",
+    "PortableContextPreferences.h": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826",
+    "PortableContextRules.h": "b259780f2366e80f9e818e63da659cc7cd8883dd73c22d2192f1452efa87e510",
+    "PortableContextsClient.h": "00519e55164c81cca72e97d9b8f42058e66428ef759a82be76e6c7b19b64ad64",
+    "PortableDeskClock.h": "603609b28ee7d891de2743d0f86417c3b00ca4201be28eb42ac257194e594bb4",
+    "PortableDeskClockApp.h": "cdf7fdbacf6fd1ff8e8f080936082aafbe01af1c81cc7710d7d362fb69870b6c",
+    "PortableDeskClockFaces.h": "6864b07c69edcdc20e473d9716db2d9ce19edf2fbfafc379566c1990c78ac5a2",
+    "PortableDeskClockSettings.h": "ca26111d67474f7664d9fac748708c25f0bc0454c0ffe647e6199d689059af0d",
+    "PortableDeskPointsSnapshot.h": "7d3a6816c86d029b9900e7af56e878cea814ed94d637a031031cc8fe928157eb",
+    "PortableFileBrowser.h": "ba52e70f3dd1ac3f705d29155eaeb5885550cb2b33cf459cfd15ddbe09bbccd3",
+    "PortableFileSetup.h": "19b833d0d31276a620a008ea4e49e1681616788c960e31edcf4f1d064feb27d3",
+    "PortableFileSharing.h": "454ef57abeea736a143ad7eeca52724bdafd1c7dfdfbf0062a3629f9527d30ec",
+    "PortableFingerprintClock.h": "26ec2a7c36f6a795d466c2cf2c4fafe37c03c24fa41060096676913b4c3a059d",
+    "PortableHomePointsCatalog.h": "d3c46fef226e626c0732c190108d016caf7bfbdfa0ac15c120e3ce281ca9181b",
+    "PortableInstalledCatalog.h": "ead6bf9af9226d8e644bc257a7b7a3eb61d746bd14f10bd6ddbd57b309684e30",
+    "PortableLowBattery.h": "c83b663b1d5676c7eb7a8ec59157f0efc561802cfe2a3b6eb63937e28b0acca3",
+    "PortableNativeCustody.h": "9dc7d0fb89bbab8304d829fa63e5baed3c6c348fdf37cc4166f5e8117a2594b6",
+    "PortableNativeTimeToolbar.h": "940454536d845d560b734eb8e887e789f4d32fadff7e5d132dc259eb69106b3b",
+    "PortableNavigation.h": "f3b9623d1e97d6a18df565aef0d9c934f18a1b97b701fbbc208de3bf0a344e6d",
+    "PortableNetworkSession.h": "7e573c3148c10bb3e0c50babea7714478ae9cd1265f7f97a91e574134f2cb5c2",
+    "PortableNovaKeyboard.h": "388cdc97e48b6e3378f1cf80b1b5dc3b0e116dd1e30a061697ae56bfb15ec0eb",
+    "PortableNovaUi.h": "7301c01a0bdeee5888b518bfb19aefeec65403caf52c589b41eb4e1dfc628291",
+    "PortablePaperScroll.h": "6575d6618628f5e195b06d9034acea20be9a5d84cee1210c1c248546c27d4347",
+    "PortablePaperTransition.h": "2f1b60dddeeae8111287fc0aa13d0d15fcc37fcdaa5da3ae6fb96edb85847328",
+    "PortablePeerFiles.h": "7498674fe9cb2cf6f139c501d46307296927c4978d01867146d46258a6935ee6",
+    "PortablePerformance.h": "4242d93019235138f6d0a80cd1edc58e55b9c591157d5f90b0d6c2992ce0672e",
+    "PortablePointsCatalogView.h": "0350a2d42d1befc07b838ef4386458d876cabc0820a2b773d9eb1b383dd2bead",
+    "PortablePointsState.h": "69dd5c45cea14991a06b397b800de7006aee8509d6ffa905a905f40d8a40baaa",
+    "PortablePowerStatus.h": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4",
+    "PortableQuickActions.h": "e96642f2d3a2056ec6022ef3f03806e5d2a2dfb582d8116480e32696a34c7883",
+    "PortableQuickPreferences.h": "bc0de08849d553da4049cee1608d765db1f48d89aa27524094088ea31d8b1b91",
+    "PortableQuickRadios.h": "676fbb46d0eae28fef515672a20c380088f69b3389a14ae44b5a67b9f014c44b",
+    "PortableQuickRender.h": "a442eff258880584976d81407cef82aac66e86b91d68ee919f477e92f5bef36a",
+    "PortableQuickSession.h": "5229c4bb8730151d15042e6695d44643810c27b85205160cf7bdb0b73349de98",
+    "PortableRadioPolicy.h": "560cf6d492bcf3453b2ee260e6e4dfa102afece7fb1d406a77f2fa32465d1ae3",
+    "PortableRadioSession.h": "8b09b402a8235dbf48826b890a04dbcabe2f7ac6c600b90b42f71ac5997356b2",
+    "PortableRaster.h": "0cded4d7c7d288f5f7a9b20114810aee209302e042d9cfead2cd8316866afc2e",
+    "PortableRasterLayer.h": "6bfac32a8582a41d447bd8121dc76fdd147c2761f3d75ff458b556339c4f2ff9",
+    "PortableReaderPreferences.h": "3f0b7b12b1ddf6bf9c45c9598dab5488feadde0e9f5879b5e12c9f4eff8d4eda",
+    "PortableRealtimeClient.h": "9a366511975762ab7124931e9124756319acfe586ba9f3881a9f710129290b0a",
+    "PortableResidentPolicyInput.h": "58063d5b10c848c09a1340e297c6aeb8fc7b9b4d7aed32e813d6c1904fbc5c0e",
+    "PortableResidentShell.h": "d92e6cc59adb9f38139b3b1693990e6494fa327cc81747a7a591c9cbfd8a3696",
+    "PortableRtcBasis.h": "89bd6751cf29c78e0eb3b76b3fe1862d5ebe733b9da0de4688e95150885496f9",
+    "PortableRtcClock.h": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c",
+    "PortableSetTime.h": "1b5b89512ca1c670adacb1ea759e22a8305bd3648b860f5bc898cfd1fbaeb5cc",
+    "PortableSleepPolicy.h": "70fa8ff8f63270b2a04d591bdbc61cd7e16d6483421121a96fe22f2855966d9d",
+    "PortableSpringboardCatalog.h": "c5d0ef941090cb68a3d355989d6fedb27546a7d8b1fe16d30c702c326f3056ef",
+    "PortableStageLog.h": "b347496d8bbb70cbbc19bd85d4a4a214f57b660d90cfb1ccaab9138fac787f02",
+    "PortableTextInputCheckpointClient.h": "1c5c1dd7c1e47cc9844d1838e85c09fdd8949c9c43006e99205d0cc4f2059de0",
+    "PortableTextInputClient.h": "f98564291d4b3685c429cdb96fd6edd0a4b5226b6bbde6ab3ea197a832f5746f",
+    "PortableTextInputExtendedClient.h": "c466d3143c160ec19ece4b1b073070cb0f953ab3820e8ebe6f12be813025f4cc",
+    "PortableTextInputHandoff.h": "ef811b3b7cf805ccdab1fb330e09dd8c533e303d29b8b4693ae5089a85432c36",
+    "PortableTextInputLongClient.h": "7ac2a5d7bdeb91f58567f2fca1fb1682fa956931039f34ef9b79cbadd85a4ac6",
+    "PortableTextInputResidentCheckpoint.h": "827ef461207082700ef01dba563bd46e69394f7749d3694031016cf478fb390a",
+    "PortableTime.h": "350b8c5255dafa9e25c4a20cfb458cdcda3439da929dab05e0de0c82e981ff6e",
+    "PortableTimeFormat.h": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867",
+    "PortableTimeZone.h": "3cfb6687d8f3675beb020a059b8cd3b3d8beffd42c11c6fd61d14b48af729c54",
+    "PortableTimeZonePreference.h": "0674f99eebc20d8665dc63915019c39b0dd7171e0ea8b6a284150b2eb473d7b0",
+    "PortableTouch.h": "817d5bde4d3a3c4634512503d283d0c7e731744a65e743305038294b58205004",
+    "PortableTouchScroll.h": "d19aba992818d60477ef0fea7882b73dd6c9c1bd1db76d4d0faf9acc2e64aebd",
+    "PortableTransition.h": "627e00b7c8143d946556f67a61803a56335f747dd8f6489bbfcabaef015542d2",
+    "PortableUpdate.h": "344344762bfc0430285ecf8a781b64fb3789949cca7a517ad0b0684bf7fa6b76",
+    "PortableUsbTransfer.h": "f1351bb4ca5d5af029f6427e814e77c2eca4baa410ca00e9be51a5bce794a2b3",
+    "PortableWatchKeyboard.h": "f006ff13fe70236433ec6c37fb8cf5c4efe018d24393a9035c446e1f3554f4dd",
+    "PortableWifiCredentials.h": "a6fd61ac64d3607de04b01185633fe9653678df73a467c22e458f9cc43393d29",
+    "PortableWifiProfiles.h": "3201c58bfb48fee81b05a27d7199c1cf6f6f49d4fa83422d0c0098c842de92d5",
+    "PortableWifiSavedNetwork.h": "9d61ddb8d6f5741e731c4b78123afeaf904a6447103b7231bc1d70842dd7e9ea",
+    "PortableWifiView.h": "7f7d2d3cf484fc5a903457057a195e43abed9e13eff12adbf343384efc2f2ce9",
+    "RiscAppDataExportV1.h": "56f9afd075f0fe3d8e7e8cdbec2d34813018dfe6cb3de3f18b326c4de948cddd",
+    "RiscAppDataV1.h": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+    "RiscBankStoreV1.h": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8",
+    "RiscBatteryGaugeV1.h": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86",
+    "RiscBluetoothSessionSetupV1.h": "8cc14caeb548f11f0045811bfc7ac66c007ddd3419b5b8db6947dc7362725b9f",
+    "RiscBluetoothTelemetryV1.h": "f98aaff4165ee3816846cfe9ba110e8bafce403342a870162eb1089a03d935a6",
+    "RiscBoundAppDataAsyncV1.h": "3bdc04e0b27ba119139fe8ac81bcc59e3c979ca83847425ccff98f147242f7be",
+    "RiscBoundAppDataV1.h": "f4c6b9e475409515ee3b385a85790f592e8d943b0f811707926a32be4e1a6a42",
+    "RiscBoundKeyValueV1.h": "4a4c7ce1ea9a941e833afc0a5c796cae1b7ec49a813350288e4220a6b52bb4d3",
+    "RiscBoundKeyValueV2.h": "f9c6589a346e6a79e784c37862228cc0c3ad3fe0c4cd8d6664800605f239b606",
+    "RiscCivilClockV1.h": "b3ef7e49bdfdedf6f5100b85587ad6714826feb3af69cc09a0811a8afd67022b",
+    "RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "RiscDiagnosticCheckpointV1.h": "2c41504823df54a43e383baafa07f45191869f6ea5de4adaaf2651c2d78af017",
+    "RiscDiagnosticSourceV1.h": "a2e246858df68fc5ad452f0d4b07d8eba10267176f75f17346417ef2b83fa845",
+    "RiscDisplayOutputV1.h": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+    "RiscEntropySourceV1.h": "042b367b5c766b4a79d887c3bc573fdd2c90b6b231510bd8b20d0b5c3d7796a7",
+    "RiscEntropyV1.h": "08b4d52e71b1349a57d1713e54bcc7872ae63d55edf647ec17b0bbb2f509c0d1",
+    "RiscFailureEvidenceV1.h": "f2b024c21780155bacf78bd67a279d8959365c1d25ff1ba421449dd5d3b35265",
+    "RiscFileOpenSourceV1.h": "6f4592ea20f26262125e9a1a1ae030aa13bbc08d06eb319c7d7f09417598ad02",
+    "RiscGpioBankV1.h": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c",
+    "RiscGpioSdmmcV1.h": "00d7788c381be557deec18a959b55d474bad7edc0331ae8331b878a618b9818f",
+    "RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+    "RiscHciControllerStatusV1.h": "235b388d91ed7e0becbb44dd476a29ef526fb2f7d9bf44b1072b86cbe5860e0e",
+    "RiscHttpClientV1.h": "e966177d426d3fadcb420f5fa9dd7226d3450a208f7ed333808d6466ba7bf8d6",
+    "RiscInputNavigationV1.h": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26",
+    "RiscInstallationV1.h": "cbf51953a4b8b11cfa0891cd3f16796123bc3e546e22b62b43285a83aa1496f4",
+    "RiscKeyValueV1.h": "0e73bf29c402be030baf52f5b2b324f5b872549cdf58aa31f45b72bd70977179",
+    "RiscKeyValueV2.h": "c66337a93c6f5fff6dac9507e011655f4827c3d0ec06b3e6d9d039084b3ec4d3",
+    "RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "RiscMemoryHeapV1.h": "369965f04303c7dae3d52b5e3d47aeb01f417ab0a566919fdb94677a1d64dced",
+    "RiscPackageResourcesV1.h": "8aff53415cf68a46e8e492dd02d12bde802ce2a1d69629dd4f3b0aad5794e459",
+    "RiscPerformanceV1.h": "c1e52e2e257a057dbbbc371fb8d83d9262bcea674f28f6ce9c56725b0d6dd14d",
+    "RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+    "RiscPlatformClockWaitV1.h": "c09d95c418f930f56c6e66004e07e38cb5726d8c7e5cd49b579bafbeebbe831c",
+    "RiscPlatformRealtimeV1.h": "ed642c0f37350f7f1402342c7710564019db9c4750f3572f153d2ef1e37eca98",
+    "RiscProtectedSettingsPath.h": "d7b894658ad802fbb9c15b17f0f3953dfd9bd48e0a3ffffbc5c1b21f457ec750",
+    "RiscProviderPromotionV1.h": "751585fed0336bf068cdde488d65b2e0191f113184e48eecbfb4f80861512c51",
+    "RiscProviderSyncV1.h": "c0981bde804b20c1b963323f91c4e9804c144c56535160bfd467be7e93028f45",
+    "RiscProviderV2.h": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+    "RiscRadioAsyncV1.h": "2b5a916cfe9e1fb6520043c2b8f3e8c13ea8e022166fcbdfa6b50ce691ebfe48",
+    "RiscRadioIqResourceV1.h": "5a1cc689b067ea59ca15ef62d943ef6fb8d4f75a887de210c859fb7e0f471874",
+    "RiscRadioScanV1.h": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+    "RiscRandomV1.h": "67e10d8b6d8b96f0ead5f0071e0eabbf73e30d2a6e0968e8bdd371ad492b6b57",
+    "RiscRealtimeV1.h": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d",
+    "RiscResidentShellV1.h": "1a84715c03fcc7fae7f75cb72c0daf875e761567dda5d1b39ec0dc8b14fba8bd",
+    "RiscRetainedWakeV1.h": "7c7b6f0d56631f3aab521a43499d2ea840d075084536e4afa654a74c52e1e511",
+    "RiscRuntimeHostControlV1.h": "697f710f7512dc724c2986bac0abc86756c9ae0739577b4f4ab20583a2743815",
+    "RiscRuntimeV1.h": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+    "RiscSceneCheckpointV1.h": "478ca88a15aeeb5a906623fb67482b29a0b5fa37dd933a5c9ca3a856ec967e44",
+    "RiscSceneComponentsV1.h": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+    "RiscSceneLifecycleV1.h": "52a3d5dcfc6a9be8d598e0c93bf9bf6c6f824674280ef03ee0c0043a01eb31f5",
+    "RiscScenePageV1.h": "a4372273adf0e587fe3d8d70912302573273a2701d3892bedf27c00d45ba96ea",
+    "RiscSceneReadingLinksV1.h": "b29144e74cf4e56a900009291536851c24d7b19a7d55cff634158e1e0ceee19d",
+    "RiscSceneReadingV1.h": "1e9c17ed25224014d33e2acca2595f642196436ac7f67a6aa0d7903c3ff73c13",
+    "RiscSceneResidentV1.h": "145ef678f3330e4fab85430395b5799dde8dd05ce056f7b2f02ad5a9f58d0414",
+    "RiscSceneStateV1.h": "aa52660271c49d9af396839a0404ba830974416259815a76e9904c4a222d607f",
+    "RiscSceneTelemetryV1.h": "c1028474b5c9e9ce6be7ea861e94b4e33bd6821e8b03e09b5c42d9ac040d39b2",
+    "RiscSceneV1.h": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+    "RiscSerialStreamSessionV1.h": "66d328c2a201625a7be348507c8dbedcaa937dfb46f86b05ecd04d60e3fba0b7",
+    "RiscStorageAsyncAdapterV1.h": "2b90ba70e6c44d112a28ce4d9a4d9272baeaf277f233d127181c1eff1515c1c6",
+    "RiscStorageExportV1.h": "74ae82f05a916ca0d2df1bb251bc66cc0ac33dde38757ced7c8e864374d43c8a",
+    "RiscStoragePackageAsyncV1.h": "c0b4a025fcbbc6ec55913dce2f99553c14cd7a96ae104f8eebc8d0dfd33ddf97",
+    "RiscStorageVolumeAsyncV1.h": "e395dccfa5c89e1585acaed0e5c8932d8487940261759741e3e60b483aafcaec",
+    "RiscStorageVolumeFsV1.h": "e487352157e3c3d5c10a28a16fdfcce76db693bf45c612ff4e2f31ee83e9a329",
+    "RiscStorageVolumeStateV1.h": "1f2f7dbfe9ec7ac27a57149ac720cf7f3a4801d6d34b5532f77c77db252b87a1",
+    "RiscStorageVolumeV1.h": "d477167a06004640b2c07c05d662c103be6e1b9e4a4d866f6fce13e754ef02f5",
+    "RiscStorageWorkerAdmissionV1.h": "013322a0db332ee9e7b124399ac12dfe050c53fd4b018feb7c278edd2ef8d8bd",
+    "RiscStorageWorkerV1.h": "9e859235403292a0108fd10b8122218d72c1c2d1dd460d94304d919f77b83b6f",
+    "RiscStreamClientV1.h": "ef5deb9a3bf8d20c0af9859a83977b93acfb8e480a851d0dcf96caf2795babcb",
+    "RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+    "RiscStreamResultV1.h": "af140ee9ca4f6286c5f1beeecb0a0952264b14eb40d3ba4f313ff952e8824a6f",
+    "RiscStreamSessionProviderV1.h": "fe463661530c43ae7d1dd8b9c8227fdc6a7e4380bca3f5c8a13287cb0db9e873",
+    "RiscTcpConnectionV1.h": "484ca863b82b44b7a26c4915a240be95b12a92817eb497def3c0d99eb68179c3",
+    "RiscTcpListenerV1.h": "63ed934c4cb1a505de539d06ad04c1551ec23f64d56b6ea07129698dde0ba886",
+    "RiscTelemetryV1.h": "8ef64c586e8392c1d7521498c25cfdaccefd53242530e2dda9116e9cc12a5d48",
+    "RiscTextEntryV1.h": "a5733f06b1d8caf86f21d730abcd9ff833b603807c8b028a49544c997b6cdba3",
+    "RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+    "RiscTouchI2cV2.h": "78179bc7a8d2dbbb5fb738d1ffabe02b31312173e70c9573941d1c8a4fcad3cf",
+    "RiscTouchV1.h": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+    "RiscUsbPhyResourceV1.h": "fe668ff8e8f83ea454eafd059c61c633d2213bc2a77504d8794a64c1dc11b016",
+    "RiscWakeSetV1.h": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375",
+    "SceneKeyboardV1.h": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+    "SceneProfileV1.h": "d687e02a50837161e833103006d93c179b22a063fa4ac3410b3e87e43ac66fc5",
+    "SoftwareUpdateV1.h": "25c1851c3c61f7d699d166c230cc561961c7e6f0fb5dcad5db8e24eb6bcf93ca",
+    "T5AppApi.h": "23ec6910005343055e71d0a364458824734f52c91a28364e419a85e94aa4ff42",
+    "T5AppFrame.h": "2a8fd35c485045294a2f9dceaf1b8474226e1475e63849080711601f6b60c8f9",
+    "T5BatteryApi.h": "f939c924102099de4ed746519791ce2b68eb2bac79bc212caeaad1366dc8c9a5",
+    "T5ButtonRemapApi.h": "2a1d8091221712c1cf7b7e500aad22e03f5db7d660a7f749684fca9d054a16ea",
+    "T5CacheApi.h": "2fd5da1a4e034310be041726b77f5ff5a5069e3a272f902294c4d0887425aff4",
+    "T5DriverManagerApi.h": "f03a43f5c1fdc0e13b33af5300c655ba3a856d0f28907a59aa874ce7db151478",
+    "T5FileBrowserApi.h": "4af0cf7ee92b85b72eadbdfcb988d7b562fc1f24b744c58d01047ad4a2b6fca9",
+    "T5FileOpenApi.h": "c1b873e364dba81ce39d8c8a62668db618735407a6291dca87b9795ce4accc30",
+    "T5FontApi.h": "06f5de46f0e373e77fb331029940c3db505a8b91b9d0fd35bf4f5ae9f8554bab",
+    "T5HardwareTakeover.h": "4e4bdfd0e923a41dde2fada074ed79365aafa48190140cd18153ad95ed922664",
+    "T5ImageApi.h": "845638fc39cd391b5d043eeea9e39fb78f966d56b854f322542fc50d20695780",
+    "T5LanguageApi.h": "cc6c343f52e0033b032cce5a6009d20a74a9464eea59019b3b128f7bc4fbbfff",
+    "T5NetworkApi.h": "7aff710c9216c3e2af9e78c7312a5d31d9510d7326cf8dfafe847418ff2f7c33",
+    "T5OtaApi.h": "2cd1cf9de3bf99bea9c67fa2bf80faffb8bce1b6dcc62ea223f98883329f64da",
+    "T5PackageManagerApi.h": "0b468ff5d6a45a79a82c9003dc6270a4859c821850250693fbb60148d34bdf2c",
+    "T5PackageVersion.h": "956106b2dd21c8e5a25cdb93814d20c4cf62ef758339ef23b79cc2b959d89f2a",
+    "T5ProviderCapabilityApi.h": "f348bc6b64017607ada44f5370631693e240c0cbef45251cae52a7dbcbe9894c",
+    "T5SdFirmwareApi.h": "8c6d467c2bc105256c22d5343778874358d82e8d1f49d4f81937f59da9647633",
+    "T5StatusBarApi.h": "6a2011799bff49e29cbacf3214b86a4d6db9751f385c36a05d40860e527bf6ec",
+    "T5StorageApi.h": "be0d63a89943a75a58723b703284992e8c6e95956c7cb39a9b3523af2c5d23ba",
+    "T5SystemUiApi.h": "aea03c2fe4ea5944dbda4ad6cfc499baa69fc2711bb55167a1e10461d500c8d1",
+    "T5TimeZoneApi.h": "e01ce2583308f89387d75bd1f5a697741d936f996dff8d10ce6d9e158b719021",
+    "T5UiApi.h": "88dbfde2a45ab385c69ee0b8192e8025446c9872711e4810f799251479b1057a",
+    "T5VideoApi.h": "af3f2318e53e20efb4e8e9e98d93abae11f1788fe14640c7b02392c22d08c6a4",
+    "TWatchHardwareV1.h": "ca48ca21a944565ae185f7c4e8cc0e73bcc18871d79b966f7e7da916e7ab2c99",
+    "TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd",
+    "TelemetryBroadcastV1.h": "986a52b5a3ddd361189d204e33624ce6275d953bca6a94a6e6dd5c136a89e2d5",
+    "WifiApi.h": "eddb48c2e4284a592f32a540e10e02572bf251e3145783e9083278afd1aa0159",
+    "alarm_writer.h": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0"
+  },
+  "catalog_sha256": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+  "original_fonts_retained": true,
+  "fonts_owned_by_unchanged_scene_host": true,
+  "baseline_features_preserved": true,
+  "predecessor_elf_sha256": "3fa28b55b4ae690c1c4217dc20dc04b04c6721ab1d4ef7b699b90f29170ef057",
+  "imports": [
+    "memchr",
+    "memcmp",
+    "memcpy",
+    "memset",
+    "risc_runtime_get_api",
+    "snprintf",
+    "strcmp",
+    "strlen"
+  ],
+  "exports": [
+    "app_main",
+    "risc_resident_app_descriptor_v1"
+  ],
+  "compaction": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 89952,
+    "after_bytes": 63444,
+    "before_sha256": "b8cb23c4686a753ce9aeabec321f8675418a7b0cbc8cc7a243ea84eec921f6a7",
+    "after_sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ]
+  },
+  "shared_text_input": true,
+  "lifecycle_successor": true,
+  "authority_unchanged": true,
+  "native_changed": false,
+  "hardware_verified": false,
+  "command_profile": "System scripts/scene_build.py build; flags and source dependencies recorded"
+}

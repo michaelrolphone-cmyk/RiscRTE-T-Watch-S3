@@ -1,0 +1,251 @@
+{
+  "device": "watch",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "branch": "work/contexts-input-lifecycle-20261012",
+  "compiled_recipe_commit": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+  "compiled_recipe_tree": "ae112a5c024d68c3222da8938d5d5dca204980d3",
+  "compiled_recipe_checkout": "/workspace/shared/contexts-input-lifecycle-watch-published-20261012",
+  "compiled_recipe_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/702225651ba4af28ca3a785eb68fd96f54109b2b",
+  "compiled_recipe_ci": {
+    "path": "/workspace/shared/contexts-input-lifecycle-profile-evidence-20261012/watch-compiled-recipe-ci.json",
+    "bytes": 578,
+    "sha256": "51f3fd7f2211924eaab34feba86d4d2c4e2a6f81ecd2cd9ae61a32b075d93a5f"
+  },
+  "compiled_recipe_ci_conclusion": "success",
+  "sources": {
+    "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+    "utilities": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "source_roots": {
+    "system-apps": "/workspace/shared/lists-shared-input-system-published-20261012",
+    "utilities": "/workspace/shared/contexts-input-lifecycle-utilities-20261012",
+    "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+    "watch": "/workspace/shared/watch-scroll-regression-20261011/watch-profile",
+    "generated": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts"
+  },
+  "candidate_directory": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate",
+  "target_build_directory": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts",
+  "target_elf": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/contexts.elf",
+    "bytes": 63444,
+    "sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac"
+  },
+  "target_manifest": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/contexts.json",
+    "bytes": 820,
+    "sha256": "9c5458f826a61c927e445d0a084c0e4691054fe760ce38a8d38423f9ff5366d6"
+  },
+  "target_build_record": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/contexts/contexts-build-record.json",
+    "bytes": 33460,
+    "sha256": "538111d9cca007d219d0d3c5a1e6882d4663bc2f2e69444846d79cf6fb7b22a3"
+  },
+  "contexts_version": "0.4.4",
+  "contexts_elf_bytes": 63444,
+  "contexts_elf_sha256": "cc63e15e88b342b1a7cd65e69f56de63ff3c1b131ef5aec307e0cccddae904ac",
+  "inherited_flags": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h"
+  ],
+  "flags": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+    "-DPORTABLE_CONTEXTS_SHARED_TEXT_INPUT"
+  ],
+  "catalog_sha256": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+  "all_inherited_defines_and_fonts_retained": true,
+  "fonts_owned_by_unchanged_scene_host": true,
+  "shared_text_hosts_unchanged": true,
+  "native_resident_owner_unchanged": true,
+  "native_unchanged": true,
+  "native_elf": {
+    "path": "/workspace/shared/watch-files-shared-input-candidate-20261012/components/firmware.elf",
+    "bytes": 24330036,
+    "sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7"
+  },
+  "normal_admission": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate/receipts/final-normal.json",
+    "bytes": 3870,
+    "sha256": "b68320fd2ebc8f7fdbb83c9891784363a6fb722e831bcc9602789da818a4ebff"
+  },
+  "sanitized_admission": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate/receipts/final-sanitized.json",
+    "bytes": 3870,
+    "sha256": "b68320fd2ebc8f7fdbb83c9891784363a6fb722e831bcc9602789da818a4ebff"
+  },
+  "normal_admission_passed": true,
+  "sanitized_admission_passed": true,
+  "normal_sanitized_admission_identical": true,
+  "packing": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate/receipts/packing.json",
+    "bytes": 4029,
+    "sha256": "4277a502f35a539612a95c7b3d76af9c9eed4a544bd19469ef667b6c4ba47195"
+  },
+  "free_spiffs_blocks": 2,
+  "required_free_spiffs_blocks": 2,
+  "target_stack": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/target-stack.json",
+    "bytes": 2467,
+    "sha256": "00b6d7a131f109d10378ab3826f1c0d2cfa466d7cb77f475117158d45bfabe2d"
+  },
+  "flagoff_equivalence": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/flagoff-target.json",
+    "bytes": 3643,
+    "sha256": "d7170bbcfa528c0a36be866cdcbc1cd6618a28ea137856fbe6afc3808fdfe444"
+  },
+  "preservation": {
+    "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/preservation.json",
+    "bytes": 32481,
+    "sha256": "8141ec8ea27e2f10de7ad79c4f48c1ae59df8730918e5107f0eef64386d51325"
+  },
+  "preserved_store_paths": 110,
+  "changed_store_paths": [
+    "cohort.json",
+    "contexts.elf",
+    "contexts.json"
+  ],
+  "grant_delta": [],
+  "components": {
+    "bootfs.bin": {
+      "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate/components/bootfs.bin",
+      "bytes": 5308416,
+      "sha256": "cfd6f03fda5f46e8be65779c181c95dc041987a7270758e07f118b41b3c13c6d"
+    },
+    "bank_state.bin": {
+      "path": "/workspace/shared/contexts-input-lifecycle-components-20261012/watch/candidate/components/bank_state.bin",
+      "bytes": 8192,
+      "sha256": "a0cbf726111b746b964a16a62850710d0068e5e0fc2b26a9c25a9806a7985468"
+    }
+  },
+  "counts": {
+    "store_files": 113,
+    "internal_elfs": 55,
+    "selected_sd_elfs": 0
+  },
+  "full_image_sha256": "d5d1c52d6c16ccaadfa092934da120d1a618fd2423279f29713f1112e266503d",
+  "full_image_bytes": 16777216,
+  "full_image_materialized": false,
+  "full_initial_erases_internal_data": true,
+  "unpublished_sd_settings_consumed": false,
+  "hardware_verified": false,
+  "target_instructions_executed": false,
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "local_cohort_sanitizers": "ASan+UBSan with ASAN_OPTIONS=detect_leaks=0 for ptrace environment",
+  "reproduction_script_validated": "Entire run_contexts_input_lifecycle.py executed against exact clean public recipe and source commits",
+  "lifecycle_correction_qualified_by_source_tests": true,
+  "preflight_and_public_target_elf_identical": true,
+  "reproduction_command": "bash /workspace/shared/contexts-input-lifecycle-components-20261012/run-published-integration.sh watch <fresh-output-root>",
+  "schema": "contexts.lifecycle-public-qualification.v1",
+  "status": "All exact-public target and source qualification passed; receipt publication metadata tracked separately",
+  "baseline": {
+    "path": "/workspace/shared/lists-shared-input-components-20261012/handoff-qualified-published-20261012T200947Z.json",
+    "bytes": 28853,
+    "sha256": "b174cba70ab88df294a48e53611bf0fecb2f0e2c8976bd6ab56e7f5e22cf3065"
+  },
+  "baseline_final_receipt_metadata": {
+    "path": "/workspace/shared/lists-shared-input-components-20261012/handoff-published.json",
+    "bytes": 36435,
+    "sha256": "a22f60edc9e83c913f72462c2639192589a78eca5b6111ca5559e4d1369631d7"
+  },
+  "source_qualification": {
+    "normal_sanitized_scenarios": 788,
+    "predecessor_render_storage_comparisons": 152,
+    "inventory_build_tests": 86,
+    "pipeline_regressions_passed": true,
+    "source_ci_passed": true
+  },
+  "source_evidence": {
+    "results": {
+      "path": "/workspace/shared/contexts-input-lifecycle-evidence-20261012/full-integrated/results.json",
+      "bytes": 149892,
+      "sha256": "f9086e9ecbadaaf5b86c8038700bd78ca551633a4d45bba1e8988025bc2515e2"
+    },
+    "source_equivalence": {
+      "path": "/workspace/shared/contexts-input-lifecycle-evidence-20261012/published-source-equivalence.json",
+      "bytes": 645,
+      "sha256": "fe6e1e0797bebe59d0aff379b74e6724f5a4c0364d206c245634c774c7bffb49"
+    },
+    "source_ci": {
+      "path": "/workspace/shared/contexts-input-lifecycle-evidence-20261012/utilities-ci.json",
+      "bytes": 565,
+      "sha256": "08c08a65b4c9bce0c9e444cf4e4163988d50274d55bc3f96a795626314d8e980"
+    },
+    "pipeline_regressions": {
+      "path": "/workspace/shared/contexts-input-lifecycle-evidence-20261012/pipeline-regressions.json",
+      "bytes": 787,
+      "sha256": "6873a29c4c5175355932ec8018b4f57b11111721b6e80a8495fc1cc4b24c9166"
+    },
+    "application_independent_review": {
+      "path": "/workspace/shared/contexts-input-lifecycle-evidence-20261012/independent-review.json",
+      "bytes": 865,
+      "sha256": "7edd121548dbe542845b6ff7850e6a436a85099208bbd03bb2f30a6008b0ad82"
+    }
+  },
+  "receipt_commit_changes_build_inputs": false,
+  "receipt_files": {
+    "application-review.json": {
+      "bytes": 865,
+      "sha256": "7edd121548dbe542845b6ff7850e6a436a85099208bbd03bb2f30a6008b0ad82"
+    },
+    "compiled-recipe-ci.json": {
+      "bytes": 578,
+      "sha256": "51f3fd7f2211924eaab34feba86d4d2c4e2a6f81ecd2cd9ae61a32b075d93a5f"
+    },
+    "flagoff-target.json": {
+      "bytes": 3643,
+      "sha256": "d7170bbcfa528c0a36be866cdcbc1cd6618a28ea137856fbe6afc3808fdfe444"
+    },
+    "normal-admission.json": {
+      "bytes": 3870,
+      "sha256": "b68320fd2ebc8f7fdbb83c9891784363a6fb722e831bcc9602789da818a4ebff"
+    },
+    "packing.json": {
+      "bytes": 4029,
+      "sha256": "4277a502f35a539612a95c7b3d76af9c9eed4a544bd19469ef667b6c4ba47195"
+    },
+    "pipeline-regressions.json": {
+      "bytes": 787,
+      "sha256": "6873a29c4c5175355932ec8018b4f57b11111721b6e80a8495fc1cc4b24c9166"
+    },
+    "preservation.json": {
+      "bytes": 32481,
+      "sha256": "8141ec8ea27e2f10de7ad79c4f48c1ae59df8730918e5107f0eef64386d51325"
+    },
+    "product-review.json": {
+      "bytes": 1826,
+      "sha256": "853a581f634d5f9462a98bf73bc2eac271eb4ca2aea0c0b99c2326bc8c2c030d"
+    },
+    "sanitized-admission.json": {
+      "bytes": 3870,
+      "sha256": "b68320fd2ebc8f7fdbb83c9891784363a6fb722e831bcc9602789da818a4ebff"
+    },
+    "source-equivalence.json": {
+      "bytes": 645,
+      "sha256": "fe6e1e0797bebe59d0aff379b74e6724f5a4c0364d206c245634c774c7bffb49"
+    },
+    "source-results.json": {
+      "bytes": 149892,
+      "sha256": "f9086e9ecbadaaf5b86c8038700bd78ca551633a4d45bba1e8988025bc2515e2"
+    },
+    "target-build.json": {
+      "bytes": 33460,
+      "sha256": "538111d9cca007d219d0d3c5a1e6882d4663bc2f2e69444846d79cf6fb7b22a3"
+    },
+    "target-manifest.json": {
+      "bytes": 820,
+      "sha256": "9c5458f826a61c927e445d0a084c0e4691054fe760ce38a8d38423f9ff5366d6"
+    },
+    "target-stack.json": {
+      "bytes": 2467,
+      "sha256": "00b6d7a131f109d10378ab3826f1c0d2cfa466d7cb77f475117158d45bfabe2d"
+    },
+    "utilities-ci.json": {
+      "bytes": 565,
+      "sha256": "08c08a65b4c9bce0c9e444cf4e4163988d50274d55bc3f96a795626314d8e980"
+    }
+  },
+  "final_product_independent_review": "passed"
+}

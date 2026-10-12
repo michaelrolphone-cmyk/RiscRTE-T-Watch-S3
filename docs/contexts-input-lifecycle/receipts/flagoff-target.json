@@ -1,0 +1,60 @@
+{
+  "schema": "contexts.flagoff-target-equivalence.v1",
+  "device": "watch",
+  "passed": true,
+  "system_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+  "watch_profile_commit": "089868395268b696c05651c33816345bfe0425df",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "inherited_defines": [
+    "-include",
+    "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h"
+  ],
+  "catalog_sha256": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+  "targets": {
+    "baseline": {
+      "utilities_commit": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+      "elf_sha256": "8547af6236dd2b2dca7281e13469caee63697b19a98574006400ea696f935b05",
+      "elf_bytes": 78016,
+      "manifest_sha256": "290215b653e46726f9ed30209f8502e6390158b09527de683f7326800cbd441c",
+      "loadable_sections": {
+        ".hash": "0d477e4a218c9a7e7685afa1519e3dec66b89b3ae30304995d34d2d2115d6269",
+        ".dynsym": "9b0b1911091b5c9621171b1c45d6204f06942412ef617509a6ea834be2b71a26",
+        ".dynstr": "9b23ac5985fcf50c9bb37a012c26f4222cc2b5a0be15a6b1ecbed6095e72da84",
+        ".rela.dyn": "c2efca59d9e01152b1713d571816dbcf506d8ac2732837c52b437973824ec569",
+        ".rela.plt": "717659a36ebb47973c22940b2b2663a5383e4c459dbab3859ee1e682cade8c34",
+        ".text": "b2c31fbfb6b0854c86c8e772ad6906401eeb57df327354271769fc70607cfe82",
+        ".rodata": "8d0c697b0a61307fa227210cf3d8fc7582e9ab303d36723c174ace663856121c",
+        ".got.loc": "9b501c7e6446fc5ad2ba5a9c0caf3f24c30cb9d393562c71c1f99399b51ee148",
+        ".data.rel.ro": "0ccc132f7ac5f29a68a10750d89b561f0a8f434e913028cbaf510e8eea5d305b",
+        ".dynamic": "764f709be47a26ee5f2b662c1b9dfa1ff0c63af60b7a4cc19f35967344ca6c1f",
+        ".got": "c0c41895843db331fd27459b4b77a94af7e147a7bd8ee8fd7d4b6f1d680eba8b",
+        ".data": "e6037d0368c849bbe0af673c1cb3a20279f0805fef1db740f781bb2505ed1688",
+        ".bss": "c178854d0b2a52bc6f6ad2c77f1f38b815dd6a298d7da32dfe1eece1d5371553"
+      }
+    },
+    "candidate": {
+      "utilities_commit": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+      "elf_sha256": "8547af6236dd2b2dca7281e13469caee63697b19a98574006400ea696f935b05",
+      "elf_bytes": 78016,
+      "manifest_sha256": "290215b653e46726f9ed30209f8502e6390158b09527de683f7326800cbd441c",
+      "loadable_sections": {
+        ".hash": "0d477e4a218c9a7e7685afa1519e3dec66b89b3ae30304995d34d2d2115d6269",
+        ".dynsym": "9b0b1911091b5c9621171b1c45d6204f06942412ef617509a6ea834be2b71a26",
+        ".dynstr": "9b23ac5985fcf50c9bb37a012c26f4222cc2b5a0be15a6b1ecbed6095e72da84",
+        ".rela.dyn": "c2efca59d9e01152b1713d571816dbcf506d8ac2732837c52b437973824ec569",
+        ".rela.plt": "717659a36ebb47973c22940b2b2663a5383e4c459dbab3859ee1e682cade8c34",
+        ".text": "b2c31fbfb6b0854c86c8e772ad6906401eeb57df327354271769fc70607cfe82",
+        ".rodata": "8d0c697b0a61307fa227210cf3d8fc7582e9ab303d36723c174ace663856121c",
+        ".got.loc": "9b501c7e6446fc5ad2ba5a9c0caf3f24c30cb9d393562c71c1f99399b51ee148",
+        ".data.rel.ro": "0ccc132f7ac5f29a68a10750d89b561f0a8f434e913028cbaf510e8eea5d305b",
+        ".dynamic": "764f709be47a26ee5f2b662c1b9dfa1ff0c63af60b7a4cc19f35967344ca6c1f",
+        ".got": "c0c41895843db331fd27459b4b77a94af7e147a7bd8ee8fd7d4b6f1d680eba8b",
+        ".data": "e6037d0368c849bbe0af673c1cb3a20279f0805fef1db740f781bb2505ed1688",
+        ".bss": "c178854d0b2a52bc6f6ad2c77f1f38b815dd6a298d7da32dfe1eece1d5371553"
+      }
+    }
+  },
+  "temporary_builds_removed": true,
+  "target_instructions_executed": false
+}

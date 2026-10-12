@@ -1,0 +1,13 @@
+{
+  "utilities_commit": "d068784cb5d581f1e81b5021f5d96d2917e03ec3",
+  "utilities_tree": "64023fde844da970ede4f2969ede2a9bbffa6ef3",
+  "all_compiled_test_input_hashes_match_published_source": true,
+  "system_test_commit": "d04117a1601b6a8eccd1499e15608b7a5352ed7d",
+  "system_test_tree": "f89c7e713961a48b13dacd42ee2df2f90fdb2423",
+  "system_public_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "system_public_tree": "f89c7e713961a48b13dacd42ee2df2f90fdb2423",
+  "scenarios": 788,
+  "frame_storage_parity": 152,
+  "normal_and_sanitized": true,
+  "full_result_sha256": "f9086e9ecbadaaf5b86c8038700bd78ca551633a4d45bba1e8988025bc2515e2"
+}

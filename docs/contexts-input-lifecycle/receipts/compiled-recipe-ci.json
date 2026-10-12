@@ -1,0 +1,17 @@
+{
+  "schema": "contexts.lifecycle-device-ci.v1",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "commit": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+  "all_applicable_workflows_succeeded": true,
+  "runs": [
+    {
+      "id": 38302870927,
+      "name": "Contexts lifecycle recipe",
+      "head_sha": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38302870927"
+    }
+  ],
+  "check_time_utc": "2026-10-12T20:14:54Z"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "contexts.lifecycle-product-review.v1",
+  "result": "PASS",
+  "scope": "Read-only product audit independent of recipe author; no physical execution",
+  "profile_handoff": {
+    "path": "/workspace/shared/contexts-input-lifecycle-profile-evidence-20261012/handoff-qualified-published-20261012T201854Z.json",
+    "sha256": "1ea274a0c38f6cc1781ccc7d9cc8ff7a4fd71bb87c86311171d0d1b5a4c45254"
+  },
+  "devices": {
+    "watch": {
+      "recipe_commit": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+      "compiled_dependency_hashes_verified": 47,
+      "source_flags_exact": true,
+      "target_manifest_and_elf_verified": true,
+      "changed_store_paths": [
+        "cohort.json",
+        "contexts.elf",
+        "contexts.json"
+      ],
+      "all_other_store_bytes_identical": true,
+      "old_sd_files_verified_unchanged": 0,
+      "sd_files": 0,
+      "free_spiffs_blocks": 2,
+      "complete_normal_sanitized_cohorts_passed": true,
+      "flagoff_target_identity_passed": true,
+      "static_stack_checks_passed": true,
+      "all_exact_recipe_ci_passed": true
+    },
+    "x4": {
+      "recipe_commit": "bb5919fef91cc27eb34570c9ffd45c904bc32bb7",
+      "compiled_dependency_hashes_verified": 46,
+      "source_flags_exact": true,
+      "target_manifest_and_elf_verified": true,
+      "changed_store_paths": [
+        "boot.json",
+        "cohort.json",
+        "contexts.json"
+      ],
+      "all_other_store_bytes_identical": true,
+      "old_sd_files_verified_unchanged": 96,
+      "sd_files": 98,
+      "free_spiffs_blocks": 126,
+      "complete_normal_sanitized_cohorts_passed": true,
+      "flagoff_target_identity_passed": true,
+      "static_stack_checks_passed": true,
+      "all_exact_recipe_ci_passed": true
+    }
+  },
+  "hardware_verified": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z"
+}

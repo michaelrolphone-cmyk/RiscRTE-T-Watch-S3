@@ -1,0 +1,48 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "display_name": "Contexts",
+  "entry": "app_main",
+  "file_name": "contexts.elf",
+  "icon": "solid:f015",
+  "id": "contexts",
+  "requires": [
+    {
+      "api": 1,
+      "capability": "ui.scene"
+    },
+    {
+      "api": 1,
+      "capability": "contexts.service"
+    },
+    {
+      "api": 1,
+      "capability": "storage.key-value"
+    },
+    {
+      "api": 1,
+      "capability": "storage.shared-data"
+    },
+    {
+      "api": 1,
+      "capability": "time.civil"
+    },
+    {
+      "api": 1,
+      "capability": "alarm.service"
+    },
+    {
+      "api": 1,
+      "capability": "board.battery"
+    },
+    {
+      "api": 2,
+      "capability": "rtc.clock"
+    },
+    {
+      "api": 1,
+      "capability": "ui.text-input"
+    }
+  ],
+  "type": "application",
+  "version": "0.4.4"
+}
