@@ -1,0 +1,21 @@
+name: Evening Watch full-image recipe
+on:
+  push:
+    branches: [work/watch-1.1.19-evening-20261012]
+  pull_request:
+    paths: ['scripts/assemble_evening_watch.py', 'tests/test_evening_watch.py', 'docs/evening-watch-1119/**', '.github/workflows/evening-watch.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 tests/test_evening_watch.py
+      - run: python3 -m py_compile scripts/assemble_evening_watch.py
