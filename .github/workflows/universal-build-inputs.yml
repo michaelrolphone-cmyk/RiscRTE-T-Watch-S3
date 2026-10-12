@@ -1,0 +1,40 @@
+name: Universal build inputs
+on:
+  push:
+    branches: [feat/universal-watch-home]
+    paths: ['.github/workflows/universal-build-inputs.yml']
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 63532e4611749acad2060d0437a883b7c4ac8fd5
+          path: system
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 814502e51125d799a7ca625b78707753ca12d4e5
+          path: utilities
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/T5S3-Reader
+          ref: 3f59913963840cb5ee8e2a65baa921f8d6af0b4d
+          path: reader
+          sparse-checkout: |
+            Drivers/storage_fatfs
+            sdk/driver
+            test/storage_volume
+            LICENSE
+      - name: Archive
+        run: |
+          for d in system utilities reader; do printf '%s ' "$d"; git -C "$d" rev-parse HEAD; done > SOURCES.txt
+          tar --exclude='.git' -czf universal-build-inputs.tar.gz system utilities reader SOURCES.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: universal-build-inputs
+          path: universal-build-inputs.tar.gz
+          retention-days: 30
