@@ -1,0 +1,39 @@
+name: Publish Wi-Fi provider
+on:
+  push:
+    branches: [feat/wifi-station-manager]
+    paths: [.github/workflows/publish-wifi-provider.yml]
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply exact tested implementation
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor a304597bf26491483bb0a567569f0ca0267cdf9c HEAD
+          echo '807b1c6f0e4fe11199e651c086b4c8156f05da39f644d0fc403eb81efd880dfa  .wifi-provider.patch' | sha256sum --check
+          git apply --check .wifi-provider.patch
+          git apply --index .wifi-provider.patch
+          git rm .wifi-provider.patch .wifi-source.txt .wifi-provider-source.txt .github/workflows/publish-wifi-provider.yml
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Add station management to shared Wi-Fi provider 0.3.0'
+          git push origin HEAD:feat/wifi-station-manager
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build target provider
+        run: |
+          python -m pip install platformio==6.1.19
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+          python scripts/build_wifi_station.py --output build/station-wifi
+          echo '1a0ceab0968da64ee6ac5d89b3aeb7246842d0d650e02f49a60b64986ae9ee35  build/station-wifi/driver.elf' | sha256sum --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wifi-provider-030
+          path: build/station-wifi/
+          retention-days: 14
