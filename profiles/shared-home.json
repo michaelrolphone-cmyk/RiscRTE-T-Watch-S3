@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "name": "twatch-universal",
+  "board_id": "lilygo-t-watch-s3",
+  "services": [
+    {"artifact":"power_sleep","directory":"power-sleep","capability":"power.sleep","api":1},
+    {"artifact":"power_key","directory":"powerkey","capability":"input.power-key","api":1},
+    {"artifact":"display_power","directory":"display-power","capability":"display.power","api":1}
+  ]
+}
