@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from assemble_evening_watch import checked_bytes, seal_store, validate_store, SELECTION
+from assemble_evening_watch import checked_bytes, seal_store, validate_store, verify_sidecars, SELECTION
 from check_runtime_store_admission import store_digest
 from assemble_watch_points_union import encoded, sha
 from assemble_watch_spectrum_policy import strict_json
@@ -87,6 +87,21 @@ class EveningWatchRecipe(unittest.TestCase):
 
     def test_duplicate_metadata_rejected(self):
         with self.assertRaises(ValueError): strict_json(b'{"version":"1","version":"2"}')
+
+    def test_changed_custody_sidecar_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); (root / 'receipts').mkdir()
+            expected = {'packing.json': encoded({'empty_blocks': 2}),
+                        'store-inventory.json': encoded({'one.elf': {'sha256': 'a'*64}}),
+                        'cohort.json': self.files['cohort.json']}
+            for name, raw in expected.items(): (root / 'receipts' / name).write_bytes(raw)
+            args = (root, {'empty_blocks': 2}, {'one.elf': {'sha256': 'a'*64}}, self.files['cohort.json'])
+            verify_sidecars(*args)
+            for name, raw in expected.items():
+                with self.subTest(name=name):
+                    (root / 'receipts' / name).write_bytes(raw + b' ')
+                    with self.assertRaises(ValueError): verify_sidecars(*args)
+                    (root / 'receipts' / name).write_bytes(raw)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)

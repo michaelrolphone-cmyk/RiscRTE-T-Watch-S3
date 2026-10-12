@@ -80,6 +80,14 @@ def write_full_image(path, previous, bootfs, bank):
             output.seek(offset); output.write(raw)
 
 
+def verify_sidecars(output, packing, inventory, cohort):
+    for name, raw in [('packing.json', encoded(packing)),
+                      ('store-inventory.json', encoded(inventory)),
+                      ('cohort.json', cohort)]:
+        require((Path(output) / 'receipts' / name).read_bytes() == raw,
+                'Written custody sidecar differs: ' + name)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['baseline', 'baseline-handoff', 'native-candidate', 'runtime', 'output']:
@@ -119,6 +127,7 @@ def main():
     rec = parse_record(bank[:96], True)
     require(rec[3] == len(firmware) and rec[6] == hashlib.sha256(firmware).digest() and rec[7] == hashlib.sha256(bootfs).digest(), 'Paired bank digest mismatch')
     full_sha = streamed_digest(previous, {BOOTFS[0]: bootfs, BANK[0]: bank})
+    inventory = {name: dict(bytes=len(raw), sha256=sha(raw)) for name, raw in sorted(sealed.items())}
     if not args.verify_only:
         require(not args.output.exists(), 'Use new output directory')
         (args.output / 'components').mkdir(parents=True)
@@ -126,10 +135,10 @@ def main():
         (args.output / 'components/bootfs.bin').write_bytes(bootfs)
         (args.output / 'components/bank_state.bin').write_bytes(bank)
         (args.output / 'receipts/packing.json').write_bytes(encoded(packing))
-        inventory = {name: dict(bytes=len(raw), sha256=sha(raw)) for name, raw in sorted(sealed.items())}
         (args.output / 'receipts/store-inventory.json').write_bytes(encoded(inventory))
         (args.output / 'receipts/cohort.json').write_bytes(sealed['cohort.json'])
     require((args.output / 'components/bootfs.bin').read_bytes() == bootfs and (args.output / 'components/bank_state.bin').read_bytes() == bank, 'Written packed artifacts differ')
+    verify_sidecars(args.output, packing, inventory, sealed['cohort.json'])
     image = args.output / ('WATCH-' + VERSION + '-FULL-INITIAL-ERASES-DATA.bin')
     if args.materialize and not image.exists():
         write_full_image(image, previous, bootfs, bank)

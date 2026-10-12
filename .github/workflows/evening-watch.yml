@@ -19,4 +19,5 @@ jobs:
           python-version: '3.11'
       - run: python3 -m pip install -r scripts/requirements.txt
       - run: python3 tests/test_evening_watch.py
+      - run: python3 tests/test_evening_watch_image.py
       - run: python3 -m py_compile scripts/assemble_evening_watch.py
