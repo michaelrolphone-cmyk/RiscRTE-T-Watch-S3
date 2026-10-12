@@ -1,0 +1,71 @@
+{
+  "schema": "lists.flagoff-target-equivalence.v1",
+  "device": "watch",
+  "passed": true,
+  "system_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "inherited_defines": [],
+  "targets": {
+    "baseline": {
+      "productivity_commit": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+      "elf_sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "elf_bytes": 33192,
+      "manifest_sha256": "ed13ea150266a96690cbf8aba8f5cf98340ddf04a4a9bad830439cb597bc3400",
+      "loadable_sections": {
+        ".hash": "1296246130807bfacc5bad169e2dfc3395232ad9da145e5ec3fcda043cdda217",
+        ".dynsym": "4b0e7aa4f9c73591c322f4a5337d0bc5637315bc45515ee4cec5c41bf967a7cd",
+        ".dynstr": "89b21bfd063bfa38b8ded53baad14e48ffb3cae9a9e21cb7c5f353b0a1f7580c",
+        ".rela.dyn": "bc0194ce3c738ffae591bbedb961f4cedecb2950496c4a3329539231c87da2dd",
+        ".rela.plt": "413c26e82955a5bdc951d0a5df3adfd70d61d93ca9d85bafc87e587431023679",
+        ".text": "2177422a20af1c3a03681ebb569c74a996b917477232c6a787f4789d672a6ce7",
+        ".rodata": "f6543c86f3d5ee53e634e9cb14cb7c5151ec608c19124f1ce56ae6c41c12fcc0",
+        ".got.loc": "8af77ca05878b8b1aa1afc4ae227186973b894c8681a7f20d8a76980cf9da266",
+        ".data.rel.ro": "12e02b536e57fd0e4317ee5938dbacb7451d0c781576ce9921ad94e16565d332",
+        ".dynamic": "e872d6bb4d9a5ddf0d0eae71d582674ffff10d2172abe08e0169cb29759aeaa2",
+        ".got": "df5b67e04a9c1215943d1f021b6d4d94df05dd8856a814c39bd50c99d81140cd",
+        ".data": "136a625df2f74a3c28a83cd508ed795c400583b27120fa00ea34e13391996917",
+        ".bss": "afe0c835732cbf2219e12dfc6a6a1a8fdac97fe70e0b068bef6c407fc42eaab4"
+      },
+      "watch_compacted_sha256": "5947277df24ce68abffe200cfd527e349dc7b68cb4d830331a99dc4356bdb009",
+      "watch_compacted_bytes": 22488
+    },
+    "candidate": {
+      "productivity_commit": "f83d79a0753c2a451730000d2f553aa21fda7830",
+      "elf_sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "elf_bytes": 33192,
+      "manifest_sha256": "ed13ea150266a96690cbf8aba8f5cf98340ddf04a4a9bad830439cb597bc3400",
+      "loadable_sections": {
+        ".hash": "1296246130807bfacc5bad169e2dfc3395232ad9da145e5ec3fcda043cdda217",
+        ".dynsym": "4b0e7aa4f9c73591c322f4a5337d0bc5637315bc45515ee4cec5c41bf967a7cd",
+        ".dynstr": "89b21bfd063bfa38b8ded53baad14e48ffb3cae9a9e21cb7c5f353b0a1f7580c",
+        ".rela.dyn": "bc0194ce3c738ffae591bbedb961f4cedecb2950496c4a3329539231c87da2dd",
+        ".rela.plt": "413c26e82955a5bdc951d0a5df3adfd70d61d93ca9d85bafc87e587431023679",
+        ".text": "2177422a20af1c3a03681ebb569c74a996b917477232c6a787f4789d672a6ce7",
+        ".rodata": "f6543c86f3d5ee53e634e9cb14cb7c5151ec608c19124f1ce56ae6c41c12fcc0",
+        ".got.loc": "8af77ca05878b8b1aa1afc4ae227186973b894c8681a7f20d8a76980cf9da266",
+        ".data.rel.ro": "12e02b536e57fd0e4317ee5938dbacb7451d0c781576ce9921ad94e16565d332",
+        ".dynamic": "e872d6bb4d9a5ddf0d0eae71d582674ffff10d2172abe08e0169cb29759aeaa2",
+        ".got": "df5b67e04a9c1215943d1f021b6d4d94df05dd8856a814c39bd50c99d81140cd",
+        ".data": "136a625df2f74a3c28a83cd508ed795c400583b27120fa00ea34e13391996917",
+        ".bss": "afe0c835732cbf2219e12dfc6a6a1a8fdac97fe70e0b068bef6c407fc42eaab4"
+      },
+      "watch_compacted_sha256": "5947277df24ce68abffe200cfd527e349dc7b68cb4d830331a99dc4356bdb009",
+      "watch_compacted_bytes": 22488
+    }
+  },
+  "historical_selected_identity_separately_reproduced": true,
+  "historical_runtime_sdk": "a9587bec00015ad56c302192a8359b6d70cde01a",
+  "historical_system_sdk": "eec748ca081fe59346be03180600c65013cc7298",
+  "current_sdk_flagoff_identity": true,
+  "selected_profile_flagoff_exact_identity": true,
+  "selected_profile": {
+    "raw_elf_sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+    "raw_elf_bytes": 33192,
+    "resident_header_sha256": "a657fcd906217fdbb03894c15b10009b352d6a5b7466868afa603a03236b8851",
+    "compacted_elf_sha256": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+    "compacted_elf_bytes": 22488
+  },
+  "temporary_builds_removed": true,
+  "target_instructions_executed": false
+}

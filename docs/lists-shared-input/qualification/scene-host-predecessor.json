@@ -1,0 +1,37 @@
+{
+  "schema": "lists.scene-host-predecessor-identity.v1",
+  "passed": true,
+  "targets": {
+    "watch": {
+      "source_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+      "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+      "version": "0.4.5",
+      "defines": [
+        "-DSCENE_HOST_TELEMETRY=0",
+        "-DSCENE_HOST_WATCH_240=1"
+      ],
+      "raw_elf_sha256": "d169c96d39c63aecb4e0f18f0f9ca9a4fd8b28e76e0b1ff26817560a5230ef54",
+      "raw_elf_bytes": 246732,
+      "fonts_tree": "28a2ae80bef4537aacd626a507900c19b071bad1",
+      "compacted_elf_sha256": "9b89bca7a6fa1a8f8ae58c5205785bb1aed0ca8328ca47afa4c8594ea1653cfe",
+      "compacted_elf_bytes": 159296
+    },
+    "x4": {
+      "source_commit": "e3fd26c2257cef91c8f6a7b98065b52f1db7a54d",
+      "runtime_commit": "1c1ed8661ea30d47e7e9707c41d492ce3a2b4d70",
+      "version": "0.4.4",
+      "defines": [],
+      "raw_elf_sha256": "f9a3b503531154a6479c5c36780daee51d6e0050a1a54b7327624b242930b188",
+      "raw_elf_bytes": 466712,
+      "fonts_tree": "28a2ae80bef4537aacd626a507900c19b071bad1",
+      "compacted_elf_sha256": "75995717f22bea4417a15ced0c0128d0ec95f23a60dd7d3f2f08fc3a9131e875",
+      "compacted_elf_bytes": 297996
+    }
+  },
+  "watch_selected_exact_identity": true,
+  "x4_selected_exact_identity": true,
+  "historical_font_trees_identical": true,
+  "source_difference": "System7fb scene host0.4.5 only raises the opt-in long-keyboard limit; X4 still selected scene host0.4.4 from Systeme3fd. All font files are identical. The continuity host must preserve both selected compile profiles and old unopted runtime behavior.",
+  "target_instructions_executed": false,
+  "temporary_builds_removed": true
+}

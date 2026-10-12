@@ -1,0 +1,92 @@
+{
+  "schema": "lists.target-stack.v1",
+  "device": "watch",
+  "application_source": "f83d79a0753c2a451730000d2f553aa21fda7830",
+  "system_source": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "target_elf_sha256": "31be400bcf3dfa6b4c27501c2938316375f3c2b82fdadddbecd426d1f7f049b6",
+  "debug_elf_sha256": "8bdbc1a3c500a43bb59a115736b0e263d433f840195e5da5b34dd122ab87ba4c",
+  "method": "Actual target entry a1 disassembly operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "portable_text_client_request_result": 32,
+    "portable_text_client_state_result": 32,
+    "portable_text_client_live$constprop$23": 32,
+    "lists_text_policy": 80,
+    "portable_text_adapter_retained": 32,
+    "portable_text_adapter_retain": 32,
+    "portable_text_adapter_attention": 32,
+    "portable_text_adapter_suspend": 48,
+    "portable_text_adapter_resume": 32,
+    "portable_text_client_release$constprop$22": 48,
+    "portable_text_client_close$constprop$18": 32,
+    "app_main": 336
+  },
+  "maximum_modal_frame_bytes": 336,
+  "all_entry_frames_maximum_bytes": 4640,
+  "static_modal_storage": {
+    "text_accepted": {
+      "bytes": 25,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 24920
+    },
+    "text_checkpoint": {
+      "bytes": 8,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 25036
+    },
+    "text_client": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 25048
+    },
+    "text_enable_failed": {
+      "bytes": 1,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 25029
+    },
+    "text_exit": {
+      "bytes": 1,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 24912
+    },
+    "text_navigation": {
+      "bytes": 80,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 24948
+    },
+    "text_outcome": {
+      "bytes": 4,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 24916
+    },
+    "text_policy_refresh": {
+      "bytes": 1,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 25030
+    },
+    "text_policy_ticks": {
+      "bytes": 4,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 25032
+    }
+  },
+  "text_acceptance_frames_bytes": {
+    "lists_ui_text_accept": 4064,
+    "lists_ui_text_cancel": 32
+  },
+  "predecessor_event_frame_bytes": 4080,
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Compiler inlining folds absent helpers into callers.",
+    "Per-frame ceilings do not establish dynamic call-chain peak, Runtime allocation or hardware behavior."
+  ]
+}

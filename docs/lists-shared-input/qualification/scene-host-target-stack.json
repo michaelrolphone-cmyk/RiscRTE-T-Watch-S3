@@ -1,0 +1,41 @@
+{
+  "schema": "lists.scene-continuity-host.target-stack.v1",
+  "device": "watch",
+  "system_source": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "target_elf_sha256": "feb5eff6e568ec18b2570a0ea67f05cb0d786ac8a874358b060b9e5d7a01be38",
+  "debug_elf_sha256": "0e1069449fbec91a57ba8caf5819fe63e5ab0d2466fc55838274f4b8781cfeac",
+  "continuity_entry_frames_bytes": {
+    "scene_snapshot": 32,
+    "scene_resume": 48,
+    "scene_configure": 32,
+    "detach_owned": 32,
+    "scene_pause": 32
+  },
+  "maximum_continuity_frame_bytes": 48,
+  "all_entry_frames_maximum_bytes": 976,
+  "static_continuity_storage": {
+    "lifecycle_enabled": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "lifecycle_features": {
+      "bytes": 4,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "paused": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "pausing": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    }
+  },
+  "per_frame_regression_checks_passed": true,
+  "target_instructions_executed": false,
+  "peak_call_chain_stack_usage_proven": false
+}

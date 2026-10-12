@@ -1,0 +1,209 @@
+{
+  "schema": "lists.shared-text-host.component.v1",
+  "device": "watch",
+  "version": "0.1.7",
+  "sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35",
+  "bytes": 11980,
+  "manifest_sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1",
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "compiler_path": "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+  "defines": [],
+  "sources": {
+    "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9"
+  },
+  "source_roots": {
+    "system-apps": "/workspace/shared/lists-shared-input-system-published-20261012",
+    "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+    "generated": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text"
+  },
+  "product_recipe": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+  "build_recipe_sha256": "640b428d5729261a7c4b220e3d9691c19696806f89889e4793c842de9866fd58",
+  "target_dependencies": {
+    "system-apps:Services/text_input/host.c": {
+      "sha256": "a35225f8afc149c55d2d15caf3671def4f0b631aecd267eb6c01085689556904",
+      "bytes": 18288
+    },
+    "generated:sdk/include/RiscTextEntryV1.h": {
+      "sha256": "a5733f06b1d8caf86f21d730abcd9ff833b603807c8b028a49544c997b6cdba3",
+      "bytes": 9556
+    },
+    "generated:sdk/include/RiscRuntimeV1.h": {
+      "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+      "bytes": 7932
+    },
+    "generated:sdk/include/RiscSceneV1.h": {
+      "sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+      "bytes": 3641
+    },
+    "generated:sdk/include/RiscSceneCheckpointV1.h": {
+      "sha256": "478ca88a15aeeb5a906623fb67482b29a0b5fa37dd933a5c9ca3a856ec967e44",
+      "bytes": 1778
+    },
+    "generated:sdk/include/RiscScenePageV1.h": {
+      "sha256": "a4372273adf0e587fe3d8d70912302573273a2701d3892bedf27c00d45ba96ea",
+      "bytes": 2428
+    },
+    "generated:sdk/include/RiscSceneComponentsV1.h": {
+      "sha256": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+      "bytes": 5604
+    },
+    "generated:sdk/include/RiscSceneLifecycleV1.h": {
+      "sha256": "52a3d5dcfc6a9be8d598e0c93bf9bf6c6f824674280ef03ee0c0043a01eb31f5",
+      "bytes": 2153
+    },
+    "system-apps:Services/text_input/SceneKeyboardV1.h": {
+      "sha256": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+      "bytes": 1945
+    },
+    "generated:sdk/include/RiscProviderV2.h": {
+      "sha256": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+      "bytes": 4145
+    },
+    "generated:sdk/include/RiscStreamProviderV1.h": {
+      "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+      "bytes": 1411
+    },
+    "system-apps:Services/text_input/RiscUsbHidV1.h": {
+      "sha256": "5b5549c4cb718dec55f2aca8bc93f401b2d5a703d30aaa1a78d1bcdd26755b5c",
+      "bytes": 4383
+    },
+    "system-apps:Services/text_input/RiscUsbControllerV1.h": {
+      "sha256": "2fb2908caee99b0822838956f33cf8302db9d2cbd0600a9eed21fcce5f68232b",
+      "bytes": 3061
+    },
+    "system-apps:Services/text_input/RiscUsbProviderV1.h": {
+      "sha256": "77f67cf5db7ed3fd7c6e148807bc705b5f8443c90d401b546069d756eb997b9a",
+      "bytes": 2354
+    },
+    "system-apps:Services/text_input/checkpoint.inc": {
+      "sha256": "4fc01913869da777c9f510f5639df69e20fa811906fd4ab96ec2c7f008294c57",
+      "bytes": 6888
+    }
+  },
+  "staged_sdk_sha256": {
+    "GardenPlatformV1.h": "2e8e32f52554b706fafce1af27a5fbaf99187f67ecb55dc0cf333144b48ef9d2",
+    "GardenRadioAsyncV1.h": "2cd46090528452cdb1f9d8368fa3f4afc568c0403f7acb38613fe63c6ac3b6aa",
+    "RiscAppDataExportV1.h": "56f9afd075f0fe3d8e7e8cdbec2d34813018dfe6cb3de3f18b326c4de948cddd",
+    "RiscAppDataV1.h": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+    "RiscBankStoreV1.h": "4c20c21500f1c0724221f30cb5664e99b8316e3d0a9594319f63a206ed0e25a8",
+    "RiscBoundAppDataAsyncV1.h": "3bdc04e0b27ba119139fe8ac81bcc59e3c979ca83847425ccff98f147242f7be",
+    "RiscBoundAppDataV1.h": "f4c6b9e475409515ee3b385a85790f592e8d943b0f811707926a32be4e1a6a42",
+    "RiscBoundKeyValueV1.h": "4a4c7ce1ea9a941e833afc0a5c796cae1b7ec49a813350288e4220a6b52bb4d3",
+    "RiscBoundKeyValueV2.h": "f9c6589a346e6a79e784c37862228cc0c3ad3fe0c4cd8d6664800605f239b606",
+    "RiscCivilClockV1.h": "b3ef7e49bdfdedf6f5100b85587ad6714826feb3af69cc09a0811a8afd67022b",
+    "RiscDeepSleepV1.h": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+    "RiscDiagnosticCheckpointV1.h": "2c41504823df54a43e383baafa07f45191869f6ea5de4adaaf2651c2d78af017",
+    "RiscDiagnosticSourceV1.h": "a2e246858df68fc5ad452f0d4b07d8eba10267176f75f17346417ef2b83fa845",
+    "RiscDisplayOutputV1.h": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+    "RiscEntropyV1.h": "08b4d52e71b1349a57d1713e54bcc7872ae63d55edf647ec17b0bbb2f509c0d1",
+    "RiscFailureEvidenceV1.h": "f2b024c21780155bacf78bd67a279d8959365c1d25ff1ba421449dd5d3b35265",
+    "RiscFileOpenSourceV1.h": "6f4592ea20f26262125e9a1a1ae030aa13bbc08d06eb319c7d7f09417598ad02",
+    "RiscGpioBankV1.h": "58cb736872a689413f6ffcf24cc5cc1bce5187e7d7cfb6fcffe10ad854e7a35c",
+    "RiscGpioSdmmcV1.h": "00d7788c381be557deec18a959b55d474bad7edc0331ae8331b878a618b9818f",
+    "RiscHardwareConfigV1.h": "47fa4cd7d4f09f571a5aedc87376d2f57520ad7873f5556af0a932011633e240",
+    "RiscHciControllerStatusV1.h": "235b388d91ed7e0becbb44dd476a29ef526fb2f7d9bf44b1072b86cbe5860e0e",
+    "RiscHttpClientV1.h": "e966177d426d3fadcb420f5fa9dd7226d3450a208f7ed333808d6466ba7bf8d6",
+    "RiscInputNavigationV1.h": "2644754feb7238d066908658ac9d4fe25537d4d5e424a6aef1365fabea600a26",
+    "RiscInstallationV1.h": "cbf51953a4b8b11cfa0891cd3f16796123bc3e546e22b62b43285a83aa1496f4",
+    "RiscKeyValueV1.h": "0e73bf29c402be030baf52f5b2b324f5b872549cdf58aa31f45b72bd70977179",
+    "RiscKeyValueV2.h": "c66337a93c6f5fff6dac9507e011655f4827c3d0ec06b3e6d9d039084b3ec4d3",
+    "RiscLightSleepV1.h": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+    "RiscMemoryHeapV1.h": "369965f04303c7dae3d52b5e3d47aeb01f417ab0a566919fdb94677a1d64dced",
+    "RiscPackageResourcesV1.h": "8aff53415cf68a46e8e492dd02d12bde802ce2a1d69629dd4f3b0aad5794e459",
+    "RiscPerformanceV1.h": "c1e52e2e257a057dbbbc371fb8d83d9262bcea674f28f6ce9c56725b0d6dd14d",
+    "RiscPlatformClockV1.h": "41a12f6529f38731ee874f8bc166e1cf89fe376a1448fe5a4dd4c9abac90e5e2",
+    "RiscPlatformClockWaitV1.h": "c09d95c418f930f56c6e66004e07e38cb5726d8c7e5cd49b579bafbeebbe831c",
+    "RiscPlatformRealtimeV1.h": "ed642c0f37350f7f1402342c7710564019db9c4750f3572f153d2ef1e37eca98",
+    "RiscProtectedSettingsPath.h": "d7b894658ad802fbb9c15b17f0f3953dfd9bd48e0a3ffffbc5c1b21f457ec750",
+    "RiscProviderPromotionV1.h": "751585fed0336bf068cdde488d65b2e0191f113184e48eecbfb4f80861512c51",
+    "RiscProviderSyncV1.h": "c0981bde804b20c1b963323f91c4e9804c144c56535160bfd467be7e93028f45",
+    "RiscProviderV2.h": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+    "RiscRadioAsyncV1.h": "2b5a916cfe9e1fb6520043c2b8f3e8c13ea8e022166fcbdfa6b50ce691ebfe48",
+    "RiscRadioIqResourceV1.h": "5a1cc689b067ea59ca15ef62d943ef6fb8d4f75a887de210c859fb7e0f471874",
+    "RiscRadioScanV1.h": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+    "RiscRandomV1.h": "67e10d8b6d8b96f0ead5f0071e0eabbf73e30d2a6e0968e8bdd371ad492b6b57",
+    "RiscRealtimeV1.h": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d",
+    "RiscResidentShellV1.h": "1a84715c03fcc7fae7f75cb72c0daf875e761567dda5d1b39ec0dc8b14fba8bd",
+    "RiscRetainedWakeV1.h": "7c7b6f0d56631f3aab521a43499d2ea840d075084536e4afa654a74c52e1e511",
+    "RiscRuntimeHostControlV1.h": "697f710f7512dc724c2986bac0abc86756c9ae0739577b4f4ab20583a2743815",
+    "RiscRuntimeV1.h": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+    "RiscSceneCheckpointV1.h": "478ca88a15aeeb5a906623fb67482b29a0b5fa37dd933a5c9ca3a856ec967e44",
+    "RiscSceneComponentsV1.h": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+    "RiscSceneLifecycleV1.h": "52a3d5dcfc6a9be8d598e0c93bf9bf6c6f824674280ef03ee0c0043a01eb31f5",
+    "RiscScenePageV1.h": "a4372273adf0e587fe3d8d70912302573273a2701d3892bedf27c00d45ba96ea",
+    "RiscSceneReadingLinksV1.h": "b29144e74cf4e56a900009291536851c24d7b19a7d55cff634158e1e0ceee19d",
+    "RiscSceneReadingV1.h": "1e9c17ed25224014d33e2acca2595f642196436ac7f67a6aa0d7903c3ff73c13",
+    "RiscSceneResidentV1.h": "145ef678f3330e4fab85430395b5799dde8dd05ce056f7b2f02ad5a9f58d0414",
+    "RiscSceneStateV1.h": "aa52660271c49d9af396839a0404ba830974416259815a76e9904c4a222d607f",
+    "RiscSceneTelemetryV1.h": "c1028474b5c9e9ce6be7ea861e94b4e33bd6821e8b03e09b5c42d9ac040d39b2",
+    "RiscSceneV1.h": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+    "RiscSerialStreamSessionV1.h": "66d328c2a201625a7be348507c8dbedcaa937dfb46f86b05ecd04d60e3fba0b7",
+    "RiscStorageAsyncAdapterV1.h": "2b90ba70e6c44d112a28ce4d9a4d9272baeaf277f233d127181c1eff1515c1c6",
+    "RiscStorageExportV1.h": "74ae82f05a916ca0d2df1bb251bc66cc0ac33dde38757ced7c8e864374d43c8a",
+    "RiscStoragePackageAsyncV1.h": "c0b4a025fcbbc6ec55913dce2f99553c14cd7a96ae104f8eebc8d0dfd33ddf97",
+    "RiscStorageVolumeAsyncV1.h": "e395dccfa5c89e1585acaed0e5c8932d8487940261759741e3e60b483aafcaec",
+    "RiscStorageVolumeFsV1.h": "e487352157e3c3d5c10a28a16fdfcce76db693bf45c612ff4e2f31ee83e9a329",
+    "RiscStorageVolumeStateV1.h": "1f2f7dbfe9ec7ac27a57149ac720cf7f3a4801d6d34b5532f77c77db252b87a1",
+    "RiscStorageVolumeV1.h": "d477167a06004640b2c07c05d662c103be6e1b9e4a4d866f6fce13e754ef02f5",
+    "RiscStorageWorkerAdmissionV1.h": "013322a0db332ee9e7b124399ac12dfe050c53fd4b018feb7c278edd2ef8d8bd",
+    "RiscStorageWorkerV1.h": "9e859235403292a0108fd10b8122218d72c1c2d1dd460d94304d919f77b83b6f",
+    "RiscStreamClientV1.h": "ef5deb9a3bf8d20c0af9859a83977b93acfb8e480a851d0dcf96caf2795babcb",
+    "RiscStreamProviderV1.h": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+    "RiscStreamResultV1.h": "af140ee9ca4f6286c5f1beeecb0a0952264b14eb40d3ba4f313ff952e8824a6f",
+    "RiscStreamSessionProviderV1.h": "fe463661530c43ae7d1dd8b9c8227fdc6a7e4380bca3f5c8a13287cb0db9e873",
+    "RiscTcpListenerV1.h": "63ed934c4cb1a505de539d06ad04c1551ec23f64d56b6ea07129698dde0ba886",
+    "RiscTextEntryV1.h": "a5733f06b1d8caf86f21d730abcd9ff833b603807c8b028a49544c997b6cdba3",
+    "RiscTimedSleepV1.h": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+    "RiscTouchI2cV2.h": "78179bc7a8d2dbbb5fb738d1ffabe02b31312173e70c9573941d1c8a4fcad3cf",
+    "RiscTouchV1.h": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+    "RiscUsbControllerV1.h": "2fb2908caee99b0822838956f33cf8302db9d2cbd0600a9eed21fcce5f68232b",
+    "RiscUsbHidV1.h": "5b5549c4cb718dec55f2aca8bc93f401b2d5a703d30aaa1a78d1bcdd26755b5c",
+    "RiscUsbPhyResourceV1.h": "fe668ff8e8f83ea454eafd059c61c633d2213bc2a77504d8794a64c1dc11b016",
+    "RiscUsbProviderV1.h": "77f67cf5db7ed3fd7c6e148807bc705b5f8443c90d401b546069d756eb997b9a",
+    "RiscWakeSetV1.h": "0b5a4914ac67d37b420e1ea19b591a71440f6e4c20149ca4324e1049517ba375",
+    "SceneKeyboardV1.h": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+    "SceneProfileV1.h": "d687e02a50837161e833103006d93c179b22a063fa4ac3410b3e87e43ac66fc5",
+    "T5FileOpenApi.h": "c1b873e364dba81ce39d8c8a62668db618735407a6291dca87b9795ce4accc30",
+    "TWatchHardwareV1.h": "ca48ca21a944565ae185f7c4e8cc0e73bcc18871d79b966f7e7da916e7ab2c99",
+    "TWatchPlatformV1.h": "88457c6cd36a8d2550c964ede1060b4006b72be5d290cff7cd108087bacc16dd"
+  },
+  "imports": [
+    "memcpy",
+    "memset",
+    "risc_runtime_get_api",
+    "strcmp",
+    "strlen"
+  ],
+  "exports": [
+    "t5_driver_get"
+  ],
+  "compaction": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 19232,
+    "after_bytes": 11980,
+    "before_sha256": "f2f39e89719fd93155a4ce649e2606c450f8d264569a47c7300a2befaa262c92",
+    "after_sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ]
+  },
+  "raw_elf_sha256": "f2f39e89719fd93155a4ce649e2606c450f8d264569a47c7300a2befaa262c92",
+  "raw_elf_bytes": 19232,
+  "prior_version": "0.1.6",
+  "prior_elf_sha256": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+  "authority_unchanged": true,
+  "embeds_fonts": false,
+  "scene_renderer_not_built_by_text_recipe": true,
+  "native_changed": false,
+  "hardware_verified": false
+}

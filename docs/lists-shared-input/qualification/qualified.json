@@ -1,0 +1,217 @@
+{
+  "schema": "lists.published-source.device-qualification.v1",
+  "device": "watch",
+  "compiled_recipe_commit": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+  "source_application_commit": "f83d79a0753c2a451730000d2f553aa21fda7830",
+  "source_system_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "receipt_publication_status": "pending_at_compilation",
+  "union_handoff_sha256": "b174cba70ab88df294a48e53611bf0fecb2f0e2c8976bd6ab56e7f5e22cf3065",
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "delivered": false,
+  "flashed": false,
+  "hardware_verified": false,
+  "qualification": {
+    "source_commit": "f83d79a0753c2a451730000d2f553aa21fda7830",
+    "compiled_recipe_commit": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+    "sources": {
+      "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+      "productivity": "f83d79a0753c2a451730000d2f553aa21fda7830",
+      "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9"
+    },
+    "source_roots": {
+      "system-apps": "/workspace/shared/lists-shared-input-system-published-20261012",
+      "productivity": "/workspace/shared/lists-shared-input-productivity-published-20261012",
+      "runtime": "/workspace/shared/watch-runtime-file-source-20261012",
+      "generated": "/workspace/shared/lists-shared-input-components-20261012/watch-published/lists"
+    },
+    "selected_resident_profile": {
+      "schema": "lists.selected-resident-profile.v1",
+      "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+      "commit": "eec748ca081fe59346be03180600c65013cc7298",
+      "path": "sdk/app/RiscSceneResidentV1.h",
+      "sha256": "a657fcd906217fdbb03894c15b10009b352d6a5b7466868afa603a03236b8851",
+      "bytes": 2812,
+      "purpose": "Preserve the exact selected Watch/X4 Lists resident helper while adding shared text input. This is a byte-identical frozen build input, not a new shared helper implementation."
+    },
+    "candidate_directory": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate",
+    "target_build_directory": "/workspace/shared/lists-shared-input-components-20261012/watch-published/lists",
+    "target_elf": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/lists/lists.elf",
+      "bytes": 26584,
+      "sha256": "31be400bcf3dfa6b4c27501c2938316375f3c2b82fdadddbecd426d1f7f049b6"
+    },
+    "target_manifest": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/lists/lists.json",
+      "bytes": 480,
+      "sha256": "5eb03ec6147ab4bed28fd9142008fbcf08c5706c38b23b7cb32fa82cb9c92b35"
+    },
+    "target_build_record": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/lists/lists-build-record.json",
+      "bytes": 17310,
+      "sha256": "0f7c1ab9a30c448e5d6b96c07bd7886c2ac6c77e84c0d60a6936676bf7db8c7b"
+    },
+    "raw_elf_sha256": "8bdbc1a3c500a43bb59a115736b0e263d433f840195e5da5b34dd122ab87ba4c",
+    "raw_elf_bytes": 41524,
+    "predecessor_version": "0.1.0",
+    "predecessor_elf_sha256": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+    "changed_store_paths": [
+      "boot.json",
+      "cohort.json",
+      "lists.elf",
+      "lists.json",
+      "text-input/driver.elf",
+      "text-input/manifest.json",
+      "ui-scene/driver.elf",
+      "ui-scene/manifest.json"
+    ],
+    "preserved_store_files": 105,
+    "store_files": 113,
+    "storage_namespace": 62,
+    "grant_delta": [
+      {
+        "manifest": "lists.json",
+        "grant": {
+          "capability": "ui.text-input",
+          "api": 1,
+          "instance_id": 0
+        }
+      }
+    ],
+    "all_other_boot_rows_and_fields_preserved": true,
+    "font_bytes_and_presentation_profiles_preserved": true,
+    "scene_host_updated": true,
+    "scene_host_version": "0.4.6",
+    "scene_host_elf": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/scene/driver.elf",
+      "bytes": 159504,
+      "sha256": "feb5eff6e568ec18b2570a0ea67f05cb0d786ac8a874358b060b9e5d7a01be38"
+    },
+    "scene_host_manifest": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/scene/manifest.json",
+      "bytes": 525,
+      "sha256": "2bf411091aa0175206a080abc204fed82cb5ef283941cb4161f90febdfe8aab4"
+    },
+    "scene_host_build_record": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/scene/scene-build-record.json",
+      "bytes": 15807,
+      "sha256": "1b04e9aa19215c04a5847fe4957a715d90c1809afbecaf202efd85a0867094e8"
+    },
+    "scene_host_authority_unchanged": true,
+    "scene_host_predecessor_identity": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/scene-host-predecessor.json",
+      "bytes": 1696,
+      "sha256": "83286cab940f01ff88e0facece3dcbae2cf8711e22cb00f52e838ee5fcefa2e9"
+    },
+    "scene_host_target_stack": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/scene-target-stack.json",
+      "bytes": 1152,
+      "sha256": "7e64b5ef519d098593b23fd6c750ceee2bbf5b49f138e4c734d2d16bce28428d"
+    },
+    "text_host_updated": true,
+    "text_host_version": "0.1.7",
+    "text_host_elf": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text/driver.elf",
+      "bytes": 11980,
+      "sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35"
+    },
+    "text_host_manifest": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text/manifest.json",
+      "bytes": 321,
+      "sha256": "60791284f2124d197876cf900345e9d5e37ed5952ce4f1fcff21c2ad54bc3ff1"
+    },
+    "text_host_build_record": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text/text-build-record.json",
+      "bytes": 13009,
+      "sha256": "4226361c6260d350ee2328471cde7f876772ab8095c5745636ba7873fc55e0e3"
+    },
+    "text_host_authority_unchanged": true,
+    "text_host_target_stack": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text-target-stack.json",
+      "bytes": 1696,
+      "sha256": "4b19cce4dc1cb2f4a421b644c40828a9340471d818fd504c90e5067a69bbdca2"
+    },
+    "text_host_predecessor_identity": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/text-host-predecessor.json",
+      "bytes": 7669,
+      "sha256": "6c7c58406fc6c4703a358c8003576a342d6c1f95023f5d4d4d2fe6b69161bcf3"
+    },
+    "all_unrelated_store_bytes_preserved": true,
+    "packing": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/receipts/packing.json",
+      "bytes": 4029,
+      "sha256": "b1fe2e1cea897eca987550dedc477a23ba948c28c11bf5c23e489b7dbe398e2b"
+    },
+    "free_blocks": 3,
+    "minimum_free_blocks": 2,
+    "target_stack": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/target-stack.json",
+      "bytes": 2692,
+      "sha256": "3df49a0ccec7925a48737d13a006165051c1feaed57cd87c508880cae02ba4be"
+    },
+    "expanded_target_stack": null,
+    "flagoff_target": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/flagoff-target.json",
+      "bytes": 4311,
+      "sha256": "126e8c32d50c1861c67fe6ac33b1c1bb23c1ae02728270a0c7356f7bc8f7e339"
+    },
+    "actual_target_dependency_count": 23,
+    "actual_text_host_dependency_count": 15,
+    "actual_scene_host_dependency_count": 29,
+    "compiled_font_dependency_count": 3,
+    "all_recorded_dependency_hashes_verified": true,
+    "native_unchanged": true,
+    "no_unpublished_sd_changes_consumed": true,
+    "full_images_materialized": false,
+    "hardware_verified": false,
+    "resident_owner_updated": false,
+    "resident_shell_configured": false,
+    "normal_admission": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/receipts/final-normal.json",
+      "bytes": 33921,
+      "sha256": "680163e5a33cac98c8a1eb0a7d21b078ee5b2c56971bc6611d54c8af2a1ec4ae"
+    },
+    "sanitized_admission": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/receipts/final-sanitized.json",
+      "bytes": 33921,
+      "sha256": "680163e5a33cac98c8a1eb0a7d21b078ee5b2c56971bc6611d54c8af2a1ec4ae"
+    },
+    "normal_sanitized_receipts_identical": true,
+    "internal_elfs": 55,
+    "full_image_sha256": "018eddc6295203f2d817cc8db91d49dd52f40182f29cbaedfc99cddc4f48ac18",
+    "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "components": {
+      "bootfs.bin": {
+        "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/components/bootfs.bin",
+        "bytes": 5308416,
+        "sha256": "5a3820dd77569f8eca9c9ec3d18dde1ba8ddfd000ff8217403a50223af63bd43"
+      },
+      "bank_state.bin": {
+        "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/components/bank_state.bin",
+        "bytes": 8192,
+        "sha256": "13158fa05187f8d38b0ff711baab2928e9effc93125e7655a0a31ed0886dc7ba"
+      }
+    },
+    "changed_sd_paths": [],
+    "added_sd_files": [],
+    "compiled_recipe_published": true,
+    "compiled_recipe_remote_ref_verified": true,
+    "compiled_recipe_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/2cd9739a403d733a3b45d6925abd5220b1a1e743",
+    "compiled_recipe_ci": {
+      "conclusion": "success",
+      "runs": [
+        {
+          "id": 38301892655,
+          "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38301892655",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "receipt_publication": {
+      "status": "pending",
+      "compiled_recipe_commit": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+      "receipt_only_expected": true
+    },
+    "exact_public_source_reproduction": true
+  }
+}

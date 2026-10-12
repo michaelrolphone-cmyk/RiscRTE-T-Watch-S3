@@ -1,0 +1,62 @@
+{
+  "schema": "lists.shared-text-host.target-stack.v1",
+  "device": "watch",
+  "system_source": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "target_elf_sha256": "c3cbb95ceee72fe4374b2ba4382d13bf6907b2956496218a80819bb6f85aad35",
+  "debug_elf_sha256": "f2f39e89719fd93155a4ce649e2606c450f8d264569a47c7300a2befaa262c92",
+  "checkpoint_entry_frames_bytes": {
+    "checkpoint_resume": 48,
+    "checkpoint_snapshot": 128,
+    "checkpoint_enable": 48,
+    "checkpoint_pause_mode$constprop$11": 64,
+    "checkpoint_pause": 32,
+    "checkpoint_pause_for_focus_change": 32
+  },
+  "maximum_checkpoint_frame_bytes": 128,
+  "all_entry_frames_maximum_bytes": 848,
+  "static_checkpoint_storage": {
+    "checkpoint_activity": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_enabled": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_full_pause": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_neutralizing": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_paused": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_pausing": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_scene": {
+      "bytes": 4,
+      "static_storage": true,
+      "symbol_kind": "b"
+    },
+    "checkpoint_usb_held": {
+      "bytes": 1,
+      "static_storage": true,
+      "symbol_kind": "b"
+    }
+  },
+  "per_frame_regression_checks_passed": true,
+  "target_instructions_executed": false,
+  "peak_call_chain_stack_usage_proven": false
+}

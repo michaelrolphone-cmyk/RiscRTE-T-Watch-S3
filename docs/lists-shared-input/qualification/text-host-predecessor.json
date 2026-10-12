@@ -1,0 +1,171 @@
+{
+  "schema": "lists.text-host-predecessor-identity.v1",
+  "passed": true,
+  "targets": {
+    "system-7fb-watch": {
+      "source_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+      "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+      "version": "0.1.6",
+      "defines": [],
+      "raw_elf_sha256": "ef48013b2201ded618bb8b7444a7ea5fa536a9e59e899cc8b059dc06a3f01ebc",
+      "raw_elf_bytes": 14028,
+      "actual_dependencies": {
+        "historical-system:Services/text_input/host.c": {
+          "sha256": "fe03d79a5a98cdc50d5f5c7e559a5856cbc4a6566d670b891929385ed0076698",
+          "bytes": 16983
+        },
+        "staged-sdk:RiscTextEntryV1.h": {
+          "sha256": "6b3877528f9581394614f906c544fd203cda3de55e52bd0d11a5a4eb5fc3599c",
+          "bytes": 7144
+        },
+        "staged-sdk:RiscRuntimeV1.h": {
+          "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+          "bytes": 7932
+        },
+        "staged-sdk:RiscSceneV1.h": {
+          "sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+          "bytes": 3641
+        },
+        "historical-system:Services/text_input/SceneKeyboardV1.h": {
+          "sha256": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+          "bytes": 1945
+        },
+        "staged-sdk:RiscProviderV2.h": {
+          "sha256": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+          "bytes": 4145
+        },
+        "staged-sdk:RiscStreamProviderV1.h": {
+          "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+          "bytes": 1411
+        },
+        "historical-system:Services/text_input/RiscUsbHidV1.h": {
+          "sha256": "5b5549c4cb718dec55f2aca8bc93f401b2d5a703d30aaa1a78d1bcdd26755b5c",
+          "bytes": 4383
+        },
+        "historical-system:Services/text_input/RiscUsbControllerV1.h": {
+          "sha256": "2fb2908caee99b0822838956f33cf8302db9d2cbd0600a9eed21fcce5f68232b",
+          "bytes": 3061
+        },
+        "historical-system:Services/text_input/RiscUsbProviderV1.h": {
+          "sha256": "77f67cf5db7ed3fd7c6e148807bc705b5f8443c90d401b546069d756eb997b9a",
+          "bytes": 2354
+        }
+      },
+      "compacted_elf_sha256": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+      "compacted_elf_bytes": 8872
+    },
+    "system-7fb-x4": {
+      "source_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+      "runtime_commit": "1c1ed8661ea30d47e7e9707c41d492ce3a2b4d70",
+      "version": "0.1.6",
+      "defines": [],
+      "raw_elf_sha256": "ef48013b2201ded618bb8b7444a7ea5fa536a9e59e899cc8b059dc06a3f01ebc",
+      "raw_elf_bytes": 14028,
+      "actual_dependencies": {
+        "historical-system:Services/text_input/host.c": {
+          "sha256": "fe03d79a5a98cdc50d5f5c7e559a5856cbc4a6566d670b891929385ed0076698",
+          "bytes": 16983
+        },
+        "staged-sdk:RiscTextEntryV1.h": {
+          "sha256": "6b3877528f9581394614f906c544fd203cda3de55e52bd0d11a5a4eb5fc3599c",
+          "bytes": 7144
+        },
+        "staged-sdk:RiscRuntimeV1.h": {
+          "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+          "bytes": 7932
+        },
+        "staged-sdk:RiscSceneV1.h": {
+          "sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+          "bytes": 3641
+        },
+        "historical-system:Services/text_input/SceneKeyboardV1.h": {
+          "sha256": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+          "bytes": 1945
+        },
+        "staged-sdk:RiscProviderV2.h": {
+          "sha256": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+          "bytes": 4145
+        },
+        "staged-sdk:RiscStreamProviderV1.h": {
+          "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+          "bytes": 1411
+        },
+        "historical-system:Services/text_input/RiscUsbHidV1.h": {
+          "sha256": "5b5549c4cb718dec55f2aca8bc93f401b2d5a703d30aaa1a78d1bcdd26755b5c",
+          "bytes": 4383
+        },
+        "historical-system:Services/text_input/RiscUsbControllerV1.h": {
+          "sha256": "2fb2908caee99b0822838956f33cf8302db9d2cbd0600a9eed21fcce5f68232b",
+          "bytes": 3061
+        },
+        "historical-system:Services/text_input/RiscUsbProviderV1.h": {
+          "sha256": "77f67cf5db7ed3fd7c6e148807bc705b5f8443c90d401b546069d756eb997b9a",
+          "bytes": 2354
+        }
+      },
+      "compacted_elf_sha256": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+      "compacted_elf_bytes": 8872
+    },
+    "system-e3fd-x4": {
+      "source_commit": "e3fd26c2257cef91c8f6a7b98065b52f1db7a54d",
+      "runtime_commit": "1c1ed8661ea30d47e7e9707c41d492ce3a2b4d70",
+      "version": "0.1.5",
+      "defines": [],
+      "raw_elf_sha256": "5517367ec213230ca5cc7e33c3f92231a89dae90cb9aba29d5bb8a36791890a1",
+      "raw_elf_bytes": 13336,
+      "actual_dependencies": {
+        "historical-system:Services/text_input/host.c": {
+          "sha256": "2a20bec2bf79ce383670c6828b4e88a2b6d407cb9f88dac3ed2c6fa571752ea6",
+          "bytes": 15715
+        },
+        "staged-sdk:RiscTextEntryV1.h": {
+          "sha256": "371e779aea3501999dc9ec2ffed1a3d31306a35b880a5089a037798a1a37284b",
+          "bytes": 5613
+        },
+        "staged-sdk:RiscRuntimeV1.h": {
+          "sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+          "bytes": 7932
+        },
+        "staged-sdk:RiscSceneV1.h": {
+          "sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+          "bytes": 3641
+        },
+        "historical-system:Services/text_input/SceneKeyboardV1.h": {
+          "sha256": "ab76f2a86483d89e77bc4553c7d9995122a6b91f2ff54403f72d248afd424b1c",
+          "bytes": 1751
+        },
+        "staged-sdk:RiscProviderV2.h": {
+          "sha256": "62478822fa8943ddfd1607f8923de52d7b5b6fc8a0db2df6ca07c65c95c62d41",
+          "bytes": 4145
+        },
+        "staged-sdk:RiscStreamProviderV1.h": {
+          "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+          "bytes": 1411
+        },
+        "historical-system:Services/text_input/RiscUsbHidV1.h": {
+          "sha256": "5b5549c4cb718dec55f2aca8bc93f401b2d5a703d30aaa1a78d1bcdd26755b5c",
+          "bytes": 4383
+        },
+        "historical-system:Services/text_input/RiscUsbControllerV1.h": {
+          "sha256": "2fb2908caee99b0822838956f33cf8302db9d2cbd0600a9eed21fcce5f68232b",
+          "bytes": 3061
+        },
+        "historical-system:Services/text_input/RiscUsbProviderV1.h": {
+          "sha256": "77f67cf5db7ed3fd7c6e148807bc705b5f8443c90d401b546069d756eb997b9a",
+          "bytes": 2354
+        }
+      },
+      "compacted_elf_sha256": "8cc6b9cd75804fb31cbda21e312499088ba141acd6b1c174d640e54dd24e2d2c",
+      "compacted_elf_bytes": 8416
+    }
+  },
+  "watch_selected_exact_identity": true,
+  "x4_selected_exact_identity": true,
+  "watch_selected_source": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "x4_selected_source": "e3fd26c2257cef91c8f6a7b98065b52f1db7a54d",
+  "source_difference": "System7fb text host0.1.6 adds an opt-in long-text request/result suffix and wider internal draft state; X4 still selected the preceding 0.1.5 host from Systeme3fd. This is source/API growth, not merely a manifest/version change. Base and extended prefix ABI methods remain supported by the new checkpoint host.",
+  "new_host_legacy_behavior_tests_required": true,
+  "scene_host_fonts_native_rebuilt": false,
+  "target_instructions_executed": false,
+  "temporary_builds_removed": true
+}
