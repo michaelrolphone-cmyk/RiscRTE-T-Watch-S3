@@ -1,5 +1,6 @@
 #include "WifiApi.h"
-#include "GardenRadioAsyncV1.h"
+#include "GardenWifiStationV1.h"
+#include "RiscWifiManagerV1.h"
 #include "twatch_support.h"
 #define hardware_config tw_config
 #define garden_dependency tw_dep
@@ -9,6 +10,7 @@ static uint64_t claim;
 static bool running;
 static uint32_t operation, completed, service_lease;
 static const garden_radio_async_v1 *async_radio;
+static const garden_wifi_station_v1 *station_radio;
 static bool bounded(const char *s, size_t maximum) {
     if (!s)
         return false;
@@ -56,6 +58,27 @@ static int32_t service_end(void *c,uint32_t id) {
     int32_t result=async_radio->service_end(radio->context,claim,id);
     if(result==RISC_RADIO_ACCEPTED)service_lease=0;
     return result;
+}
+static int32_t station_begin(void *c,const risc_wifi_station_request_v1 *request,uint32_t *out) {
+    (void)c;if(out)*out=0;
+    if(!running||!station_radio||!(hardware.features&1))return RISC_RADIO_UNAVAILABLE;
+    if(operation)return RISC_RADIO_BUSY;
+    int32_t result=station_radio->begin_station(radio->context,claim,request,out);
+    if(result==RISC_RADIO_ACCEPTED&&out&&*out){operation=*out;completed=0;}
+    return result;
+}
+static int32_t station_observe(void *c,uint32_t id,risc_wifi_station_observation_v1 *out) {
+    (void)c;
+    if(!running||!station_radio)return RISC_RADIO_UNAVAILABLE;
+    if(!id||(id!=operation&&id!=completed))return RISC_RADIO_STALE;
+    return station_radio->observe(radio->context,claim,id,out);
+}
+static int32_t station_request(void *c,uint32_t id,uint32_t command) {
+    (void)c;
+    if(!running||!station_radio)return RISC_RADIO_UNAVAILABLE;
+    if(!id||id!=operation)return RISC_RADIO_STALE;
+    if(service_lease)return RISC_RADIO_BUSY;
+    return station_radio->request(radio->context,claim,id,command);
 }
 static bool connect(void *c, const char *ssid, const char *password) {
     (void)c;
@@ -136,13 +159,15 @@ static bool addresses(void *c, wifi_ipv4_v1 *station, wifi_ipv4_v1 *ap) {
     return running && station && ap &&
            radio->addresses(radio->context, claim, (uint8_t *)station, (uint8_t *)ap);
 }
-static wifi_async_v1 api = { .base = {
+static risc_wifi_manager_v1 api = { .base = { .base = {
     .api_version=1, .struct_size=sizeof(wifi_api_v1), .context=NULL, .connect=connect,
     .disconnect=disconnect, .status=status, .rssi=rssi, .start_ap=start_ap,
     .stop_ap=stop_ap, .addresses=addresses, .scan_start=scan_start,
     .scan_poll=scan_poll, .scan_cancel=scan_cancel, .disconnect_checked=disconnect_checked
 }, .async_tag=RISC_RADIO_ASYNC_TAG, .async_version=RISC_RADIO_ASYNC_VERSION,
    .begin=async_begin, .poll=async_poll, .cancel=async_cancel, .service_begin=service_begin, .service_end=service_end
+}, .station_tag=RISC_WIFI_STATION_TAG, .station_version=1,
+   .begin_station=station_begin, .observe=station_observe, .request=station_request
 };
 static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (claim || running)
@@ -156,12 +181,14 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!radio || !radio->claim || !radio->join || !radio->state || !radio->leave ||
         !radio->release || !radio->start_ap || !radio->stop_ap || !radio->addresses)
         return false;
-    async_radio=NULL;api.base.struct_size=sizeof(wifi_api_v1);
+    async_radio=NULL;station_radio=NULL;api.base.base.struct_size=sizeof(wifi_api_v1);
     if(radio->struct_size>=sizeof(garden_radio_async_v1)){
         const garden_radio_async_v1 *next_async=(const garden_radio_async_v1*)radio;
         if(next_async->async_tag==RISC_RADIO_ASYNC_TAG && next_async->async_version==RISC_RADIO_ASYNC_VERSION &&
-           next_async->begin && next_async->poll && next_async->cancel && next_async->service_begin && next_async->service_end){async_radio=next_async;api.base.struct_size=sizeof(api);}
+           next_async->begin && next_async->poll && next_async->cancel && next_async->service_begin && next_async->service_end){async_radio=next_async;api.base.base.struct_size=sizeof(wifi_async_v1);}
     }
+    station_radio=async_radio?garden_wifi_station_get_v1(radio):NULL;
+    if(station_radio)api.base.base.struct_size=sizeof(api);
     operation=completed=service_lease=0;
     running = radio->claim(radio->context, &claim) && claim;
     return running;
