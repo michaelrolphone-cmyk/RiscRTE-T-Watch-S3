@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 WATCH_SHA='d36b2d14d92e24278f2d3415235b32a454206038b5d460e18fb0d6ddf1b99916'
 WAVE_SHA='032643ee90d63f4894dcdc8bacac8a5e067596aaeaa382c374efb53c6b49ae4d'
-HOME_SHA='813fa2aab98220dde9a3975b91e95bac8faeb497034e8588b3b230c6707ff124'
+HOME_SHA='db647227a06c452721fe6789dceb58847f9e9dced36c0bc21b53265eccc96ba8'
 LORA_SHA='0a0c9ed6d8c701af9af336fcbb067b6ece8fc304f4acf68722b627c04d96d785'
 def sha(b):return hashlib.sha256(b).hexdigest()
 def encode(v):return (json.dumps(v,sort_keys=True,separators=(',',':'))+'\n').encode()

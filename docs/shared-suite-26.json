@@ -190,8 +190,8 @@
           "sha256": "7ce679c923db857a00681eaaa6f760950f2c3c7a81aacb02f28ec40dedb123bf"
         },
         "default.elf": {
-          "bytes": 870876,
-          "sha256": "813fa2aab98220dde9a3975b91e95bac8faeb497034e8588b3b230c6707ff124"
+          "bytes": 764380,
+          "sha256": "db647227a06c452721fe6789dceb58847f9e9dced36c0bc21b53265eccc96ba8"
         },
         "default.json": {
           "bytes": 923,
@@ -494,15 +494,9 @@
           "sha256": "71f301c6f9be62678b6086bbff7ea0ee3b87499500929d648308974d69242b9b"
         }
       },
-      "inventory_sha256": "fae8e779ca63629f599780b31268489b299216918bd4459b008fc9908bb4a3bb",
+      "inventory_sha256": "4c13f9bec7b435be522495a9c8379ecdd5be4df48a662b1812047945b4f306a8",
       "max_grants": 28,
-      "providers": 34,
-      "schema": 1,
-      "version": "1.1.23",
-      "baseline_sha256": "d36b2d14d92e24278f2d3415235b32a454206038b5d460e18fb0d6ddf1b99916",
-      "status": "unsealed component staging only",
-      "flashable": false,
-      "native_cohort_admitted": false
+      "providers": 34
     },
     "waveshare": {
       "all_prior_provider_bytes_and_policies_preserved": true,
@@ -723,8 +717,8 @@
           "sha256": "a8ca0aaab464b21366fb4f9368c9ea2b4254b3c672d793c86e2df0ed3a0e49a5"
         },
         "default.elf": {
-          "bytes": 870876,
-          "sha256": "813fa2aab98220dde9a3975b91e95bac8faeb497034e8588b3b230c6707ff124"
+          "bytes": 764380,
+          "sha256": "db647227a06c452721fe6789dceb58847f9e9dced36c0bc21b53265eccc96ba8"
         },
         "default.json": {
           "bytes": 831,
@@ -1007,7 +1001,7 @@
           "sha256": "5a7e66ad7c21891034240b0f747e55e87e763278f172bcb1c56ad5da5db30ce4"
         }
       },
-      "inventory_sha256": "baad9bde89dacd7fa802b5706e37233c4fab96258b77fc2183e1dd0549946d7a",
+      "inventory_sha256": "61ec6294976875a5963854832caaff956fd6ba3821651deba56cac34b2d43e4c",
       "max_grants": 29,
       "providers": 35
     }
@@ -1062,8 +1056,8 @@
       "sha256": "821960a5bfb6d84fef583bae809e7a17e47f7a527708d76c6b82db48a55c7876"
     },
     "default.elf": {
-      "bytes": 870876,
-      "sha256": "813fa2aab98220dde9a3975b91e95bac8faeb497034e8588b3b230c6707ff124"
+      "bytes": 764380,
+      "sha256": "db647227a06c452721fe6789dceb58847f9e9dced36c0bc21b53265eccc96ba8"
     },
     "file_browser.elf": {
       "bytes": 300356,
@@ -1133,11 +1127,17 @@
     }
   },
   "delivery_hold_until": "2026-10-13T23:30:00Z",
-  "home": "2403fc2",
-  "home_system": "46a6162",
-  "watch_runtime": "0d51e85",
-  "waveshare_runtime": "4e340c7",
+  "home": "a7d1500a09ff1f5e560a5db44426cd21e7f2576a",
+  "home_system": "46a6162341665c8649f52301a8a1c1a379394858",
+  "watch_runtime": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+  "waveshare_runtime": "4e340c7d55152454622796f12d49704f6d5a0dd8",
   "radio_unavailable_ui": "Radio unavailable; retry",
   "missing_media_ui": "APP MEDIA UNAVAILABLE",
-  "hardware_qualified": false
+  "hardware_qualified": false,
+  "lora": "40cb8ee6cebe86469044745651a47b7201016136",
+  "home_lossless_atlas": {
+    "saved_bytes": 106496,
+    "scratch_bytes": 6853,
+    "original_golden_frames_exact": 362
+  }
 }
