@@ -1,0 +1,245 @@
+{
+  "status": "provisional-target-admitted-capacity-blocked",
+  "finalized": false,
+  "source_publication": "local-provisional",
+  "source_file_sha256": "19f0169c32a5958d956cecad61aa4a808fb0ef32aae12f74c8b0868f619ffb8e",
+  "capacity_gap_bytes": 2055,
+  "capacity_gap_object_pages": 9,
+  "raw": {
+    "raw_target_bytes": 151068,
+    "raw_target_sha256": "c82200343e8fc8eba2844655f9f3ace03eb29888004ca1aa8ca241598bf534e1",
+    "delta_bytes": 4096,
+    "candidate_pages_after_remaining_json": {
+      "data_pages": 19177,
+      "index_pages": 249,
+      "used_object_pages": 19426,
+      "occupied_blocks": 1296,
+      "free_blocks": 0,
+      "floor_shortfall_object_pages": 16
+    },
+    "required_free_blocks": 2,
+    "metadata_gap_packing_applied": false
+  },
+  "metadata_gap_packing": {
+    "profile": "points-nonallocated-tail-gap-v1",
+    "before_bytes": 151068,
+    "after_bytes": 149392,
+    "bytes_saved": 1676,
+    "before_sha256": "c82200343e8fc8eba2844655f9f3ace03eb29888004ca1aa8ca241598bf534e1",
+    "after_sha256": "ca704e18dca7eee1eb431e6c88f58998dfe0a482399ed7f82063073e553a5825",
+    "gap_start": 137056,
+    "gap_end": 139264,
+    "gap_bytes": 2208,
+    "section_table_before": 150308,
+    "section_table_after": 137972,
+    "metadata_moves": [
+      {
+        "section": ".comment",
+        "before_offset": 149392,
+        "after_offset": 137056,
+        "bytes": 44,
+        "section_alignment": 1
+      },
+      {
+        "section": ".xtensa.info",
+        "before_offset": 149436,
+        "after_offset": 137100,
+        "bytes": 56,
+        "section_alignment": 1
+      },
+      {
+        "section": ".symtab",
+        "before_offset": 149492,
+        "after_offset": 137156,
+        "bytes": 528,
+        "section_alignment": 4
+      },
+      {
+        "section": ".strtab",
+        "before_offset": 150020,
+        "after_offset": 137684,
+        "bytes": 133,
+        "section_alignment": 1
+      },
+      {
+        "section": ".shstrtab",
+        "before_offset": 150153,
+        "after_offset": 137817,
+        "bytes": 152,
+        "section_alignment": 1
+      }
+    ],
+    "retained_loader_evidence_identical": true,
+    "program_headers_byte_identical": true,
+    "allocated_sections_bytes_addresses_alignments_identical": true,
+    "imports_exports_and_relocations_identical": true,
+    "section_inventory_and_order_identical": true,
+    "linker_options_unchanged": true,
+    "section_file_offsets_changed_only_for_nonallocated_metadata": true,
+    "target_instructions_executed": false,
+    "hardware_verified": false
+  },
+  "baseline_capacity": {
+    "baseline_handoff_sha256": "245b77bada834635a69c65f5dd3517b76f3f1bf8cc71c8f723e4546aa95f4616",
+    "baseline_store_sha256": "f4c554a3df583ab0e3d56f37a491efb28d7fa197fbe5e5607704494dda7d8d92",
+    "baseline_pages": {
+      "data_pages": 19162,
+      "index_pages": 248,
+      "used_object_pages": 19410,
+      "occupied_blocks": 1294,
+      "free_blocks": 2,
+      "floor_shortfall_object_pages": 0
+    },
+    "scanner_bytes": 146972,
+    "scanner_pages": {
+      "data_pages": 586,
+      "index_pages": 5,
+      "used_object_pages": 591,
+      "occupied_blocks": 40,
+      "free_blocks": 1256,
+      "floor_shortfall_object_pages": 0
+    },
+    "remaining_eligible_json": [
+      {
+        "path": "clock.json",
+        "original_bytes": 187,
+        "compact_bytes": 158,
+        "bytes_saved": 29,
+        "object_pages_saved": 0
+      },
+      {
+        "path": "ui-profile/manifest.json",
+        "original_bytes": 281,
+        "compact_bytes": 219,
+        "bytes_saved": 62,
+        "object_pages_saved": 1
+      }
+    ],
+    "raw_maximum_scanner_growth_bytes": 114,
+    "raw_maximum_scanner_bytes": 147086,
+    "all_eligible_json_compacted_maximum_scanner_growth_bytes": 365,
+    "all_eligible_json_compacted_maximum_scanner_bytes": 147337
+  },
+  "flagoff": {
+    "schema": "scanner.modal-policy.flagoff-target.v1",
+    "device": "watch",
+    "passed": true,
+    "raw_byte_equal": true,
+    "current_dependency_unchanged_app_sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+    "current_dependency_unchanged_app_equal": true,
+    "unchanged_app_source": "3385d634db829066e3f7f0d84474df5ed54bf143",
+    "inherited_system_attention_delta": null,
+    "selected_predecessor_sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+    "candidate_flagoff_sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+    "candidate_flagoff_bytes": 146972,
+    "sources": {
+      "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+      "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+      "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+      "watch": "089868395268b696c05651c33816345bfe0425df"
+    },
+    "source_publication": "local-provisional",
+    "only_removed_flag": "-DPORTABLE_TEXT_INPUT_POLICY",
+    "target_instructions_executed": false,
+    "hardware_verified": false
+  },
+  "stack": {
+    "schema": "scanner.target-stack.v1",
+    "device": "watch",
+    "application_source": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+    "system_source": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "target_elf_sha256": "c82200343e8fc8eba2844655f9f3ace03eb29888004ca1aa8ca241598bf534e1",
+    "debug_elf_sha256": "132b7bb43324074ebbdb211fa88506adc9c2ba7d1b407b9356663958de6f6616",
+    "method": "Actual target disassembly entry a1 operands; no target instructions executed",
+    "entry_frames_bytes": {
+      "portable_text_client_live$constprop$114": 32,
+      "app_module_fini": 32,
+      "app_module_init": 64,
+      "portable_text_adapter_policy_capture": 32,
+      "portable_text_client_release$constprop$27": 48,
+      "name_retain": 32,
+      "name_storage_live": 32,
+      "name_storage_get": 32,
+      "name_storage_put": 32,
+      "name_policy": 64,
+      "name_step": 144,
+      "app_main": 448,
+      "portable_text_client_request_result": 32
+    },
+    "maximum_modal_frame_bytes": 448,
+    "all_entry_frames_maximum_bytes": 800,
+    "static_modal_storage": {
+      "editing": {
+        "bytes": 25,
+        "symbol_kind": "b",
+        "static_storage": true,
+        "address": 231830
+      },
+      "name_checkpoint": {
+        "bytes": 8,
+        "symbol_kind": "b",
+        "static_storage": true,
+        "address": 231856
+      },
+      "name_client": {
+        "bytes": 48,
+        "symbol_kind": "b",
+        "static_storage": true,
+        "address": 231576
+      },
+      "name_policy_continuity": {
+        "bytes": 1,
+        "symbol_kind": "b",
+        "static_storage": true,
+        "address": 231829
+      },
+      "name_state": {
+        "bytes": 88,
+        "symbol_kind": "b",
+        "static_storage": true,
+        "address": 231884
+      }
+    },
+    "bounded_custom_name_capacity_bytes": 25,
+    "per_frame_regression_checks_passed": true,
+    "peak_call_chain_stack_usage_proven": false,
+    "limits": [
+      "Inlining folds helper frames into callers; absent symbols are not separate frame measurements.",
+      "Entry frame sizes do not prove dynamic call-chain peak stack use, Runtime allocation, or physical execution."
+    ]
+  },
+  "admission": {
+    "active_store_sha256": "f4c554a3df583ab0e3d56f37a491efb28d7fa197fbe5e5607704494dda7d8d92",
+    "app_policy_rows": 24,
+    "candidate_store_sha256": "b04d1e9eaf94f30edd59c03e8e3b47f28d41a309df77a75bf6973ba61c5e70ce",
+    "cohort_validated": true,
+    "cooperative_yields": 174,
+    "delivered": false,
+    "elf_count": 55,
+    "error": "",
+    "flashed": false,
+    "hardware_calls": 0,
+    "hardware_verified": false,
+    "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "prepared": true,
+    "source_publication": "local-provisional",
+    "status": "provisional-complete-cohort-admitted-capacity-blocked",
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "normal_sanitized_identical": true,
+  "test_cases_passed": {
+    "recipe": 25,
+    "metadata_packing": 6
+  },
+  "pending": [
+    "exact-public-utilities-source",
+    "reserve-preserving-target",
+    "final-source-host-tests-and-CI",
+    "final-recipe-CI",
+    "independent-review",
+    "device-validation"
+  ],
+  "flashed": false,
+  "delivered": false
+}

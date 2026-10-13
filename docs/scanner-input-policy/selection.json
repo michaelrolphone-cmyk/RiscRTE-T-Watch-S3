@@ -1,0 +1,70 @@
+{
+  "schema": "scanner.modal-policy.selection.v1",
+  "finalized": true,
+  "version": "0.2.19",
+  "source_publication": "public-exact-commit",
+  "sources": {
+    "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "utilities": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+    "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "utilities_base": "4cfe21248f1f81339072c39eba44dbaea3a444b6",
+  "baseline": {
+    "compiled_recipe_commit": "b47f196b4199ebbdfe9ed74d0d4ef0ea277d8055",
+    "docs_recipe_commit": "33c62cb135174ef98286d34efb2c0d658a906ecd",
+    "system_commit": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "combined_handoff_sha256": "245b77bada834635a69c65f5dd3517b76f3f1bf8cc71c8f723e4546aa95f4616",
+    "receipt_sha256": "0edc36e92d7d4d08c1be34400243125e6a09411bcd97b523fd743da235d8e86a",
+    "candidate_store_sha256": "f4c554a3df583ab0e3d56f37a491efb28d7fa197fbe5e5607704494dda7d8d92",
+    "full_image_sha256": "4229c0da7b17232421a9b4dea50fd4cebc1221dd9eac839c5551c6922a83d1d0",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0
+  },
+  "predecessor": {
+    "version": "0.2.18",
+    "record_sha256": "b4f1513653397fe7593801f1b42a5015ddf731752efefb262dd7513b82f891d8",
+    "elf_sha256": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+    "manifest_sha256": "8a9f3fe02b17a6b0c8b9d790d466077a63da20c406f2f1e8bb28a072a5c71f9b",
+    "generated_sha256": {
+      "empty_catalog.c": "0f00645d5834dc582197aeea4caec4d9a797dfc14dda3c2cfbe2d32d38da3b4b",
+      "watch-alarm-profile.h": "fd9022c3e5d148c6d3d61d1157f2c75f3845aace98dcc012e074c18b1180e54c",
+      "exports.map": "6a4f0306496e7574c02b3c566cfd68edaf8ae11fd19933029134e663ed1ea399"
+    }
+  },
+  "scope": {
+    "watch_only": true,
+    "tonight_sealed_at_files": true,
+    "x4_scanner_0_2_24_provenance_unresolved": true,
+    "rf_0_3_5_excluded": true
+  },
+  "watch_scene_dependencies": [
+    "display.output",
+    "input.touch.raw",
+    "platform.clock",
+    "ui.presentation-profile"
+  ],
+  "metadata_only_components": {
+    "model_viewer.elf": {
+      "original_sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+      "original_bytes": 43300,
+      "packed_sha256": "df54d45fb79182dc08913458dc5fa38214a92c8e3fc3eb222672f931fd7b58eb",
+      "packed_bytes": 41548,
+      "bytes_saved": 1752,
+      "pages_saved": 7,
+      "source_receipt": "docs/scanner-input-policy/receipts/model_viewer-source.json",
+      "source_receipt_sha256": "07e2edd9de897631945a728d388167f4229f8ee1c2d2f3d3429e253408f3936b"
+    },
+    "calculator.elf": {
+      "original_sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+      "original_bytes": 115864,
+      "packed_sha256": "e7394fea887144624c39c971c8f3771cebfed57d457403d2a3087748e8dc83bf",
+      "packed_bytes": 114192,
+      "bytes_saved": 1672,
+      "pages_saved": 7,
+      "source_receipt": "docs/scanner-input-policy/receipts/calculator-source.json",
+      "source_receipt_sha256": "8bb0c3c6e9fefccd10e51416153936be4eb0461364cc0a2bbf433294b9b1e7b9"
+    }
+  },
+  "utilities_tree": "7791c3260f056a4ad2875ca31a46a952bc8e710c"
+}

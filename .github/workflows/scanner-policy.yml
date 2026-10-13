@@ -1,0 +1,23 @@
+name: Scanner lifecycle overlay recipe
+on:
+  push:
+    branches: [work/scanner-input-policy-20261012]
+  pull_request:
+    paths: ['**/*scanner*policy*', '**/scanner-input-policy/**', '.github/workflows/scanner-policy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install pyelftools==0.32
+      - run: python3 tests/test_scanner_policy_recipe.py
+      - run: python3 tests/test_points_metadata_pack.py
+      - run: python3 -m py_compile scripts/build_scanner_policy.py scripts/assemble_watch_scanner_policy.py scripts/inspect_scanner_target_stack.py scripts/test_scanner_policy_flagoff.py scripts/pack_points_elf_metadata.py scripts/qualify_scanner_policy.py
