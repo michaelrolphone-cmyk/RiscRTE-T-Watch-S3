@@ -2,6 +2,12 @@
 
 This is a later, Watch-only component qualification checkpoint. It does not assemble, flash or deliver a device increment. Existing device artifacts remain unchanged. Qualification status and the complete source/artifact bindings are in `qualified-components.json`.
 
+## Integration hold: use the recovered device selection
+
+This component checkpoint is **not an integration-ready device selection**. Its qualification uses the frozen Points/b47 baseline and Runtime64c8. Do not reconstruct or deliver that historical native/store baseline.
+
+The Watch owner's user-confirmed recovered selection is **1.1.21-r1**, native revision `06da76aa7f074220b74a282badca0ed0061f1643`, with the pad-hold fix and formatted appdata at `0x270000` (reported SHA-256 prefix `5f03c248`). Its 55 ELFs match delivered 1.1.20, including the Home swipe and RTC fixes. Any future composition must rebase onto that verified recovered selection, preserve native/appdata/Home/RTC changes, and rerun complete admission. That integration is not performed or qualified here. Component bytes are unchanged.
+
 ## Exact selections
 
 - Scanner source: Utilities `89e2132c4ed9b1e0372381f149be5c158ab1e666`

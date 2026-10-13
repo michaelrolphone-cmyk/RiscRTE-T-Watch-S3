@@ -260,5 +260,32 @@
   "flashed": false,
   "delivered": false,
   "hardware_verified": false,
-  "target_instructions_executed": false
+  "target_instructions_executed": false,
+  "integration_status": "not-integration-ready-device-selection",
+  "integration_warning": {
+    "reason": "This component qualification uses the frozen Points/b47 baseline and Runtime64c8. That historical native/store baseline must not be reconstructed or delivered as a current device selection.",
+    "verified_recovered_selection_reported_by_watch_owner": "1.1.21-r1",
+    "recovered_native_revision": "06da76aa7f074220b74a282badca0ed0061f1643",
+    "preserve_native_pad_hold_fix": true,
+    "formatted_appdata_offset": "0x270000",
+    "formatted_appdata_sha256_prefix": "5f03c248",
+    "full_formatted_appdata_sha256_not_supplied": true,
+    "recovered_elf_count": 55,
+    "recovered_elves_match_delivered_version": "1.1.20",
+    "preserve_home_swipe_and_rtc_fixes": true,
+    "future_composition_required": [
+      "Rebase onto the verified recovery selection.",
+      "Preserve its native pad-hold fix, formatted appdata and Home/RTC changes.",
+      "Rerun complete target/cohort admission against that exact recovered selection."
+    ],
+    "current_component_bytes_unchanged": true,
+    "current_source_recipe_target_and_behavior_qualification_unchanged": true,
+    "device_integration_requalified": false,
+    "warning_source": "Watch owner update forwarded by parent on 2026-10-13T05:33:38Z"
+  },
+  "supersedes_component_handoff_for_integration_guidance": {
+    "path": "/workspace/shared/scanner-input-policy-components-20261012/handoff-complete.json",
+    "sha256": "0072b098d6910cacd3903a1e2d77658517f7d5551b285758f59654e6afdd4a25",
+    "bytes": 11564
+  }
 }

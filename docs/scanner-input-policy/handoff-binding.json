@@ -1,10 +1,11 @@
 {
   "schema": "scanner.modal-policy.handoff-binding.v1",
-  "frozen_handoff_sha256": "0072b098d6910cacd3903a1e2d77658517f7d5551b285758f59654e6afdd4a25",
+  "frozen_handoff_sha256": "50089c2086330d4fa6a5baddf39bbcc5c9d976cfe1d8b63cc39e9d88036ac488",
   "frozen_handoff_file": "qualified-components.json",
   "compiled_recipe_commit": "b022f6ea6628e346832996308821cae8d4cdd50c",
   "compiled_recipe_tree": "0a01c4b2738bb49fd60b0de8ea337504198d4efb",
   "source_commit": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
   "receipt_only": true,
-  "device_image_assembled": false
+  "device_image_assembled": false,
+  "integration_status": "not-integration-ready-device-selection"
 }
