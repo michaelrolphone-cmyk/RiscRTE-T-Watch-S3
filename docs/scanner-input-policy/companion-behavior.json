@@ -1,0 +1,40 @@
+{
+  "applications": {
+    "calculator": {
+      "normal_cases": 7,
+      "sanitized_cases": 7,
+      "selected_elf_sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+      "source_commit": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
+      "system_commit": "14762601b3fa7bbeeac5ed565a6825534bf74dca",
+      "verified_target_utilities_system_dependencies": 79
+    },
+    "model_viewer": {
+      "normal_cases": 11,
+      "original_elf_sha256": "4bcafa3f13fdcafe74d7cf16868444a1f38b3dc4e5f14d9912b4bb5a9695bd16",
+      "runtime_sdk_commit": "c2623b59ca87eaa22e0057f5f2306093379a6ca5",
+      "sanitized_cases": 11,
+      "sdk_header_provenance": "sdk-header-provenance.json records a comment-only workflow-pin discrepancy; staged header bytes match the selected target receipt and preprocess identically",
+      "selected_elf_sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+      "source_commit": "c310854418f920340257c61af62c202f7ff4ca12",
+      "system_sdk_commit": "59878efb3aadd22ef3138085568fb3555ea7c553",
+      "verified_sdk_headers": 94,
+      "verified_target_source_dependencies": 28
+    }
+  },
+  "completed_utc": "2026-10-13T05:23:44.850963+00:00",
+  "emitted_frame_count": 84,
+  "entrypoint_equivalence": "Original compile and case arguments retained except output directories; normal Model Viewer build omits sanitizer-only flags, as requested. No unrelated Hollow Trail or X4 cases executed.",
+  "hardware_testing": false,
+  "normal_passed": 18,
+  "normal_sanitized_frame_bytes_equal": true,
+  "production_or_original_artifact_modified": false,
+  "sanitized_passed": 18,
+  "sanitizer_scope": "AddressSanitizer and UndefinedBehaviorSanitizer. LeakSanitizer disabled because this executor runs under ptrace; initial environment-only failure log retained.",
+  "schema": "scanner.companion-source-behavior.v1",
+  "scope": "Existing real-entrypoint and adapter host behavior gates for attributed unmodified source; Model Viewer Watch subset only. Original target artifact receipts bind source and selected artifacts.",
+  "source_roots_unchanged": true,
+  "target_admission": "Separate validation; not performed by this behavior replay.",
+  "total_failed": 0,
+  "total_passed": 36,
+  "xtensa_execution": false
+}

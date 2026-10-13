@@ -1,0 +1,264 @@
+{
+  "schema": "scanner.modal-policy.qualified-components.v1",
+  "status": "exact-public-source-recipe-ci-host-target-complete-cohort-and-independent-review-passed",
+  "version": "0.2.19",
+  "sources": {
+    "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "utilities": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+    "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "recipe_commit": "b022f6ea6628e346832996308821cae8d4cdd50c",
+  "recipe_tree": "0a01c4b2738bb49fd60b0de8ea337504198d4efb",
+  "source_publication": "public-exact-commit",
+  "scope": {
+    "watch_only": true,
+    "later_increment_only": true,
+    "tonight_artifacts_unchanged": true,
+    "rf_version": "0.3.4",
+    "rf_bytes_unchanged": true,
+    "x4_scanner_version": "0.2.24",
+    "x4_status": "excluded-provenance-unresolved",
+    "x4_rebuilt": false
+  },
+  "baseline": {
+    "frozen_handoff": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/baseline-points-frozen.json",
+      "sha256": "245b77bada834635a69c65f5dd3517b76f3f1bf8cc71c8f723e4546aa95f4616",
+      "bytes": 20052
+    },
+    "complete_supplement": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/baseline-points-complete-supplement.json",
+      "sha256": "1383a192d137666f7cfc749ef467f09280a826df6f9692b5034442618eec5b8a",
+      "bytes": 20650
+    },
+    "compiled_recipe": "b47f196b4199ebbdfe9ed74d0d4ef0ea277d8055",
+    "store_sha256": "f4c554a3df583ab0e3d56f37a491efb28d7fa197fbe5e5607704494dda7d8d92"
+  },
+  "target": {
+    "elf": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/watch-final-public/ble_scanner.elf",
+      "sha256": "ca704e18dca7eee1eb431e6c88f58998dfe0a482399ed7f82063073e553a5825",
+      "bytes": 149392
+    },
+    "manifest": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/watch-final-public/ble_scanner.json",
+      "sha256": "6f9d4ce12b7e12133e17d5d65d5e647e25ef1d70ec1c96cfa1b417d61be91c41",
+      "bytes": 717
+    },
+    "build_record": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/watch-final-public/ble_scanner-build-record.json",
+      "sha256": "ce35466f63d1d84ef33a21dfdd085dc3a8b817e3acc1043fdb66864734da99bd",
+      "bytes": 35485
+    },
+    "stack": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/final-public-evidence/watch-stack.json",
+      "sha256": "e34b9f7aff093e6e83db76da70560a37d5bbe2ac5a77d21ce63b522f199ad23b",
+      "bytes": 2094
+    },
+    "flagoff": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/final-public-evidence/watch-flagoff.json",
+      "sha256": "c6e14c46f1db462cf50079d5ffb21f380c2e60181b41957fbecca62c74938f9b",
+      "bytes": 1482
+    },
+    "bytes": 149392,
+    "delta_bytes": 2420,
+    "feature_additions": [
+      "-DPORTABLE_TEXT_INPUT_POLICY"
+    ],
+    "fonts_and_features_preserved": true,
+    "imports_exports_grants_preserved": true,
+    "selected_predecessor_flagoff_equal": true,
+    "unchanged_app_current_dependency_equal": true,
+    "maximum_measured_modal_frame_bytes": 448,
+    "dynamic_peak_stack_proven": false
+  },
+  "metadata_only_companions": {
+    "model_viewer.elf": {
+      "source_receipt": {
+        "path": "/workspace/shared/scanner-input-policy-watch-20261012/docs/scanner-input-policy/receipts/model_viewer-source.json",
+        "sha256": "07e2edd9de897631945a728d388167f4229f8ee1c2d2f3d3429e253408f3936b",
+        "bytes": 39753
+      },
+      "packed_artifact": {
+        "path": "/workspace/shared/scanner-input-policy-components-20261012/metadata-packing-copies/model_viewer.elf",
+        "sha256": "df54d45fb79182dc08913458dc5fa38214a92c8e3fc3eb222672f931fd7b58eb",
+        "bytes": 41548
+      },
+      "source_and_artifact_binding": {
+        "original_sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+        "original_bytes": 43300,
+        "packed_sha256": "df54d45fb79182dc08913458dc5fa38214a92c8e3fc3eb222672f931fd7b58eb",
+        "packed_bytes": 41548,
+        "bytes_saved": 1752,
+        "pages_saved": 7,
+        "source_receipt": "docs/scanner-input-policy/receipts/model_viewer-source.json",
+        "source_receipt_sha256": "07e2edd9de897631945a728d388167f4229f8ee1c2d2f3d3429e253408f3936b"
+      },
+      "rebuilt": false
+    },
+    "calculator.elf": {
+      "source_receipt": {
+        "path": "/workspace/shared/scanner-input-policy-watch-20261012/docs/scanner-input-policy/receipts/calculator-source.json",
+        "sha256": "8bb0c3c6e9fefccd10e51416153936be4eb0461364cc0a2bbf433294b9b1e7b9",
+        "bytes": 24874
+      },
+      "packed_artifact": {
+        "path": "/workspace/shared/scanner-input-policy-components-20261012/metadata-packing-copies/calculator.elf",
+        "sha256": "e7394fea887144624c39c971c8f3771cebfed57d457403d2a3087748e8dc83bf",
+        "bytes": 114192
+      },
+      "source_and_artifact_binding": {
+        "original_sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+        "original_bytes": 115864,
+        "packed_sha256": "e7394fea887144624c39c971c8f3771cebfed57d457403d2a3087748e8dc83bf",
+        "packed_bytes": 114192,
+        "bytes_saved": 1672,
+        "pages_saved": 7,
+        "source_receipt": "docs/scanner-input-policy/receipts/calculator-source.json",
+        "source_receipt_sha256": "8bb0c3c6e9fefccd10e51416153936be4eb0461364cc0a2bbf433294b9b1e7b9"
+      },
+      "rebuilt": false
+    }
+  },
+  "packing_header_proof": {
+    "path": "/workspace/shared/scanner-input-policy-components-20261012/final-public-evidence/packing-header-checks.json",
+    "sha256": "e89efc5196ef9a1410f363414d347e7466eee0c15d23e711a60b81f7369718f9",
+    "bytes": 3717
+  },
+  "packing_exception": "ELF32 e_shoff at absolute file offsets 32\u201335 changes to locate the moved section table. The first PT_LOAD includes this field; its other file bytes remain identical.",
+  "cohort": {
+    "normal": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/final-public-admission/normal.json",
+      "sha256": "7a3added5da80d6e5f34cf3eccf651b70d4b8c214599a2387937f8b06f83c7cf",
+      "bytes": 10945
+    },
+    "sanitized": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/final-public-admission/sanitized.json",
+      "sha256": "7a3added5da80d6e5f34cf3eccf651b70d4b8c214599a2387937f8b06f83c7cf",
+      "bytes": 10945
+    },
+    "normal_sanitized_identical": true,
+    "elf_count": 55,
+    "unrelated_elf_bytes_unchanged": 52,
+    "store_files": 113,
+    "candidate_store_sha256": "d629f3e8c06980dc456ecdeff573e991c1ac670af22a2af988960b8094798e01",
+    "in_memory_spiffs_sha256": "cd511d261d819737daac9df301ab372432a3503f535d26fed39b0c2186a0bdca",
+    "free_blocks": 2,
+    "page_accounting": {
+      "data_pages": 19158,
+      "floor_shortfall_object_pages": 0,
+      "free_blocks": 2,
+      "index_pages": 248,
+      "occupied_blocks": 1294,
+      "used_object_pages": 19406
+    },
+    "spare_object_pages": 4,
+    "remaining_eligible_json_pages": 1,
+    "additional_json_compaction": [],
+    "changed_paths": [
+      "ble_scanner.elf",
+      "ble_scanner.json",
+      "calculator.elf",
+      "cohort.json",
+      "model_viewer.elf"
+    ],
+    "boot_json_byte_identical": true,
+    "grant_delta": [],
+    "native_unchanged": true
+  },
+  "checks": {
+    "source_qualification": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/source-qualification.json",
+      "sha256": "6344ab6d299674bd2f66b7ec5c5027b9416a743bf3572e9bf79aa8eefb545ddd",
+      "bytes": 29366
+    },
+    "scanner_workflows": {
+      "normal": 38,
+      "sanitized": 38,
+      "matching_frame_files": 618
+    },
+    "companion_behavior": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/companion-behavior/summary.json",
+      "sha256": "cfeb66d5c6b37519fd44759f1bb22f184a834aee88f09f60a4827c76b27954e6",
+      "bytes": 2271
+    },
+    "companion_behavior_counts": {
+      "normal": 18,
+      "sanitized": 18,
+      "matching_frame_files": 84
+    },
+    "companion_sdk_header_provenance": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/companion-behavior/model_viewer/sdk-header-provenance.json",
+      "sha256": "67b9395d87f59113d2d6ec0ddf814c815588c15523499e5ec5ffa8c2d02427d9",
+      "bytes": 714
+    },
+    "companion_commands": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/companion-behavior/commands.json",
+      "sha256": "2d67baed6442190f0eaa7a1749b7202c83d10958e8118d3d2aa5d50cdecb967a",
+      "bytes": 49245
+    },
+    "companion_results": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/companion-behavior/results.json",
+      "sha256": "a164ad4ea193def483c3c45c27871785a4966ed5bad3673d721fb54f6a4ec496",
+      "bytes": 22675
+    },
+    "recipe_tests": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/exact-public-recipe-tests.log",
+      "sha256": "600ede5a5525a490d2de460349d65515cee5fe03a6f346001e273c8b944301c7",
+      "bytes": 129
+    },
+    "metadata_tests": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/exact-public-metadata-tests.log",
+      "sha256": "e9dbc1a31936475165af55356b566005547a03914ab93e4739e4aa9949799201",
+      "bytes": 104
+    },
+    "recipe_ci": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/public-recipe-ci.json",
+      "sha256": "485d02c5274e40c3e66bd206b5fecac8f626b7c23aae1a30f1388981d9bba5f0",
+      "bytes": 14539
+    },
+    "recipe_ci_runs": [
+      38351186017
+    ],
+    "source_ci": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/public-final-source-ci.json",
+      "sha256": "404878b4d7deedf88a252cb8ef369248213f654695175412742ae8c0e23cfe6d",
+      "bytes": 28806
+    },
+    "public_recipe_commit": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/public-recipe-commit.json",
+      "sha256": "d5832d21b61902e618e8c160fed518577eeecec4e0ef21c7a52215cba04d4364",
+      "bytes": 1290
+    },
+    "public_recipe_ref": {
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/public-recipe-ref.json",
+      "sha256": "728c6ef875d71ee177c30579a4a776261214a4e2ad4d615148a92341edef931d",
+      "bytes": 480
+    },
+    "independent_fresh_policy_runs": {
+      "normal": 15,
+      "sanitized": 15
+    },
+    "independent_prior_scanner_runs_inspected": 76
+  },
+  "independent_review": {
+    "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/review.json",
+    "sha256": "9604d655137ea557bc851f0b4c59ecd7819211c32ac8456b4cca441d34031b25",
+    "bytes": 14483
+  },
+  "limits": [
+    "Host behavior exercises attributed C sources, not target Xtensa instructions.",
+    "Actual packed target ELFs passed Runtime structural/cohort admission; no hardware execution is implied.",
+    "Entry-frame checks do not prove peak dynamic call-chain stack use.",
+    "Model Viewer SDK replay uses the receipt-matching RiscFileOpenSourceV1.h with four comment lines differing from the historical workflow pin; preprocessed bytes are identical.",
+    "LeakSanitizer is disabled for the verified container ptrace incompatibility; ASan/UBSan remain enabled."
+  ],
+  "candidate_store_materialized": false,
+  "bank_materialized": false,
+  "full_device_image_materialized": false,
+  "flashed": false,
+  "delivered": false,
+  "hardware_verified": false,
+  "target_instructions_executed": false
+}

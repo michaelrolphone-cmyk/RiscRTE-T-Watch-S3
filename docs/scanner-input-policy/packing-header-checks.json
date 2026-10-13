@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "artifacts": [
+    {
+      "path": "ble_scanner.elf",
+      "before_sha256": "c82200343e8fc8eba2844655f9f3ace03eb29888004ca1aa8ca241598bf534e1",
+      "after_sha256": "ca704e18dca7eee1eb431e6c88f58998dfe0a482399ed7f82063073e553a5825",
+      "elf_header_changed_offsets": [
+        32,
+        33
+      ],
+      "only_header_field_changed": "e_shoff",
+      "program_headers_byte_identical": true,
+      "all_section_content_byte_identical": true,
+      "allocated_section_bytes_addresses_alignments_file_offsets_identical": true,
+      "symbols_and_relocations_identical": true,
+      "segments": [
+        {
+          "type": "PT_LOAD",
+          "offset": 0,
+          "changed_absolute_file_offsets": [
+            32,
+            33
+          ],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_LOAD",
+          "offset": 139264,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_DYNAMIC",
+          "offset": 149152,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        }
+      ]
+    },
+    {
+      "path": "calculator.elf",
+      "before_sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+      "after_sha256": "e7394fea887144624c39c971c8f3771cebfed57d457403d2a3087748e8dc83bf",
+      "elf_header_changed_offsets": [
+        32,
+        33
+      ],
+      "only_header_field_changed": "e_shoff",
+      "program_headers_byte_identical": true,
+      "all_section_content_byte_identical": true,
+      "allocated_section_bytes_addresses_alignments_file_offsets_identical": true,
+      "symbols_and_relocations_identical": true,
+      "segments": [
+        {
+          "type": "PT_LOAD",
+          "offset": 0,
+          "changed_absolute_file_offsets": [
+            32,
+            33
+          ],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_LOAD",
+          "offset": 106496,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_DYNAMIC",
+          "offset": 113992,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        }
+      ]
+    },
+    {
+      "path": "model_viewer.elf",
+      "before_sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+      "after_sha256": "df54d45fb79182dc08913458dc5fa38214a92c8e3fc3eb222672f931fd7b58eb",
+      "elf_header_changed_offsets": [
+        32,
+        33
+      ],
+      "only_header_field_changed": "e_shoff",
+      "program_headers_byte_identical": true,
+      "all_section_content_byte_identical": true,
+      "allocated_section_bytes_addresses_alignments_file_offsets_identical": true,
+      "symbols_and_relocations_identical": true,
+      "segments": [
+        {
+          "type": "PT_LOAD",
+          "offset": 0,
+          "changed_absolute_file_offsets": [
+            32,
+            33
+          ],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_LOAD",
+          "offset": 40960,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        },
+        {
+          "type": "PT_DYNAMIC",
+          "offset": 41328,
+          "changed_absolute_file_offsets": [],
+          "identical_except_e_shoff": true
+        }
+      ]
+    }
+  ],
+  "permitted_header_exception": "ELF32 e_shoff at absolute file offsets 32\u201335 changes to locate the moved section table. The first PT_LOAD includes this field; its other file bytes remain identical.",
+  "target_instructions_executed": false
+}

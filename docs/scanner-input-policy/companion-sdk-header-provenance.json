@@ -1,0 +1,13 @@
+{
+  "comment_only_diff": true,
+  "generated_sdk_only": true,
+  "header": "RiscFileOpenSourceV1.h",
+  "preprocessed_bytes_identical": true,
+  "preprocessed_sha256": "d19070acc7e5ec5fdfe13866a79b22050eaf12bb5e74169b84b8108bf9a14b8a",
+  "receipt_matching_commit": "2bd501d93117cdb0e9adbf3673e01394ec678ea8",
+  "receipt_matching_git_blob": "4398bc912c765668d3485884f71113f5f6bec37b",
+  "receipt_matching_repository": "/workspace/shared/runtime-file-source-20261012",
+  "receipt_sha256": "6f4592ea20f26262125e9a1a1ae030aa13bbc08d06eb319c7d7f09417598ad02",
+  "workflow_pin_commit": "c2623b59ca87eaa22e0057f5f2306093379a6ca5",
+  "workflow_pin_sha256": "43fdd6cd1673ee19f46246e444d8d1e260fa60b52493134e35592742a7031ac9"
+}

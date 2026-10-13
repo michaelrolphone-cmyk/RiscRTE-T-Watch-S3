@@ -1,0 +1,274 @@
+{
+  "artifact_identities": [
+    {
+      "actual_elf_header_changed_byte_offsets": [
+        32,
+        33
+      ],
+      "after_bytes": 149392,
+      "after_sha256": "ca704e18dca7eee1eb431e6c88f58998dfe0a482399ed7f82063073e553a5825",
+      "application": "ble_scanner",
+      "before_bytes": 151068,
+      "before_sha256": "c82200343e8fc8eba2844655f9f3ace03eb29888004ca1aa8ca241598bf534e1",
+      "original_path": "/workspace/shared/scanner-input-policy-components-20261012/watch-final-public/debug/scanner-before-metadata-pack.elf",
+      "packed_path": "/workspace/shared/scanner-input-policy-components-20261012/watch-final-public/ble_scanner.elf"
+    },
+    {
+      "actual_elf_header_changed_byte_offsets": [
+        32,
+        33
+      ],
+      "after_bytes": 41548,
+      "after_sha256": "df54d45fb79182dc08913458dc5fa38214a92c8e3fc3eb222672f931fd7b58eb",
+      "application": "model_viewer.elf",
+      "before_bytes": 43300,
+      "before_sha256": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+      "original_path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/components/bootfs.bin:model_viewer.elf",
+      "packed_path": "/workspace/shared/scanner-input-policy-components-20261012/metadata-packing-copies/model_viewer.elf"
+    },
+    {
+      "actual_elf_header_changed_byte_offsets": [
+        32,
+        33
+      ],
+      "after_bytes": 114192,
+      "after_sha256": "e7394fea887144624c39c971c8f3771cebfed57d457403d2a3087748e8dc83bf",
+      "application": "calculator.elf",
+      "before_bytes": 115864,
+      "before_sha256": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+      "original_path": "/workspace/shared/points-input-policy-components-20261012/watch-final-binding-public-candidate/components/bootfs.bin:calculator.elf",
+      "packed_path": "/workspace/shared/scanner-input-policy-components-20261012/metadata-packing-copies/calculator.elf"
+    }
+  ],
+  "blockers": [],
+  "bound_handoff_file_references_verified": 25,
+  "capacity": {
+    "additional_json_compaction": false,
+    "data_pages": 19158,
+    "free_blocks": 2,
+    "index_pages": 248,
+    "object_pages": 19406,
+    "reserve_blocks": 2,
+    "spare_object_pages_before_floor": 4
+  },
+  "ci_receipts_verified": [
+    {
+      "conclusion": "success",
+      "head_sha": "b022f6ea6628e346832996308821cae8d4cdd50c",
+      "id": 38351186017,
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38351186017"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+      "id": 38350925703,
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38350925703"
+    },
+    {
+      "conclusion": "success",
+      "head_sha": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+      "id": 38350925517,
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38350925517"
+    }
+  ],
+  "completed_utc": "2026-10-13T05:31:52.871390+00:00",
+  "device_image_written": false,
+  "evidence": {
+    "audit.py": {
+      "bytes": 12329,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/audit.py",
+      "sha256": "0bc7f26bb7df1f62fc614f124533014e73d51ba271c75f6167769363694e85b3"
+    },
+    "cohort-audit.json": {
+      "bytes": 1706,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/cohort-audit.json",
+      "sha256": "e73138d4a9f6a3807ead23076812758d513fdde2bb0d1dcc035bca1a4bfc4862"
+    },
+    "elf-packing-audit.json": {
+      "bytes": 28000,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/elf-packing-audit.json",
+      "sha256": "75f17eeb600900be68394a92145b506fe75d9ffd67ff86edacc02c4d2b3d696b"
+    },
+    "finalize.py": {
+      "bytes": 14090,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/finalize.py",
+      "sha256": "9aa94a0791884bf7e77efecfb12837340bd00ad59a4aaa147ad3fbb557ae2ef8"
+    },
+    "fresh-policy-audit.json": {
+      "bytes": 1434,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/fresh-policy-audit.json",
+      "sha256": "04f0947f95fe0c57b6aa20dfdf9f5cab58104d0daae37ba12fde065e66fccd40"
+    },
+    "lifecycle-findings.json": {
+      "bytes": 4943,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/lifecycle-findings.json",
+      "sha256": "d1a505261562672cac4d52f9273da0129da04359b32ba5d5377212691fef3fbd"
+    },
+    "packing-unit-tests.log": {
+      "bytes": 792,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/packing-unit-tests.log",
+      "sha256": "3a972312fbe91200efb9e86e57590a94687f688546a368e0f99d731b040d06d2"
+    },
+    "recipe-unit-tests.log": {
+      "bytes": 4466,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/recipe-unit-tests.log",
+      "sha256": "6fe803561e46685e14b347b5aec63a50b41a7853b95586ccd4659e81e636625f"
+    },
+    "scanner-host-audit.json": {
+      "bytes": 16072,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/scanner-host-audit.json",
+      "sha256": "c8b5219503d5073a2ce56b54131a1406f78edd66fc4f4a2701142bfcd7107463"
+    },
+    "stack-recheck.json": {
+      "bytes": 2094,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/stack-recheck.json",
+      "sha256": "e34b9f7aff093e6e83db76da70560a37d5bbe2ac5a77d21ce63b522f199ad23b"
+    },
+    "target-source-audit.json": {
+      "bytes": 1326,
+      "path": "/workspace/shared/scanner-input-policy-components-20261012/independent-review/target-source-audit.json",
+      "sha256": "c073bf186034bd2b648d57efa16e0a1389fba3fd60fe5016e435a79c8e765ded"
+    }
+  },
+  "findings": [
+    {
+      "basis": [
+        "Apps/ble_scanner.c:155-163 calls stop before shared-text begin. portable_radio_suspend:76-95 closes token and releases grant before progression; uncertain custody retries cleanup only.",
+        "App host fixtures use the real BLE sensor driver, record radio claim/close counts, and validate all complete workflows."
+      ],
+      "result": "passed",
+      "topic": "Foreground scan custody before naming"
+    },
+    {
+      "basis": [
+        "name_step calls capture-only progression at modal boundaries; name_policy snapshots, pauses, applies policy, then resumes the same session.",
+        "System text_input_policy.inc preserves background/capture progression, defers mutable-frame and busy-input policy, and prevents continuity-only battery checks from escalating into sleep.",
+        "Host policy-idle, pause-again, pause-busy and sleep-refused assert 13 battery samples, one sleep attempt, balanced pauses/resumes and Contexts/background/capture progression. Low-battery asserts one threshold transition."
+      ],
+      "result": "passed",
+      "topic": "Eligible Contexts audio, battery and idle servicing"
+    },
+    {
+      "basis": [
+        "name_step:269-288 completes portable_text_client_close before save_name. Shared close releases the host grant and restores the app presenter before returning success.",
+        "save_name:192-219 independently checks Runtime liveness around acquire/get/put/release and validates fully cleared release identity before updating local aliases.",
+        "Fixture fake_put asserts no text grant remains; nine Runtime-loss cases cover acquisition, open, poll, close, release and KV boundaries, with no subsequent provider I/O."
+      ],
+      "result": "passed",
+      "topic": "Alias persistence after complete host closure"
+    },
+    {
+      "basis": [
+        "name_step:245-250 checks attention while pause is pending or complete before another policy dispatch.",
+        "policy-paused-back asserts editor cancellation, no write, no resume, restored app frames and one later root return.",
+        "policy-paused-home asserts no write, no resume, no explicit launcher request and no additional app frames; Runtime retains ownership of Home."
+      ],
+      "result": "passed",
+      "topic": "Pending-pause PMU Back and Runtime Home"
+    },
+    {
+      "basis": [
+        "PortableTextInputCheckpointClient.h makes any non-OK resume terminal. After retention, name_step/app_main stop, app_module_fini preserves custody and re-entry is refused.",
+        "policy-resume-again and policy-resume-retained assert one policy sample and no repeated dispatch; sleep-error/sleep-retained freeze resources after one sleep attempt.",
+        "Runtime-loss fixtures assert silent retention, unchanged grants/subscriptions/frames and no subsequent Runtime/provider I/O."
+      ],
+      "result": "passed",
+      "topic": "Failed resume, sleep failure and Runtime-loss custody"
+    },
+    {
+      "basis": [
+        "Both the real host fixture and unchanged selected ui-scene manifest contain exactly display.output, input.touch.raw, platform.clock and ui.presentation-profile."
+      ],
+      "result": "passed",
+      "topic": "Actual Watch scene graph"
+    },
+    {
+      "basis": [
+        "Independent command normalization shows only -DPORTABLE_TEXT_INPUT_POLICY is added; original four font inputs, features, imports, exports and grants are preserved.",
+        "Flag-off artifact is byte-for-byte equal to the selected 0.2.18 ELF and the unchanged-app/current-dependency reference.",
+        "Independent stack-inspection rerun reproduces the bound record exactly: max modal entry frame 448 bytes, bounded static editor/client/checkpoint state."
+      ],
+      "result": "passed",
+      "topic": "Opt-in target and flag-off regression"
+    },
+    {
+      "basis": [
+        "Independent struct-based ELF32 parser compared all section inventory/order/contents and section semantics, exact SHF_ALLOC headers/content, symbol and relocation tables and raw program-header table.",
+        "All three inputs change only absolute bytes 32 and 33 inside ELF32 e_shoff (field range 32..35) within the first PT_LOAD. All other bytes of every segment remain exact.",
+        "Only Model Viewer and Calculator are packing-only companions; their selected original artifact and source receipts are exact."
+      ],
+      "result": "passed",
+      "topic": "Three metadata packing transformations"
+    },
+    {
+      "basis": [
+        "Independent in-memory reconstruction has exactly five changed paths, 113 files and 55 ELFs, with all other 52 ELFs and boot authority bytes exact.",
+        "Independent page calculation is 19,158 data plus 248 index pages = 19,406 object pages, four pages below the unchanged two-block floor. No additional JSON compaction.",
+        "Existing exact-cohort normal and ASan/UBSan admission receipts are byte-identical, bind the reconstructed candidate digest and report zero hardware/storage calls."
+      ],
+      "result": "passed",
+      "topic": "Cohort and storage reserve"
+    }
+  ],
+  "hardware_verified": false,
+  "limitations": [
+    "The prior 76 Scanner workflows were independently source/log/frame-verified; this reviewer freshly reran all 15 policy cases normal and ASan/UBSan (30 runs), all companion host gates (36 runs), 30+6 unit tests and the static target-stack inspector.",
+    "Normal/sanitized exact-target cohort admission results were receipt-verified separately from source behavior, not claimed as Xtensa execution.",
+    "Model Viewer uses the exact receipt-matching RiscFileOpenSourceV1.h; it differs from the historical Runtime workflow pin only by four contract-comment lines and produces identical preprocessed bytes.",
+    "ASan and UBSan remained enabled; LeakSanitizer was disabled for the verified ptrace environment limitation.",
+    "e_shoff changes inside the first PT_LOAD; do not describe every raw load-segment byte as unchanged.",
+    "448-byte maximum measured modal entry frame is not proof of peak dynamic call-chain stack use.",
+    "This review gives no physical hardware, flash, delivery, X4 Scanner or RF 0.3.5 qualification."
+  ],
+  "original_artifacts_modified": false,
+  "production_files_modified": false,
+  "reviewed_handoff": {
+    "bytes": 11203,
+    "path": "/workspace/shared/scanner-input-policy-components-20261012/handoff-public-review-pending.json",
+    "sha256": "17ab9c631d1123791f56c81072ba95f6efde8d766b85da978dd2274ae15ed687"
+  },
+  "reviewed_recipe_commit": "b022f6ea6628e346832996308821cae8d4cdd50c",
+  "reviewed_recipe_tree": "0a01c4b2738bb49fd60b0de8ea337504198d4efb",
+  "reviewed_source_commit": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+  "reviewed_source_tree": "7791c3260f056a4ad2875ca31a46a952bc8e710c",
+  "runtime_header_attribution": {
+    "comment_only_diff": true,
+    "generated_sdk_only": true,
+    "header": "RiscFileOpenSourceV1.h",
+    "preprocessed_bytes_identical": true,
+    "preprocessed_sha256": "d19070acc7e5ec5fdfe13866a79b22050eaf12bb5e74169b84b8108bf9a14b8a",
+    "receipt_matching_commit": "2bd501d93117cdb0e9adbf3673e01394ec678ea8",
+    "receipt_matching_git_blob": "4398bc912c765668d3485884f71113f5f6bec37b",
+    "receipt_matching_repository": "/workspace/shared/runtime-file-source-20261012",
+    "receipt_sha256": "6f4592ea20f26262125e9a1a1ae030aa13bbc08d06eb319c7d7f09417598ad02",
+    "workflow_pin_commit": "c2623b59ca87eaa22e0057f5f2306093379a6ca5",
+    "workflow_pin_sha256": "43fdd6cd1673ee19f46246e444d8d1e260fa60b52493134e35592742a7031ac9"
+  },
+  "schema": "scanner.modal-policy.independent-review.v1",
+  "source_pins": {
+    "runtime": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "system-apps": "9957e7c975f7b57ce9ea50d57b13c1d9bb75cf43",
+    "utilities": "89e2132c4ed9b1e0372381f149be5c158ab1e666",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "status": "passed",
+  "target_instructions_executed": false,
+  "verification_counts": {
+    "companion_frame_files": 84,
+    "companion_frame_pairs": 42,
+    "companion_host_runs": 36,
+    "complete_cohort_elfs": 55,
+    "fresh_packing_unit_tests": 6,
+    "fresh_recipe_unit_tests": 30,
+    "host_dependency_hashes": 154,
+    "metadata_transformations": 3,
+    "scanner_frame_files": 618,
+    "scanner_frame_pairs": 309,
+    "scanner_fresh_policy_asan_ubsan": 15,
+    "scanner_fresh_policy_normal": 15,
+    "scanner_fresh_policy_runs": 30,
+    "scanner_prior_host_runs_independently_verified": 76,
+    "target_dependency_hashes": 126,
+    "unchanged_other_elfs": 52
+  }
+}
