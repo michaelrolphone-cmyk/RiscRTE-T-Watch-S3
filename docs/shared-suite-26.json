@@ -118,8 +118,8 @@
           "sha256": "79b40b252494575daaa5dea38d8f19210052efdfb062bf79f48bc252eaa3c969"
         },
         "boot.json": {
-          "bytes": 31680,
-          "sha256": "cf37954baa308ec0d287bafc411068dffc63f3f8f438551d8206478a9a968982"
+          "bytes": 31573,
+          "sha256": "ede54621d81c0f87718ca469ea8e6e7b4e888c1f09105c29dded4b4f35cafcd1"
         },
         "bringup.elf": {
           "bytes": 9052,
@@ -494,7 +494,7 @@
           "sha256": "71f301c6f9be62678b6086bbff7ea0ee3b87499500929d648308974d69242b9b"
         }
       },
-      "inventory_sha256": "4c13f9bec7b435be522495a9c8379ecdd5be4df48a662b1812047945b4f306a8",
+      "inventory_sha256": "fed60469efcdd097c1772cbb84839f23db298184cee797b014acd6c538756cce",
       "max_grants": 28,
       "providers": 34
     },
@@ -1139,5 +1139,6 @@
     "saved_bytes": 106496,
     "scratch_bytes": 6853,
     "original_golden_frames_exact": 362
-  }
+  },
+  "provider_selection": "Preserve product-local capability/API instance selection; append only missing capabilities or explicit persistent namespace rows."
 }

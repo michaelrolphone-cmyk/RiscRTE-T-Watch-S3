@@ -51,7 +51,12 @@ def main():
    if n in rows[product]:
     own=json.loads(old[product][n]);add_unique(manifest['requires'],own.get('requires',[]))
     add_unique(manifest.setdefault('optional',[]),own.get('optional',[]))
-   add_unique(policy['grants'],rows[origin][n]['grants'])
+   # Existing product-local provider selection wins over another board's ID.
+   # Persistent grants retain their explicit per-namespace rows.
+   for grant in rows[origin][n]['grants']:
+    persistent=grant['capability'] in ('storage.key-value','storage.shared-data')
+    already=any(g['capability']==grant['capability'] and g['api']==grant['api'] for g in policy['grants'])
+    if persistent or not already:add_unique(policy['grants'],[grant])
    if n=='default.json':manifest['version']='0.15.1'
    if n=='lora_messages.json':
     manifest['version']='0.1.16';manifest['display_name']='LoRa Messages';manifest['icon']='solid:f27a'
