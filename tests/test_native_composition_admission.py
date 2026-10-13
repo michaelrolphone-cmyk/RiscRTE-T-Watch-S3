@@ -127,7 +127,7 @@ class NativeComposition(unittest.TestCase):
             self.markers[name] = self.markers[name].replace(b':24', b':16')
             with self.assertRaisesRegex(ValueError, 'Native row bounds differ'):
                 self.check()
-        with self.assertRaisesRegex(ValueError, '24 policy rows'):
+        with self.assertRaisesRegex(ValueError, '24 or 32 policy rows'):
             self.check(rows=16)
 
     def test_unselected_native_sharing_backend_rejected(self):
@@ -214,6 +214,8 @@ board_build.partitions = partitions-paired-appdata-expanded.csv
 build_unflags =
   -std=gnu++11
   -DRISC_PROVIDER_CAPACITY=32
+  -DRISC_APP_POLICY_ROWS=24
+  -DRISC_APP_REQUIREMENT_ROWS=24
   -DRISC_OWNER_INSTALLER=1
   -Wl,-u,risc_owner_maintenance_target
   -DRISC_TARGET=\"esp32s3-16mb-appdata-iq\"
@@ -222,15 +224,21 @@ build_flags =
   -DRISC_TARGET=\"esp32s3-16mb-appdata-expanded-iq\"
   -DRISC_PAIRED_APP_DATA_EXPANDED=1
   -DRISC_PROVIDER_CAPACITY=40
+  -DRISC_APP_POLICY_ROWS=32
+  -DRISC_APP_REQUIREMENT_ROWS=32
 '''
 
 
 class ExpandedNativeComposition(unittest.TestCase):
     git_output = NativeComposition.git_output
-    check = NativeComposition.check
+    def check(self, rows=32):
+        return NativeComposition.check(self, rows)
 
     def setUp(self):
         NativeComposition.setUp(self)
+        self.native=self.native.replace(b"ROWS:24",b"ROWS:32")
+        for key in ("risc_app_policy_rows","risc_app_requirement_rows"):
+            self.markers[key]=self.markers[key].replace(b"ROWS:24",b"ROWS:32")
         self.profile = self.root / 'watch-expanded-profile.ini'
         self.profile.write_text(EXPANDED_PROFILE)
         source = (ROOT / 'docs/file-source/watch-file-source-profile.ini').read_bytes()
@@ -255,7 +263,7 @@ class ExpandedNativeComposition(unittest.TestCase):
         self.abi_check.assert_called_once_with(self.native, 3)
         self.assertEqual(proof['profile'], 'env:watch-expanded')
         self.assertEqual(proof['bounds'], {'RISC_INSTALLED_APP_CAPACITY': 64,
-            'RISC_PROVIDER_CAPACITY': 40, 'RISC_APP_POLICY_ROWS': 24, 'RISC_APP_REQUIREMENT_ROWS': 24})
+            'RISC_PROVIDER_CAPACITY': 40, 'RISC_APP_POLICY_ROWS': 32, 'RISC_APP_REQUIREMENT_ROWS': 32})
         self.assertEqual((proof['store_abi'], proof['store_size'], proof['layout']),
                          (3, 0x550000, 'riscrte-paired-appdata-v3'))
         self.assertFalse(proof['owner_installer'])
@@ -304,9 +312,9 @@ class ExpandedNativeComposition(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'store ABI differs'):
             self.check()
         self.abi_check.side_effect = None
-        with self.assertRaisesRegex(ValueError, '24 policy rows'):
-            self.check(rows=32)
-        self.markers['risc_app_requirement_rows'] = b'RISC_APP_REQUIREMENT_ROWS:32\0'
+        with self.assertRaisesRegex(ValueError, '32 policy rows'):
+            self.check(rows=24)
+        self.markers['risc_app_requirement_rows'] = b'RISC_APP_REQUIREMENT_ROWS:24\0'
         with self.assertRaisesRegex(ValueError, 'Native row bounds differ'):
             self.check()
 
@@ -328,16 +336,16 @@ class ExpandedNativeComposition(unittest.TestCase):
         with patch.object(admission.subprocess, 'run') as run, \
                 patch('verify_update_elf.cohort_admission_header', return_value='// production header') as header, \
                 patch('elftools.elf.elffile.ELFFile', return_value=elf):
-            admission.compile_harness(self.root, self.root / 'matched', True, self.native, 24,
+            admission.compile_harness(self.root, self.root / 'matched', True, self.native, 32,
                                       native_profile=self.profile)
         command = run.call_args.args[0]
         for define in ('RISC_PAIRED_APP_DATA=1', 'RISC_PAIRED_APP_DATA_EXPANDED=1',
                        'RISC_INSTALLED_APP_CAPACITY=64', 'RISC_PROVIDER_CAPACITY=40',
-                       'RISC_APP_REQUIREMENT_ROWS=24', 'RISC_APP_POLICY_ROWS=24',
+                       'RISC_APP_REQUIREMENT_ROWS=32', 'RISC_APP_POLICY_ROWS=32',
                        'STORE_ADMISSION_CROWN_PROFILE', 'STORE_ADMISSION_FILE_SOURCE'):
             self.assertEqual(command.count('-D' + define), 1)
         self.assertNotIn('-DRISC_PROVIDER_CAPACITY=32', command)
-        header.assert_called_once_with(self.root, self.native, store_abi=3)
+        header.assert_called_once_with(self.root.resolve(), self.native, store_abi=3)
 
     def test_expanded_decode_is_explicit_and_historical_default_is_unchanged(self):
         store = {name: b'fixture' for name in ('boot.json', 'board.json', 'default.json', 'default.elf')}

@@ -60,7 +60,7 @@ class FactoryRecipe(unittest.TestCase):
             'sanitizers': ['address', 'undefined'] if mode == 'asan-ubsan' else [],
             'leak_detection': False,
             'result': {'prepared': True, 'cohort_validated': True, 'elf_count': 58,
-                       'hardware_calls': 0, 'storage_calls': 0, 'app_policy_rows': 24,
+                       'hardware_calls': 0, 'storage_calls': 0, 'app_policy_rows': 32,
                        'target_instructions_executed': False,
                        'active_store_sha256': self.seal['store_sha256'],
                        'candidate_store_sha256': self.seal['store_sha256'],

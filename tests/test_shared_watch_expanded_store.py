@@ -192,11 +192,11 @@ class SyntheticStoreMutations(unittest.TestCase):
     def test_required_optional_and_grant_capacity_mutations(self):
         for field in ('requires', 'optional'):
             changed = self.mutate('contexts.json', lambda m: m.update({field: [
-                {'capability': 'test.' + str(i), 'api': 1} for i in range(25)]}))
+                {'capability': 'test.' + str(i), 'api': 1} for i in range(recipe.AUTHORITY_CAPACITY+1)]}))
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'capacity exceeded'):
                 recipe.verify_store(self.old, changed)
         changed = self.mutate('boot.json', lambda b: b['app_capabilities'][0].update(grants=[
-            {'capability': 'test.' + str(i), 'api': 1, 'instance_id': 0} for i in range(25)]))
+            {'capability': 'test.' + str(i), 'api': 1, 'instance_id': 0} for i in range(recipe.AUTHORITY_CAPACITY+1)]))
         with self.assertRaisesRegex(ValueError, 'capacity exceeded'):
             recipe.verify_store(self.old, changed)
 
@@ -373,13 +373,13 @@ class ExactArtifactMutations(unittest.TestCase):
     def test_requirements_optional_and_grants_capacity_are_rejected(self):
         for field in ('requires', 'optional'):
             def change(manifest):
-                manifest[field] = [{'capability': 'test.' + str(i), 'api': 1} for i in range(25)]
+                manifest[field] = [{'capability': 'test.' + str(i), 'api': 1} for i in range(recipe.AUTHORITY_CAPACITY+1)]
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'capacity exceeded'):
                 recipe.verify_store(self.old, self.mutated_json('contexts.json', change))
         def change(boot):
             row = next(r for r in boot['app_capabilities'] if r['manifest'] == 'file_browser.json')
             self.assertEqual(len(row['grants']), 24)
-            row['grants'].append({'capability': 'extra', 'api': 1, 'instance_id': 0})
+            row['grants'] += [{'capability': 'extra'+str(i), 'api': 1, 'instance_id': 0} for i in range(recipe.AUTHORITY_CAPACITY-len(row['grants'])+1)]
         with self.assertRaisesRegex(ValueError, 'capacity exceeded'):
             recipe.verify_store(self.old, self.mutated_json('boot.json', change))
 

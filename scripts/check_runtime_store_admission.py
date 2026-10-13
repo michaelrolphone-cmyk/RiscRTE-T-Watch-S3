@@ -100,8 +100,8 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     Provider/app capacities have no retained native marker in this generation;
     those two values are witnessed by the exact source-bound build profile.
     """
-    if native_elf is None or app_policy_rows != 24:
-        raise ValueError('Crown composition requires a native ELF and 24 policy rows')
+    if native_elf is None or app_policy_rows not in (24, 32):
+        raise ValueError('Crown composition requires a native ELF and 24 or 32 policy rows')
     runtime, native_profile = Path(runtime).resolve(), Path(native_profile)
     profile_bytes = native_profile.read_bytes()
     profile = configparser.ConfigParser(interpolation=None)
@@ -109,13 +109,14 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
     expanded_profile_bytes = None
     if EXPANDED_SECTION in profile:
+        if app_policy_rows != 32:raise ValueError('Shared expanded Watch requires 32 policy rows')
         # PlatformIO emits -U after -D, so old definitions must be removed with
         # build_unflags. Defining a new unflags list also replaces inheritance.
         expected_flags = ['${env:watch-file-source.build_flags}',
                           r'-DRISC_TARGET=\"esp32s3-16mb-appdata-expanded-iq\"',
                           '-DRISC_PAIRED_APP_DATA_EXPANDED=1',
-                          '-DRISC_PROVIDER_CAPACITY=40']
-        expected_unflags = ['-std=gnu++11', '-DRISC_PROVIDER_CAPACITY=32', '-DRISC_OWNER_INSTALLER=1',
+                          '-DRISC_PROVIDER_CAPACITY=40', '-DRISC_APP_POLICY_ROWS=32', '-DRISC_APP_REQUIREMENT_ROWS=32']
+        expected_unflags = ['-std=gnu++11', '-DRISC_PROVIDER_CAPACITY=32', '-DRISC_APP_POLICY_ROWS=24', '-DRISC_APP_REQUIREMENT_ROWS=24', '-DRISC_OWNER_INSTALLER=1',
                             '-Wl,-u,risc_owner_maintenance_target',
                             r'-DRISC_TARGET=\"esp32s3-16mb-appdata-iq\"']
         if (profile.defaults() or set(profile.sections()) != {'platformio', EXPANDED_SECTION} or
@@ -209,8 +210,12 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
             dict(source[parent]) != {'extends': inherited, 'build_flags': source[parent].get('build_flags', '')} or
             lines(source[parent].get('build_flags', '')) != expected):
         raise ValueError('Runtime sharing profile has unsupported composition bounds')
-    for name, value in [('risc_app_policy_rows', b'RISC_APP_POLICY_ROWS:24\0'),
-                        ('risc_app_requirement_rows', b'RISC_APP_REQUIREMENT_ROWS:24\0')]:
+    if expanded_profile_bytes is not None:
+        bounds.update(RISC_APP_POLICY_ROWS=32, RISC_APP_REQUIREMENT_ROWS=32)
+    elif app_policy_rows != 24:
+        raise ValueError('Unexpanded recovery profile requires 24 rows')
+    for name, value in [('risc_app_policy_rows', ('RISC_APP_POLICY_ROWS:'+str(bounds['RISC_APP_POLICY_ROWS'])+'\0').encode()),
+                        ('risc_app_requirement_rows', ('RISC_APP_REQUIREMENT_ROWS:'+str(bounds['RISC_APP_REQUIREMENT_ROWS'])+'\0').encode())]:
         if native_symbol_bytes(native_elf, name) != value:
             raise ValueError('Native row bounds differ from the source build profile')
     for name in ('risc_tcp_listener_abi', 'risc_entropy_abi'):
@@ -244,7 +249,7 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
             if selected != committed or (runtime / name).read_bytes() != committed:
                 raise ValueError('Expanded Watch input differs from the source identity: ' + name)
         # Only this selected provider bound changes. Apps and policy/requirement
-        # rows stay at the exact inherited recovery-profile values (64/24/24).
+        # app count stays inherited; immutable rows are explicitly expanded (64/32/32).
         proof['bounds'] = {**bounds, 'RISC_PROVIDER_CAPACITY': 40}
         proof.update(profile=EXPANDED_SECTION, expanded_profile_sha256=sha(expanded_profile_bytes),
                      partition_table_source_sha256=sha(partition_bytes),
@@ -267,10 +272,10 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy
                'src/runtime/drivers/ProviderModuleV2.cpp', 'src/ports/esp32s3/CpuPort.cpp')]
     command = ['c++', '-std=c++17', '-Wall', '-Wextra', '-Werror',
                '-Wno-missing-field-initializers', '-rdynamic']
-    if type(app_policy_rows) is not int or app_policy_rows not in (16, 17, 24):
-        raise ValueError('App policy rows must be exactly 16, 17 or 24')
+    if type(app_policy_rows) is not int or app_policy_rows not in (16, 17, 24, 32):
+        raise ValueError('App policy rows must be exactly 16, 17, 24 or 32')
     marker = b'RISC_APP_POLICY_ROWS:' + str(app_policy_rows).encode() + b'\0'
-    if app_policy_rows in (17,24):
+    if app_policy_rows in (17,24,32):
         if not (runtime / 'src/bootstrap/AppPolicyLimits.h').is_file() or native_elf is None or marker not in native_elf:
             raise ValueError('Expanded policy admission requires the matching compiled native marker')
     if native_elf is not None and b'RISC_APP_POLICY_ROWS:' in native_elf and marker not in native_elf:

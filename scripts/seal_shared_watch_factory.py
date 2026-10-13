@@ -180,11 +180,11 @@ def read_native(runtime, runtime_sha):
                                              str(runtime), str(build)]))
     require(proof['runtime_version'] == RUNTIME_VERSION, 'Runtime source version differs')
     composition = native_composition(runtime, blobs['firmware.elf'],
-                                     runtime / 'watch-expanded-profile.ini', 24)
+                                     runtime / 'watch-expanded-profile.ini', 32)
     require(composition.get('store_abi') == 3 and composition.get('profile') == 'env:watch-expanded'
             and composition.get('bounds') == {'RISC_INSTALLED_APP_CAPACITY': 64,
-                'RISC_PROVIDER_CAPACITY': 40, 'RISC_APP_POLICY_ROWS': 24,
-                'RISC_APP_REQUIREMENT_ROWS': 24}, 'Native expanded composition differs')
+                'RISC_PROVIDER_CAPACITY': 40, 'RISC_APP_POLICY_ROWS': 32,
+                'RISC_APP_REQUIREMENT_ROWS': 32}, 'Native expanded composition differs')
     # Catch a target build or source change during proof collection.
     require(all(file_bytes(build / name) == raw for name, raw in blobs.items()),
             'Native build changed during verification')
@@ -263,7 +263,7 @@ def verify_receipt(receipt, seal, mode):
             type(proof.get('elf_count')) is int and proof['elf_count'] == COUNTS['elfs'] and
             all(type(proof.get(k)) is int and proof[k] == 0 for k in ('hardware_calls', 'storage_calls')) and
             proof.get('target_instructions_executed') is False and
-            type(proof.get('app_policy_rows')) is int and proof['app_policy_rows'] == 24,
+            type(proof.get('app_policy_rows')) is int and proof['app_policy_rows'] == 32,
             'Incomplete or unsafe 58-ELF admission receipt')
     require(proof.get('active_store_sha256') == seal['store_sha256'] and
             proof.get('candidate_store_sha256') == seal['store_sha256'] and
@@ -282,7 +282,7 @@ def admission(args):
         os.environ['SANITIZE'] = '1' if args.mode == 'asan-ubsan' else '0'
         os.environ['ASAN_OPTIONS'] = 'detect_leaks=0:halt_on_error=1:abort_on_error=1'
         os.environ['UBSAN_OPTIONS'] = 'halt_on_error=1:print_stacktrace=1'
-        result = admit_cohort(args.runtime, blobs['firmware.elf'], store, store, app_policy_rows=24,
+        result = admit_cohort(args.runtime, blobs['firmware.elf'], store, store, app_policy_rows=32,
                               native_profile=args.runtime / 'watch-expanded-profile.ini')
     finally:
         for key, value in old.items():

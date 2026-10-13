@@ -22,7 +22,7 @@ contents are reset to the previously verified empty disk2.1 image.
   ELF32 Xtensa and ESP image integrity, embedded input-ELF digest, reviewed
   bootloader hash, exact expanded native partition table, native post-link and
   radio IQ proofs, and source-bound composition limits (64 apps, 40 providers,
-  24 policy rows and 24 requirements).
+  32 policy rows and 32 requirements).
 - Original 1.1.21-r1 full BIN SHA-256
   `4e43fc376021779a2d7a5cada96aee255735d5db1eb0e896c5aacf65bb3889bc`.
   Only its `0x270000:0x2f0000` app-data slice is used, with SHA-256
