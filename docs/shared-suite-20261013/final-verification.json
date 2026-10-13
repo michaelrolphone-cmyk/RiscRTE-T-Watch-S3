@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "status": "Software-qualified factory images; delivery held",
+  "delivery_hold_until": "2026-10-13T23:30:00Z",
+  "images": {
+    "watch": {
+      "file": "watch-assembly-final/T-Watch-S3-1.1.23-shared-suite-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "2c176351446c379d73f05b7879533fac4f163c53adb7fe460491a1b4c17ed455"
+    },
+    "waveshare": {
+      "file": "waveshare-assembly-final/Waveshare-0.1.22-expanded-updates-full-initial-erases-data-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "975db7c284951684bac71f2296cbd1e1c0807eb096c8be6e16c567d2f6093c2a"
+    }
+  },
+  "cohorts": {
+    "watch": {
+      "firmware_sha256": "53f92dd6f754de6cc3b9b7263d0fbda9e58e77abb760962f17a29d85ab2f5736",
+      "firmware_size": 1465504,
+      "layout": "riscrte-paired-appdata-v3",
+      "product": "twatch-s3",
+      "runtime_version": "0.2.23",
+      "schema": "riscrte.cohort",
+      "schema_version": 1,
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+      "source_revision": "249254cbd95d2d0366c3cc70c9110931ee759518",
+      "store_abi": 3,
+      "version": "1.1.23"
+    },
+    "waveshare": {
+      "schema": "riscrte.cohort",
+      "schema_version": 1,
+      "product": "waveshare-s3-touch-amoled-206",
+      "version": "0.1.22",
+      "runtime_version": "0.3.3",
+      "source_repo": "michaelrolphone-cmyk/RiscRTE-Wavshare-S3-Touch-AMOLED-2.06",
+      "source_revision": "a03f3c328b8d89d0d9d5ac29eab3ba1fc9187563",
+      "layout": "riscrte-paired-appdata-v3",
+      "store_abi": 3,
+      "firmware_size": 1518320,
+      "firmware_sha256": "258c1105e59162452a1e061623af1cb43b06aad0849b2393c7740ea402cf6124"
+    }
+  },
+  "counts": {
+    "watch": {
+      "apps": 26,
+      "internal_elfs": 59,
+      "providers": 34
+    },
+    "waveshare": {
+      "apps": 26,
+      "internal_elfs": 60,
+      "providers": 35
+    }
+  },
+  "common_app_binary_parity": {
+    "alarms.elf": {
+      "bytes": 134420,
+      "sha256": "9084a305eb1ebb9a6f8d7031a54c1761d1c26d0428265ced30c1d4241d4688e1"
+    },
+    "app_store.elf": {
+      "bytes": 138564,
+      "sha256": "fbe7d4c370a4042171476cc1e6a26d24184eb0955348b88c18d6709dab9a3912"
+    },
+    "audio_spectrum.elf": {
+      "bytes": 238872,
+      "sha256": "a822a0689e263e240f62b6bbcdd8b0de04a70d341fa368017c60070e56d05c0a"
+    },
+    "battery.elf": {
+      "bytes": 132200,
+      "sha256": "50aa9253f48060c31d28a26d35d58897a59c88e16724e30b93b39eea11e6f26b"
+    },
+    "ble_buttons.elf": {
+      "bytes": 134996,
+      "sha256": "857e96852db8c9f34e4c551f196202a3f1a3be2031830cd3300b4f509212699a"
+    },
+    "ble_scanner.elf": {
+      "bytes": 135032,
+      "sha256": "375de039ea344bf6b88a2b5de43cc6a7bc20990936a8d588fd9971e80d800f92"
+    },
+    "ble_touchpad.elf": {
+      "bytes": 134708,
+      "sha256": "f80ff25bb9b0fd2adb531723c06434b8d9557fea1c01c8262bd8618de862fa65"
+    },
+    "bringup.elf": {
+      "bytes": 9052,
+      "sha256": "ca2e30237ceee4b218faf8ec94ca9286fd97cf7be09d0fce3ca8a2eab88c6216"
+    },
+    "calculator.elf": {
+      "bytes": 126764,
+      "sha256": "ae03c974385dd6f3c4bb0c3538e2616e09117410be2eedbba0fd11844c6bb664"
+    },
+    "clock.elf": {
+      "bytes": 996,
+      "sha256": "0a9d3f2d2988643b61f08948e02158e791450ef348b26b5c3b9b6ca223a69fea"
+    },
+    "contexts.elf": {
+      "bytes": 59156,
+      "sha256": "e7f99a107597bcf1085e9146e917822af19783dc75781c7b598181d213756901"
+    },
+    "countdown.elf": {
+      "bytes": 129316,
+      "sha256": "821960a5bfb6d84fef583bae809e7a17e47f7a527708d76c6b82db48a55c7876"
+    },
+    "default.elf": {
+      "bytes": 764380,
+      "sha256": "db647227a06c452721fe6789dceb58847f9e9dced36c0bc21b53265eccc96ba8"
+    },
+    "file_browser.elf": {
+      "bytes": 300356,
+      "sha256": "f3928f7da470095fc02011717589fc72ee72a3d2da3abc99d6c158378f1de88a"
+    },
+    "frequency_generator.elf": {
+      "bytes": 119892,
+      "sha256": "31acdbfa500a3a06c05b4cabcc7a7ce8d0249304e37851f53d75a48838ecb5cf"
+    },
+    "lists.elf": {
+      "bytes": 26352,
+      "sha256": "cfbb592836763f80a98904aa3aaf6a04c9cb1214f447a42e9df2739f5e259f48"
+    },
+    "lora_messages.elf": {
+      "bytes": 132708,
+      "sha256": "0a0c9ed6d8c701af9af336fcbb067b6ece8fc304f4acf68722b627c04d96d785"
+    },
+    "model_viewer.elf": {
+      "bytes": 43068,
+      "sha256": "8b4cb6c789afcaa9c6bb6a4d348f9b7b2618baeca70831fd25819f275c1c874d"
+    },
+    "ota_update.elf": {
+      "bytes": 138564,
+      "sha256": "f9c32e16b1ea8e9a1f4f1f13107edc7c19bcbc94f6d33dea8d66b37cca7ed7c6"
+    },
+    "points_in_time.elf": {
+      "bytes": 171576,
+      "sha256": "97f8128bb844062bffdc06aedfbfee1a9a1d1d34623e2e7fea66f62baae54fba"
+    },
+    "settings.elf": {
+      "bytes": 139524,
+      "sha256": "932384fe0c7432e073b999e2220876204254bc8b72466da4af19dfa655c26202"
+    },
+    "springboard.elf": {
+      "bytes": 146576,
+      "sha256": "3d1382056584b7f748f98ae08df317a39c7781e635069c5e4da7416ab80f332f"
+    },
+    "stopwatch.elf": {
+      "bytes": 128056,
+      "sha256": "a0f347b089175d44b96f8daa49014b50de68ed8deb2889d062b183bfec2c0a80"
+    },
+    "timecard.elf": {
+      "bytes": 155268,
+      "sha256": "e510af68c8c19315c904033fff21cccf14905259cf2d7fb324f3f2f01216420c"
+    },
+    "waterfall.elf": {
+      "bytes": 248080,
+      "sha256": "3901a29e80d9df868b97f59aaf721cab420a58a7ae5563616f30ab00b451241b"
+    },
+    "wifi_settings.elf": {
+      "bytes": 136268,
+      "sha256": "8fb0d20f11476ea431665c456dd3b702b7df571b3dfc853fbafe34804a5c66ae"
+    }
+  },
+  "card_contents": {
+    "Apps/lora_messages/lora_messages.elf": {
+      "bytes": 132708,
+      "sha256": "0a0c9ed6d8c701af9af336fcbb067b6ece8fc304f4acf68722b627c04d96d785"
+    },
+    "Apps/lora_messages/manifest.json": {
+      "bytes": 932,
+      "sha256": "fe1ad46d6dfcdd19ccb27e9e620a817e21684526034e0d53baf54019c658d3ac"
+    },
+    "suite-card.json": {
+      "bytes": 343,
+      "sha256": "fd795f10e7507279e1dcb90ec1607de1d4b84d9eb204bf289243e175ed01158e"
+    }
+  },
+  "preserved": {
+    "watch": {
+      "appdata_512KiB_sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "partition_table_unchanged": true,
+      "all_original_provider_bytes_and_policy_unchanged": true,
+      "board_unchanged": true,
+      "home_internal": true
+    },
+    "waveshare": {
+      "appdata_512KiB_sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "partition_table_unchanged": true,
+      "all_original_provider_bytes_and_policy_unchanged": true,
+      "board_unchanged": true,
+      "home_internal": true
+    }
+  },
+  "declaration_and_grant_rows": 32,
+  "live_handles_per_invocation": 16,
+  "hardware_qualified": false,
+  "target_instructions_executed": false,
+  "preserving_OTA": {
+    "watch": "1.1.22 to 1.1.23 cohort admission passes; no OTA package or hardware update executed.",
+    "waveshare": "0.1.21 to 0.1.22 cohort admission rejects new LoRa ownership of previously shared namespaces without explicit migration; guard unchanged.",
+    "delivery": "Factory images only; factory use erases saved settings/AppData."
+  }
+}

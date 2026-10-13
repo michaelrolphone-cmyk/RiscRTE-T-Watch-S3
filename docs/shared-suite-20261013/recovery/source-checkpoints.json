@@ -1,0 +1,1319 @@
+{
+  "watch-runtime": {
+    "path": "/tmp/twatch-capacity-runtime-0121",
+    "source": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+    "archive": "watch-runtime-source.tar.gz",
+    "bytes": 2521001,
+    "sha256": "acb8ee11a8396b9a219fb9d67da5c08e463e6bd917a947b5fd84f8615aae6d23",
+    "status": ""
+  },
+  "wave-runtime": {
+    "path": "/tmp/waveshare-suite-runtime-0122",
+    "source": "4e340c7d55152454622796f12d49704f6d5a0dd8",
+    "archive": "wave-runtime-source.tar.gz",
+    "bytes": 2563631,
+    "sha256": "527a30ac6ed905a94aa30a4ca370ce40a29679120ab601c7d6ed3b809d2672fa",
+    "status": "?? expanded-candidate.ini\n?? lib/WaveshareVendorGfx/\n?? src/VendorDisplay.cpp\n"
+  },
+  "watch-product": {
+    "path": "/tmp/twatch-shared-cohort-0121",
+    "source": "249254cbd95d2d0366c3cc70c9110931ee759518",
+    "archive": "watch-product-source.tar.gz",
+    "bytes": 30231054,
+    "sha256": "a3aaebbc948ceb24087eb1bcb1d2d19b6dc0d43c31fbd3261ced010cd224ef9c",
+    "status": ""
+  },
+  "wave-product": {
+    "path": "/tmp/waveshare-shared-cohort-0121",
+    "source": "a03f3c328b8d89d0d9d5ac29eab3ba1fc9187563",
+    "archive": "wave-product-source.tar.gz",
+    "bytes": 862707,
+    "sha256": "dd217424ae9d9304597b239d4dfbb18307517c656541049ca0564d55447f7b78",
+    "status": ""
+  },
+  "home": {
+    "path": "/tmp/shared-home-media-0122",
+    "source": "a7d1500a09ff1f5e560a5db44426cd21e7f2576a",
+    "archive": "home-source.tar.gz",
+    "bytes": 1298841,
+    "sha256": "623fb0d70853c564c1366e8e8937e01b02a829687985af900310f87251d0a4bd",
+    "status": ""
+  },
+  "home-system": {
+    "path": "/tmp/shared-home-system-media-0122",
+    "source": "46a6162341665c8649f52301a8a1c1a379394858",
+    "archive": "home-system-source.tar.gz",
+    "bytes": 1147342,
+    "sha256": "b6ea81d76ed3016cd8c525145c5a845db6cf298bca20fafc37ada5452421453c",
+    "status": ""
+  },
+  "lora": {
+    "path": "/tmp/twatch-lora-shared-0121",
+    "source": "40cb8ee6cebe86469044745651a47b7201016136",
+    "archive": "lora-source.tar.gz",
+    "bytes": 2223922,
+    "sha256": "75286076fe0da3519ee17c987d7ede60ea40fb65cf5472fd510c66fc7252f3fd",
+    "status": ""
+  },
+  "waveshare-native-staging": {
+    "vendor_pin": "b099739ad0e33b34e5fbaae77f02bd84805d79a3",
+    "files": {
+      "expanded-candidate.ini": {
+        "bytes": 1681,
+        "sha256": "8ab53405f3257bb6fe65776bc59cebc3cfb9395f42e3d4ac9fa266adfeb464e8"
+      },
+      "src/VendorDisplay.cpp": {
+        "bytes": 5902,
+        "sha256": "6d0181578fc9b955a9d8c3f94a87dd441db1c7c267de261e27d1dbfdba510f92"
+      },
+      "lib/WaveshareVendorGfx/README.md": {
+        "bytes": 25057,
+        "sha256": "5902e42dd66a555889ad40e624c88972361d63d4ea13a009c06dce32f26e11a4"
+      },
+      "lib/WaveshareVendorGfx/library.json": {
+        "bytes": 272,
+        "sha256": "19ebba3b3dfb78eaf4f3f430412ef3b60fe0adfa3c6222096d96f73d49c2f88e"
+      },
+      "lib/WaveshareVendorGfx/library.properties": {
+        "bytes": 1049,
+        "sha256": "a9a4fef625d9c296c8dea1cbdec1dc21048990e124ea401a85fe1bd85810548b"
+      },
+      "lib/WaveshareVendorGfx/gen_keywords.pl": {
+        "bytes": 1452,
+        "sha256": "5459d51d0490257cec8c40ec4bab24b8eb571417029296eab899edac9330db1c"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerPROGMEM/Arduino_UNO_Rev3_Ok.c": {
+        "bytes": 45457,
+        "sha256": "d47b87d5916e86a948b217a94cb46b70af17cd42119a4b284049e999076384c3"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerPROGMEM/ImgViewerPROGMEM.ino": {
+        "bytes": 3965,
+        "sha256": "d0b7b92fa7ed0f74d956e3137225d35c0c48c85d00e385b724bb3e44ceb952c3"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_JPEGDEC/MjpegClass.h": {
+        "bytes": 4177,
+        "sha256": "76b6185c8bfe7b558fae58eaa933d25b2a1d0e261bb7bdb21eac4044f583ad13"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_JPEGDEC/ImgViewerMjpeg_JPEGDEC.ino": {
+        "bytes": 9885,
+        "sha256": "adb38b21278d8844a2a7dad6831a641aa6cb3b68733fa6231d13a354d4912885"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_JPEGDEC/data/earth128.mjpeg": {
+        "bytes": 244334,
+        "sha256": "fe2987bc0d2be5f09639404bfc4ff6565b77108dbbe9d55471ec8c030dbd3216"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_JPEGDEC/data/earth.mjpeg": {
+        "bytes": 645355,
+        "sha256": "f0a5ffce063914ac0ef11f86a5b3b10275ae18a2623b5e1396ff9ed967d20c23"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32_JPEG/MjpegClass.h": {
+        "bytes": 4065,
+        "sha256": "853f135c04e8d1ff88a5c4d7f8c938cf49567f77ba755009b05e0ee070a7d223"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32_JPEG/ImgViewerMjpeg_ESP32_JPEG.ino": {
+        "bytes": 7684,
+        "sha256": "6fa3783b7bc810613c867d5ef46c220e298893a28d9f4a2788e034bf3b4651d9"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32_JPEG/data/earth.mjpeg": {
+        "bytes": 645355,
+        "sha256": "f0a5ffce063914ac0ef11f86a5b3b10275ae18a2623b5e1396ff9ed967d20c23"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerPng_PNGdec/ImgViewerPng_PNGdec.ino": {
+        "bytes": 9440,
+        "sha256": "71e1d493da4b22d2077fdc2a5a454032460ea4b7d46fff2accc1cf9a350f43ca"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerPng_PNGdec/data/octocat-4bpp.png": {
+        "bytes": 868,
+        "sha256": "3c70c42aaa8ec2b0a477adbf730f3b5a8cc0a664b1f677766d8e00afc9e96b43"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerPng_PNGdec/data/octocat.png": {
+        "bytes": 26838,
+        "sha256": "78a15ee06e4dde40bcb614ac9ccf27694edd7d9755c409db7a246df20815dd46"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32P4/MjpegClass.h": {
+        "bytes": 4338,
+        "sha256": "88813e0eaf9823d5f309f6c07b9b531b24bdf5091859c56c136ef5903860889f"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32P4/ImgViewerMjpeg_ESP32P4.ino": {
+        "bytes": 6430,
+        "sha256": "8ec46168051f2c68f848f08b178263379a9016965174d7659be53aed302d790d"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerMjpeg_ESP32P4/data/earth.mjpeg": {
+        "bytes": 645355,
+        "sha256": "f0a5ffce063914ac0ef11f86a5b3b10275ae18a2623b5e1396ff9ed967d20c23"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_GIFDEC/GifClass.h": {
+        "bytes": 18987,
+        "sha256": "3c839fa63febde372ce446120c2cc7688a9f982d508d3ac6e42d2142d330683a"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_GIFDEC/ImgViewerAnimatedGIF_GIFDEC.ino": {
+        "bytes": 9025,
+        "sha256": "494253fb0e54a9b842e9a823fed58aaaa40a9b5b052dd2e029a0bd874f69f928"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_GIFDEC/data/ezgif.com-resize.gif": {
+        "bytes": 91139,
+        "sha256": "fe8dd8a24dc56a9286fac423c1953ff8a4f402ea73b1d37e7436c5f1d851a8ff"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_GIFDEC/data/ezgif.com-optimize.gif": {
+        "bytes": 793877,
+        "sha256": "9031cd762f8d1966a95aecaec76747d89ab9d5e40b0ffcd88b9ec00603d29064"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerJpeg/JpegFunc.h": {
+        "bytes": 2898,
+        "sha256": "3c8fe0b3a2a06c2ae56812856527ccbffa18924681cc9c703d505377e5a1e944"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerJpeg/ImgViewerJpeg.ino": {
+        "bytes": 6978,
+        "sha256": "2c6fca82393b7954e84aa07181e612e6edafaf7ecac86dab5e85d218968d91c3"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerJpeg/data/octocat.jpg": {
+        "bytes": 103471,
+        "sha256": "7342870f0adf2944dad281af23b2bd9b3c0fdce9b5c15fcca3aaeabb752aba20"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerTiff_G4/ImgViewerTiff_G4.ino": {
+        "bytes": 9170,
+        "sha256": "889c5cf2a93a1a1d1080e92a06c444f2c3947322a176b103b7f16f798c4ca0ed"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerTiff_G4/data/at3_1m4_01_g4.tif": {
+        "bytes": 3512,
+        "sha256": "a0437450f16703521b1d9f5604181ba6f3c7456336b72b1423b96f9a19023dec"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerBmp/ImgViewerBmp.ino": {
+        "bytes": 7507,
+        "sha256": "38e632eefbbff5d900259c3d45de4f55f5f25a12300f2d4f8efb98157a6f8c4c"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerBmp/BmpClass.h": {
+        "bytes": 8416,
+        "sha256": "e718b84b7d16ddae5cae21ec9e1d0e542b1b991dc3e583be268fe9ecbfa100d0"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerBmp/data/octocatM.bmp": {
+        "bytes": 218950,
+        "sha256": "147f0779660bbc3fb4e8b688b8942a87ed595807244f42006d7a1a484611035d"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerBmp/data/octocatL.bmp": {
+        "bytes": 583734,
+        "sha256": "8a74435c891f2487e24e16a47159ec2fb77972051518e8826499f1d146a76254"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerBmp/data/octocatS.bmp": {
+        "bytes": 31542,
+        "sha256": "cf3757e9360986e59c1a02e69202e8a2d96721d45031a6c0395264672e910a6b"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_bitbank/ImgViewerAnimatedGIF_bitbank.ino": {
+        "bytes": 11321,
+        "sha256": "fd4373d06c30cc571087bb1232723c307b5685acac4ebb8c65818369581baa05"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_bitbank/data/ezgif.com-resize.gif": {
+        "bytes": 91139,
+        "sha256": "fe8dd8a24dc56a9286fac423c1953ff8a4f402ea73b1d37e7436c5f1d851a8ff"
+      },
+      "lib/WaveshareVendorGfx/examples/ImgViewer/ImgViewerAnimatedGIF_bitbank/data/ezgif.com-optimize.gif": {
+        "bytes": 793877,
+        "sha256": "9031cd762f8d1966a95aecaec76747d89ab9d5e40b0ffcd88b9ec00603d29064"
+      },
+      "lib/WaveshareVendorGfx/examples/HelloWorld/HelloWorld.ino": {
+        "bytes": 3368,
+        "sha256": "5758deef877024e7e3d24d4cf37941a9027d667929329c328d9a6a487b3d774c"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/MultipleAnimatedGIF.ino": {
+        "bytes": 10234,
+        "sha256": "1d860f4102238fa4e1cfa83b5d64bf07dbba40241255063f00d45c2615c5b40d"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/GifClass.h": {
+        "bytes": 18987,
+        "sha256": "3c839fa63febde372ce446120c2cc7688a9f982d508d3ac6e42d2142d330683a"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/data/archer.gif": {
+        "bytes": 3887,
+        "sha256": "3fdbe2af82a182ba94c9c05c5fec01d8c2c2c2df7c10492ccae291c7f7bf7f47"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/data/jobs.gif": {
+        "bytes": 3733,
+        "sha256": "19d47598d0e007415eae378bb4eec8e5e99e81bc3b8d7fdb2c7f886498046599"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/data/white.gif": {
+        "bytes": 28035,
+        "sha256": "418415c20c692fbd311ef588ee290a571ccd0871041d946160e088ef0d1e2840"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultipleAnimatedGIF/data/lancer.gif": {
+        "bytes": 10786,
+        "sha256": "0194e120eda9bf42d9d23027d9dd235bbbb8426ded0f18270a264c3a5b5164b5"
+      },
+      "lib/WaveshareVendorGfx/examples/MultipleDisplay/MultiplePDQgraphicstest/MultiplePDQgraphicstest.ino": {
+        "bytes": 15853,
+        "sha256": "4c8fbc45c174d3a61ffdfa9fb96829fd77a11e453d4b5b85cffe660a71493564"
+      },
+      "lib/WaveshareVendorGfx/examples/TouchCalibration/touch.h": {
+        "bytes": 5508,
+        "sha256": "d91a120008b44b2c447cce5cc3342344be2176f72087c5248dc8b6368c764758"
+      },
+      "lib/WaveshareVendorGfx/examples/TouchCalibration/TouchCalibration.ino": {
+        "bytes": 9049,
+        "sha256": "3eda4cb24e8678b1ca6112cee597c1c7c2f59d9bd14732df2eee8dc8c063e541"
+      },
+      "lib/WaveshareVendorGfx/examples/NeoPixel/FastLED/FastLED.ino": {
+        "bytes": 1190,
+        "sha256": "187af139f57ef2f72441a127e06791b76392488538fe7762e495202a37e4c860"
+      },
+      "lib/WaveshareVendorGfx/examples/NeoPixel/FastLED/FastLED_GFX.h": {
+        "bytes": 2000,
+        "sha256": "188cbec7ee750d9228de79ccd7d4b71e944c85531cdfbf2a8bfca31ebb04e0e7"
+      },
+      "lib/WaveshareVendorGfx/examples/NeoPixel/Adafruit_NeoPixel/Adafruit_NeoPixel.ino": {
+        "bytes": 1261,
+        "sha256": "7c81146ab90a3847a1e13f240b6ae9aa67fa51c8bb61d2281052b04953fbe730"
+      },
+      "lib/WaveshareVendorGfx/examples/NeoPixel/Adafruit_NeoPixel/Adafruit_NeoPixel_GFX.h": {
+        "bytes": 3059,
+        "sha256": "4dc06d4bd74397c93d041c6005687b5cb869a22010d7a443c1e1f831298dcffb"
+      },
+      "lib/WaveshareVendorGfx/examples/PDQgraphicstest/PDQgraphicstest.ino": {
+        "bytes": 15213,
+        "sha256": "dfde10ba999f5ac6ed9b992a45a3db7ab2fb989067e7798e3e4bc9eac9ca26bc"
+      },
+      "lib/WaveshareVendorGfx/examples/PDQgraphicstest/Arduino_GFX_databus.h": {
+        "bytes": 5129,
+        "sha256": "2e5eb6a3bd8b802b7bebebfafc25efcd94cd8b321b516a899b8ee49b66f02bb0"
+      },
+      "lib/WaveshareVendorGfx/examples/PDQgraphicstest/Arduino_GFX_dev_device.h": {
+        "bytes": 56531,
+        "sha256": "2e529d8b338b514f7f96e3abbfb393d60b0b62abb098cfca0ef22ea71854a5a5"
+      },
+      "lib/WaveshareVendorGfx/examples/PDQgraphicstest/Arduino_GFX_display.h": {
+        "bytes": 10126,
+        "sha256": "db7aa1242b137deaf90d000fd9fa592e35600c7f5a556082414009a956cf6f58"
+      },
+      "lib/WaveshareVendorGfx/examples/PDQgraphicstest/Arduino_GFX_pins.h": {
+        "bytes": 2163,
+        "sha256": "e706f7d3837445a5b2a6d2c72dc1d3b9ee3b58effaf85616abe6995632592063"
+      },
+      "lib/WaveshareVendorGfx/examples/HelloWorldGfxfont/FreeSerifBoldItalic12pt7b.h": {
+        "bytes": 19701,
+        "sha256": "b612aeadf4e19693f0d9fa97f35b3b49c3f5134c4db00ef136c944cb5ede86b0"
+      },
+      "lib/WaveshareVendorGfx/examples/HelloWorldGfxfont/HelloWorldGfxfont.ino": {
+        "bytes": 3715,
+        "sha256": "82348b2be7654ef872966f023cdea38f276b4e539eabf30c2c7f9bac44be93a5"
+      },
+      "lib/WaveshareVendorGfx/examples/HelloWorldGfxfont/FreeMono8pt7b.h": {
+        "bytes": 9967,
+        "sha256": "b7f5ead9b973f6f4aaa054110f233054dce03f6a9af4078c440d4c35b050b9ba"
+      },
+      "lib/WaveshareVendorGfx/examples/HelloWorldGfxfont/FreeSansBold10pt7b.h": {
+        "bytes": 15131,
+        "sha256": "40be09c370adfb5cc28c3e774551da83bb1029a7517cec55fcd2862832841d72"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2FontHelloWorld/U8g2FontHelloWorld.ino": {
+        "bytes": 3475,
+        "sha256": "e64c5018e89ae33c16bbf62a6aa3a098a177c7924e4d623990b43728580179ab"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2FontUTF8Chinese/U8g2FontUTF8Chinese.ino": {
+        "bytes": 4744,
+        "sha256": "bfd26de3057c67de9625be34789b6ced6682268635f95335534ab931bc1063df"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2RssReader/U8g2RssReader.ino": {
+        "bytes": 8432,
+        "sha256": "bc99b5f75600f4089015d3c448c395d22e3ac316f197df413b2b1be0f0335040"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2FontPrintUTF8/U8g2FontPrintUTF8.ino": {
+        "bytes": 5055,
+        "sha256": "7ebd38cbd2aa7134a5145d932c2e1ab910b1f6a24e5baaf0154a65516eeb79aa"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2FontUTF8FullCJK/U8g2FontUTF8FullCJK.ino": {
+        "bytes": 4704,
+        "sha256": "66afc2a3a7f829ffe05d4b039d53c6594ca2537e77594e3f1127007c4c8e156c"
+      },
+      "lib/WaveshareVendorGfx/examples/U8g2Font/U8g2FontUTF8FullUnifont/U8g2FontUTF8FullUnifont.ino": {
+        "bytes": 10002,
+        "sha256": "d1cf796ee31bc351c06ff6980765a819eeced7ef9fa576de16d769c917f55413"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/PicoWiFiAnalyzer/PicoWiFiAnalyzer.ino": {
+        "bytes": 10483,
+        "sha256": "7e7b35a677ebdb6994d23fb817aad5e48e1cf072df5a9fcda79702ce2a33b693"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/WioWiFiAnalyzer/WioWiFiAnalyzer.ino": {
+        "bytes": 10579,
+        "sha256": "e665bb60aba65b767c13a9e0706091ce6b683f31bcd3e098cd74588d25cf2813"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/RTLWiFiAnalyzerUTF8/RTLWiFiAnalyzerUTF8.ino": {
+        "bytes": 11887,
+        "sha256": "cd9d6107f31036c0b48287287c1cc666a37e990fe3d2f14e430a03922c1ebb8d"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/ESPWiFiAnalyzerUTF8/ESPWiFiAnalyzerUTF8.ino": {
+        "bytes": 11427,
+        "sha256": "dab55e71fad0dff65fb10fc8dcd0540cea96c905abcd08c5deacfd975e90804a"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/RTLWiFiAnalyzer/RTLWiFiAnalyzer.ino": {
+        "bytes": 11944,
+        "sha256": "2b9ae64f20c21e0ef30d29d7b1128140a2f516187485135cf802d869b46c411c"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/PicoWiFiAnalyzerUTF8/PicoWiFiAnalyzerUTF8.ino": {
+        "bytes": 10665,
+        "sha256": "ae983266be5b518e0bb925190828c175536c6258de5a068e4d54cd69a684f69d"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiAnalyzer/ESPWiFiAnalyzer/ESPWiFiAnalyzer.ino": {
+        "bytes": 11245,
+        "sha256": "84c5ebb0386e662b5a1637d2889eb086681c5283843d0eb464917e87737ad272"
+      },
+      "lib/WaveshareVendorGfx/examples/AsciiTable/AsciiTable.ino": {
+        "bytes": 3637,
+        "sha256": "d5e91b2a9811cb24ca6c5560f3f6de37a589a2fae7b9e57e41428c2b1c749cef"
+      },
+      "lib/WaveshareVendorGfx/examples/Sprite/SpriteGif/IndexedSprite.h": {
+        "bytes": 2397,
+        "sha256": "250bbebb8fd9d50499d18eae8a0ab0c8051e70bc4684b540fa4437b954ea9285"
+      },
+      "lib/WaveshareVendorGfx/examples/Sprite/SpriteGif/GifClass.h": {
+        "bytes": 18968,
+        "sha256": "09d551bc79d7b62eb51b2bc9baa598e538087014924d8c14ec7a582046afd83e"
+      },
+      "lib/WaveshareVendorGfx/examples/Sprite/SpriteGif/SpriteGif.ino": {
+        "bytes": 9280,
+        "sha256": "d9117137ebafa7396d028d94650aebd00bac917bf833a31985eda2c36aed276a"
+      },
+      "lib/WaveshareVendorGfx/examples/Sprite/SpriteGif/data/city17_240.gif": {
+        "bytes": 19221,
+        "sha256": "4ca34f670312bd56162e03c60808ae28cbdfcdb8c4de9608817c241aa93befe6"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiPhotoFrame/JpegFunc.h": {
+        "bytes": 3090,
+        "sha256": "9ccf299986cac22765034e404be77aa3f1fed142663cff1bc6af1bcc40713574"
+      },
+      "lib/WaveshareVendorGfx/examples/WiFiPhotoFrame/WiFiPhotoFrame.ino": {
+        "bytes": 9845,
+        "sha256": "d110d6702eb09e6a2bbf9c119985b1f24799d79a1a17c8f50d8c37f3a9213637"
+      },
+      "lib/WaveshareVendorGfx/examples/Clock/Clock.ino": {
+        "bytes": 11052,
+        "sha256": "ad9734069a50aabec9a8686e383632c1dbd1a567c93e991f72ffffbda070a754"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/img_benchmark_cogwheel_chroma_keyed.c": {
+        "bytes": 541889,
+        "sha256": "4e549bbe849ac045ade59fb20b506fa664fe28761227078bb0e117e1e60893ed"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/lv_demo_benchmark.h": {
+        "bytes": 960,
+        "sha256": "c379145fd3c0628a2271e2134868ccfb3872bb483441b2ffa7ff97f685fd00c6"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/img_benchmark_cogwheel_alpha16.c": {
+        "bytes": 30748,
+        "sha256": "5e18050876c046f4e1fb139dd409d9682616152bc1133d87631cbf999de40d72"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/img_benchmark_cogwheel_indexed16.c": {
+        "bytes": 31553,
+        "sha256": "b452771bd61eef966d0eb5bfa9a8875ecb5a29278442f483891be850342f62b1"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/touch.h": {
+        "bytes": 5421,
+        "sha256": "d05e6f2852d72dc118b6570cf64a9121079b12ecbb47e90f99b667553565027e"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/lv_font_bechmark_montserrat_28_compr_az.c": {
+        "bytes": 20370,
+        "sha256": "6be6b2a52cd11193bf17b14aff2ba5dc746d3bb10c6dad3cd47e4e62a2beaf4b"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/lv_font_bechmark_montserrat_12_compr_az.c": {
+        "bytes": 10882,
+        "sha256": "a48943a20e4b48df1299b39bd4d0a321bf5897ef0e830811da7c8c6f94566fba"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/LvglBenchmark.ino": {
+        "bytes": 8292,
+        "sha256": "42ee6c62d1f750e9f916f4c9766e0e9e606fae37ee09343c4e356a58af90453e"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/lv_demo_benchmark.c": {
+        "bytes": 39064,
+        "sha256": "559a77889df3d07f5181dbf20bd8f0f95513b6bdee6e1e2cf883cc6b0166aaa2"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/img_benchmark_cogwheel_rgb.c": {
+        "bytes": 541822,
+        "sha256": "27aef0e42dd8097190da15571c68d0de95d71ea693f09961a2fe5853ef4611a9"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/lv_font_bechmark_montserrat_16_compr_az.c": {
+        "bytes": 12838,
+        "sha256": "0843d33bf541b871926e8cfea08eaa555086cf4087e1deccaf67adaf03d888c2"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglBenchmark/img_benchmark_cogwheel_argb.c": {
+        "bytes": 721814,
+        "sha256": "dc61e45ae6a905505cce715ca9c14d144758f6ab770b16f74d3a5ed9b4f9813d"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LVGL_Arduino_v8/touch.h": {
+        "bytes": 5421,
+        "sha256": "d05e6f2852d72dc118b6570cf64a9121079b12ecbb47e90f99b667553565027e"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LVGL_Arduino_v8/LVGL_Arduino_v8.ino": {
+        "bytes": 8719,
+        "sha256": "7beda3b9ef9addb0a02cf2e3c3036dc3d6cd49c97be1e46f138f11a258f398fa"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LVGL_Arduino_v9/touch.h": {
+        "bytes": 5421,
+        "sha256": "d05e6f2852d72dc118b6570cf64a9121079b12ecbb47e90f99b667553565027e"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LVGL_Arduino_v9/LVGL_Arduino_v9.ino": {
+        "bytes": 8760,
+        "sha256": "4ff316dfa3f1029d02965efd6c56383098840016e5f3342cd46a3b9c1c2a4924"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglHelloNeoPixel/LvglHelloNeoPixel.ino": {
+        "bytes": 3755,
+        "sha256": "c1f599c6468150a84c6e8df3297d60f7c3de73218ebc2a7ce84c3178f7b3fc6b"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglHelloNeoPixel/ui_font_Chill7.c": {
+        "bytes": 1075584,
+        "sha256": "b92e40ee6937f6cec544b0217554af2c4330b5b506963f9c78b57b50c63bbde3"
+      },
+      "lib/WaveshareVendorGfx/examples/LVGL/LvglHelloNeoPixel/Adafruit_NeoPixel_GFX.h": {
+        "bytes": 3059,
+        "sha256": "4dc06d4bd74397c93d041c6005687b5cb869a22010d7a443c1e1f831298dcffb"
+      },
+      "lib/WaveshareVendorGfx/examples/ArduinoVNC/touch.h": {
+        "bytes": 5421,
+        "sha256": "d05e6f2852d72dc118b6570cf64a9121079b12ecbb47e90f99b667553565027e"
+      },
+      "lib/WaveshareVendorGfx/examples/ArduinoVNC/ArduinoVNC.ino": {
+        "bytes": 7579,
+        "sha256": "c5e8816a078772d6995de3456eae78601ff79e07aa6657a275f3eae1eba60280"
+      },
+      "lib/WaveshareVendorGfx/examples/ArduinoVNC/keyboard.h": {
+        "bytes": 1851,
+        "sha256": "ed153787fd4e1455196024aea03f062c6d3e455d648bd3043a0f0afb238e06c8"
+      },
+      "lib/WaveshareVendorGfx/examples/ArduinoVNC/VNC_GFX.h": {
+        "bytes": 3729,
+        "sha256": "07d79a0c440fbea24ec5774586b6318d37adafc839d6522cee5c46e4d4487900"
+      },
+      "lib/WaveshareVendorGfx/examples/SetTextBound/SetTextBound.ino": {
+        "bytes": 3980,
+        "sha256": "7dcfed7332110febdf010bd331dadd49693349cd2706ce32ffdea6fbf1185ece"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_TFT_18bit.cpp": {
+        "bytes": 13606,
+        "sha256": "dc24b955b2a92d8eaa240199a12aaef48fb7b851786db54a29a26b22665914f4"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_TFT.h": {
+        "bytes": 3703,
+        "sha256": "4d9eb70fc543ebe43b4deba19f27210a1c9de709c88e0d111aa2019fa1deb1de"
+      },
+      "lib/WaveshareVendorGfx/src/gfxfont.h": {
+        "bytes": 1077,
+        "sha256": "1a5044a5b5c80feaf2c8eada02cf077a0977b42bbfd6c5409d8cee3e681c6562"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_GFX_Library.h": {
+        "bytes": 8948,
+        "sha256": "eec1598a88f1a7822f6c0924428780f61fede94251af5055d3e58fe0784622b9"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_G.cpp": {
+        "bytes": 6519,
+        "sha256": "fb539168ad2f39c9d0a6db9045d392e7cf75723811880f60035f8454cfbe5888"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_DataBus.cpp": {
+        "bytes": 4317,
+        "sha256": "342d946717361402f7cf2d1af437ee796deadbcbe7bcfe84a29debff3d9d0f65"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_GFX_Library.cpp": {
+        "bytes": 1681,
+        "sha256": "9b3af74b502140fd82899caf0451cd45a4991431dbd43e72b6ef47b371eea25f"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_GFX.cpp": {
+        "bytes": 94397,
+        "sha256": "b868fd030732eb1df54c4de19ccaf67f40483c6ad3657c3ae758af7665be4ef5"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_TFT_18bit.h": {
+        "bytes": 2254,
+        "sha256": "cf1c66769fdeb1bef5096632f2101fce66442fbdfee2606301a2cb985bb88137"
+      },
+      "lib/WaveshareVendorGfx/src/YCbCr2RGB.h": {
+        "bytes": 27384,
+        "sha256": "5b75c28bf83a8eef05a85919c08175696e9920100f4b9736a759d6b6014458b7"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_GFX.h": {
+        "bytes": 21222,
+        "sha256": "f31136ebede649a3cbb766a3501961abb9010f718f7e153f6f6555312cc80d61"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_OLED.h": {
+        "bytes": 484,
+        "sha256": "728075e5c736471f6cea40041be2e1b58e1534e5b2efb56ac77e4e9322555b4a"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_G.h": {
+        "bytes": 2059,
+        "sha256": "bfa9ac677740a086a61b5843aa6deab5be67ff200f6a0246034d69948b957417"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_TFT.cpp": {
+        "bytes": 25672,
+        "sha256": "d9dafc1b7cae9bb0de79dd11421aa14686493141c9f6fcf955e239adea9c79ba"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_DataBus.h": {
+        "bytes": 12988,
+        "sha256": "05a1bf8a8b6b2661f34dd633973514a2a5234530ee965b2781cf391e955298d7"
+      },
+      "lib/WaveshareVendorGfx/src/Arduino_OLED.cpp": {
+        "bytes": 424,
+        "sha256": "b14435b63fc470cf1b029ba5f2c3ab89a46580fa3fc2e0dc13d111db29b8584a"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_Mono.cpp": {
+        "bytes": 2377,
+        "sha256": "4b88874ff72544d76c44e51f45ddbaac6892dcb68a2e9e683aebc612b964782e"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_3bit.cpp": {
+        "bytes": 1732,
+        "sha256": "b5880bb92a4ba4e5ce50b998749b925b080748a2051cabba3efca3f4340e4902"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_Indexed.cpp": {
+        "bytes": 11710,
+        "sha256": "8806f045563d5c3cf3d2bf9f973f6d938317b1225c0ab716d875bfa37ac48c99"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_3bit.h": {
+        "bytes": 760,
+        "sha256": "b47091fd5d4391ce0fd28cf5555f84e32b98ae44ed4699bdd944ae495b985c03"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/readme.md": {
+        "bytes": 954,
+        "sha256": "a291f69f433d191bf04eb812c05ab0f95989104a47f2cff34d3c4dae336add28"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas.h": {
+        "bytes": 1930,
+        "sha256": "26d6f530b11667b087ae8d753d9f015d7ced767a139f9dc4a32bab54a2b9fe2f"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas.cpp": {
+        "bytes": 13593,
+        "sha256": "106b920e71ecd027fd79fa30d9e9b2c5c76aeed98c2262069b9e13099d1bc0ae"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_Mono.h": {
+        "bytes": 888,
+        "sha256": "25d9c531a5e934e5e3cec8be40846c50f8d7b8937cb13ca962b19ebd68b8ca08"
+      },
+      "lib/WaveshareVendorGfx/src/canvas/Arduino_Canvas_Indexed.h": {
+        "bytes": 2155,
+        "sha256": "05d3a31b87a49c6396f53be887f570c402449d3cf7b8a902e43715389268717a"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8369A.h": {
+        "bytes": 6737,
+        "sha256": "e331ad273fac0d6d9da81315c38d01771fb777f28beb70ce4d29c90bfd53cfb0"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1283A.h": {
+        "bytes": 2795,
+        "sha256": "eeeca2d1400b126fea2116f1dff2d21a8256e85c65cff7beedbfb8e1336932b7"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3023.h": {
+        "bytes": 4075,
+        "sha256": "171c99b41cc8dd66a9411d778eb44449b17940f4e9e87c8733d0f9247ccd40a8"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8357B.h": {
+        "bytes": 9307,
+        "sha256": "17ea1e7a7fa805f13ed642984491c2d7ab9499c65e6ac272302a5339393ce956"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT35510.h": {
+        "bytes": 3327,
+        "sha256": "d6e4bb2aaf15fcf7129b5cf85e45df840ccae5fed9b07ca76da9be97253d186d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9486.cpp": {
+        "bytes": 2836,
+        "sha256": "af9c7b4a3dfb574f098e5d4b11629632f5f6e96adb0c3030eb73ccbc36f1e766"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1283A.cpp": {
+        "bytes": 5410,
+        "sha256": "6497ce1423f39c6b4ae44b2f7fd805de5c86b16aa55d17df35b0bf9544c5d16d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT39125.h": {
+        "bytes": 8796,
+        "sha256": "9ac7e6f8b1a0e61624a7cd6256a8e5bde7713946d6e1f0187512565e09a5c6f1"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7789.h": {
+        "bytes": 4967,
+        "sha256": "69be4345f6a6a920b8483c6ccf7081c624a90f733e2f2b2cba8bc08e7ea5100a"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8352C.cpp": {
+        "bytes": 10850,
+        "sha256": "c8277a763b4a4043c9c95e4ccbfd2726710370232bacfed22b22a1b6a34661ba"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SEPS525.h": {
+        "bytes": 1931,
+        "sha256": "8c10d9c9f871e683d5f48e00bf97923c3d8162212eb5f7be7e93bb50f443cd02"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9341.h": {
+        "bytes": 5521,
+        "sha256": "2fd6c6c9538d4daf366d5431f29dd8441cb11a1e3e930a625a2464b4d19bd699"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7796.cpp": {
+        "bytes": 3204,
+        "sha256": "bbfd14fcef33624f2d84da2018962351023ec26c652b7adb63ec09f8f07ba6bd"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_AXS15231B.h": {
+        "bytes": 7551,
+        "sha256": "2e5f8ea5f4504d8597077f98b413780ba6a6e0695f904d7a607cf738895b0796"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9A01.h": {
+        "bytes": 4417,
+        "sha256": "ece60fb1ac33bc01eb28be81426e59bf90e7cebb0dfa6bc1c82e8f67de690d50"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1331.cpp": {
+        "bytes": 4254,
+        "sha256": "0553717d92c6172808a57c84ec6074dc05b02064665cf87b499aa1f0b30e949e"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT35310.h": {
+        "bytes": 14838,
+        "sha256": "167c118a8f036c67baa985b745801e8f9c8a88d4f43a3eb9ffa7491e9a4ac010"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1306.h": {
+        "bytes": 2314,
+        "sha256": "9ad03a523db987348d694556da6218e600b58c54ac7cea97a314358ecb777eda"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9331.cpp": {
+        "bytes": 3462,
+        "sha256": "ce05d013022bfc665f2ec468adcb1f902801b82ddc728e103b39d533be4cf6fb"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9486_18bit.cpp": {
+        "bytes": 2914,
+        "sha256": "1dfbbbdc51c9bd41ca7d5569142b118b47e63f792fcf4b4716c12b641d66198c"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9C01.h": {
+        "bytes": 5980,
+        "sha256": "9ce8093aee6fa1972c879bfae631c67366d961d3b9482141d3c3251dde5e4239"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_DSI_Display.cpp": {
+        "bytes": 14028,
+        "sha256": "4fbbdc2866c585a4ea62e3071a075cb3d37b0457395181bb5db6b8e238326f66"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8369A.cpp": {
+        "bytes": 3214,
+        "sha256": "a152b0ba865d1236bd149c523e014cbce321fab8763aeea44d500e3d7695217d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_AXS15231B.cpp": {
+        "bytes": 2947,
+        "sha256": "fcb6e5fd002b590a59d65a28bdb77f7a1efe195349ce9a2b6e26a24aead42e86"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_OTM8009A.h": {
+        "bytes": 3327,
+        "sha256": "967ec77645f211c7ec357affbf2d5986198037c92b06f0ac451b48cf594b2d85"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_OTM8009A.cpp": {
+        "bytes": 7439,
+        "sha256": "6e233ddf8ee17e8ab274430afa7835b160a37b56ef1d3cba27688854f1f00d6a"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8357A.h": {
+        "bytes": 19794,
+        "sha256": "e96c9fdb12228d42d940c720e8f100f7c44d2121565c034adf6819cc2eda221d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1351.h": {
+        "bytes": 2047,
+        "sha256": "aece9a88ae844bc416878fc2b7d1e05bf624d4d788f144502fdcc02a153b4e7d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9481_18bit.h": {
+        "bytes": 2227,
+        "sha256": "304225791a1a13b9a604f80ea5fab0a7da2a0b396b4ea982dae1d200f3a79fa7"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9C01.cpp": {
+        "bytes": 2829,
+        "sha256": "dae2f624ffeb7c8d47577afe95373795367acc8e1d852b975752ec54ad92dcaf"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9342.cpp": {
+        "bytes": 2716,
+        "sha256": "ef75bce358799a79026aafc8be5b31c195f08dee403174f9e2eb3b4981ace2c9"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_CO5300.h": {
+        "bytes": 7148,
+        "sha256": "ad26ba2d773471198e65f57365b0b35e17b54b405313407bbb0474e1549fce86"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SH8601.cpp": {
+        "bytes": 3789,
+        "sha256": "e859c60221e482636d4ed1cd4b66acc1f56067ac69e5466d4965ea69d2de742b"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT39125.cpp": {
+        "bytes": 2669,
+        "sha256": "472104a68040ee80f1f656dd93d3441a30274463872d4e26f2da3e8f7591b0ef"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SH1106.h": {
+        "bytes": 1166,
+        "sha256": "a91c0ec83dc0ebc8b1ad34b985e074d70f93d15f2e4d02fd138b8b0b4db4c1e8"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9A01.cpp": {
+        "bytes": 2355,
+        "sha256": "4d50222f21973c7752158267b8d59f3a7e7b6e7834c1387208c9fdc57892c636"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RM690B0.cpp": {
+        "bytes": 2858,
+        "sha256": "fbd2618ce026b215a4fb0d9147a8f1d405e2ed69ccfed8d977f3cba504ee1e2d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_JBT6K71.cpp": {
+        "bytes": 4127,
+        "sha256": "0bdfa1d92e5f2d66e63a6e53d0c86be86789d7a8bdef552f15a8d00bd5769c60"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488_18bit.h": {
+        "bytes": 729,
+        "sha256": "706f545006cb2bf06fe1fc6c267eea5c450b0a0f9bf7a915d95c986998fd3894"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9481_18bit.cpp": {
+        "bytes": 5659,
+        "sha256": "6a8609423caa20f1a2ea03bb7f50e43f3f9f81636aee472818253c19aa4e9b16"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9106.h": {
+        "bytes": 3297,
+        "sha256": "cbc413bbfabd571c9eab0674d2a0cb5e4616d12f7bc3c1b3d4eebabe6ee0b344"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9341.cpp": {
+        "bytes": 2726,
+        "sha256": "350fca3a9a5121c964b194889f14353f8c143b3441ce84e3affb20553e861d90"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_JD9613.cpp": {
+        "bytes": 2767,
+        "sha256": "1a932a8ebb87f0f71f6153a4d7404f3525f8e7bcb9fd642c34c70e7a474fc996"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9806.cpp": {
+        "bytes": 2657,
+        "sha256": "9371b7c9d742da17705434a4081c013148ee571bb79bd596d438c207629f38fe"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_WEA2012.h": {
+        "bytes": 11321,
+        "sha256": "52a0a9d4fa691755f89bf9376dfc28aa4d7113ba375b51e9adefadd76fd07e09"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9225.cpp": {
+        "bytes": 3343,
+        "sha256": "e5d4c812a863b73934acc6c60a9c05465972cc62ede3075c22ae884647ce5ac9"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RM67162.h": {
+        "bytes": 2212,
+        "sha256": "4f352b39863b7ebd01ef4ca31dcc31e329600d1d29eb6aae09b04aa0f33b733c"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9342.h": {
+        "bytes": 4637,
+        "sha256": "89060c1de81e1363bfb82a84c3fda1ac8cf79122f95314650114f87b08fadf92"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3041A.h": {
+        "bytes": 7448,
+        "sha256": "c5fa7da0fec0e7b1e595d56265b023b16ffc6db43db19d729b691f6df5254ca2"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3007.cpp": {
+        "bytes": 2344,
+        "sha256": "52fe060cfb19cfb6a74c654bc65d1c7d9a008cee141303c6ebb0ec22edf041fb"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_R61529.cpp": {
+        "bytes": 2593,
+        "sha256": "8e19a973f5011eca71ffab7531eb1db4165938ec080133aa59ae5497a6186db4"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7735.cpp": {
+        "bytes": 3605,
+        "sha256": "2e4d347bd3b78b9b2f973fd835ce0486f9b21ec6830832fcb8d10a211a2ba1b3"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST77916.cpp": {
+        "bytes": 2622,
+        "sha256": "e0e125c2e7166911c035cf85ff04c2c49dd20604a5f2506b6f4a6c0c4030f12f"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_JD9613.h": {
+        "bytes": 10128,
+        "sha256": "30ee648fde44e14240fa5535cdcec7c620cc1299d73a14f8c2b05b743209cfec"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1351.cpp": {
+        "bytes": 3613,
+        "sha256": "fe091a3120188c707c4964611ba81829cfca74fcb905147fade0318fbc73d004"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1331.h": {
+        "bytes": 1884,
+        "sha256": "d344b47b35b6b0620811a4e6e15b6d899886a8653ff27050fafea2cf521dc248"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_JBT6K71.h": {
+        "bytes": 4003,
+        "sha256": "ca1d429c3868bde85d1a21502aba52fc059c67c91db2db7eb807e13dc9ffcb1f"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT35310.cpp": {
+        "bytes": 2769,
+        "sha256": "6ba47c3a72a912200c2033c7c729a06c8de7812dfc32869435c7b480e7c02a2c"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RGB_Display.cpp": {
+        "bytes": 13839,
+        "sha256": "0457b8bb351081c2b176d6f0c2d4b9b5facc487d9905afd604ef50937c1ba842"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8347D.h": {
+        "bytes": 2736,
+        "sha256": "4dd4f40a238cccfc839068f5860532bbf7589ad16d6f3e9f0ddd12eefd8888c6"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_DSI_Display.h": {
+        "bytes": 16797,
+        "sha256": "16acf74a0b635854e98ef8acc327ef53f4308633ec45c458dfb2ef26ad4cfe77"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3041A.cpp": {
+        "bytes": 2748,
+        "sha256": "969af7e6fd116eef307e61436638353368d561785b3e68ffaa35b1f5447afcbd"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9107.h": {
+        "bytes": 4678,
+        "sha256": "761defaf9567e3b4ab17d3dc018ea01b8619228e8b07e4fd6b72d36e64533c68"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3023.cpp": {
+        "bytes": 2516,
+        "sha256": "3ed764b006aa1f500d1e5a075093f30d7efecfa682f282e332a4f8d5eb423011"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SH8601.h": {
+        "bytes": 7267,
+        "sha256": "98fc75460b36884e82bf2a4fe88b30e95adb056085ad3722ba5286b79dd9f928"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8357A.cpp": {
+        "bytes": 4353,
+        "sha256": "b61cf934c8927aeb814e2ee00a0820033afca87e980751dabbd1288d2c1b169d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488_3bit.cpp": {
+        "bytes": 2990,
+        "sha256": "79fe442ebae791c1786a34d23234e9ea6df9de6d60120cf97fbed1b64d95cd9a"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NT35510.cpp": {
+        "bytes": 6225,
+        "sha256": "db745219c537c184a611477e9ee47a2e973f79a0f58a1ab90d182d8bee2b6e22"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_R61529.h": {
+        "bytes": 10719,
+        "sha256": "3591911c06180b405c8177f1673793f8e298539c1da38ba92e9770dd0b126374"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8357B.cpp": {
+        "bytes": 2503,
+        "sha256": "9d7c1e91ddc3a60b78f16448e9625c102af676d312f50ebda4bd4b0c6da11b6f"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488_3bit.h": {
+        "bytes": 1244,
+        "sha256": "e35a1aefd9110450ffdff6c1ef0a04df802a484a13fea3895c63becc0f7b9a91"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SPD2010.cpp": {
+        "bytes": 2020,
+        "sha256": "290f89cdadc4856cac80a098c690b9d166642d1df9d6f0e8e568f87886d2422e"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9806.h": {
+        "bytes": 6496,
+        "sha256": "cb9b41ac68a4ea352d470d52b726994361f61cf1e3a0b579699fc507a03f9cd0"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST77916.h": {
+        "bytes": 9335,
+        "sha256": "65b125cd069ccbefa33898c54838a025c5cc170b88f0eeb037892ed0d12cffe5"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488.h": {
+        "bytes": 3153,
+        "sha256": "1f92384ebe811e515eeb0f08d1c2356c44e373693082fe00d799fc610020e250"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8347D.cpp": {
+        "bytes": 3113,
+        "sha256": "86b454fe81ac329e2f7702d601fd551dcd88a8e26fece38e03111976639b1fd4"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8347C.h": {
+        "bytes": 1040,
+        "sha256": "970403d395779ba34b500d21379135f4678517d265ae04c9c8570f63e168e19a"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9107.cpp": {
+        "bytes": 2508,
+        "sha256": "aa047074e139d71817d6f9286dc9074c876850d224f925efbf099ec2f689a89d"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_NV3007.h": {
+        "bytes": 5310,
+        "sha256": "e6a8f4aeddae18fa8e1aec808eb382eb4b270e664b0e4bdfd8c5989c065929c9"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_GC9106.cpp": {
+        "bytes": 2508,
+        "sha256": "2125cbabf5f82d9388d630a940a38a26e71fa392b9de57806cb86da56915088b"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_CO5300.cpp": {
+        "bytes": 3705,
+        "sha256": "b9a36fe5d81da061f4c9c4ba10354ba2fd5259064c3f4ad14c4bb3412725aa59"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RM67162.cpp": {
+        "bytes": 2511,
+        "sha256": "fd99ce83b4fb281c5038c42381b93ba667b8cdd7ed98c05576c4517bfcc6d545"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RGB_Display.h": {
+        "bytes": 63458,
+        "sha256": "baafc7564f0ca45976e5c180d8e717b617ee94af7868f41657209af951c46f85"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_WEA2012.cpp": {
+        "bytes": 2214,
+        "sha256": "a8020af7cd16f68095cbf765f4a047f24364bb2a3ecd47814f716fc631085502"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9331.h": {
+        "bytes": 7504,
+        "sha256": "858ad20aac129d57869a83c1eeaa41a67b0c5642584dc0ada44f592c6369237b"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9486_18bit.h": {
+        "bytes": 1295,
+        "sha256": "6bdea09ee1940f695cd1104e05acff24683f23344303023cfcf808c5ca022dd9"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SEPS525.cpp": {
+        "bytes": 5329,
+        "sha256": "c0f297602efec3bbfe3b07acef813a7f5fcc4ab354138b834cc9c0e140efda21"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9486.h": {
+        "bytes": 3523,
+        "sha256": "ff5c784c1b65d7e2de350b757865bbf67a7dd88db7cfe629d3f534903a2122ad"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_RM690B0.h": {
+        "bytes": 3166,
+        "sha256": "37156b3d38d1b29bca994ac1b061902a3fcc2f67cca5b36789a4ff0a645508cb"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SPD2010.h": {
+        "bytes": 14713,
+        "sha256": "b172b4e6cfcf9d363a318e50a8ef4ef780276dda34ca24382d809f50fb631608"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8352C.h": {
+        "bytes": 1040,
+        "sha256": "6e49d84fe109a7c31269b643c284cf1291afe594d3de218073478bc6a22b8b43"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_HX8347C.cpp": {
+        "bytes": 10850,
+        "sha256": "e935239ebfdc0d68176585f3f19559d8403a37897897f1c0ae365447e3729048"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488_18bit.cpp": {
+        "bytes": 2675,
+        "sha256": "2060ea9275b7b02c1585b53e8c37b304db749b47543aa7659d3f76e149467e4e"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SSD1306.cpp": {
+        "bytes": 4747,
+        "sha256": "3e687039c6fcc42adb983bb2a799eb7c69b8bb90fa68fdc0e16494e09d566d25"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9225.h": {
+        "bytes": 5937,
+        "sha256": "df0b5c54db54d44998bd9a0c30f18d8462b78c9b0f06d4156cc8cf88fd5a2a4b"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7796.h": {
+        "bytes": 3008,
+        "sha256": "a59274b360f017fc0cb0b4a40ef63fae9a991e81cbfb9001f3645ecdbb8456b8"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_SH1106.cpp": {
+        "bytes": 5840,
+        "sha256": "c74f3b74bec1e75c8e4c7bd471fea96ad19b7d91bddc2fd978faf333c054de21"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ILI9488.cpp": {
+        "bytes": 2619,
+        "sha256": "47838e9870a3c16f02675bfc1624c921d224763beb30faa1f5dddd7ce6d17fca"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7735.h": {
+        "bytes": 3497,
+        "sha256": "0505666b56b7cb92421472530d2640c351ae537d63df2f5394eb7855755838d4"
+      },
+      "lib/WaveshareVendorGfx/src/display/Arduino_ST7789.cpp": {
+        "bytes": 3206,
+        "sha256": "ea66b9438a97032045ad0b341e3ff727b4714839d034fbaa5232e0a0b28cc7dc"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_quan7_h_cjk.h": {
+        "bytes": 985140,
+        "sha256": "dba2a605285a5efeaa841a0ca884a76ededd5b5788d01a11f6c330018d30aebb"
+      },
+      "lib/WaveshareVendorGfx/src/font/glcdfont.h": {
+        "bytes": 8894,
+        "sha256": "04d399ad4a25a132b52239b3c53c5638350845dfc3a2d036a0fb67bac353025e"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_unifont_t_cjk.h": {
+        "bytes": 4732472,
+        "sha256": "e5b83aa4ca61039845303ea6fc6e5f88a16b5082606ed7cca29ceddb05db6330"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_unifont_t_chinese4.h": {
+        "bytes": 830558,
+        "sha256": "1dd18a40aaf70f994fa82af86b769600a59f868ffb11e8dab893ee6b8e18290f"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_cubic11_h_cjk.h": {
+        "bytes": 970493,
+        "sha256": "798b80fdc15eb11fde0928d6211621f9def47727a793dee15338360109cb2ddb"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_chill7_h_cjk.h": {
+        "bytes": 712244,
+        "sha256": "998c40734f272adc2fd9e7634aefbff449de456ed87cd1e08a7e2044c4d452ff"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_unifont_t_chinese.h": {
+        "bytes": 2695494,
+        "sha256": "c879ff6ab0ca65d2369f6aec7f56af4d223f7000b179c09a54bb358c5a53c279"
+      },
+      "lib/WaveshareVendorGfx/src/font/u8g2_font_unifont_h_utf8.h": {
+        "bytes": 6182324,
+        "sha256": "07ef1fbacd29c10bad4616cc0556785ae621459d27e2d4ec4fa28bfa43b3ba46"
+      },
+      "lib/WaveshareVendorGfx/src/font/chinese4.list": {
+        "bytes": 46146,
+        "sha256": "bca28891c0f43fcd7b2e85a6c302c9438186c6b733dd1a716f20031af7bc86f0"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_STM32PAR8.cpp": {
+        "bytes": 4817,
+        "sha256": "2fb09bcdc38d31a3e242a78dc62f59350b06871fd086def3142355a1fbe1d2df"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_AVRPAR16.h": {
+        "bytes": 2227,
+        "sha256": "c895b71684e5a49bf2335ee55c6462950c3befe4ca18af288fac455b62a795cb"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWPAR8.h": {
+        "bytes": 4873,
+        "sha256": "ef536e1996f8debd9e6c959c971e0c2b628e60c82cde5a92a8c1d40b49c29711"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8QQ.h": {
+        "bytes": 2385,
+        "sha256": "21b3c86aee8aea04d770a2109e7c1567bc93fc38fd576341e866562512ea05f7"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8QQ.cpp": {
+        "bytes": 7128,
+        "sha256": "9801bbaf61816933579dad99a0acb34cc4fe7a1d246aedd1b79bbe412966de02"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32SPIDMA.cpp": {
+        "bytes": 19422,
+        "sha256": "3559d82427ebec07e72366d0636bba088ae080d32ca10016857ee1d33a81e7c8"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR16Q.cpp": {
+        "bytes": 5319,
+        "sha256": "bab93af7c76ac46fedf19e170c74a84d34ccd7c9d5de119b79b261cc2b62d00e"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR16Q.h": {
+        "bytes": 2182,
+        "sha256": "33f0ae33c2a49ddb58115fbf2f5432527d8fd8e02b523c37cb228bda7b60d79e"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR16.h": {
+        "bytes": 2177,
+        "sha256": "90435cc9e5491d253b40902f457638c1fee03145352121f349568530f5400b2a"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8.h": {
+        "bytes": 2488,
+        "sha256": "21293111477acbee8f94bde9ed558ad7b386342c25d8eb90a7ab7debe00ce6ee"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8QQQ.cpp": {
+        "bytes": 6994,
+        "sha256": "33413f1e4af3f04fc309b6b3a6a3ed5de9141fbd2ee1880f532ca052f15e4944"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32LCD8.cpp": {
+        "bytes": 27331,
+        "sha256": "261fa9e577484bce718a227836e7cc8ce7e13d36788606630c73dd5ea6bafd2d"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32RGBPanel.h": {
+        "bytes": 6878,
+        "sha256": "a1efe8a9a7bbeece8665693a7df5c1ead0651d2a10b5cfd597d4fa96cae0622c"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32RGBPanel.cpp": {
+        "bytes": 6086,
+        "sha256": "0fcbe25203ad8833eaa2ce31438c011feb47ad3f7b8b4f85a71df1e5b98ca638"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32LCD16.cpp": {
+        "bytes": 15475,
+        "sha256": "bbdefe43e951dddc747543a15f5886bdd69063734063335ad1bf6b916e6602c8"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_DUEPAR16.h": {
+        "bytes": 1723,
+        "sha256": "5372cff3ffd26629707854b36e47bb2f67a0462236f55965805763388f2341ad"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWPAR8.cpp": {
+        "bytes": 29809,
+        "sha256": "cbd2ec1ec0e3f3be0d8ff687ef68775f2f946715e076f7bf55cc51e2976b3bf6"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR8Q.cpp": {
+        "bytes": 5447,
+        "sha256": "cc84d07f2765ddcf9c97797279dd9b65ea417715261e5346afd80faff87fb8e3"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32SPI.cpp": {
+        "bytes": 22164,
+        "sha256": "225b42e148024f7efdaf8fc9a14d29ea2be795f4436bc133a050acd3112bfe39"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_XL9535SWSPI.cpp": {
+        "bytes": 5150,
+        "sha256": "3fc981c4f3cec36ee1ef173b41a7e3f480fe01cc1b0eefe1792857e01cb20060"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_Wire.h": {
+        "bytes": 1321,
+        "sha256": "b34e4adb1fdac15d19dc6c061845334960691e423465d808a304583c032cab19"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoPAR8.cpp": {
+        "bytes": 4252,
+        "sha256": "ed8aa7ef7eb26a6a345616df15df7bf1e9cc917d67080a516219d3a1122c8306"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16.h": {
+        "bytes": 2756,
+        "sha256": "71323094dfd5623eba0fc927e677b935a9f623d82278b60baeca960e97ffc3e0"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16QQ.h": {
+        "bytes": 2618,
+        "sha256": "3444df437b5736f9b308ee8e597ab42427fd7268937495ae9a3a2e26368fb172"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32QSPI.h": {
+        "bytes": 2851,
+        "sha256": "1012ace248dd88e769fd3eb18851698d5c5828bf43fc5f493470edd2f2c72e75"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8Q.cpp": {
+        "bytes": 7105,
+        "sha256": "5be62bd9da56edc75bf24fc06668f9ba31dfa9a7b9414ccc538eb8fb3deef436"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16Q.cpp": {
+        "bytes": 7527,
+        "sha256": "090a656b35b04ddedc76714f26f6395ec5ba5b5d3303c03362bdca226ed942d6"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_HWSPI.cpp": {
+        "bytes": 12822,
+        "sha256": "25e9dc7cb9af07b625122f32785ece04b027134e1869a063a94906681bf75cec"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR8.h": {
+        "bytes": 2060,
+        "sha256": "fcd4826fcf4d706f6a470e05966c84d63bcdacaad80ef0727e5e87250a241670"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8Q.h": {
+        "bytes": 2380,
+        "sha256": "f9a1ce8c18fdbcd3e6edfcdf26c92db140804c4f29802e63ae7e480627f7d05d"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32SPI.h": {
+        "bytes": 4285,
+        "sha256": "a8cbe138ba74a519b9082921ed9c0525411e333c8c2672238774950ce7cb3b97"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP8266SPI.cpp": {
+        "bytes": 7422,
+        "sha256": "01d28078a3ba442862472469cf095c6d546f23cb26ffaaeca3b3af3756965d8e"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16Q.h": {
+        "bytes": 2613,
+        "sha256": "e9cd108e41b07d8316c5b15653b2af585ee55a242b42ce2d1acf4144c7ca9378"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_Wire.cpp": {
+        "bytes": 3102,
+        "sha256": "2b39e84dbcafdff0dd53c00458bc26a59372dfb01d3f4e82be3e566ccfbeaced"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32DSIPanel.cpp": {
+        "bytes": 3648,
+        "sha256": "bf5a30173dadac614f288a4f0f061f262eb211308c4a1c46761ddef072465398"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoPAR16.h": {
+        "bytes": 1730,
+        "sha256": "25f263fee708e27aa074b17e729dcdf95cb8415b8667acc9304836c0b92fa68b"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWPAR16.cpp": {
+        "bytes": 49503,
+        "sha256": "5aaaf4980f093de3bdbb4da69fa2283f79bd7bf7304899789ad1ee29f10331a1"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32QSPI.cpp": {
+        "bytes": 17927,
+        "sha256": "8ba0ea84c792fea2f1b53ffb26c8b4bbea434f71486082124b5bc7afc320d5ec"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32DSIPanel.h": {
+        "bytes": 1965,
+        "sha256": "a181aaf7f3f446d47de019666fe74e8f6827d726acc9113537e8a684d82763bd"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR8Q.h": {
+        "bytes": 2065,
+        "sha256": "caadc183c47d1c65b033fca6bbb5d8e7903ffee1c5de10358452799c49d915ab"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_XL9535SWSPI.h": {
+        "bytes": 1638,
+        "sha256": "0e15977183297d5d570be2ceb0a988ece3f07de7e2628356584d98998e1891f5"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoSPI.cpp": {
+        "bytes": 4421,
+        "sha256": "46ff85e0601a9dcd73ac7667cfd5ce9433785b56252471422be694485e3f9ba2"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RTLPAR8.h": {
+        "bytes": 2479,
+        "sha256": "a7fed479dadff0adfa30e481da334f18e0b8a47bd54efeb49f3cf8a859106e09"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RTLPAR8.cpp": {
+        "bytes": 7256,
+        "sha256": "777a41f9d5f718b40459144af0fce8a7932fa0f988254d33ff5ccdedd34ed6fa"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_NRFXSPI.h": {
+        "bytes": 2322,
+        "sha256": "dc4534ae7358333010df839b2e8e892d7ba6c19e4b0fd1911b3a573319fa48ae"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32LCD16.h": {
+        "bytes": 2891,
+        "sha256": "02e8123e52a87fa84d8f6c5aeb9bbdc58673e2ea02ae704f01afa62275300dc6"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_AVRPAR8.h": {
+        "bytes": 2011,
+        "sha256": "e73a1914a6ff39092e4b75600466cd26a6938d0226914b1b31a4926a09d37582"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_UNOPAR8.h": {
+        "bytes": 1849,
+        "sha256": "183e860e159f6647f3a1a2778a0d3e645762c7a43eeb2f04f0ceb4222f639a47"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8.cpp": {
+        "bytes": 9379,
+        "sha256": "498e07b445874c20ceb743f558324d782ddac4128f5a221d819f2f95eb16e77c"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_AVRPAR8.cpp": {
+        "bytes": 3936,
+        "sha256": "6b6f074ea29c04cb9f99bc318a8a9a9b825ee56fa90471c56f359a0f022b372d"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_STM32PAR8.h": {
+        "bytes": 2017,
+        "sha256": "faa53bc04ce5400ae27418db55e91c5cc0a920dc06f512f13017cf7cd2c97cd8"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16QQ.cpp": {
+        "bytes": 7420,
+        "sha256": "b8640aa9ce95390d3750e9f7e51c942c926a5d6f67cf4ec700ec00c51cd96121"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWPAR16.h": {
+        "bytes": 7092,
+        "sha256": "8f996ecdcc3832ef249309c54a1794383c0f28f8de8414bb738b4f4908b5b0c2"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR8QQQ.h": {
+        "bytes": 2390,
+        "sha256": "2174d07a95f9f4762f3235eb2662c1b593b858cfacd9db62d50dcf1835652c6d"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32PAR16.cpp": {
+        "bytes": 12296,
+        "sha256": "6491ff7c3e4acf7c0e224f101f986c311518a09fed5c19681f11a0a94af8e6c6"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_UNOPAR8.cpp": {
+        "bytes": 5408,
+        "sha256": "f8803b4d669c835415e1daae0ede517acc4f6cead87079b5d8288b4c94ffbf06"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWSPI.cpp": {
+        "bytes": 17517,
+        "sha256": "fd79fff6008e552718fe8d877f37b67bb3262fa283890fd1f370afd21caa4763"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_AVRPAR16.cpp": {
+        "bytes": 4554,
+        "sha256": "673799f568776f30be1fe460ff8275b063123d6f60d75545dfe5e80691a18335"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_mbedSPI.h": {
+        "bytes": 1996,
+        "sha256": "0de7cabbc870782d547b01a971217e8d1ab129e509f5662d4108766bf0ddeffa"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR16.cpp": {
+        "bytes": 5366,
+        "sha256": "16af8f34b34752c56eb430ab21e8b5a500f4eaeecb2404944627de0a814ddefc"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32SPIDMA.h": {
+        "bytes": 3384,
+        "sha256": "b8469b9162bf310a5d8515038d81beaeb0eb62f7756aeb7c6f3aba40e74c3a73"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoPAR8.h": {
+        "bytes": 1613,
+        "sha256": "42260b19f55819582a2c40677924d93ad5332a5fc845f96566d69796ea498195"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoSPI.h": {
+        "bytes": 2305,
+        "sha256": "6ed6818440627a0d1ffed21721ea1add81578858c7472dd58212dec9e6a8db17"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_DUEPAR16.cpp": {
+        "bytes": 5081,
+        "sha256": "06c908077efbb3ae8626707001de57f735bc895072019c64e2b0bd0a6704c54f"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32S2PAR8.cpp": {
+        "bytes": 5430,
+        "sha256": "8904e30f8aeb06a34ddaceaaa0273708852a9044d92a7478d32d351b8279d505"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_XCA9554SWSPI.cpp": {
+        "bytes": 5053,
+        "sha256": "2aee2a29647dd4983583e46d33c544dfb45355c7ac38191587fc39693883db0e"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP32LCD8.h": {
+        "bytes": 4718,
+        "sha256": "76382091163eed351e2e176c4cc07f8bfab6c54ed6b0da768edd3a95e29129e1"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_SWSPI.h": {
+        "bytes": 4166,
+        "sha256": "d62330c53f52c2c059893bb300cb75b2980f4c42c252af59c60416ad77c94505"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_RPiPicoPAR16.cpp": {
+        "bytes": 4478,
+        "sha256": "1e19ee27be762cf07bc16774201ad9e3b463d9ebea088b9000e1795585d1f4be"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_XCA9554SWSPI.h": {
+        "bytes": 1460,
+        "sha256": "338b29b1c1605866064a13e0ac5700c8740f9bdc672f4d5173844bb3148303da"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_HWSPI.h": {
+        "bytes": 4099,
+        "sha256": "3e01d9912ce0f2dbde204ff6621c24d55ee849207e25febe19e1510debfe198f"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_ESP8266SPI.h": {
+        "bytes": 2128,
+        "sha256": "565a5f50540963fa9ce1a3235a74810fc7aa3737d72dfebe8f58b69736a8d9c5"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_mbedSPI.cpp": {
+        "bytes": 4112,
+        "sha256": "7d6d09a9de67db1d362cbf2db226b7c50870c2db1cb366dbf5dcbd9dddb8a9fe"
+      },
+      "lib/WaveshareVendorGfx/src/databus/Arduino_NRFXSPI.cpp": {
+        "bytes": 5784,
+        "sha256": "9f66d91481542380e98f9551ba83587b7bca5a3a8d1065f594998491181b91e6"
+      }
+    }
+  }
+}

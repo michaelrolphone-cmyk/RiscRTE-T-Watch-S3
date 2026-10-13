@@ -1,0 +1,8 @@
+Home native render: every face/core parity, live added Point summary, picker collections, bottom-anchored alerts/status, proportional effects, padded guards PASS
+Home native input: all 205820 pixels, exact visible-card hit boundaries, final-row hold, category drag, invalid/multitouch cancellation PASS
+Home 240px golden parity: 362 frames PASS
+Home native render: every face/core parity, live added Point summary, picker collections, bottom-anchored alerts/status, proportional effects, padded guards PASS
+Home native input: all 205820 pixels, exact visible-card hit boundaries, final-row hold, category drag, invalid/multitouch cancellation PASS
+Home 240px golden parity: 362 frames PASS
+normal: PASS
+ASan/UBSan: PASS

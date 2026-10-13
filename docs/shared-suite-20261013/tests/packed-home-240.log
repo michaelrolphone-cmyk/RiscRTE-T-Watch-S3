@@ -1,0 +1,18 @@
+RTC reconciliation: deep/light wake +/-5-minute drift, late acquire/read refusal continuity, bounded active/next-wake retry, cold UNSET and normal-return VALID recovery, and fresh native custody fencing PASS
+Fast Watch Clock: production Points/motion/alarm-resume feature paths; 10 cold/deep variants; exact first frame/input; mid-frame navigation; cold/light low-battery; phased service starts; radio policy/failure variants; early/repeated light wake; due alarms; terminal retain fences PASS
+Modeled cost only: 95 ms first Clock frame and input, four 700 ms service acquisitions plus 400 ms service starts deferred; 95 ms light-resume frame without an alarm; no physical timing claim.
+Boot/wake stage timing: ordered essential grants, settings, alarm/touch/reconciliation, render/transfer/unblank; first-frame precedes sleep settings; failure markers stop at failed boundary; light logs bounded per wake PASS
+Minimal first-frame closure: valid deep native time defers RTC then reconciles after first input; alarm/output admission follows first frame/input and precedes handoff/radios; 700 ms modeled load deferred; deep due alarms and stale crown cancellation PASS
+Sleep refusal: settings acquisition, every face unchanged outside explicit error strip, completed redraw before unblank, repeated retry/cleanup, success clears error, and exact stage/signed-detail diagnostics PASS
+Launch feedback: actual Home first-frame pixels include missing-media/general failure status; no extra grants; fresh invocation reads once PASS
+Bounded key trace: delayed key acquisition, fresh Home after stale short/long gesture, held-input suppression, manual sleep,24-message cap and unchanged cleanup PASS
+Sleep diagnostics: real Home blank brightness/acquire failure injection, absent key/power/panel capability, exact stage and unchanged cleanup PASS
+RTC reconciliation: deep/light wake +/-5-minute drift, late acquire/read refusal continuity, bounded active/next-wake retry, cold UNSET and normal-return VALID recovery, and fresh native custody fencing PASS
+Fast Watch Clock: production Points/motion/alarm-resume feature paths; 10 cold/deep variants; exact first frame/input; mid-frame navigation; cold/light low-battery; phased service starts; radio policy/failure variants; early/repeated light wake; due alarms; terminal retain fences PASS
+Modeled cost only: 95 ms first Clock frame and input, four 700 ms service acquisitions plus 400 ms service starts deferred; 95 ms light-resume frame without an alarm; no physical timing claim.
+Boot/wake stage timing: ordered essential grants, settings, alarm/touch/reconciliation, render/transfer/unblank; first-frame precedes sleep settings; failure markers stop at failed boundary; light logs bounded per wake PASS
+Minimal first-frame closure: valid deep native time defers RTC then reconciles after first input; alarm/output admission follows first frame/input and precedes handoff/radios; 700 ms modeled load deferred; deep due alarms and stale crown cancellation PASS
+Sleep refusal: settings acquisition, every face unchanged outside explicit error strip, completed redraw before unblank, repeated retry/cleanup, success clears error, and exact stage/signed-detail diagnostics PASS
+Launch feedback: actual Home first-frame pixels include missing-media/general failure status; no extra grants; fresh invocation reads once PASS
+Bounded key trace: delayed key acquisition, fresh Home after stale short/long gesture, held-input suppression, manual sleep,24-message cap and unchanged cleanup PASS
+Sleep diagnostics: real Home blank brightness/acquire failure injection, absent key/power/panel capability, exact stage and unchanged cleanup PASS

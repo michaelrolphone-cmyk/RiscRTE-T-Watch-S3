@@ -1,0 +1,106 @@
+{
+  "bootfs_sha256": "1b7d8d19054e7d3ec51bdc94d77ea39454b9613bef5785100598d144bda56aba",
+  "expected_elfs": 59,
+  "kind": "shared-watch-store-admission",
+  "leak_detection": false,
+  "mode": "asan-ubsan",
+  "native_elf_sha256": "bbfa55a5e6d1dfb0765195c9510661afcf4dc620a37b59d88489ba17ab609a7d",
+  "product_revision": "249254cbd95d2d0366c3cc70c9110931ee759518",
+  "result": {
+    "active_store_sha256": "3469d33678855c1338527b46a471359ee3a225d8e60e2fdcff80fafbff6c5d95",
+    "app_policy_rows": 32,
+    "candidate_store_sha256": "3469d33678855c1338527b46a471359ee3a225d8e60e2fdcff80fafbff6c5d95",
+    "cohort_validated": true,
+    "cooperative_yields": 188,
+    "elf_count": 59,
+    "error": "",
+    "hardware_calls": 0,
+    "native_composition": {
+      "bounds": {
+        "RISC_APP_POLICY_ROWS": 32,
+        "RISC_APP_REQUIREMENT_ROWS": 32,
+        "RISC_INSTALLED_APP_CAPACITY": 64,
+        "RISC_PROVIDER_CAPACITY": 40
+      },
+      "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+      "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+      "diagnostic_allocations": {
+        "_ZN15RiscDiagnostics11timestampedEPKcz": {
+          "address": 1107541892,
+          "bytes": 230
+        },
+        "_ZN8RiscPerf4dataE": {
+          "address": 1070182592,
+          "bytes": 5440
+        }
+      },
+      "diagnostic_flags": {
+        "RISC_PERFORMANCE_TRACE": 1,
+        "RISC_STAGE_LOGS": 1
+      },
+      "expanded_profile_sha256": "5bb16e40cfdbb6e5d1cdf99829051b633bc0034a7e49360f2d0514ac8dc5176b",
+      "file_source_backend_allocations": {
+        "__wrap_esp_littlefs_format": {
+          "address": 1107485424,
+          "bytes": 33
+        },
+        "__wrap_esp_littlefs_format_partition": {
+          "address": 1107485460,
+          "bytes": 24
+        },
+        "__wrap_esp_partition_erase_range": {
+          "address": 1107485356,
+          "bytes": 66
+        },
+        "__wrap_esp_partition_read": {
+          "address": 1107485248,
+          "bytes": 36
+        },
+        "__wrap_esp_partition_write": {
+          "address": 1107485284,
+          "bytes": 69
+        },
+        "__wrap_esp_vfs_register": {
+          "address": 1107484640,
+          "bytes": 535
+        },
+        "__wrap_esp_vfs_unregister": {
+          "address": 1107485176,
+          "bytes": 70
+        }
+      },
+      "file_source_enabled": true,
+      "layout": "riscrte-paired-appdata-v3",
+      "native_layout": {
+        "marker_address": 1007767663,
+        "marker_bytes": 24,
+        "marker_symbol": "risc_paired_store_abi",
+        "store_abi": 3
+      },
+      "owner_installer": false,
+      "partition_table_source_sha256": "eae45fedd426718b1d24ec61d49104418837d689583a48f4f72cfa6a6615252b",
+      "private_scratch_root": "/appdata/.risc-file-source",
+      "profile": "env:watch-expanded",
+      "row_evidence": "allocated native policy and requirement marker symbols",
+      "runtime_commit": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+      "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+      "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+      "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+      "store_abi": 3,
+      "store_size": 5570560,
+      "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+    },
+    "native_elf_sha256": "bbfa55a5e6d1dfb0765195c9510661afcf4dc620a37b59d88489ba17ab609a7d",
+    "prepared": true,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "runtime_revision": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "schema": 1,
+  "seal_sha256": "6cb22d1bffdb66ac7e275c9c9d20abcbb0bf95203bebe1bbeb100b8fa0a63c16",
+  "store_sha256": "3469d33678855c1338527b46a471359ee3a225d8e60e2fdcff80fafbff6c5d95"
+}

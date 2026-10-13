@@ -1,0 +1,78 @@
+{
+  "watch": {
+    "native_bank_source_sha256": "c9dafe906f9101b9f3b05a30e2c1a8aa1b61a89348b54770f8309b95114f7d23",
+    "native_elf_sha256": "bbfa55a5e6d1dfb0765195c9510661afcf4dc620a37b59d88489ba17ab609a7d",
+    "app_elf_sha256": "0a0c9ed6d8c701af9af336fcbb067b6ece8fc304f4acf68722b627c04d96d785",
+    "imports": [
+      "free",
+      "malloc",
+      "memchr",
+      "memcmp",
+      "memcpy",
+      "memset",
+      "risc_runtime_get_api",
+      "snprintf",
+      "strcmp",
+      "strcpy",
+      "strlen"
+    ],
+    "production_native_admission": true,
+    "all_imports_defined_in_native_candidate": true,
+    "compiled_public_exports": {
+      "free": "0x4038907c",
+      "malloc": "0x4038905c",
+      "memchr": "0x40001344",
+      "memcmp": "0x4000120c",
+      "memcpy": "0x400011f4",
+      "memset": "0x400011e8",
+      "risc_runtime_get_api": "0x4200bc74",
+      "snprintf": "0x420e4e40",
+      "strcmp": "0x40001230",
+      "strcpy": "0x40001218",
+      "strlen": "0x40001248"
+    },
+    "each_missing_import_rejected": true,
+    "provider": false,
+    "target_instructions_executed": false,
+    "target_symbol_resolver_host_executed": false,
+    "store_abi": 3
+  },
+  "waveshare": {
+    "native_bank_source_sha256": "c9dafe906f9101b9f3b05a30e2c1a8aa1b61a89348b54770f8309b95114f7d23",
+    "native_elf_sha256": "2bcfdf056cde13677b7bb2e59fd833a4ce05920cc3a10b7ecc1e24707bca0b04",
+    "app_elf_sha256": "0a0c9ed6d8c701af9af336fcbb067b6ece8fc304f4acf68722b627c04d96d785",
+    "imports": [
+      "free",
+      "malloc",
+      "memchr",
+      "memcmp",
+      "memcpy",
+      "memset",
+      "risc_runtime_get_api",
+      "snprintf",
+      "strcmp",
+      "strcpy",
+      "strlen"
+    ],
+    "production_native_admission": true,
+    "all_imports_defined_in_native_candidate": true,
+    "compiled_public_exports": {
+      "free": "0x40389284",
+      "malloc": "0x40389264",
+      "memchr": "0x40001344",
+      "memcmp": "0x4000120c",
+      "memcpy": "0x400011f4",
+      "memset": "0x400011e8",
+      "risc_runtime_get_api": "0x4200c30c",
+      "snprintf": "0x420ecef4",
+      "strcmp": "0x40001230",
+      "strcpy": "0x40001218",
+      "strlen": "0x40001248"
+    },
+    "each_missing_import_rejected": true,
+    "provider": false,
+    "target_instructions_executed": false,
+    "target_symbol_resolver_host_executed": false,
+    "store_abi": 3
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "delivery_hold_until": "2026-10-13T23:30:00Z",
+  "directory": "/Users/micahelbyrns/Documents/Codex/2026-10-12/task/shared-watch-0122/held-delivery",
+  "artifacts": {
+    "Shared-watch-26-app-recovery.tar.gz": {
+      "bytes": 242782687,
+      "sha256": "0764ecc482312df045b0259381459c5ce5e7f6fbf2842aca3011ae73d219f522"
+    },
+    "Waveshare-0.1.22-SD-card.zip": {
+      "bytes": 76182,
+      "sha256": "12ba60f0b25bd9f1b794eea98b0109f691d23e422029478e9f77f8952db38e8c"
+    },
+    "Shared-watch-26-app-factory-suite.zip": {
+      "bytes": 7806178,
+      "sha256": "a45c554cb780df2278c45a2ce5da5f1d0cef6acb913f0e18a0202ac03a1d92e8"
+    },
+    "README.txt": {
+      "bytes": 1235,
+      "sha256": "4181d7afbd65514d016d2445d7753d011ef1a12685de63d8e37821a0a646a052"
+    }
+  },
+  "library_artifact_ids": null,
+  "reason": "Build delivery intentionally held; no upload before release time."
+}

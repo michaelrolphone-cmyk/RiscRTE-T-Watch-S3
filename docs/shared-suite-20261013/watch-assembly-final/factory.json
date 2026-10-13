@@ -1,0 +1,192 @@
+{
+  "admission_receipts": {
+    "asan-ubsan": {
+      "bytes": 3963,
+      "sha256": "60117b31926fbeb12a082e86e3ac596584427f03cee569431ec273332811468d"
+    },
+    "normal": {
+      "bytes": 3925,
+      "sha256": "14b0b102601c93499eedd6d5ec711e5ebebda4a5d6c8dbd294a80193a11baeac"
+    }
+  },
+  "bootfs": {
+    "config": {
+      "aligned": true,
+      "aligned_obj_ix_tables": false,
+      "block_ix_len": 2,
+      "block_size": 4096,
+      "endianness": "little",
+      "meta_len": 4,
+      "obj_id_len": 2,
+      "obj_name_len": 32,
+      "packed": true,
+      "page_ix_len": 2,
+      "page_size": 256,
+      "span_ix_len": 2,
+      "use_magic": true,
+      "use_magic_len": true
+    },
+    "empty_blocks": 5,
+    "file_count": 121,
+    "generator": "esp-idf-spiffsgen",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "image_bytes": 5570560,
+    "independent_round_trip_verified": true,
+    "metadata": "zero",
+    "occupied_blocks": 1355,
+    "order": "sorted ASCII path names",
+    "payload_bytes": 5018117,
+    "sha256": "1b7d8d19054e7d3ec51bdc94d77ea39454b9613bef5785100598d144bda56aba",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3"
+  },
+  "components": [
+    {
+      "file": "bootloader.bin",
+      "offset": "0x0",
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
+      "size_bytes": 15104
+    },
+    {
+      "file": "partitions.bin",
+      "offset": "0x8000",
+      "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8",
+      "size_bytes": 3072
+    },
+    {
+      "file": "firmware.bin",
+      "offset": "0x10000",
+      "sha256": "53f92dd6f754de6cc3b9b7263d0fbda9e58e77abb760962f17a29d85ab2f5736",
+      "size_bytes": 1465504
+    },
+    {
+      "file": "appdata.bin",
+      "offset": "0x270000",
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "size_bytes": 524288
+    },
+    {
+      "file": "bootfs.bin",
+      "offset": "0x2f0000",
+      "sha256": "1b7d8d19054e7d3ec51bdc94d77ea39454b9613bef5785100598d144bda56aba",
+      "size_bytes": 5570560
+    },
+    {
+      "file": "otadata.bin",
+      "offset": "0xff0000",
+      "sha256": "8ba3b110139f45443d4f268d1a3373ef99a1718b71d51664531b83ee2d4b91a3",
+      "size_bytes": 8192
+    },
+    {
+      "file": "bank_state.bin",
+      "offset": "0xff2000",
+      "sha256": "ca4113f6c13735b635c890bcfa900346d7bd35ce0e299f26e4c0333dcd23a83e",
+      "size_bytes": 8192
+    }
+  ],
+  "counts": {
+    "apps": 26,
+    "elfs": 59,
+    "files": 121,
+    "providers": 34
+  },
+  "erases_saved_settings": true,
+  "factory_warning": "FULL FACTORY BIN at 0x0 ERASES CURRENT SETTINGS, NVS and app-data. No automatic flashing; not an OTA migration.",
+  "hardware_qualified": false,
+  "image": {
+    "bytes": 16777216,
+    "file": "T-Watch-S3-1.1.23-shared-suite-full-0x0.bin",
+    "flash_offset": "0x0",
+    "sha256": "2c176351446c379d73f05b7879533fac4f163c53adb7fe460491a1b4c17ed455"
+  },
+  "inactive_bank_erased": true,
+  "initial_appdata": {
+    "baseline_sha256": "d36b2d14d92e24278f2d3415235b32a454206038b5d460e18fb0d6ddf1b99916",
+    "bytes": 524288,
+    "offset": 2555904,
+    "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+    "witness": {
+      "bytes": 1248,
+      "sha256": "518da93e321701682210ef5794c388849732281b5946488afaaacf25223b7838"
+    },
+    "witness_layout": "riscrte-paired-appdata-v2",
+    "witness_preserved_byte_for_byte": true
+  },
+  "kind": "shared-watch-factory",
+  "layout": "riscrte-paired-appdata-v3",
+  "ota_migration": false,
+  "partitions": {
+    "app0": {
+      "bytes": 2490368,
+      "erased": false,
+      "offset": 65536,
+      "sha256": "49ed2610b00931a7323c2f88719a494d1f30313bc0f01bd376de3bb67a84058b",
+      "subtype": 16,
+      "type": 0
+    },
+    "app1": {
+      "bytes": 2490368,
+      "erased": true,
+      "offset": 8650752,
+      "sha256": "1094abc604413b629624bca536b19eb7d894d68ab0b4b9ed00e60558ffc54736",
+      "subtype": 17,
+      "type": 0
+    },
+    "appdata": {
+      "bytes": 524288,
+      "erased": false,
+      "offset": 2555904,
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "subtype": 65,
+      "type": 1
+    },
+    "bank_state": {
+      "bytes": 8192,
+      "erased": false,
+      "offset": 16719872,
+      "sha256": "ca4113f6c13735b635c890bcfa900346d7bd35ce0e299f26e4c0333dcd23a83e",
+      "subtype": 64,
+      "type": 1
+    },
+    "bootfs0": {
+      "bytes": 5570560,
+      "erased": false,
+      "offset": 3080192,
+      "sha256": "1b7d8d19054e7d3ec51bdc94d77ea39454b9613bef5785100598d144bda56aba",
+      "subtype": 130,
+      "type": 1
+    },
+    "bootfs1": {
+      "bytes": 5570560,
+      "erased": true,
+      "offset": 11141120,
+      "sha256": "f70da1d3d30a005555dc5ed7f5d35471873d74411d4e5d9fe04ef666c95a0d42",
+      "subtype": 130,
+      "type": 1
+    },
+    "nvs": {
+      "bytes": 24576,
+      "erased": true,
+      "offset": 36864,
+      "sha256": "1df8949b2e345ab8c00cb81fb6b83686e20a4080f969e5cd8b8d520a07cdaba2",
+      "subtype": 2,
+      "type": 1
+    },
+    "otadata": {
+      "bytes": 8192,
+      "erased": false,
+      "offset": 16711680,
+      "sha256": "8ba3b110139f45443d4f268d1a3373ef99a1718b71d51664531b83ee2d4b91a3",
+      "subtype": 0,
+      "type": 1
+    }
+  },
+  "product_revision": "249254cbd95d2d0366c3cc70c9110931ee759518",
+  "runtime_revision": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+  "schema": 1,
+  "scope": "Software-only factory composition. No device access, flashing or hardware/RF qualification.",
+  "seal_sha256": "6cb22d1bffdb66ac7e275c9c9d20abcbb0bf95203bebe1bbeb100b8fa0a63c16",
+  "store_abi": 3,
+  "target": "esp32s3-16mb-appdata-expanded-iq",
+  "target_instructions_executed": false,
+  "version": "1.1.23"
+}

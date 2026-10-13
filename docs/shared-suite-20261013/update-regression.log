@@ -1,0 +1,38 @@
+Default-entry health, child/queued/retained refusal, and immutable multi-namespace app-update admission PASS
+Full cohort split writes, independent SHA/readback, graph gate, mount-mutation rejection, cleanup, cancellation, cut/rollback and uncertain selection PASS
+Paired bank cloning, readback, activation ordering, fault cuts, stale handles, cleanup retention and old-pair preservation PASS
+Production native provider bank admission: selected=0 exact bytes/imports, application/extra isolation, provisioning and immutable staged authority PASS; zero mapping/hardware/selection
+Production native provider custody: staged read=prepare loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=prepare loss=2 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=3 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=4 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider bank admission: selected=1 exact bytes/imports, application/extra isolation, provisioning and immutable staged authority PASS; zero mapping/hardware/selection
+Production native provider custody: staged read=prepare loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=prepare loss=2 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=3 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=4 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=prepare loss=1 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=1 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=3 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=4 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Default-entry health, child/queued/retained refusal, and immutable multi-namespace app-update admission PASS
+Full cohort split writes, independent SHA/readback, graph gate, mount-mutation rejection, cleanup, cancellation, cut/rollback and uncertain selection PASS
+Paired bank cloning, readback, activation ordering, fault cuts, stale handles, cleanup retention and old-pair preservation PASS
+Production native provider bank admission: selected=0 exact bytes/imports, application/extra isolation, provisioning and immutable staged authority PASS; zero mapping/hardware/selection
+Production native provider custody: staged read=prepare loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=prepare loss=2 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=3 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=4 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider bank admission: selected=1 exact bytes/imports, application/extra isolation, provisioning and immutable staged authority PASS; zero mapping/hardware/selection
+Production native provider custody: staged read=prepare loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=prepare loss=2 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=1 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=3 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: staged read=second loss=4 retains candidate/FILE/buffer, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=prepare loss=1 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=1 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=3 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS
+Production native provider custody: provisioning read=second loss=4 retains candidate/FILE/buffer/CPU, refuses cleanup, zero unauthorized closes/selection PASS

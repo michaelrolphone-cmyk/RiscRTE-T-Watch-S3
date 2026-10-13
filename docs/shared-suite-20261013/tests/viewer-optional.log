@@ -1,0 +1,36 @@
+real entrypoint kind=1 target=watch frames=5 elapsed=1123 retention=0 PASS
+Canvas: capability release retained
+real entrypoint kind=1 target=watch frames=5 elapsed=1123 retention=1 PASS
+real entrypoint kind=1 target=watch frames=5 elapsed=1123 retention=0 PASS
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=0 PASS
+Canvas: capability release retained
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=1 PASS
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=0 PASS
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=0 PASS
+Canvas: capability release retained
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=1 PASS
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=0 PASS
+real entrypoint kind=1 target=x4 frames=5 elapsed=1186 retention=0 PASS
+Hollow Trail: display.output owns presentation quality; using ordinary narration refresh
+SIMD stage 1: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 2: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 3: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 4: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+Hollow Trail: unavailable SIMD stages use scalar fallback
+Hollow Trail fused SIMD unavailable: AI fallback
+SIMD pack=NOT S3 BUILD expanded=NOT TESTED features=0 pattern=0 phase=0 byte=0 expected=0 actual=0
+Hollow Trail 1.2.1: draw the mill desk into the window light
+Hollow Trail input: no-wait updates; scheduler yield every 32ms
+real entrypoint kind=2 target=x4 frames=264 elapsed=101376 retention=0 PASS
+Hollow Trail: display.output owns presentation quality; using ordinary narration refresh
+SIMD stage 1: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 2: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 3: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+SIMD stage 4: NOT S3 BUILD pattern=0 phase=0 byte=0 expected=0 actual=0
+Hollow Trail: unavailable SIMD stages use scalar fallback
+Hollow Trail fused SIMD unavailable: AI fallback
+SIMD pack=NOT S3 BUILD expanded=NOT TESTED features=0 pattern=0 phase=0 byte=0 expected=0 actual=0
+Hollow Trail 1.2.1: draw the mill desk into the window light
+Hollow Trail input: no-wait updates; scheduler yield every 32ms
+Canvas: presentation status unknown
+real entrypoint kind=2 target=x4 frames=264 elapsed=101272 retention=1 PASS
