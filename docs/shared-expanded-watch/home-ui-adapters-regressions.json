@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "home": {
+    "watch_layout": {
+      "normal": true,
+      "asan_ubsan": true,
+      "native_pixels": 5033052
+    },
+    "viewport": {
+      "normal": true,
+      "asan_ubsan": true
+    },
+    "native_height": {
+      "normal": true,
+      "asan_ubsan": true,
+      "input_pixels": 205820,
+      "golden_frames": 362
+    }
+  },
+  "shared_ui": {
+    "checks": 152,
+    "result": "outputs/shared-ui/regression-result.json",
+    "result_semantically_identical_to_published": true,
+    "asan_ubsan": true,
+    "dimensions": [
+      [
+        240,
+        240
+      ],
+      [
+        410,
+        502
+      ]
+    ],
+    "full_23_entry_pixels_identical": true,
+    "log": "logs/shared-ui-regression.log"
+  },
+  "generic_power": {
+    "normal": true,
+    "asan_ubsan": true,
+    "roles": [
+      "power_sleep",
+      "power_key",
+      "display_power"
+    ],
+    "sanitizer_log": "logs/generic-power-sanitized.log",
+    "leak_sanitizer": "Disabled via ASAN_OPTIONS=detect_leaks=0 because this executor is traced; initial unmodified sanitizer invocation hit LeakSanitizer ptrace incompatibility, then all three roles passed with address and undefined checks active"
+  },
+  "target_loader_validation": {
+    "home": true,
+    "clock": true,
+    "power_sleep": true,
+    "power_key": true,
+    "display_power": true
+  },
+  "hardware_qualified": false,
+  "native_firmware_built": false
+}

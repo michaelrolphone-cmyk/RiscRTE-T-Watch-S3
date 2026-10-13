@@ -1,0 +1,177 @@
+{
+  "schema": 1,
+  "purpose": "Fresh pinned-source reproduction following filesystem reset",
+  "compiler": {
+    "path": "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+    "version": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+    "sha256": "732bebd44b70a21687ffa3ac5da55edc9b555080ad21cfd74503b2288a143d3f"
+  },
+  "sources": {
+    "watch": {
+      "commit": "ec768c7fae6fdb484fef28c6ec87f129b0a7f585",
+      "tree": "077d227a58c67eede60395161bba9530be54f0db",
+      "tracked_files": 196,
+      "source_sha256_manifest": "watch-source-sha256.json",
+      "source_sha256_manifest_hash": "1368b00082d474f9ba3e9805f90f16ac5780f2f83e6fafb410df73ecf1353231",
+      "clean": true
+    },
+    "bridges": {
+      "commit": "6e82fdcaec0b73ed700d2104cfb4d94f011c19d4",
+      "tree": "ca7b9d7e0851d2d24fb9da0eda74a33ad23eb13f",
+      "tracked_files": 203,
+      "source_sha256_manifest": "bridges-source-sha256.json",
+      "source_sha256_manifest_hash": "e2ffe8bde0f4280a9b0c41b4ffd550a13548ed8ebd4f3c59a238e97a89ae39f9",
+      "clean": true
+    },
+    "system-home": {
+      "commit": "076f8da38f7dfebdfde6dd5d46e06446470fb828",
+      "tree": "c2edfbae0c1c8c76cdd6e1dced29e3e130bec343",
+      "tracked_files": 472,
+      "source_sha256_manifest": "system-home-source-sha256.json",
+      "source_sha256_manifest_hash": "d7903ff1877e5ac1af6013169afe42607eeed5d2900db95b5f9c20620fe70d60",
+      "clean": true
+    },
+    "system-ui": {
+      "commit": "b580e32d5821d4a80e80c896bf7c085214f2b590",
+      "tree": "9be52410a6e27dfb1674a387a384b7ba5b117626",
+      "tracked_files": 499,
+      "source_sha256_manifest": "system-ui-source-sha256.json",
+      "source_sha256_manifest_hash": "79b33bf1f59da394d638d976360d59b36e6fb27d6d200f748f339b2276ec390d",
+      "clean": true
+    },
+    "utilities": {
+      "commit": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
+      "tree": "425de989a42f10d0bd7f8de2ec440232f8e6524d",
+      "tracked_files": 796,
+      "source_sha256_manifest": "utilities-source-sha256.json",
+      "source_sha256_manifest_hash": "af4eae759cd6c54bce45225099dd6cc66bd2efad929b250d63daa95d1beabc37",
+      "clean": true
+    },
+    "drivers": {
+      "commit": "422e1e81a498fb6bdab9abf086325afc05a532dc",
+      "tree": "0fed9851585f0556c1c246a8e12cfc173b177056",
+      "tracked_files": 487,
+      "source_sha256_manifest": "drivers-source-sha256.json",
+      "source_sha256_manifest_hash": "42f86b75e4d097b24f7d918f6580328af200dacdd6d487315264751cb6f3f395",
+      "clean": true
+    }
+  },
+  "artifacts": [
+    {
+      "file": "outputs/shared-home/default.elf",
+      "bytes": 871088,
+      "sha256": "7397f8ba6a036299a71bf7c62ba7882065e9ffca0ea87f0175a7eb35908cfbc1",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/default.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-home/clock.elf",
+      "bytes": 1232,
+      "sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/clock.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-home/default.json",
+      "bytes": 1021,
+      "sha256": "856b1487302d57f24e794f91045b796ece85e65da6b108f28c577f376b44c58e",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/default.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-home/clock.json",
+      "bytes": 187,
+      "sha256": "ee26c7ec19cb41daafa76e455c3bd24ca9a1ee6762fe5cf74cd2ddb321fc0bcd",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/clock.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-home/build.json",
+      "bytes": 47336,
+      "sha256": "1ef09445da264389483c576d5e943f56eaac120ae2c7eaa01bba62b4b69532dc",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/build.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-ui/settings.elf",
+      "bytes": 225256,
+      "sha256": "4ee26705175a325f62af18e6dc98edc9e28aa51b9bf239bc946d8908cbce1385",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-ui-b580/generic-target/settings.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-ui/springboard.elf",
+      "bytes": 228136,
+      "sha256": "f33ff27719ffd1faa1fb5f671579ada881aac29c9bd4c4673779798064470b17",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-ui-b580/generic-target/springboard.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/build.json",
+      "bytes": 810,
+      "sha256": "2b5c90c266ee98cae8ee7a1a58defccf8375b837371641cd793e8cb6e2dcb298",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/build.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/power_sleep/driver.elf",
+      "bytes": 2496,
+      "sha256": "2930cf26f1d7f234b9f77eb24f418a03a084ca4fb3f5b75012e6a1b02f8ac09f",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/power_sleep/driver.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/power_sleep/manifest.json",
+      "bytes": 236,
+      "sha256": "03b51f515bb72efb701976aa81de78f69bd590761d3671f41877cebfa5105e30",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/power_sleep/manifest.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/power_key/driver.elf",
+      "bytes": 2400,
+      "sha256": "c554afa6be5ffea40ec540bf3f7a6cd7ff55a908ae2f278b026b8117196d0e15",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/power_key/driver.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/power_key/manifest.json",
+      "bytes": 238,
+      "sha256": "e7278f18a506c29e94936358fac18cf2b3710ad008aed09a96eb8290257bc6b2",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/power_key/manifest.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/display_power/driver.elf",
+      "bytes": 2440,
+      "sha256": "dbebe25d7e3817048daa63a07b5658e1059353de6ea0f78338ff389d4e648028",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/display_power/driver.elf",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/generic-power/display_power/manifest.json",
+      "bytes": 241,
+      "sha256": "6d9fe86bdd8da3a6c20d798a06e875a1c392fce7c32ed176d69d436961032fcb",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-home-ec768/generic-power/display_power/manifest.json",
+      "byte_identical_to_published_reference": true
+    },
+    {
+      "file": "outputs/shared-ui/receipt.json",
+      "bytes": 89008,
+      "sha256": "6d93e378a3e3343d1e20d4d27d89f97a05af1fba42f5e639f0e063eedcc26b51",
+      "reference_file": "/workspace/shared/watch-reset-recovery-20261013/artifacts/shared-ui-b580/generic-target/receipt.json",
+      "json_semantically_identical_to_published_reference": true,
+      "byte_identical_to_published_reference": false,
+      "difference": "JSON dictionary insertion order only"
+    }
+  ],
+  "home_source_receipt": "outputs/shared-home/build.json",
+  "shared_ui_source_receipt": "outputs/shared-ui/receipt.json",
+  "generic_power_source_receipt": "receipts/generic-power-source-inputs.json",
+  "system_ui_apps_lib_unchanged_since": "72f435fcee376ec62d17ece6180753385ea547d9",
+  "settings_version": "1.3.24",
+  "hardware_qualified": false,
+  "native_firmware_built": false,
+  "remote_writes": false,
+  "regressions": "See regression-results.json after test completion"
+}
