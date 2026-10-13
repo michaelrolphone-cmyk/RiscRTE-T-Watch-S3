@@ -24,6 +24,13 @@ BOOTFS_OFFSET = 0x310000
 BOOTFS_SIZE = 0x4f0000
 BIN_SIZE = 0x800000
 MKSPIFFS_SHA256 = '4ddf79a1ab9a3baf502cdb979bea7ed173bbe46727a9902649cc09e6a28a5ad2'
+EXPANDED_STORE_SIZE = 0x550000
+EXPANDED_SECTION = 'env:watch-expanded'
+
+
+def git_read(runtime, *args, text=False):
+    return subprocess.check_output(['git', '-C', str(runtime), *args], text=text,
+                                   env={**os.environ, 'GIT_NO_LAZY_FETCH': '1'})
 
 
 def sha(data):
@@ -88,7 +95,7 @@ def native_symbol_allocation(native_elf, symbol_name):
 
 
 def native_composition(runtime, native_elf, native_profile, app_policy_rows):
-    """Bind the explicit crown profile to source identity and compiled row bounds.
+    """Bind the explicit crown/expanded profile to source and native row bounds.
 
     Provider/app capacities have no retained native marker in this generation;
     those two values are witnessed by the exact source-bound build profile.
@@ -99,6 +106,38 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
     profile_bytes = native_profile.read_bytes()
     profile = configparser.ConfigParser(interpolation=None)
     profile.read_string(profile_bytes.decode())
+    lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
+    expanded_profile_bytes = None
+    if EXPANDED_SECTION in profile:
+        # PlatformIO emits -U after -D, so old definitions must be removed with
+        # build_unflags. Defining a new unflags list also replaces inheritance.
+        expected_flags = ['${env:watch-file-source.build_flags}',
+                          r'-DRISC_TARGET=\"esp32s3-16mb-appdata-expanded-iq\"',
+                          '-DRISC_PAIRED_APP_DATA_EXPANDED=1',
+                          '-DRISC_PROVIDER_CAPACITY=40']
+        expected_unflags = ['-std=gnu++11', '-DRISC_PROVIDER_CAPACITY=32', '-DRISC_OWNER_INSTALLER=1',
+                            '-Wl,-u,risc_owner_maintenance_target',
+                            r'-DRISC_TARGET=\"esp32s3-16mb-appdata-iq\"']
+        if (profile.defaults() or set(profile.sections()) != {'platformio', EXPANDED_SECTION} or
+                set(profile['platformio']) != {'extra_configs'} or
+                lines(profile['platformio']['extra_configs']) !=
+                ['platformio.ini', 'crown-build.ini', 'crown-wake-profile.ini', 'watch-file-source-profile.ini'] or
+                set(profile[EXPANDED_SECTION]) != {'extends', 'board_build.partitions', 'build_unflags', 'build_flags'} or
+                profile[EXPANDED_SECTION]['extends'] != 'env:watch-file-source' or
+                profile[EXPANDED_SECTION]['board_build.partitions'] != 'partitions-paired-appdata-expanded.csv' or
+                lines(profile[EXPANDED_SECTION]['build_flags']) != expected_flags or
+                lines(profile[EXPANDED_SECTION]['build_unflags']) != expected_unflags):
+            raise ValueError('Unsupported or modified expanded Watch profile')
+        from verify_update_elf import verify_native_store_abi
+        layout_proof = verify_native_store_abi(native_elf, 3)
+        expanded_profile_bytes = profile_bytes
+        profile_bytes = (runtime / 'watch-file-source-profile.ini').read_bytes()
+        profile = configparser.ConfigParser(interpolation=None)
+        profile.read_string(profile_bytes.decode())
+        if set(profile.sections()) != {'platformio', 'env:watch-file-source'}:
+            raise ValueError('Expanded Watch requires the exact inherited file-source profile')
+    elif b'RISC_PAIRED_STORE_ABI:3\0' in native_elf:
+        raise ValueError('ABI3 native admission requires the explicit expanded Watch profile')
     source_profile_bytes = None
     source_section = 'env:watch-file-source'
     if source_section in profile:
@@ -119,7 +158,6 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
         profile.read_string(profile_bytes.decode())
     section = 'env:crown-recovery-qualification'
     parent = 'env:esp32s3-16mb-appdata-iq-sharing'
-    lines = lambda value: [line.strip() for line in value.splitlines() if line.strip()]
     wake_section = 'env:crown-wake-profile'
     wake_profile_bytes = None
     if wake_section in profile:
@@ -144,22 +182,22 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
             profile[section]['extends'] != parent or
             lines(profile[section]['build_flags']) not in (expected_flags, expected_flags + ['-fstack-usage'])):
         raise ValueError('Unsupported or modified native crown build profile')
-    head = subprocess.check_output(['git', '-C', str(runtime), 'rev-parse', 'HEAD'], text=True).strip()
+    head = git_read(runtime, 'rev-parse', 'HEAD', text=True).strip()
     if (not re.fullmatch('[0-9a-f]{40}', head) or
             set(re.findall(rb'RTE_SOURCE=([^\x00\s]+)', native_elf)) != {head.encode()}):
         raise ValueError('Native RTE_SOURCE does not match selected Runtime source')
-    if subprocess.check_output(['git', '-C', str(runtime), 'status', '--porcelain', '--untracked-files=no'], text=True).strip():
+    if git_read(runtime, 'status', '--porcelain', '--untracked-files=no', text=True).strip():
         raise ValueError('Native composition requires unchanged Runtime source')
     diagnostics = None
     if wake_profile_bytes is not None:
         for name, selected in [('crown-build.ini', profile_bytes), ('crown-wake-profile.ini', wake_profile_bytes)]:
-            committed = subprocess.check_output(['git', '-C', str(runtime), 'show', head + ':' + name])
+            committed = git_read(runtime, 'show', head + ':' + name)
             if selected != committed or (runtime / name).read_bytes() != committed:
                 raise ValueError('Wake diagnostic profile differs from the source identity')
         diagnostics = {name: native_symbol_allocation(native_elf, name) for name in
                        ('_ZN15RiscDiagnostics11timestampedEPKcz', '_ZN8RiscPerf4dataE')}
     source_bytes = (runtime / 'platformio.ini').read_bytes()
-    if source_bytes != subprocess.check_output(['git', '-C', str(runtime), 'show', head + ':platformio.ini']):
+    if source_bytes != git_read(runtime, 'show', head + ':platformio.ini'):
         raise ValueError('Runtime build profile differs from the source identity')
     source = configparser.ConfigParser(interpolation=None)
     source.read_string(source_bytes.decode())
@@ -196,6 +234,22 @@ def native_composition(runtime, native_elf, native_profile, app_policy_rows):
         proof.update(profile=source_section, source_profile_sha256=sha(source_profile_bytes),
                      file_source_backend_allocations=allocations, file_source_enabled=True,
                      private_scratch_root='/appdata/.risc-file-source')
+    if expanded_profile_bytes is not None:
+        partition_name = 'partitions-paired-appdata-expanded.csv'
+        partition_bytes = (runtime / partition_name).read_bytes()
+        for name, selected in [('watch-expanded-profile.ini', expanded_profile_bytes),
+                               ('watch-file-source-profile.ini', source_profile_bytes),
+                               (partition_name, partition_bytes)]:
+            committed = git_read(runtime, 'show', head + ':' + name)
+            if selected != committed or (runtime / name).read_bytes() != committed:
+                raise ValueError('Expanded Watch input differs from the source identity: ' + name)
+        # Only this selected provider bound changes. Apps and policy/requirement
+        # rows stay at the exact inherited recovery-profile values (64/24/24).
+        proof['bounds'] = {**bounds, 'RISC_PROVIDER_CAPACITY': 40}
+        proof.update(profile=EXPANDED_SECTION, expanded_profile_sha256=sha(expanded_profile_bytes),
+                     partition_table_source_sha256=sha(partition_bytes),
+                     layout='riscrte-paired-appdata-v3', store_abi=3, store_size=EXPANDED_STORE_SIZE,
+                     native_layout=layout_proof, owner_installer=False)
     return proof
 
 
@@ -203,6 +257,9 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy
     if cohort_policy and (not app_data or native_elf is not None):
         raise ValueError('Policy-only cohort admission requires app-data and no native ELF')
     runtime, output = Path(runtime).resolve(), Path(output)
+    composition = None
+    if native_elf is not None and b'RISC_PAIRED_STORE_ABI:3\0' in native_elf and (native_profile is None or not app_data):
+        raise ValueError('ABI3 native admission requires app-data and the explicit expanded Watch profile')
     includes = [runtime / p for p in ('src', 'sdk/app', 'sdk/driver', 'sdk/hardware',
                                      'lib/ArduinoJson/src', 'test/drivers/stubs')]
     sources = [runtime / p for p in ('src/bootstrap/Json.cpp', 'src/bootstrap/Board.cpp',
@@ -239,12 +296,17 @@ def compile_harness(runtime, output, app_data=False, native_elf=None, app_policy
                     '-fno-omit-frame-pointer', '-no-pie']
     if app_data:
         command += ['-DSTORE_ADMISSION_APP_DATA','-DRISC_PAIRED_APP_DATA=1']
+    if composition is not None and composition.get('store_abi') == 3:
+        if not app_data:
+            raise ValueError('Expanded Watch admission requires app-data')
+        command += ['-DRISC_PAIRED_APP_DATA_EXPANDED=1']
     if cohort_policy:
         command += ['-DSTORE_ADMISSION_COHORT', '-DSTORE_ADMISSION_COHORT_POLICY']
     if native_elf is not None:
         from verify_update_elf import cohort_admission_header
         output = output.resolve()
-        (output.parent / 'cohort_elf_admission.h').write_text(cohort_admission_header(runtime, native_elf))
+        options = {'store_abi': 3} if composition is not None and composition.get('store_abi') == 3 else {}
+        (output.parent / 'cohort_elf_admission.h').write_text(cohort_admission_header(runtime, native_elf, **options))
         includes += [output.parent, runtime / 'lib/elf_loader/include', runtime / 'test/native_bank_stubs']
         command += ['-DSTORE_ADMISSION_COHORT', '-Wno-misleading-indentation']
         obj = output.parent / 'cohort-validate.o'
@@ -327,7 +389,7 @@ def validate_paths(store):
 
 
 def unpack_image(raw, tool=None, expected_size=BOOTFS_SIZE):
-    if expected_size not in (BOOTFS_SIZE, 0x510000):
+    if expected_size not in (BOOTFS_SIZE, 0x510000, EXPANDED_STORE_SIZE):
         raise ValueError('Unknown SPIFFS geometry')
     if tool is None:
         files = read_image(raw, expected_size)
@@ -456,7 +518,8 @@ def main():
         stores.append((path.name, store))
     results = admit_many(args.runtime, stores, args.expect_error)
     record = {'schema': 1, 'runtime_source': subprocess.check_output(
-        ['git', 'rev-parse', 'HEAD'], cwd=args.runtime, text=True).strip(),
+        ['git', 'rev-parse', 'HEAD'], cwd=args.runtime, text=True,
+        env={**os.environ, 'GIT_NO_LAZY_FETCH': '1'}).strip(),
         'expected_error': args.expect_error, 'inputs': inputs, 'results': results,
         'policy_substitutions': 0, 'physical_verification': 'pending',
         'preservation_overlays': ['pmu-sleep-0.5.3'] if args.current_pmu_sleep_repair else []}

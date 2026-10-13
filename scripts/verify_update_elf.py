@@ -7,11 +7,44 @@ linker's symbol resolver. The full transaction/lifecycle tests are separate.
 import hashlib
 import io
 import json
+import re
 from pathlib import Path
 import subprocess
 import struct
 import tempfile
 from elftools.elf.elffile import ELFFile
+
+
+def verify_native_store_abi(native_elf, expected):
+    """Witness an explicit layout in allocated Xtensa code/data, not debug text.
+
+    This is opt-in so historical callers keep their admission contract. A new
+    layout cannot be selected merely by pointing the host at newer source.
+    """
+    if type(expected) is not int or expected not in (1, 2, 3):
+        raise ValueError('Unsupported native store ABI')
+    native = ELFFile(io.BytesIO(native_elf))
+    if native.elfclass != 32 or not native.little_endian or native['e_machine'] != 'EM_XTENSA':
+        raise ValueError('Expected a little-endian ELF32 Xtensa native candidate')
+    table = native.get_section_by_name('.symtab')
+    matches = table.get_symbol_by_name('risc_paired_store_abi') if table else None
+    if not matches or len(matches) != 1 or not isinstance(matches[0]['st_shndx'], int):
+        raise ValueError('Missing or ambiguous allocated native store ABI marker')
+    symbol = matches[0]
+    section = native.get_section(symbol['st_shndx'])
+    marker = ('RISC_PAIRED_STORE_ABI:' + str(expected)).encode() + b'\0'
+    offset = symbol['st_value'] - section['sh_addr']
+    if (not section['sh_flags'] & 2 or section['sh_type'] == 'SHT_NOBITS' or
+            symbol['st_size'] != len(marker) or offset < 0 or
+            offset + len(marker) > section['sh_size'] or
+            section.data()[offset:offset + len(marker)] != marker):
+        raise ValueError('Native allocated store ABI differs from the selected layout')
+    found = set(re.findall(rb'RISC_PAIRED_STORE_ABI:([^\0\s]+)\0', native_elf))
+    if (found != {str(expected).encode()} or b'RISC_OWNER_INSTALLER:' in native_elf or
+            b'RTE_OWNER_MAINTENANCE=1\0' in native_elf):
+        raise ValueError('Conflicting or owner-installer native store ABI marker')
+    return {'store_abi': expected, 'marker_symbol': 'risc_paired_store_abi',
+            'marker_address': symbol['st_value'], 'marker_bytes': len(marker)}
 
 
 def extract(text, signature):
@@ -81,8 +114,10 @@ def admission_includes(text):
     return ''.join('#include "' + header + '"\n' for header in headers)
 
 
-def cohort_admission_header(runtime, native_elf):
+def cohort_admission_header(runtime, native_elf, *, store_abi=None):
     """Compile the production admission function against actual native exports."""
+    if store_abi is not None:
+        verify_native_store_abi(native_elf, store_abi)
     exported = public_exports(ELFFile(io.BytesIO(native_elf)))
     text = (Path(runtime) / 'src/ports/esp32s3/NativeBankStore.cpp').read_text()
     function, provider_role, _ = admission_source(text)
@@ -113,7 +148,9 @@ static bool file(void* context,const char* path,bool provider){
 '''
 
 
-def verify(runtime, native_elf, app_elf, provider=False):
+def verify(runtime, native_elf, app_elf, provider=False, *, store_abi=None):
+    if store_abi is not None:
+        verify_native_store_abi(native_elf, store_abi)
     runtime=Path(runtime);native=ELFFile(io.BytesIO(native_elf));app=ELFFile(io.BytesIO(app_elf))
     defined={s.name for s in native.get_section_by_name('.symtab').iter_symbols() if s.name and s['st_shndx']!='SHN_UNDEF'}
     imports=sorted({s.name for section in app.iter_sections() if section['sh_type'] in ('SHT_DYNSYM','SHT_SYMTAB') for s in section.iter_symbols() if s.name and s['st_shndx']=='SHN_UNDEF'})
@@ -166,4 +203,5 @@ int main(int argc,char**argv){
                 app_elf_sha256=digest(app_elf),imports=imports,production_native_admission=True,
                 all_imports_defined_in_native_candidate=True,compiled_public_exports={name:hex(exported[name]) for name in imports},
                 each_missing_import_rejected=True,provider=provider,
-                target_instructions_executed=False,target_symbol_resolver_host_executed=False)
+                target_instructions_executed=False,target_symbol_resolver_host_executed=False,
+                **({'store_abi': store_abi} if store_abi is not None else {}))
