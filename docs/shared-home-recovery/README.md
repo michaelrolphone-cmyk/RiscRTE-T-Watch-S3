@@ -124,3 +124,18 @@ flashable outputs.
 
 Previously recovered firmware remains the qualified fallback. No publication,
 release selection, flash, device instruction execution or physical test occurred.
+
+## Lightweight public source CI
+
+`.github/workflows/watch-shared-recovery-source.yml` runs six source-contract
+checks, the seven inherited recovery-contract tests, and seven inherited appdata
+guards that do not write full-image files. It reproduces only the 512 KiB empty
+appdata fixture from pinned Runtime/LittleFS source. It downloads no firmware and
+never materializes a full flash image.
+
+The 15 exact-image/pair staging tests were locally qualified for public source
+checkpoint `3212fe1c67c0f21e32cca1d330ed02ced7ccc4d0`; CI explicitly skips them
+unless their three external inputs are supplied. This workflow supplies none.
+A green source check does not establish full cohort admission, native firmware
+readiness, hardware qualification or layout approval. Pending layout approval
+and the capacity/native/provider gates above are unchanged.
