@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import shutil
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -272,6 +273,30 @@ class CompositionTests(unittest.TestCase):
         path.write_bytes(path.read_bytes() + b'RISC_RUNTIME_VERSION:9.9.9\0')
         _, result = self.run_compose(success=False)
         self.assertIn('exact firmware native version marker', result.stderr)
+
+    def test_native_parser_prefix_literal_is_not_a_version(self):
+        firmware = b'RISC_RUNTIME_VERSION:\0RISC_RUNTIME_VERSION:' + NATIVE_VERSION.encode() + b'\0'
+        self.assertEqual(core.verify_runtime_version(NATIVE_VERSION, firmware), NATIVE_VERSION)
+        for suffix in [b'RISC_RUNTIME_VERSION:9.9.9\0', b'RISC_RUNTIME_VERSION:9.9.9']:
+            with self.assertRaisesRegex(ValueError, 'exact firmware native version marker'):
+                core.verify_runtime_version(NATIVE_VERSION, firmware + suffix)
+        with self.assertRaisesRegex(ValueError, 'exact firmware native version marker'):
+            core.verify_runtime_version(NATIVE_VERSION, b'RISC_RUNTIME_VERSION:\0')
+
+    def test_real_native_ci_markers_when_supplied(self):
+        source = os.environ.get('T023_NATIVE_FIRMWARE')
+        if source is None:
+            self.skipTest('Set T023_NATIVE_FIRMWARE to exercise the exact product CI binary')
+        firmware = Path(source).read_bytes()
+        marker = b'RISC_RUNTIME_VERSION:' + NATIVE_VERSION.encode() + b'\0'
+        self.assertIn(b'RISC_RUNTIME_VERSION:\0', firmware)
+        self.assertIn(marker, firmware)
+        self.assertEqual(core.verify_runtime_version(NATIVE_VERSION, firmware), NATIVE_VERSION)
+        for candidate in [firmware + b'RISC_RUNTIME_VERSION:9.9.9\0',
+                          firmware + b'RISC_RUNTIME_VERSION:9.9.9',
+                          firmware.replace(marker, b'RISC_RUNTIME_VERSION:\0')]:
+            with self.assertRaisesRegex(ValueError, 'exact firmware native version marker'):
+                core.verify_runtime_version(NATIVE_VERSION, candidate)
 
     def test_invalid_native_versions_rejected(self):
         for version in ['0.3', 'v0.3.4', '0.03.4', '0.3.4-extra', '4294967296.0.0', '']:

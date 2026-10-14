@@ -92,7 +92,10 @@ def verify_runtime_version(version, firmware):
         raise ValueError('--runtime-version must be a canonical bounded three-part native version')
     marker = b'RISC_RUNTIME_VERSION:'
     matches = re.findall(rb'RISC_RUNTIME_VERSION:([^\x00]*)\x00', firmware)
-    if firmware.count(marker) != len(matches) or set(matches) != {version.encode('ascii')}:
+    # NativeBankStore also embeds the empty parser-prefix string. It carries no
+    # version identity; all nonempty markers must still match the requested one.
+    versions = {match for match in matches if match}
+    if firmware.count(marker) != len(matches) or versions != {version.encode('ascii')}:
         raise ValueError('--runtime-version does not match the exact firmware native version marker')
     return version
 
