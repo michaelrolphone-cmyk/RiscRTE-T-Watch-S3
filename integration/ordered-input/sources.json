@@ -1,0 +1,53 @@
+{
+  "product": "TWatch",
+  "version": "1.1.27",
+  "baseline": "/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/watch-builds/combined-ui/T-Watch-S3-1.1.26-combined-ui-spectrum-factory-erases-data-0x0.bin",
+  "baseline_sha256": "ec55e1ab83be7c7195412d152f42c78a94865e5f24028f68168cbc286adae7f3",
+  "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c",
+  "apps": {
+    "springboard": {
+      "sha256": "e61b6c2e409f18a94782b811b41a7c1c576a11af2b85a002dfe471449fac55b4",
+      "bytes": 147612
+    },
+    "battery": {
+      "sha256": "2068836e535d4663ce2445e5661c5bddcc6d74e8b4aefa14622aeda23b09cf38",
+      "bytes": 129440
+    },
+    "calculator": {
+      "sha256": "26fef35a1443ec0f5971d108448ea9cf00e850806fad4f04ed0e8e547244d473",
+      "bytes": 125508
+    },
+    "stopwatch": {
+      "sha256": "03e456e49dc7bebe6b4314d7c44b786139eaf4c92a6b362264c0d4b29a9942fc",
+      "bytes": 126800
+    },
+    "frequency_generator": {
+      "sha256": "d96416097b0714e99fadee0ac2cfe92cb030a41c4016bdd5f967d45df8807e54",
+      "bytes": 118440
+    },
+    "alarms": {
+      "sha256": "eee14389b4eab372510ed11844f16e02bbec3b41bfe220836460bd617b11adf5",
+      "bytes": 133184
+    },
+    "countdown": {
+      "sha256": "1b148ce07eb6eb3d50c0c51f70a880e7e907d7f5dc1396cb4b329b000ce9e4ce",
+      "bytes": 128384
+    },
+    "ble_touchpad": {
+      "sha256": "88c7b54ef76d69fc52bdb0a25533117761a9f84bf2c59510f8be94d984cfadf7",
+      "bytes": 133088
+    },
+    "ble_buttons": {
+      "sha256": "595103077c5f6fd6808b7bc674b21093771588719c21174eeb206531c8e48c54",
+      "bytes": 133948
+    }
+  },
+  "springboard_version": "1.7.11",
+  "preserve_native_runtime": true,
+  "preserve_home": true,
+  "hardware_verified": false,
+  "native_resolution": [
+    240,
+    240
+  ]
+}
