@@ -24,3 +24,12 @@ remain byte-identical to the T051 firmware baselines.
 
 Host models cover protocol/controller behavior; no physical BLE, Wi-Fi, card,
 radio timing, flashing or target instruction execution is claimed.
+
+## Reproduction
+
+The component and assembly scripts use the existing workspace sibling checkout
+names (`System-t052`, `Runtime-wave-t051`, `TWatch-input-product`,
+`Waveshare-input-product`, `X4-input-product`) and verified T051 artifacts.
+Build commands and ELF hashes are checked in here. The assembly script replaces
+only Files ELF/manifest and cohort metadata, preserves native/boot/application
+bytes, regenerates the paired state and verifies complete image readback.

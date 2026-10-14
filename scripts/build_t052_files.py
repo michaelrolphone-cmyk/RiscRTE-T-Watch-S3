@@ -1,6 +1,6 @@
 from pathlib import Path
 import json,hashlib,subprocess,sys,shutil
-R=Path(__file__).resolve().parents[1];sys.path[:0]=[str(R/'Runtime-wave-t051/scripts'),str(R/'TWatch-input-product/scripts')]
+R=Path(__file__).resolve().parents[2];sys.path[:0]=[str(R/'Runtime-wave-t051/scripts'),str(R/'TWatch-input-product/scripts')]
 from spiffs_image import read_image
 from paired_bank_images import initial_bank_state,parse_record
 import current_bootfs
