@@ -1,7 +1,7 @@
 name: Shared Watch expanded source and factory contracts
 on:
   push:
-    branches: [work/watch-1.1.22-shared-expanded-20261013]
+    branches: [work/watch-1.1.22-shared-expanded-20261013, fix/t023-automatic-provisioning]
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,3 +31,135 @@ jobs:
         if: always()
         run: |
           echo 'Source contract checks only. Exact-input cases are explicitly skipped without their artifacts. Complete 58-ELF normal/sanitized admission, SPIFFS readback, target linked-memory and final factory checks remain required artifact gates. No hardware execution.' >> "$GITHUB_STEP_SUMMARY"
+  t023-native-intermediate:
+    if: github.ref == 'refs/heads/fix/t023-automatic-provisioning'
+    needs: source-contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      # Published combined Runtime checkpoint; tree fd93cbd04727d93a2ae36f8e2936590b8415bb7f.
+      T023_RUNTIME_SHA: db88b5c5732bfa4b74fc73dcfe52dcce2ab4a4a2
+      PLATFORMIO_CORE_DIR: ${{ github.workspace }}/.pio-core
+      PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'No'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require an immutable Runtime source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$T023_RUNTIME_SHA" =~ ^[0-9a-f]{40}$ ]]
+          mkdir -p build/t023-native-intermediate
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ env.T023_RUNTIME_SHA }}
+          path: runtime
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Record exact source and native profile inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git -C runtime rev-parse HEAD)" = "$T023_RUNTIME_SHA"
+          cp native/t023-provisioning.ini runtime/t023-provisioning.ini
+          cp native/t023-migration-policy.h runtime/t023-migration-policy.h
+          mkdir -p build/t023-native-intermediate/profiles
+          for input in platformio.ini crown-build.ini crown-wake-profile.ini watch-file-source-profile.ini watch-expanded-profile.ini t023-provisioning.ini t023-migration-policy.h partitions-paired-appdata-expanded.csv requirements-ci.txt; do
+            cp "runtime/$input" "build/t023-native-intermediate/profiles/$input"
+          done
+          (
+            cd runtime
+            sha256sum platformio.ini crown-build.ini crown-wake-profile.ini watch-file-source-profile.ini watch-expanded-profile.ini t023-provisioning.ini t023-migration-policy.h partitions-paired-appdata-expanded.csv requirements-ci.txt
+          ) > build/t023-native-intermediate/profile-sha256.txt
+          printf 'Product source: %s\nRuntime source: %s\n' "$GITHUB_SHA" "$T023_RUNTIME_SHA" > build/t023-native-intermediate/source-pins.txt
+          git archive --format=tar.gz -o build/t023-native-intermediate/product-source.tar.gz "$GITHUB_SHA"
+          git -C runtime archive --format=tar.gz -o "$GITHUB_WORKSPACE/build/t023-native-intermediate/runtime-source.tar.gz" "$T023_RUNTIME_SHA"
+          printf '%s\n' 'python -m platformio run -d runtime -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1' > build/t023-native-intermediate/build-command.txt
+          printf '%s\n' 'Intermediate native source checkpoint only. The historical product migration header must be regenerated against the final component composition. This artifact is not a releasable product or a hardware qualification.' > build/t023-native-intermediate/QUALIFICATION.txt
+      - name: Install pinned build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -r runtime/requirements-ci.txt
+          python -m pip freeze > build/t023-native-intermediate/python-packages.txt
+      - name: Build the exact opt-in Watch native profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m platformio run -d runtime -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1 2>&1 | tee build/t023-native-intermediate/build.log
+      - name: Verify linked native identity, memory, imports and unchanged partitions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, io, json, os, subprocess, sys
+          root = Path('runtime').resolve()
+          sys.path.insert(0, str(root / 'scripts'))
+          from paired_candidate import EXPANDED_EXPECTED, native_proof, partitions, policy_rows_proof
+          from radio_iq_proof import prove
+          from release_assets import elf, esp_image
+          from elftools.elf.elffile import ELFFile
+          from platformio.project.config import ProjectConfig
+          output = Path('build/t023-native-intermediate').resolve()
+          build = root / '.pio/build/watch-t023-boot-profiles'
+          source = os.environ['T023_RUNTIME_SHA']
+          assert subprocess.check_output(['git', '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip() == source
+          blobs = {name: (build / name).read_bytes() for name in ('firmware.bin', 'firmware.elf', 'bootloader.bin', 'partitions.bin')}
+          for name in ('firmware.bin', 'bootloader.bin'):
+              esp_image(blobs[name])
+              assert blobs[name][3] >> 4 == 4, '16 MiB image flag missing'
+          elf(blobs['firmware.elf'])
+          layout = partitions(blobs['partitions.bin'], EXPANDED_EXPECTED)
+          assert len(blobs['firmware.bin']) <= layout['app0'][3], 'firmware exceeds unchanged slot'
+          markers = ['RTE_SOURCE=' + source, 'RISC_RUNTIME_VERSION:0.2.24', 'RISC_PAIRED_STORE_ABI:3', 'RISC_PROVISION_IMAGE:1', 'RISC_PROVISION_TUPLES:1', 'platform.provision-request', 'rte_provreq', 'esp32s3-16mb-appdata-expanded-iq']
+          for name in ('firmware.bin', 'firmware.elf'):
+              for marker in markers:
+                  assert marker.encode() + b'\0' in blobs[name], (name, 'missing marker', marker)
+              for marker in ('RISC_OWNER_INSTALLER:1', 'RISC_PAIRED_STORE_ABI:1', 'RISC_PAIRED_STORE_ABI:2'):
+                  assert marker.encode() + b'\0' not in blobs[name], (name, 'unexpected marker', marker)
+          proof = native_proof(blobs['firmware.elf'])
+          proof['app_policy'] = policy_rows_proof(blobs, 32, 32)
+          proof['iq'] = prove(blobs['firmware.elf'], expanded=True)
+          image = ELFFile(io.BytesIO(blobs['firmware.elf']))
+          undefined = [symbol.name for symbol in image.get_section_by_name('.symtab').iter_symbols() if symbol.name and symbol['st_shndx'] == 'SHN_UNDEF']
+          # The pinned Arduino/IDF symbol table retains these SDK startup declarations.
+          known_sdk_undefined = {'start_app', 'start_app_other_cores'}
+          unexpected_undefined = sorted(set(undefined) - known_sdk_undefined)
+          assert not unexpected_undefined, unexpected_undefined
+          nm = Path(os.environ['PLATFORMIO_CORE_DIR']) / 'packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-nm'
+          symbols = subprocess.check_output([str(nm), '-C', str(build / 'firmware.elf')], text=True)
+          (output / 'defined-symbols.txt').write_text(symbols)
+          for name in ('RiscProvisionRequest::bind(', 'RiscProvision::queueRequest(', 'RiscProvision::preservingPolicy(', 'RiscPackageVolume::bindAdmission('):
+              assert name in symbols, ('missing native implementation', name)
+          report = {'schema': 1, 'runtime_source': source, 'product_source': os.environ['GITHUB_SHA'], 'runtime_version': '0.2.24', 'environment': 'watch-t023-boot-profiles', 'intermediate_only': True, 'migration_header_requires_regeneration': True, 'artifacts': {name: {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()} for name, data in blobs.items()}, 'firmware_slot_bytes': layout['app0'][3], 'firmware_spare_bytes': layout['app0'][3] - len(blobs['firmware.bin']), 'partition_map': layout, 'markers': markers, 'undefined_symbols': undefined, 'unexpected_undefined_symbols': unexpected_undefined, 'proof': proof}
+          (output / 'native-verification.json').write_text(json.dumps(report, indent=2) + '\n')
+          os.chdir(root)
+          config = ProjectConfig(str(root / 't023-provisioning.ini'))
+          (output / 'resolved-profile.json').write_text(json.dumps(dict(config.items(env='watch-t023-boot-profiles')), indent=2) + '\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('Intermediate Watch native build passed: ' + str(len(blobs['firmware.bin'])) + ' firmware bytes, ' + str(report['firmware_spare_bytes']) + ' slot bytes free, ' + str(proof['static_dram_bytes']) + ' static DRAM bytes, no unexpected unresolved symbols. ABI3 partitions and IQ reservation verified. Final product composition, migration policy and hardware qualification remain pending.\n')
+          PY
+          python -m pip freeze > build/t023-native-intermediate/python-packages-final.txt
+          sha256sum runtime/.pio/build/watch-t023-boot-profiles/{firmware.bin,firmware.elf,bootloader.bin,partitions.bin} > build/t023-native-intermediate/artifact-sha256.txt
+      - name: Retain intermediate native outputs and exact input evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: t023-watch-native-intermediate-${{ github.sha }}
+          path: |
+            build/t023-native-intermediate/
+            runtime/.pio/build/watch-t023-boot-profiles/firmware.bin
+            runtime/.pio/build/watch-t023-boot-profiles/firmware.elf
+            runtime/.pio/build/watch-t023-boot-profiles/bootloader.bin
+            runtime/.pio/build/watch-t023-boot-profiles/partitions.bin
+            runtime/.pio/build/watch-t023-boot-profiles/radio-iq-proof.json
+            runtime/.pio/build/watch-t023-boot-profiles/RiscBuildIdentity.h
+          if-no-files-found: error
+          retention-days: 14
