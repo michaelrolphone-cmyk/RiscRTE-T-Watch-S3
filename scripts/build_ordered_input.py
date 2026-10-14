@@ -21,9 +21,15 @@ for name in ['audio_spectrum','waterfall']:
   if a.product.name.startswith('TWatch'):store[n]=(a.sdr_store/n).read_bytes()
   else:assert store[n]==(a.sdr_store/n).read_bytes()
  versions[name]=json.loads(store[name+'.json'])['version']
+boot=json.loads(store['boot.json']);old_boot=json.loads(before['boot.json'])
+for row in boot['app_capabilities']:
+ if row['manifest']=='springboard.json':
+  required={(r['capability'],r['api']) for r in json.loads(store['springboard.json'])['requires']}
+  row['grants']=[g for g in row['grants'] if (g['capability'],g['api']) in required]
+if boot!=old_boot:store['boot.json']=(json.dumps(boot,indent=2)+'\n').encode()
 cohort=json.loads(store['cohort.json']);cohort['version']=lock['version'];cohort['source_revision']=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip();store['cohort.json']=(json.dumps(cohort,indent=2)+'\n').encode()
-changed=sorted(n for n in store if store[n]!=before[n]);allow={n+'.'+e for n in [*lock['apps'],'audio_spectrum','waterfall'] for e in ['elf','json']}|{'cohort.json'};assert set(changed)<=allow
-for n in ['default.elf','clock.elf','boot.json']:assert store[n]==before[n]
+changed=sorted(n for n in store if store[n]!=before[n]);allow={n+'.'+e for n in [*lock['apps'],'audio_spectrum','waterfall'] for e in ['elf','json']}|{'cohort.json','boot.json'};assert set(changed)<=allow
+for n in ['default.elf','clock.elf']:assert store[n]==before[n]
 fw=raw[0x10000:0x10000+cohort['firmware_size']];assert sha(fw)==cohort['firmware_sha256']
 image,packing=current_bootfs.build(store,size=0x550000);assert read_image(image,0x550000)==store
 state=initial_bank_state(fw,image,True,True);parse_record(state[:96],True,True)
@@ -32,5 +38,5 @@ assert full[:0x2f0000]==raw[:0x2f0000] and full[0x840000:0xff2000]==raw[0x840000
 a.output.mkdir(parents=True,exist_ok=True)
 for n,b in store.items():f=a.output/'store'/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes(b)
 name=lock['product']+'-'+lock['version']+'-ordered-input-factory-erases-data-0x0.bin';(a.output/name).write_bytes(full)
-proof={'version':lock['version'],'file':name,'bytes':len(full),'sha256':sha(full),'source_revision':cohort['source_revision'],'changed_files':changed,'component_versions':versions,'packing':packing,'native_firmware_unchanged':True,'home_clock_boot_unchanged':True,'hardware_verified':False,'inventory':{n:sha(b) for n,b in store.items()}}
+proof={'version':lock['version'],'file':name,'bytes':len(full),'sha256':sha(full),'source_revision':cohort['source_revision'],'changed_files':changed,'component_versions':versions,'packing':packing,'native_firmware_unchanged':True,'home_clock_unchanged':True,'boot_changes':'Only remove obsolete Springboard grants when restoring its manifest contract','hardware_verified':False,'inventory':{n:sha(b) for n,b in store.items()}}
 (a.output/'verification.json').write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps({k:v for k,v in proof.items() if k!='inventory'},indent=2))
