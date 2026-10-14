@@ -1,0 +1,290 @@
+{
+  "result": {
+    "prepared": true,
+    "cohort_validated": false,
+    "error": "",
+    "hardware_calls": 0,
+    "storage_calls": 0,
+    "elf_count": 0,
+    "cooperative_yields": 0,
+    "active_store_sha256": "eb54d274cfea01192ae07e57b804cc9aca4be50277871f11ff59dfd65badaa6e",
+    "candidate_store_sha256": "4985efb58ee4a1cf3a44e49ab1c674adad6e4bd9c544311a7f04685a3a53a805",
+    "native_elf_sha256": "7c7024d72983ddcf6e22261b5cac694a13bb5626bfe1e4d6adb2b1e76f078e00",
+    "app_policy_rows": 32,
+    "target_instructions_executed": false,
+    "native_composition": {
+      "profile": "env:watch-expanded",
+      "runtime_commit": "78a99f278015e35bc96a025cbb6672285b306197",
+      "bounds": {
+        "RISC_INSTALLED_APP_CAPACITY": 64,
+        "RISC_PROVIDER_CAPACITY": 40,
+        "RISC_APP_POLICY_ROWS": 32,
+        "RISC_APP_REQUIREMENT_ROWS": 32
+      },
+      "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+      "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+      "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+      "row_evidence": "allocated native policy and requirement marker symbols",
+      "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+      "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb",
+      "diagnostic_flags": {
+        "RISC_STAGE_LOGS": 1,
+        "RISC_PERFORMANCE_TRACE": 1
+      },
+      "diagnostic_allocations": {
+        "_ZN15RiscDiagnostics11timestampedEPKcz": {
+          "address": 1107549000,
+          "bytes": 230
+        },
+        "_ZN8RiscPerf4dataE": {
+          "address": 1070182592,
+          "bytes": 5440
+        }
+      },
+      "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+      "file_source_backend_allocations": {
+        "__wrap_esp_vfs_register": {
+          "address": 1107486092,
+          "bytes": 535
+        },
+        "__wrap_esp_vfs_unregister": {
+          "address": 1107486628,
+          "bytes": 70
+        },
+        "__wrap_esp_partition_read": {
+          "address": 1107486700,
+          "bytes": 36
+        },
+        "__wrap_esp_partition_write": {
+          "address": 1107486736,
+          "bytes": 69
+        },
+        "__wrap_esp_partition_erase_range": {
+          "address": 1107486808,
+          "bytes": 66
+        },
+        "__wrap_esp_littlefs_format": {
+          "address": 1107486876,
+          "bytes": 33
+        },
+        "__wrap_esp_littlefs_format_partition": {
+          "address": 1107486912,
+          "bytes": 24
+        }
+      },
+      "file_source_enabled": true,
+      "private_scratch_root": "/appdata/.risc-file-source",
+      "expanded_profile_sha256": "5bb16e40cfdbb6e5d1cdf99829051b633bc0034a7e49360f2d0514ac8dc5176b",
+      "partition_table_source_sha256": "eae45fedd426718b1d24ec61d49104418837d689583a48f4f72cfa6a6615252b",
+      "layout": "riscrte-paired-appdata-v3",
+      "store_abi": 3,
+      "store_size": 5570560,
+      "native_layout": {
+        "store_abi": 3,
+        "marker_symbol": "risc_paired_store_abi",
+        "marker_address": 1007826699,
+        "marker_bytes": 24
+      },
+      "owner_installer": true,
+      "package_profile_sha256": "b1188db9f6a5e56e7750ca3f927016d0d990d41117749d9f793e65181b192098",
+      "package_media": "internal-only"
+    }
+  },
+  "commands": [
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:crown-build.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:crown-wake-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:platformio.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:watch-expanded-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:watch-file-source-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:partitions-paired-appdata-expanded.csv"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/app",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/driver",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/hardware",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/lib/ArduinoJson/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/test/drivers/stubs",
+      "-I/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/lib/elf_loader/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/test/native_bank_stubs",
+      "-c",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/lib/elf_loader/src/esp_elf_validate.c",
+      "-o",
+      "/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/cohort-validate.o"
+    ],
+    [
+      "c++",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "-Wno-unused-function",
+      "-Wno-unused-private-field",
+      "-Wno-unused-but-set-variable",
+      "-std=c++17",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-missing-field-initializers",
+      "-rdynamic",
+      "-DRISC_APP_POLICY_ROWS=32",
+      "-DRISC_INSTALLED_APP_CAPACITY=64",
+      "-DRISC_PROVIDER_CAPACITY=40",
+      "-DRISC_APP_REQUIREMENT_ROWS=32",
+      "-DSTORE_ADMISSION_CROWN_PROFILE",
+      "-DSTORE_ADMISSION_FILE_SOURCE",
+      "-DSTORE_ADMISSION_APP_DATA",
+      "-DRISC_PAIRED_APP_DATA=1",
+      "-DRISC_PAIRED_APP_DATA_EXPANDED=1",
+      "-DSTORE_ADMISSION_COHORT",
+      "-Wno-misleading-indentation",
+      "/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/cohort-validate.o",
+      "-DSTORE_ADMISSION_COLD_BOOT",
+      "-DSTORE_ADMISSION_KV_V2",
+      "-DSTORE_ADMISSION_RUNTIME_FEATURES",
+      "-DSTORE_ADMISSION_RADIO_IQ",
+      "-DSTORE_ADMISSION_IQ_LIFECYCLE",
+      "-DSTORE_ADMISSION_RADIO",
+      "-DSTORE_ADMISSION_HCI",
+      "-DSTORE_ADMISSION_I2S_RX",
+      "-DSTORE_ADMISSION_UPDATE_PLATFORMS",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/app",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/driver",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/sdk/hardware",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/lib/ArduinoJson/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/test/drivers/stubs",
+      "-I/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/lib/elf_loader/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/test/native_bank_stubs",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/bootstrap/Json.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/bootstrap/Board.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/bootstrap/Runtime.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/runtime/drivers/ProviderGraphV2.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/runtime/drivers/ProviderModuleV2.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/ports/esp32s3/CpuPort.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/runtime/streams/AppStreamSessions.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/runtime/streams/ProviderQueueHost.cpp",
+      "/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/tmpecma3_91/tests/runtime_store_admission.cpp",
+      "-ldl",
+      "-o",
+      "/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/admit",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023/src/runtime/storage/PackageFiles.cpp",
+      "-Wno-unused-but-set-variable",
+      "-Wno-error=misleading-indentation",
+      "-Wno-unused-private-field"
+    ],
+    [
+      "/private/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/admit",
+      "/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/active",
+      "/var/folders/4r/rbtpllh96jngnhswvqg0hzw00000gn/T/risc-cohort-admission-y39oo9p3/candidate"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "rev-parse",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "status",
+      "--porcelain",
+      "--untracked-files=no"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:crown-build.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:crown-wake-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:platformio.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:watch-expanded-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:watch-file-source-profile.ini"
+    ],
+    [
+      "git",
+      "-C",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/Runtime-watch-t023",
+      "show",
+      "78a99f278015e35bc96a025cbb6672285b306197:partitions-paired-appdata-expanded.csv"
+    ]
+  ]
+}
