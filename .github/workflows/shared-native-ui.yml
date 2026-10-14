@@ -1,0 +1,20 @@
+name: Shared native UI product contracts
+on:
+  push:
+    branches: [fix/shared-native-ui-1.1.35]
+  pull_request:
+    paths:
+      - 'scripts/shared_native_ui.py'
+      - 'scripts/verify_shared_native_ui.py'
+      - 'scripts/test_shared_native_ui.py'
+      - 'native/shared-ui-profile/**'
+      - 'docs/shared-native-ui/**'
+permissions:
+  contents: read
+jobs:
+  product-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/test_shared_native_ui.py -v
+      - run: python -m py_compile scripts/shared_native_ui.py scripts/verify_shared_native_ui.py

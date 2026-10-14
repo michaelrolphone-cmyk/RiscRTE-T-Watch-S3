@@ -1,0 +1,18 @@
+{
+  "x4_product": "3ac013bd21815bf18e42466b656dbc333665bf6b",
+  "paper_system": "09400a550562ca9568ac7ab664ba3222eeedf2c8",
+  "runtime_sdk": "54461e8a7f61b28600b8ec8dcaf27b12cd45e829",
+  "sparse_boot_wake_sleep_cases": {
+    "normal": 572,
+    "asan_ubsan": 572
+  },
+  "native_static_fallback_cases": 24,
+  "native_static_fallback_status": "provisional RGB working snapshot; rerun after final System pin",
+  "eink_product_changed": false,
+  "hardware_tested": false,
+  "logs": {
+    "eink-sleep-normal.log": "e57dac3fcf5f27d0fe1804a73e838850b982196349dcbeadf2aa08dcfc5bb486",
+    "eink-sleep-sanitized.log": "e57dac3fcf5f27d0fe1804a73e838850b982196349dcbeadf2aa08dcfc5bb486",
+    "native-fallback-provisional-no-lsan.log": "7c4ac6c8dc1abc4ac8e0bdecc9d6310f80366505f90640aa0620d7332f124d25"
+  }
+}
