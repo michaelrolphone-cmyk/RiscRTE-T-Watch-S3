@@ -10,7 +10,8 @@ physical device/radio/OS interoperability remains untested.
 Wave additionally moves shared HID 0.1.2 to qualified 0.1.4. Watch and X4 already
 carry the exact same 0.1.4 bytes. Native firmware, boot registration, grants,
 other apps and prior fixes are preserved. X4 requires its cumulative SD overlay
-with the BIN. Only Apps/ble_buttons/ble_buttons.elf changes in that overlay.
+with the BIN. The overlay adds Apps/ble_buttons/ble_buttons.elf and its manifest, updating the
+existing installation; all files from the .116 overlay remain byte-identical.
 
 ## Reproduction
 

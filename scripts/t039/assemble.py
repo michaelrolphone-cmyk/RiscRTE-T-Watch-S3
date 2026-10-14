@@ -43,9 +43,12 @@ proof={'file':filename,'version':version,'image_sha256':sha(full),'baseline_sha2
 if a.product=='x4':
  assert a.previous_sd and sha(a.previous_sd.read_bytes())=='ad6aeed029d4c08ecdb0c0c75b8bb39dec413f08a04f734abc1454ec83a957c6'
  with zipfile.ZipFile(a.previous_sd) as z:previous={n:z.read(n) for n in z.namelist() if not n.endswith('/')}
- sd=dict(previous);path='Apps/ble_buttons/ble_buttons.elf';assert path in sd;sd[path]=binary
+ sd=dict(previous);path='Apps/ble_buttons/ble_buttons.elf'
+ boot=json.loads(before['boot.json']);row=next(r for r in boot['app_capabilities'] if r['manifest']=='ble_buttons.json');assert row['image_source']['path']==path
+ assert path not in previous;sd[path]=binary
+ sd['Apps/ble_buttons/manifest.json']=store['ble_buttons.json']
  sdname=f'X4-{version}-Cumulative-Changed-SD-Keep-Existing.zip'
  with zipfile.ZipFile(out/sdname,'w',zipfile.ZIP_DEFLATED) as z:
   for n,b in sorted(sd.items()):item=zipfile.ZipInfo(n,(2026,10,14,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,b)
- assert all(sd[n]==b for n,b in previous.items() if n!=path);proof.update(sd_file=sdname,sd_sha256=sha((out/sdname).read_bytes()),sd_inventory={n:sha(b) for n,b in sd.items()},changed_sd_files=[path],other_sd_files_unchanged=True)
+ assert all(sd[n]==b for n,b in previous.items() if n!=path);proof.update(sd_file=sdname,sd_sha256=sha((out/sdname).read_bytes()),sd_inventory={n:sha(b) for n,b in sd.items()},added_overlay_files=[path,'Apps/ble_buttons/manifest.json'],other_sd_files_unchanged=True)
 (out/'assembly-report.json').write_text(json.dumps(proof,indent=2)+'\n');print(name,version,sha(full),packing)
