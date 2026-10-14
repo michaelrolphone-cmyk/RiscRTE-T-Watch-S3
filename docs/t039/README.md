@@ -48,3 +48,5 @@ Full-image admission is recorded here after assembly. No hardware was flashed.
 Test builds only. Full 16 MiB factory BINs flash at 0x0 and erase internal user
 data; back up before flashing. For X4, overlay the cumulative SD ZIP onto the
 existing card, preserving every other file and settings directory.
+
+Final admission: 59 internal ELFs, complete T046-to-T039 transition, zero hardware/storage calls. See evidence/admission.json.
