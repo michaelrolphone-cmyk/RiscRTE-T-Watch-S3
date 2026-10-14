@@ -80,7 +80,7 @@ jobs:
           printf 'Product source: %s\nRuntime source: %s\n' "$GITHUB_SHA" "$T023_RUNTIME_SHA" > build/t023-native-intermediate/source-pins.txt
           git archive --format=tar.gz -o build/t023-native-intermediate/product-source.tar.gz "$GITHUB_SHA"
           git -C runtime archive --format=tar.gz -o "$GITHUB_WORKSPACE/build/t023-native-intermediate/runtime-source.tar.gz" "$T023_RUNTIME_SHA"
-          printf '%s\n' 'python -m platformio run -d runtime -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1' > build/t023-native-intermediate/build-command.txt
+          printf '%s\n' '(cd runtime && python -m platformio run -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1)' > build/t023-native-intermediate/build-command.txt
           printf '%s\n' 'Intermediate native source checkpoint only. The historical product migration header must be regenerated against the final component composition. This artifact is not a releasable product or a hardware qualification.' > build/t023-native-intermediate/QUALIFICATION.txt
       - name: Install pinned build dependencies
         shell: bash
@@ -92,7 +92,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m platformio run -d runtime -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1 2>&1 | tee build/t023-native-intermediate/build.log
+          (cd runtime && python -m platformio run -c t023-provisioning.ini -e watch-t023-boot-profiles -j 1) 2>&1 | tee build/t023-native-intermediate/build.log
       - name: Verify linked native identity, memory, imports and unchanged partitions
         shell: bash
         run: |
