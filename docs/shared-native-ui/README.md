@@ -1,7 +1,8 @@
 # Shared native UI integration: T-Watch 1.1.35
 
-Final immutable shared System source qualification is pending. Release asset
-publication is authorized but remains gated on that final source. Version 1.1.34 remains reserved
+The final shared System source is `f31f89636304d202c49884e2e9b2e0b2ec5fb891`.
+Release asset publication is authorized but remains gated on final product
+qualification. Version 1.1.34 remains reserved
 for the independent provisioning work. No serial access, flashing or deployment
 is performed by this route.
 
