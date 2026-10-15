@@ -57,7 +57,7 @@ class ProvenanceContracts(unittest.TestCase):
                 producer.validate_build_proof(proof, {}, Path('.'), Path('/compiler'))
 
     def test_injected_build_environment_is_removed(self):
-        bad = {name: '/injected' for name in ('CC','CXX','CFLAGS','CPPFLAGS','CPATH','CPLUS_INCLUDE_PATH','LDFLAGS','LD_PRELOAD','PYTHONPATH','CMAKE_TOOLCHAIN_FILE','RISC_SOURCE_SHA','X4_VERSION','IDF_EXTRA_ACTIONS_PATH')}
+        bad = {name: '/injected' for name in ('CC','CXX','CFLAGS','CPPFLAGS','CPATH','CPLUS_INCLUDE_PATH','LDFLAGS','LD_PRELOAD','PYTHONPATH','CMAKE_TOOLCHAIN_FILE','RISC_SOURCE_SHA','X4_VERSION','IDF_EXTRA_ACTIONS_PATH','XTENSA_GNU_CONFIG','XTENSA_CORE')}
         with mock.patch.dict(os.environ, bad):
             clean = producer.clean_environment(Path('/sdk'), Path('/compiler/bin/xtensa-esp-elf-gcc'))
         self.assertFalse(set(bad) & set(clean))
@@ -89,6 +89,32 @@ class ProvenanceContracts(unittest.TestCase):
         for text in ('', valid.replace('VALID', 'STALE'), 'unsupported\n'):
             with self.assertRaises(ValueError):
                 producer.dependency_rows(text, Path('/build'))
+
+    def test_exact_compiler_family_and_xtensa_configuration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); (root / 'bin').mkdir(); (root / 'lib').mkdir()
+            compiler = root / 'bin/xtensa-esp-elf-gcc'
+            for filename in provenance.COMPILER_FAMILY_NAMES.values():
+                (root / 'bin' / filename).write_bytes(filename.encode())
+            (root / 'lib/xtensa_esp32s3.so').write_bytes(b'S3 config')
+            def probe(args, **kwargs):
+                self.assertNotIn('XTENSA_GNU_CONFIG', kwargs['env'])
+                return {'--version': 'GCC15.2.0 esp-15.2.0_20251204\n', '-dumpmachine': 'xtensa-esp-elf\n', '-print-multi-directory': 'esp32s3\n'}[args[-1]]
+            with mock.patch.dict(os.environ, {'XTENSA_GNU_CONFIG': '/wrong'}), mock.patch.object(provenance.subprocess, 'check_output', probe):
+                family = provenance.compiler_family(compiler)
+            self.assertEqual(set(family), {'gcc','g++','s3-gcc','s3-g++','xtensa-config'})
+            wrapper = str(root / 'bin/xtensa-esp32s3-elf-gcc')
+            self.assertEqual(provenance.compiler_command([wrapper,'-c','file.c'],compiler,family), 's3-gcc')
+            self.assertEqual(provenance.compiler_command([str(compiler),'-mdynconfig=xtensa_esp32s3.so','-c','file.c'],compiler,family), 'gcc')
+            for args in ([str(compiler),'-c','file.c'], ['/other/xtensa-esp32s3-elf-gcc','-c','file.c'],
+                         ['ccache',wrapper,'-c','file.c'], [wrapper,'-mdynconfig=xtensa_esp32.so'],
+                         [wrapper,'-Wa,--dynconfig=other'], [wrapper,'-B/other-tools'], [wrapper,'--specs=evil'],
+                         [wrapper,'@unlocked'], [str(compiler),'-mdynconfig=xtensa_esp32s3.so','-mdynconfig=xtensa_esp32.so']):
+                with self.subTest(args=args), self.assertRaises(ValueError):
+                    provenance.compiler_command(args,compiler,family)
+            for result in ('wrong-compiler 8.4.0', 'riscv32-esp-elf', 'esp32'):
+                with mock.patch.object(provenance.subprocess, 'check_output', return_value=result), self.assertRaises(ValueError):
+                    provenance.compiler_family(compiler)
 
     def test_ninja_phony_alias_requires_exact_graph_and_retains_real_inputs(self):
         with tempfile.TemporaryDirectory() as tmp:

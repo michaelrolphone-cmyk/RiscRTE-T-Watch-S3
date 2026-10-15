@@ -1,5 +1,8 @@
 """Fail-closed effective SDK configuration and compiler argument checks."""
 import importlib.util
+import hashlib
+import os
+import subprocess
 import json
 from pathlib import Path
 import re
@@ -115,3 +118,53 @@ def expand_response_files(arguments, build, directory, blobs, artifact_rows):
             result.extend(expand(shlex.split(allowed[str(path)].decode()), (*ancestors, str(path))))
         return result
     return expand(arguments)
+
+
+COMPILER_FAMILY_NAMES = {'gcc': 'xtensa-esp-elf-gcc', 'g++': 'xtensa-esp-elf-g++',
+                         's3-gcc': 'xtensa-esp32s3-elf-gcc', 's3-g++': 'xtensa-esp32s3-elf-g++'}
+
+
+def compiler_family(compiler):
+    """Pin the generic drivers, official S3 wrappers and their dynamic config."""
+    compiler = Path(compiler).resolve()
+    require(compiler.name == 'xtensa-esp-elf-gcc', 'Pinned generic native GCC driver required')
+    paths = {name: compiler.with_name(filename) for name, filename in COMPILER_FAMILY_NAMES.items()}
+    paths['xtensa-config'] = compiler.parent.parent / 'lib/xtensa_esp32s3.so'
+    result = {}
+    for role, path in paths.items():
+        require(path.is_file() and path.resolve().is_relative_to(compiler.parent.parent), 'Compiler family member missing/escaped: ' + role)
+        raw = path.read_bytes()
+        result[role] = {'path': str(path.resolve()), 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+    env = {key: value for key, value in os.environ.items() if not key.startswith('XTENSA_') and key not in
+           ('LD_PRELOAD', 'LD_LIBRARY_PATH', 'GCC_EXEC_PREFIX', 'COMPILER_PATH', 'LIBRARY_PATH', 'CPATH', 'C_INCLUDE_PATH', 'CPLUS_INCLUDE_PATH')}
+    for role in COMPILER_FAMILY_NAMES:
+        path = paths[role]
+        version = subprocess.check_output([str(path), '--version'], env=env, text=True).splitlines()[0]
+        require('15.2.0' in version and 'esp-15.2.0_20251204' in version, 'Unreviewed native compiler family version: ' + role)
+        require(subprocess.check_output([str(path), '-dumpmachine'], env=env, text=True).strip() == 'xtensa-esp-elf', 'Wrong compiler target: ' + role)
+        flags = [] if role.startswith('s3-') else ['-mdynconfig=xtensa_esp32s3.so']
+        require(subprocess.check_output([str(path), *flags, '-print-multi-directory'], env=env, text=True).strip() == 'esp32s3', 'Wrong compiler Xtensa configuration: ' + role)
+    return result
+
+
+def compiler_command(arguments, compiler, family):
+    """Accept exact pinned executables and reject configuration/tool overrides."""
+    require(arguments, 'Empty compiler invocation')
+    compiler = Path(compiler).resolve()
+    invoked = Path(arguments[0])
+    require(invoked.is_absolute() and invoked.parent.resolve() == compiler.parent, 'Compiler command is outside pinned tool directory')
+    role = next((role for role, filename in COMPILER_FAMILY_NAMES.items() if invoked.name == filename), None)
+    require(role is not None and str(invoked.resolve()) == family[role]['path'], 'Compiler command is not a pinned native family member')
+    config = []
+    for argument in arguments[1:]:
+        require(not argument.startswith(('-B', '-specs', '--specs', '-wrapper', '--sysroot', '-isysroot', '-fplugin', '-iplugindir')),
+                'Compiler child-tool/specification override')
+        if argument.startswith('-mdynconfig='):
+            config.append(argument.split('=', 1)[1])
+        elif 'dynconfig' in argument or argument.startswith('@'):
+            raise ValueError('Unreviewed Xtensa configuration or unexpanded response override')
+    if role.startswith('s3-'):
+        require(not config, 'Official S3 wrapper configuration overridden')
+    else:
+        require(config == ['xtensa_esp32s3.so'], 'Generic compiler requires exactly one explicit S3 configuration')
+    return role

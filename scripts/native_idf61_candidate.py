@@ -20,7 +20,7 @@ import subprocess
 import sys
 import tempfile
 
-from native_idf61_provenance import effective_sdkconfig, compiler_definitions, expand_response_files
+from native_idf61_provenance import effective_sdkconfig, compiler_definitions, expand_response_files, compiler_family, compiler_command
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / 'docs/native-idf61/released-baseline.json'
@@ -185,7 +185,7 @@ def freeze(sources, build, compiler, output, candidate_version):
                    'sha256': sha(safe_path(build, path).read_bytes())} for key, path in paths.items()}
     lock = dict(schema=1, publication_enabled=False, candidate_version=candidate_version,
                 baseline_contract_sha256=sha(CONTRACT.read_bytes()), sources=pins, native_files=files,
-                compiler=dict(version=version, sha256=sha(compiler.read_bytes())),
+                compiler=dict(version=version, sha256=sha(compiler.read_bytes())), compiler_family=compiler_family(compiler),
                 status='frozen-inputs-only-not-qualified')
     output.write_bytes(encoded(lock))
     return lock
@@ -283,6 +283,9 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
     source_files = {}
     roots = sorted(sources.items(), key=lambda item: len(str(item[1])), reverse=True)
     runtime_rows = []
+    family = compiler_family(compiler)
+    require(lock.get('compiler_family') == family, 'Pinned compiler wrapper/configuration family differs')
+    require(family['gcc']['sha256'] == lock['compiler']['sha256'], 'Pinned generic compiler digest differs')
     profile = (ROOT / 'profiles/native-idf61.cmake').read_text()
     required_definitions = dict(re.findall(r'\b(RISC_[A-Z0-9_]+)=(\d+)\b', profile))
     required_definitions.update(RISC_NATIVE_ESP_IDF='1', RISC_TARGET='\"' + contract['target'] + '\"')
@@ -309,9 +312,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
             source_files['generated/' + source.relative_to(build.resolve()).as_posix()] = sha(source.read_bytes())
         command = row.get('command') or shlex.join(row['arguments'])
         arguments = expand_response_files(shlex.split(command), build, row['directory'], blobs, lock['native_files'])
-        actual_compiler = Path(arguments[1] if Path(arguments[0]).name == 'ccache' else arguments[0]).resolve()
-        require(actual_compiler.parent == compiler.resolve().parent and actual_compiler.name in
-                ('xtensa-esp-elf-gcc', 'xtensa-esp-elf-g++'), 'Compilation did not use the pinned native compiler family')
+        compiler_command(arguments, compiler, family)
         if source.is_relative_to(sources['runtime'] / 'src'):
             compiler_definitions(arguments, required_definitions)
             runtime_rows.append(command)

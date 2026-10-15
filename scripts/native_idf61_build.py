@@ -16,6 +16,8 @@ import shutil
 import subprocess
 import sys
 
+from native_idf61_provenance import compiler_family
+
 _TOKEN = object()
 
 
@@ -46,7 +48,7 @@ def clean_environment(sdk, compiler):
                     'LIBRARY_PATH', 'LD_PRELOAD', 'LD_LIBRARY_PATH', 'GCC_EXEC_PREFIX',
                     'COMPILER_PATH', 'PYTHONPATH', 'PYTHONHOME', 'CMAKE_TOOLCHAIN_FILE',
                     'CMAKE_PREFIX_PATH', 'CMAKE_PROJECT_INCLUDE', 'CMAKE_PROJECT_INCLUDE_BEFORE',
-                    'CMAKE_GENERATOR', 'IDF_CMAKE_ARGS', 'SDKCONFIG', 'SDKCONFIG_DEFAULTS'} or name.startswith(('CCACHE_', 'CMAKE_', 'RISC_', 'X4_', 'IDF_')) and name not in ('IDF_TOOLS_PATH', 'IDF_PYTHON_ENV_PATH', 'IDF_PYTHON_CHECK_CONSTRAINTS'):
+                    'CMAKE_GENERATOR', 'IDF_CMAKE_ARGS', 'SDKCONFIG', 'SDKCONFIG_DEFAULTS'} or name.startswith(('CCACHE_', 'CMAKE_', 'RISC_', 'X4_', 'IDF_', 'XTENSA_')) and name not in ('IDF_TOOLS_PATH', 'IDF_PYTHON_ENV_PATH', 'IDF_PYTHON_CHECK_CONSTRAINTS'):
             env.pop(name, None)
     env.update(IDF_PATH=str(sdk), CCACHE_DISABLE='1', IDF_CCACHE_ENABLE='0',
                PYTHONNOUSERSITE='1', PYTHONDONTWRITEBYTECODE='1', LC_ALL='C', TZ='UTC',
@@ -294,6 +296,8 @@ def validate_build_proof(proof, sources, build, compiler, lock=None):
         require(path.is_file() and file_row(path) == {key: row[key] for key in ('bytes', 'sha256')}, 'Controlled build input changed: ' + name)
     if lock is not None:
         require(lock['sources'] == proof.pins, 'Frozen sources differ from controlled build')
+        expected_family = {role: proof.report['tools'][role] for role in ('gcc', 'g++', 's3-gcc', 's3-g++', 'xtensa-config')}
+        require(lock.get('compiler_family') == expected_family, 'Frozen compiler family differs from pre-build custody')
         for key, row in lock['native_files'].items():
             require(proof.artifacts.get(key) == {name: row[name] for name in ('bytes', 'sha256')}, 'Frozen artifact differs from controlled build: ' + key)
     return proof.report
@@ -326,7 +330,7 @@ def main():
         require(native_cmake.is_file() and native_cmake.read_bytes()[:4] == b'\x7fELF', 'Use native CMake or an isolated IDF environment; ambient PYTHONPATH is not allowed')
         cmake = native_cmake.resolve()
     env['PATH'] = str(cmake.parent) + os.pathsep + env['PATH']
-    tools = {}
+    tools = compiler_family(compiler)
     selected_tools = [('gcc', str(compiler)), ('g++', str(compiler.with_name('xtensa-esp-elf-g++'))),
                              ('python', sys.executable), ('cmake', str(cmake)),
                              ('ninja', shutil.which('ninja', path=env['PATH']))]
