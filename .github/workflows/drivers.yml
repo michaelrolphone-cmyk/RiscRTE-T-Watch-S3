@@ -1213,6 +1213,7 @@ jobs:
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
           python -m unittest discover -s tests -p test_current_execution_sources.py -v
           python -m unittest discover -s tests -p test_midpoint_publication.py -v
+          python -m unittest discover -s tests -p test_midpoint_source_custody.py -v
       - uses: actions/download-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}
