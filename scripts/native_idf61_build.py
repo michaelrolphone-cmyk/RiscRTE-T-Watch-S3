@@ -39,6 +39,12 @@ def run(command, cwd=None, env=None):
     return subprocess.check_output([str(x) for x in command], cwd=cwd, env=env, text=True)
 
 
+def compiler_child(compiler, name, env):
+    executable = run([compiler, '-print-prog-name=' + name], env=env).strip()
+    require(Path(executable).is_absolute(), 'Compiler child tool path is not absolute: ' + name)
+    return executable
+
+
 def clean_environment(sdk, compiler):
     env = dict(os.environ)
     for name in list(env):
@@ -336,8 +342,7 @@ def main():
                              ('ninja', shutil.which('ninja', path=env['PATH']))]
     selected_tools.extend((name, str(compiler.with_name('xtensa-esp-elf-' + name))) for name in ('as', 'ld', 'ar', 'objcopy', 'objdump', 'readelf', 'nm', 'c++filt'))
     for name in ('cc1', 'cc1plus', 'collect2'):
-        executable = run([compiler, '-print-prog-name=' + name]).strip()
-        require(Path(executable).is_absolute(), 'Compiler child tool path is not absolute: ' + name)
+        executable = compiler_child(compiler, name, env)
         selected_tools.append((name, executable))
     for name, executable in selected_tools:
         require(executable is not None and Path(executable).is_file(), 'Required native build tool missing: ' + name)

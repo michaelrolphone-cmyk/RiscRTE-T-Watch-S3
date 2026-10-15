@@ -90,6 +90,17 @@ class ProvenanceContracts(unittest.TestCase):
             with self.assertRaises(ValueError):
                 producer.dependency_rows(text, Path('/build'))
 
+    def test_compiler_child_discovery_uses_clean_build_environment(self):
+        with mock.patch.dict(os.environ, {'GCC_EXEC_PREFIX': '/injected', 'COMPILER_PATH': '/injected'}):
+            env = producer.clean_environment(Path('/sdk'), Path('/compiler/bin/xtensa-esp-elf-gcc'))
+            with mock.patch.object(producer, 'run', return_value='/compiler/libexec/cc1\n') as query:
+                self.assertEqual(producer.compiler_child(Path('/compiler/bin/xtensa-esp-elf-gcc'), 'cc1', env), '/compiler/libexec/cc1')
+            self.assertIs(query.call_args.kwargs['env'], env)
+            self.assertNotIn('GCC_EXEC_PREFIX', env)
+            self.assertNotIn('COMPILER_PATH', env)
+        with mock.patch.object(producer, 'run', return_value='cc1\n'), self.assertRaises(ValueError):
+            producer.compiler_child(Path('/compiler/bin/xtensa-esp-elf-gcc'), 'cc1', env)
+
     def test_exact_compiler_family_and_xtensa_configuration(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); (root / 'bin').mkdir(); (root / 'lib').mkdir()
