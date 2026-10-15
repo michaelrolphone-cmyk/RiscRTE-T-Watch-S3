@@ -183,7 +183,7 @@ jobs:
           assert not any(r['ref']=='refs/tags/'+os.environ['RELEASE_TAG'] for r in json.loads((Path(os.environ['RUNNER_TEMP'])/'tags.json').read_text()))
           PY
           gh release create "$RELEASE_TAG" release-assets/* --repo "$PRODUCT_REPOSITORY" --target "$GITHUB_SHA" \
-            --prerelease --latest=false --title 'T-Watch 1.1.36 app and SDR repair (hardware validation pending)' \
+            --prerelease --latest=false --title 'T-Watch 1.1.36 app and SDR repair' \
             --notes-file release-assets/RELEASE-NOTES.txt
       - name: Verify published source and re-downloaded asset hashes
         env:

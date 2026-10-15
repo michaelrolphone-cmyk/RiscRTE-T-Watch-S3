@@ -38,6 +38,11 @@ def verify_replay(root,source,manifest,compiler):
  return report
 
 
+def release_notes():
+ return ('- Fixes shared-app crashes, including Points in Time.\n'
+         '- Prevents SDR scheduling starvation that could trigger watchdog resets.\n')
+
+
 def instructions():
  return ('T-Watch 1.1.36 app/SDR repair preserving update from exact 1.1.35\n\n'
  'This kit never connects to hardware. The full factory image erases saved data.\n'
@@ -83,6 +88,8 @@ def main():
   need(report['prepared'] and report['cohort_validated'] and report['elf_count']==59 and report['hardware_calls']==report['storage_calls']==0,'Complete no-I/O admission required')
   need(report['sanitized']==(label=='sanitized') and report['producer_sha256']==sha((ROOT/'scripts/verify_app_repair_native.py').read_bytes()),'Admission mode/producer differs')
   need(report['native_elf_sha256']==sha((native/'firmware.elf').read_bytes()),'Native admission ELF differs')
+  scheduler=report['iq_scheduler']
+  need(scheduler['native_elf_sha256']==report['native_elf_sha256'] and all(scheduler[k] is True for k in ('blocking_delay_target_present','notification_target_present','one_tick_argument_instruction_present')),'Production SDR worker target proof absent')
   need(report['active_store_sha256']==store_digest(before) and report['candidate_store_sha256']==store_digest(store_files),'Admission store differs')
   admissions[label]=report
  iq=json.loads((native/'radio-iq-proof.json').read_text())
@@ -118,12 +125,7 @@ def main():
  for name in PINS['expected_repaired_apps']:
   evidence['apps/'+name+'.elf']=store_files[name+'.elf'];evidence['replay-logs/'+name+'.log']=(a.replay/(name+'.log')).read_bytes()
  archive(a.output/(PREFIX+'-Evidence.zip'),evidence)
- notes=('T-Watch 1.1.36 app crash and SDR scheduling repair.\n\n'
-        'Seventeen inherited app ELFs rebuilt from pinned per-app sources; manifests change version only. All 86 other store files, including native Springboard and Home wake policy, are byte-preserved from official 1.1.35.\n'
-        'Runtime 0.3.5 bounds IQ worker occupancy with a real scheduler delay while retaining native trace capacity and the complete product profile. Exact per-artifact source pins are in the evidence bundle.\n'
-        'Complete-store native admission (normal and ASan/UBSan), pinned source replay, ELF-to-BIN proof and 272 both-bank/selector preservation fixtures passed. Hardware validation is pending.\n'
-        'Use the preserving kit only from exact installed 1.1.35 after a fresh full readback. The factory image erases saved data. Non-Plus T-Watch-S3 with BMA423; confirm physical radio and antenna band.\n\n'
-        'Product: '+a.source_revision+'\nRuntime: '+PINS['runtime_revision']+'\nFactory SHA256: '+sha(factory)+'\n')
+ notes=release_notes()
  (a.output/'RELEASE-NOTES.txt').write_text(notes);(a.output/'UPDATE-INSTRUCTIONS.txt').write_text(instructions())
  payload=files(a.output);(a.output/'SHA256SUMS').write_bytes(checksums(payload))
  print(json.dumps(metadata,indent=2))

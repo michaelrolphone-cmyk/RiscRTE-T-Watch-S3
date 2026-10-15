@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 """Admit the complete T-Watch store against the exact shared Runtime native ELF."""
-import argparse,hashlib,io,json,os,re,subprocess,sys
+import argparse,hashlib,io,json,os,re,struct,subprocess,sys
 from pathlib import Path
 from watch_app_repair import ROOT,PINS,clean,need,sha,encoded,files,verify_wake
 import check_runtime_store_admission as admission
 from elftools.elf.elffile import ELFFile
+
+def scheduler_proof(path,compiler):
+    native=path.read_bytes();elf=ELFFile(io.BytesIO(native));syms={s.name:s for s in elf.get_section_by_name('.symtab').iter_symbols()}
+    workers=[s for n,s in syms.items() if 'NativeRadioIq' in n and 'workerRun' in n]
+    need(len(workers)==1,'Exact production IQ worker required')
+    worker=workers[0];start=worker['st_value'];stop=start+worker['st_size']
+    objdump=str(compiler).removesuffix('gcc')+'objdump'
+    disassembly=subprocess.check_output([objdump,'-D','-C',f'--start-address={start}',f'--stop-address={stop}',str(path)],text=True)
+    targets=[]
+    for match in re.finditer(r'l32r\s+a8,\s+([0-9a-f]+)',disassembly):
+        address=int(match.group(1),16)
+        section=next(s for s in elf.iter_sections() if s['sh_addr']<=address< s['sh_addr']+s['sh_size'])
+        targets.append(struct.unpack_from('<I',section.data(),address-section['sh_addr'])[0])
+    need(syms['vTaskDelay']['st_value'] in targets and syms['ulTaskGenericNotifyTake']['st_value'] in targets,'Production worker blocking/notify calls absent')
+    need(re.search(r'movi(?:\.n)?\s+a10,\s*1\b',disassembly),'Production worker one-tick argument instruction absent')
+    return dict(native_elf_sha256=sha(native),worker_address=start,worker_bytes=worker['st_size'],blocking_delay_target_present=True,notification_target_present=True,one_tick_argument_instruction_present=True,disassembly_sha256=sha(disassembly.encode()),scope='Static production-worker target/call evidence; source semantics and timing are covered by the pinned Runtime regression tests, not physical hardware.')
 
 def composition(runtime,native,profile,rows):
     need(rows==32,'Expected 32 app policy rows');clean(runtime,PINS['runtime_revision'])
@@ -33,6 +49,7 @@ def composition(runtime,native,profile,rows):
 def main():
  p=argparse.ArgumentParser()
  for n in ('runtime','store','baseline-store','output'):p.add_argument('--'+n,type=Path,required=True)
+ p.add_argument('--compiler',type=Path,required=True)
  a=p.parse_args();a.runtime=a.runtime.resolve();a.output.mkdir(parents=True,exist_ok=True)
  native=(a.runtime/'.pio/build/watch-native-ui/firmware.elf').read_bytes()
  active=files(a.baseline_store);store=files(a.store);verify_wake(store)
@@ -41,5 +58,6 @@ def main():
  result=admission.admit_cohort(a.runtime,native,active,store,app_policy_rows=32,native_profile=a.runtime/'watch-native-ui.ini')
  need(result['elf_count']==59 and result['hardware_calls']==result['storage_calls']==0,'Incomplete or stateful admission')
  result.update(sanitized=os.environ.get('SANITIZE')=='1',producer_sha256=sha(Path(__file__).read_bytes()))
+ result['iq_scheduler']=scheduler_proof(a.runtime/'.pio/build/watch-native-ui/firmware.elf',a.compiler)
  (a.output/'admission.json').write_bytes(encoded(result));print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

@@ -13,9 +13,15 @@ def require_final():
     need(PINS['finalized'] is True, 'Final repaired-app closure pending')
     need(PINS['version'] == '1.1.36' and PINS['baseline_version'] == '1.1.35', 'Wrong successor versions')
     need(PINS['provisioning_version_reserved'] == '1.1.34', 'Provisioning reservation changed')
-    for key in ('runtime_revision', 'apps_system_revision', 'preserved_springboard_system_revision', 'baseline_source'):
-        need(re.fullmatch('[0-9a-f]{40}', PINS[key]), 'Immutable source required: ' + key)
+    for key in ('runtime_revision', 'apps_system_revision', 'preserved_springboard_system_revision', 'baseline_source', 'replay_source_revision'):
+        need(isinstance(PINS[key],str) and re.fullmatch('[0-9a-f]{40}', PINS[key]), 'Immutable source required: ' + key)
     need(sha((DOCS / 'app-manifest.json').read_bytes()) == PINS['app_manifest_sha256'], 'Final app manifest differs')
+    manifest = json.loads((DOCS / 'app-manifest.json').read_text())
+    need(manifest['complete'] is True and manifest['product'] == 'twatch' and manifest['all_transitive_inputs_verified'] is True, 'Incomplete source closure')
+    need(manifest['system_source'] == PINS['apps_system_revision'] and manifest['runtime_repair'] == PINS['runtime_revision'], 'App/native source closure differs')
+    need(set(manifest['apps']) == set(PINS['expected_repaired_apps']), 'Unexpected repaired app set')
+    for name, row in manifest['apps'].items():
+        need(row['deployed_sha256'] == PINS['baseline_files'][name+'.elf'], 'App predecessor differs: '+name)
 
 
 def verify_baseline(store):

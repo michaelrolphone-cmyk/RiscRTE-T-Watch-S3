@@ -6,6 +6,8 @@ from unittest.mock import patch
 import package_app_repair as p
 
 class PackageTests(unittest.TestCase):
+ def test_release_notes_only_actual_changes(self):
+  self.assertEqual(p.release_notes(),'- Fixes shared-app crashes, including Points in Time.\n- Prevents SDR scheduling starvation that could trigger watchdog resets.\n')
  def test_nonbaseline_factory_refused(self):
   with self.assertRaisesRegex(ValueError,'Exact released .35'):p.make_factory(b'wrong',b'',b'',Path('/unused'),Path('/unused'))
  def test_same_size_wrong_factory_refused(self):
