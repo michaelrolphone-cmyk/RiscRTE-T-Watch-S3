@@ -13,6 +13,10 @@
   "logs": {
     "eink-sleep-normal.log": "e57dac3fcf5f27d0fe1804a73e838850b982196349dcbeadf2aa08dcfc5bb486",
     "eink-sleep-sanitized.log": "e57dac3fcf5f27d0fe1804a73e838850b982196349dcbeadf2aa08dcfc5bb486",
-    "native-fallback-provisional-no-lsan.log": "7c4ac6c8dc1abc4ac8e0bdecc9d6310f80366505f90640aa0620d7332f124d25"
-  }
+    "native-fallback-provisional-no-lsan.log": "7c4ac6c8dc1abc4ac8e0bdecc9d6310f80366505f90640aa0620d7332f124d25",
+    "eink-wake-light.log": "df29a10b20dfb58a23510543703a7c9d715f57ce1011e005c2f252781f010704"
+  },
+  "sparse_adapter_wake_light_cases": 12,
+  "sparse_adapter_wake_light_result": "interactive restores saved on/off/nondefault brightness; timer/cold remain dark; failed restoration fenced",
+  "scope": "Sparse X4 sleep client plus actual shared paper adapter; native/provider doubles, not hardware"
 }

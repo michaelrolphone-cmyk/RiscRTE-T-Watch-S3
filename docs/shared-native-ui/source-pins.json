@@ -148,5 +148,25 @@
     "wifi/manifest.json": "6fcc5370af830419e4e14c2ea000998e60e035623ba9489c3889bb0286842e99",
     "wifi_settings.elf": "0260a6d8c39ede4ed4b5aebc2220c93141b6db800c0aebab464404e313a5af2a",
     "wifi_settings.json": "90227394a8d95c5faba2ed35a59c21b93d2bd00c967a65d36bfb022f1e71b414"
-  }
+  },
+  "springboard_imports": [
+    "free",
+    "malloc",
+    "memchr",
+    "memcmp",
+    "memcpy",
+    "memset",
+    "risc_runtime_get_api",
+    "snprintf",
+    "strcmp",
+    "strcpy",
+    "strlen",
+    "strncmp"
+  ],
+  "springboard_exports": [
+    "app_main",
+    "app_module_fini",
+    "app_module_init"
+  ],
+  "native_build_status": "paused; native rebuild and asset publication are not authorized"
 }

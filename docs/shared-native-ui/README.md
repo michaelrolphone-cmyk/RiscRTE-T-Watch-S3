@@ -72,3 +72,15 @@ paper_clock.c and does not by itself update that product. Audit paper retained
 wake classification, sparse timer wake, sleep ownership and driver boundaries
 separately against the shared Runtime ABI. No e-ink UI migration or hardware
 assumption is part of this Watch integration.
+
+The exact .121 sparse X4 sleep client passed 143 scenarios x 2 brightness x 2
+diagnostic profiles in normal and ASan/UBSan modes (572 each). The actual shared
+paper adapter passed 12 wake-light cases across normal/sanitized runs: interactive
+wake restores saved light, while timer/cold stay dark. Preserve this distinction;
+do not transplant the RGB first-visible-frame brightness helper into paper Home.
+
+`qualify_shared_native_ui.py` archives the final pinned shared System and runs
+the full both-Watch geometry/features/fallback/input/brightness/custody matrix
+without PlatformIO or native firmware builds. Final pin selection is required.
+Native firmware builds remain paused; no assets may be published from their
+existing local outputs. Source and host qualification continue independently.

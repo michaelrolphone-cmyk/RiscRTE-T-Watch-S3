@@ -67,6 +67,7 @@ def _build(args):
     syms=subprocess.check_output([str(args.compiler).removesuffix('gcc')+'nm','-D',str(elf)],text=True)
     imports=sorted({l.split()[-1] for l in syms.splitlines() if ' U ' in ' '+l})
     exports=sorted({l.split()[-1] for l in syms.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')})
+    need(imports==PINS['springboard_imports'] and exports==PINS['springboard_exports'],'Springboard import/export authority differs from released baseline')
     report=dict(baseline=args.baseline,provisional=args.provisional,sha256=sha(elf.read_bytes()),bytes=elf.stat().st_size,imports=imports,exports=exports,command=cmd,compaction=compaction,compiler=cc_version,compiler_sha256=sha(args.compiler.read_bytes()),source_revision=PINS['baseline_system'] if args.baseline else PINS['system_revision'],source_files={k:sha(v) for k,v in files(args.system).items() if not k.startswith(('.git/','build/'))},device_accessed=False)
     (args.output/'build.json').write_bytes(encoded(report));print(json.dumps({k:report[k] for k in ('baseline','provisional','sha256','bytes','imports','exports')},indent=2))
 
@@ -96,7 +97,9 @@ def native_stage(args):
     print('Native profiles staged; use PLATFORMIO_SETTING_ENABLE_TELEMETRY=No and pio run -c watch-native-ui.ini -e watch-native-ui -j1')
 
 def compose(args):
-    if not args.provisional:require_final()
+    if not args.provisional:
+        require_final();clean(ROOT,args.source_revision)
+    need(re.fullmatch('[0-9a-f]{40}',args.source_revision),'Full product source revision required')
     need(not args.output.exists(),'Output must be new')
     before=files(args.baseline_store);wake=verify_baseline(before);store=copy.deepcopy(before)
     candidate=(args.springboard/'springboard.elf').read_bytes();need(candidate[:7]==b'\x7fELF\x01\x01\x01','Invalid target ELF')
