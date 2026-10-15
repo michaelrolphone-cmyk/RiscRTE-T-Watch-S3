@@ -21,6 +21,8 @@ def clean(repo, revision):
     need(not git(repo,'diff','HEAD','--name-only').strip(),'Dirty source: '+str(repo))
 def require_final():
     need(PINS['finalized'] is True and re.fullmatch('[0-9a-f]{40}',PINS['system_revision'] or ''),'Final shared System pin pending')
+    for key in ('runtime_revision','bridge_revision','baseline_system','baseline_runtime'):
+        need(re.fullmatch('[0-9a-f]{40}',PINS[key] or ''),'Immutable source pin required: '+key)
     need(PINS['version']=='1.1.35' and PINS['provisioning_version_reserved']=='1.1.34','Reserved product versions changed')
 def verify_wake(store):
     manifest=json.loads(store['default.json']);boot=json.loads(store['boot.json'])

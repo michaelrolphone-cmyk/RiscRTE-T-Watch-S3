@@ -100,6 +100,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m pip install platformio==6.1.19 esptool==4.11.0 pyelftools==0.32
+          git -C .source/runtime fetch --no-tags --depth=1 origin "$(python3 -c 'import json; print(json.load(open("docs/shared-native-ui/source-pins.json"))["baseline_runtime"])')"
           python3 scripts/test_shared_native_ui.py
           python3 scripts/test_shared_ui_package.py
           python3 scripts/shared_native_ui.py native-stage --runtime .source/runtime
