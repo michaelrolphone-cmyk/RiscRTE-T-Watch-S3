@@ -1,0 +1,21 @@
+name: T-Watch 1.1.36 repair contracts
+on:
+  push:
+    branches: [fix/shared-app-repair-1.1.36]
+    paths:
+      - '.github/workflows/shared-app-repair*.yml'
+      - 'docs/shared-app-repair/**'
+      - 'scripts/*app_repair*.py'
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: |
+          python3 scripts/test_watch_app_repair.py
+          python3 scripts/test_shared_native_ui.py
+          python3 scripts/test_shared_ui_package.py
