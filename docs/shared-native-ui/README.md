@@ -1,7 +1,7 @@
 # Shared native UI integration: T-Watch 1.1.35
 
-This is a source-only integration route. Final shared System source qualification is
-pending. Release asset publication is disabled. Version 1.1.34 remains reserved
+Final immutable shared System source qualification is pending. Release asset
+publication is authorized but remains gated on that final source. Version 1.1.34 remains reserved
 for the independent provisioning work. No serial access, flashing or deployment
 is performed by this route.
 
@@ -41,8 +41,9 @@ No Waveshare vendor display source or provisioning profile is selected.
 Stage with `scripts/shared_native_ui.py native-stage --runtime <checkout>`.
 Build in that runtime using the installed pinned PlatformIO/toolchain:
 `PLATFORMIO_SETTING_ENABLE_TELEMETRY=No pio run -c watch-native-ui.ini -e watch-native-ui -j1`.
-Disable PlatformIO telemetry and update polling before running; no project or
-machine metadata is authorized for an external collector.
+Keep PlatformIO telemetry disabled. The owner has authorized the build tool
+network/metadata routes needed for this task. An interval of zero enables checks
+on every run; it does not disable PlatformIO core-version maintenance.
 
 ## Required release gates
 
@@ -58,7 +59,7 @@ machine metadata is authorized for an external collector.
 6. Construct a preserving update from exact 1.1.33 and test source identity,
    interrupted writes, readback and unchanged NVS/AppData/partition bytes.
 7. Only after final shared pins and product source commit are coordinated,
-   authorize asset publication separately. Factory images erase saved data;
+   package and publish the tested assets. Factory images erase saved data;
    source tests and target builds do not qualify physical hardware.
 
 ## E-ink applicability
@@ -82,5 +83,16 @@ do not transplant the RGB first-visible-frame brightness helper into paper Home.
 `qualify_shared_native_ui.py` archives the final pinned shared System and runs
 the full both-Watch geometry/features/fallback/input/brightness/custody matrix
 without PlatformIO or native firmware builds. Final pin selection is required.
-Native firmware builds remain paused; no assets may be published from their
-existing local outputs. Source and host qualification continue independently.
+The authorized native target run passed on Runtime54461e8. Final source-pin
+qualification remains a separate gate.
+`test_shared_ui_preservation.py` models both active banks, staged and torn writes,
+readback corruption and final-selector interruption with protected NVS/AppData
+and active-pair bytes. Its flash images are software fixtures only.
+
+`package_shared_native_ui.py` requires final immutable source, exact cohort and
+firmware identity, full-store native admission, shared source qualification and
+all 60 preservation/fault cases. It creates local factory, preserving-kit and
+evidence artifacts with independently verified ZIP contents and checksums. It
+has no network or hardware operations. Its factory constructor has also been
+checked against the exact released .33 image and the candidate native/store
+bytes: bootloader, partition table, NVS, AppData and unrelated regions match.

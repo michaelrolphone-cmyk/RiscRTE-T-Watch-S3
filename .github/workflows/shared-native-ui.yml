@@ -8,6 +8,9 @@ on:
       - 'scripts/verify_shared_native_ui.py'
       - 'scripts/qualify_shared_native_ui.py'
       - 'scripts/test_shared_native_ui.py'
+      - 'scripts/test_shared_ui_preservation.py'
+      - 'scripts/package_shared_native_ui.py'
+      - 'scripts/test_shared_ui_package.py'
       - 'native/shared-ui-profile/**'
       - 'docs/shared-native-ui/**'
 permissions:
@@ -18,4 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python scripts/test_shared_native_ui.py -v
-      - run: python -m py_compile scripts/shared_native_ui.py scripts/verify_shared_native_ui.py scripts/qualify_shared_native_ui.py
+      - run: python scripts/test_shared_ui_package.py -v
+      - run: python -m py_compile scripts/shared_native_ui.py scripts/verify_shared_native_ui.py scripts/qualify_shared_native_ui.py scripts/test_shared_ui_preservation.py scripts/package_shared_native_ui.py

@@ -168,5 +168,5 @@
     "app_module_fini",
     "app_module_init"
   ],
-  "native_build_status": "paused; native rebuild and asset publication are not authorized"
+  "native_build_status": "authorized target run passed; final System pin and final release qualification pending"
 }
