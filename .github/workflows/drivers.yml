@@ -35,6 +35,7 @@ jobs:
           python scripts/test_contracts.py
           python scripts/test_motion_wake.py
           python -m unittest discover -s tests -p test_motion_source_custody.py -v
+          python -m unittest discover -s tests -p test_legacy_clock_custody.py -v
           python scripts/test_alarm_outputs.py
           python scripts/test_panel_throughput.py
           python -m unittest discover -s tests -p test_clock_performance.py -v
