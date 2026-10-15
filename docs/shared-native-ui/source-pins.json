@@ -13,7 +13,7 @@
   "runtime_revision": "54461e8a7f61b28600b8ec8dcaf27b12cd45e829",
   "system_revision": "f31f89636304d202c49884e2e9b2e0b2ec5fb891",
   "finalized": true,
-  "publication_enabled": false,
+  "publication_enabled": true,
   "baseline_store_file_count": 121,
   "baseline_elf_count": 59,
   "springboard_manifest_version": "1.7.17",
@@ -168,5 +168,5 @@
     "app_module_fini",
     "app_module_init"
   ],
-  "native_build_status": "authorized target run passed; final System pin and final release qualification pending"
+  "native_build_status": "final immutable System and native target qualification, both admissions, 272 preservation cases, and gated release packaging passed in CI"
 }
