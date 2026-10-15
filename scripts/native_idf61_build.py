@@ -115,6 +115,57 @@ def dependency_rows(text, directory):
     return objects, paths
 
 
+def ninja_input_paths(text, directory, query):
+    """Resolve only Ninja-proven phony aliases; missing real inputs still fail.
+
+    Ninja versions differ in whether `-t inputs` retains order-only phony
+    targets. Query the actual graph instead of treating target-looking names
+    or filename extensions as an exemption from source closure.
+    """
+    directory = directory.resolve()
+    paths, aliases, visiting = set(), {}, set()
+
+    def expand(name):
+        require(name and not any(c in name for c in '\n\r\0'), 'Invalid Ninja input name')
+        path = (directory / name).resolve()
+        if path.exists():
+            paths.add(path)
+            return
+        require(path.is_relative_to(directory), 'Missing external Ninja input: ' + str(path))
+        canonical = path.relative_to(directory).as_posix()
+        require(canonical not in visiting, 'Cyclic Ninja phony dependency: ' + canonical)
+        if canonical in aliases:
+            return
+        require(len(aliases) + len(visiting) < 2048, 'Excessive Ninja phony closure')
+        visiting.add(canonical)
+        raw = query(canonical)
+        lines = raw.splitlines()
+        require(lines and lines[0] == canonical + ':' and len(lines) >= 3
+                and lines[1] == '  input: phony', 'Missing non-phony Ninja input: ' + canonical)
+        require(lines.count('  outputs:') == 1, 'Unrecognized Ninja query shape')
+        stop = lines.index('  outputs:')
+        require(stop >= 2, 'Unrecognized Ninja query order')
+        children = []
+        for line in lines[2:stop]:
+            require(line.startswith('    '), 'Unrecognized Ninja dependency edge')
+            child = line[4:]
+            for prefix in ('|| ', '| '):
+                if child.startswith(prefix):
+                    child = child[len(prefix):]
+                    break
+            require(child, 'Empty Ninja dependency edge')
+            children.append(child)
+        for child in children:
+            expand(child)
+        visiting.remove(canonical)
+        aliases[canonical] = {'rule': 'phony', 'inputs': children, 'query': raw}
+
+    for name in text.splitlines():
+        if name:
+            expand(name)
+    return paths, aliases
+
+
 def map_inputs(raw, directory, executable, elf):
     from elftools.elf.elffile import ELFFile
     import io
@@ -152,6 +203,8 @@ def collect_build_proof(recipe, sources, build, compiler, pins, command, env, to
     catalog = tracked_catalog(sources)
     rows = []
     objects, dependencies, traces = set(), set(), {}
+    phony_aliases = {}
+    evidence = build / 'native-build-evidence'; evidence.mkdir()
     for folder, label in ((build, 'app'), (build / 'bootloader', 'bootloader')):
         compilation = json.loads((folder / 'compile_commands.json').read_text())
         rows.extend(compilation)
@@ -163,11 +216,15 @@ def collect_build_proof(recipe, sources, build, compiler, pins, command, env, to
                 args.append(executable)
             content = run(args, cwd=folder, env=env)
             traces[label + '_' + operation] = content
+            (evidence / (label + '_' + operation + '.txt')).write_text(content)
         found, headers = dependency_rows(traces[label + '_deps'], folder)
         objects.update(found); dependencies.update(headers)
-        for name in traces[label + '_inputs'].splitlines():
-            if name:
-                path = Path(name); dependencies.add((folder / path).resolve() if not path.is_absolute() else path.resolve())
+        input_paths, aliases = ninja_input_paths(traces[label + '_inputs'], folder,
+            lambda target: run([tools['ninja']['path'], '-t', 'query', target], cwd=folder, env=env))
+        dependencies.update(input_paths)
+        phony_aliases[label] = aliases
+        traces[label + '_phony_queries'] = recipe.encoded(aliases).decode()
+        (evidence / (label + '_phony_queries.txt')).write_text(traces[label + '_phony_queries'])
         executable_path = folder / executable
         map_path = executable_path.with_suffix('.map')
         dependencies.update(map_inputs(map_path.read_bytes(), folder, executable_path, executable_path.read_bytes()))
@@ -219,9 +276,8 @@ def collect_build_proof(recipe, sources, build, compiler, pins, command, env, to
     artifacts = {key: file_row(recipe.safe_path(build, path)) for key, path in recipe.artifact_paths(build).items()}
     report = dict(schema=1, fresh_build=True, same_process_qualification=True,
                   detached_receipt_is_attestation=False, commands=command, compile_jobs=1, sources=pins,
-                  tools=tools, dependency_counts=classes, files=files, artifacts=artifacts,
+                  tools=tools, dependency_counts=classes, files=files, artifacts=artifacts, phony_aliases=phony_aliases,
                   traces={key: {'sha256': sha(value.encode()), 'bytes': len(value.encode())} for key, value in traces.items()})
-    evidence = build / 'native-build-evidence'; evidence.mkdir()
     for key, value in traces.items():
         (evidence / (key + '.txt')).write_text(value)
     (evidence / 'build-closure.json').write_bytes(recipe.encoded(report))

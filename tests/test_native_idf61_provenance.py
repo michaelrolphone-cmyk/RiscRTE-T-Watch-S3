@@ -90,6 +90,48 @@ class ProvenanceContracts(unittest.TestCase):
             with self.assertRaises(ValueError):
                 producer.dependency_rows(text, Path('/build'))
 
+    def test_ninja_phony_alias_requires_exact_graph_and_retains_real_inputs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / 'esp-idf/esp_system/ld/sections.ld'
+            real.parent.mkdir(parents=True); real.write_bytes(b'actual linker script')
+            archive = root / 'runtime.a'; archive.write_bytes(b'actual linked archive')
+            rows = {
+                '__ldgen_output_sections.ld': '__ldgen_output_sections.ld:\n  input: phony\n    CMakeFiles/__ldgen_output_sections.ld\n    runtime.a\n  outputs:\n    app.elf\n',
+                'CMakeFiles/__ldgen_output_sections.ld': 'CMakeFiles/__ldgen_output_sections.ld:\n  input: phony\n    esp-idf/esp_system/ld/sections.ld\n    || runtime.a\n  outputs:\n    __ldgen_output_sections.ld\n',
+            }
+            paths, aliases = producer.ninja_input_paths('__ldgen_output_sections.ld\n', root, rows.__getitem__)
+            self.assertEqual(paths, {real, archive})
+            self.assertEqual(set(aliases), set(rows))
+            self.assertEqual(aliases['__ldgen_output_sections.ld']['query'], rows['__ldgen_output_sections.ld'])
+            # An extension/SDK-looking name is never sufficient: the actual
+            # graph must say phony, with the exact queried target identity.
+            for bad in (rows['__ldgen_output_sections.ld'].replace('input: phony', 'input: CUSTOM_COMMAND'),
+                        rows['__ldgen_output_sections.ld'].replace('__ldgen_output_sections.ld:', 'different:'),
+                        rows['__ldgen_output_sections.ld'].replace('  outputs:', '  unknown:')):
+                with self.subTest(query=bad), self.assertRaises(ValueError):
+                    producer.ninja_input_paths('__ldgen_output_sections.ld\n', root, lambda _: bad)
+            # A removed real linker input cannot hide behind a phony wrapper.
+            real.unlink()
+            missing = 'esp-idf/esp_system/ld/sections.ld'
+            rows[missing] = missing + ':\n  input: CUSTOM_COMMAND\n    template.in\n  outputs:\n    app.elf\n'
+            with self.assertRaisesRegex(ValueError, 'Missing non-phony'):
+                producer.ninja_input_paths('__ldgen_output_sections.ld\n', root, rows.__getitem__)
+
+    def test_ninja_phony_cycles_external_missing_and_empty_order_only_targets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            rows = {'a': 'a:\n  input: phony\n    b\n  outputs:\n',
+                    'b': 'b:\n  input: phony\n    a\n  outputs:\n'}
+            with self.assertRaisesRegex(ValueError, 'Cyclic'):
+                producer.ninja_input_paths('a\n', root, rows.__getitem__)
+            with self.assertRaisesRegex(ValueError, 'Missing external'):
+                producer.ninja_input_paths('/nonexistent-external-source-header\n', root, rows.__getitem__)
+            # Empty order-only phony nodes have no file semantics. Their exact
+            # graph evidence remains recorded, rather than invented bytes.
+            paths, aliases = producer.ninja_input_paths('empty\n', root, lambda _: 'empty:\n  input: phony\n  outputs:\n')
+            self.assertEqual(paths, set()); self.assertEqual(aliases['empty']['inputs'], [])
+
     def test_map_must_match_output_and_singleton_elf_address(self):
         symbol = {'st_value': 0x40370000, 'st_shndx': 1}
         class Symbol(dict):
