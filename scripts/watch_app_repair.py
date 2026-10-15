@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict official-1.1.35 successor composition; no device or publication I/O."""
+"""Strict official-1.1.36 successor composition; no device or publication I/O."""
 import argparse, copy, json, re, subprocess
 from pathlib import Path
 from shared_native_ui import clean, encoded, files, git, need, sha, verify_wake, write
@@ -10,25 +10,44 @@ PINS = json.loads((DOCS / 'source-pins.json').read_text())
 
 
 def require_final():
-    need(PINS['finalized'] is True, 'Final repaired-app closure pending')
-    need(PINS['version'] == '1.1.36' and PINS['baseline_version'] == '1.1.35', 'Wrong successor versions')
+    need(PINS['finalized'] is True, 'Final native SDR source closure pending')
+    need(PINS['version'] == '1.1.37' and PINS['baseline_version'] == '1.1.36', 'Wrong successor versions')
     need(PINS['provisioning_version_reserved'] == '1.1.34', 'Provisioning reservation changed')
-    for key in ('runtime_revision', 'apps_system_revision', 'preserved_springboard_system_revision', 'baseline_source', 'replay_source_revision'):
+    for key in ('runtime_revision', 'apps_system_revision', 'preserved_springboard_system_revision', 'baseline_source', 'replay_source_revision', 'sdr_system_revision', 'sdr_utilities_revision'):
         need(isinstance(PINS[key],str) and re.fullmatch('[0-9a-f]{40}', PINS[key]), 'Immutable source required: ' + key)
     need(sha((DOCS / 'app-manifest.json').read_bytes()) == PINS['app_manifest_sha256'], 'Final app manifest differs')
     manifest = json.loads((DOCS / 'app-manifest.json').read_text())
-    need(manifest['complete'] is True and manifest['product'] == 'twatch' and manifest['all_transitive_inputs_verified'] is True, 'Incomplete source closure')
-    need(manifest['system_source'] == PINS['apps_system_revision'] and manifest['runtime_repair'] == PINS['runtime_revision'], 'App/native source closure differs')
-    need(set(manifest['apps']) == set(PINS['expected_repaired_apps']), 'Unexpected repaired app set')
+    need(manifest['complete'] is True and manifest['product'] == 'twatch', 'Incomplete source closure')
+    need(manifest['producer_commit'] == PINS['replay_source_revision'] and manifest['runtime_repair'] == PINS['runtime_revision'], 'App/native source closure differs')
+    need(manifest['waterfall_system_source'] == PINS['apps_system_revision'] == PINS['sdr_system_revision'] and manifest['waterfall_utilities_source'] == PINS['sdr_utilities_revision'], 'SDR source closure differs')
+    need(manifest['baseline_product_source'] == PINS['baseline_source'] and manifest['baseline_factory_sha256'] == PINS['baseline_sha256'], 'Producer baseline differs')
+    need(manifest['changed_apps'] == ['waterfall'], 'Producer replacement set differs')
+    need(set(manifest['apps']) == set(PINS['expected_replayed_apps']) and len(manifest['apps']) == 18, 'Unexpected source replay app set')
+    need(PINS['expected_replaced_apps'] == ['waterfall'], 'Only native SDR app may be replaced')
+    need(PINS['changed_store_files'] == ['cohort.json', 'waterfall.elf', 'waterfall.json'], 'Only SDR payload, version and cohort may change')
+    qualification_data = (DOCS / 'source-renderer-qualification.json').read_bytes()
+    need(sha(qualification_data) == PINS['source_renderer_qualification_sha256'], 'Source renderer qualification changed')
+    qualification = json.loads(qualification_data)
+    need(qualification['system_source']['published_equivalent'] == PINS['sdr_system_revision'], 'Source renderer System differs')
+    need(qualification['target_builds']['twatch']['sha256'] == manifest['apps']['waterfall']['sha256'], 'Qualified renderer artifact differs')
+    waterfall = manifest['apps']['waterfall']
+    defines = qualification['target_builds']['twatch']['recipe_flags']
+    need('-DPORTABLE_RF_NATIVE_CANVAS' in defines, 'Native SDR selector absent')
+    need('-DPORTABLE_QUICK_ATOMIC_PREFERENCES' not in defines, 'Wave-only atomic preferences selector present')
+    need(waterfall['old_version'] == '0.3.6' and waterfall['version'] == '0.3.7', 'Wrong T-Watch SDR versions')
+    need(all(r['capability'] != 'storage.key-value.atomic' for r in PINS['baseline_waterfall_manifest']['requires']), 'Wave atomic grant in T-Watch baseline')
     for name, row in manifest['apps'].items():
         need(row['deployed_sha256'] == PINS['baseline_files'][name+'.elf'], 'App predecessor differs: '+name)
+        need(row['changed'] is (name == 'waterfall'), 'Unexpected changed app: '+name)
+        need(row['manifest_changes'] == (['version'] if name == 'waterfall' else []), 'Unexpected manifest scope: '+name)
+        if name != 'waterfall':need(row['sha256'] == row['deployed_sha256'] and row['old_version'] == row['version'], 'Preserved app differs: '+name)
 
 
 def verify_baseline(store):
-    need({n: sha(v) for n, v in store.items()} == PINS['baseline_files'], 'Exact official 1.1.35 store required')
+    need({n: sha(v) for n, v in store.items()} == PINS['baseline_files'], 'Exact official 1.1.36 store required')
     need(len(store) == 121 and sum(n.endswith('.elf') for n in store) == 59, 'Incomplete official baseline')
     cohort = json.loads(store['cohort.json'])
-    need(cohort['version'] == '1.1.35' and cohort['source_revision'] == PINS['baseline_source'], 'Wrong official cohort')
+    need(cohort['version'] == '1.1.36' and cohort['source_revision'] == PINS['baseline_source'], 'Wrong official cohort')
     need(sha(store['springboard.elf']) == PINS['preserved_springboard_sha256'], 'Official Springboard differs')
     return verify_wake(store)
 
@@ -46,7 +65,7 @@ def verify_metadata(before, after, firmware, revision):
     need(set(after) == set(before), 'Store inventory changed')
     changed = sorted(n for n in before if before[n] != after[n])
     need(changed == PINS['changed_store_files'], 'Unexpected changed store files')
-    for name in PINS['expected_repaired_apps']:
+    for name in PINS['expected_replaced_apps']:
         need(json.loads(after[name + '.json']) == next_manifest(before[name + '.json']), 'App manifest authority changed: ' + name)
     cohort = json.loads(before['cohort.json'])
     cohort.update(version=PINS['version'], source_revision=revision, runtime_version=PINS['runtime_version'],
@@ -76,14 +95,20 @@ def compose(a):
     before = files(a.baseline_store); wake = verify_baseline(before); store = copy.deepcopy(before)
     manifest = json.loads((DOCS / 'app-manifest.json').read_text())
     need(manifest['complete'] is True and manifest['product'] == 'twatch', 'Incomplete or wrong app closure')
-    need(set(manifest['apps']) == set(PINS['expected_repaired_apps']), 'Wrong app closure members')
+    need(set(manifest['apps']) == set(PINS['expected_replayed_apps']), 'Wrong app closure members')
     for name, row in manifest['apps'].items():
         old = before[name + '.elf']; elf = (a.apps / (name + '.elf')).read_bytes()
         need(row['deployed_sha256'] == sha(old), 'App baseline mismatch: ' + name)
         need(sha(elf) == row['sha256'] and len(elf) == row['bytes'], 'App candidate differs: ' + name)
         need(elf[:7] == b'\x7fELF\x01\x01\x01', 'Invalid ELF: ' + name)
-        store[name + '.elf'] = elf
-        store[name + '.json'] = encoded(next_manifest(before[name + '.json']))
+        need(row['old_version'] == json.loads(before[name + '.json'])['version'], 'App predecessor version differs: ' + name)
+        if name in PINS['expected_replaced_apps']:
+            need(row['version'] == next_manifest(before[name + '.json'])['version'], 'App candidate version differs: ' + name)
+            store[name + '.elf'] = elf
+            store[name + '.json'] = encoded(next_manifest(before[name + '.json']))
+        else:
+            need(elf == old, 'Preserved source replay differs: ' + name)
+            need(row['version'] == row['old_version'], 'Preserved app version differs: ' + name)
     firmware = a.firmware.read_bytes()
     need(24 < len(firmware) <= 0x260000, 'Native firmware size differs')
     need(set(re.findall(rb'RTE_SOURCE=([^\x00\s]+)', firmware)) == {PINS['runtime_revision'].encode()}, 'Native source marker differs')

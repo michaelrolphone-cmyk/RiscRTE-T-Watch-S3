@@ -1,7 +1,7 @@
-name: T-Watch 1.1.36 repair contracts
+name: T-Watch 1.1.37 native SDR contracts
 on:
   push:
-    branches: [fix/shared-app-repair-1.1.36]
+    branches: [release/twatch-1.1.37-sdr-native]
     paths:
       - '.github/workflows/shared-app-repair*.yml'
       - 'docs/shared-app-repair/**'

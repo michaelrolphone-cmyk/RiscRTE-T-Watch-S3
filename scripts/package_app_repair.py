@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Package a qualified official-1.1.35 successor without hardware or publication I/O."""
+"""Package a qualified official-1.1.36 successor without hardware or publication I/O."""
 import argparse,json,re,subprocess,sys,tempfile
 from pathlib import Path
 from watch_app_repair import ROOT,DOCS,PINS,clean,encoded,files,git,need,require_final,sha,verify_baseline,verify_wake,verify_metadata
 from package_shared_native_ui import archive,checksums,verify_native_bin
-PREFIX='TWatch-1.1.36-App-SDR-Repair'
+PREFIX='TWatch-1.1.37-Native-SDR'
 
 def make_factory(baseline,firmware,store,runtime,native):
- need(len(baseline)==0x1000000 and sha(baseline)==PINS['baseline_sha256'],'Exact released .35 factory required')
+ need(len(baseline)==0x1000000 and sha(baseline)==PINS['baseline_sha256'],'Exact released .36 factory required')
  need(0<len(firmware)<=0x260000 and len(store)==0x550000,'Invalid candidate sizes')
  need(firmware[2:4]==baseline[0x10002:0x10004]==bytes.fromhex('024f'),'Native DIO/80MHz/16MiB profile changed')
  for name,offset in [('bootloader.bin',0),('partitions.bin',0x8000)]:
@@ -47,7 +47,7 @@ def verify_replay(root,source,manifest,compiler):
  clean(source,PINS['replay_source_revision'])
  report=json.loads((root/'receipt.json').read_text())
  need(report['product']=='twatch' and report['source_inputs_verified'] is True,'Wrong replay product/source verification')
- need(set(report['apps'])==set(PINS['expected_repaired_apps']),'Incomplete replay')
+ need(set(report['apps'])==set(PINS['expected_replayed_apps']),'Incomplete replay')
  need(report['driver_sha256']==sha((source/'scripts/replay_shared_crash_apps.py').read_bytes()),'Replay driver differs')
  need(report['compiler_sha256']==sha(compiler.read_bytes()),'Replay compiler differs')
  spec=source/'docs/shared-app-crashes/replay'
@@ -60,16 +60,16 @@ def verify_replay(root,source,manifest,compiler):
 
 
 def release_notes():
- return ('- Fixes shared-app crashes, including Points in Time.\n'
-         '- Prevents SDR scheduling starvation that could trigger watchdog resets.\n')
+ return ('- Renders RF Spectrum and Waterfall plots at the display’s native resolution.\n'
+         '- Keeps status text clear of the RF plots.\n')
 
 
 def instructions():
- return ('T-Watch 1.1.36 app/SDR repair preserving update from exact 1.1.35\n\n'
+ return ('T-Watch 1.1.37 native SDR preserving update from exact 1.1.36\n\n'
  'This kit never connects to hardware. The full factory image erases saved data.\n'
  'Obtain a fresh full 16 MiB readback through an explicitly authorized device flow.\n'
  'Run Python 3: python prepare_preserving_update.py --snapshot DEVICE-READBACK.bin\n'
- ' --baseline baseline-1.1.35.bin --candidate candidate-1.1.36.bin\n'
+ ' --baseline baseline-1.1.36.bin --candidate candidate-1.1.37.bin\n'
  ' --baseline-sha256 '+PINS['baseline_sha256']+' --output NEW-PLAN-DIRECTORY\n\n'
  'The plan rejects different active firmware/store, layout, corrupt readback,\n'
  'unconfirmed source or ambiguous OTA selection. Read the generated plan.json.\n'
@@ -84,7 +84,7 @@ def instructions():
 
 def main():
  p=argparse.ArgumentParser(description=__doc__)
- for name in ('baseline','runtime','composition','admission','admission-sanitized','preservation','replay','replay-source','compiler','output'):
+ for name in ('baseline','runtime','composition','admission','admission-sanitized','preservation','renderer','replay','replay-source','compiler','output'):
   p.add_argument('--'+name,type=Path,required=True)
  p.add_argument('--source-revision',required=True);a=p.parse_args()
  for name,value in vars(a).items():
@@ -94,11 +94,15 @@ def main():
  from read_only_spiffs import read_image
  before=read_image(baseline[0x2f0000:0x840000],0x550000);verify_baseline(before)
  native=a.runtime/'.pio/build/watch-native-ui';firmware=(native/'firmware.bin').read_bytes();verify_native_bin(native)
+ from stage_app_repair_native import NATIVE
+ need(sha(firmware)==NATIVE['files']['firmware.bin']['sha256'] and sha((native/'firmware.elf').read_bytes())==NATIVE['files']['firmware.elf']['sha256'],'Published native bytes changed')
+ custody=json.loads((native/'native-custody.json').read_text())
+ need(custody['native_origin_product_revision']==PINS['baseline_source'] and custody['baseline_native_bytes_preserved'] is True,'Native provenance missing')
  store=(a.composition/'store.bin').read_bytes();store_files=files(a.composition/'store')
  need(read_image(store,0x550000)==store_files,'Complete packed store differs')
  changed=verify_metadata(before,store_files,firmware,a.source_revision);verify_wake(store_files)
  manifest=json.loads((DOCS/'app-manifest.json').read_text());replay=verify_replay(a.replay,a.replay_source,manifest,a.compiler)
- for name in PINS['expected_repaired_apps']:need(store_files[name+'.elf']==(a.replay/(name+'.elf')).read_bytes(),'Packaged app differs from source replay: '+name)
+ for name in PINS['expected_replayed_apps']:need(store_files[name+'.elf']==(a.replay/(name+'.elf')).read_bytes(),'Packaged app differs from source replay: '+name)
  composition=json.loads((a.composition/'composition.json').read_text())
  need(composition['store_sha256']==sha(store) and composition['native_sha256']==sha(firmware),'Composition identities differ')
  need(composition['packing']['empty_blocks']>=2,'Insufficient existing SPIFFS reserve')
@@ -116,34 +120,40 @@ def main():
  iq=json.loads((native/'radio-iq-proof.json').read_text())
  need(iq==admissions['normal']['native_composition']['radio_iq']==admissions['sanitized']['native_composition']['radio_iq'],'IQ proof differs')
  proof=json.loads((a.preservation/'preservation.json').read_text())
- need(proof['baseline_version']=='1.1.35' and proof['baseline_sha256']==sha(baseline),'Preservation baseline differs')
+ need(proof['baseline_version']=='1.1.36' and proof['baseline_sha256']==sha(baseline),'Preservation baseline differs')
  need(len(proof['cases'])==272 and proof['candidate_native_sha256']==sha(firmware) and proof['candidate_store_sha256']==sha(store),'Preservation candidate differs')
  with tempfile.TemporaryDirectory(prefix='watch-repair-preservation-') as td:
   regenerated=Path(td)/'proof'
   subprocess.run([sys.executable,str(ROOT/'scripts/test_app_repair_preservation.py'),'--runtime',str(a.runtime),'--baseline',str(a.baseline),'--firmware',str(native/'firmware.bin'),'--store',str(a.composition/'store.bin'),'--output',str(regenerated)],check=True)
   need(json.loads((regenerated/'preservation.json').read_text())==proof,'Preservation report does not reproduce')
+ from qualify_app_repair_renderer import verify as verify_renderer,evidence as renderer_evidence
+ renderer=verify_renderer(a.renderer)
+ source_renderer=json.loads((DOCS/'source-renderer-qualification.json').read_text())
  factory=make_factory(baseline,firmware,store,a.runtime,native);a.output.mkdir(parents=True)
  factory_name=PREFIX+'-factory-erases-data-0x0.bin';(a.output/factory_name).write_bytes(factory)
- metadata=dict(version=PINS['version'],source_revision=a.source_revision,runtime_revision=PINS['runtime_revision'],runtime_version=PINS['runtime_version'],
+ metadata=dict(version=PINS['version'],source_revision=a.source_revision,runtime_revision=PINS['runtime_revision'],runtime_version=PINS['runtime_version'],native_origin_product_revision=PINS['baseline_source'],baseline_native_evidence_sha256=NATIVE['evidence_sha256'],baseline_native_bytes_preserved=True,
                baseline_version=PINS['baseline_version'],baseline_source=PINS['baseline_source'],baseline_sha256=sha(baseline),
                apps_system_revision=PINS['apps_system_revision'],replay_source_revision=PINS['replay_source_revision'],app_manifest_sha256=PINS['app_manifest_sha256'],
                preserved_springboard_system_revision=PINS['preserved_springboard_system_revision'],preserved_springboard_sha256=sha(store_files['springboard.elf']),
                firmware_sha256=sha(firmware),native_elf_sha256=sha((native/'firmware.elf').read_bytes()),store_sha256=sha(store),factory_sha256=sha(factory),
-               changed_store_files=changed,unchanged_store_files=121-len(changed),file_count=121,elf_count=59,repaired_apps=len(replay['apps']),
-               all_repaired_apps_reproduced_from_pinned_sources=True,native_bin_reproduced_from_admitted_elf=True,empty_store_blocks=composition['packing']['empty_blocks'],
-               hardware_tested=False,device_accessed=False)
+               changed_store_files=changed,unchanged_store_files=121-len(changed),file_count=121,elf_count=59,replayed_apps=len(replay['apps']),replaced_apps=len(PINS['expected_replaced_apps']),sdr_system_revision=PINS['sdr_system_revision'],sdr_utilities_revision=PINS['sdr_utilities_revision'],renderer_checks=renderer['reports'],generic_rf_scene_suite={k:source_renderer['generic_controller'][k] for k in ('passed','total','clean')},twatch_rf_profile_suite={k:source_renderer['product_profiles']['twatch'][k] for k in ('passed','total','remaining_failures')},
+               all_replayed_apps_reproduced_from_pinned_sources=True,native_bin_reproduced_from_admitted_elf=True,empty_store_blocks=composition['packing']['empty_blocks'],
+               installation_method='preserving-update-from-exact-1.1.36-or-factory-flash',factory_erases_saved_data=True,preserving_update_requires_fresh_full_readback=True,hardware_model='non-Plus T-Watch-S3 with BMA423',radio_antenna_variant_requires_confirmation=True,hardware_tested=False,device_accessed=False)
  (a.output/'release.json').write_bytes(encoded(metadata))
  helpers=('prepare_preserving_update.py','paired_bank_images.py','spiffs_image.py')
  kit={}
  for name in helpers:
   data=(a.runtime/'scripts'/name).read_bytes();need(data==git(a.runtime,'show',PINS['runtime_revision']+':scripts/'+name),'Update helper differs: '+name);kit[name]=data
- kit.update({'baseline-1.1.35.bin':baseline,'candidate-1.1.36.bin':factory,'README.txt':instructions().encode(),'source-pins.json':encoded(PINS)})
- archive(a.output/(PREFIX+'-Preserving-Update-From-1.1.35.zip'),kit)
+ kit.update({'baseline-1.1.36.bin':baseline,'candidate-1.1.37.bin':factory,'README.txt':instructions().encode(),'source-pins.json':encoded(PINS)})
+ archive(a.output/(PREFIX+'-Preserving-Update-From-1.1.36.zip'),kit)
  evidence={'source-pins.json':encoded(PINS),'app-manifest.json':(DOCS/'app-manifest.json').read_bytes(),'replay.json':encoded(replay),
            'composition.json':encoded(composition),'admission.json':encoded(admissions['normal']),'admission-sanitized.json':encoded(admissions['sanitized']),
-           'preservation.json':encoded(proof),'native-radio-iq-proof.json':encoded(iq),'firmware.bin':firmware,'firmware.elf':(native/'firmware.elf').read_bytes(),
+           'preservation.json':encoded(proof),'native-radio-iq-proof.json':encoded(iq),'native-custody.json':encoded(custody),'native-baseline.json':(DOCS/'native-baseline.json').read_bytes(),'firmware.bin':firmware,'firmware.elf':(native/'firmware.elf').read_bytes(),
            'springboard.elf':store_files['springboard.elf'],'store-SHA256SUMS.txt':checksums(store_files),'release.json':encoded(metadata)}
- for name in PINS['expected_repaired_apps']:
+ evidence['renderer/renderer.json']=encoded(renderer)
+ evidence['renderer/source-qualification.json']=(DOCS/'source-renderer-qualification.json').read_bytes()
+ for name,data in renderer_evidence(a.renderer).items():evidence['renderer/'+name]=data
+ for name in PINS['expected_replayed_apps']:
   evidence['apps/'+name+'.elf']=store_files[name+'.elf'];evidence['replay-logs/'+name+'.log']=(a.replay/(name+'.log')).read_bytes()
  for name,data in link_evidence(a.replay,replay).items():evidence['replay-logs/'+name]=data
  archive(a.output/(PREFIX+'-Evidence.zip'),evidence)

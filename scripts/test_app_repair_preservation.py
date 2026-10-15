@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline preservation/fault model for exact .35 and a composed candidate store.
+"""Offline preservation/fault model for exact .36 and a composed candidate store.
 All flash bytes are software fixtures. No serial, hardware or publication access.
 """
 import argparse,hashlib,json,struct,sys
@@ -12,7 +12,7 @@ def main():
  a=p.parse_args();sys.path.insert(0,str(a.runtime/'scripts'))
  from prepare_preserving_update import layout,pair,plan,selection,ota
  from paired_bank_images import initial_bank_state,record
- baseline=a.baseline.read_bytes();need(sha(baseline)==PINS['baseline_sha256'],'Wrong .35 factory')
+ baseline=a.baseline.read_bytes();need(sha(baseline)==PINS['baseline_sha256'],'Wrong .36 factory')
  geometry=layout(baseline);expanded,natives,stores,size=geometry;need(expanded and size==0x550000,'Wrong ABI3 geometry')
  firmware=a.firmware.read_bytes();store=a.store.read_bytes();need(len(store)==size and len(firmware)<=0x260000,'Invalid candidate lengths')
  _,old_fw,old_store=pair(baseline,0,geometry)
@@ -93,6 +93,6 @@ def main():
     except ValueError:cases.append({'active_bank':bank,'fault':fault,'rejected':True})
     else:raise ValueError('Unsafe fixture accepted: '+fault)
    for case in cases[case_start:]:case.update(selected_ota_sector=selector_sector,two_valid_selectors=both_valid)
- report={'baseline_version':'1.1.35','baseline_sha256':sha(baseline),'candidate_native_sha256':sha(firmware),'candidate_store_sha256':sha(store),'cases':cases,'software_fixtures_only':True,'device_accessed':False,'hardware_tested':False,'assets_published':False}
+ report={'baseline_version':'1.1.36','baseline_sha256':sha(baseline),'candidate_native_sha256':sha(firmware),'candidate_store_sha256':sha(store),'cases':cases,'software_fixtures_only':True,'device_accessed':False,'hardware_tested':False,'assets_published':False}
  a.output.mkdir(parents=True,exist_ok=False);(a.output/'preservation.json').write_bytes(encoded(report));print('PASS:',len(cases),'both-bank preservation/interruption/rejection fixtures; all NVS/AppData and active-pair ranges preserved')
 if __name__=='__main__':main()
