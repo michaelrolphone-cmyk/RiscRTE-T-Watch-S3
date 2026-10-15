@@ -1,0 +1,4 @@
+- Native-resolution Springboard fonts, icons and layout.
+- Corrected input-wait timing during gestures.
+- Brightness restored after the first completed frame.
+- Isolates app-catalog dispatch from atomic-storage handles.

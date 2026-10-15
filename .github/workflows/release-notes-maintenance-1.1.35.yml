@@ -1,0 +1,52 @@
+name: Shorten T-Watch 1.1.35 release notes only
+on:
+  push:
+    branches: [docs/short-release-notes-1.1.35]
+    paths:
+      - '.github/workflows/release-notes-maintenance-1.1.35.yml'
+      - 'docs/shared-native-ui/release-notes-short.md'
+permissions:
+  contents: read
+jobs:
+  notes:
+    if: github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3' && github.ref == 'refs/heads/docs/short-release-notes-1.1.35'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Change only release body and verify immutable tag and assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          repo='michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
+          tag='test-shared-native-ui-1.1.35'
+          source='a617d859d0adc9e6796666b06033035345d7370c'
+          endpoint='repos/'+repo+'/releases/413368220'
+          def get(path): return json.loads(subprocess.check_output(['gh','api',path]))
+          def assets(release): return sorted((x['id'],x['name'],x['size'],x['digest'],x['browser_download_url']) for x in release['assets'])
+          before=get(endpoint)
+          assert before['tag_name']==tag and before['prerelease'] and not before['draft'] and len(before['assets'])==7
+          assert get('repos/'+repo+'/git/ref/tags/'+tag)['object']['sha']==source
+          body=Path('docs/shared-native-ui/release-notes-short.md').read_text()
+          assert len(body.split())<80
+          subprocess.run(['gh','api','--method','PATCH',endpoint,'--input','-'],input=json.dumps({'body':body}).encode(),stdout=subprocess.DEVNULL,check=True)
+          after=get(endpoint)
+          assert after['body']==body and after['tag_name']==tag and after['prerelease'] and not after['draft']
+          assert assets(after)==assets(before)
+          assert get('repos/'+repo+'/git/ref/tags/'+tag)['object']['sha']==source
+          Path('release-notes-readback.json').write_text(json.dumps({'source_tag_unchanged':source,'assets_unchanged':assets(after),'release_url':after['html_url'],'body':after['body']},indent=2)+'\n')
+          print(body)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: twatch-1.1.35-release-notes-readback
+          path: release-notes-readback.json
+          if-no-files-found: error
