@@ -19,6 +19,7 @@ class PackageTests(unittest.TestCase):
   apps={}
   for name in p.PINS['expected_repaired_apps']:
    value=name.encode();(out/(name+'.elf')).write_bytes(value);apps[name]={'sha256':p.sha(value),'bytes':len(value)}
+   folder=out/(name+'-link-attempts');folder.mkdir();log=folder/'attempt-01.log';log.write_bytes(b'');history=[{'attempt':1,'returncode':0,'log':str(log),'log_sha256':p.sha(b''),'recognized_linker_abort':False}];apps[name]['link_attempts']=history;(folder/'receipt.json').write_text(json.dumps({'command':['cc','-o',name+'.elf'],'max_attempts':6,'attempts':history}))
   report={'product':'twatch','source_inputs_verified':True,'driver_sha256':p.sha(b'driver'),'compiler_sha256':p.sha(b'compiler'),'spec_sha256':{'inputs.json':p.sha(b'{}')},'apps':apps}
   (out/'receipt.json').write_text(json.dumps(report));return out,source,{'apps':apps},compiler,report
  def test_exact_replay_bindings(self):
@@ -37,5 +38,18 @@ class PackageTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as td,patch.object(p,'clean'),patch.dict(p.PINS,{'replay_source_revision':'a'*40}):
    out,source,manifest,compiler,report=self.replay_fixture(Path(td));(out/'calculator.elf').write_bytes(b'tampered')
    with self.assertRaisesRegex(ValueError,'app differs'):p.verify_replay(out,source,manifest,compiler)
+
+ def test_compiler_attempt_logs_retained(self):
+  with tempfile.TemporaryDirectory() as td:
+   out,source,manifest,compiler,report=self.replay_fixture(Path(td));evidence=p.link_evidence(out,report);self.assertEqual(len(evidence),36)
+ def test_compiler_log_tampering_refused(self):
+  with tempfile.TemporaryDirectory() as td:
+   out,source,manifest,compiler,report=self.replay_fixture(Path(td));(out/'calculator-link-attempts/attempt-01.log').write_bytes(b'tampered')
+   with self.assertRaisesRegex(ValueError,'log hash'):p.link_evidence(out,report)
+ def test_compiler_history_escape_and_failure_refused(self):
+  for key,value in [('log','/escape/attempt-01.log'),('attempt',2),('returncode',1),('recognized_linker_abort',True)]:
+   with self.subTest(key=key),tempfile.TemporaryDirectory() as td:
+    out,source,manifest,compiler,report=self.replay_fixture(Path(td));report['apps']['calculator']['link_attempts'][0][key]=value
+    with self.assertRaises(ValueError):p.link_evidence(out,report)
 
 if __name__=='__main__':unittest.main()

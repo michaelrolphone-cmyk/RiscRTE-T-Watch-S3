@@ -19,12 +19,14 @@ def main():
   env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0','SANITIZE':'1' if sanitize else '0'}
   subprocess.run([sys.executable,str(ROOT/'scripts'/script),*map(str,args)],check=True,env=env)
  if a.qualified_replay:
-  from package_app_repair import verify_replay
+  from package_app_repair import verify_replay,link_evidence
   manifest=json.loads((ROOT/'docs/shared-app-repair/app-manifest.json').read_text())
-  verify_replay(a.qualified_replay,a.replay_source,manifest,a.compiler)
+  replay=verify_replay(a.qualified_replay,a.replay_source,manifest,a.compiler)
   (work/'replay').mkdir()
   names=['receipt.json']+[name+ext for name in PINS['expected_repaired_apps'] for ext in ('.elf','.log')]
   for name in names:shutil.copyfile(a.qualified_replay/name,work/'replay'/name)
+  for name,data in link_evidence(a.qualified_replay,replay).items():
+   path=work/'replay'/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
  else:
   cmd=[sys.executable,str(a.replay_source/'scripts/replay_shared_crash_apps.py'),'--product','twatch','--compiler',str(a.compiler),'--output',str(work/'replay')]
   if a.source_cache:cmd+=['--source-cache',str(a.source_cache)]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package a qualified official-1.1.35 successor without hardware or publication I/O."""
-import argparse,json,subprocess,sys,tempfile
+import argparse,json,re,subprocess,sys,tempfile
 from pathlib import Path
 from watch_app_repair import ROOT,DOCS,PINS,clean,encoded,files,git,need,require_final,sha,verify_baseline,verify_wake,verify_metadata
 from package_shared_native_ui import archive,checksums,verify_native_bin
@@ -23,6 +23,26 @@ def make_factory(baseline,firmware,store,runtime,native):
   need(result[start:end]==baseline[start:end],'Unexpected factory region changed')
  return bytes(result)
 
+def link_evidence(root,report):
+ evidence={}
+ for name,app in report['apps'].items():
+  history=app['link_attempts'];need(1<=len(history)<=6,'Unbounded compiler attempt history')
+  directory=None
+  for index,row in enumerate(history,1):
+   path=Path(row['log']);folder=path.parent.name
+   need(re.fullmatch(re.escape(name)+r'-link-attempts(?:-(?:[2-9]|[1-9][0-9]+))?',folder) is not None,'Unsafe compiler log directory')
+   need(path.name==f'attempt-{index:02d}.log' and row['attempt']==index,'Compiler attempt order differs')
+   need(directory is None or directory==folder,'Compiler attempt directory differs');directory=folder
+   data=(root/folder/path.name).read_bytes();need(sha(data)==row['log_sha256'],'Compiler log hash differs')
+   if index==len(history):need(row['returncode']==0 and row['recognized_linker_abort'] is False,'Compiler final attempt did not succeed')
+   else:need(row['returncode']!=0 and row['recognized_linker_abort'] is True,'Unrecognized compiler retry')
+   evidence[folder+'/'+path.name]=data
+  receipt=(root/directory/'receipt.json').read_bytes();saved=json.loads(receipt)
+  need(saved['attempts']==history and saved['max_attempts']==6 and isinstance(saved['command'],list) and saved['command'] and all(isinstance(v,str) for v in saved['command']),'Compiler command/history differs')
+  evidence[directory+'/receipt.json']=receipt
+ return evidence
+
+
 def verify_replay(root,source,manifest,compiler):
  clean(source,PINS['replay_source_revision'])
  report=json.loads((root/'receipt.json').read_text())
@@ -35,6 +55,7 @@ def verify_replay(root,source,manifest,compiler):
  for name,row in report['apps'].items():
   payload=(root/(name+'.elf')).read_bytes();expected=manifest['apps'][name]
   need(row['sha256']==expected['sha256']==sha(payload) and row['bytes']==expected['bytes']==len(payload),'Replay app differs: '+name)
+ link_evidence(root,report)
  return report
 
 
@@ -124,6 +145,7 @@ def main():
            'springboard.elf':store_files['springboard.elf'],'store-SHA256SUMS.txt':checksums(store_files),'release.json':encoded(metadata)}
  for name in PINS['expected_repaired_apps']:
   evidence['apps/'+name+'.elf']=store_files[name+'.elf'];evidence['replay-logs/'+name+'.log']=(a.replay/(name+'.log')).read_bytes()
+ for name,data in link_evidence(a.replay,replay).items():evidence['replay-logs/'+name]=data
  archive(a.output/(PREFIX+'-Evidence.zip'),evidence)
  notes=release_notes()
  (a.output/'RELEASE-NOTES.txt').write_text(notes);(a.output/'UPDATE-INSTRUCTIONS.txt').write_text(instructions())
