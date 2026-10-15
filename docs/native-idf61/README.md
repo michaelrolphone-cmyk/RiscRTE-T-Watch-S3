@@ -54,34 +54,44 @@ The System/Drivers pins describe the migrated toolchain/ABI qualification source
 cohort. They do **not** falsely claim to have rebuilt preserved released payloads.
 Those bytes retain their released-product provenance and exact recorded hashes.
 Current qualified shared source pins are System
-`cb4bf2547b89e14a721d4a4bb6ada4f5f4750aed` and Drivers
-`03116cd2a6d881fafb28f20490e9af48c9179633`; freeze must use the final explicitly
+`755cc5174a6deaee120d108cbffe67ae809e1e6f` and Drivers
+`cb8049a99753e304dfe348cd9276fb9bb517dbbe`; freeze must use the final explicitly
 selected clean commits, never a substituted generic smoke-test ELF.
 
-Example command structure (replace uppercase paths and source choices with the
-actual immutable candidate inputs; do not run against an active build):
+The only qualifying entrypoint performs a fresh build and qualification in one
+process. The build and output directories must not exist. It checks exact clean
+sources before and after, removes compiler/preprocessor/environment overrides,
+disables caches, configures the product-owned profile, and compiles with one job
+(including nested bootloader builds). Use the official isolated IDF Python
+installation and native CMake/Ninja executables; arbitrary PYTHONPATH is removed.
+All source ownership protections remain enabled. Initialize every pinned SDK
+submodule before invoking the producer.
 
 ```sh
-python scripts/native_idf61_candidate.py audit-baseline \
+python scripts/native_idf61_build.py \
   --source product=PRODUCT --source runtime=RUNTIME \
   --source system=SYSTEM --source drivers=DRIVERS \
   --source sdk=SDK --source image_helper=WATCH_HELPERS \
-  --baseline RELEASED_FACTORY --output baseline-audit.json
-
-python scripts/native_idf61_candidate.py freeze \
-  --source product=PRODUCT --source runtime=RUNTIME \
-  --source system=SYSTEM --source drivers=DRIVERS \
-  --source sdk=SDK --source image_helper=WATCH_HELPERS \
-  --native-build COMPLETED_BUILD --compiler GCC15 \
-  --candidate-version SELECTED_VERSION --output source-lock.json
-
-python scripts/native_idf61_candidate.py qualify \
-  --source product=PRODUCT --source runtime=RUNTIME \
-  --source system=SYSTEM --source drivers=DRIVERS \
-  --source sdk=SDK --source image_helper=WATCH_HELPERS \
-  --native-build COMPLETED_BUILD --compiler GCC15 \
-  --baseline RELEASED_FACTORY --lock source-lock.json --output NEW_DIRECTORY
+  --compiler GCC15 --baseline RELEASED_FACTORY \
+  --candidate-version SELECTED_VERSION \
+  --native-build NEW_BUILD_DIRECTORY --output NEW_CANDIDATE_DIRECTORY
 ```
+
+The build directory contains native ELF/BIN/MAP, generated configuration and
+response files, compilation databases and native-build-evidence/ with app and
+bootloader Ninja dependencies, inputs and commands, build-closure.json and
+source-lock.json. The closure hashes source/Git headers, generated objects and
+archives, linked inputs, selected compiler tools and ROM ELF. MAP output and
+critical allocated symbol addresses must match the exact ELF. The qualifier also
+checks effective SDK JSON/headers and ordered compiler definitions, refusing late
+-D/-U overrides or unlocked response files. Its 64-app capacity comes from an
+allocated native ELF marker, not just the host fixture's capacity.
+
+A detached JSON receipt is evidence only. Standalone `qualify` refuses to produce
+a qualified candidate; `freeze` is diagnostic input locking, not attestation.
+Only the producer's current-process build proof permits qualification. The final
+report rechecks all locked inputs and clean sources before writing any assets.
+An incremental build or a copied snapshot cannot be promoted by a sidecar file.
 
 The parent release process chooses SELECTED_VERSION. A local prerelease may be
 `MAJOR.MINOR.PATCH-idf61.RUNTIME12`; the suffix must match the selected Runtime.
@@ -163,3 +173,6 @@ The suite checks immutable baseline selection, exact payload preservation,
 private imports in both symbol tables, corrupted/traversing artifact inputs,
 mutable/dirty source refusal, deterministic packing, protected data regions,
 new-bootloader/old-bootloader separation and torn-write fail-closed behavior.
+Run `python tests/test_native_idf61_provenance.py -v` for effective-config,
+late-override, response-file, MAP, stale-dependency, current-process proof and
+single-job build negative controls.

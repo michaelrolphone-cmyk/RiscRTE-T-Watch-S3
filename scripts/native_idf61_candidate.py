@@ -8,6 +8,7 @@ change. Private providers require a separately reviewed product recipe.
 import argparse
 import hashlib
 import importlib
+import importlib.util
 import io
 import json
 import os
@@ -19,6 +20,8 @@ import subprocess
 import sys
 import tempfile
 
+from native_idf61_provenance import effective_sdkconfig, compiler_definitions, expand_response_files
+
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / 'docs/native-idf61/released-baseline.json'
 SDK_REVISION = 'fff9895c82d744c7237be8847347bdd1b07c6643'
@@ -26,7 +29,10 @@ REQUIRED_ROLES = {'product', 'runtime', 'system', 'drivers', 'sdk', 'image_helpe
 BOUNDARY_SYMBOLS = ('risc_tcp_listener_abi', 'risc_entropy_abi', 'risc_file_source_abi')
 ARTIFACT_KEYS = {'firmware_bin', 'firmware_elf', 'firmware_map', 'bootloader', 'partitions',
                  'sdkconfig', 'compile_commands', 'project_description', 'flasher_args',
-                 'bootloader_elf', 'bootloader_compile_commands', 'bootloader_sdkconfig'}
+                 'bootloader_elf', 'bootloader_compile_commands', 'bootloader_sdkconfig',
+                 'sdkconfig_json', 'sdkconfig_header', 'bootloader_sdkconfig_header'} | {
+                 prefix + name for prefix in ('response_', 'boot_response_')
+                 for name in ('cflags', 'cxxflags', 'asmflags', 'ldflags')}
 
 
 def require(condition, message):
@@ -109,6 +115,16 @@ def setup_modules(sources):
     return importlib.import_module('prepare_preserving_update'), importlib.import_module('read_only_spiffs')
 
 
+def local_qualification():
+    # image_helper prepends its scripts directory for legacy common helpers.
+    # Product admission must never resolve through that ambient module path.
+    path = ROOT / 'scripts/native_idf61_qualification.py'
+    spec = importlib.util.spec_from_file_location('product_native_qualification', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def baseline_bytes(path, contract, sources):
     update, spiffs = setup_modules(sources)
     image = path.read_bytes()
@@ -134,6 +150,7 @@ def descriptor(data):
 def artifact_paths(build):
     project = json.loads((build / 'project_description.json').read_bytes())
     flash = json.loads((build / 'flasher_args.json').read_bytes())
+    require(Path(project['config_file']).resolve() == (build / 'sdkconfig').resolve(), 'Build must own exact sdkconfig')
     app = Path(flash['app']['file'])
     require(not app.is_absolute(), 'Flash descriptor app must be relative')
     return dict(firmware_bin=app.as_posix(), firmware_elf=app.with_suffix('.elf').as_posix(),
@@ -141,7 +158,11 @@ def artifact_paths(build):
                 partitions=flash['partition-table']['file'], sdkconfig='sdkconfig',
                 compile_commands='compile_commands.json', project_description='project_description.json',
                 flasher_args='flasher_args.json', bootloader_elf='bootloader/bootloader.elf',
-                bootloader_compile_commands='bootloader/compile_commands.json', bootloader_sdkconfig='bootloader/config/sdkconfig.json')
+                bootloader_compile_commands='bootloader/compile_commands.json', bootloader_sdkconfig='bootloader/config/sdkconfig.json',
+                sdkconfig_json='config/sdkconfig.json', sdkconfig_header='config/sdkconfig.h',
+                bootloader_sdkconfig_header='bootloader/config/sdkconfig.h',
+                **{'response_' + name: 'toolchain/' + name for name in ('cflags', 'cxxflags', 'asmflags', 'ldflags')},
+                **{'boot_response_' + name: 'bootloader/toolchain/' + name for name in ('cflags', 'cxxflags', 'asmflags', 'ldflags')})
 
 
 def verify_sources(lock, sources):
@@ -196,6 +217,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
     from verify_update_elf import verify_native_store_abi, public_exports
     import check_runtime_store_admission as admission
     blobs = checked_artifacts(lock, build)
+    effective_config = effective_sdkconfig(blobs)
     require(sha(compiler.read_bytes()) == lock['compiler']['sha256'], 'Compiler bytes differ')
     require(run(compiler, '--version').decode().splitlines()[0] == lock['compiler']['version'], 'Compiler version differs')
     for key in ('firmware_bin', 'bootloader'):
@@ -251,6 +273,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
         require(set(re.findall(rb'RTE_SOURCE=([^\x00\s]+)', blobs[key])) == {lock['sources']['runtime']['revision'].encode()}, 'Ambiguous Runtime identity')
     for name, prefix in (('risc_app_policy_rows', 'RISC_APP_POLICY_ROWS'), ('risc_app_requirement_rows', 'RISC_APP_REQUIREMENT_ROWS')):
         require(admission.native_symbol_bytes(blobs['firmware_elf'], name) == (prefix + ':32\0').encode(), 'Native policy bounds changed')
+    require(admission.native_symbol_bytes(blobs['firmware_elf'], 'risc_installed_app_capacity') == b'\x40\0\0\0', 'Allocated installed-app capacity changed')
     for name in BOUNDARY_SYMBOLS:
         require(admission.native_symbol_bytes(blobs['firmware_elf'], name) == b'\x01\0\0\0', 'Native public backend missing: ' + name)
     require(('risc_native_settings_admission' in symbols) == (contract['product'] == 'waveshare'), 'Product settings backend selection changed')
@@ -260,6 +283,9 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
     source_files = {}
     roots = sorted(sources.items(), key=lambda item: len(str(item[1])), reverse=True)
     runtime_rows = []
+    profile = (ROOT / 'profiles/native-idf61.cmake').read_text()
+    required_definitions = dict(re.findall(r'\b(RISC_[A-Z0-9_]+)=(\d+)\b', profile))
+    required_definitions.update(RISC_NATIVE_ESP_IDF='1', RISC_TARGET='\"' + contract['target'] + '\"')
     for row in compile_rows:
         source = Path(row['file']).resolve()
         require('framework-arduino' not in str(source).lower() and source.name not in ('esp32-hal-misc.c', 'Arduino.cpp'), 'Arduino core compiled')
@@ -282,11 +308,12 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
         else:
             source_files['generated/' + source.relative_to(build.resolve()).as_posix()] = sha(source.read_bytes())
         command = row.get('command') or shlex.join(row['arguments'])
-        arguments = shlex.split(command)
+        arguments = expand_response_files(shlex.split(command), build, row['directory'], blobs, lock['native_files'])
         actual_compiler = Path(arguments[1] if Path(arguments[0]).name == 'ccache' else arguments[0]).resolve()
         require(actual_compiler.parent == compiler.resolve().parent and actual_compiler.name in
                 ('xtensa-esp-elf-gcc', 'xtensa-esp-elf-g++'), 'Compilation did not use the pinned native compiler family')
         if source.is_relative_to(sources['runtime'] / 'src'):
+            compiler_definitions(arguments, required_definitions)
             runtime_rows.append(command)
     if contract['product'] == 'waveshare':
         displays = [Path(row['file']).resolve() for row in compile_rows if Path(row['file']).name == 'VendorDisplay.cpp']
@@ -308,7 +335,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
             require(out.read_bytes() == blobs[binary], 'ELF/BIN correspondence differs: ' + binary)
     return blobs, dict(app_descriptor=desc, native_layout=verify_native_store_abi(blobs['firmware_elf'], 3),
                        radio_iq=prove(blobs['firmware_elf'], contract['target']),
-                       public_export_count=len(public_exports(elf)), source_files=source_files,
+                       public_export_count=len(public_exports(elf)), source_files=source_files, effective_sdkconfig=effective_config,
                        arduino_core_linked=False, ordinary_app_payloads_rebuilt=False,
                        unselected_usb_host_controller=False, elf_bin_identical=True)
 
@@ -342,12 +369,15 @@ def make_images(baseline, firmware, bootloader, packed):
     return bytes(candidate), transition
 
 
-def qualify(args, sources):
+def qualify(args, sources, *, build_proof=None):
+    from native_idf61_build import validate_build_proof
+    build_closure = validate_build_proof(build_proof, sources, args.native_build, args.compiler)
     contract = json.loads(CONTRACT.read_bytes())
     lock = json.loads(args.lock.read_bytes())
     require(lock.get('schema') == 1 and lock.get('publication_enabled') is False, 'Only unreleased candidate locks accepted')
     require(lock['baseline_contract_sha256'] == sha(CONTRACT.read_bytes()), 'Released baseline contract differs')
     verify_sources(lock, sources)
+    validate_build_proof(build_proof, sources, args.native_build, args.compiler, lock)
     require(not args.output.exists(), 'Qualification output must be new')
     baseline, old_native, before = baseline_bytes(args.baseline, contract, sources)
     blobs, native_proof = verify_native(lock, sources, args.native_build, args.compiler, contract, baseline)
@@ -357,13 +387,14 @@ def qualify(args, sources):
     packed, packing = build(after, size=0x550000)
     require(build(after, size=0x550000)[0] == packed, 'Non-deterministic bootfs packing')
     factory, transition = make_images(baseline, blobs['firmware_bin'], blobs['bootloader'], packed)
-    from native_idf61_qualification import admit_product, preservation_model
-    admission = admit_product(sources, blobs['firmware_elf'], before, after, native_proof, sanitized=False)
-    admission_sanitized = admit_product(sources, blobs['firmware_elf'], before, after, native_proof, sanitized=True)
+    qualification = local_qualification()
+    admission = qualification.admit_product(sources, blobs['firmware_elf'], before, after, native_proof, sanitized=False)
+    admission_sanitized = qualification.admit_product(sources, blobs['firmware_elf'], before, after, native_proof, sanitized=True)
     require(admission['elf_count'] == admission_sanitized['elf_count'] == contract['elf_count'], 'Incomplete product ELF admission')
-    preservation = preservation_model(baseline, transition, contract['factory_sha256'])
+    preservation = qualification.preservation_model(baseline, transition, contract['factory_sha256'])
     checked_artifacts(lock, args.native_build)
     verify_sources(lock, sources)
+    validate_build_proof(build_proof, sources, args.native_build, args.compiler, lock)
     args.output.mkdir(parents=True)
     assets = {'factory-candidate-erases-data-0x0.bin': factory, 'firmware.bin': blobs['firmware_bin'],
               'bootloader.bin': blobs['bootloader'], 'partitions.bin': blobs['partitions'], 'store.bin': packed}
@@ -374,7 +405,7 @@ def qualify(args, sources):
                   factory_erases_data=True, preserving_update_kit_emitted=False,
                   preserving_sdk_migration_eligible=False,
                   preserving_sdk_migration_blocker='Exact deployed bootloader plus candidate boot, health confirmation and rollback are hardware-pending.',
-                  input_lock=lock, input_lock_sha256=sha(args.lock.read_bytes()), native=native_proof,
+                  input_lock=lock, input_lock_sha256=sha(args.lock.read_bytes()), native=native_proof, controlled_build=build_closure,
                   packing=packing, admission=admission, admission_sanitized=admission_sanitized,
                   preservation_software_model=preservation, baseline_contract=contract,
                   unchanged_store_payloads=len(before) - 1,

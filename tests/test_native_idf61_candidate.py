@@ -38,6 +38,14 @@ class NativeCandidateContracts(unittest.TestCase):
             with self.subTest(symbol=name):
                 self.assertEqual(recipe.arduino_runtime_symbols([name]), [name])
 
+    def test_product_qualification_import_is_explicit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = Path(tmp) / 'native_idf61_qualification.py'
+            fake.write_text('raise RuntimeError("wrong product helper")')
+            with mock.patch.object(sys, 'path', [tmp, *sys.path]):
+                module = recipe.local_qualification()
+            self.assertEqual(Path(module.__file__).resolve(), ROOT / 'scripts/native_idf61_qualification.py')
+
     def test_exact_baseline_inventory(self):
         self.assertEqual(len(BEFORE), CONTRACT['store_file_count'])
         self.assertEqual(sum(name.endswith('.elf') for name in BEFORE), CONTRACT['elf_count'])
