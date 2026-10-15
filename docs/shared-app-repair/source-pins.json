@@ -1,5 +1,5 @@
 {
-  "app_manifest_sha256": "23445e58daf591cd580838d12df8c008fa6bca8fdfac947abe4b28d87231df6a",
+  "app_manifest_sha256": "7c54819f530a6a58b62baba6b80ae0274dad9834f073b9e1ffe0809d2d05e978",
   "apps_system_revision": "b8086d45ffa8259f982acac5974e7d6e4a6aa88b",
   "baseline_cohort_source": "a617d859d0adc9e6796666b06033035345d7370c",
   "baseline_files": {
@@ -155,6 +155,8 @@
     "file_browser.json",
     "frequency_generator.elf",
     "frequency_generator.json",
+    "lora_messages.elf",
+    "lora_messages.json",
     "ota_update.elf",
     "ota_update.json",
     "points_in_time.elf",
@@ -180,6 +182,7 @@
     "countdown",
     "file_browser",
     "frequency_generator",
+    "lora_messages",
     "ota_update",
     "points_in_time",
     "stopwatch",
@@ -187,7 +190,7 @@
     "waterfall",
     "wifi_settings"
   ],
-  "finalized": true,
+  "finalized": false,
   "preserved_springboard_sha256": "29bf77aca08bc794e379a50e333a5d0193bbcf2a8fd8c138616cb1a15640e200",
   "preserved_springboard_system_revision": "f31f89636304d202c49884e2e9b2e0b2ec5fb891",
   "profile_origin_runtime": "26a54ff7769f7c9072a2a133790cd293b72abcba",

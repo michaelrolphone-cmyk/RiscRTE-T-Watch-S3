@@ -10,7 +10,7 @@
   "system_tree": "c2d9e816581e6ce59a08dc23832f3e013b949a11",
   "runtime_repair": "4107eaeedd8c801eeaf7deb1c7bc4a943cd27342",
   "hardware_tested": false,
-  "qualification": "Xtensa GCC8.4 target compilation and structural ELF validation. No target instructions or hardware execution.",
+  "qualification": "Target compilation, structural ELF validation and exact ABI/capability comparison; source replay separately recorded.",
   "source_migration_notes": {
     "selector_migration": {
       "basic8": [
@@ -23,7 +23,8 @@
     },
     "baseline_caveats": {
       "audio_spectrum": "Reconstructed baseline with Utilitiesca7fe82/System088c88b does not reproduce all allocated bytes. Original generated source closure unresolved. Fixed artifact is explicitly a source migration.",
-      "waterfall": "System088c88b baseline with reconstructed SDK aborted inside GCC8.4 linker (double free or corruption). Original source pins and flags are known; generated SDK closure remains unverified. Fixed artifact is explicitly a source migration."
+      "waterfall": "System088c88b baseline with reconstructed SDK aborted inside GCC8.4 linker (double free or corruption). Original source pins and flags are known; generated SDK closure remains unverified. Fixed artifact is explicitly a source migration.",
+      "lora_messages": "Exact deployed T-Watch .16 source closure unresolved; bounded migration preserving symbols, capabilities and original LoRa/model source."
     },
     "optional_capability_analysis": {
       "runtime.realtime-control": "Only new capability literal in basic8, from custody_acquire_for clean-refusal strcmp comparison (native_custody_adapter.inc203). No selected acquisition: PortableFingerprintClock.h uses rtc.clock@2 unless PORTABLE_NATIVE_TIME_TOOLBAR or PORTABLE_X4_IDLE_POLICY, neither present. No additional grant required."
@@ -98,7 +99,7 @@
   "application_version_manifests_generated": false,
   "apps": {
     "alarms": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/alarms.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/alarms.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/alarms.elf",
       "sha256": "b3c0b7bc0d4e5b95069ddd6b0d3c4114ab3c0f6e2e45eee81f47b141fedd3004",
       "bytes": 155988,
@@ -253,7 +254,7 @@
       "deployed_predecessor_caveat": null
     },
     "app_store": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/app_store.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/app_store.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-updaters/fixed/app_store.elf",
       "sha256": "deb25c5e9a42294c311e90f546cd5d1b69b6831398ba58ef9f8577e95b21f01c",
       "bytes": 140088,
@@ -421,7 +422,7 @@
       "deployed_predecessor_caveat": null
     },
     "audio_spectrum": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/audio_spectrum.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/audio_spectrum.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-spectrum/fixed/audio_spectrum.elf",
       "sha256": "0c9f4733febb6de93a6fa9e779bc3550d7017e82387eb443cc08a680d97ec690",
       "bytes": 230644,
@@ -608,7 +609,7 @@
       "deployed_predecessor_caveat": "Reconstructed baseline with Utilitiesca7fe82/System088c88b does not reproduce all allocated bytes. Original generated source closure unresolved. Fixed artifact is explicitly a source migration."
     },
     "battery": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/battery.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/battery.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/battery.elf",
       "sha256": "a6e21e1b0b0f79427b9e7469bd7471bbfc4de48c15ce60afacc328c39d096bd1",
       "bytes": 155448,
@@ -764,7 +765,7 @@
       "deployed_predecessor_caveat": null
     },
     "ble_buttons": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/ble_buttons.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/ble_buttons.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/ble_buttons.elf",
       "sha256": "62097f65e5dd6bb3e58a847234467b21c7c1cbd5a27f02ea8f53bd37af39066f",
       "bytes": 157000,
@@ -909,7 +910,7 @@
       "deployed_predecessor_caveat": null
     },
     "ble_scanner": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/ble_scanner.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/ble_scanner.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-remaining/twatch-final/ble_scanner.elf",
       "sha256": "f41b94f7086e213487ae85a98a99f640e38e4697433855b8e4743bb6235659fe",
       "bytes": 159528,
@@ -1088,7 +1089,7 @@
       "deployed_predecessor_caveat": "Full inherited source closure was not recovered; selected shared-source migration."
     },
     "ble_touchpad": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/ble_touchpad.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/ble_touchpad.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/ble_touchpad.elf",
       "sha256": "17685c811647d706acd2bcf21d7edb55dd6b0e06154056336f2f1f8ce3e443a0",
       "bytes": 155452,
@@ -1228,7 +1229,7 @@
       "deployed_predecessor_caveat": null
     },
     "calculator": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/calculator.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/calculator.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/calculator.elf",
       "sha256": "60d3b426580b9b7c8607cce66859a865749578c91ee0dd0b459c94e33db16367",
       "bytes": 151420,
@@ -1385,7 +1386,7 @@
       "deployed_predecessor_caveat": null
     },
     "countdown": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/countdown.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/countdown.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/countdown.elf",
       "sha256": "1e8d268715c840a0efaf5ece011379445970337877198e11bbec53aa2104f911",
       "bytes": 151376,
@@ -1540,7 +1541,7 @@
       "deployed_predecessor_caveat": null
     },
     "file_browser": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/file_browser.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/file_browser.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-remaining/twatch-final/file_browser.elf",
       "sha256": "b5ab445689f4be7c7e626c4b1cc1d3a2740f624b3817d33ea6f0accf3fbe5a06",
       "bytes": 280924,
@@ -1780,7 +1781,7 @@
       "deployed_predecessor_caveat": null
     },
     "frequency_generator": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/frequency_generator.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/frequency_generator.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/frequency_generator.elf",
       "sha256": "23ee79d3160436b8b0db5ae069b55c8055a0ae3b3b22a3c38492c58fb09ed9c8",
       "bytes": 143124,
@@ -1941,7 +1942,7 @@
       "deployed_predecessor_caveat": null
     },
     "ota_update": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/ota_update.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/ota_update.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-updaters/fixed/ota_update.elf",
       "sha256": "eec29479caf405dc62c1984704cf42a2a768242346f46a5b8a3abcf701b47870",
       "bytes": 140100,
@@ -2109,7 +2110,7 @@
       "deployed_predecessor_caveat": null
     },
     "points_in_time": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/points_in_time.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/points_in_time.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-more/fixed/points_in_time/points_in_time.elf",
       "sha256": "3748b6815766a24153f8beaed9427f2cc02d177f395af9fdd6502dcf0911aa3f",
       "bytes": 159160,
@@ -2271,7 +2272,7 @@
       "deployed_predecessor_caveat": null
     },
     "stopwatch": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/stopwatch.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/stopwatch.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-basic/fixed/stopwatch.elf",
       "sha256": "c2453ff0ddb1f1710cc27aba79da41a16a1b06ca0ac2dc046819cb68b87cfd05",
       "bytes": 151352,
@@ -2433,7 +2434,7 @@
       "deployed_predecessor_caveat": null
     },
     "timecard": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/timecard.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/timecard.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-remaining/twatch-final/timecard.elf",
       "sha256": "6dd1fda10e49f032390633f558712df68571f28db8c07abd0b3c3a7582cc58fb",
       "bytes": 157324,
@@ -2620,7 +2621,7 @@
       "deployed_predecessor_caveat": "Full inherited source closure was not recovered; selected shared-source migration."
     },
     "waterfall": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/waterfall.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/waterfall.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-spectrum/fixed/waterfall.elf",
       "sha256": "cbe62f1f81e1780b46ee88a312e56f81f9bf3c9228b04ebe12234df12655c61a",
       "bytes": 238912,
@@ -2810,7 +2811,7 @@
       "deployed_predecessor_caveat": "System088c88b baseline with reconstructed SDK aborted inside GCC8.4 linker (double free or corruption). Original source pins and flags are known; generated SDK closure remains unverified. Fixed artifact is explicitly a source migration."
     },
     "wifi_settings": {
-      "file": "/workspace/shared/watch-shared-app-crashes-20261015/app-cohort/twatch/wifi_settings.elf",
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/wifi_settings.elf",
       "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-twatch-more/fixed/wifi_settings/wifi_settings.elf",
       "sha256": "595ec0b90aad4b8dafbc5440a5bc7ec178717a137011d2f1cb8a209d0e0693a7",
       "bytes": 145084,
@@ -2979,6 +2980,307 @@
       "validation_stderr": "",
       "hardware_tested": false,
       "deployed_predecessor_caveat": null
+    },
+    "lora_messages": {
+      "file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/app-cohort/twatch/lora_messages.elf",
+      "source_file": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/fixed-final/lora_messages.elf",
+      "sha256": "81877ba548ae0c45f4ebbbe71c53753159a4b3a28282ac9ce3c5ef63ad90c0f5",
+      "bytes": 136960,
+      "deployed_sha256": "fa87d851c8d1e3f83ad85bf5a08b2ecd2431397c60e261b0b18b9afc5e89d6df",
+      "deployed_bytes": 132708,
+      "deployed_predecessor_replay_exact": false,
+      "deployed_predecessor_receipt": null,
+      "fixed_receipt": "/workspace/shared/watch-shared-app-crashes-20261015/target-lora/fixed-final/receipt.json",
+      "source_migration_from_deployed": true,
+      "source_migration": {
+        "system_current_commit": "b8086d45ffa8259f982acac5974e7d6e4a6aa88b",
+        "verified_equivalent_wave_baseline": "21f640e",
+        "utilities": "40cb8ee6cebe86469044745651a47b7201016136",
+        "watch": "6e82fdcaec0b73ed700d2104cfb4d94f011c19d4",
+        "runtime_sdk": "d493ca3ede561d410a858440ee2db9073c963426",
+        "added_custody_or_checked_storage_selectors": []
+      },
+      "source_file_count": 132,
+      "public_system_inputs_verified": true,
+      "exports_unchanged": true,
+      "builtin_imports_added": [],
+      "builtin_imports_removed": [],
+      "capability_literals_added": [],
+      "capability_literals_removed": [],
+      "capability_and_import_exceptions_documented": true,
+      "defines": [
+        "-DPORTABLE_LOW_BATTERY",
+        "-DPORTABLE_BLE_BROADCAST",
+        "-DPORTABLE_TOUCH_ROTATION=0",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DPORTABLE_FORCE_FULL_FRAMES",
+        "-DPORTABLE_INPUT_NAVIGATION",
+        "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+        "-DPORTABLE_APP_SLEEP_LOCAL",
+        "-DPORTABLE_ALARM_CLIENT",
+        "-DPORTABLE_QUICK_ACTIONS",
+        "-DPORTABLE_QUICK_RADIOS",
+        "-DPORTABLE_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DPORTABLE_NOVA_UI",
+        "-DPORTABLE_RADIO_SESSION",
+        "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+        "-DLORA_RETURN_APP=\"springboard.elf\"",
+        "-DPORTABLE_CONTEXTS_CLIENT",
+        "-DPORTABLE_ASYNC_RGB565",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_LORA_SHARED_TEXT_INPUT",
+        "-DPORTABLE_APP_LAUNCH_GUARD",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_WATCH_FROZEN_ICONS",
+        "-DPORTABLE_NOVA_TEXT_FACES_012",
+        "-DPORTABLE_TEXT_INPUT_POLICY",
+        "-DPORTABLE_NAVIGATION_RETENTION",
+        "-DPORTABLE_WATCH_NATIVE_HEIGHT",
+        "-DPORTABLE_RUNTIME_APP_CATALOG"
+      ],
+      "original_manifest_sha256": "fe1ad46d6dfcdd19ccb27e9e620a817e21684526034e0d53baf54019c658d3ac",
+      "original_boot_grants": [
+        {
+          "api": 1,
+          "capability": "display.output",
+          "instance_id": 5
+        },
+        {
+          "api": 1,
+          "capability": "input.touch.raw",
+          "instance_id": 6
+        },
+        {
+          "api": 1,
+          "capability": "board.battery",
+          "instance_id": 4
+        },
+        {
+          "api": 2,
+          "capability": "radio.lora",
+          "instance_id": 11
+        },
+        {
+          "api": 1,
+          "capability": "storage.key-value",
+          "instance_id": 9
+        },
+        {
+          "api": 1,
+          "capability": "alarm.service",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "storage.key-value",
+          "instance_id": 1
+        },
+        {
+          "api": 2,
+          "capability": "rtc.clock",
+          "instance_id": 8
+        },
+        {
+          "api": 1,
+          "capability": "net.wifi",
+          "instance_id": 15
+        },
+        {
+          "api": 1,
+          "capability": "bluetooth.hci",
+          "instance_id": 16
+        },
+        {
+          "api": 1,
+          "capability": "motion.accel",
+          "instance_id": 7
+        },
+        {
+          "api": 1,
+          "capability": "telemetry.broadcast",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "contexts.service",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "storage.shared-data",
+          "file": "context-fingerprints.cfp",
+          "instance_id": 2
+        },
+        {
+          "api": 1,
+          "capability": "storage.shared-data",
+          "file": "context-fingerprints.cfp",
+          "instance_id": 3
+        },
+        {
+          "api": 1,
+          "capability": "storage.shared-data",
+          "file": "context-rules.ctx",
+          "instance_id": 4
+        },
+        {
+          "api": 1,
+          "capability": "storage.key-value",
+          "instance_id": 3
+        },
+        {
+          "api": 1,
+          "capability": "ui.text-input",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "input.power-key",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "power.sleep",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "display.power",
+          "instance_id": 0
+        },
+        {
+          "api": 1,
+          "capability": "app.catalog",
+          "instance_id": 0
+        }
+      ],
+      "original_boot_policy": {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "display.output",
+            "instance_id": 5
+          },
+          {
+            "api": 1,
+            "capability": "input.touch.raw",
+            "instance_id": 6
+          },
+          {
+            "api": 1,
+            "capability": "board.battery",
+            "instance_id": 4
+          },
+          {
+            "api": 2,
+            "capability": "radio.lora",
+            "instance_id": 11
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 9
+          },
+          {
+            "api": 1,
+            "capability": "alarm.service",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 2,
+            "capability": "rtc.clock",
+            "instance_id": 8
+          },
+          {
+            "api": 1,
+            "capability": "net.wifi",
+            "instance_id": 15
+          },
+          {
+            "api": 1,
+            "capability": "bluetooth.hci",
+            "instance_id": 16
+          },
+          {
+            "api": 1,
+            "capability": "motion.accel",
+            "instance_id": 7
+          },
+          {
+            "api": 1,
+            "capability": "telemetry.broadcast",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "contexts.service",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "ui.text-input",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "input.power-key",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "power.sleep",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "display.power",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "app.catalog",
+            "instance_id": 0
+          }
+        ],
+        "manifest": "lora_messages.json"
+      },
+      "validation_stdout": "Native ELF structural validation tests passed\n",
+      "validation_stderr": "",
+      "hardware_tested": false,
+      "compaction": "loader-metadata-v4",
+      "growth_bytes": 4252
     }
   },
   "remaining": [],
@@ -2987,5 +3289,6 @@
   "unique_transitive_source_files": 367,
   "unique_public_system_files_verified": 159,
   "total_elf_bytes": 2872924,
-  "total_file_growth_bytes": 204880
+  "total_file_growth_bytes": 204880,
+  "app_count": 18
 }

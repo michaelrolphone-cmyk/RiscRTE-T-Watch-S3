@@ -23,7 +23,7 @@ class RepairTests(unittest.TestCase):
         return p.verify_metadata(before, after, b'firmware', 'a'*40)
 
     def test_exact_manifest_and_cohort_delta(self):
-        self.assertEqual(len(self.check(*self.fixture())), 35)
+        self.assertEqual(len(self.check(*self.fixture())), 37)
 
     def test_added_capability_refused(self):
         before, after = self.fixture()
@@ -65,7 +65,7 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(len(pins['baseline_files']),121)
         self.assertEqual(sum(n.endswith('.elf') for n in pins['baseline_files']),59)
         self.assertEqual(pins['baseline_files']['springboard.elf'],pins['preserved_springboard_sha256'])
-        self.assertEqual(len(pins['expected_repaired_apps']),17)
+        self.assertEqual(len(pins['expected_repaired_apps']),18)
 
     def test_bad_baseline_refused(self):
         with self.assertRaisesRegex(ValueError, 'official'): p.verify_baseline({})
