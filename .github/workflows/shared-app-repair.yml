@@ -17,5 +17,6 @@ jobs:
           persist-credentials: false
       - run: |
           python3 scripts/test_watch_app_repair.py
+          python3 scripts/test_app_repair_package.py
           python3 scripts/test_shared_native_ui.py
           python3 scripts/test_shared_ui_package.py
