@@ -39,6 +39,6 @@ def main():
    rows=json.loads((out/'results.json').read_text());need([(r['width'],r['height']) for r in rows]==[(160,160),(239,293),(240,240),(320,320),(320,390),(410,502),(800,1000)],'Geometry matrix changed')
    reports[out.name]={'cases':len(rows),'results':rows}
  need(reports['geometry']['results']==reports['geometry-sanitized']['results'],'Sanitized native geometry differs')
- report={'system_revision':PINS['system_revision'],'bridge_revision':PINS['bridge_revision'],'stage_profile':True,'reports':reports,'logs_sha256':logs,'device_accessed':False,'native_firmware_built':False,'target_instructions_executed':False,'hardware_tested':False,'leak_sanitizer':'disabled under ptrace; ASan/UBSan remain enabled'}
+ report={'producer_sha256':sha(Path(__file__).read_bytes()),'system_revision':PINS['system_revision'],'bridge_revision':PINS['bridge_revision'],'stage_profile':True,'reports':reports,'logs_sha256':logs,'device_accessed':False,'native_firmware_built':False,'target_instructions_executed':False,'hardware_tested':False,'leak_sanitizer':'disabled under ptrace; ASan/UBSan remain enabled'}
  (a.output/'qualification.json').write_bytes(encoded(report));print('Shared native app source qualified; hardware and native firmware remain separate gates')
 if __name__=='__main__':main()

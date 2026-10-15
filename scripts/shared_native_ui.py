@@ -68,7 +68,7 @@ def _build(args):
     imports=sorted({l.split()[-1] for l in syms.splitlines() if ' U ' in ' '+l})
     exports=sorted({l.split()[-1] for l in syms.splitlines() if len(l.split())>=3 and l.split()[-2] in ('T','D','B','R')})
     need(imports==PINS['springboard_imports'] and exports==PINS['springboard_exports'],'Springboard import/export authority differs from released baseline')
-    report=dict(baseline=args.baseline,provisional=args.provisional,sha256=sha(elf.read_bytes()),bytes=elf.stat().st_size,imports=imports,exports=exports,command=cmd,compaction=compaction,compiler=cc_version,compiler_sha256=sha(args.compiler.read_bytes()),source_revision=PINS['baseline_system'] if args.baseline else PINS['system_revision'],source_files={k:sha(v) for k,v in files(args.system).items() if not k.startswith(('.git/','build/'))},device_accessed=False)
+    report=dict(baseline=args.baseline,provisional=args.provisional,product_source_revision=git(ROOT,'rev-parse','HEAD').decode().strip(),bridge_revision=PINS['bridge_revision'],sha256=sha(elf.read_bytes()),bytes=elf.stat().st_size,imports=imports,exports=exports,command=cmd,compaction=compaction,compiler=cc_version,compiler_sha256=sha(args.compiler.read_bytes()),source_revision=PINS['baseline_system'] if args.baseline else PINS['system_revision'],source_files={k:sha(v) for k,v in files(args.system).items() if not k.startswith(('.git/','build/'))},device_accessed=False)
     (args.output/'build.json').write_bytes(encoded(report));print(json.dumps({k:report[k] for k in ('baseline','provisional','sha256','bytes','imports','exports')},indent=2))
 
 def archive(repo, revision, target):
@@ -77,6 +77,7 @@ def archive(repo, revision, target):
     with tarfile.open(fileobj=io.BytesIO(data)) as source:source.extractall(target,filter='data')
 
 def build(args):
+    if not args.provisional:clean(ROOT,git(ROOT,'rev-parse','HEAD').decode().strip())
     clean(args.bridges,PINS['bridge_revision'])
     if args.baseline:clean(args.system,PINS['baseline_system'])
     elif not args.provisional:require_final();clean(args.system,PINS['system_revision'])

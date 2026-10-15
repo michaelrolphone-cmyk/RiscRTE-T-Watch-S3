@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 """Offline deterministic-package and factory custody rejection tests."""
-import tempfile,unittest,zipfile
+import json,tempfile,unittest,zipfile
 from pathlib import Path
 import package_shared_native_ui as p
 
 class PackageTests(unittest.TestCase):
+ def metadata(self):
+  before={'springboard.json':p.encoded({'version':'1.7.12','requires':[]}),'cohort.json':p.encoded({'version':'1.1.33','apps':['default.json','springboard.json']})}
+  manifest=json.loads(before['springboard.json']);manifest['version']=p.PINS['springboard_manifest_version']
+  cohort=json.loads(before['cohort.json']);cohort.update(version=p.PINS['version'],source_revision='a'*40,runtime_version='0.3.3',firmware_sha256=p.sha(b'firmware'),firmware_size=8)
+  return before,{'springboard.json':p.encoded(manifest),'cohort.json':p.encoded(cohort)}
+ def test_metadata_exact_transform(self):
+  before,after=self.metadata();p.verify_store_metadata(before,after,b'firmware','a'*40)
+ def test_extra_manifest_authority_refused(self):
+  before,after=self.metadata();m=json.loads(after['springboard.json']);m['requires']=[{'capability':'extra','api':1}];after['springboard.json']=p.encoded(m)
+  with self.assertRaisesRegex(ValueError,'manifest'):p.verify_store_metadata(before,after,b'firmware','a'*40)
+ def test_changed_cohort_inventory_refused(self):
+  before,after=self.metadata();m=json.loads(after['cohort.json']);m['apps']=[];after['cohort.json']=p.encoded(m)
+  with self.assertRaisesRegex(ValueError,'Cohort'):p.verify_store_metadata(before,after,b'firmware','a'*40)
+ def test_incomplete_qualification_refused(self):
+  report={'system_revision':p.PINS['system_revision'],'bridge_revision':p.PINS['bridge_revision'],'stage_profile':True,'reports':{}}
+  with self.assertRaisesRegex(ValueError,'Incomplete'):p.verify_qualification(report,Path('/unused'))
  def test_roundtrip_and_checksums(self):
   payload={'README.txt':b'keep NVS and AppData\n','nested/proof.json':b'{}\n'}
   with tempfile.TemporaryDirectory() as td:

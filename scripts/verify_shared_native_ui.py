@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Admit the complete T-Watch store against the exact shared Runtime native ELF."""
-import argparse,hashlib,io,json,re,subprocess,sys
+import argparse,hashlib,io,json,os,re,subprocess,sys
 from pathlib import Path
 from shared_native_ui import ROOT,PINS,clean,need,sha,encoded,files,verify_wake
 import check_runtime_store_admission as admission
@@ -40,5 +40,6 @@ def main():
  admission.native_composition=composition
  result=admission.admit_cohort(a.runtime,native,active,store,app_policy_rows=32,native_profile=a.runtime/'watch-native-ui.ini')
  need(result['elf_count']==59 and result['hardware_calls']==result['storage_calls']==0,'Incomplete or stateful admission')
+ result.update(sanitized=os.environ.get('SANITIZE')=='1',producer_sha256=sha(Path(__file__).read_bytes()))
  (a.output/'admission.json').write_bytes(encoded(result));print(json.dumps(result,indent=2))
 if __name__=='__main__':main()

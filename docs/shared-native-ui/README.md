@@ -91,8 +91,14 @@ and active-pair bytes. Its flash images are software fixtures only.
 
 `package_shared_native_ui.py` requires final immutable source, exact cohort and
 firmware identity, full-store native admission, shared source qualification and
-all 60 preservation/fault cases. It creates local factory, preserving-kit and
+all 272 preservation/fault cases. It creates local factory, preserving-kit and
 evidence artifacts with independently verified ZIP contents and checksums. It
 has no network or hardware operations. Its factory constructor has also been
 checked against the exact released .33 image and the candidate native/store
 bytes: bootloader, partition table, NVS, AppData and unrelated regions match.
+
+The release workflow first checks finalized pins. With finalized=false, it
+performs no release build. With finalized=true and publication_enabled=false,
+it builds and retains qualified CI artifacts only. The later coordinated
+publication-enabled commit creates a new prerelease, never reuses a tag, and
+verifies the exact source and downloaded asset checksums.
