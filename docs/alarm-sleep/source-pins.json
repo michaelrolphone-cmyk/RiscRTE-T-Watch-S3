@@ -1,0 +1,35 @@
+{
+  "alarm_bytes": 20684,
+  "alarm_manifest_sha256": "d8de271face1fa0464bc23e0f8b8d5f75e82505d9479d6504132368f5e1740a2",
+  "alarm_sha256": "189ce61b0e4a2b08cbd83ff90564a4c79a6c5e9a3d74b4ad4dcc2a61b4b51604",
+  "alarm_version": "0.4.12",
+  "baseline_alarm_version": "0.4.9",
+  "baseline_source": "8b68431c5d32468ab0b882cc8df1b388b1c6e1fe",
+  "baseline_transport_sha256": "14c91d012d0af6cbf8410da8b7e9750f1dd2ba8750fafd1b4b8836afa5243a5b",
+  "baseline_version": "1.1.40",
+  "builder_sha256": "aabe7e1ce39b6ea7ae73543e9d43fdfb285df3c2a27493cb6b0375e56b9dd342",
+  "changed_store_files": [
+    "alarm-service/driver.elf",
+    "alarm-service/manifest.json",
+    "cohort.json"
+  ],
+  "compiler_sha256": "f556eb8b42ff8c0bb748243afa391a216b3482b7d3724e5c2aa6870952b76b74",
+  "elf_count": 59,
+  "finalized": true,
+  "product": "twatch",
+  "publication_enabled": true,
+  "release_branch": "release/alarm-sleep-1.1.41",
+  "release_tag": "test-alarm-sleep-1.1.41",
+  "schema": 1,
+  "sources": {
+    "image_helper": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+    "runtime": "659d859acb122640ef4003bb8d7099501d4381be",
+    "sdk": "fff9895c82d744c7237be8847347bdd1b07c6643",
+    "system": "755cc5174a6deaee120d108cbffe67ae809e1e6f",
+    "utilities": "fc9f93402050f020a3422ee889620b2414c7ad5d",
+    "watch": "2f77e01c19f20418e2f91e7181422bc4aabd3c85"
+  },
+  "toolchain_archive_sha256": "3d50f5cd5f173acfd524e07c1cd69bc99585731a415ca2e5bce879997fe602b8",
+  "toolchain_archive_url": "https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/xtensa-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz",
+  "version": "1.1.41"
+}
