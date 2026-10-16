@@ -1,0 +1,48 @@
+{
+  "schema": "lists.scene-host.baseline.v1",
+  "device": "watch",
+  "manifest": {
+    "architecture": "xtensa-esp32s3",
+    "driver_abi": 2,
+    "file_name": "driver.elf",
+    "id": "scene-host",
+    "provides": [
+      {
+        "api": 1,
+        "capability": "ui.scene"
+      }
+    ],
+    "requires": [
+      {
+        "api": 1,
+        "capability": "display.output"
+      },
+      {
+        "api": 1,
+        "capability": "input.touch.raw"
+      },
+      {
+        "api": 1,
+        "capability": "platform.clock"
+      },
+      {
+        "api": 1,
+        "capability": "ui.presentation-profile"
+      }
+    ],
+    "type": "driver",
+    "version": "0.4.5"
+  },
+  "manifest_sha256": "90324e22966c11b50b761dfb350810aaec0b01dbb4620e34c538f3a7444e2fe4",
+  "elf_sha256": "9b89bca7a6fa1a8f8ae58c5205785bb1aed0ca8328ca47afa4c8594ea1653cfe",
+  "elf_bytes": 159296,
+  "boot_row": {
+    "manifest": "ui-scene/manifest.json"
+  },
+  "defines": [
+    "-DSCENE_HOST_TELEMETRY=0",
+    "-DSCENE_HOST_WATCH_240=1"
+  ],
+  "font_tree": "28a2ae80bef4537aacd626a507900c19b071bad1",
+  "x4_generated_telemetry_font_sha256": "2d7501e42d6223ebbc191817715431182c435fea944a1a02166a0748a577eaf1"
+}

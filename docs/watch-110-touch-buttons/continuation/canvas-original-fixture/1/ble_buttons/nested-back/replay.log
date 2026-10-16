@@ -1,0 +1,3 @@
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 6 frames, 51 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified

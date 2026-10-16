@@ -20,8 +20,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 import publish_midpoint_test as midpoint
-import publish_sdr_test as sdr
-import publish_watch_product as pub
+sdr, pub = midpoint.sdr, midpoint.pub
 from watch_release_index import EMPTY_INDEX, update_index
 
 
@@ -70,7 +69,7 @@ class SourceCustodyTests(unittest.TestCase):
         guards = midpoint.source_guards()
         self.assertEqual(set(guards), set(midpoint.SOURCE_FILES))
         for path, digest in guards.items():
-            self.assertEqual(digest, pub.sha((ROOT / path).read_bytes()), path)
+            self.assertEqual(digest, pub.sha((midpoint.DERIVATION_ROOT / path).read_bytes()), path)
         self.assertIn('release/sdr-test-acceptance.json', guards)
         self.assertIn('apps/midpoint-origin-baseline.json', guards)
 
@@ -78,9 +77,10 @@ class SourceCustodyTests(unittest.TestCase):
         name = 'scripts/midpoint_upgrade.py'
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / name).parent.mkdir(parents=True)
-            (root / name).write_bytes((ROOT / name).read_bytes() + b'\n# altered\n')
-            with patch.object(midpoint, 'ROOT', root), patch.object(midpoint, 'SOURCE_FILES', (name,)):
+            import shutil
+            shutil.copytree(midpoint.DERIVATION_ROOT, root, dirs_exist_ok=True)
+            (root / name).write_bytes((root / name).read_bytes() + b'\n# altered\n')
+            with patch.object(midpoint, 'DERIVATION_ROOT', root), patch.object(midpoint, 'SOURCE_FILES', (name,)):
                 with self.assertRaisesRegex(ValueError, 'Frozen derivation source changed'):
                     midpoint.source_guards()
 

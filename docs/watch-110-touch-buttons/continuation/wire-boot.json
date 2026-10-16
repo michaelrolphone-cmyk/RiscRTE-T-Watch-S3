@@ -1,0 +1,21 @@
+{
+  "transactions": [
+    [
+      "1b230005004c0000000000",
+      "1b23000000000000000000"
+    ],
+    [
+      "1b230005004c0000000000",
+      "1b23000000000000000000"
+    ]
+  ],
+  "protocol": "boot",
+  "expected_baseline_loss": false,
+  "hardware_tested": false,
+  "source_or_binary_sha256": {
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/drivers/test/ble_hid_protocol_test.py": "3afb8cf8d3702f0c3ef36b860cb74096c1e228368195e0cc1ffbb07c45212b95",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/drivers/build/ble-hid-host/driver.so": "56bce168f5434e56124d6b1492401480fd7f6280610ce647741e4b0afb0cefa7",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/continuation/wire-seam/app-seam.so": "64ea95eb5a14a576cfe2cc5136b32a5965acf0fb4c11f96adf7cee9b87fcfbce",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/scripts/test_hid_buttons_wire.py": "d409878ddf5da101fbd642237b9b8e517887ed80572ec2c30577e1cba5e5137a"
+  }
+}

@@ -1,0 +1,105 @@
+name: Watch shared Home source checkpoint (not firmware admission)
+on:
+  push:
+    branches: [work/twatch-shared-recovery-20261013]
+    paths:
+      - 'scripts/stage_watch_shared_recovery.py'
+      - 'scripts/watch_recovery_contract.py'
+      - 'scripts/watch_factory_appdata.py'
+      - 'scripts/test_watch_factory_appdata.py'
+      - 'scripts/verify_watch_recovery.py'
+      - 'tests/test_watch_shared_recovery.py'
+      - 'tests/test_watch_recovery_contract.py'
+      - 'docs/shared-home-recovery/**'
+      - 'docs/watch-recovery/**'
+      - '.github/workflows/watch-shared-recovery-source.yml'
+  pull_request:
+    paths:
+      - 'scripts/stage_watch_shared_recovery.py'
+      - 'scripts/watch_recovery_contract.py'
+      - 'scripts/watch_factory_appdata.py'
+      - 'scripts/test_watch_factory_appdata.py'
+      - 'scripts/verify_watch_recovery.py'
+      - 'tests/test_watch_shared_recovery.py'
+      - 'tests/test_watch_recovery_contract.py'
+      - 'docs/shared-home-recovery/**'
+      - 'docs/watch-recovery/**'
+      - '.github/workflows/watch-shared-recovery-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-packaging-contracts:
+    name: Source contracts and nonmaterializing appdata checks only
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts
+            tests
+            docs/watch-recovery
+            docs/shared-home-recovery
+            vendor/esp-idf-spiffs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Source contracts; exact-artifact tests intentionally skipped without inputs
+        env:
+          WATCH_SHARED_RECOVERY_BASELINE: ''
+          WATCH_SHARED_SOURCE: ''
+          WATCH_SHARED_BUILD: ''
+        run: |
+          python -m unittest discover -s tests -p test_watch_shared_recovery.py -v
+          python -m unittest discover -s tests -p test_watch_recovery_contract.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 06da76aa7f074220b74a282badca0ed0061f1643
+          path: .dependencies/runtime
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/app_data_image.py
+            /scripts/app_data_format.c
+      - uses: actions/checkout@v4
+        with:
+          repository: littlefs-project/littlefs
+          ref: f53a0cc961a8acac85f868b431d2f3e58e447ba3
+          path: .dependencies/littlefs
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /lfs.c
+            /lfs.h
+            /lfs_util.c
+            /lfs_util.h
+      - name: Reproduce only the pinned 512 KiB empty appdata fixture
+        run: |
+          python scripts/watch_factory_appdata.py format \
+            --runtime .dependencies/runtime \
+            --littlefs-source .dependencies/littlefs \
+            --output "$RUNNER_TEMP/watch-shared-appdata"
+      - name: Inherited appdata guards; no full-image files or packaging writes
+        run: |
+          python scripts/test_watch_factory_appdata.py \
+            --appdata "$RUNNER_TEMP/watch-shared-appdata/appdata.bin" \
+            Packaging.test_exact_qualified_partition \
+            Packaging.test_blank_fails_admission \
+            Packaging.test_truncated_and_extra_bytes \
+            Packaging.test_corrupt_appdata_fails \
+            Packaging.test_table_checksum_fails \
+            Packaging.test_wrong_partition_type_geometry_and_flags \
+            Packaging.test_overlap_and_duplicate_labels -v
+      - name: Describe this check's limits
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          This job checks source contracts, the inherited recovery contract, and seven nonmaterializing appdata guards.
+          The 15 exact-image/shared-pair staging tests were qualified locally for source checkpoint 3212fe1c67c0f21e32cca1d330ed02ced7ccc4d0. They are intentionally skipped here because their three explicit artifact inputs are not supplied.
+          Only a 512 KiB empty appdata test fixture is generated from pinned source. No full flash image is downloaded or materialized.
+          A green result is not complete cohort admission, firmware readiness, a native build, hardware qualification, or layout approval. Provider/native/capacity gates and pending layout approval remain open.
+          EOF

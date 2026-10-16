@@ -1,0 +1,35 @@
+{
+  "schema": "watch.home-swipe-clock.regression.v1",
+  "source": "b7a6cf0d2505ecf9b1c625bbfcc6d4048c13b471",
+  "tree": "a448e3d29d61467ee67e5bddc4e29a20706e2c36",
+  "gesture_matrix_cases": 40,
+  "gesture_boundary_cases": 15,
+  "gesture_normal_and_asan_ubsan": true,
+  "fast_wake_actual_app_normal_and_asan_ubsan": true,
+  "injected_clock_offset_seconds": [
+    -300,
+    300
+  ],
+  "deep_wake_accuracy_cases": 6,
+  "optional_rtc_failure_cases": 3,
+  "rtc_denver_parity_cases_each_mode": 333563,
+  "rtc_writes_added": false,
+  "native_firmware_changed": false,
+  "provisional_first_frame_may_show_retained_time": true,
+  "hardware_timing_measured": false,
+  "hardware_accuracy_measured": false,
+  "evidence": {
+    "final-combined-raster.log": {
+      "sha256": "9c0b9ef41fabbdf760cd75aef53f20b99924145ba517946d28854b9f498ee628",
+      "bytes": 15857
+    },
+    "final-combined-fast-wake.log": {
+      "sha256": "7889c7d1777476edfc1c7ecb5507585e08ab2e25398afa16463b8a61cb1807e4",
+      "bytes": 2352
+    },
+    "public-combined-source.json": {
+      "sha256": "6b2b6f0bdb87f906b803028f99d1c0545cd00e834d58a6c813e5e6efceb24bf2",
+      "bytes": 3525
+    }
+  }
+}

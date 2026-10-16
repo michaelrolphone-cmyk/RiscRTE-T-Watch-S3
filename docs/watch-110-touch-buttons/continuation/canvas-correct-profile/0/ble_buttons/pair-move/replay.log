@@ -1,0 +1,11 @@
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=4 flags=31 error=0 generation=1
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing touch ignored reason=moved
+HID pairing contact target=accept x=180 y=218 contacts=1 armed=1
+HID pairing response action=accept requested
+HID pairing response action=accept result=ok
+HID state from=4 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1

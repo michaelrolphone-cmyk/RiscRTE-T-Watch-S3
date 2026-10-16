@@ -1,0 +1,63 @@
+{
+  "actual_full_image": {
+    "sha256": "4ad9155ca9ec94c440e9d4c6c868947bae0a0d7868f9f416929ca18bbca8404b",
+    "size_bytes": 16777216
+  },
+  "hardware_qualified": false,
+  "leak_detection": false,
+  "results": {
+    "normal": {
+      "cohort": {
+        "active_store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc",
+        "app_policy_rows": 16,
+        "candidate_store_sha256": "cafb62751d30a1d849a6017b89bb6e82f7b7b711f9e23f136dea6ce2df08dbf1",
+        "cohort_validated": true,
+        "cooperative_yields": 142,
+        "elf_count": 46,
+        "error": "",
+        "hardware_calls": 0,
+        "native_elf_sha256": "f92e83ca6c7850fbba844ac7a647e5e3bc1d13f1c16c1a2b8ae0fcd4f4d67859",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "whole_store": {
+        "error": "",
+        "hardware_calls": 0,
+        "i2s_tables": 2,
+        "prepared": true,
+        "storage_calls": 0,
+        "store_files": 95,
+        "store_sha256": "cafb62751d30a1d849a6017b89bb6e82f7b7b711f9e23f136dea6ce2df08dbf1"
+      }
+    },
+    "sanitized": {
+      "cohort": {
+        "active_store_sha256": "18c3a475eda87cbddc65b906c729cdcca8cf42e124cd0067aed2b00cff6ba6fc",
+        "app_policy_rows": 16,
+        "candidate_store_sha256": "cafb62751d30a1d849a6017b89bb6e82f7b7b711f9e23f136dea6ce2df08dbf1",
+        "cohort_validated": true,
+        "cooperative_yields": 142,
+        "elf_count": 46,
+        "error": "",
+        "hardware_calls": 0,
+        "native_elf_sha256": "f92e83ca6c7850fbba844ac7a647e5e3bc1d13f1c16c1a2b8ae0fcd4f4d67859",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "whole_store": {
+        "error": "",
+        "hardware_calls": 0,
+        "i2s_tables": 2,
+        "prepared": true,
+        "storage_calls": 0,
+        "store_files": 95,
+        "store_sha256": "cafb62751d30a1d849a6017b89bb6e82f7b7b711f9e23f136dea6ce2df08dbf1"
+      }
+    }
+  },
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "source_revision": "b44d8ee0159464e9fd2be20c02092c6596573860",
+  "target_instructions_executed": false
+}

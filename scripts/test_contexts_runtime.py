@@ -7,6 +7,7 @@ for key in ('watch','runtime','system','utilities','drivers','store','output'):p
 p.add_argument('--runtime-candidate-sha',help='Early source-compatibility probe only; never final artifact qualification')
 for key in ('binding-repository','binding','native-candidate'):p.add_argument('--'+key,type=Path)
 p.add_argument('--binding-source')
+p.add_argument('--lifecycle-build',type=Path,help='Strict verified Watch18 overlay on the exact baseline binding')
 p.add_argument('--enabled',action='store_true')
 a=p.parse_args()
 a.watch=a.watch.resolve();sys.path.insert(0,str(a.watch/'scripts'))
@@ -20,17 +21,26 @@ runtime,system,utilities,drivers=[paths[k] for k in ('runtime','system','utiliti
 stream_sources=('src/runtime/streams/AppStreamSessions.cpp','src/runtime/streams/ProviderQueueHost.cpp')
 if all((runtime/name).is_file() for name in stream_sources):
     base.RUNTIME_SOURCES=(*base.RUNTIME_SOURCES,*stream_sources)
-c=configuration(a.watch)
+if a.lifecycle_build:
+    from build_lifecycle_routes import configuration as lifecycle_configuration, verify as verify_lifecycle
+    c=lifecycle_configuration()
+else:
+    c=configuration(a.watch)
 binding_arguments=(a.binding_repository,a.binding,a.native_candidate,a.binding_source)
 bound_receipt=None
 if any(binding_arguments):
     base.require(all(binding_arguments) and not a.runtime_candidate_sha,'Complete final binding arguments required without an override')
     clean(a.binding_repository,a.binding_source)
-    verify_code=('import json,sys;from pathlib import Path;sys.path.insert(0,sys.argv[1]);'
-                 'import watch_native_binding;r,f,b,l=watch_native_binding.verify(Path(sys.argv[2]),Path(sys.argv[3]),Path(sys.argv[4]),sys.argv[5]);'
-                 'print(json.dumps(r,sort_keys=True))')
-    bound_receipt=json.loads(base.command([sys.executable,'-c',verify_code,a.binding_repository/'scripts',a.binding,runtime,a.native_candidate,a.binding_source]))
-    base.require(bound_receipt['app_stage_configuration']==c,'Native binding selected different app/source bytes')
+    if a.lifecycle_build:
+        base.require(a.binding_source=='b6abe35ed3049174e53c89c8adb85edd3860da34','Wrong baseline binding source')
+        bound_receipt=verify_lifecycle(a.lifecycle_build,a.binding,runtime,a.native_candidate,clean(a.watch))
+        base.require(bound_receipt['configuration']==c,'Lifecycle build configuration differs')
+    else:
+        verify_code=('import json,sys;from pathlib import Path;sys.path.insert(0,sys.argv[1]);'
+                     'import watch_native_binding;r,f,b,l=watch_native_binding.verify(Path(sys.argv[2]),Path(sys.argv[3]),Path(sys.argv[4]),sys.argv[5]);'
+                     'print(json.dumps(r,sort_keys=True))')
+        bound_receipt=json.loads(base.command([sys.executable,'-c',verify_code,a.binding_repository/'scripts',a.binding,runtime,a.native_candidate,a.binding_source]))
+        base.require(bound_receipt['app_stage_configuration']==c,'Native binding selected different app/source bytes')
 
 for key,path in [('runtime',runtime),('system-apps',system),('utilities',utilities)]:
     clean(path,(bound_receipt['runtime']['source'] if bound_receipt else a.runtime_candidate_sha or c['sources'][key]['commit']) if key=='runtime' else c['sources'][key]['commit'])
@@ -40,9 +50,14 @@ content=base._files(a.store.resolve())
 watch_head=clean(a.watch)
 candidate_cohort=json.loads(content['cohort.json'])
 if bound_receipt:
-    base.require(bound_receipt['app_stage_source']==watch_head and bound_receipt['cohort']==candidate_cohort and
-                 bound_receipt['files']=={n:{'sha256':hashlib.sha256(b).hexdigest(),'size_bytes':len(b)} for n,b in content.items()},
-                 'Executed store differs from the exact native/app binding')
+    if a.lifecycle_build:
+        base.require(bound_receipt['watch_source']==watch_head and candidate_cohort['source_revision']==watch_head and
+                     bound_receipt['files']=={n:{'sha256':hashlib.sha256(b).hexdigest(),'size_bytes':len(b)} for n,b in content.items()},
+                     'Executed store differs from the exact lifecycle build')
+    else:
+        base.require(bound_receipt['app_stage_source']==watch_head and bound_receipt['cohort']==candidate_cohort and
+                     bound_receipt['files']=={n:{'sha256':hashlib.sha256(b).hexdigest(),'size_bytes':len(b)} for n,b in content.items()},
+                     'Executed store differs from the exact native/app binding')
 else:
     base.require(candidate_cohort['source_revision']==watch_head,'Candidate is not bound to this Watch source')
 source_states={name:base.source_state(path) for name,path in {'watch':a.watch,**paths}.items()}
@@ -93,7 +108,11 @@ for name, destinations in targets.items():
         production=source_manifests[name];source=list(production.parent.glob('*.c'));assert len(source)==1;source=source[0]
         inc=['-I'+str(drivers/'sdk/driver')] if name in base.EXTERNAL_DRIVERS else includes
     selected=[json.loads(content[row['manifest']]) for row in json.loads(content['boot.json'])['drivers'] if json.loads(content[row['manifest']])['id']==name][0]
-    assert json.loads(production.read_text())==selected,name
+    expected=json.loads(production.read_text())
+    if a.lifecycle_build and name=='software-update-firmware':
+        base.require(c['firmware_update']['source_routes'] and selected['version']=='0.1.5','Missing explicit route selection')
+        extra+=['-DUPDATE_SOURCE_ROUTES=1'];expected={**expected,'version':'0.1.5'}
+    assert expected==selected,name
     base.command([compiler,language,*base._flags(),'-fPIC','-shared','-fvisibility=hidden',*inc,*extra,source,*(__import__('imu_sources').extra_sources(name)),'-o',module])
     for target in destinations:shutil.copy2(module,target)
 clock_includes=['-I'+str(q) for q in (system/'lib/PortableApps/include',utilities/'lib/Alarm/include',utilities/'lib/Contexts/include')]+includes
@@ -129,7 +148,7 @@ base.require(source_states=={name:base.source_state(path) for name,path in {'wat
 record={'schema':2,'mode':'actual Runtime/CpuPort/ProviderGraph and source-compiled providers/Clock over existing lowest-hardware fixture',
         'monitoring_enabled':a.enabled,
         'sanitizer':{'undefined':os.environ.get('SANITIZE','1')!='0','address':os.environ.get('ADDRESS_SANITIZE')=='1'},
-        'runtime_candidate_override':a.runtime_candidate_sha,'native_binding':bound_receipt,'final_artifact_qualification':a.runtime_candidate_sha is None,'candidate_cohort':candidate_cohort,'candidate_store_sha256':base.store_digest(content),
+        'runtime_candidate_override':a.runtime_candidate_sha,'native_binding':None if a.lifecycle_build else bound_receipt,'lifecycle_build':bound_receipt if a.lifecycle_build else None,'final_artifact_qualification':a.runtime_candidate_sha is None,'candidate_cohort':candidate_cohort,'candidate_store_sha256':base.store_digest(content),
         'candidate_files':{name:{'sha256':hashlib.sha256(raw).hexdigest(),'size_bytes':len(raw)} for name,raw in sorted(content.items())},
         'watch_source':watch_head,'source_pins':c['sources'],'drivers_pin':c['drivers'],'source_states':source_states,
         'source_hashes':before_sources,'runner_sha256':base.sha(Path(__file__)),
