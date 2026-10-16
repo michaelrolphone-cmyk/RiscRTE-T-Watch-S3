@@ -10,6 +10,8 @@ for sanitize in (False,True):
  if sanitize:flags+=['-fsanitize=address,undefined','-fno-sanitize-recover=all','-fno-omit-frame-pointer','-no-pie']
  objects=[]
  for i,source in enumerate([root/'tests/fast_wake_clock_test.c',root/'apps/clock/nova/nova.c',root/'apps/clock/points_projection.c',*[a.system_apps/'lib/PortableApps/src'/n for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')]]):
-  obj=out/f'{int(sanitize)}-{i}.o';subprocess.run([os.environ.get('CC','cc'),'-std=c11',*flags,'-c',str(source),'-o',str(obj)],check=True);objects.append(str(obj))
+  obj=out/f'{int(sanitize)}-{i}.o'
+  renderer_flags=['-DWATCH_CONTEXTS_CLIENT'] if source.name=='nova.c' else []
+  subprocess.run([os.environ.get('CC','cc'),'-std=c11',*flags,*renderer_flags,'-c',str(source),'-o',str(obj)],check=True);objects.append(str(obj))
  binary=out/f'test-{int(sanitize)}';subprocess.run([os.environ.get('CXX','c++'),'-std=c++11',*flags,str(root/'apps/clock/effects/boot.cpp'),*objects,'-o',str(binary)],check=True)
  subprocess.run([str(binary)],check=True,timeout=60,env={**os.environ,'ASAN_OPTIONS':'detect_leaks=0'})

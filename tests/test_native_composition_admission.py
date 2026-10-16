@@ -67,6 +67,7 @@ class NativeComposition(unittest.TestCase):
         self.addCleanup(self.marker.stop)
 
     def git_output(self, command, **kwargs):
+        self.assertEqual(kwargs.get('env', {}).get('GIT_NO_LAZY_FETCH'), '1')
         if 'rev-parse' in command:
             return HEAD + '\n'
         if 'status' in command:
@@ -126,7 +127,7 @@ class NativeComposition(unittest.TestCase):
             self.markers[name] = self.markers[name].replace(b':24', b':16')
             with self.assertRaisesRegex(ValueError, 'Native row bounds differ'):
                 self.check()
-        with self.assertRaisesRegex(ValueError, '24 policy rows'):
+        with self.assertRaisesRegex(ValueError, '24 or 32 policy rows'):
             self.check(rows=16)
 
     def test_unselected_native_sharing_backend_rejected(self):
@@ -199,6 +200,162 @@ class NativeComposition(unittest.TestCase):
             self.assertNotIn('-DRISC_INSTALLED_APP_CAPACITY=64', historical)
             self.assertNotIn('-DRISC_APP_REQUIREMENT_ROWS=24', historical)
             self.assertNotIn('-DSTORE_ADMISSION_CROWN_PROFILE', historical)
+
+
+EXPANDED_PROFILE = r'''[platformio]
+extra_configs =
+  platformio.ini
+  crown-build.ini
+  crown-wake-profile.ini
+  watch-file-source-profile.ini
+[env:watch-expanded]
+extends = env:watch-file-source
+board_build.partitions = partitions-paired-appdata-expanded.csv
+build_unflags =
+  -std=gnu++11
+  -DRISC_PROVIDER_CAPACITY=32
+  -DRISC_APP_POLICY_ROWS=24
+  -DRISC_APP_REQUIREMENT_ROWS=24
+  -DRISC_OWNER_INSTALLER=1
+  -Wl,-u,risc_owner_maintenance_target
+  -DRISC_TARGET=\"esp32s3-16mb-appdata-iq\"
+build_flags =
+  ${env:watch-file-source.build_flags}
+  -DRISC_TARGET=\"esp32s3-16mb-appdata-expanded-iq\"
+  -DRISC_PAIRED_APP_DATA_EXPANDED=1
+  -DRISC_PROVIDER_CAPACITY=40
+  -DRISC_APP_POLICY_ROWS=32
+  -DRISC_APP_REQUIREMENT_ROWS=32
+'''
+
+
+class ExpandedNativeComposition(unittest.TestCase):
+    git_output = NativeComposition.git_output
+    def check(self, rows=32):
+        return NativeComposition.check(self, rows)
+
+    def setUp(self):
+        NativeComposition.setUp(self)
+        self.native=self.native.replace(b"ROWS:24",b"ROWS:32")
+        for key in ("risc_app_policy_rows","risc_app_requirement_rows"):
+            self.markers[key]=self.markers[key].replace(b"ROWS:24",b"ROWS:32")
+        self.profile = self.root / 'watch-expanded-profile.ini'
+        self.profile.write_text(EXPANDED_PROFILE)
+        source = (ROOT / 'docs/file-source/watch-file-source-profile.ini').read_bytes()
+        self.git_profiles.update({'watch-expanded-profile.ini': EXPANDED_PROFILE.encode(),
+                                  'watch-file-source-profile.ini': source,
+                                  'partitions-paired-appdata-expanded.csv': b'committed table\n'})
+        for name, raw in self.git_profiles.items():
+            (self.root / name).write_bytes(raw)
+        self.native += b'RISC_PAIRED_STORE_ABI:3\0'
+        self.markers['risc_file_source_abi'] = b'\x01\0\0\0'
+        self.abi = patch('verify_update_elf.verify_native_store_abi',
+                         return_value={'store_abi': 3, 'marker_symbol': 'risc_paired_store_abi'})
+        self.abi_check = self.abi.start()
+        self.addCleanup(self.abi.stop)
+        self.allocation = patch.object(admission, 'native_symbol_allocation',
+                                       return_value={'address': 0x3fc90000, 'bytes': 128})
+        self.allocation.start()
+        self.addCleanup(self.allocation.stop)
+
+    def test_exact_expanded_profile_retains_recovery_and_bounded_rows(self):
+        proof = self.check()
+        self.abi_check.assert_called_once_with(self.native, 3)
+        self.assertEqual(proof['profile'], 'env:watch-expanded')
+        self.assertEqual(proof['bounds'], {'RISC_INSTALLED_APP_CAPACITY': 64,
+            'RISC_PROVIDER_CAPACITY': 40, 'RISC_APP_POLICY_ROWS': 32, 'RISC_APP_REQUIREMENT_ROWS': 32})
+        self.assertEqual((proof['store_abi'], proof['store_size'], proof['layout']),
+                         (3, 0x550000, 'riscrte-paired-appdata-v3'))
+        self.assertFalse(proof['owner_installer'])
+        self.assertTrue(proof['file_source_enabled'])
+        self.assertEqual(proof['crown_profile_sha256'], admission.sha(PROFILE.encode()))
+        self.assertEqual(proof['wake_profile_sha256'], admission.sha(WAKE_PROFILE.encode()))
+
+    def test_reject_missing_changed_or_extra_expanded_flags(self):
+        for text in (EXPANDED_PROFILE.replace('  -DRISC_OWNER_INSTALLER=1\n', ''),
+                     EXPANDED_PROFILE.replace('  -DRISC_PROVIDER_CAPACITY=32\n', ''),
+                     EXPANDED_PROFILE.replace('  -std=gnu++11\n', ''),
+                     EXPANDED_PROFILE + '  -URISC_OWNER_INSTALLER\n',
+                     EXPANDED_PROFILE + '  -URISC_TARGET\n',
+                     EXPANDED_PROFILE + '  -URISC_PROVIDER_CAPACITY\n',
+                     EXPANDED_PROFILE.replace('CAPACITY=40', 'CAPACITY=64'),
+                     EXPANDED_PROFILE.replace('env:watch-file-source\n', 'env:crown-wake-profile\n'),
+                     EXPANDED_PROFILE.replace('partitions-paired-appdata-expanded.csv', 'partitions-paired-appdata.csv'),
+                     EXPANDED_PROFILE + '  -DRISC_APP_POLICY_ROWS=32\n',
+                     EXPANDED_PROFILE + '  -DRISC_NATIVE_RECOVERY_AXP2101=0\n'):
+            self.profile.write_text(text)
+            with self.subTest(text=text), self.assertRaisesRegex(ValueError, 'modified expanded'):
+                self.check()
+
+    def test_reject_any_uncommitted_selected_profile_or_table(self):
+        for name in ('watch-expanded-profile.ini', 'watch-file-source-profile.ini',
+                     'partitions-paired-appdata-expanded.csv'):
+            saved = self.git_profiles[name]
+            self.git_profiles[name] = b'other committed bytes'
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'differs from the source identity'):
+                self.check()
+            self.git_profiles[name] = saved
+
+    def test_reject_inherited_recovery_or_file_source_change(self):
+        path = self.root / 'crown-build.ini'
+        path.write_text(PROFILE.replace('RISC_NATIVE_RECOVERY_AXP2101=1', 'RISC_NATIVE_RECOVERY_AXP2101=0'))
+        with self.assertRaisesRegex(ValueError, 'modified native crown'):
+            self.check()
+        path.write_text(PROFILE)
+        path = self.root / 'watch-file-source-profile.ini'
+        path.write_bytes(self.git_profiles[path.name].replace(b'RISC_NATIVE_FILE_SOURCE=1', b'RISC_NATIVE_FILE_SOURCE=0'))
+        with self.assertRaisesRegex(ValueError, 'modified native source'):
+            self.check()
+
+    def test_reject_wrong_abi_and_unsupported_rows(self):
+        self.abi_check.side_effect = ValueError('Native allocated store ABI differs')
+        with self.assertRaisesRegex(ValueError, 'store ABI differs'):
+            self.check()
+        self.abi_check.side_effect = None
+        with self.assertRaisesRegex(ValueError, '32 policy rows'):
+            self.check(rows=24)
+        self.markers['risc_app_requirement_rows'] = b'RISC_APP_REQUIREMENT_ROWS:24\0'
+        with self.assertRaisesRegex(ValueError, 'Native row bounds differ'):
+            self.check()
+
+    def test_abi3_cannot_silently_select_historical_or_profileless_admission(self):
+        self.profile = self.root / 'crown-build.ini'
+        with self.assertRaisesRegex(ValueError, 'explicit expanded Watch profile'):
+            self.check()
+        with self.assertRaisesRegex(ValueError, 'explicit expanded Watch profile'):
+            admission.compile_harness(self.root, self.root / 'admit', True, self.native, 24)
+
+    def test_host_compiles_selected_geometry_and_exact_capacities(self):
+        for relative in ('src/ports/esp32s3/CpuPort.h', 'src/bootstrap/Runtime.h',
+                         'src/bootstrap/AppPolicyLimits.h'):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('')
+        elf = Mock()
+        elf.get_section_by_name.return_value = None
+        with patch.object(admission.subprocess, 'run') as run, \
+                patch('verify_update_elf.cohort_admission_header', return_value='// production header') as header, \
+                patch('elftools.elf.elffile.ELFFile', return_value=elf):
+            admission.compile_harness(self.root, self.root / 'matched', True, self.native, 32,
+                                      native_profile=self.profile)
+        command = run.call_args.args[0]
+        for define in ('RISC_PAIRED_APP_DATA=1', 'RISC_PAIRED_APP_DATA_EXPANDED=1',
+                       'RISC_INSTALLED_APP_CAPACITY=64', 'RISC_PROVIDER_CAPACITY=40',
+                       'RISC_APP_REQUIREMENT_ROWS=32', 'RISC_APP_POLICY_ROWS=32',
+                       'STORE_ADMISSION_CROWN_PROFILE', 'STORE_ADMISSION_FILE_SOURCE'):
+            self.assertEqual(command.count('-D' + define), 1)
+        self.assertNotIn('-DRISC_PROVIDER_CAPACITY=32', command)
+        header.assert_called_once_with(self.root.resolve(), self.native, store_abi=3)
+
+    def test_expanded_decode_is_explicit_and_historical_default_is_unchanged(self):
+        store = {name: b'fixture' for name in ('boot.json', 'board.json', 'default.json', 'default.elf')}
+        with patch.object(admission, 'read_image', return_value=store) as read:
+            admission.unpack_image(b'expanded', expected_size=0x550000)
+            read.assert_called_with(b'expanded', 0x550000)
+            admission.unpack_image(b'old')
+            read.assert_called_with(b'old', 0x4f0000)
+        with self.assertRaisesRegex(ValueError, 'Unknown SPIFFS geometry'):
+            admission.unpack_image(b'unknown', expected_size=0x560000)
 
 
 if __name__ == '__main__':

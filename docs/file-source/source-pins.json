@@ -1,0 +1,14 @@
+{
+  "baseline_product": "e0b43ef70f312cc512861926109ebe99f41c964d",
+  "product_version": "1.1.18",
+  "watch_runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+  "general_runtime": "98b9d2b08cd6a05f75ec0ca0cd755a63484a2246",
+  "files_system": "54d25603c3e9610f5e82dab5472e3ece76ab242e",
+  "model_viewer_utilities": "c310854418f920340257c61af62c202f7ff4ca12",
+  "scanner_utilities": "3385d634db829066e3f7f0d84474df5ed54bf143",
+  "scanner_product_recipe": "14387b49351eba7539b3e76ea16c99d0b8445e21",
+  "rtc_utilities": "80efb298c9ca8d0f62f9a31840c9e51d380b40f6",
+  "rtc_settings_system": "3508092f135d428b5bbccee0546616d046938527",
+  "hardware_verified": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z"
+}

@@ -1,0 +1,85 @@
+{
+  "baseline_selection_sha256": "862cb81d8f3d8bfe810274f3f803f30346970818e8c0e114f53771fd5527a503",
+  "baseline_source": "b5ed35f93792cd34a0c6df30895767a708a98658",
+  "flashable": false,
+  "generic_services": [
+    {
+      "api": 1,
+      "capability": "power.sleep",
+      "instance_id": 0
+    },
+    {
+      "api": 1,
+      "capability": "input.power-key",
+      "instance_id": 0
+    },
+    {
+      "api": 1,
+      "capability": "display.power",
+      "instance_id": 0
+    }
+  ],
+  "home": {
+    "build_receipt_sha256": "1ef09445da264389483c576d5e943f56eaac120ae2c7eaa01bba62b4b69532dc",
+    "clock": {
+      "bytes": 1232,
+      "defines": [],
+      "sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1"
+    },
+    "default": {
+      "bytes": 871088,
+      "defines": [
+        "-DWATCH_FAST_WAKE",
+        "-DPORTABLE_WATCH_NATIVE_HEIGHT",
+        "-DPORTABLE_LOW_BATTERY",
+        "-DWATCH_RUNTIME_FEATURES",
+        "-DWATCH_BLE_BROADCAST",
+        "-DWATCH_CLOCK_LAUNCHER",
+        "-DWATCH_CLOCK_ALARMS",
+        "-DWATCH_CLOCK_POINTS",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DWATCH_PAIRED_BOOT_CONFIRM",
+        "-DWATCH_QUICK_ACTIONS",
+        "-DWATCH_QUICK_RADIOS",
+        "-DWATCH_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DWATCH_CONTEXTS_CLIENT",
+        "-flto",
+        "-Wl,--undefined=__udivdi3",
+        "-Wl,--undefined=__umoddi3",
+        "-Wl,--undefined=__divdi3",
+        "-Wl,--undefined=__moddi3"
+      ],
+      "sha256": "7397f8ba6a036299a71bf7c62ba7882065e9ffca0ea87f0175a7eb35908cfbc1"
+    },
+    "repository": "michaelrolphone-cmyk/RiscRTE-Watch",
+    "source": "ec768c7fae6fdb484fef28c6ec87f129b0a7f585",
+    "stager_sha256": "902b36766fb0ee369a04b6a8b37667b04bcf654579602c05025425c6b93325e7",
+    "system_source": "076f8da38f7dfebdfde6dd5d46e06446470fb828",
+    "utilities_source": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8"
+  },
+  "minimum_free_spiffs_blocks": 2,
+  "native": {
+    "historical_generic_runtime_not_selected": "5323d1e834bdcc8e5e9fb0e8f76c383e46626801",
+    "retained_bin_sha256": "1477f28bad4bf78faa7e29eb5082421b84050e5f160bc12e4e92a74ca2ce701f",
+    "retained_source": "06da76aa7f074220b74a282badca0ed0061f1643",
+    "selected_successor": null
+  },
+  "optional_ui_sources": {
+    "allowed_apps": [
+      "settings",
+      "springboard"
+    ],
+    "selected": false,
+    "shared_bridges": "6e82fdcaec0b73ed700d2104cfb4d94f011c19d4",
+    "system_ui": "2c3f44dd773e27e3a142462088a96328119a79e7"
+  },
+  "public_ancestor_audit": {
+    "baseline": "1.1.17",
+    "source": "27505625b29031de4d2347a37fbc1ef82176ad67",
+    "status": "reference only; not a composable replacement for recovered repairs",
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/27505625b29031de4d2347a37fbc1ef82176ad67"
+  },
+  "schema": "riscrte.twatch-shared-home-source-checkpoint",
+  "source_only": true
+}

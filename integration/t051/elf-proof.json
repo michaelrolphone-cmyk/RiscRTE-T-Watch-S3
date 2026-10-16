@@ -1,0 +1,52 @@
+{
+  "watch": {
+    "normalized_relocations": 0,
+    "profile": "loader-metadata-v3",
+    "before_bytes": 228264,
+    "after_bytes": 144720,
+    "before_sha256": "aad5ddfd8faeeb54cb073fcfebe30a9c7f93993ba2cac7be8a18f8191aff0085",
+    "after_sha256": "0260a6d8c39ede4ed4b5aebc2220c93141b6db800c0aebab464404e313a5af2a",
+    "removed_sections": [
+      ".debug_abbrev",
+      ".debug_aranges",
+      ".debug_info",
+      ".debug_line",
+      ".debug_str",
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ]
+  },
+  "waveshare": {
+    "normalized_relocations": 0,
+    "profile": "loader-metadata-v3",
+    "before_bytes": 246840,
+    "after_bytes": 157016,
+    "before_sha256": "d07d9b69a02d9c97a79b2dc5b27a8755411c696bd5b4fc934a7cd389cd7b18d3",
+    "after_sha256": "f26a4c8847c69e08a559784cb7401b802740fde8c7be760f3b6acc6fd3d27621",
+    "removed_sections": [
+      ".debug_abbrev",
+      ".debug_aranges",
+      ".debug_info",
+      ".debug_line",
+      ".debug_str",
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ]
+  }
+}

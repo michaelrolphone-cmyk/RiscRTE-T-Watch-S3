@@ -211,6 +211,18 @@ int main(int argc, char** argv) {
   runtimePort.memoryHeap=[](risc_memory_heap_snapshot_v1*)->int32_t{++hardwareCalls;return -1;};
   runtimePort.randomBytes=[](void*,uint32_t)->int32_t{++hardwareCalls;return -1;};
 #endif
+#ifdef STORE_ADMISSION_FILE_SOURCE
+  // Admission models authority availability only. Every source operation is
+  // forbidden here and counted, just like native hardware/storage callbacks.
+  const RiscBoot::FileSourceBackend fileSource{&storageCalls,
+    [](void* c,uint64_t)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c,const void*,uint32_t,uint32_t*)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c,uint64_t,void*,uint32_t,uint32_t*)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void*){return true;}};
+  runtimePort.fileSource=&fileSource;
+#endif
   RiscBoot::Runtime runtime(runtimePort);
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {

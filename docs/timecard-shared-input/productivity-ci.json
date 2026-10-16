@@ -1,0 +1,119 @@
+{
+  "schema": "timecard.github-ci.v1",
+  "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
+  "commit": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+  "run_id": 38283829029,
+  "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Productivity/actions/runs/38283829029",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": {
+    "jobs": [
+      {
+        "id": 114927297643,
+        "name": "host-regressions",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 38283829029,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Normal and ASan/UBSan with platform-default leak detection",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Run actions/setup-python@v5",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      }
+    ]
+  },
+  "checks": [
+    "2026-10-12T17:23:21.2374294Z Watch complete adapter submitted RGB565 frame/ledger parity PASS",
+    "2026-10-12T17:23:22.5315967Z watch seven non-keyboard frames and ledger byte parity PASS",
+    "2026-10-12T17:23:27.4816302Z x4 seven non-keyboard frames and ledger byte parity PASS",
+    "2026-10-12T17:23:55.3701085Z Watch complete adapter submitted RGB565 frame/ledger parity PASS",
+    "2026-10-12T17:23:58.0930221Z watch seven non-keyboard frames and ledger byte parity PASS",
+    "2026-10-12T17:24:08.0907742Z x4 seven non-keyboard frames and ledger byte parity PASS",
+    "2026-10-12T17:24:08.0984068Z 174 workflow/regression runs and 6 paired render/storage parity checks PASS"
+  ],
+  "ci_leak_detection": "platform-default",
+  "verified_at": "2026-10-12T17:26:57Z",
+  "ci_leak_detection_disabled": false
+}

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendar Watch Faces — 8 × 240×240</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--cap:#7d8c90;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:#000}
+body{min-height:100vh;padding:28px 16px;font-family:'Rajdhani','Segoe UI',sans-serif}
+h1{margin:0 0 24px;text-align:center;font:500 14px 'Orbitron','Segoe UI',sans-serif;letter-spacing:.3em;color:var(--cap)}
+#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:30px 16px;justify-items:center;max-width:1200px;margin:0 auto}
+figure{margin:0;text-align:center}
+.case{padding:12px;border-radius:34px;background:linear-gradient(145deg,#2a2d30,#0a0b0c);box-shadow:0 0 0 2px #1b1d1f,0 14px 30px #000}
+svg.w{display:block;width:240px;height:240px;border-radius:22px;background:#000;overflow:hidden}
+figcaption{margin-top:12px;font-size:13px;letter-spacing:.3em;color:var(--cap)}
+.f{fill:none}
+.o{font-family:'Orbitron','Rajdhani','Segoe UI',sans-serif}
+.r{font-family:'Rajdhani','Segoe UI',sans-serif}
+.m{font-family:'Share Tech Mono','Courier New',monospace}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="dd"><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+<h1>CALENDAR + TIME · 240 × 240</h1>
+<div id="grid"></div>
+<script>
+const R=Math.PI/180,p2=n=>('0'+n).slice(-2),G='filter="url(#g)"';
+const P=(r,a,x=120,y=120)=>[(x+r*Math.sin(a*R)).toFixed(1),(y-r*Math.cos(a*R)).toFixed(1)];
+const A=(r,a,b,x=120,y=120)=>{b=Math.min(b,a+359.9);return `M${P(r,a,x,y)} A${r} ${r} 0 ${b-a>180?1:0} 1 ${P(r,b,x,y)}`};
+const L=(a,r1,r2,c,w,x=120,y=120)=>{const u=P(r1,a,x,y),v=P(r2,a,x,y);return `<line x1="${u[0]}" y1="${u[1]}" x2="${v[0]}" y2="${v[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`};
+const X=(x,y,s,z,c,k='o',e='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${z}" fill="${c}" class="${k}" ${e}>${s}</text>`;
+const C=(x,y,r,c,e='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${e}/>`;
+const RC=(r,c,w,x=120,y=120)=>`<circle cx="${x}" cy="${y}" r="${r}" class="f" stroke="${c}" stroke-width="${w}"/>`;
+const S=(d,c,w,e='')=>`<path d="${d}" class="f" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const FIT='textLength="{w}" lengthAdjust="spacingAndGlyphs"';
+const fit=w=>FIT.replace('{w}',w);
+const batt=(y,w=7,g=2,lbl='BATT 84%',lc='#7d8c90')=>{const x0=120-(10*w+9*g)/2;let o=X(120,y-6,lbl,9,lc,'r','letter-spacing="2"');for(let i=0;i<10;i++)o+=`<rect x="${x0+i*(w+g)}" y="${y}" width="${w}" height="5" rx="1" fill="${i<8?'#3dff9a':'#0a2014'}"/>`;return o};
+const bar=(x,y,w,c,bg)=>`<rect x="${x}" y="${y}" width="${w}" height="3" rx="1.5" fill="${bg}"/><rect x="${x}" y="${y}" width="${(w*.84).toFixed(1)}" height="3" rx="1.5" fill="${c}"/>`;
+
+// extra defs: edge-fade masks, glow gradients, sun and wave gradients
+document.getElementById('dd').insertAdjacentHTML('beforeend',
+ [['ra','#19e3ff'],['rb','#ff3dcb'],['rc','#6d5bff'],['rm','#9fb4ff'],['rs','#ffb020']].map(([i,c])=>`<radialGradient id="${i}"><stop offset="0" stop-color="${c}" stop-opacity=".6"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`).join('')
+ +'<linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff3d6e"/><stop offset="1" stop-color="#ffb020"/></linearGradient><pattern id="sl" width="4" height="4" patternUnits="userSpaceOnUse"><rect y="2.4" width="4" height="1.6" fill="#000"/></pattern>'
+ +'<linearGradient id="sn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd24a"/><stop offset="1" stop-color="#ff2d8a"/></linearGradient>'
+ +'<linearGradient id="gw" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="240" y2="0"><stop offset="0" stop-color="#3d7bff" stop-opacity="0"/><stop offset=".25" stop-color="#3d7bff"/><stop offset=".55" stop-color="#b24dff"/><stop offset=".8" stop-color="#ff4d9a"/><stop offset="1" stop-color="#ff4d9a" stop-opacity="0"/></linearGradient>'
+ +['x','y'].map(d=>`<linearGradient id="g${d}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${d=='x'?240:0}" y2="${d=='y'?240:0}"><stop offset="0" stop-color="#000"/><stop offset=".2" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="m${d}" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="240"><rect width="240" height="240" fill="url(#g${d})"/></mask>`).join(''));
+const EF=s=>`<g mask="url(#mx)"><g mask="url(#my)">${s}</g></g>`;
+const BT=(cx,y,w=6,g=2,c='#3dff9a',k=8)=>{const x0=cx-(10*w+9*g)/2;let o='';for(let i=0;i<10;i++)o+=`<rect x="${x0+i*(w+g)}" y="${y}" width="${w}" height="4" rx="1" fill="${c}" fill-opacity="${i<k?1:.16}"/>`;return o};
+const blob=(id,x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="url(#${id})"/>`;
+const STARS=Array.from({length:46},(_,i)=>{const a=Math.sin(i*127.1)*43758.5453,b=Math.sin(i*311.7)*12543.321;return[(a-Math.floor(a))*240,(b-Math.floor(b))*240,(i%3)+1.4]});
+const DG=[[14,17,19,21,25,17,14],[4,12,4,4,4,4,14],[14,17,1,2,4,8,31],[31,2,4,2,1,17,14],[2,6,10,18,31,2,2],[31,16,30,1,1,17,14],[6,8,16,30,17,17,14],[31,1,2,4,8,8,8],[14,17,17,14,17,17,14],[14,17,17,15,1,2,12]];
+const PH=['NEW MOON','WAXING CRESCENT','FIRST QUARTER','WAXING GIBBOUS','FULL MOON','WANING GIBBOUS','LAST QUARTER','WANING CRESCENT'];
+
+const hs=(i,j)=>{const s=Math.sin(i*127.1+j*311.7)*43758.5453;return s-Math.floor(s)};
+const VN=(x,y)=>{const i=Math.floor(x),j=Math.floor(y),u=x-i,v=y-j,a=u*u*(3-2*u),b=v*v*(3-2*v);return hs(i,j)*(1-a)*(1-b)+hs(i+1,j)*a*(1-b)+hs(i,j+1)*(1-a)*b+hs(i+1,j+1)*a*b};
+const HT=(x,y)=>(VN(x*.016,y*.016)+.5*VN(x*.034+7.3,y*.034)+.25*VN(x*.07,y*.07+3.1))/1.75;
+const SGT={1:'LB',2:'BR',3:'LR',4:'TR',5:'TRLB',6:'TB',7:'TL',8:'TL',9:'TB',10:'TLBR',11:'TR',12:'LR',13:'BR',14:'LB'};
+const ctr=(H,L)=>{let d='';const q=v=>Math.round(v*10)/10;
+ for(let j=0;j<30;j++)for(let i=0;i<30;i++){
+  const a=H[j*31+i],b=H[j*31+i+1],c=H[j*31+32+i],e=H[j*31+31+i],ix=(a>L?8:0)+(b>L?4:0)+(c>L?2:0)+(e>L?1:0);
+  if(!ix||ix==15)continue;
+  const x=i*8,y=j*8,p={T:[x+8*(L-a)/(b-a),y],R:[x+8,y+8*(L-b)/(c-b)],B:[x+8*(L-e)/(c-e),y+8],L:[x,y+8*(L-a)/(e-a)]},sg=SGT[ix];
+  for(let m=0;m<sg.length;m+=2){const u=p[sg[m]],w=p[sg[m+1]];d+=`M${q(u[0])} ${q(u[1])}L${q(w[0])} ${q(w[1])}`}}
+ return d};
+
+const DN=['SUN','MON','TUE','WED','THU','FRI','SAT'],DF=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const MN=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+const dim=(y,m)=>new Date(y,m+1,0).getDate(),yd=y=>(y%4==0&&(y%100!=0||y%400==0))?366:365;
+const doy=d=>Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);
+const wk=d=>{const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y0)/864e5+1)/7)};
+const EV=[[9.5,10.25,'STANDUP','#3d9bff'],[12,13,'LUNCH','#3dff9a'],[15,16.5,'REVIEW','#ff9e1f'],[18.5,19.5,'GYM','#ff3d71']];
+const SO='letter-spacing="3" stroke="#000" stroke-width="4" paint-order="stroke"';
+
+const F=[
+['GRID',t=>{const d=t.d,y=d.getFullYear(),m=d.getMonth(),n=dim(y,m),f=new Date(y,m,1).getDay(),td=d.getDate();
+ let o=X(120,50,t.h+':'+t.m,38,'#fff','o','font-weight="700" '+fit(122))+X(120,72,MN[m]+' '+y,10,'#19e3ff','r','letter-spacing="3"');
+ 'SMTWTFS'.split('').forEach((c,i)=>o+=X(42+i*26,90,c,10,'#6b8288','r'));
+ for(let k=0;k<n;k++){const c=(f+k)%7,r=Math.floor((f+k)/7),x=42+c*26,yy=108+r*16,on=k+1===td;
+  if(on)o+=`<rect x="${x-11}" y="${yy-12}" width="22" height="15" rx="7" fill="#19e3ff"/>`;
+  o+=X(x,yy,k+1,11,on?'#001418':(c%6?'#cfe9ee':'#6b8288'),'r','font-weight="600"')}
+ return o+BT(120,206,7,2,'#19e3ff')}],
+
+['RIBBON',t=>{const d=t.d;
+ let o=X(120,40,MN[d.getMonth()].slice(0,3)+' '+d.getFullYear(),11,'#ff9e1f','r','letter-spacing="4"')+X(120,102,t.h+':'+t.m,52,'#fff','o','font-weight="700" '+fit(150));
+ for(let i=-3;i<=3;i++){const q=new Date(d.getFullYear(),d.getMonth(),d.getDate()+i),x=120+i*29,on=!i;
+  if(on)o+=`<rect x="${x-13}" y="130" width="26" height="46" rx="13" fill="#ff9e1f"/>`;
+  o+=X(x,148,DN[q.getDay()][0],10,on?'#1a0f00':'#6b8288','r','font-weight="600"')+X(x,166,q.getDate(),12,on?'#1a0f00':'#d9dfe0','o','font-weight="700"')}
+ return o+X(120,196,'WEEK '+wk(d),9,'#6b8288','r','letter-spacing="3"')+BT(120,206,7,2,'#ff9e1f')}],
+
+['YEAR',t=>{const d=t.d,m=d.getMonth(),fr=(d.getDate()-1+d.getHours()/24)/dim(d.getFullYear(),m);let o='';
+ for(let i=0;i<12;i++){const a0=i*30+1.5,a1=i*30+28.5;o+=S(A(96,a0,a1),'#1c2226',7);
+  const p=i<m?1:i==m?fr:0;if(p>0)o+=S(A(96,a0,a0+(a1-a0)*p),i==m?'#ffd24a':'#19e3ff',7);
+  const q=P(80,i*30+15);o+=X(q[0],+q[1]+3.5,'JFMAMJJASOND'[i],9,i==m?'#ffd24a':'#6b8288','r','font-weight="600"')}
+ return o+X(120,66,DN[d.getDay()],11,'#ffd24a','r','letter-spacing="4"')+X(120,126,t.h+':'+t.m,42,'#fff','o','font-weight="700" '+fit(110))+X(120,150,MN[m]+' '+p2(d.getDate()),11,'#cfe9ee','r','letter-spacing="3"')+BT(120,164,7,2)}],
+
+['24H',t=>{const d=t.d,a=(d.getHours()+d.getMinutes()/60+d.getSeconds()/3600)*15;
+ let o=S(A(98,0,360),'#121c30',10)+S(A(98,90,270),'#7a5512',10);
+ for(let i=0;i<24;i++)o+=L(i*15,i%6?88:84,i%6?91:93,i%6?'#4a5a6a':'#cfe9ee',i%6?1:2);
+ [[0,'00'],[6,'06'],[12,'12'],[18,'18']].forEach(([h,s])=>{const q=P(70,h*15);o+=X(q[0],+q[1]+3.5,s,9,'#8a98a8','o')});
+ const q=P(98,a);o+=L(a,78,98,'#fff',2)+C(q[0],q[1],5,'#fff','filter="url(#g)"')+C(q[0],q[1],2,'#ff7a1a');
+ return o+X(120,122,t.h+':'+t.m,36,'#fff','o','font-weight="700" '+fit(104))+X(120,142,t.dt,10,'#cfe9ee','r','letter-spacing="3"')+BT(120,156,7,2,'#ffb020')}],
+
+['AGENDA',t=>{const d=t.d,nf=d.getHours()+d.getMinutes()/60+d.getSeconds()/3600,Y=h=>120+(h-nf)*44;let g='';
+ for(let h=Math.floor(nf)-3;h<=Math.ceil(nf)+3;h++){if(h<0||h>24)continue;const yy=Y(h).toFixed(1);
+  g+=`<line x1="110" y1="${yy}" x2="216" y2="${yy}" stroke="#1d262a"/><text x="104" y="${(+yy+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="#6b8288" class="o">${p2(h)}</text>`}
+ EV.forEach(([s,e,n,c])=>{const y1=Y(s),y2=Y(e);if(y2<0||y1>240)return;
+  g+=`<rect x="114" y="${y1.toFixed(1)}" width="102" height="${(y2-y1).toFixed(1)}" rx="6" fill="${c}" fill-opacity=".25"/><rect x="114" y="${y1.toFixed(1)}" width="3" height="${(y2-y1).toFixed(1)}" fill="${c}"/><text x="124" y="${(y1+14).toFixed(1)}" font-size="10" fill="#fff" class="r" font-weight="600" letter-spacing="1">${n}</text>`});
+ g+='<line x1="110" y1="120" x2="216" y2="120" stroke="#19e3ff" stroke-width="1.5"/>'+C(110,120,3.5,'#19e3ff');
+ return EF(g)+X(50,56,DN[d.getDay()]+' '+d.getDate(),10,'#ff9e1f','r','letter-spacing="2"')+X(50,108,t.h,40,'#fff','o','font-weight="700" '+fit(58))+X(50,152,t.m,40,'#fff','o','font-weight="700" '+fit(58))+BT(50,176,5,2,'#3dff9a')}],
+
+['DATE',t=>{const d=t.d,m=d.getMonth(),n=dim(d.getFullYear(),m),td=d.getDate();
+ let o=X(120,40,DF[d.getDay()]+' · '+MN[m],11,'#b24dff','r','letter-spacing="3"')+X(120,138,p2(td),120,'none','o','font-weight="700" stroke="#b24dff" stroke-width="2.5" '+fit(170))+X(120,168,t.h+':'+t.m,28,'#fff','o','font-weight="700" '+fit(86));
+ for(let i=0;i<n;i++)o+=C((120-(n-1)*3.25+i*6.5).toFixed(1),186,i==td-1?3:1.8,i==td-1?'#fff':(i<td?'#b24dff':'#241a33'));
+ return o+BT(120,203,7,2,'#b24dff')}],
+
+['DOTS',t=>{const d=t.d,n=yd(d.getFullYear()),td=doy(d);let o='';
+ for(let i=0;i<n;i++){const x=(32.6+(i%20)*9.2).toFixed(1),y=(32.5+Math.floor(i/20)*9.2).toFixed(1);
+  o+=i==td-1?C(x,y,(2.8+.9*Math.sin(t.sf*3)).toFixed(2),'#fff','filter="url(#g)"'):C(x,y,1.8,i<td-1?'#19e3ff':'#1a2630',i<td-1?'fill-opacity=".8"':'')}
+ return EF(o)+X(120,124,t.h+':'+t.m,46,'#fff','o','font-weight="700" stroke="#000" stroke-width="7" paint-order="stroke" '+fit(126))
+ +X(120,148,t.dt,11,'#e8f6ff','r',SO)+X(120,164,`DAY ${td} / ${n}`,10,'#19e3ff','r',SO)+'<rect x="72" y="176" width="96" height="14" fill="#000" fill-opacity=".7"/>'+BT(120,181,7,2)}],
+
+['PROGRESS',t=>{const d=t.d,y=d.getFullYear(),m=d.getMonth(),df=(d.getHours()*3600+d.getMinutes()*60+d.getSeconds())/86400,
+ wf=(d.getDay()+df)/7,mf=(d.getDate()-1+df)/dim(y,m),yf=(doy(d)-1+df)/yd(y);
+ let o=X(120,46,t.h+':'+t.m,40,'#fff','o','font-weight="700" '+fit(120))+X(120,64,t.dt,10,'#6b8288','r','letter-spacing="3"');
+ [['DAY',df,'#19e3ff'],['WEEK',wf,'#3dff9a'],['MONTH',mf,'#ffd24a'],['YEAR',yf,'#ff3d71']].forEach(([n,f,c],i)=>{const yy=96+i*26;
+  o+=`<text x="26" y="${yy+4}" font-size="10" fill="#8a98a8" class="r" font-weight="600" letter-spacing="2">${n}</text><rect x="76" y="${yy-3}" width="100" height="6" rx="3" fill="#1a2024"/><rect x="76" y="${yy-3}" width="${(100*f).toFixed(1)}" height="6" rx="3" fill="${c}"/><text x="214" y="${yy+4}" text-anchor="end" font-size="11" fill="${c}" class="o">${Math.floor(f*100)}%</text>`});
+ return o+X(120,196,'BATTERY 84%',9,'#6b8288','r','letter-spacing="2"')+BT(120,202,7,2)}]
+];
+
+const now=()=>{const d=new Date(),ms=d.getMilliseconds(),sf=d.getSeconds()+ms/1e3,mf=d.getMinutes()+sf/60,hf=d.getHours()%12+mf/60,
+ w=d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),mo=d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+ return{d,sf,mf,hf,h:p2(d.getHours()),m:p2(d.getMinutes()),s:p2(d.getSeconds()),dt:`${w} ${p2(d.getDate())} ${mo}`,day:d.getDate(),blink:ms<500}};
+
+const grid=document.getElementById('grid');
+F.forEach(([n])=>grid.insertAdjacentHTML('beforeend',`<figure><div class="case"><svg class="w" viewBox="0 0 240 240" role="img" aria-label="${n} watch face"></svg></div><figcaption>${n}</figcaption></figure>`));
+const sv=[...grid.querySelectorAll('svg.w')];
+let last=0;
+(function loop(ts){if(ts-last>50){last=ts;const t=now();sv.forEach((s,i)=>{s.innerHTML=F[i][1](t)})}requestAnimationFrame(loop)})(0);
+</script>
+</body>
+</html>

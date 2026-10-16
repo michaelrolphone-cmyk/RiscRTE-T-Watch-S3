@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Watch Faces II — 8 × 240×240</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--cap:#7d8c90;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:#000}
+body{min-height:100vh;padding:28px 16px;font-family:'Rajdhani','Segoe UI',sans-serif}
+h1{margin:0 0 24px;text-align:center;font:500 14px 'Orbitron','Segoe UI',sans-serif;letter-spacing:.3em;color:var(--cap)}
+#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:30px 16px;justify-items:center;max-width:1200px;margin:0 auto}
+figure{margin:0;text-align:center}
+.case{padding:12px;border-radius:34px;background:linear-gradient(145deg,#2a2d30,#0a0b0c);box-shadow:0 0 0 2px #1b1d1f,0 14px 30px #000}
+svg.w{display:block;width:240px;height:240px;border-radius:22px;background:#000;overflow:hidden}
+figcaption{margin-top:12px;font-size:13px;letter-spacing:.3em;color:var(--cap)}
+.f{fill:none}
+.o{font-family:'Orbitron','Rajdhani','Segoe UI',sans-serif}
+.r{font-family:'Rajdhani','Segoe UI',sans-serif}
+.m{font-family:'Share Tech Mono','Courier New',monospace}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="dd"><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+<h1>FACES II · 240 × 240</h1>
+<div id="grid"></div>
+<script>
+const R=Math.PI/180,p2=n=>('0'+n).slice(-2),G='filter="url(#g)"';
+const P=(r,a,x=120,y=120)=>[(x+r*Math.sin(a*R)).toFixed(1),(y-r*Math.cos(a*R)).toFixed(1)];
+const A=(r,a,b,x=120,y=120)=>{b=Math.min(b,a+359.9);return `M${P(r,a,x,y)} A${r} ${r} 0 ${b-a>180?1:0} 1 ${P(r,b,x,y)}`};
+const L=(a,r1,r2,c,w,x=120,y=120)=>{const u=P(r1,a,x,y),v=P(r2,a,x,y);return `<line x1="${u[0]}" y1="${u[1]}" x2="${v[0]}" y2="${v[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`};
+const X=(x,y,s,z,c,k='o',e='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${z}" fill="${c}" class="${k}" ${e}>${s}</text>`;
+const C=(x,y,r,c,e='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${e}/>`;
+const RC=(r,c,w,x=120,y=120)=>`<circle cx="${x}" cy="${y}" r="${r}" class="f" stroke="${c}" stroke-width="${w}"/>`;
+const S=(d,c,w,e='')=>`<path d="${d}" class="f" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${e}/>`;
+const FIT='textLength="{w}" lengthAdjust="spacingAndGlyphs"';
+const fit=w=>FIT.replace('{w}',w);
+const batt=(y,w=7,g=2,lbl='BATT 84%',lc='#7d8c90')=>{const x0=120-(10*w+9*g)/2;let o=X(120,y-6,lbl,9,lc,'r','letter-spacing="2"');for(let i=0;i<10;i++)o+=`<rect x="${x0+i*(w+g)}" y="${y}" width="${w}" height="5" rx="1" fill="${i<8?'#3dff9a':'#0a2014'}"/>`;return o};
+const bar=(x,y,w,c,bg)=>`<rect x="${x}" y="${y}" width="${w}" height="3" rx="1.5" fill="${bg}"/><rect x="${x}" y="${y}" width="${(w*.84).toFixed(1)}" height="3" rx="1.5" fill="${c}"/>`;
+
+// extra defs: edge-fade masks, glow gradients, sun and wave gradients
+document.getElementById('dd').insertAdjacentHTML('beforeend',
+ [['ra','#19e3ff'],['rb','#ff3dcb'],['rc','#6d5bff'],['rm','#9fb4ff'],['rs','#ffb020']].map(([i,c])=>`<radialGradient id="${i}"><stop offset="0" stop-color="${c}" stop-opacity=".6"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`).join('')
+ +'<linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff3d6e"/><stop offset="1" stop-color="#ffb020"/></linearGradient><pattern id="sl" width="4" height="4" patternUnits="userSpaceOnUse"><rect y="2.4" width="4" height="1.6" fill="#000"/></pattern>'
+ +'<linearGradient id="sn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd24a"/><stop offset="1" stop-color="#ff2d8a"/></linearGradient>'
+ +'<linearGradient id="gw" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="240" y2="0"><stop offset="0" stop-color="#3d7bff" stop-opacity="0"/><stop offset=".25" stop-color="#3d7bff"/><stop offset=".55" stop-color="#b24dff"/><stop offset=".8" stop-color="#ff4d9a"/><stop offset="1" stop-color="#ff4d9a" stop-opacity="0"/></linearGradient>'
+ +['x','y'].map(d=>`<linearGradient id="g${d}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${d=='x'?240:0}" y2="${d=='y'?240:0}"><stop offset="0" stop-color="#000"/><stop offset=".2" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="m${d}" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="240"><rect width="240" height="240" fill="url(#g${d})"/></mask>`).join(''));
+const EF=s=>`<g mask="url(#mx)"><g mask="url(#my)">${s}</g></g>`;
+const BT=(cx,y,w=6,g=2,c='#3dff9a',k=8)=>{const x0=cx-(10*w+9*g)/2;let o='';for(let i=0;i<10;i++)o+=`<rect x="${x0+i*(w+g)}" y="${y}" width="${w}" height="4" rx="1" fill="${c}" fill-opacity="${i<k?1:.16}"/>`;return o};
+const blob=(id,x,y,r)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="url(#${id})"/>`;
+const STARS=Array.from({length:46},(_,i)=>{const a=Math.sin(i*127.1)*43758.5453,b=Math.sin(i*311.7)*12543.321;return[(a-Math.floor(a))*240,(b-Math.floor(b))*240,(i%3)+1.4]});
+const DG=[[14,17,19,21,25,17,14],[4,12,4,4,4,4,14],[14,17,1,2,4,8,31],[31,2,4,2,1,17,14],[2,6,10,18,31,2,2],[31,16,30,1,1,17,14],[6,8,16,30,17,17,14],[31,1,2,4,8,8,8],[14,17,17,14,17,17,14],[14,17,17,15,1,2,12]];
+const PH=['NEW MOON','WAXING CRESCENT','FIRST QUARTER','WAXING GIBBOUS','FULL MOON','WANING GIBBOUS','LAST QUARTER','WANING CRESCENT'];
+
+const hs=(i,j)=>{const s=Math.sin(i*127.1+j*311.7)*43758.5453;return s-Math.floor(s)};
+const VN=(x,y)=>{const i=Math.floor(x),j=Math.floor(y),u=x-i,v=y-j,a=u*u*(3-2*u),b=v*v*(3-2*v);return hs(i,j)*(1-a)*(1-b)+hs(i+1,j)*a*(1-b)+hs(i,j+1)*(1-a)*b+hs(i+1,j+1)*a*b};
+const HT=(x,y)=>(VN(x*.016,y*.016)+.5*VN(x*.034+7.3,y*.034)+.25*VN(x*.07,y*.07+3.1))/1.75;
+const SGT={1:'LB',2:'BR',3:'LR',4:'TR',5:'TRLB',6:'TB',7:'TL',8:'TL',9:'TB',10:'TLBR',11:'TR',12:'LR',13:'BR',14:'LB'};
+const ctr=(H,L)=>{let d='';const q=v=>Math.round(v*10)/10;
+ for(let j=0;j<30;j++)for(let i=0;i<30;i++){
+  const a=H[j*31+i],b=H[j*31+i+1],c=H[j*31+32+i],e=H[j*31+31+i],ix=(a>L?8:0)+(b>L?4:0)+(c>L?2:0)+(e>L?1:0);
+  if(!ix||ix==15)continue;
+  const x=i*8,y=j*8,p={T:[x+8*(L-a)/(b-a),y],R:[x+8,y+8*(L-b)/(c-b)],B:[x+8*(L-e)/(c-e),y+8],L:[x,y+8*(L-a)/(e-a)]},sg=SGT[ix];
+  for(let m=0;m<sg.length;m+=2){const u=p[sg[m]],w=p[sg[m+1]];d+=`M${q(u[0])} ${q(u[1])}L${q(w[0])} ${q(w[1])}`}}
+ return d};
+
+const F=[
+['AURORA',t=>{const ph=t.d.getTime()/9000;
+ return EF(blob('ra',90+40*Math.sin(ph),80+30*Math.cos(ph*1.3),100)+blob('rb',150+40*Math.cos(ph*.9),150+30*Math.sin(ph*1.1),100)+blob('rc',120+50*Math.sin(ph*.7+2),120+40*Math.cos(ph*.8),90))
+ +X(120,62,t.dt,12,'#e8f6ff','r','letter-spacing="3" fill-opacity=".85"')
+ +X(120,140,t.h+':'+t.m,62,'#fff','r','font-weight="600" '+fit(150))
+ +BT(120,180,7,2,'#fff')}],
+
+['HORIZON',t=>{let o='<circle cx="120" cy="76" r="46" fill="url(#sn)"/>';
+ for(let i=0;i<5;i++)o+=`<rect x="60" y="${(84+i*8+i*i*.6).toFixed(1)}" width="120" height="${(1.5+i*.9).toFixed(1)}" fill="#000"/>`;
+ o+='<line x1="40" y1="130" x2="200" y2="130" stroke="#ff2d8a" stroke-width="1.2"/>';
+ return EF(o)+X(120,172,t.h+':'+t.m,36,'#fff','o','font-weight="700" '+fit(124))+X(120,191,t.dt,10,'#ff9ec9','r','letter-spacing="3"')+BT(120,203,6,2,'#ffd24a')}],
+
+['GIANT',t=>EF(X(120,114,t.h,104,'url(#gg)','o','font-weight="700" '+fit(196))+X(120,196,t.m,104,'url(#gg)','o','font-weight="700" '+fit(196))
+ +'<rect x="22" y="118" width="196" height="2" fill="#2a2a2a"/>'+`<rect x="22" y="118" width="${(196*t.sf/60).toFixed(1)}" height="2" fill="#fff"/>`
+ +'<rect x="0" y="36" width="240" height="170" fill="url(#sl)"/>')
+ +X(120,30,t.dt,11,'#fff','r','letter-spacing="3" fill-opacity=".75"')+BT(120,208,7,2,'#ff7a3d')],
+
+['MOON',t=>{const jd=t.d.getTime()/864e5+2440587.5,age=(((jd-2451550.1)/29.530588)%1+1)%1,k=Math.cos(2*Math.PI*age),cy=84,r=36,wax=age<.5;
+ let o=STARS.map(([x,y,s],i)=>C(x.toFixed(0),y.toFixed(0),(s*.5).toFixed(1),'#fff',`fill-opacity="${(.2+.5*Math.abs(Math.sin(t.sf*.7+i))).toFixed(2)}"`)).join('')
+ +C(120,cy,r*2.1,'url(#rm)')+C(120,cy,r,'#15171d','stroke="#2a2f3a"')
+ +`<path d="M120 ${cy-r}A${r} ${r} 0 0 ${wax?1:0} 120 ${cy+r}A${(r*Math.abs(k)).toFixed(1)} ${r} 0 0 ${k<0?(wax?1:0):(wax?0:1)} 120 ${cy-r}Z" fill="#ebe7d6"/>`;
+ return EF(o)+X(120,136,PH[Math.round(age*8)%8],9,'#9fb4ff','r','letter-spacing="2.5"')+X(120,172,t.h+':'+t.m,34,'#fff','o','font-weight="700" '+fit(116))+X(120,190,t.dt,10,'#7d8c90','r','letter-spacing="3"')+BT(120,203,6,2)}],
+
+['TOPO',t=>{const T=performance.now()/1000,cx=6*T+30*Math.sin(T/9),cy=3.5*T+22*Math.cos(T/11),H=new Float32Array(961);
+ for(let j=0;j<31;j++)for(let i=0;i<31;i++)H[j*31+i]=HT(cx+i*8,cy+j*8);
+ let o='';
+ for(let k=0;k<10;k++){const f=k/9;o+=`<path d="${ctr(H,.3+.045*k)}" class="f" stroke="hsl(${(170-105*f).toFixed(0)},65%,${(46+16*f).toFixed(0)}%)" stroke-opacity="${(.4+.5*f).toFixed(2)}" stroke-width="${k%3==2?1.7:.8}" stroke-linecap="round"/>`}
+ const el=Math.round(200+HT(cx+120,cy+120)*1900),gx=Math.floor((cx+120)/60),gy=Math.floor((cy+120)/60),so='letter-spacing="3" stroke="#000" stroke-width="4" paint-order="stroke"';
+ return EF(o)+'<path d="M18 30V18h12M222 30V18h-12M18 210v12h12M222 210v12h-12" class="f" stroke="#7de8c4" stroke-opacity=".5"/>'
+ +X(120,46,`GRID ${p2(gx%100)} · ${p2(gy%100)}`,10,'#7de8c4','r',so)
+ +X(120,124,t.h+':'+t.m,48,'#fff','o','font-weight="700" stroke="#000" stroke-width="6" paint-order="stroke" '+fit(130))
+ +X(120,148,t.dt,11,'#e8ffd9','r',so)+X(120,165,`ELEV ${el} M`,10,'#7de8c4','r',so)
+ +'<rect x="72" y="173" width="96" height="14" fill="#000" fill-opacity=".65"/>'+BT(120,178,7,2,'#7de8c4')}],
+
+['ORRERY',t=>{const cy=92;let o=blob('rs',120,cy,36);
+ [26,48,70].forEach(r=>o+=`<circle cx="120" cy="${cy}" r="${r}" class="f" stroke="#2a3a52" stroke-width="1"/>`);
+ const h=P(26,t.hf*30,120,cy),m=P(48,t.mf*6,120,cy),s=P(70,t.sf*6,120,cy),mo=P(9,t.sf*18,+m[0],+m[1]);
+ o+=C(120,cy,7,'#ffb020')+S(A(70,t.sf*6-50,t.sf*6,120,cy),'#ff4d9a',1.5,'stroke-opacity=".6"')
+ +C(h[0],h[1],5.5,'#7db4ff')+C(m[0],m[1],4.5,'#19e3ff')+C(mo[0],mo[1],1.6,'#fff')+C(s[0],s[1],3.5,'#ff4d9a');
+ return o+X(120,192,t.h+':'+t.m,24,'#fff','o','font-weight="700" '+fit(86))+X(120,207,t.dt,10,'#7d8c90','r','letter-spacing="3"')+BT(120,214,6,2)}],
+
+['FLIP',t=>{const dg=(t.h+t.m).split(''),xs=[22,68,130,176];let o=X(120,46,t.dt,12,'#9aa3a6','r','letter-spacing="3"');
+ dg.forEach((d,i)=>{const x=xs[i];
+  o+=`<rect x="${x}" y="64" width="42" height="72" rx="6" fill="#16181b"/><path d="M${x} 100V70a6 6 0 0 1 6-6h30a6 6 0 0 1 6 6v30z" fill="#1b1e22"/>`
+  +X(x+21,118,d,54,'#f2efe6','r','font-weight="700"')+`<rect x="${x}" y="99" width="42" height="2" fill="#000"/>`});
+ o+=C(120,88,3,'#f2efe6',`fill-opacity="${t.blink?1:.3}"`)+C(120,112,3,'#f2efe6',`fill-opacity="${t.blink?1:.3}"`)
+ +'<rect x="22" y="148" width="196" height="3" rx="1.5" fill="#16181b"/>'+`<rect x="22" y="148" width="${(196*t.sf/60).toFixed(1)}" height="3" rx="1.5" fill="#ff9e1f"/>`;
+ return o+X(120,171,'BATT 84%',9,'#7d8c90','r','letter-spacing="2"')+BT(120,177,7,2)}],
+
+['MATRIX',t=>{let o='';const dg=(t.h+t.m).split('').map(Number),dx=[22,64,148,190];
+ dg.forEach((d,i)=>{for(let r=0;r<7;r++)for(let c=0;c<5;c++)o+=C(dx[i]+c*7,76+r*7,2.6,(DG[d][r]>>(4-c))&1?'#ffb020':'#1b1405')});
+ o+=C(120,90,2.6,t.blink?'#ffb020':'#1b1405')+C(120,104,2.6,t.blink?'#ffb020':'#1b1405');
+ let s='';for(let i=0;i<30;i++)s+=C((18.5+i*7).toFixed(1),146,1.8,i<Math.floor(t.sf/2)?'#ffb020':'#1b1405');
+ let b='';for(let i=0;i<10;i++)b+=C(75+i*10,178,2.6,i<8?'#3dff9a':'#0b2214');
+ return o+EF(s)+X(120,58,t.dt,12,'#ffb020','r','letter-spacing="3" fill-opacity=".8"')+b+X(120,198,'BATTERY 84%',9,'#6b8288','r','letter-spacing="2"')}]
+];
+
+const now=()=>{const d=new Date(),ms=d.getMilliseconds(),sf=d.getSeconds()+ms/1e3,mf=d.getMinutes()+sf/60,hf=d.getHours()%12+mf/60,
+ w=d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),mo=d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+ return{d,sf,mf,hf,h:p2(d.getHours()),m:p2(d.getMinutes()),s:p2(d.getSeconds()),dt:`${w} ${p2(d.getDate())} ${mo}`,day:d.getDate(),blink:ms<500}};
+
+const grid=document.getElementById('grid');
+F.forEach(([n])=>grid.insertAdjacentHTML('beforeend',`<figure><div class="case"><svg class="w" viewBox="0 0 240 240" role="img" aria-label="${n} watch face"></svg></div><figcaption>${n}</figcaption></figure>`));
+const sv=[...grid.querySelectorAll('svg.w')];
+let last=0;
+(function loop(ts){if(ts-last>50){last=ts;const t=now();sv.forEach((s,i)=>{s.innerHTML=F[i][1](t)})}requestAnimationFrame(loop)})(0);
+</script>
+</body>
+</html>

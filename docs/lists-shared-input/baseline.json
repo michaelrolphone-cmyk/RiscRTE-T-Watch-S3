@@ -1,0 +1,103 @@
+{
+  "version": "0.1.0",
+  "manifest": {
+    "architecture": "xtensa-esp32s3",
+    "display_name": "Lists",
+    "entry": "app_main",
+    "file_name": "lists.elf",
+    "icon": "solid:f274",
+    "id": "lists",
+    "requires": [
+      {
+        "api": 1,
+        "capability": "ui.scene"
+      },
+      {
+        "api": 1,
+        "capability": "storage.app-data"
+      },
+      {
+        "api": 1,
+        "capability": "time.civil"
+      }
+    ],
+    "type": "application",
+    "version": "0.1.0"
+  },
+  "elf_bytes": 22488,
+  "elf_sha256": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+  "boot_row": {
+    "grants": [
+      {
+        "api": 1,
+        "capability": "ui.scene",
+        "instance_id": 0
+      },
+      {
+        "api": 1,
+        "capability": "storage.app-data",
+        "instance_id": 62
+      },
+      {
+        "api": 1,
+        "capability": "time.civil",
+        "instance_id": 0
+      }
+    ],
+    "manifest": "lists.json"
+  },
+  "loaded_sections": {
+    ".hash": {
+      "bytes": 64,
+      "sha256": "1296246130807bfacc5bad169e2dfc3395232ad9da145e5ec3fcda043cdda217"
+    },
+    ".dynsym": {
+      "bytes": 176,
+      "sha256": "993e6ef0f13166c7e60c60b3d86c4be441f7fb4f7d912783cdd51ee39898b658"
+    },
+    ".dynstr": {
+      "bytes": 114,
+      "sha256": "89b21bfd063bfa38b8ded53baad14e48ffb3cae9a9e21cb7c5f353b0a1f7580c"
+    },
+    ".rela.dyn": {
+      "bytes": 2724,
+      "sha256": "83cfe53e4629bdd2d93f4f15696f86cc5528ce6d64e58ce115b1b7509edd0397"
+    },
+    ".rela.plt": {
+      "bytes": 492,
+      "sha256": "0436090e68957d1b461ea3608eda7fa71b62cb5a9b378b220660eeb937e3fe6e"
+    },
+    ".text": {
+      "bytes": 13548,
+      "sha256": "6260aa69158db2f74f10f741168605ca277c1f764527f18a545e4ce3f58e6d7d"
+    },
+    ".rodata": {
+      "bytes": 1614,
+      "sha256": "f6543c86f3d5ee53e634e9cb14cb7c5151ec608c19124f1ce56ae6c41c12fcc0"
+    },
+    ".got.loc": {
+      "bytes": 352,
+      "sha256": "1627e64b75445b1a50231ba50c18c7b7dc12a6499e891c40206d43346002279c"
+    },
+    ".data.rel.ro": {
+      "bytes": 156,
+      "sha256": "4c8844b098c1e6953b0b62abbd060339a5a1d2e8c7c8db52681993b74805cc58"
+    },
+    ".dynamic": {
+      "bytes": 160,
+      "sha256": "a7d0fb6950ebbfeed85bd2465459d6748f889862f0e0482874d9bd92e76f1aca"
+    },
+    ".got": {
+      "bytes": 4,
+      "sha256": "df5b67e04a9c1215943d1f021b6d4d94df05dd8856a814c39bd50c99d81140cd"
+    },
+    ".data": {
+      "bytes": 12,
+      "sha256": "53ec50d5823f6113c26724c110e583f81beb0af3aa173dd16a861ddea6d7cc11"
+    },
+    ".bss": {
+      "bytes": 46348,
+      "sha256": "afe0c835732cbf2219e12dfc6a6a1a8fdac97fe70e0b068bef6c407fc42eaab4"
+    }
+  }
+}
