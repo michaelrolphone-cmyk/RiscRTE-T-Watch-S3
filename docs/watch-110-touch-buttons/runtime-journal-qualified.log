@@ -1,0 +1,8 @@
+diagnostic journal: retention, cold reset, all-byte corruption, interrupted commit, separate overflow, truncation, parser, partial writes, backpressure and reconnect passed
+native diagnostic adapter: zero-timeout USB, absent transport, ownership, bounded RX/TX, reset policy, backpressure and reconnect passed
+USB sleep recovery: RAM-only request, owner polling, bounded detach, repeated sleep, wraparound, no host, allocation failures, no busy retry and recorder mode 0 passed
+USB sleep recovery: RAM-only request, owner polling, bounded detach, repeated sleep, wraparound, no host, allocation failures, no busy retry and recorder mode 1 passed
+Actual Arduino 2.0.17 HWCDC: begin/end, all four allocation failures, zero-wait adapter recovery, no host, wrong owner, failed-state suppression, explicit retry and RX replay passed
+Actual HWCDC stage TX: preallocation, 6 KiB burst, full-ring preservation, delayed-host 13-line startup, no-host boundedness, recovery capacity, allocation fallback and zero waits PASS
+Actual Arduino 2.0.17 HWCDC: begin/end, all four allocation failures, zero-wait adapter recovery, no host, wrong owner, failed-state suppression, explicit retry and RX replay passed
+Actual HWCDC stage TX: preallocation, 6 KiB burst, full-ring preservation, delayed-host 13-line startup, no-host boundedness, recovery capacity, allocation fallback and zero waits PASS

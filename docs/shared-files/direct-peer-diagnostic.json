@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "product_version": "1.1.5",
+  "scope": "Isolated router-free Files diagnostic, not a release; hardware RF pairing untested",
+  "base_source": "f5ba7734d4fc36b770bc2edf9fbb9fafdf3a2732",
+  "binary_baseline": "full 25-app 1.1.4 peer cohort retaining 1.1.1 canvas baseline",
+  "source_checkpoints": {
+    "runtime": "791ecf8ee40bab55e4c36ea28189ff4f218d2cfa",
+    "system": "1bfdfd1b3582d57675138b567ca5ddd7d653011e",
+    "drivers": "281609a0d2ae514f107d2ef67b6e8b4d25c72fb8",
+    "wifi-provider": "6bc28feae525074a1a5e0030c4b1bf6bebdc48fa"
+  },
+  "components": {
+    "Runtime": "0.2.20",
+    "Files": "1.5.26",
+    "BLE": "0.1.3",
+    "WiFi": "0.2.2"
+  },
+  "provider_capacity": 32,
+  "app_capacity": 64,
+  "persistent_profile_writes": false,
+  "hardware_tested": false,
+  "full_initial_image_erases_internal_data": true,
+  "preserving_update_qualified": false,
+  "reservation": "Local diagnostic increment after remote heads checked 2026-10-11; no tag, release or catalog write"
+}

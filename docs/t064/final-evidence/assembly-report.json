@@ -1,0 +1,49 @@
+{
+  "file": "TWatch-1.1.33-T064-Crash-Reports-factory-erases-data-0x0.bin",
+  "version": "1.1.33",
+  "image_sha256": "077676642f2a3e938cf6fea497e6322dad198e1c2e98236d9367fb6bb5dcefca",
+  "baseline_sha256": "cc37711c0df356ad28bf79b9e8a273111aa1239999b22f8780c63fb228fc0646",
+  "baseline_file": "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t054-build/watch/TWatch-1.1.32-T054-Preferences-factory-erases-data-0x0.bin",
+  "native_sha256": "bb140b07df3a1f862a2bf0291239e04567c548e8fe30cfddc1e91c1cd919f15f",
+  "native_unchanged": true,
+  "all_other_store_files_unchanged": true,
+  "changed_store_files": [
+    "boot.json",
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "packing": {
+    "generator": "esp-idf-spiffsgen",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "config": {
+      "page_size": 256,
+      "page_ix_len": 2,
+      "block_size": 4096,
+      "block_ix_len": 2,
+      "meta_len": 4,
+      "obj_name_len": 32,
+      "obj_id_len": 2,
+      "span_ix_len": 2,
+      "packed": true,
+      "aligned": true,
+      "endianness": "little",
+      "use_magic": true,
+      "use_magic_len": true,
+      "aligned_obj_ix_tables": false
+    },
+    "order": "sorted ASCII path names",
+    "metadata": "zero",
+    "image_bytes": 5570560,
+    "file_count": 121,
+    "payload_bytes": 4719287,
+    "occupied_blocks": 1275,
+    "empty_blocks": 85,
+    "sha256": "9dc29da4d3e84086ef46808f8d05c0a33a143da8b43824b97290d4f3f6f9efc8",
+    "independent_round_trip_verified": true
+  },
+  "crash_namespace": 61,
+  "crash_sd_instance": null,
+  "hardware_tested": false
+}

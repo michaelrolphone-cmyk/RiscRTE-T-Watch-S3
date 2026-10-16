@@ -10,8 +10,13 @@ followup=receipt['verifier_followup']
 if followup['historical_matrix_rerun'] is not False or followup['scope']!='Verifier admission hardening only; historical execution receipts are unchanged':
     raise SystemExit('Verifier follow-up must not relabel historical matrix results')
 files={**receipt['loaded_python_and_native_fixture_files'],**followup['source_files']}
+integration=receipt.get('main_integration')
+if integration is not None:
+    if integration['historical_matrix_rerun'] is not False or integration['scope']!='Main integration source custody; historical execution receipts are unchanged':
+        raise SystemExit('Main integration must preserve historical qualification status')
+    files.update(integration['source_files'])
 for name,digest in files.items():
     path=ROOT/name
     if not path.is_file() or path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:
         raise SystemExit('Software-qualified preserving source changed: '+name)
-print('Historical preserving source closure and explicit verifier follow-up match; historical matrix was not rerun')
+print('Preserving historical, verifier and main-integration source custody match; historical matrix was not rerun')

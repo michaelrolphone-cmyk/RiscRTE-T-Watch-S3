@@ -7,8 +7,11 @@ import hashlib,json,subprocess,zipfile,shutil
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def legacy_inputs(root=ROOT):
- source=root/'custody/sleep-prefix';record=json.loads((source/'PROVENANCE.json').read_text())
+ source=root/'custody/sleep-prefix';provenance=(source/'PROVENANCE.json').read_bytes()
+ assert hashlib.sha256(provenance).hexdigest()=='be4c57f9c638e19e84d8019fd0e027c5e4e0cb184b4ff8fef283551443e2c556','Sleep-prefix custody record changed'
+ record=json.loads(provenance)
  assert record['commit']=='2a4fbae8fb2425bf830c302863a5e195106e77c9'
+ assert {str(p.relative_to(source)) for p in source.rglob('*') if p.is_file() and p!=source/'PROVENANCE.json'}==set(record['files']),'Sleep-prefix source inventory changed'
  for name,digest in record['files'].items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==digest,name
  return source
 def legacy_panel_inputs(root=ROOT):
@@ -23,14 +26,14 @@ def legacy_manifests(root=ROOT):
  return sorted((legacy_inputs(root)/'drivers').glob('*/manifest.json'))+[
   legacy_panel_inputs(root)/'drivers/twatch_panel/manifest.json']
 def legacy_clock(root=ROOT):
- # Original Clock and portable sleep bodies must keep their emitted bytes as
- # well as behavior. Copy the unchanged source topology and overlay only the
- # reviewed pre-motion sources; the current app lane never uses this.
+ # The entire original Clock tree, including transitive headers, effects,
+ # generated assets and app SDK, is source-owned. Never seed historical
+ # compilation with the current Home tree: its touch sampler changed in 1.1.20.
  source=legacy_inputs(root);out=root/'dist/legacy-sleep/clock-source'
- shutil.copytree(root/'apps/clock',out,dirs_exist_ok=True)
- for name in ('crown.c','portable_sleep.c','watch_sleep.h','watch_alarm_sleep.h','PortableSleepPolicy.h','nova/nova.c','nova/nova.h'):
-  shutil.copyfile(source/'apps/clock'/name,out/name)
+ if out.exists():shutil.rmtree(out)
+ shutil.copytree(source/'apps/clock',out)
  return out
+
 def build(cc,root=ROOT):
  source=legacy_inputs(root);catalog=[]
  expected={'twatch-gpio':'0f079b1d8957725ef38c037252eb8cf25e42f2dfff10157bd71cedf4aec78549','twatch-pmu':'ea536f0532e001bd4a3d36e50d2f2fcbe1db5bfab218def6ad28b536f578fbfb','twatch-panel':'6b59a6c443becc77ca8240cbc7624bca0865e408e45f46973cf0639f8fd6b90d'}

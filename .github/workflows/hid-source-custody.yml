@@ -1,0 +1,22 @@
+name: HID increment source custody
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hid-source-custody:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact HID increment source and evidence
+        run: python scripts/check_hid_increment_custody.py
+      - name: Compile recipe syntax
+        run: python -m py_compile scripts/build_touchpad_increment.py scripts/build_ble_reconnect_increment.py scripts/check_touchpad_increment_scope.py

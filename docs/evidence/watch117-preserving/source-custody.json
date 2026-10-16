@@ -51,6 +51,64 @@
     "tests/runtime_features_watch_upgrade/native_transaction.cpp": "0092100137e88219982297e300739e937f350929fbf027ea113c4cf17a1dbd74",
     "tests/runtime_store_admission.cpp": "c80f18414663693cc4fa0155cd816d8fc6558cf57212b70f5d4f7ef8546a3843"
   },
+  "main_integration": {
+    "historical_matrix_rerun": false,
+    "prior_branch_source": "a77eacb57f93d2bef563ace797348348e0021304",
+    "scope": "Main integration source custody; historical execution receipts are unchanged",
+    "source": "747f498d93f8ef5e8c1ceac23b1d91f955fd3b09",
+    "source_files": {
+      "scripts/build_legacy_sleep.py": "46804c482f083b08d8376bae026341bf501a353611465664d7761c1840aba00e",
+      "scripts/check_preserving_source_custody.py": "d8a5b782951ead579ac329693a8f7fd4b042ec7eb2ba382a1d3d51f8c7097a64",
+      "scripts/check_runtime_store_admission.py": "5caac6d183142b02eb02bd28cedac6c649f8bcf78df839ddbd6e7ba4f15fc23e",
+      "scripts/current_bootfs.py": "6f0997a71fe6d2abbb97ed91e0e4180abf43b2056afbcb5b54d303437791576b",
+      "scripts/current_cohort.py": "8a9bf9f68e0e3cd8a12d46e167cff1386734a795eca7c4f1facb691b64a9dc4f",
+      "scripts/current_flash_layout.py": "3f001eae242fe66826b33ab676c962045b15b030483da5a8bcd5ffa3b94c47bd",
+      "scripts/read_only_spiffs.py": "e48d3b2422c60f81fdae6371ff3c5b65c5cbaa9dd250b4a2925c74c0b45f040d",
+      "scripts/verify_update_elf.py": "44928864315e763c42174f7b3c07b4cfb6d3fbb8951d3f1e33d6ef6215ab56bc",
+      "tests/runtime_store_admission.cpp": "c800986aa5386d5d859fa786d304ff97d87cc5d4d63bd54d3c1b09182e4f6b2d",
+      "tests/test_current_execution_sources.py": "151fc3903e521d4f7ff4c1ba554ea0a24fd75613b77f061a3829d5d13fbd080a",
+      "tests/test_native_composition_admission.py": "cc8c1b79fa8eac7c91e1d4792bbd7e65ddd33376dc996806235754f582c44745"
+    },
+    "validation": {
+      "branch_ci": "Pending publication of the resolved merge; recorded separately from local tests.",
+      "broad_discovery": {
+        "errors": 11,
+        "failures": 54,
+        "limitations": {
+          "leak_sanitizer_unsupported_under_executor_ptrace": {
+            "failures": 1
+          },
+          "missing_generated_archives_and_images": {
+            "errors": 9,
+            "failures": 53
+          },
+          "standalone_cli_modules_imported_by_discovery": {
+            "errors": 2
+          }
+        },
+        "passed": false,
+        "skipped": 53,
+        "tests_run": 815
+      },
+      "focused_unit_tests": {
+        "failed": 0,
+        "passed": 47,
+        "suites": [
+          "test_current_execution_sources",
+          "test_native_composition_admission",
+          "test_update_elf_admission_headers",
+          "test_preserving_verifier_guards"
+        ]
+      },
+      "hardware": "not_tested",
+      "qualified_compiler_smoke": {
+        "passed_runtime_sources": [
+          "3c39aa7ac50ecd7f6da0296a62a2d7af066f82d1",
+          "2317b4fca374bb2b9cfe8dd204aa22244d1db609"
+        ]
+      }
+    }
+  },
   "public_base": "a0f2894bb3513d024653e71ce7e52733804e19e8",
   "schema": 2,
   "tested_source": "8e5c33292a9b2eb47855e198df9d50a081c9215c",

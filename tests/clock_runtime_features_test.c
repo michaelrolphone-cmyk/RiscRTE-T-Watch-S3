@@ -45,9 +45,9 @@ int main(void){
   bool old_valid=watch_display_time(&raw,&old_ui);assert(old_valid==watch_display_time(&recovered,&new_ui));if(old_valid)assert(!memcmp(&old_ui,&new_ui,sizeof(old_ui)));cases++;
  }
  for(unsigned reason=0;reason<=4;reason++){
-  reset();cause=reason;wake_status=0;sample.validity=1;sample.epoch_seconds=1791412272;
+  reset();cause=reason;wake_status=0;sample.validity=1;sample.epoch_seconds=1791412272+300;
   assert(watch_runtime_open(&c,&rt,true));assert(c.resume==(reason>=2));
-  assert(watch_runtime_seed(&c,&rtc));assert(rtc_reads==(reason<2));assert(seeds==(reason<2));assert(watch_runtime_close(&c));
+  assert(watch_runtime_seed(&c,&rtc));assert(rtc_reads==1);assert(seeds==1);assert(sample.epoch_seconds==1791412272);assert(watch_runtime_close(&c));
  }
  reset();cause=RISC_BOOT_DEEP_TIMER;wake_status=0;checkpoint.payload[0]=0;
  assert(watch_runtime_open(&c,&rt,true)&&!c.resume);assert(watch_runtime_seed(&c,&rtc)&&seeds==1);assert(watch_runtime_close(&c));

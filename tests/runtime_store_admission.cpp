@@ -36,6 +36,10 @@ static_assert(RISC_APP_DATA_FILE_MAX==65536 && RISC_APP_DATA_FILES_MAX>=3,"RF fi
 #include <RiscBankStoreV1.h>
 #endif
 
+#ifdef STORE_ADMISSION_DIAGNOSTIC_SOURCE
+#include <RiscDiagnosticSourceV1.h>
+#endif
+
 namespace {
 unsigned hardwareCalls = 0, storageCalls = 0;
 #ifdef STORE_ADMISSION_COHORT
@@ -67,6 +71,15 @@ risc_bank_store_v1 bankApi{
 #endif
 bool bind(RiscBoot::Runtime& runtime) {
   if (!cpu->bind(runtime)) return false;
+#ifdef STORE_ADMISSION_DIAGNOSTIC_SOURCE
+  static const risc_diagnostic_source_api_v1 source{1,sizeof(source),nullptr,
+    [](void*,uint32_t,char*,uint32_t,uint32_t*,uint64_t*,uint32_t*)->int32_t{
+      ++hardwareCalls;return RISC_DIAGNOSTIC_SOURCE_INVALID;
+    }};
+  if(!runtime.registerPlatform(RISC_DIAGNOSTIC_SOURCE_CAPABILITY,1,
+       RiscBoot::Runtime::Scope::Global,0,&source))return false;
+#endif
+
 #ifdef STORE_ADMISSION_UPDATE_PLATFORMS
   if (!runtime.registerPlatform(RISC_HTTP_CLIENT_CAPABILITY,RISC_HTTP_CLIENT_API_V1,
                                 RiscBoot::Runtime::Scope::Global,0,&httpApi)) return false;
@@ -77,6 +90,26 @@ bool bind(RiscBoot::Runtime& runtime) {
 }
 RiscCpu::Hardware hardware() {
   RiscCpu::Hardware h{};
+#ifdef STORE_ADMISSION_CROWN_PROFILE
+  // Present only for the source/ELF-witnessed sharing composition. Admission
+  // may inspect these interfaces but must never perform native I/O.
+  static RiscBoot::EntropyBackend entropy{nullptr,
+    [](void*,uint64_t,void*,uint32_t)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t){return true;},[](void*){return true;}};
+  static RiscBoot::TcpListenerBackend tcp{nullptr,
+    [](void*,uint64_t,const risc_tcp_listen_v1*,uint64_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,uint64_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,void*,uint32_t,uint32_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t,const void*,uint32_t,uint32_t*)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t,uint64_t)->int32_t{++hardwareCalls;return -1;},
+    [](void*,uint64_t){return true;},[](void*){return true;}};
+  h.entropy=&entropy;h.tcpListener=&tcp;
+#endif
+#ifdef STORE_ADMISSION_USB_PHY
+  h.usbPhyIdle=[](){++hardwareCalls;return false;};
+  h.usbPhySuspend=[](){++hardwareCalls;return false;};
+  h.usbPhyResume=[](){++hardwareCalls;return false;};
+#endif
 #ifdef STORE_ADMISSION_HCI
   h.hciOpen=[](){++hardwareCalls;return false;};
   h.hciSend=[](uint8_t,const uint8_t*,size_t,uint32_t){++hardwareCalls;return false;};
@@ -170,6 +203,26 @@ int main(int argc, char** argv) {
   RiscRetainedWake::Image rtcImage{};
   RiscRetainedWake::Store wake(rtcImage);runtimePort.retainedWake=&wake;
 #endif
+#ifdef STORE_ADMISSION_COLD_BOOT
+  // prepare/admission must never ask for a boot cause or activate providers.
+  runtimePort.coldBoot=[](){++hardwareCalls;return false;};
+#endif
+#ifdef STORE_ADMISSION_CROWN_PROFILE
+  runtimePort.memoryHeap=[](risc_memory_heap_snapshot_v1*)->int32_t{++hardwareCalls;return -1;};
+  runtimePort.randomBytes=[](void*,uint32_t)->int32_t{++hardwareCalls;return -1;};
+#endif
+#ifdef STORE_ADMISSION_FILE_SOURCE
+  // Admission models authority availability only. Every source operation is
+  // forbidden here and counted, just like native hardware/storage callbacks.
+  const RiscBoot::FileSourceBackend fileSource{&storageCalls,
+    [](void* c,uint64_t)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c,const void*,uint32_t,uint32_t*)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c,uint64_t,void*,uint32_t,uint32_t*)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void* c)->int32_t{++*static_cast<unsigned*>(c);return RISC_FILE_SOURCE_UNAVAILABLE;},
+    [](void*){return true;}};
+  runtimePort.fileSource=&fileSource;
+#endif
   RiscBoot::Runtime runtime(runtimePort);
   const bool prepared = runtime.prepare(argv[1]);
   if (!prepared) {
@@ -193,7 +246,7 @@ int main(int argc, char** argv) {
   RiscBoot::Runtime candidate({});unsigned admitted=0;
   const bool validated=prepared && runtime.validateCohort(candidate,argv[2],CohortElf::file,&admitted);
   printf("{\"prepared\":%s,\"cohort_validated\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"elf_count\":%u,\"cooperative_yields\":%u}\n",
-         prepared?"true":"false",validated?"true":"false",candidate.error(),hardwareCalls,storageCalls,admitted,cooperativeYields);
+         prepared?"true":"false",validated?"true":"false",prepared?candidate.error():runtime.error(),hardwareCalls,storageCalls,admitted,cooperativeYields);
 #else
   // Runtime errors are constant diagnostics, with no input text or credentials.
   printf("{\"prepared\":%s,\"error\":\"%s\",\"hardware_calls\":%u,\"storage_calls\":%u,\"i2s_tables\":%zu}\n",

@@ -1,0 +1,42 @@
+diff --git a/Apps/hollow_trail.c b/Apps/hollow_trail.c
+index 4ca481e..4e20777 100644
+--- a/Apps/hollow_trail.c
++++ b/Apps/hollow_trail.c
+@@ -838,7 +838,7 @@ __attribute__((visibility("default"))) void canvas_original_main(void) {
+     memset(&ht_perf,0,sizeof(ht_perf));ht_perf.start=app->millis();
+     if(video->frame_counter) ht_perf.scan_start=video->frame_counter();
+     ht_fps_reset(&ht_fps,ht_perf.start);
+-    ht_log("Hollow Trail 1.2.0: draw the mill desk into the window light");
++    ht_log("Hollow Trail 1.2.1: draw the mill desk into the window light");
+     ht_log(HT_HAS(app,t5_app_api_v1,poll_nowait)?
+         "Hollow Trail input: no-wait updates; scheduler yield every 32ms":
+         "Hollow Trail input: legacy yielding poll (firmware lacks poll_nowait)");
+diff --git a/Apps/hollow_trail.json b/Apps/hollow_trail.json
+index 4fcae7e..9c1bb95 100644
+--- a/Apps/hollow_trail.json
++++ b/Apps/hollow_trail.json
+@@ -1,7 +1,7 @@
+ {
+   "type": "application",
+   "id": "hollow_trail",
+-  "version": "1.2.0",
++  "version": "1.2.1",
+   "architecture": "xtensa-esp32s3",
+   "file_name": "hollow_trail.elf",
+   "entry": "app_main",
+diff --git a/lib/CanvasApp/canvas.c b/lib/CanvasApp/canvas.c
+index 69352b2..3448c34 100644
+--- a/lib/CanvasApp/canvas.c
++++ b/lib/CanvasApp/canvas.c
+@@ -133,7 +133,10 @@ static void pump(void){
+  if(!display->acquire(display->context,format,&borrowed))return;
+  unsigned min_stride=(info.width*(format==RISC_DISPLAY_FORMAT_RGB565?16:1)+7)/8;
+  if(!borrowed.frame||!borrowed.pixels||borrowed.pixel_format!=format||borrowed.width!=info.width||borrowed.height!=info.height||borrowed.stride_bytes<min_stride||borrowed.stride_bytes>borrowed.size_bytes/info.height){canvas_retain("Canvas: invalid borrowed surface");return;}
+- memset(borrowed.pixels,format==RISC_DISPLAY_FORMAT_RGB565?255:0,(size_t)borrowed.stride_bytes*borrowed.height);
++ /* Hollow Trail keeps its 16:9 image; unused panel space is black. */
++ bool black_background=kind==CANVAS_GAME;
++ unsigned background=(format==RISC_DISPLAY_FORMAT_RGB565)?(black_background?0:255):(black_background?255:0);
++ memset(borrowed.pixels,background,(size_t)borrowed.stride_bytes*borrowed.height);
+  for(unsigned y=0;y<out_h;y++){
+   unsigned sy=y*height/out_h;
+   for(unsigned x=0;x<out_w;x++){unsigned sx=x*width/out_w;bool black=(snapshot[(size_t)sy*stride+sx/8]&(0x80u>>(sx&7)))!=0;put_output(x+out_x,y+out_y,black);}

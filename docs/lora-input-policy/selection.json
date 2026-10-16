@@ -1,0 +1,22 @@
+{
+  "schema": "lora.modal-policy.selection.v1",
+  "finalized": true,
+  "device": "watch",
+  "version": "0.1.15",
+  "sources": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "4cfe21248f1f81339072c39eba44dbaea3a444b6"
+  },
+  "source_publication": "public-exact-commit",
+  "baseline": {
+    "compiled_recipe_commit": "0499a3a3cd3e0461e61c6c93a444090657d41e9e",
+    "system_commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "combined_handoff_sha256": "da5564e34cd251c6fd185c4c2959c60607838b9b21e1206bdc5f0af73bf3b365",
+    "receipt_sha256": "4721c929cbfb712ef0ce7ddd8351609b76032845273942cd01f99d5177c7061d",
+    "full_image_sha256": "31a67e68998c6043ff7f64ec4dba89b5753e71d6ff3f9de8f53d6546a5ecb0c1",
+    "candidate_store_sha256": "9175383025736d455aee3a7009d98b41d0a4ee3cdff5c3cb734ee85319a83b59",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0,
+    "lora_predecessor_record_sha256": "aba17696647add8da51db65dd3331dbd80f57e49435818df84d8375354e86d34"
+  }
+}

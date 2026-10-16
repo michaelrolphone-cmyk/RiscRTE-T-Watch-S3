@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "product": "twatch-s3",
+  "version": "1.1.14",
+  "status": "Published-source diagnostic test build; underlying physical acquisition cause unconfirmed",
+  "predecessor": {
+    "version": "1.1.13",
+    "product_source": "8ed572f02941d79c3ffbf4e05e0c4218b99b4d7e",
+    "full_image_sha256": "8dfab6470779a396b2c28aa9cdacc54f02d802363ef33b4afa9cc1ef92492dce"
+  },
+  "native": {
+    "runtime_commit": "267aab6d9382ce4921a1536fab1620749b2f5301",
+    "parent": "defefb9648035443ea79b68c7fbda4d8282c582d",
+    "scope": "ELF regular-file fstat size query with legacy seek fallback and unchanged admission; diagnostic profile inherited from parent",
+    "host_tests": {
+      "performance_loader": "normal and ASan/UBSan PASS",
+      "image_byte_cache": "normal and ASan/UBSan PASS",
+      "elf_structure": "PASS",
+      "resident_object_export": "normal and ASan/UBSan PASS on frozen X4 0.1.92 store"
+    },
+    "sanitizer_limit": "LeakSanitizer disabled locally due ptrace environment; ASan and UBSan retained",
+    "exact_watch_spiffs_counts": {
+      "baseline_size_query_hal_reads": 1324,
+      "baseline_size_query_hal_bytes": 338944,
+      "fstat_size_query_hal_reads": 0,
+      "fstat_size_query_hal_bytes": 0,
+      "named_open_and_payload_counts": "unchanged",
+      "io_sequence": "58 metadata files and 11 pre-frame ELF instances"
+    },
+    "publication": "Verified remote branch fix/deep-wake-native-startup-20261012 at 267aab6d9382ce4921a1536fab1620749b2f5301",
+    "target": "PASS: exact published-source single-job crown-wake-profile build and IQ proof; source marker verified",
+    "hardware": "not tested",
+    "target_profile": "crown-wake-profile",
+    "ram_static_bytes": 77216,
+    "flash_used_bytes": 1443693,
+    "iq_gap_bytes": 8624,
+    "files": {
+      "firmware.bin": {
+        "bytes": 1444112,
+        "sha256": "f9cc819421775cfb9e55a8c7b2c1f2174c9a61b1a85560446cf4f680d14a7726"
+      },
+      "firmware.elf": {
+        "bytes": 23993316,
+        "sha256": "7025c5158323a0b26a62c3608684a3eecdbfd74e42049ba760f57822315307f0"
+      },
+      "radio-iq-proof.json": {
+        "bytes": 2176,
+        "sha256": "77c412977fcb25e9a8985bc78b1fb01001af0b7c3b544c0f4764ae74df945c99"
+      },
+      "runtime-source.tar.gz": {
+        "bytes": 2429905,
+        "sha256": "fda1dde2920570cc35b7df16f537e3d7cbec2bfc27465ce37e8f07e0e3f841c6"
+      },
+      "crown-build.ini": {
+        "bytes": 306,
+        "sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5"
+      },
+      "crown-wake-profile.ini": {
+        "bytes": 394,
+        "sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+      },
+      "bootloader.bin": {
+        "bytes": 15104,
+        "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+      },
+      "partitions.bin": {
+        "bytes": 3072,
+        "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+      }
+    },
+    "runtime_tree": "62fe2dfc53169317f91bbc8fadadd9e0bda7e62c",
+    "source_equivalence": "git diff empty; exact same tree; published commit metadata only changed",
+    "source_url": "https://github.com/michaelrolphone-cmyk/RiscRTE/commit/267aab6d9382ce4921a1536fab1620749b2f5301",
+    "ci_run": "https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/38194714678",
+    "runtime_version": "0.2.23",
+    "source_tar_verified_against_exact_tree": true,
+    "boot_components": "Byte-identical bootloader and partitions retained from delivered Watch 1.1.12"
+  },
+  "clock": {
+    "version": "0.11.5",
+    "product_commit": "e9df61067f1e1cc35e7327993143ca084c2ce4cb",
+    "product_tree": "4c6a93b8b51696cb1ea67d0f004597e0aec66c61",
+    "system_commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+    "utilities_commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+    "builder": "scripts/build_watch_sleep_failure_clock.py",
+    "source_files": {
+      "apps/clock/crown.c": "21dff8f1e974e007f614a2f3725754d951d6af54454a0150bc4ced16be6693d1",
+      "apps/clock/watch_motion_client.h": "424111031b9e9c8e543cd2b36351cea5825e022e9862d2f93a6e1c57af84ffe9"
+    },
+    "build_receipt_sha256": "c8c4c6bd89291769cbecee8488a0ad036695f7d77154653765bac995dd21053f",
+    "original_reproduction_sha256": "82e06ed773f21c0dfa1936bd7d2a0f1f7e27de14a16a65bcfa1e10641ed791ac",
+    "predecessor_default_sha256": "82e06ed773f21c0dfa1936bd7d2a0f1f7e27de14a16a65bcfa1e10641ed791ac",
+    "dependency_count": 98,
+    "changed_dependency_keys": [
+      "watch:apps/clock/crown.c",
+      "watch:apps/clock/watch_motion_client.h"
+    ],
+    "files": {
+      "default.elf": {
+        "bytes": 862880,
+        "sha256": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875"
+      },
+      "default.json": {
+        "bytes": 1203,
+        "sha256": "e270a5229ed4a661d0d8a399ee7df126a144b6bf68e65cadcd46ed0c1e83aa6b"
+      }
+    },
+    "symbols": {
+      "file": "debug/fast.elf",
+      "bytes": 926756,
+      "sha256": "cb29c97c31ea92d3f792f10ba5c7608a73be35dcfc599ca6ff0eae768baa5f29"
+    },
+    "publication": "Remote commit fetched and tree verified byte-identical to tested source",
+    "source_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/e9df61067f1e1cc35e7327993143ca084c2ce4cb"
+  },
+  "preserved_sources": {
+    "runtime": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
+    "watch_canvas_system": "14762601b3fa7bbeeac5ed565a6825534bf74dca",
+    "modern_system": "1aaf53e23ca9651a5cf9d1debe44941c9d7d0e58",
+    "utilities": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
+    "watch_scanner_utilities": "377d471d284cf18e13927481362d011bc981dfee",
+    "productivity": "0b8667d64e76a6b4bbd325a1c963405f3af57404",
+    "watch_build_profile": "089868395268b696c05651c33816345bfe0425df",
+    "drivers_sdk": "aac1cb342696e96345d4546e2c69023834c6c8d4"
+  },
+  "system_assembly_source": "1aaf53e23ca9651a5cf9d1debe44941c9d7d0e58",
+  "layout": {
+    "apps": 25,
+    "providers": 30,
+    "store_files": 111,
+    "store_bytes": 5308416,
+    "initial_flash_erases_internal_data": true,
+    "shared_settings_opt_in": false,
+    "store_content_bytes": 4708822
+  },
+  "files_version": "1.5.30",
+  "physical_qualification": false,
+  "full_initial_flash_erases_internal_data": true,
+  "native_regressions": [
+    "Clean deep-entry refusal restores caller display instead of permanent dark retention",
+    "Pending acknowledged or held crown event vetoes deep entry",
+    "External deep-wake crown gesture cannot become a second sleep/navigation action"
+  ],
+  "changes": [
+    "Preserve genuine sleep failure notices; distinguish runtime API, settings and motion acquisition failures",
+    "Omit synthetic zero result on boolean acquisition errors",
+    "Retain exact bounded off-face failure diagnostics without adding successful notices"
+  ],
+  "excluded": [
+    "Sleep-policy changes",
+    "Tap-wake disablement or fallback on acquire failure",
+    "Native Runtime changes",
+    "Other application/provider changes",
+    "SPIFFS index or placement changes"
+  ],
+  "clock_return": "Unchanged empty clock.elf return shim; fresh default invocation handles Settings/app return",
+  "qualification": {
+    "face_cases": "34 faces; both failed acquisitions; repeated refusal followed by successful wake",
+    "cross_layer": "Actual Runtime/CpuPort/GPIO/I2C/IMU with unchanged delivered JSON; nine controlled cases; normal and ASan/UBSan",
+    "device_failure_cause": "Not established; no unforced host refusal reproduced",
+    "broad_alarm_script_limit": "Pinned source snapshot lacks unrelated portable_settings_test.c; affected alarm/motion/clock cases passed directly",
+    "physical": "Not tested"
+  }
+}

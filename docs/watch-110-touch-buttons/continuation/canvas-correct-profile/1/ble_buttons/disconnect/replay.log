@@ -1,0 +1,6 @@
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 5 frames, 240 polls; 0 mouse/2 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID state from=5 to=2 flags=16 error=0 generation=1
+HID suspend status=1 state=2 flags=16 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1

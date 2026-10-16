@@ -15,6 +15,7 @@ GENERATOR = ROOT / 'vendor/esp-idf-spiffs/spiffsgen.py'
 GENERATOR_SHA = '5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466'
 UPSTREAM = '38eeba213aa695aabfd6d89aa9f5078dbe5a94c3'
 IMAGE_SIZE = 0x510000
+EXPANDED_IMAGE_SIZE = 0x550000
 # Match the pinned ESP32-S3 Arduino/IDF SDK and the existing mkspiffs reader.
 CONFIG = dict(page_size=256, page_ix_len=2, block_size=4096, block_ix_len=2,
               meta_len=4, obj_name_len=32, obj_id_len=2, span_ix_len=2,
@@ -28,7 +29,7 @@ def require(condition, message):
 
 
 def build(store, size=IMAGE_SIZE):
-    require(size == IMAGE_SIZE, 'Current bootfs requires the verified ABI2 geometry')
+    require(size in (IMAGE_SIZE, EXPANDED_IMAGE_SIZE), 'Unsupported explicit bootfs geometry')
     require(store, 'Current bootfs cannot be empty')
     # Validate the entire input before writing any temporary files. The NUL
     # terminator is included in the fixed 32-byte SPIFFS object-name field.

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "sources": {
+    "runtime": "791ecf8ee40bab55e4c36ea28189ff4f218d2cfa",
+    "system": "1bfdfd1b3582d57675138b567ca5ddd7d653011e",
+    "drivers": "281609a0d2ae514f107d2ef67b6e8b4d25c72fb8",
+    "wifi-provider": "6bc28feae525074a1a5e0030c4b1bf6bebdc48fa",
+    "x4": "264b801903bc1a4b1b114c46a6d70b1caad0c99e",
+    "watch": "7c19552e4b73ae550513931a429bdadb5fb5c5c9"
+  },
+  "version": "1.1.5",
+  "file": "watch/WATCH-1.1.5-Shared-Files-FULL-INITIAL-ERASES-DATA.bin",
+  "sha256": "376f5f57a2692e16d93180ad9cf6604ec32c6d53f794bb83c5d405731548da4c",
+  "bytes": 16777216,
+  "native_sha256": "218a78298a69e0cfb7c6cbba8c9278f4bfc7f739b6bb74bf9d72622cb6865ad3",
+  "apps": 25,
+  "providers": 30,
+  "changed_store_paths": [
+    "cohort.json",
+    "file_browser.elf",
+    "file_browser.json",
+    "wifi/manifest.json",
+    "wifi/driver.elf",
+    "sharing-ble/manifest.json",
+    "sharing-ble/driver.elf"
+  ],
+  "unchanged_other_store_files": true,
+  "full_image_independently_parsed": true,
+  "hardware_tested": false,
+  "tests": {
+    "native_target_compile": "passed",
+    "Files_target_compile_and_loader": "passed",
+    "Runtime_cohort_admission": "passed",
+    "production_host_scenarios": "passed; controlled radio/storage boundaries with UBSan",
+    "BLE_secure_network_offer": "two production NimBLE hosts on simulated HCI boundary",
+    "physical_RF": "not performed"
+  },
+  "full_initial_images_erase_internal_data": true,
+  "preserving_update_qualified": false
+}
