@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "status": "source-and-component-checkpoint-full-bin-blocked",
+  "baseline": {
+    "library_file_id": "libfile_689418e749c481918e7f31ab563c687c",
+    "filename": "X4-0.1.69-Watch-1.1.0-Canvas-Apps.zip",
+    "resolved_file_id": "file_00000000a9d481fdb19aed43e6eabc97",
+    "expected_bytes": 7409174,
+    "bytes_verified": false,
+    "attempts": 2,
+    "failure": "Supported Library transfer helper failed both local download attempts; no local bytes."
+  },
+  "remote_heads_verified": {
+    "watch_canvas": "42b2d8bfae5f7170fb0019dc5a7646f9ed4cba0a",
+    "watch_touch": "56114a3c3b06041a9283fb6feac47099896ca5a8",
+    "utilities_buttons": "e620160c48c11fb074378cd31a20ff8362a9659b"
+  },
+  "sources": {
+    "watch": {
+      "commit": "dc4cc020b37636c9fdf4b37dc9f63cb5d2f96765",
+      "tree": "6e7850a3e72fa9948be554954617797a28cb3200"
+    },
+    "utilities": {
+      "commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+      "tree": "c2f1092b7d07ae9eb639e0d40141b2d84658fbbe"
+    },
+    "runtime": {
+      "commit": "e96f2affc691b929e89b624a998f0687a2746fd6",
+      "tree": "3aa15af65246a6491110f01f4bb4bf9a51b4bd56"
+    },
+    "system": {
+      "commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+      "tree": "647b523b197de59f36b6db4101854635557c4843"
+    },
+    "system-hid": {
+      "commit": "8a75862929e4e83c8f66b3d58cc1c36d44830c84",
+      "tree": "2a2de2b8b7537a3bfd322a6c4771f28e51e774df"
+    }
+  },
+  "selected_system": "system",
+  "provider_test_only_system": "system-hid",
+  "touch_target": {
+    "sha256": "28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368",
+    "bytes": 13240,
+    "version": "0.2.2"
+  },
+  "buttons_target": {
+    "sha256": "8868f53d2572feafc472eedc96f931c5c8e1f1afc1d4220717ba11ae129fe002",
+    "bytes": 113900,
+    "version": "0.1.22"
+  },
+  "planned_changed_store_paths": [
+    "<existing-touch-dir>/driver.elf",
+    "<existing-touch-dir>/manifest.json",
+    "ble_buttons.elf",
+    "ble_buttons.json"
+  ],
+  "unchanged_source_components": [
+    "all original Watch apps including both Clock 0.11.2 entrypoints",
+    "hardware configuration",
+    "current accepted touch 0.2.1 lane",
+    "Runtime 0.2.4 e96f2aff",
+    "System canvas 63532e46",
+    "Utilities canvas 814502e5 (already contains Buttons fix)"
+  ],
+  "tests": {
+    "buttons_normal_cases": 25,
+    "buttons_ubsan_cases": 25,
+    "touch_provider_cases": 44,
+    "touch_provider_system": "8a75862929e4e83c8f66b3d58cc1c36d44830c84",
+    "touch_provider_note": "nominal/alternate wiring, normal/UBSan, not ASan; exact canvas System lacks portable_touch_next",
+    "hid_models_app_cases": "four binaries normal plus four UBSan passed; subsequent screenshot phase fails clang unused np_pixel warning",
+    "portable_sleep_lifecycle_ubsan_programs": 4,
+    "hybrid_policy_ubsan": true,
+    "pmu_cold_boot_ubsan": true,
+    "runtime_journal_usb_hwcdc_normal": true,
+    "asan": "stalled first test even outside sandbox; bounded termination, no pass claim",
+    "low_battery_clock": "blocked by exact System/Watch sleep-policy equality guard",
+    "selected_power_union": "blocked by exact System/Runtime header equality guard",
+    "renderer": "blocked by older canvas Alarm header and absent PaperPresentation.h",
+    "nimble_hci": "not rerun",
+    "full_cohort_admission": "not run; baseline bytes absent",
+    "runtime_cpu_light_sleep": "blocked by Clang unused-variable/private-field diagnostics after host Bash adapter"
+  },
+  "hardware_tested": false,
+  "flashed": false,
+  "master_merged": false
+}

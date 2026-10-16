@@ -15,14 +15,19 @@ import subprocess
 import tempfile
 import zlib
 
-import current_cohort as cohort
-from current_bootfs import build as build_store
-from current_flash_layout import assemble
-import midpoint_upgrade as midpoint
-import publish_sdr_test as sdr
-import publish_watch_product as pub
-from read_only_spiffs import read_image
-from watch_release_index import REPOSITORY, require, update_index, validate_record
+from midpoint_source_custody import FrozenModules, FROZEN as DERIVATION_ROOT, verify as verify_sources
+
+_frozen = FrozenModules()
+cohort = _frozen.load('current_cohort')
+build_store = _frozen.load('current_bootfs').build
+assemble = _frozen.load('current_flash_layout').assemble
+midpoint = _frozen.load('midpoint_upgrade')
+sdr = _frozen.load('publish_sdr_test')
+pub = _frozen.load('publish_watch_product')
+read_image = _frozen.load('read_only_spiffs').read_image
+_index = _frozen.load('watch_release_index')
+REPOSITORY, require = _index.REPOSITORY, _index.require
+update_index, validate_record = _index.update_index, _index.validate_record
 
 ROOT = Path(__file__).resolve().parents[1]
 ACCEPTANCE = ROOT / 'release/midpoint-test-acceptance.json'
@@ -61,12 +66,9 @@ def files_from_zip(raw):
 
 
 def source_guards():
-    result = {}
-    for name in SOURCE_FILES:
-        original = pub.command('git', 'show', SOURCE + ':' + name)
-        require((ROOT / name).read_bytes() == original, 'Frozen derivation source changed: ' + name)
-        result[name] = sha(original)
-    return result
+    record = verify_sources(DERIVATION_ROOT)
+    require(record['commit'] == SOURCE, 'Frozen derivation source identity differs')
+    return {name: record['files'][name]['sha256'] for name in SOURCE_FILES}
 
 
 def validate_input(role, item):
@@ -314,8 +316,8 @@ def derive(a, raw, evidence):
         require(marker in firmware and marker in native['firmware.elf'], 'Missing native compiled identity')
     proof = decode(get('next-watch-build-proof.json'))
     requirements_raw = get('runtime-requirements.json'); requirements = decode(requirements_raw)
-    require(requirements_raw == (ROOT / 'apps/current-runtime-requirements.json').read_bytes(), 'Runtime requirements differ')
-    require(proof['watch_source'] == SOURCE and proof['configuration'] == decode((ROOT / 'apps/current-apps-sources.json').read_bytes())
+    require(requirements_raw == (DERIVATION_ROOT / 'apps/current-runtime-requirements.json').read_bytes(), 'Runtime requirements differ')
+    require(proof['watch_source'] == SOURCE and proof['configuration'] == decode((DERIVATION_ROOT / 'apps/current-apps-sources.json').read_bytes())
             and proof['runtime_requirements'] == requirements and proof['runtime_requirements_sha256'] == sha(requirements_raw)
             and proof['native_elf_sha256'] == sha(native['firmware.elf']), 'Ordinary proof/source differs')
     standard_store = get('bootfs.bin'); standard = read_image(standard_store, cohort.STORE_SIZE)
@@ -353,7 +355,7 @@ def derive(a, raw, evidence):
             build['bridge']['native_sha256'] == midpoint.base.NATIVE_SHA and
             build['bridge']['retained_source_revision'] == midpoint.MIDPOINT_SOURCE and
             build['source_initial_image_sha256'] == midpoint.MIDPOINT_SHA and
-            build['source_baseline_sha256'] == sha((ROOT / 'apps/midpoint-origin-baseline.json').read_bytes()),
+            build['source_baseline_sha256'] == sha((DERIVATION_ROOT / 'apps/midpoint-origin-baseline.json').read_bytes()),
             'Midpoint custody differs')
     verify_build_admissions(build)
     for role in ('normal', 'sanitized'):
@@ -406,7 +408,7 @@ def verify_catalog(index, system, output):
         flags = ['-fsanitize=address,undefined', '-fno-omit-frame-pointer', '-fno-pie', '-no-pie'] if sanitized else []
         subprocess.run(['c++', '-std=c++17', '-Wall', '-Wextra', '-Werror', '-Wno-misleading-indentation', *flags,
             *['-I' + str(system / p) for p in ('Services/update', 'lib/PortableApps/include', 'lib/NativeApps/include')],
-            str(ROOT / 'tests/midpoint_upgrade/catalog.cpp'), '-o', str(executable)], check=True)
+            str(DERIVATION_ROOT / 'tests/midpoint_upgrade/catalog.cpp'), '-o', str(executable)], check=True)
         env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0', 'UBSAN_OPTIONS': 'halt_on_error=1'}
         subprocess.run([str(executable), str(path), 'accept'], check=True, env=env)
     return {'source_sha': SYSTEM_SOURCE, 'index_sha256': sha(encoded(index)),

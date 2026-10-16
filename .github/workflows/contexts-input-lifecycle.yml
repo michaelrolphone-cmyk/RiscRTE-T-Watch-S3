@@ -1,0 +1,21 @@
+name: Contexts lifecycle recipe
+on:
+  push:
+    branches: [work/contexts-input-lifecycle-20261012]
+  pull_request:
+    paths: ['**/*contexts*life*', '**/contexts-input-lifecycle/**', '.github/workflows/contexts-input-lifecycle.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 tests/test_contexts_input_lifecycle_recipe.py
+      - run: python3 -m py_compile scripts/build_contexts_input_lifecycle.py scripts/assemble_watch_contexts_input_lifecycle.py scripts/inspect_contexts_lifecycle_stack.py scripts/test_contexts_lifecycle_flagoff.py scripts/run_contexts_input_lifecycle.py

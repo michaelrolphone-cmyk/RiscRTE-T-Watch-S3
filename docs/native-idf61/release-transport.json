@@ -1,0 +1,53 @@
+{
+  "baseline_contract_sha256": "13a624532a753bdc0f6ab6dcb51f08bdc2a3aa64ecc71441c868ae553f34b401",
+  "candidate_artifacts": {
+    "bootloader.bin": {
+      "bytes": 22640,
+      "sha256": "06d22b02b631afd104890e475771f03fb15bec87734f3db2e6fd3cdd49973104"
+    },
+    "factory-candidate-erases-data-0x0.bin": {
+      "bytes": 16777216,
+      "sha256": "0da39cd020256f88c2da9b45c5b68fb5fb4002999a00c4f4250306eec358bc33"
+    },
+    "firmware.bin": {
+      "bytes": 1546944,
+      "sha256": "6cf85ed9fd36e578e8d297836969b619c7740416d27aa05ded06b331a8d79348"
+    },
+    "partitions.bin": {
+      "bytes": 3072,
+      "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+    },
+    "store.bin": {
+      "bytes": 5570560,
+      "sha256": "82568c56c85f9d0ed84b7bf78d37d05c94a3473efc3b8ae7d3f1b07ecabbdc15"
+    }
+  },
+  "candidate_version": "1.1.40",
+  "evidence_asset": "Runtime-0.4.0-Watch-1.1.40-Native-IDF61-Evidence.zip",
+  "evidence_sha256": "dd8ca187c52dc4594781f39480a1e59c433f6d4aa798fcb9b482e8a1be7b9828",
+  "finalized": true,
+  "product": "twatch",
+  "publication_enabled": true,
+  "qualification_sha256": "6f26e48b094a16d7e0aeb453294e91f89a24f1fb79412c9a90dbd18a6c9fee57",
+  "release_branch": "work/native-idf-6.1",
+  "release_tag": "test-native-idf61-1.1.40",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "runtime_artifact_id": 12002797189,
+  "runtime_manifest_sha256": "ddf5e3be350658b53bffa023fd3fbc9771c11fce25065f9bf6021ab5ca015d29",
+  "runtime_release_revision": "659d859acb122640ef4003bb8d7099501d4381be",
+  "runtime_repository": "michaelrolphone-cmyk/RiscRTE",
+  "runtime_revision": "659d859acb122640ef4003bb8d7099501d4381be",
+  "runtime_run_attempt": 1,
+  "runtime_run_id": 38797200408,
+  "runtime_tag": "firmware-v0.4.0",
+  "schema": 1,
+  "sources": {
+    "drivers": "5890721073ebabd781d5d278e447c761947a5c58",
+    "image_helper": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+    "product": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+    "runtime": "659d859acb122640ef4003bb8d7099501d4381be",
+    "sdk": "fff9895c82d744c7237be8847347bdd1b07c6643",
+    "system": "755cc5174a6deaee120d108cbffe67ae809e1e6f"
+  },
+  "version": "1.1.40"
+}

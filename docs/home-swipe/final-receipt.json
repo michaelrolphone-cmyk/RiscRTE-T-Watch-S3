@@ -1,0 +1,116 @@
+{
+  "active_store_sha256": "657aaf062e2798f4cc35efb69cfa4ee82183feb94eeca802cb14ffc698cb7590",
+  "app_policy_rows": 24,
+  "baseline_full_image_sha256": "fe9fd6bc304de29023c1ac3d485a65af880c38d41ab4da7f963d0985e7da997d",
+  "baseline_source": "6260a9d01d409a21b49d600176d591ab919b79d7",
+  "boot_json_byte_identical": true,
+  "candidate_store_sha256": "4f73c20cfe8e259734f532b3972b1a973d1f981ac74a393041bba64d615c0090",
+  "changed_store_paths": [
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "cohort_validated": true,
+  "cooperative_yields": 174,
+  "delivered": false,
+  "elf_count": 55,
+  "error": "",
+  "flash_offset": "0x0",
+  "flashed": false,
+  "free_spiffs_blocks": 2,
+  "full_image_bytes": 16777216,
+  "full_image_materialized": true,
+  "full_image_sha256": "f8195d2af2dfdcc9f2c0413883efd97f6efe4d62eb90cfd4e5cab5aec5332cb6",
+  "full_initial_erases_data": true,
+  "grant_delta": [],
+  "hardware_calls": 0,
+  "hardware_verified": false,
+  "home_bytes": 862864,
+  "home_feature_flags_unchanged": true,
+  "home_fonts_source_unchanged": true,
+  "home_sha256": "29e0d273913184da56afaca0e10f8478ebd057d803f7ebe0c870e74aaf7569d0",
+  "home_source_delta": [
+    "watch:apps/clock/crown.c",
+    "watch:apps/clock/launcher_touch.h",
+    "watch:apps/clock/nova/nova.h",
+    "watch:apps/runtime_features/clock_runtime.h"
+  ],
+  "home_version": "0.11.6",
+  "native_composition": {
+    "bounds": {
+      "RISC_APP_POLICY_ROWS": 24,
+      "RISC_APP_REQUIREMENT_ROWS": 24,
+      "RISC_INSTALLED_APP_CAPACITY": 64,
+      "RISC_PROVIDER_CAPACITY": 32
+    },
+    "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+    "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+    "diagnostic_allocations": {
+      "_ZN15RiscDiagnostics11timestampedEPKcz": {
+        "address": 1107539120,
+        "bytes": 230
+      },
+      "_ZN8RiscPerf4dataE": {
+        "address": 1070182592,
+        "bytes": 5440
+      }
+    },
+    "diagnostic_flags": {
+      "RISC_PERFORMANCE_TRACE": 1,
+      "RISC_STAGE_LOGS": 1
+    },
+    "file_source_backend_allocations": {
+      "__wrap_esp_littlefs_format": {
+        "address": 1107482652,
+        "bytes": 33
+      },
+      "__wrap_esp_littlefs_format_partition": {
+        "address": 1107482688,
+        "bytes": 24
+      },
+      "__wrap_esp_partition_erase_range": {
+        "address": 1107482584,
+        "bytes": 66
+      },
+      "__wrap_esp_partition_read": {
+        "address": 1107482476,
+        "bytes": 36
+      },
+      "__wrap_esp_partition_write": {
+        "address": 1107482512,
+        "bytes": 69
+      },
+      "__wrap_esp_vfs_register": {
+        "address": 1107481868,
+        "bytes": 535
+      },
+      "__wrap_esp_vfs_unregister": {
+        "address": 1107482404,
+        "bytes": 70
+      }
+    },
+    "file_source_enabled": true,
+    "private_scratch_root": "/appdata/.risc-file-source",
+    "profile": "env:watch-file-source",
+    "row_evidence": "allocated native policy and requirement marker symbols",
+    "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+    "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+    "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+    "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+  },
+  "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+  "native_unchanged": true,
+  "other_app_provider_font_bytes_unchanged": true,
+  "prepared": true,
+  "preserved_other_elf_count": 54,
+  "preserved_store_paths": 110,
+  "product": "Watch",
+  "product_source": "b7a6cf0d2505ecf9b1c625bbfcc6d4048c13b471",
+  "product_tree": "a448e3d29d61467ee67e5bddc4e29a20706e2c36",
+  "required_free_spiffs_blocks": 2,
+  "storage_calls": 0,
+  "store_files": 113,
+  "target_instructions_executed": false,
+  "version": "1.1.20"
+}

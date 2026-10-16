@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "scope": "Explicit live successors to original Watch 1.0.18 target inputs; the historical custody record and bundle remain unchanged",
+  "target_watch_inputs": {
+    "apps/clock/watch_motion_client.h": {
+      "source_commit": "afdab33b66d18d2afc5d9da3abdbcfe90490941a",
+      "sha256": "424111031b9e9c8e543cd2b36351cea5825e022e9862d2f93a6e1c57af84ffe9",
+      "reason": "Delivered Watch 1.1.15 Clock input, inherited byte-for-byte by Watch 1.1.16. Includes persistent tap settings and bounded settings/motion acquisition refusal diagnostics. This is a successor input, not the original Watch 1.0.18 input."
+    }
+  }
+}

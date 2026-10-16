@@ -1,0 +1,54 @@
+{
+  "device_accessed": false,
+  "diff_whitespace_checked": true,
+  "finalized_source_pins": true,
+  "full_native_build_performed": false,
+  "full_production_loader_admission_performed": false,
+  "hardware_tested": false,
+  "historical_profile_note": "The native-IDF61 historical equality tests predate generic storage flags already present in the released shared-default profiles. They are unchanged. The new gate freezes the exact previous released profile and permits only the explicitly selected serial definition lines.",
+  "previous_public_release_modified": false,
+  "product": "twatch",
+  "publication_enabled": false,
+  "runtime_revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+  "schema": 1,
+  "shell_syntax_checked": true,
+  "source_sha256": {
+    "docs/shared-default/source-pins.json": "dbeef8456145897fec234ff2c1c5987f31d58203e854f46faf830e98181e2c1f",
+    "profiles/native-idf61.cmake": "6e87b761aa0d3abdaa4154481c0a2b0c7be7ffdc6b12b548e96dcc325e58fc75",
+    "scripts/build_shared_default_native.py": "c391c45e548b03857f9ad28f00e2c9a0ca06291a8340c54b11c2dfcb6c658e7c",
+    "scripts/package_shared_default.py": "a1258a42bc3077b25a0a6e6f007a113503e75f0ef5f0cf45fc5854ab01a6a1b6",
+    "scripts/serial_files_product.py": "d415cd8d216a0d84b44759eb73c8632fd671d03b38d688e52d9eb433f2d0ee82",
+    "scripts/shared_default_release.py": "4308d19aba0c137bfd4d559ffd01ba835e4498bb080b76c4a3d4dfcadf6a84a2",
+    "scripts/test_alarm_sleep_package.py": "05de35f9921036b1f16b36904c839d84e35c5ca5b214e4b6c4931b17b880e18c",
+    "scripts/test_shared_default_package.py": "8c69a177e631b00502367959cd4c6ee0fb093bf3afaf1e083b51f4fcbc8b3637",
+    "scripts/test_shared_default_release.py": "56feebedbbd0b01783de72ea9a263b7d150b84b0063136cd613bd5e86faddd1e",
+    "tests/test_native_idf61_provenance.py": "83d6843f42b57715fff9042dc0fd5a7c2f783f4baeeab32de14d600f2ad81ca6",
+    "tests/test_native_idf61_release_transport.py": "f0c7e94b66826044264449b3950a2963a779ba3e3d01e3a94949583da842c615"
+  },
+  "status": "source-integration-tested-native-build-pending",
+  "tested_at_utc": "2026-10-16T10:58:45.868578+00:00",
+  "tests": {
+    "scripts/test_alarm_sleep_package.py": {
+      "cases": 15,
+      "passed": true
+    },
+    "scripts/test_shared_default_package.py": {
+      "cases": 6,
+      "passed": true
+    },
+    "scripts/test_shared_default_release.py": {
+      "cases": 7,
+      "passed": true
+    },
+    "tests/test_native_idf61_provenance.py": {
+      "cases": 14,
+      "passed": true
+    },
+    "tests/test_native_idf61_release_transport.py": {
+      "cases": 21,
+      "passed": true
+    }
+  },
+  "version": "1.1.43",
+  "watch_revision": "8132d73c828c0e4763f6c89a3d6a4a883314056a"
+}

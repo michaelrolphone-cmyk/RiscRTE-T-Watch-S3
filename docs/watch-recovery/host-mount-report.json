@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "scope": "host-only production storage regression; not Xtensa execution or hardware qualification",
+  "kind": "delivered-images",
+  "status": "pass",
+  "images": {
+    "old": {
+      "path": "WATCH-1.1.20-FULL-INITIAL-ERASES-DATA.bin",
+      "size": 16777216,
+      "sha256": "f8195d2af2dfdcc9f2c0413883efd97f6efe4d62eb90cfd4e5cab5aec5332cb6",
+      "partition_table_sha256": "a6675ae117269ab78b4af211c13c08f4a62a8dcaa17adc3b66f508c464907601",
+      "appdata": {
+        "label": "appdata",
+        "type": 1,
+        "subtype": 65,
+        "offset": 2555904,
+        "size": 524288,
+        "flags": 0
+      },
+      "appdata_sha256": "043e238a765f7cfbc62596a50e53c8ffb6b188a99357b0ebede251725d67589f",
+      "appdata_all_erased": true
+    },
+    "recovered": {
+      "path": "T-Watch-S3-1.1.21-r1-AppData-Fix-full-0x0.bin",
+      "size": 16777216,
+      "sha256": "4e43fc376021779a2d7a5cada96aee255735d5db1eb0e896c5aacf65bb3889bc",
+      "partition_table_sha256": "a6675ae117269ab78b4af211c13c08f4a62a8dcaa17adc3b66f508c464907601",
+      "appdata": {
+        "label": "appdata",
+        "type": 1,
+        "subtype": 65,
+        "offset": 2555904,
+        "size": 524288,
+        "flags": 0
+      },
+      "appdata_sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "appdata_all_erased": false
+    }
+  },
+  "modes": {
+    "normal": {
+      "status": "pass",
+      "cases": [
+        {
+          "name": "mount/healthy",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/fault",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/close-failure",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/lost-custody",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/native-backend",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/recovery",
+          "returncode": 0,
+          "output": "baseline replace status 0 retained 0\nPASS: 440 actual flash fault attempts (440 retained), every reached program/erase plus sampled read, cold restart old-or-new 8192->65536 bytes\nPASS: native retained mount binding"
+        },
+        {
+          "name": "file-source/healthy",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: healthy PASS"
+        },
+        {
+          "name": "file-source/open-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: open-fault PASS"
+        },
+        {
+          "name": "file-source/close-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: close-fault PASS"
+        },
+        {
+          "name": "file-source/read-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: read-fault PASS"
+        },
+        {
+          "name": "image/old-zero-write-rejection",
+          "returncode": 0,
+          "output": "COUNTERS: reads=4 program=0 erase=0 bytes_unchanged=yes\nPASS: erased-appdata image rejects production mount/FileSource preparation without flash writes"
+        },
+        {
+          "name": "image/recovered-fresh",
+          "returncode": 0,
+          "output": "COUNTERS: reads=34497 program=963 erase=159 live_files=0 live_dirs=0; all 65536 scratch bytes verified\nPASS: host-only fresh mount of exact image appdata; production mount/FileSource ready; full 64 KiB scratch roundtrip; saved AppData readable"
+        },
+        {
+          "name": "image/recovered-cold-remount",
+          "returncode": 0,
+          "output": "COUNTERS: reads=36542 program=955 erase=157 live_files=0 live_dirs=0; all 65536 scratch bytes verified\nPASS: host-only separate-process cold remount; production mount/FileSource ready; full 64 KiB scratch roundtrip; saved AppData readable"
+        }
+      ],
+      "address_sanitizer": false,
+      "undefined_behavior_sanitizer": false,
+      "leak_check": false,
+      "snapshots": {
+        "fresh.bin": "e7dda5a78ddaef3f9d29c7946e06ba7c6f5b4ee7ab028f83872b3d7c460245e8",
+        "rebooted.bin": "f5343630b3cfcdb025f921f52c4dad55a68b693a0e53bc428fbca903b124c5c2"
+      }
+    },
+    "sanitized": {
+      "status": "pass",
+      "cases": [
+        {
+          "name": "mount/healthy",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/fault",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/close-failure",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/lost-custody",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/native-backend",
+          "returncode": 0,
+          "output": "PASS: native retained mount binding"
+        },
+        {
+          "name": "mount/recovery",
+          "returncode": 0,
+          "output": "baseline replace status 0 retained 0\nPASS: 440 actual flash fault attempts (440 retained), every reached program/erase plus sampled read, cold restart old-or-new 8192->65536 bytes\nPASS: native retained mount binding"
+        },
+        {
+          "name": "file-source/healthy",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: healthy PASS"
+        },
+        {
+          "name": "file-source/open-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: open-fault PASS"
+        },
+        {
+          "name": "file-source/close-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: close-fault PASS"
+        },
+        {
+          "name": "file-source/read-fault",
+          "returncode": 0,
+          "output": "NativeFileSource + real pinned LittleFS mount: read-fault PASS"
+        },
+        {
+          "name": "image/old-zero-write-rejection",
+          "returncode": 0,
+          "output": "COUNTERS: reads=4 program=0 erase=0 bytes_unchanged=yes\nPASS: erased-appdata image rejects production mount/FileSource preparation without flash writes"
+        },
+        {
+          "name": "image/recovered-fresh",
+          "returncode": 0,
+          "output": "COUNTERS: reads=34497 program=963 erase=159 live_files=0 live_dirs=0; all 65536 scratch bytes verified\nPASS: host-only fresh mount of exact image appdata; production mount/FileSource ready; full 64 KiB scratch roundtrip; saved AppData readable"
+        },
+        {
+          "name": "image/recovered-cold-remount",
+          "returncode": 0,
+          "output": "COUNTERS: reads=36542 program=955 erase=157 live_files=0 live_dirs=0; all 65536 scratch bytes verified\nPASS: host-only separate-process cold remount; production mount/FileSource ready; full 64 KiB scratch roundtrip; saved AppData readable"
+        }
+      ],
+      "address_sanitizer": true,
+      "undefined_behavior_sanitizer": true,
+      "leak_check": false,
+      "snapshots": {
+        "fresh.bin": "e5aff7d29aeb266bb5a03310f49e6fd8bcb81f0a6352d40bec7b1dfbea544504",
+        "rebooted.bin": "b48cfab799f3ec1a38ce82dc2290e05e23100346c75073634694baea6be49c76"
+      }
+    }
+  },
+  "started_at_utc": "2026-10-13T05:33:58.621101+00:00",
+  "harness_sha256": "2cd76e43be46f73b015ac1886e9629acf20a1b352e636774789ee47cdc5e9e62",
+  "runner_sha256": "2b8a65e97f6ef23a82b0869f6b82aaf0b768e23e1d816c84e4fe455fde2f4b54",
+  "runtime_commit": "06da76aa7f074220b74a282badca0ed0061f1643",
+  "runtime_tracked_files_clean_before": true,
+  "runtime_source_sha256": {
+    "src/ports/esp32s3/NativeAppData.cpp": "26b88a6bf56323a19102b557e6ab9860712e5ea9a244b8df3c89f848ac3b76d4",
+    "src/ports/esp32s3/NativeAppDataMount.cpp": "ab51ac0ca4b0db121e2225dc1b5d66f0403d0516b96b7b1de2ea850b4cae8523",
+    "src/ports/esp32s3/NativeFileSource.cpp": "d7c0690bfb038dee8fc84365b3470e43dcd84971fafef579155c3a62728588ba",
+    "src/runtime/storage/AppDataFiles.cpp": "cdf022200c59f85d148ae4806416507e8b2a72e5612bc41684f61a9cea409f55",
+    "src/runtime/storage/FileSourceFiles.h": "c3090ebf69da39259cf8ed2e42356dde0fe32f8d8f7fdf42be364b97331349fb",
+    "test/native_littlefs_profile_fixture.c": "cc7222e2e5d71535aeb7d3d526482c3c6bf6dda8ee83169ad375daef27df3320",
+    "test/run_native_littlefs_profile_test.py": "a4a6e56f30b2d0c1b19d90967910f4cd59ee0b8ac5ed2d2831e591038f0c00a3",
+    "test/native_app_data_mount_test.cpp": "54a9738e8d815756331ef35e859940d9828b2cd8828ea1fa76c08658cbbe180d",
+    "test/native_app_data_mount_posix.cpp": "a96513dc2babb5d565f70e800ef81b2b4684db34b78e4ddf09d3bd2d7cb051cf",
+    "test/native_file_source_mount_test.cpp": "44912a5c245d34a8787a054c31578d7962f1bee6bac569ea1723e0e20ec70fea"
+  },
+  "vendor_pins": {
+    "esp_littlefs.c": "f26aa8bdc70c44e9676069a8d91e11921c770dceac989bbf63d9af73c95dcaeb",
+    "esp_littlefs.h": "f321f41845da8cc68f6c15a860311afe37a52ad57abb95949b820a92e9e8d9ad",
+    "littlefs_api.h": "cc806a02463db1516ed1a144189bc9267168b6cd79b543e95fb12099eeed18c2",
+    "littlefs_esp_part.c": "fe89617c72ab3d36ea833a58a8cb8e4208509dd32b4663f91d72ba02ea13e0ea",
+    "littlefs/lfs.c": "0b9845f350c33aa448a916847d2246b76c8e296eed8e7e296ae0430242cfda6c",
+    "littlefs/lfs.h": "a8c8d70f0863fbbc46ce17c5dc7673b40f1b3c9e7e10f3bf33fd28f03dc67703",
+    "littlefs/lfs_util.c": "f2fbde533670560434bd9f5a547174cc7c5a4670a02c47b4bd85180dced8b2ec",
+    "littlefs/lfs_util.h": "03e912a6e9894c9d10c61f5da22b89ebe0bb778af67972d7b67a5f160731bf72"
+  },
+  "runtime_tracked_files_clean_after": true,
+  "input_images_unchanged": true,
+  "finished_at_utc": "2026-10-13T05:34:09.613586+00:00"
+}

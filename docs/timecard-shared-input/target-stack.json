@@ -1,0 +1,57 @@
+{
+  "schema": "timecard.target-stack.v1",
+  "device": "watch",
+  "application_source": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+  "system_source": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "target_elf_sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+  "debug_elf_sha256": "be1854208d4572be65cd0c3dfe192390d4931e5234d2a0ff1398bf1381dcd36c",
+  "method": "Actual target disassembly entry a1 frame operands; no target instructions executed",
+  "entry_frames_bytes": {
+    "portable_app_before_launch$constprop$84": 32,
+    "portable_text_client_live$constprop$120": 32,
+    "app_module_fini": 32,
+    "app_module_init": 64,
+    "portable_text_client_release$constprop$103": 48,
+    "tcp_editor_cancel": 32,
+    "tcp_checked_data_result": 32,
+    "tcp_text_background_ready": 32,
+    "tcp_checked_stat": 32,
+    "tcp_checked_read": 48,
+    "tcp_checked_replace": 32,
+    "tcp_text_preference_get": 32,
+    "portable_app_before_home": 32,
+    "tcp_text_begin": 192,
+    "tcp_text_retry": 32,
+    "app_main": 160,
+    "portable_text_client_request_result": 32
+  },
+  "maximum_modal_frame_bytes": 192,
+  "all_entry_frames_maximum_bytes": 640,
+  "static_modal_storage": {
+    "tcp_entry": {
+      "bytes": 13,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 300512
+    },
+    "tcp_text_client": {
+      "bytes": 48,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 231200
+    },
+    "tcp_text_state": {
+      "bytes": 88,
+      "symbol_kind": "b",
+      "static_storage": true,
+      "address": 300724
+    }
+  },
+  "bounded_time_entry_buffer_bytes": 13,
+  "per_frame_regression_checks_passed": true,
+  "peak_call_chain_stack_usage_proven": false,
+  "limits": [
+    "Inlining folds helper frames into their callers; absent standalone symbols are not separate frame measurements.",
+    "Disassembly frame sizes do not prove dynamic call-chain peak stack use, Runtime stack allocation, or physical execution."
+  ]
+}

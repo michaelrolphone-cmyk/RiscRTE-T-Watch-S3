@@ -1,0 +1,42 @@
+{
+  "app_provider_native_bytes_unchanged": true,
+  "artifact_graph_cases": 60,
+  "changed_store_members": [
+    "boot.json",
+    "cohort.json"
+  ],
+  "hardware_qualified": false,
+  "live_catalog_deployed": false,
+  "original_late_provider_executions": 24,
+  "original_policy_probe_cases": 43,
+  "package_mutations": 16,
+  "preserving_matrices": "in progress; separate exact-source receipts required",
+  "proof_receipts": {
+    "artifact-lifecycle": {
+      "sha256": "1412419752d3f07f9cc523bda43dcc240632014e04d554c7b7466a17d62d9368",
+      "size_bytes": 1950
+    },
+    "late-provider-qualification": {
+      "sha256": "aeebed5e252c356bdde14ef419a856536d9311eb53ed70790cf58d7687267d93",
+      "size_bytes": 14929
+    },
+    "package-mutations": {
+      "sha256": "0541e48df53ca65418298ebbff05e9eb67adedbb92ee7af2e7cb8baef9ad5f91",
+      "size_bytes": 2669
+    },
+    "retained-memory-composition": {
+      "sha256": "b78df11783414d57b4b6ca40e6bc37d755e02e34774ee5d4284ad11531961bc7",
+      "size_bytes": 64336
+    },
+    "selected18-state": {
+      "sha256": "d5ed3c0f2071b18b32bfe2b7400e154c914e668d5f798215440965d5bda2a429",
+      "size_bytes": 4006
+    },
+    "startup-policy-probe": {
+      "sha256": "a1a3ad87de7ce39cd4efd6ae6d3ef0ae79ac67f957777fb5df87858d39a17f83",
+      "size_bytes": 1809
+    }
+  },
+  "schema": 1,
+  "scope": "Watch19 software checkpoint, not hardware or release qualification"
+}
