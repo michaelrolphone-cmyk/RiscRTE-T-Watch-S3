@@ -32,7 +32,7 @@ def pins():
     require(sha((DOCS / 'released-alarm-baseline.json').read_bytes()) == p['baseline_contract_sha256'], 'Released baseline contract changed')
     for path, expected in p['historical_contracts'].items():
         require(sha((ROOT / path).read_bytes()) == expected, 'Historical contract modified: ' + path)
-    for role in ('watch', 'system', 'utilities', 'sdk'):
+    for role in ('watch', 'system', 'utilities', 'sdk', 'image_helper'):
         require(re.fullmatch('[0-9a-f]{40}', p[role + '_revision']), 'Immutable source pin required: ' + role)
     if p['finalized'] or p['publication_enabled']:
         require(p['finalized'] and re.fullmatch('[0-9a-f]{40}', p.get('runtime_revision') or ''), 'Final Runtime pin required')
@@ -121,6 +121,8 @@ def stage(args):
     verifier = importlib.util.module_from_spec(spec); spec.loader.exec_module(verifier)
     proof = verifier.verify(args.first, args.second)
     default, manifest, _ = verifier.check_build(args.first)
+    clean_source(args.image_helper.resolve(), p['image_helper_revision'])
+    sys.path.insert(0, str(args.image_helper / 'scripts'))
     from read_only_spiffs import read_image
     from current_bootfs import build
     sys.path.insert(0, str(args.runtime / 'scripts'))
@@ -149,7 +151,7 @@ def stage(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('baseline', 'watch', 'runtime', 'first', 'second', 'output'):
+    for name in ('baseline', 'watch', 'runtime', 'image-helper', 'first', 'second', 'output'):
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--source-revision', required=True)
     stage(parser.parse_args())

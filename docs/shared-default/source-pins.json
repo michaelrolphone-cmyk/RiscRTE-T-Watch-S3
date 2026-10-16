@@ -22,6 +22,7 @@
     "scripts/package_alarm_sleep.py": "7d970f87ddab2ea15cdaef50e67d8c934601c0a64535bb0ecea488a5b4bb7cc4",
     "scripts/test_alarm_sleep_package.py": "05de35f9921036b1f16b36904c839d84e35c5ca5b214e4b6c4931b17b880e18c"
   },
+  "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
   "product": "twatch",
   "publication_enabled": false,
   "release_branch": "release/shared-default-1.1.42",
