@@ -1,4 +1,5 @@
 #include "WifiApi.h"
+#include "GardenRadioAsyncV1.h"
 #include "twatch_support.h"
 #define hardware_config tw_config
 #define garden_dependency tw_dep
@@ -6,6 +7,8 @@ static risc_hw_radio_v1 hardware;
 static const garden_radio_v1 *radio;
 static uint64_t claim;
 static bool running;
+static uint32_t operation, completed, service_lease;
+static const garden_radio_async_v1 *async_radio;
 static bool bounded(const char *s, size_t maximum) {
     if (!s)
         return false;
@@ -14,9 +17,49 @@ static bool bounded(const char *s, size_t maximum) {
             return true;
     return false;
 }
+static int32_t async_begin(void *c,const risc_radio_request_v1 *request,uint32_t *out) {
+    (void)c;if(out)*out=0;
+    if(!running || !async_radio || !(hardware.features&1))return RISC_RADIO_UNAVAILABLE;
+    if(operation)return RISC_RADIO_BUSY;
+    int32_t result=async_radio->begin(radio->context,claim,request,out);
+    if(result==RISC_RADIO_ACCEPTED && out && *out){operation=*out;completed=0;}
+    return result;
+}
+static int32_t async_poll(void *c,uint32_t id,risc_radio_progress_v1 *out) {
+    (void)c;
+    if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
+    if(!id || (id!=operation && id!=completed))return RISC_RADIO_STALE;
+    int32_t result=async_radio->poll(radio->context,claim,id,out);
+    if(result==RISC_RADIO_QUIESCENT){operation=0;completed=id;}
+    return result;
+}
+static int32_t async_cancel(void *c,uint32_t id) {
+    (void)c;
+    if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
+    if(!id || (id!=operation && id!=completed))return RISC_RADIO_STALE;
+    int32_t result=async_radio->cancel(radio->context,claim,id);
+    if(result==RISC_RADIO_QUIESCENT){operation=0;completed=id;}
+    return result;
+}
+static int32_t service_begin(void *c,uint32_t *out) {
+    (void)c;if(out)*out=0;
+    if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
+    if(service_lease)return RISC_RADIO_BUSY;
+    int32_t result=async_radio->service_begin(radio->context,claim,out);
+    if(result==RISC_RADIO_ACCEPTED && out && *out)service_lease=*out;
+    return result;
+}
+static int32_t service_end(void *c,uint32_t id) {
+    (void)c;
+    if(!running || !async_radio)return RISC_RADIO_UNAVAILABLE;
+    if(!id || id!=service_lease)return RISC_RADIO_STALE;
+    int32_t result=async_radio->service_end(radio->context,claim,id);
+    if(result==RISC_RADIO_ACCEPTED)service_lease=0;
+    return result;
+}
 static bool connect(void *c, const char *ssid, const char *password) {
     (void)c;
-    return running && (hardware.features & 1) && ssid && ssid[0] && bounded(ssid, 32) &&
+    return running && !operation && (hardware.features & 1) && ssid && ssid[0] && bounded(ssid, 32) &&
            bounded(password, 63) && radio->join(radio->context, claim, ssid, password);
 }
 static bool scan_available(void) {
@@ -25,11 +68,13 @@ static bool scan_available(void) {
 }
 static bool scan_cancel(void *c) {
     (void)c;
+    if(operation)return async_cancel(NULL,operation)==RISC_RADIO_QUIESCENT;
     return running && scan_available() && radio->scan_cancel(radio->context, claim);
 }
 static bool disconnect_checked(void *c) {
     (void)c;
     if (!running) return false;
+    if(operation && async_cancel(NULL,operation)!=RISC_RADIO_QUIESCENT)return false;
     /* Call leave even if cancel failed: independent cleanup attempts must not
      * be skipped. False keeps the token and app cleanup obligation alive. */
     bool cancelled = !scan_available() || radio->scan_cancel(radio->context, claim);
@@ -39,7 +84,7 @@ static bool disconnect_checked(void *c) {
 static void disconnect(void *c) { (void)disconnect_checked(c); }
 static bool scan_start(void *c) {
     (void)c;
-    return running && (hardware.features & 1) && scan_available() &&
+    return running && !operation && (hardware.features & 1) && scan_available() &&
            radio->scan_start(radio->context, claim);
 }
 static bool scan_poll(void *c, garden_radio_scan_result_v1 *result) {
@@ -91,11 +136,13 @@ static bool addresses(void *c, wifi_ipv4_v1 *station, wifi_ipv4_v1 *ap) {
     return running && station && ap &&
            radio->addresses(radio->context, claim, (uint8_t *)station, (uint8_t *)ap);
 }
-static const wifi_api_v1 api = {
-    .api_version=1, .struct_size=sizeof(api), .context=NULL, .connect=connect,
+static wifi_async_v1 api = { .base = {
+    .api_version=1, .struct_size=sizeof(wifi_api_v1), .context=NULL, .connect=connect,
     .disconnect=disconnect, .status=status, .rssi=rssi, .start_ap=start_ap,
     .stop_ap=stop_ap, .addresses=addresses, .scan_start=scan_start,
     .scan_poll=scan_poll, .scan_cancel=scan_cancel, .disconnect_checked=disconnect_checked
+}, .async_tag=RISC_RADIO_ASYNC_TAG, .async_version=RISC_RADIO_ASYNC_VERSION,
+   .begin=async_begin, .poll=async_poll, .cancel=async_cancel, .service_begin=service_begin, .service_end=service_end
 };
 static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (claim || running)
@@ -109,10 +156,19 @@ static bool start(const risc_provider_dependency_v1 *d, size_t n) {
     if (!radio || !radio->claim || !radio->join || !radio->state || !radio->leave ||
         !radio->release || !radio->start_ap || !radio->stop_ap || !radio->addresses)
         return false;
+    async_radio=NULL;api.base.struct_size=sizeof(wifi_api_v1);
+    if(radio->struct_size>=sizeof(garden_radio_async_v1)){
+        const garden_radio_async_v1 *next_async=(const garden_radio_async_v1*)radio;
+        if(next_async->async_tag==RISC_RADIO_ASYNC_TAG && next_async->async_version==RISC_RADIO_ASYNC_VERSION &&
+           next_async->begin && next_async->poll && next_async->cancel && next_async->service_begin && next_async->service_end){async_radio=next_async;api.base.struct_size=sizeof(api);}
+    }
+    operation=completed=service_lease=0;
     running = radio->claim(radio->context, &claim) && claim;
     return running;
 }
 static bool quiesce(void) {
+    if(service_lease)return false;
+    if(operation && async_cancel(NULL,operation)!=RISC_RADIO_QUIESCENT)return false;
     running = false;
     if (!claim)
         return true;
