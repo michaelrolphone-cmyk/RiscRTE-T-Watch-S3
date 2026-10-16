@@ -15,7 +15,9 @@ class Contracts(unittest.TestCase):
         c = package.baseline_contract(p)
         self.assertEqual(c['files']['alarm-service/driver.elf']['sha256'], package.ALARM_SHA)
         self.assertEqual(c['elf_count'], 59 if p['product'] == 'twatch' else 62)
-        self.assertFalse(p['publication_enabled'])
+        if p['publication_enabled']:
+            self.assertTrue(p['finalized'])
+            self.assertRegex(p['runtime_revision'], r'^[0-9a-f]{40}$')
         profile = (package.ROOT / 'profiles/native-idf61.cmake').read_text()
         self.assertIn('RISC_RUNTIME_PREFERENCE_STORE=1', profile)
         self.assertIn('RISC_RUNTIME_STORAGE_FILES=1', profile)

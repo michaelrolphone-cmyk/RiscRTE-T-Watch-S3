@@ -8,6 +8,11 @@ on:
       - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
       - scripts/test_shared_default_package.py
+      - scripts/shared_default_release.py
+      - scripts/publish_shared_default_release.py
+      - scripts/test_shared_default_release.py
+      - scripts/run_shared_default_native_ci.sh
+      - .github/workflows/shared-default-native.yml
       - docs/shared-default/**
       - profiles/native-idf61.cmake
   pull_request:
@@ -17,6 +22,11 @@ on:
       - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
       - scripts/test_shared_default_package.py
+      - scripts/shared_default_release.py
+      - scripts/publish_shared_default_release.py
+      - scripts/test_shared_default_release.py
+      - scripts/run_shared_default_native_ci.sh
+      - .github/workflows/shared-default-native.yml
       - docs/shared-default/**
       - profiles/native-idf61.cmake
 permissions:
@@ -35,4 +45,6 @@ jobs:
       - name: Check default scope, frozen historical contracts and negative mutations
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python scripts/test_shared_default_package.py
+        run: |
+          python scripts/test_shared_default_package.py
+          python scripts/test_shared_default_release.py

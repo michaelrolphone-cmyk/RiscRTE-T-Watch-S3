@@ -32,7 +32,7 @@ def canonical(args, sources, p):
 
 def qualify(args, sources, proof):
     from shared_default_qualification import admit_product
-    from native_idf61_qualification import preservation_model
+    preservation_model = native.local_qualification().preservation_model
     from read_only_spiffs import read_image
     from prepare_preserving_update import layout, pair
     from current_bootfs import build
