@@ -1,0 +1,28 @@
+{
+  "product_source": "b7a6cf0d2505ecf9b1c625bbfcc6d4048c13b471",
+  "product_tree": "a448e3d29d61467ee67e5bddc4e29a20706e2c36",
+  "home_sha256": "29e0d273913184da56afaca0e10f8478ebd057d803f7ebe0c870e74aaf7569d0",
+  "home_bytes": 862864,
+  "elf_count": 55,
+  "free_spiffs_blocks": 2,
+  "prepared": true,
+  "cohort_validated": true,
+  "full_image_sha256": "f8195d2af2dfdcc9f2c0413883efd97f6efe4d62eb90cfd4e5cab5aec5332cb6",
+  "full_image_materialized": true,
+  "changed_store_paths": [
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "preserved_store_paths": 110,
+  "preserved_other_elf_count": 54,
+  "native_unchanged": true,
+  "boot_json_byte_identical": true,
+  "grant_delta": [],
+  "hardware_calls": 0,
+  "storage_calls": 0,
+  "hardware_verified": false,
+  "image_path": "/workspace/shared/watch-home-swipe-20261012/final/WATCH-1.1.20-FULL-INITIAL-ERASES-DATA.bin",
+  "image_bytes": 16777216,
+  "identical_normal_sanitized_receipts_sha256": "96da7ac58625b3a0c8c166da1f9f132b49851512f771aa46d1e9efd751a9c0c7"
+}

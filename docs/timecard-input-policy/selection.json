@@ -1,0 +1,20 @@
+{
+  "schema": "timecard.modal-policy.selection.v1",
+  "finalized": true,
+  "device": "watch",
+  "version": "0.2.14",
+  "sources": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "productivity": "164ea8c4f8bace10148bcfd9b9dcdd97e9fc8e75"
+  },
+  "baseline": {
+    "compiled_recipe_commit": "702225651ba4af28ca3a785eb68fd96f54109b2b",
+    "system_commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+    "combined_handoff_sha256": "b7ee5ef73024c2d512646837c2f753eb48ec3bdd4afbb4623c56f2ab7d947f1c",
+    "receipt_sha256": "b68320fd2ebc8f7fdbb83c9891784363a6fb722e831bcc9602789da818a4ebff",
+    "full_image_sha256": "d5d1c52d6c16ccaadfa092934da120d1a618fd2423279f29713f1112e266503d",
+    "candidate_store_sha256": "8a51c7d38bb3868480b4c7266925dcf5d908f4719af40a09c5abc18d818bb60e",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0
+  }
+}

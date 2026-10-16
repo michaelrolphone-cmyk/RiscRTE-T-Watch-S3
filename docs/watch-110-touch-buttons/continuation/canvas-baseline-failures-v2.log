@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/scripts/test_hid_renderer_isolated.py", line 125, in <module>
+    assert all(r['exit_code']==0 for r in records),[(r['scene'],r['sanitizers']) for r in records if r['exit_code']]
+AssertionError: [('quick-controls', 'none'), ('home', 'none'), ('edit-home', 'none'), ('quick-controls', 'undefined'), ('home', 'undefined'), ('edit-home', 'undefined')]

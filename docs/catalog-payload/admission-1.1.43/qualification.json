@@ -1,0 +1,35 @@
+{
+  "ci_support": "prepared; not run remotely",
+  "device_accessed": false,
+  "empty_appdata_core_reproduction": "passed",
+  "hardware_tested": false,
+  "inventory_audit": "passed",
+  "new_firmware_built": false,
+  "new_payload_manifest_emitted": false,
+  "observed_at": "2026-10-16T22:31:18.083566+00:00",
+  "python": "3.12.14",
+  "python_optimized_decoder_rejects": true,
+  "require_paired_rejects": true,
+  "schema": 1,
+  "source_files": {
+    ".github/workflows/catalog-payload-audit.yml": {
+      "bytes": 3070,
+      "sha256": "573b9ef9df14b2bab2667602e0e5aa3c7f81a35592cf787cbebb0b98d9e14707"
+    },
+    "scripts/audit_catalog_payload.py": {
+      "bytes": 17094,
+      "sha256": "cae0aea7339bdc24f63d6040f289c52e9d4de8d79ebe6d68810972df75bfe594"
+    },
+    "scripts/test_catalog_payload.py": {
+      "bytes": 9651,
+      "sha256": "e411477e64fd97d54e8b08cfd42660f65b2eb0ef7b28f13dca680363e5f2151d"
+    }
+  },
+  "source_support_only": true,
+  "tests": {
+    "command": "python scripts/test_catalog_payload.py --assets <public-assets> --runtime <pinned-runtime> -v",
+    "log_sha256": "9218f4da99b8b4f1dc745faa4addd60b1d93302ae457e49bff952bc935c322ae",
+    "passed": 27
+  },
+  "workflow_yaml_and_shell_syntax": "passed"
+}

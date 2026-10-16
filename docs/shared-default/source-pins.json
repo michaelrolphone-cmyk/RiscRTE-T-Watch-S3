@@ -1,0 +1,62 @@
+{
+  "alarm_sha256": "189ce61b0e4a2b08cbd83ff90564a4c79a6c5e9a3d74b4ad4dcc2a61b4b51604",
+  "baseline_contract_sha256": "475396e773b07243389efd9e27e77c7a137f5a5fc47c9e00cbac3e437ac4cd8e",
+  "baseline_version": "1.1.41",
+  "changed_store_files": [
+    "boot.json",
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "default_bytes": 617424,
+  "default_manifest_sha256": "0888f82c0f69d48210d94bd9507e359833200d2756a1327323580324f314e3b1",
+  "default_sha256": "9f10c7150cdc175ff5af0dbc1410e455ead4f18868dd56555e10860781103f2f",
+  "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
+  "finalized": true,
+  "historical_contracts": {
+    ".github/workflows/alarm-sleep-release.yml": "7fbcf43ad365232a338e74e534770f1db521950160832ba70f124715c527565b",
+    "docs/alarm-sleep/source-pins.json": "ba41f077bf176bbe084d33965f5f452e2acc396e2c2f7001f75d7b9a4ea969c5",
+    "docs/native-idf61/release-transport.json": "14c91d012d0af6cbf8410da8b7e9750f1dd2ba8750fafd1b4b8836afa5243a5b",
+    "docs/shared-default/history/1.1.42/README.md": "65a4deb32d3a9086d0aacffe8aec0163ed9163548c81d617430904f771e2c4a2",
+    "docs/shared-default/history/1.1.42/native-idf61.cmake": "b7bf496db351211fb32b352db1b351b57d8c03c73f79657a8ba1325e26da49a0",
+    "docs/shared-default/history/1.1.42/source-pins.json": "886fd017e3682f298a97ee234d29cb45114c8ef3fffbb0b78b6b3d87c8a716aa",
+    "scripts/native_idf61_build.py": "6221d18e2557e024e9fc38881c046dc5b953b72f00466a8a324b8e889052d796",
+    "scripts/native_idf61_candidate.py": "7702030e1c3da058ada8b79b98999f7d343869ba9bc941417c6a6dc2275975a9",
+    "scripts/native_idf61_qualification.py": "7626be8291240b17889a9158fdb289f5bcc6ce391ce4a6a9a757f8a112a8a619",
+    "scripts/package_alarm_sleep.py": "7d970f87ddab2ea15cdaef50e67d8c934601c0a64535bb0ecea488a5b4bb7cc4",
+    "scripts/test_alarm_sleep_package.py": "05de35f9921036b1f16b36904c839d84e35c5ca5b214e4b6c4931b17b880e18c"
+  },
+  "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+  "native_input_sha256": {},
+  "previous_release_profile": "docs/shared-default/history/1.1.42/native-idf61.cmake",
+  "product": "twatch",
+  "publication_enabled": true,
+  "release_branch": "release/shared-default-1.1.43",
+  "release_tag": "test-shared-default-1.1.43",
+  "runtime_revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+  "schema": 1,
+  "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "serial_files": {
+    "active_boot_bank_writable": false,
+    "application_grants_reused": false,
+    "boot_export_enabled": false,
+    "dispatch": "settled-owner-checkpoint",
+    "flags": {
+      "RISC_NATIVE_SERIAL_APPDATA_FILES": 1,
+      "RISC_NATIVE_SERIAL_FILES": 1
+    },
+    "hardware_tested": false,
+    "namespaces": [
+      {
+        "id": 2,
+        "label": "Serial files",
+        "private_root": "/appdata/.serial-files",
+        "writable": true
+      }
+    ]
+  },
+  "system_revision": "cb483470887b5198e2f3cd2457586ef6622142a9",
+  "utilities_revision": "fc9f93402050f020a3422ee889620b2414c7ad5d",
+  "version": "1.1.43",
+  "watch_revision": "8132d73c828c0e4763f6c89a3d6a4a883314056a"
+}

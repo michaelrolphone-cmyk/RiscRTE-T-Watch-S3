@@ -1,0 +1,66 @@
+name: Home swipe repair and preserved Watch image
+on:
+  push:
+    branches: [work/watch-1.1.20-home-swipe-20261012]
+  pull_request:
+    paths:
+      - 'apps/clock/crown.c'
+      - 'apps/clock/launcher_touch.h'
+      - 'apps/clock/nova/nova.h'
+      - 'apps/runtime_features/clock_runtime.h'
+      - 'scripts/build_home_swipe.py'
+      - 'scripts/assemble_home_swipe_watch.py'
+      - 'scripts/test_home_swipe*.py'
+      - 'scripts/test_clock_raster_gestures.py'
+      - 'scripts/test_fast_wake_clock.py'
+      - 'tests/home_swipe*'
+      - 'tests/clock_raster_gesture_test.c'
+      - 'tests/fast_wake_clock_test.c'
+      - 'docs/home-swipe/**'
+      - 'docs/clock-drift/**'
+      - '.github/workflows/home-swipe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gesture-and-recipe:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install -r scripts/requirements.txt
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 63532e4611749acad2060d0437a883b7c4ac8fd5
+          path: .dependencies/system
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 814502e51125d799a7ca625b78707753ca12d4e5
+          path: .dependencies/utilities
+          persist-credentials: false
+      - name: Gesture timing, interruption, and queue regressions
+        run: python3 scripts/test_clock_raster_gestures.py --system-apps .dependencies/system --utilities .dependencies/utilities
+      - name: Existing fast-wake production source regression
+        run: python3 scripts/test_fast_wake_clock.py --system-apps .dependencies/system --utilities .dependencies/utilities
+      - name: RTC client parity and custody
+        run: |
+          cc -std=c11 -O1 -g -Wall -Wextra -Werror -Wno-missing-field-initializers -Isdk/app -Isdk/driver -Iinclude tests/clock_runtime_features_test.c -o /tmp/watch-rtc-client
+          /tmp/watch-rtc-client
+          cc -std=c11 -O1 -g -Wall -Wextra -Werror -Wno-missing-field-initializers -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -no-pie -Isdk/app -Isdk/driver -Iinclude tests/clock_runtime_features_test.c -o /tmp/watch-rtc-client-san
+          ASAN_OPTIONS=detect_leaks=0 /tmp/watch-rtc-client-san
+      - name: Exact Home-only overlay and manifest authority boundaries
+        run: python3 scripts/test_home_swipe_assembly.py
+      - name: Retained full-image writer and custody boundaries
+        run: |
+          python3 tests/test_evening_watch.py
+          python3 tests/test_evening_watch_image.py
+      - name: Recipe syntax
+        run: python3 -m py_compile scripts/build_home_swipe.py scripts/assemble_home_swipe_watch.py
