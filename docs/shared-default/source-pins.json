@@ -12,7 +12,7 @@
   "default_manifest_sha256": "d75c5a1945fe59f573043280cfa1a3be948063757416df4afd305f9eab477db5",
   "default_sha256": "b60579dddf0123907e11b6c3ec862e28c76547482bcc325de349e55f06db2dd6",
   "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
-  "finalized": false,
+  "finalized": true,
   "historical_contracts": {
     ".github/workflows/alarm-sleep-release.yml": "7fbcf43ad365232a338e74e534770f1db521950160832ba70f124715c527565b",
     "docs/alarm-sleep/source-pins.json": "ba41f077bf176bbe084d33965f5f452e2acc396e2c2f7001f75d7b9a4ea969c5",
@@ -25,7 +25,7 @@
   },
   "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
   "product": "twatch",
-  "publication_enabled": false,
+  "publication_enabled": true,
   "release_branch": "release/shared-default-1.1.42",
   "release_tag": "test-shared-default-1.1.42",
   "runtime_revision": "e697c3677eca661892517c2bf4c0c6b2f764985c",
