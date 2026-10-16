@@ -1,61 +1,54 @@
-# Shared default package contract
+# Serial-enabled shared default candidate 1.1.43
 
-The shared-default release preserves the released alarm-sleep product inventory,
-including every unrelated native-resolution application and provider ELF. Only
-`default.elf`, `default.json`, `boot.json`, and `cohort.json` may change in the
-installed store. The Runtime firmware is rebuilt from the pinned shared-provider
-integration.
+This source-only candidate uses the existing fresh-build, exact-source shared-default
+release machinery. Source pins are finalized; publication is disabled. Runtime is
+`21c6d64c51470158e1e8fb26d403b194f27ea38c`; Watch is
+`8132d73c828c0e4763f6c89a3d6a4a883314056a`. Fresh full native qualification
+and release enablement remain required. A source pin or previous qualification
+receipt alone does not qualify this candidate.
 
-The canonical Watch build is common to both products. Product routing resides in
-boot policy: both products grant preferences namespace 1. Waveshare additionally
-maps generic file namespace 12 to the unchanged sdmmc-fatfs volume 12 provider;
-TWatch leaves the optional file capability unavailable. Other app policies,
-board selection, provider configuration, settings namespaces, native watch-face
-payloads and alarm service bytes are preserved exactly.
+The common Home 0.18.0 default is identical for both products: 617424 bytes,
+SHA256 `9f10c7150cdc175ff5af0dbc1410e455ead4f18868dd56555e10860781103f2f`.
+Its ordinary owner loop uses the settled Runtime serial checkpoint. The manifest
+SHA256 is `0888f82c0f69d48210d94bd9507e359833200d2756a1327323580324f314e3b1`.
 
-`package_shared_default.py` creates a staging store and an extraction proof. It
-verifies the exact released factory/store inventory and two matching canonical
-builds, then round-trips the new store. This staging command alone does not
-produce a firmware-qualified factory image.
+## Explicit serial authority
 
-## Qualified integration and release production
+Both profiles explicitly enable `RISC_NATIVE_SERIAL_FILES=1` and
+`RISC_NATIVE_SERIAL_APPDATA_FILES=1`. Writable namespace 2 is a separate
+Runtime-owned session rooted only at `/appdata/.serial-files`. It is unrelated
+to application AppData id 2 and does not reuse application grants.
 
-The shared-provider Runtime source is pinned to
-`e697c3677eca661892517c2bf4c0c6b2f764985c`, merged in Runtime 0.4.4 at
-`d567c81bdc939c2ccce6858aa650fbf094757e8a` with the same qualified source tree.
-Both broad host jobs, focused provider regressions, strict GCC 15 target checks,
-and fresh SDK 6.1 native product preflights passed. The official product
-preflight receipts are:
+TWatch does not select SD or inherit any other product's provider choice.
 
-- [T-Watch native preflight](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38874706996)
-- [Waveshare native preflight](https://github.com/michaelrolphone-cmyk/RiscRTE-Wavshare-S3-Touch-AMOLED-2.06/actions/runs/38874746179)
+Neither product enables a boot-store export. No serial write reaches the active
+paired boot bank. The private provider reopens bounded I/O under the existing
+AppData mount/resource custody; it does not mount, format or change partition
+identity. Capacity/contention may leave the optional namespace unavailable.
+An uncertain close/sync retains custody and fences teardown rather than claiming
+cleanup succeeded.
 
-These preflights cover fresh same-process native build custody, admission of
-every production ELF in normal and sanitized runs, native/store bank binding,
-preservation fault models, and cross-product extraction. Both final factories
-contained the same 616752-byte default ELF, SHA256
-`b60579dddf0123907e11b6c3ec862e28c76547482bcc325de349e55f06db2dd6`.
-Independent extraction also preserved every unrelated installed payload and the
-released alarm ELF.
+Use the exact pinned Runtime's `scripts/serial_files.py`,
+`docs/SERIAL_FILES.md` and `docs/NATIVE_SERIAL_STORAGE.md`. The RTEF1 protocol
+supports individual binary/empty files, directories, exclusive create and explicit
+in-place replacement. Replacement is not atomic; interruption or abort can leave
+a partial file. The connection must be owner-trusted; no authentication or
+encryption is provided. No port discovery, device access or flashing is implied.
 
-`source-pins.json` now enables release publication. The versioned release branch
-runs `shared-default-native.yml` to rebuild and qualify its exact commit, generate
-the source-bound 16-asset release, and publish only after complete byte
-verification. Preflight success does not substitute for that final release run
-or the subsequent independent public-asset audit.
+## Preservation and qualification
 
-## Installation and hardware status
+The frozen alarm-sleep factory remains the input baseline. Only `default.elf`,
+`default.json`, `boot.json` and `cohort.json` change in its installed store.
+All unrelated applications, provider ELFs, board data and alarm-service bytes
+remain byte-identical. Existing native qualification also checks every profile
+flag in actual compile commands. The serial gate additionally checks exact
+compiled Runtime source digests, linked implementations and the private root.
+Full normal/sanitized production-loader admission and independent factory
+extraction remain required. These are software checks, not hardware qualification.
 
-The factory image is a full-flash image and erases saved data. Back up first.
-No data-preserving update kit is supplied by this release recipe. Standalone
-firmware and store assets are verification inputs, not independently flashable
-upgrade instructions. Use the release's `TESTING.txt` for the exact factory
-installation command and device checks.
+The previous 1.1.42 pins, native profile and qualification narrative are archived unchanged
+under `history/1.1.42/` and hash-guarded. Its receipts apply only to that release.
+The historical alarm-sleep and native-IDF61 contracts remain frozen by hash.
 
-Physical-device qualification remains unperformed. Software/native build and
-public-byte verification must be reported separately from actual hardware
-behavior; no measured device timing, PSRAM pressure, or persistence result is
-implied by host tests.
-
-The historical alarm-sleep and native-IDF61 recipes/contracts are frozen by hash.
-The new recipe must never relax their unchanged-native or alarm-only assertions.
+The factory image erases saved data. Back up first. No data-preserving update kit
+is supplied, and standalone firmware/store assets must not be flashed independently.

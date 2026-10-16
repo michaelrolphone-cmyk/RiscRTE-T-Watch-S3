@@ -2,6 +2,7 @@
 """Default packaging contracts and rejection tests; no hardware assertions."""
 import copy
 import json
+import tempfile
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -21,6 +22,56 @@ class Contracts(unittest.TestCase):
         profile = (package.ROOT / 'profiles/native-idf61.cmake').read_text()
         self.assertIn('RISC_RUNTIME_PREFERENCE_STORE=1', profile)
         self.assertIn('RISC_RUNTIME_STORAGE_FILES=1', profile)
+
+    def test_explicit_serial_namespace_selection(self):
+        p = package.pins()
+        profile = (package.ROOT / 'profiles/native-idf61.cmake').read_text()
+        expected = package.serial_files.contract(p['product'])
+        self.assertEqual(package.serial_files.check_profile(profile, p['product']), expected)
+        self.assertEqual([n['id'] for n in expected['namespaces']], [2, 12] if p['product'] == 'waveshare' else [2])
+        self.assertFalse(expected['active_boot_bank_writable'])
+        self.assertFalse(expected['application_grants_reused'])
+        previous = (package.ROOT / p['previous_release_profile']).read_text()
+        package.serial_files.check_profile(profile, p['product'], previous)
+        for old, new in (('RISC_PROVIDER_CAPACITY=40', 'RISC_PROVIDER_CAPACITY=39'), ('RISC_NATIVE_IQ ON', 'RISC_NATIVE_IQ OFF')):
+            with self.subTest(unrelated=old), self.assertRaises(ValueError):
+                package.serial_files.check_profile(profile.replace(old, new), p['product'], previous)
+        for flag in expected['flags']:
+            with self.subTest(flag=flag), self.assertRaises(ValueError):
+                package.serial_files.check_profile(profile.replace(flag + '=1', flag + '=0'), p['product'])
+        for flag in ('RISC_NATIVE_SERIAL_BOOT_FILES=1', 'RISC_NATIVE_SERIAL_FILES=1', 'RISC_NATIVE_SERIAL_UNKNOWN=1'):
+            with self.subTest(extra=flag), self.assertRaises(ValueError):
+                package.serial_files.check_profile(profile.replace('set(RISC_NATIVE_DEFINITIONS', 'set(RISC_NATIVE_DEFINITIONS ' + flag), p['product'])
+        if p['product'] == 'twatch':
+            with self.assertRaises(ValueError):
+                package.serial_files.check_profile(profile.replace('set(RISC_NATIVE_DEFINITIONS', 'set(RISC_NATIVE_DEFINITIONS RISC_NATIVE_SERIAL_SD=1'), p['product'])
+
+    def test_native_serial_source_and_link_gate(self):
+        p = package.pins()
+        profile = (package.ROOT / 'profiles/native-idf61.cmake').read_text()
+        symbols = ['NativeSerialStorage_prepare', 'NativeSerialStorage_sdFiles', 'NativeSerialFiles_prepare', 'ReopenedFiles_open']
+        blobs = {'firmware_elf': b'synthetic', 'firmware_bin': b'/appdata/.serial-files\0'}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            inputs = {}
+            for name in package.serial_files.RUNTIME_SOURCES:
+                source = root / name; source.parent.mkdir(parents=True, exist_ok=True); source.write_bytes(b'source')
+                inputs['runtime/' + name] = package.sha(b'source')
+            proof = {'source_files': inputs}
+            with patch.object(package.serial_files, 'linked_symbols', return_value=symbols):
+                self.assertEqual(package.serial_files.check_native(blobs, proof, p['product'], root, profile), p['serial_files'])
+                for name in inputs:
+                    bad = dict(inputs); del bad[name]
+                    with self.subTest(missing=name), self.assertRaises(ValueError):
+                        package.serial_files.check_native(blobs, {'source_files': bad}, p['product'], root, profile)
+                with self.assertRaises(ValueError):
+                    package.serial_files.check_native(dict(blobs, firmware_bin=b'wrong-root'), proof, p['product'], root, profile)
+            for fragment in ('NativeSerialStorage', 'NativeSerialFiles', 'ReopenedFiles'):
+                with patch.object(package.serial_files, 'linked_symbols', return_value=[s for s in symbols if fragment not in s]), self.assertRaises(ValueError):
+                    package.serial_files.check_native(blobs, proof, p['product'], root, profile)
+            if p['product'] == 'waveshare':
+                with patch.object(package.serial_files, 'linked_symbols', return_value=[s for s in symbols if 'sdFiles' not in s]), self.assertRaises(ValueError):
+                    package.serial_files.check_native(blobs, proof, p['product'], root, profile)
 
     def fixtures(self, product):
         app = {'id': 'twatch-clock', 'file_name': 'default.elf', 'requires': [

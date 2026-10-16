@@ -59,6 +59,7 @@ def check_qualification(q, p, revision):
     require(canonical['independent_builds_identical'] is True and canonical['hardware_tested'] is False, 'Two canonical builds required')
     require(canonical['default_sha256'] == p['default_sha256'] and canonical['default_bytes'] == p['default_bytes']
             and canonical['manifest_sha256'] == p['default_manifest_sha256'], 'Canonical default differs')
+    require(q.get('serial_files') == p['serial_files'], 'Native serial admission differs')
     baseline = q['baseline_contract']
     require(baseline == package.baseline_contract(p), 'Released baseline contract differs')
     for key, sanitized in [('admission', False), ('admission_sanitized', True)]:
@@ -128,7 +129,7 @@ def verify_ci_provenance(path, p, revision, native_proof):
     with zipfile.ZipFile(path) as z:
         ci = decode(z.read('ci-run.json'))
         require(ci['GITHUB_REPOSITORY'] == repo and ci['GITHUB_SHA'] == revision and ci['GITHUB_WORKFLOW_SHA'] == revision, 'CI source identity differs')
-        require(ci['GITHUB_REF'] in ('refs/heads/work/shared-default-package', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
+        require(ci['GITHUB_REF'] in ('refs/heads/work/serial-files-native', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
         require(ci['GITHUB_WORKFLOW_REF'] == repo + '/.github/workflows/shared-default-native.yml@' + ci['GITHUB_REF'], 'CI workflow identity differs')
         require(all(re.fullmatch('[1-9][0-9]*', ci[k]) for k in ('GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')), 'CI run identity missing')
         require(z.read('workflow.yml') == (package.ROOT / '.github/workflows/shared-default-native.yml').read_bytes(), 'Published workflow snapshot differs')
@@ -176,6 +177,9 @@ def transport(args):
     notes = (prefix + ' ' + p['version'] + ' shared default\n\n'
         'Both watch products use default.elf SHA256 ' + p['default_sha256'] + '.\n'
         'Native ESP-IDF 6.1 / GCC 15.2 Runtime with generic file and settings providers.\n'
+        'RTEF1 serial individual-file transfers use writable private namespace 2; ' +
+        ('Waveshare also admits writable SD namespace 12.\n' if p['product'] == 'waveshare' else 'TWatch does not admit SD.\n') +
+        'Serial writes never target the active boot bank. Replace is explicit and not atomic; interrupted writes can remain partial.\n'
         'Native faces and the existing alarm repair are retained. All unrelated store payloads are byte-identical.\n'
         'Software-qualified; hardware has not been tested for this release.\n'
         'The factory image erases existing device data. Back up first. No data-preserving update kit is supplied.\n'
@@ -195,6 +199,8 @@ def transport(args):
         '4. Open and return from installed applications; check application ELF loading and normal platform operation.\n'
         '5. Verify alarms across light/deep sleep and wake, including an existing scheduled alarm.\n'
         '6. Exercise optional file export when provisioned, and normal Home use when it is absent.\n'
+        '7. Use the pinned Runtime scripts/serial_files.py client over an owner-trusted serial port: enumerate namespaces, create, read back, then explicitly replace a test file.\n'
+        '8. Check binary and empty files, nested sibling preservation, missing SD, interrupted writes and AppData isolation. No boot-bank namespace may be writable.\n'
         'Report the device, firmware version, steps, expected and actual result, and serial logs for failures.\n').encode()
     release = dict(schema=1, repository='michaelrolphone-cmyk/' + repository, product=p['product'], version=p['version'],
         source_revision=args.source_revision, release_tag=p['release_tag'], publication_enabled=p['publication_enabled'],

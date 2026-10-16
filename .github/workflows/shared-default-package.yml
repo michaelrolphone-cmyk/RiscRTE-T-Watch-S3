@@ -1,12 +1,13 @@
 name: Shared default package contract
 on:
   push:
-    branches: [work/shared-default-package]
+    branches: [work/serial-files-native]
     paths:
       - .github/workflows/shared-default-package.yml
       - scripts/build_shared_default_native.py
       - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
+      - scripts/serial_files_product.py
       - scripts/test_shared_default_package.py
       - scripts/shared_default_release.py
       - scripts/publish_shared_default_release.py
@@ -21,6 +22,7 @@ on:
       - scripts/build_shared_default_native.py
       - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
+      - scripts/serial_files_product.py
       - scripts/test_shared_default_package.py
       - scripts/shared_default_release.py
       - scripts/publish_shared_default_release.py

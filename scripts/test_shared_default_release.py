@@ -22,7 +22,7 @@ class ReleaseContracts(unittest.TestCase):
             publication_enabled=False, hardware_tested=False, device_accessed=False, factory_erases_data=True, preserving_update_kit_emitted=False,
             native_rebuilt=True, input_lock=lock, controlled_build=proof, artifacts={n: {'bytes': 1, 'sha256':'3'*64} for n in release.NATIVE},
             default=dict(independent_builds_identical=True,hardware_tested=False,default_sha256=p['default_sha256'],default_bytes=p['default_bytes'],manifest_sha256=p['default_manifest_sha256']),
-            baseline_contract=c, native=dict(arduino_core_linked=False,ordinary_app_payloads_rebuilt=False,unselected_usb_host_controller=False,elf_bin_identical=True),
+            serial_files=p['serial_files'], baseline_contract=c, native=dict(arduino_core_linked=False,ordinary_app_payloads_rebuilt=False,unselected_usb_host_controller=False,elf_bin_identical=True),
             preservation_software_model=dict(passed=True,cases=496,nvs_and_appdata_preserved=True,bootloader_compatibility_tested=False,hardware_tested=False),
             preservation=dict(changed_store_files=package.CHANGED,unchanged_store_payloads=len(c['files'])-len(package.CHANGED),unchanged_elf_count=c['elf_count']-1,alarm_sha256=package.ALARM_SHA))
         for k,san in [('admission',False),('admission_sanitized',True)]:
@@ -41,6 +41,7 @@ class ReleaseContracts(unittest.TestCase):
             ('input_lock','candidate_version'):'0.0.0',('controlled_build','fresh_build'):False,('controlled_build','same_process_qualification'):False,
             ('controlled_build','detached_receipt_is_attestation'):True,('controlled_build','compile_jobs'):2,
             ('default','independent_builds_identical'):False,('default','hardware_tested'):True,('default','default_sha256'):'4'*64,
+            ('serial_files','active_boot_bank_writable'):True,('serial_files','namespaces'):[],
             ('default','default_bytes'):1,('default','manifest_sha256'):'4'*64,('baseline_contract','factory_sha256'):'4'*64,
             ('native','arduino_core_linked'):True,('native','ordinary_app_payloads_rebuilt'):True,('native','unselected_usb_host_controller'):True,
             ('native','elf_bin_identical'):False,('preservation_software_model','passed'):False,('preservation_software_model','cases'):0,
@@ -105,8 +106,8 @@ class ReleaseContracts(unittest.TestCase):
         blobs['candidate-evidence.zip']=release.make_archive(evidence)
         _,renamed=release.release_names(p);files={renamed.get(n,n):b for n,b in blobs.items()}
         repo='michaelrolphone-cmyk/'+release.PRODUCTS[p['product']][0]
-        ci={'GITHUB_REPOSITORY':repo,'GITHUB_SHA':rev,'GITHUB_WORKFLOW_SHA':rev,'GITHUB_REF':'refs/heads/work/shared-default-package',
-            'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1','GITHUB_WORKFLOW_REF':repo+'/.github/workflows/shared-default-native.yml@refs/heads/work/shared-default-package'}
+        ci={'GITHUB_REPOSITORY':repo,'GITHUB_SHA':rev,'GITHUB_WORKFLOW_SHA':rev,'GITHUB_REF':'refs/heads/work/serial-files-native',
+            'GITHUB_RUN_ID':'123','GITHUB_RUN_ATTEMPT':'1','GITHUB_WORKFLOW_REF':repo+'/.github/workflows/shared-default-native.yml@refs/heads/work/serial-files-native'}
         c=package.baseline_contract(p);workflow=(package.ROOT/'.github/workflows/shared-default-native.yml').read_bytes()
         metadata={'ci-run.json':package.encoded(ci),'workflow.yml':workflow,'compiler-version.txt':b'esp-15.2.0_20251204',
             'iq-linked.json':package.encoded(iq),'baseline-tag.json':package.encoded({'ref':'refs/tags/'+c['release_tag'],'object':{'type':'commit','sha':c['source_revision']}}),
@@ -235,6 +236,7 @@ class ReleaseContracts(unittest.TestCase):
         subprocess.run(['bash','-n',str(script)],check=True)
         self.assertIn('espressif/idf:v6.1@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c',workflow)
         self.assertIn('release/shared-default-'+p['version'],workflow)
+        self.assertIn('work/serial-files-native',workflow)
         self.assertIn("needs.native.outputs.publication_enabled == 'true'",workflow)
         self.assertIn('needs.native.outputs.release_branch',workflow)
         self.assertIn('--verify-tag',(package.ROOT/'scripts/publish_shared_default_release.py').read_text())
