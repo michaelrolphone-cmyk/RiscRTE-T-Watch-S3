@@ -1,0 +1,36 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "espressif,esp32s3-gpio",
+      "config_type": "controller.gpio",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "twatch-gpio",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "gpio.bank"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "platform.gpio"
+    }
+  ],
+  "status": "software-only-runtime-backfill-required",
+  "type": "driver",
+  "version": "0.5.0"
+}

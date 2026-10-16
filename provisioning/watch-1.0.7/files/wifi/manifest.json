@@ -1,0 +1,36 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "espressif,esp32s3-wifi",
+      "config_type": "radio.integrated",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "wifi",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "net.wifi"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "platform.radio"
+    }
+  ],
+  "status": "software-verified-native-station-prerequisite",
+  "type": "driver",
+  "version": "0.2.0"
+}
