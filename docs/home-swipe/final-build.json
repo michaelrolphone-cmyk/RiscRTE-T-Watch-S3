@@ -1,0 +1,572 @@
+{
+  "baseline_elf_sha256": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875",
+  "baseline_receipt_sha256": "c8c4c6bd89291769cbecee8488a0ad036695f7d77154653765bac995dd21053f",
+  "baseline_reproduced_byte_for_byte": false,
+  "boot_command": [
+    "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-g++",
+    "-std=c++11",
+    "-Os",
+    "-fPIC",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-fvisibility=hidden",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-fno-threadsafe-statics",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-I/workspace/shared/watch-home-swipe-20261012/product/sdk/driver",
+    "-c",
+    "/workspace/shared/watch-home-swipe-20261012/product/apps/clock/effects/boot.cpp",
+    "-o",
+    "/workspace/shared/watch-home-swipe-20261012/home-build-final/boot-effect.o"
+  ],
+  "bytes": 862864,
+  "changed_dependency_keys": [
+    "watch:apps/clock/crown.c",
+    "watch:apps/clock/launcher_touch.h",
+    "watch:apps/clock/nova/nova.h",
+    "watch:apps/runtime_features/clock_runtime.h"
+  ],
+  "command": [
+    "/workspace/scratch/c744abbbbd60/watch-build-tools/platformio-core/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc",
+    "-std=c11",
+    "-Os",
+    "-fPIC",
+    "-mtext-section-literals",
+    "-mlongcalls",
+    "-fvisibility=hidden",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-nostdlib",
+    "-nostartfiles",
+    "-shared",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Wl,--gc-sections",
+    "-Wl,--no-relax",
+    "-Wl,--hash-style=sysv",
+    "-Wl,--version-script=/workspace/shared/watch-home-swipe-20261012/home-build-final/default.map",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-DPORTABLE_LOW_BATTERY",
+    "-DWATCH_RUNTIME_FEATURES",
+    "-DWATCH_BLE_BROADCAST",
+    "-DWATCH_CLOCK_LAUNCHER",
+    "-DWATCH_CLOCK_ALARMS",
+    "-DWATCH_CLOCK_POINTS",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DWATCH_PAIRED_BOOT_CONFIRM",
+    "-DWATCH_QUICK_ACTIONS",
+    "-DWATCH_QUICK_RADIOS",
+    "-DWATCH_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DWATCH_CONTEXTS_CLIENT",
+    "-flto",
+    "-Wl,--undefined=__udivdi3",
+    "-Wl,--undefined=__umoddi3",
+    "-Wl,--undefined=__divdi3",
+    "-Wl,--undefined=__moddi3",
+    "-I/workspace/shared/watch-fast-wake-20261012/system-clock/lib/PortableApps/include",
+    "-I/workspace/shared/watch-fast-wake-20261012/utilities-clock/lib/Alarm/include",
+    "-I/workspace/shared/watch-fast-wake-20261012/utilities-clock/lib/Contexts/include",
+    "-I/workspace/shared/watch-home-swipe-20261012/product/sdk/app",
+    "-I/workspace/shared/watch-home-swipe-20261012/product/sdk/driver",
+    "-I/workspace/shared/watch-home-swipe-20261012/product/include",
+    "/workspace/shared/watch-home-swipe-20261012/product/apps/clock/crown.c",
+    "/workspace/shared/watch-home-swipe-20261012/product/apps/clock/nova/nova.c",
+    "/workspace/shared/watch-fast-wake-20261012/system-clock/lib/PortableApps/src/quick_actions.c",
+    "/workspace/shared/watch-fast-wake-20261012/system-clock/lib/PortableApps/src/quick_render.c",
+    "/workspace/shared/watch-fast-wake-20261012/system-clock/lib/PortableApps/src/quick_session.c",
+    "/workspace/shared/watch-fast-wake-20261012/system-clock/lib/PortableApps/src/quick_radios.c",
+    "/workspace/shared/watch-home-swipe-20261012/product/apps/clock/points_projection.c",
+    "/workspace/shared/watch-home-swipe-20261012/product/apps/clock/effects/divdi3.c",
+    "/workspace/shared/watch-home-swipe-20261012/home-build-final/boot-effect.o",
+    "-lgcc",
+    "-DWATCH_FAST_WAKE",
+    "-o",
+    "/workspace/shared/watch-home-swipe-20261012/home-build-final/default.elf"
+  ],
+  "compaction": {
+    "after_bytes": 862864,
+    "after_sha256": "29e0d273913184da56afaca0e10f8478ebd057d803f7ebe0c870e74aaf7569d0",
+    "before_bytes": 927448,
+    "before_sha256": "72b8332106386a89dfd3bf2f0517d37230b4d728dfe31b4da9f213d73c08908b",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "original_elf_retained": true,
+    "profile": "loader-metadata-v3",
+    "removed_sections": [
+      ".debug_abbrev",
+      ".debug_aranges",
+      ".debug_info",
+      ".debug_line",
+      ".debug_str",
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223"
+  },
+  "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+  "compiler_sha256": {
+    "g++": "5b30f4eb7c41b7954acd4f183895f03abdb612d8470346436d850208b8be2c98",
+    "gcc": "732bebd44b70a21687ffa3ac5da55edc9b555080ad21cfd74503b2288a143d3f",
+    "nm": "af632d7578c77d53fe9767298b0fc0b46763f855df5cab7d40343f51e9b2f0bf",
+    "objcopy": "e366061dda019ed36a3cf902f7abf5b48a0ac2f8c47ae7ad4794f5e4c0658203"
+  },
+  "dependencies": {
+    "system:lib/PortableApps/include/AlarmRecords.h": {
+      "predecessor_sha256": "7f998d150be1619697756fd5f98ec5e82880c544e6e9d2cee742a2012e4f016b",
+      "sha256": "7f998d150be1619697756fd5f98ec5e82880c544e6e9d2cee742a2012e4f016b"
+    },
+    "system:lib/PortableApps/include/AlarmServiceV1.h": {
+      "predecessor_sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5",
+      "sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5"
+    },
+    "system:lib/PortableApps/include/ContextFingerprintService.h": {
+      "predecessor_sha256": "778ece8ba2064df59cb0fa3452b878406475deaca9b25c208463dbbb1e386308",
+      "sha256": "778ece8ba2064df59cb0fa3452b878406475deaca9b25c208463dbbb1e386308"
+    },
+    "system:lib/PortableApps/include/ContextsRules.h": {
+      "predecessor_sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89",
+      "sha256": "e890b236dd7a969f25db9642fcd8eea25eaed68f3dcb41820ffaacc95c159c89"
+    },
+    "system:lib/PortableApps/include/ContextsServiceV1.h": {
+      "predecessor_sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d",
+      "sha256": "ade2f40d01c7c384c6a71b4ee2a3b077c140ac6af06d7cc69350f02f7be6643d"
+    },
+    "system:lib/PortableApps/include/PortableAlarmClient.h": {
+      "predecessor_sha256": "f039a90b50f1173baa4ad3e77baa81ea0af2451f491152a0c0994e2e6f87f932",
+      "sha256": "f039a90b50f1173baa4ad3e77baa81ea0af2451f491152a0c0994e2e6f87f932"
+    },
+    "system:lib/PortableApps/include/PortableAlarmSettings.h": {
+      "predecessor_sha256": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284",
+      "sha256": "cf4fb88bfeabb99282b02a871963858a9d20c8985e7da80d57341c33c5250284"
+    },
+    "system:lib/PortableApps/include/PortableBluetoothControl.h": {
+      "predecessor_sha256": "777f0c7f92092d05a428c04255b6df1b3e9510a36c7425fc95092b3321e67a2c",
+      "sha256": "777f0c7f92092d05a428c04255b6df1b3e9510a36c7425fc95092b3321e67a2c"
+    },
+    "system:lib/PortableApps/include/PortableBroadcastClient.h": {
+      "predecessor_sha256": "caa6f6a246e3a7a2ac9983e4914ba4854712e0cd51300775bee131b2acfdef36",
+      "sha256": "caa6f6a246e3a7a2ac9983e4914ba4854712e0cd51300775bee131b2acfdef36"
+    },
+    "system:lib/PortableApps/include/PortableContextActions.h": {
+      "predecessor_sha256": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c",
+      "sha256": "9ebea2abc377b880fed7ab8537b93fa123eb58ea11d35f53aa96bcf4fd0dbb0c"
+    },
+    "system:lib/PortableApps/include/PortableContextFingerprints.h": {
+      "predecessor_sha256": "76bfffa6336aa1caa10a0c479c6d67f6792847083a32da6b2910c3ec675d381c",
+      "sha256": "76bfffa6336aa1caa10a0c479c6d67f6792847083a32da6b2910c3ec675d381c"
+    },
+    "system:lib/PortableApps/include/PortableContextPreferences.h": {
+      "predecessor_sha256": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826",
+      "sha256": "1fb5e6d3cc796892f15c15162bd38b64d4b4508756de5f0c77b2015fbe388826"
+    },
+    "system:lib/PortableApps/include/PortableContextRules.h": {
+      "predecessor_sha256": "c5dc73ff50bdd59b2011a61a3a04a0f6949287cd8ec051bc4b898aeafef3f3cf",
+      "sha256": "c5dc73ff50bdd59b2011a61a3a04a0f6949287cd8ec051bc4b898aeafef3f3cf"
+    },
+    "system:lib/PortableApps/include/PortableContextsClient.h": {
+      "predecessor_sha256": "9c4e3f0ab12027d922a1af1e9def1bdacb71e7c5205752af11e819d49faa133e",
+      "sha256": "9c4e3f0ab12027d922a1af1e9def1bdacb71e7c5205752af11e819d49faa133e"
+    },
+    "system:lib/PortableApps/include/PortableFingerprintClock.h": {
+      "predecessor_sha256": "adee78a399282377feb15c7964d9816cca17bb1e6fda9cec23bfffea1366b1f9",
+      "sha256": "adee78a399282377feb15c7964d9816cca17bb1e6fda9cec23bfffea1366b1f9"
+    },
+    "system:lib/PortableApps/include/PortableLowBattery.h": {
+      "predecessor_sha256": "0d7ba85a84cda3330f2ec8221fce90888deb67052778f79ad9d6f398c50258e1",
+      "sha256": "0d7ba85a84cda3330f2ec8221fce90888deb67052778f79ad9d6f398c50258e1"
+    },
+    "system:lib/PortableApps/include/PortableMotionTap.h": {
+      "predecessor_sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50",
+      "sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50"
+    },
+    "system:lib/PortableApps/include/PortablePowerStatus.h": {
+      "predecessor_sha256": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4",
+      "sha256": "957925504f2032963d1f2411bc676f2f6b493b41db3f9317182c2cca1a3067e4"
+    },
+    "system:lib/PortableApps/include/PortableQuickActions.h": {
+      "predecessor_sha256": "984cfad9015a2d3bb115c24b403a050e1036ceb67c3907e3464565be55d2deb9",
+      "sha256": "984cfad9015a2d3bb115c24b403a050e1036ceb67c3907e3464565be55d2deb9"
+    },
+    "system:lib/PortableApps/include/PortableQuickPreferences.h": {
+      "predecessor_sha256": "775e4bb34c12e118810b9a271acbfc90a7018454a69e975a8bb4d677af16bae0",
+      "sha256": "775e4bb34c12e118810b9a271acbfc90a7018454a69e975a8bb4d677af16bae0"
+    },
+    "system:lib/PortableApps/include/PortableQuickRadios.h": {
+      "predecessor_sha256": "676fbb46d0eae28fef515672a20c380088f69b3389a14ae44b5a67b9f014c44b",
+      "sha256": "676fbb46d0eae28fef515672a20c380088f69b3389a14ae44b5a67b9f014c44b"
+    },
+    "system:lib/PortableApps/include/PortableQuickRender.h": {
+      "predecessor_sha256": "94dbca40cd488438c4e6c76c8a3c29089e1ed6089f8ecfcdd691a38214d096da",
+      "sha256": "94dbca40cd488438c4e6c76c8a3c29089e1ed6089f8ecfcdd691a38214d096da"
+    },
+    "system:lib/PortableApps/include/PortableQuickSession.h": {
+      "predecessor_sha256": "7c13c14be6975babbb97acf516fa5d6651f0817e13ef062db452b748be30c2a3",
+      "sha256": "7c13c14be6975babbb97acf516fa5d6651f0817e13ef062db452b748be30c2a3"
+    },
+    "system:lib/PortableApps/include/PortableRadioPolicy.h": {
+      "predecessor_sha256": "d2a32cec2554bf1681e0c61cfc391515aed3886b67f117481c25bd592f9fed93",
+      "sha256": "d2a32cec2554bf1681e0c61cfc391515aed3886b67f117481c25bd592f9fed93"
+    },
+    "system:lib/PortableApps/include/PortableRtcClock.h": {
+      "predecessor_sha256": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c",
+      "sha256": "43508db1cd392606cf37a7e55ad15e3770de1284af13a431876fd5d7785b838c"
+    },
+    "system:lib/PortableApps/include/PortableSleepPolicy.h": {
+      "predecessor_sha256": "8d4b92e1f230bf13ad885dbc3f6a51f7a459d229703301d433124ccb428e557a",
+      "sha256": "8d4b92e1f230bf13ad885dbc3f6a51f7a459d229703301d433124ccb428e557a"
+    },
+    "system:lib/PortableApps/include/PortableTapSettings.h": {
+      "predecessor_sha256": "f6ff75e400224f2285f131d2088bd32985f9d18feefac64aa408f8b63c764132",
+      "sha256": "f6ff75e400224f2285f131d2088bd32985f9d18feefac64aa408f8b63c764132"
+    },
+    "system:lib/PortableApps/include/PortableTime.h": {
+      "predecessor_sha256": "350b8c5255dafa9e25c4a20cfb458cdcda3439da929dab05e0de0c82e981ff6e",
+      "sha256": "350b8c5255dafa9e25c4a20cfb458cdcda3439da929dab05e0de0c82e981ff6e"
+    },
+    "system:lib/PortableApps/include/PortableTimeFormat.h": {
+      "predecessor_sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867",
+      "sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867"
+    },
+    "system:lib/PortableApps/include/PortableTouch.h": {
+      "predecessor_sha256": "c54a408ceda99210367e7798978c9b6614ebba4991015d37253bf37134862790",
+      "sha256": "c54a408ceda99210367e7798978c9b6614ebba4991015d37253bf37134862790"
+    },
+    "system:lib/PortableApps/include/RiscAppDataV1.h": {
+      "predecessor_sha256": "df4e31c71ad360c856aa24388548feee07097126e380c081bc35a82c5b71f248",
+      "sha256": "df4e31c71ad360c856aa24388548feee07097126e380c081bc35a82c5b71f248"
+    },
+    "system:lib/PortableApps/include/RiscBatteryGaugeV1.h": {
+      "predecessor_sha256": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86",
+      "sha256": "03d2f2b78e8f261cfb10f5c44bcabc1495bfecb17d7953586a58c27dce151b86"
+    },
+    "system:lib/PortableApps/include/RiscDisplayOutputV1.h": {
+      "predecessor_sha256": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726",
+      "sha256": "8111c8fb6d28542f3d2f5ae7ce7497891b1c89bd2488735c817542b955bdd726"
+    },
+    "system:lib/PortableApps/include/RiscKeyValueV1.h": {
+      "predecessor_sha256": "5d5524ffd27b164f31505c5f538f528b39b35e356922e03e2eb59a9c68677b56",
+      "sha256": "5d5524ffd27b164f31505c5f538f528b39b35e356922e03e2eb59a9c68677b56"
+    },
+    "system:lib/PortableApps/include/RiscProviderV2.h": {
+      "predecessor_sha256": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17",
+      "sha256": "2935d83493a411e19ee98b8c7e805b86f4adf98c6bde66fd031df7cc379bdc17"
+    },
+    "system:lib/PortableApps/include/RiscRadioScanV1.h": {
+      "predecessor_sha256": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b",
+      "sha256": "696227eecfd124f941023673680e0a15917d5b03c8f769756ed12ec34f7ccc9b"
+    },
+    "system:lib/PortableApps/include/RiscRuntimeV1.h": {
+      "predecessor_sha256": "6fbfacaa46d532bfef083e8c7dd3bbe36613e557279fdda887d814d53915526b",
+      "sha256": "6fbfacaa46d532bfef083e8c7dd3bbe36613e557279fdda887d814d53915526b"
+    },
+    "system:lib/PortableApps/include/RiscStreamProviderV1.h": {
+      "predecessor_sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432",
+      "sha256": "0fe306e060321387c816bb70ec4370a501a423f4fe19a20c9be80aa1b98f3432"
+    },
+    "system:lib/PortableApps/include/RiscTelemetryV1.h": {
+      "predecessor_sha256": "8ef64c586e8392c1d7521498c25cfdaccefd53242530e2dda9116e9cc12a5d48",
+      "sha256": "8ef64c586e8392c1d7521498c25cfdaccefd53242530e2dda9116e9cc12a5d48"
+    },
+    "system:lib/PortableApps/include/RiscTouchV1.h": {
+      "predecessor_sha256": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d",
+      "sha256": "fe18fab3ac20fda95747388f1428408b7795e5da3511c7a9fff07c16ddfd2c7d"
+    },
+    "system:lib/PortableApps/include/TelemetryBroadcastV1.h": {
+      "predecessor_sha256": "986a52b5a3ddd361189d204e33624ce6275d953bca6a94a6e6dd5c136a89e2d5",
+      "sha256": "986a52b5a3ddd361189d204e33624ce6275d953bca6a94a6e6dd5c136a89e2d5"
+    },
+    "system:lib/PortableApps/include/WifiApi.h": {
+      "predecessor_sha256": "aca1437adcbe8a99bd6a76332a4543657b6440d98f622972c9f599fa21c5322a",
+      "sha256": "aca1437adcbe8a99bd6a76332a4543657b6440d98f622972c9f599fa21c5322a"
+    },
+    "system:lib/PortableApps/include/alarm_writer.h": {
+      "predecessor_sha256": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0",
+      "sha256": "6a28cd9955cbd099fe778777c63ebcb2c606ee48bab206fece6f45c644138ba0"
+    },
+    "system:lib/PortableApps/src/quick_actions.c": {
+      "predecessor_sha256": "fe06a7a5d55249bdf6353e1ba1d0f4fca00bccfc83db2ee485fd55ca49546a27",
+      "sha256": "fe06a7a5d55249bdf6353e1ba1d0f4fca00bccfc83db2ee485fd55ca49546a27"
+    },
+    "system:lib/PortableApps/src/quick_actions_assets.inc": {
+      "predecessor_sha256": "6e0eadad1387eee501f4524d3b21d86fac61e9051822c368070468b9c41d896c",
+      "sha256": "6e0eadad1387eee501f4524d3b21d86fac61e9051822c368070468b9c41d896c"
+    },
+    "system:lib/PortableApps/src/quick_radios.c": {
+      "predecessor_sha256": "b0946e9cc136c005cbd73df64fb785f41f46a7187860443642f1e88476e38316",
+      "sha256": "b0946e9cc136c005cbd73df64fb785f41f46a7187860443642f1e88476e38316"
+    },
+    "system:lib/PortableApps/src/quick_render.c": {
+      "predecessor_sha256": "15180cd5449b11baefdf93c1c70558a4509644792bfc4942cefb80ac261ec9c1",
+      "sha256": "15180cd5449b11baefdf93c1c70558a4509644792bfc4942cefb80ac261ec9c1"
+    },
+    "system:lib/PortableApps/src/quick_session.c": {
+      "predecessor_sha256": "fb0d01f3fba45b8add8767972d019b54127b85e51e1d8d9b238fec45071b8104",
+      "sha256": "fb0d01f3fba45b8add8767972d019b54127b85e51e1d8d9b238fec45071b8104"
+    },
+    "system:lib/PortableApps/time/denver/display_time.h": {
+      "predecessor_sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03",
+      "sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03"
+    },
+    "system:lib/PortableApps/time/denver/twatch_calendar.h": {
+      "predecessor_sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
+      "sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733"
+    },
+    "system:lib/PortableApps/time/denver/twatch_caps.h": {
+      "predecessor_sha256": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e",
+      "sha256": "b8b3003c77c72eb251227329c94fda7244389fb45c7a7e92aa01a5ddce50600e"
+    },
+    "utilities:lib/Alarm/include/AlarmRecords.h": {
+      "predecessor_sha256": "e04d9cfa6c32a70125ef618b85d048936afad2204fb97d459cda8c36fd0b2066",
+      "sha256": "e04d9cfa6c32a70125ef618b85d048936afad2204fb97d459cda8c36fd0b2066"
+    },
+    "utilities:lib/Alarm/include/AlarmServiceV1.h": {
+      "predecessor_sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5",
+      "sha256": "c70c087550306c123255e1ace41aeb504809e16b0193e382ec8dfbd7cb5531f5"
+    },
+    "utilities:lib/Alarm/include/PointsRecords.h": {
+      "predecessor_sha256": "ee59148062a39b2973e70c9c4816c1109686df0440d0ffd0d56ef0bff8820332",
+      "sha256": "ee59148062a39b2973e70c9c4816c1109686df0440d0ffd0d56ef0bff8820332"
+    },
+    "utilities:lib/Alarm/include/PointsSchedule.h": {
+      "predecessor_sha256": "9e34d32dbf989ee28f287813744748ab2d3193857a71bcab66e1f9b41749306c",
+      "sha256": "9e34d32dbf989ee28f287813744748ab2d3193857a71bcab66e1f9b41749306c"
+    },
+    "watch:apps/clock/PortableSleepPolicy.h": {
+      "predecessor_sha256": "15e94bdeabe34ac8a3e0b836a7cc59b00b9c4b3c22f3b2592919ce347ce3bbb1",
+      "sha256": "15e94bdeabe34ac8a3e0b836a7cc59b00b9c4b3c22f3b2592919ce347ce3bbb1"
+    },
+    "watch:apps/clock/PortableTimeFormat.h": {
+      "predecessor_sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867",
+      "sha256": "8eb4d0f850c974da910a516c0f13ed9302ad3928849aa85d7641bdbcf3bd1867"
+    },
+    "watch:apps/clock/clock_alarm.inc": {
+      "predecessor_sha256": "9edfb78eabe2d8b1b7add4759ecc334955f3d6185a8eacd40c2ff97419dc8601",
+      "sha256": "9edfb78eabe2d8b1b7add4759ecc334955f3d6185a8eacd40c2ff97419dc8601"
+    },
+    "watch:apps/clock/clock_contexts.inc": {
+      "predecessor_sha256": "9c5c322d29f439feeb3e9508ab9781f053823a54d27beeb06383660b49586469",
+      "sha256": "9c5c322d29f439feeb3e9508ab9781f053823a54d27beeb06383660b49586469"
+    },
+    "watch:apps/clock/crown.c": {
+      "predecessor_sha256": "21dff8f1e974e007f614a2f3725754d951d6af54454a0150bc4ced16be6693d1",
+      "sha256": "394077e7926ae4a5741303a4ad9f5bdcde5515dc7c605b74dc72f22e1adbb30f"
+    },
+    "watch:apps/clock/display_time.h": {
+      "predecessor_sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03",
+      "sha256": "9460e26e1d6faf574a212cdec86d9477de7a0e5d50168d5e7e76613be2868a03"
+    },
+    "watch:apps/clock/effects/divdi3.c": {
+      "predecessor_sha256": "8f83fa25ad5a00330b20ac425e0139219c398e664e723ff00cbbc60fd49c4244",
+      "sha256": "8f83fa25ad5a00330b20ac425e0139219c398e664e723ff00cbbc60fd49c4244"
+    },
+    "watch:apps/clock/effects/effects.h": {
+      "predecessor_sha256": "ec1b63c787bd6d3fd8b81306aea11e47a1da52d1466af9e4e0c19edc7869327b",
+      "sha256": "ec1b63c787bd6d3fd8b81306aea11e47a1da52d1466af9e4e0c19edc7869327b"
+    },
+    "watch:apps/clock/faces/assets_text.inc": {
+      "predecessor_sha256": "bc829687376d4452aa121d5301501bef688a14a10b20767c4724d388e2db0b64",
+      "sha256": "bc829687376d4452aa121d5301501bef688a14a10b20767c4724d388e2db0b64"
+    },
+    "watch:apps/clock/faces/calendar_assets.inc": {
+      "predecessor_sha256": "331c0f8205b547136772a63b82312e93401b7aef39b0224dfbbb2c5ed1d90821",
+      "sha256": "331c0f8205b547136772a63b82312e93401b7aef39b0224dfbbb2c5ed1d90821"
+    },
+    "watch:apps/clock/faces/calendar_collection.inc": {
+      "predecessor_sha256": "f60200b45b6f1717bbd6784116c690206c4e956dbfd92b1a57bced140ec8ee0a",
+      "sha256": "f60200b45b6f1717bbd6784116c690206c4e956dbfd92b1a57bced140ec8ee0a"
+    },
+    "watch:apps/clock/faces/catalog.h": {
+      "predecessor_sha256": "c1304734707ce50d7e4205aa93ff582c1a87e2c20b6ce878d49b3d45078a329f",
+      "sha256": "c1304734707ce50d7e4205aa93ff582c1a87e2c20b6ce878d49b3d45078a329f"
+    },
+    "watch:apps/clock/faces/collection_two.inc": {
+      "predecessor_sha256": "7b50c9a0a7006ce2ed2961f16c4cbb963d9187d8ce748ba7cdfa289d81e1ab2c",
+      "sha256": "7b50c9a0a7006ce2ed2961f16c4cbb963d9187d8ce748ba7cdfa289d81e1ab2c"
+    },
+    "watch:apps/clock/faces/collection_two_assets.inc": {
+      "predecessor_sha256": "1efed5f90c6d2cbbaf84f0ca67851ac580fa3c9e23c70a4c2c8f761c2204b313",
+      "sha256": "1efed5f90c6d2cbbaf84f0ca67851ac580fa3c9e23c70a4c2c8f761c2204b313"
+    },
+    "watch:apps/clock/faces/names.h": {
+      "predecessor_sha256": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16",
+      "sha256": "fd911f147817f540b231871f8c5ae03737786c9e6eee9a9aef389caf22630c16"
+    },
+    "watch:apps/clock/faces/picker.h": {
+      "predecessor_sha256": "72fb1cc1b7d0a72476f1a9677b99a31c9df37d1c5b3cff9cb50ba159618c3288",
+      "sha256": "72fb1cc1b7d0a72476f1a9677b99a31c9df37d1c5b3cff9cb50ba159618c3288"
+    },
+    "watch:apps/clock/faces/points_collection.inc": {
+      "predecessor_sha256": "26d1e8863296371bd7565d661fb54af2f2843a3ae55095f7381efbafca97e340",
+      "sha256": "26d1e8863296371bd7565d661fb54af2f2843a3ae55095f7381efbafca97e340"
+    },
+    "watch:apps/clock/faces/points_state.h": {
+      "predecessor_sha256": "a0c2867af9950cd345539047c9a9cf38a240ca723559626bb4f65dedac499be2",
+      "sha256": "a0c2867af9950cd345539047c9a9cf38a240ca723559626bb4f65dedac499be2"
+    },
+    "watch:apps/clock/faces/points_text_assets.inc": {
+      "predecessor_sha256": "d28e60208128e39aeeb5f5d654b21dad7b5920d9715f1bcff1f956ecb7f44f3f",
+      "sha256": "d28e60208128e39aeeb5f5d654b21dad7b5920d9715f1bcff1f956ecb7f44f3f"
+    },
+    "watch:apps/clock/faces/render.inc": {
+      "predecessor_sha256": "4b08af40caceac64466a0eaf108aa7a87067c1c0ba37c807ee9196092729784a",
+      "sha256": "4b08af40caceac64466a0eaf108aa7a87067c1c0ba37c807ee9196092729784a"
+    },
+    "watch:apps/clock/launcher_touch.h": {
+      "predecessor_sha256": "1742842453178836c8d24e0810575ffc3ee4cb47ffffc89296135a45b0891185",
+      "sha256": "f1d022f9521b0a75782d9fe95629c7908fadbf88e1a779d38ef1b153f46fb9cb"
+    },
+    "watch:apps/clock/nova/assets.inc": {
+      "predecessor_sha256": "db6f5842db035cea83b8fdc0452db37d74e32ab29765b50e14ba289f00621b88",
+      "sha256": "db6f5842db035cea83b8fdc0452db37d74e32ab29765b50e14ba289f00621b88"
+    },
+    "watch:apps/clock/nova/nova.c": {
+      "predecessor_sha256": "f63d2955510ddc5834f5090d5507bdfaaf2cb91f7ff3c17e78739d51992ab5d2",
+      "sha256": "f63d2955510ddc5834f5090d5507bdfaaf2cb91f7ff3c17e78739d51992ab5d2"
+    },
+    "watch:apps/clock/nova/nova.h": {
+      "predecessor_sha256": "e03945a4b63bbc85b75b5f630e7fa4afe0f632a6763e649ace76082b3b0007c2",
+      "sha256": "1b08e7ae9c2d31a726e2d6db771d35dd807cb135c3c20112a99430b73d463e9e"
+    },
+    "watch:apps/clock/points_compat.h": {
+      "predecessor_sha256": "ebdbede60b0c541ef75ee2e56063ecba5f7939228d5316d7369cca2035dcb691",
+      "sha256": "ebdbede60b0c541ef75ee2e56063ecba5f7939228d5316d7369cca2035dcb691"
+    },
+    "watch:apps/clock/points_projection.c": {
+      "predecessor_sha256": "a3221744f356555ac77ab9cdee6c53c0cd63bebfd520409c9f7388ed25f09620",
+      "sha256": "a3221744f356555ac77ab9cdee6c53c0cd63bebfd520409c9f7388ed25f09620"
+    },
+    "watch:apps/clock/points_projection.h": {
+      "predecessor_sha256": "eac7a568d6ed50ef08042dbb3873f8fcb7c108e9197d18297d01adc866fd1c47",
+      "sha256": "eac7a568d6ed50ef08042dbb3873f8fcb7c108e9197d18297d01adc866fd1c47"
+    },
+    "watch:apps/clock/runtime_boot_confirm.h": {
+      "predecessor_sha256": "ffac1a50eedeca797f26601dd6fc43018ee5dceba39e2f64b6812530149c13d7",
+      "sha256": "ffac1a50eedeca797f26601dd6fc43018ee5dceba39e2f64b6812530149c13d7"
+    },
+    "watch:apps/clock/transitions/PortableTransition.h": {
+      "predecessor_sha256": "627e00b7c8143d946556f67a61803a56335f747dd8f6489bbfcabaef015542d2",
+      "sha256": "627e00b7c8143d946556f67a61803a56335f747dd8f6489bbfcabaef015542d2"
+    },
+    "watch:apps/clock/watch_alarm_sleep.h": {
+      "predecessor_sha256": "df0e93850176f4c975456a72c2dc518a7215b35662bb4a9a7d9f864a58cec42a",
+      "sha256": "df0e93850176f4c975456a72c2dc518a7215b35662bb4a9a7d9f864a58cec42a"
+    },
+    "watch:apps/clock/watch_motion_client.h": {
+      "predecessor_sha256": "424111031b9e9c8e543cd2b36351cea5825e022e9862d2f93a6e1c57af84ffe9",
+      "sha256": "424111031b9e9c8e543cd2b36351cea5825e022e9862d2f93a6e1c57af84ffe9"
+    },
+    "watch:apps/clock/watch_sleep.h": {
+      "predecessor_sha256": "ea1948c880ca2f340b2e63650ef7f52641bce6b1851c6d1992fffa7100e7db91",
+      "sha256": "ea1948c880ca2f340b2e63650ef7f52641bce6b1851c6d1992fffa7100e7db91"
+    },
+    "watch:apps/runtime_features/clock_runtime.h": {
+      "predecessor_sha256": "b6617c33fcaefeb4d6d81e4e55990aa8a681726c655c2869baa47f3329d66487",
+      "sha256": "3696136f69c61c062ea71bf9d8f9f05af3194636579ef08efce7de0383ffa100"
+    },
+    "watch:apps/runtime_features/sdk/RiscProviderPromotionV1.h": {
+      "predecessor_sha256": "b7765248e6c9d959df648417344e134b55a87a11702ba0c78dde19e7bc332295",
+      "sha256": "b7765248e6c9d959df648417344e134b55a87a11702ba0c78dde19e7bc332295"
+    },
+    "watch:apps/runtime_features/sdk/RiscRealtimeV1.h": {
+      "predecessor_sha256": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d",
+      "sha256": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d"
+    },
+    "watch:apps/runtime_features/sdk/RiscRetainedWakeV1.h": {
+      "predecessor_sha256": "36066ff656dbdfbd6546b8ee92b62f7a74c3ba501bda34602e39811035fa7296",
+      "sha256": "36066ff656dbdfbd6546b8ee92b62f7a74c3ba501bda34602e39811035fa7296"
+    },
+    "watch:include/PortableMotionTap.h": {
+      "predecessor_sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50",
+      "sha256": "73fe7e58159860dab4ed1b2bf9a2a5e85b0a94c7bef39718a15e04a5d49cfc50"
+    },
+    "watch:include/twatch_calendar.h": {
+      "predecessor_sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733",
+      "sha256": "67e4a670e4ee8a485843e99be0d198d0b60d84a0bc8d84fc77a3d0e4bde39733"
+    },
+    "watch:include/twatch_caps.h": {
+      "predecessor_sha256": "88bf36643ca8ae431ef4757debd36c8b2e07212916835c6d7dbf37fca699eade",
+      "sha256": "88bf36643ca8ae431ef4757debd36c8b2e07212916835c6d7dbf37fca699eade"
+    },
+    "watch:include/twatch_power.h": {
+      "predecessor_sha256": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d",
+      "sha256": "3e805e4b6b195f0d6ecd32db28a2b41c2b72f8cebd37aad5a2a6a4b024ea3b8d"
+    },
+    "watch:sdk/driver/RiscDeepSleepV1.h": {
+      "predecessor_sha256": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161",
+      "sha256": "0949cf9591ef0f07b61c1306897287ea2eb1533755b5e569bfe1cb2c9b236161"
+    },
+    "watch:sdk/driver/RiscLightSleepV1.h": {
+      "predecessor_sha256": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94",
+      "sha256": "43cbd671265959ec2db7904bf6185e97a87c4cde9d389cdccf6fbb7c916f3b94"
+    },
+    "watch:sdk/driver/RiscTimedSleepV1.h": {
+      "predecessor_sha256": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34",
+      "sha256": "475ba9bfaf6c7497ace7baeb93f2bd9a6abe1e3a91f62eed24862a88d60dbf34"
+    }
+  },
+  "exports": [
+    "app_main"
+  ],
+  "feature_flags": [
+    "-DPORTABLE_LOW_BATTERY",
+    "-DWATCH_RUNTIME_FEATURES",
+    "-DWATCH_BLE_BROADCAST",
+    "-DWATCH_CLOCK_LAUNCHER",
+    "-DWATCH_CLOCK_ALARMS",
+    "-DWATCH_CLOCK_POINTS",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DWATCH_PAIRED_BOOT_CONFIRM",
+    "-DWATCH_QUICK_ACTIONS",
+    "-DWATCH_QUICK_RADIOS",
+    "-DWATCH_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DWATCH_CONTEXTS_CLIENT",
+    "-DWATCH_FAST_WAKE"
+  ],
+  "fonts_unchanged": true,
+  "hardware_verified": false,
+  "image_assembled": false,
+  "imports": [
+    "free",
+    "malloc",
+    "memchr",
+    "memcmp",
+    "memcpy",
+    "memset",
+    "risc_runtime_get_api",
+    "strcmp",
+    "strncmp"
+  ],
+  "manifest": {
+    "sha256": "c04a85ceaa53c8e68d6c23a5b29882e3bc8fc4a3ac433697c7ac3c77e2d533b4",
+    "version": "0.11.6"
+  },
+  "mapping": {
+    "/workspace/shared/watch-clean-face-1114/product": "/workspace/shared/watch-home-swipe-20261012/product",
+    "/workspace/shared/watch-fast-wake-20261012/system-clock": "/workspace/shared/watch-fast-wake-20261012/system-clock",
+    "/workspace/shared/watch-fast-wake-20261012/utilities-clock": "/workspace/shared/watch-fast-wake-20261012/utilities-clock",
+    "/workspace/shared/watch-sleep-failure-clock-build-0115": "/workspace/shared/watch-home-swipe-20261012/home-build-final"
+  },
+  "product": "/workspace/shared/watch-home-swipe-20261012/product",
+  "product_source": "b7a6cf0d2505ecf9b1c625bbfcc6d4048c13b471",
+  "product_tree": "a448e3d29d61467ee67e5bddc4e29a20706e2c36",
+  "recipe_sha256": "f9f58091d826f33ceb0c48a7742bbf2cee1730f48bb49ce8a4e7b8e8132d66f3",
+  "relocation_normalization": 0,
+  "schema": 1,
+  "sha256": "29e0d273913184da56afaca0e10f8478ebd057d803f7ebe0c870e74aaf7569d0",
+  "toolchain_pins_sha256": "83ec949f5c1b81fbf73c89ee7ef8975ae7821f02318fe9beddc3fe6eefab58a1"
+}

@@ -1,0 +1,358 @@
+{
+  "schema": "timecard.independent-public-review.v1",
+  "reviewed_at_utc": "2026-10-12T17:33:11.180629+00:00",
+  "public_source": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+  "source_tree": "4cf4c4b9c78eb1e6dedd5aa5da0a947759a2d0c6",
+  "source_clean": true,
+  "equal_to_tested_local_tree": true,
+  "system_source": "7fb13b09b4dac275a8111b224784f8a472f39264",
+  "hardware_execution_verified": false,
+  "targets": {
+    "watch": {
+      "recipe": "9f3669771c75e6d472afd8c8af9861600dcc9e5a",
+      "recipe_clean": true,
+      "elf_sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+      "elf_bytes": 146272,
+      "byte_identical_to_f52": true,
+      "all_target_dependencies_checked": 121,
+      "dependency_digest": "34d0f9ea5ef6487175e5d0dfd4a5aac60b1109f98a1841134aaf1ae596ff1f5f",
+      "inherited_flags_preserved": true,
+      "whole_font_files_and_metrics_identical": [
+        {
+          "path": "system-apps:lib/PortableApps/fonts/watch-240-icons.inc",
+          "sha256": "df8c293fd11b3f9f55a0627fad79863d26d7e98944f17fa8113d8f6068d5c920"
+        },
+        {
+          "path": "system-apps:lib/PortableApps/fonts/text.inc",
+          "sha256": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42"
+        },
+        {
+          "path": "system-apps:lib/PortableApps/settings_fonts/text.inc",
+          "sha256": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+        }
+      ],
+      "experimental_system_or_font_subset_selected": false
+    },
+    "x4": {
+      "recipe": "2220ffcb4054c6213fdf3b1c68d3c6808b807630",
+      "recipe_clean": true,
+      "elf_sha256": "5f36916c576249ec96cc47bfc10607e05f81e511b372a7dddc4cf514375ad3c4",
+      "elf_bytes": 175412,
+      "byte_identical_to_f52": true,
+      "all_target_dependencies_checked": 99,
+      "dependency_digest": "6bd030f629fc41033d92f7bcbfa35f9522804c57cf024b06cf50844016a8ccef",
+      "inherited_flags_preserved": true,
+      "whole_font_files_and_metrics_identical": [
+        {
+          "path": "system-apps:lib/PortableApps/fonts/icons.inc",
+          "sha256": "fbfee54e9dd3fd331bdfc6babf60427ccffa93c4e8956ceb0129d2b6111d411d"
+        },
+        {
+          "path": "system-apps:lib/PortableApps/fonts/text.inc",
+          "sha256": "88aad3c3002381190ba5fc584fb2177b623cbeb30bc6cf7bfde10b0399d20c42"
+        },
+        {
+          "path": "system-apps:lib/PortableApps/settings_fonts/text.inc",
+          "sha256": "8453a3f7c123799354a0ff4246dba420de2a612f421d6d9de9bf4c976073b449"
+        },
+        {
+          "path": "system-apps:lib/PortableApps/paper_fonts/text.inc",
+          "sha256": "9ee273df1c27df92d8ab2a985fb474d15b715770984894da4fee40b8cd9f2e4a"
+        }
+      ],
+      "experimental_system_or_font_subset_selected": false
+    }
+  },
+  "pending": [],
+  "watch_cohort": {
+    "changed": [
+      "boot.json",
+      "cohort.json",
+      "timecard.elf",
+      "timecard.json"
+    ],
+    "identical_file_count": 109,
+    "identical_files_sha256": "8ce8bcffdadc2c8d289d09cc11ee1b3b2a80e0bd7fbae6711c18ae690c6eae25",
+    "boot_semantic_delta_only_timecard_grant": true,
+    "duplicate_json_keys_rejected": true,
+    "boot_before_bytes": 50487,
+    "boot_after_bytes": 27085,
+    "candidate_store_sha256": "b283d927b20e7ba29190f095a3f75407896de15bd1c5b41cc7666ab6f3a4eef0",
+    "every_elf_sha256": {
+      "alarm-service/driver.elf": "e2f761dc24a1c095ce15212a650b3c09fd11855560923af1cc5df193e24774c4",
+      "alarms.elf": "8a4b0487652642f33f8979e714c7b52829edc8649c263e2ebd31e698815e6cc3",
+      "app_store.elf": "98dbf0078a3288e66b5517b99b38709b4e5739f041cbeaf0ea87a1d0e9941c4f",
+      "audio_spectrum.elf": "2c84ebdf52aa1affd4d6fd7034daef2f0a86111e795d99fbef0a0a700bffa04a",
+      "battery-telem/driver.elf": "f0cab9a3eb32c9f0f351cc4f52ee5a4e9830d7ad26c012fa5c248fd791ac06da",
+      "battery.elf": "5ac9fc4aff75b5d8431a4f312863c18a75de0236c783a208b08c663ebbf9173c",
+      "ble-hid/driver.elf": "6290d9cdfae051b9f2f2c83060f1c4000a62f727d47b680c67cd77b0d9e0c555",
+      "ble-sensors/driver.elf": "cf34fa23f8a6086c7dbeb022a5ddc252088207eb0773251d183873bf1737d998",
+      "ble-telemetry/driver.elf": "86e36ad3ec31ba1e4f639c1110cecfdd07e9bfc7695dcceba42672303f01f4a2",
+      "ble/driver.elf": "80253ef0e3cbd39df67d4b5e66d53762702383ec77f193b0d041fdb47baf9007",
+      "ble_buttons.elf": "d661beb925257bfa1e39a77a1026fc49ce66d1907ed53bded8e5fbec83f3b2e9",
+      "ble_scanner.elf": "07eb058652eaaf6ccd5da59e21bf3548354b2e6b61418e874afed367e3cd8b57",
+      "ble_touchpad.elf": "d0f9545d7b439ea174f45b8eabf234920b96b966cd8a460bcd942d95f0209630",
+      "broadcast/driver.elf": "b2b8f55baa39a798873daff31b4878f64e91adf444e81b243d1c84080e5fd35a",
+      "calculator.elf": "eebc9869ab16c7ec63b3b67226cb8e38de10c465d6a417b153179304311525df",
+      "civil-clock/driver.elf": "e9158f0572d1d1402cee42ae5f4c43b9c7c009531f97b0a1be84d1376ef35862",
+      "clock.elf": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+      "contexts.elf": "4896654c86b0c1c203af5e07a20425157a512c48b68dd5bca1c86756ca7dfe9a",
+      "contexts/driver.elf": "bce4f7f82480765595758c8f5c63436d0f5b39473ebac3c033bb9e8cd7bc896c",
+      "countdown.elf": "335431931522c5ea40658404c1c3ae80f9614ac2a43dcc566eb14a2f0600dc73",
+      "default.elf": "90388f2269badefae66d8ba7fc844fd7d7af481392e55bb79f9e898e4ff81875",
+      "file_browser.elf": "2265a75e0f1226f9b885207dfd176d335593703aa5721f1581dee08dfa87c583",
+      "frequency_generator.elf": "b0d6b3a83280b694a1987f815df962c4e358c9b9ece41ff5ce858c4c8df15b20",
+      "gpio/driver.elf": "a2b4b27df7e4893267cbbc69197fc1c0e6ad54ef7b059a12b3117485907bfa78",
+      "haptic/driver.elf": "61e31dffb174c950f936f9bef917705b13b31e010ab4a380a5d4c5c4aff9786d",
+      "i2c/driver.elf": "9ae372bab72c4f49b791bc3eb6724a725c3598cda373e005f1af058254a61ada",
+      "imu/driver.elf": "de08cd62fae7a5094e03aa6b84cf51e2dc216c55ee5ac1fc41228acd6e07f67a",
+      "lists.elf": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+      "lora/driver.elf": "877120b94f302ded76d13cffd050452bf95d9ca597ac8e8438ac75c67203e4bc",
+      "lora_messages.elf": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5",
+      "mic/driver.elf": "bacc1daeb9e9be64e1e5527939fb045e7458563fb415481951d72411c9d1bcfe",
+      "model_viewer.elf": "33b9b63affa83d4489769c13f5c20d244accb42adb69efbee0b7dfa38c5a9050",
+      "ota_update.elf": "73c4989e43d2a66d7b7595672ce903ce11f43c454fa4cdf97486e99c52e49919",
+      "panel/driver.elf": "1a927a37f91000317519790474920d5467f7ed4a86fbecad03ed1a3524a098cd",
+      "pmu/driver.elf": "26e695eade9d0d3164f308fdef6d74921066c679c047b6f7b97cf5d2b4c61616",
+      "points_in_time.elf": "4ee1c06b8eb191980afdd0522c5f1f2b1c05c1eeb38c8fa18e9c10cb382205b5",
+      "rtc/driver.elf": "c39b7f6fb6ca4bbc403ea556ea3ebd0d649abb717a0f9692d1094f43f991705a",
+      "s3-radio-iq/driver.elf": "e42951a6122ee5e43e7167ebdd0066febeb590a40229c269687706223e54a44e",
+      "settings.elf": "66221cdc7c54cf0cc5a010e35fafde320b7697ec54cadf7c618eb2975b53ded8",
+      "sharing-ble/driver.elf": "3ad68e94751f049a4da43461368a5b3aec3557028009e390dfadb01bf57ac378",
+      "sharing-entropy/driver.elf": "8ba3adbc17a8cb2a6ed3977119d39f8adc8d435cc4735f77fad32d5a2acd9c84",
+      "sharing-tcp/driver.elf": "5e7e9ff32b1804a14427280abe27277dc7ebbb0c692dae87798e57b5f6859efc",
+      "speaker/driver.elf": "a8ed14e1af402943136bd92d9b585e6413f1d8f79e979b5c9f9d01de6fba3fd1",
+      "springboard.elf": "1ddb0613f6b98623ac4b18a720581dc7f0319c6fe94f169538a2e8d9ee97483d",
+      "stopwatch.elf": "e3c729575a527be64cc3a905a8a699312a461392e0c02fd759b86adfbb6dfb0a",
+      "text-input/driver.elf": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+      "timecard.elf": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+      "touch/driver.elf": "6fdd785ef67bb5cf923918fa6fe8caab2b02d580e71169e167d1693a468658b2",
+      "ui-profile/driver.elf": "8df161bca238bf03b7533cfb02317d0a574def0b096d568f455e8061caa4ebb4",
+      "ui-scene/driver.elf": "9b89bca7a6fa1a8f8ae58c5205785bb1aed0ca8328ca47afa4c8594ea1653cfe",
+      "update-apps/driver.elf": "46a656b3e1b3fe3ddb295e2b9edcabaa22ad8f4c582b702d00866ca0af83420c",
+      "update-fw/driver.elf": "81f05eae38e7a77a83f6d33d8450e33244caf6552e792eaed36d5618ea0998b3",
+      "waterfall.elf": "c0612e63664bfcb25f2bb3ea79286e97b36c6f62eb95a4ddb1c719868890bd05",
+      "wifi/driver.elf": "e071dab745633ad812c828590463cc7d2fc33f0ca35d06185d119c2908bfb40c",
+      "wifi_settings.elf": "e39c23a8c287fa61eecedef89fea40d85e1b99fbef302c0ad3f2b71d3ef5a4fb"
+    },
+    "admission": {
+      "normal": {
+        "receipt": "/workspace/shared/timecard-shared-input-components-20261012/watch/receipts/final-normal.json",
+        "sha256": "d98b6869d0ba31366c8cd89f9a4cc9a801756bf920f75b3110a3f66cec955069",
+        "exact_store_digest_bound": true,
+        "validated_elf_count": 55,
+        "free_blocks": 6
+      },
+      "sanitized": {
+        "receipt": "/workspace/shared/timecard-shared-input-components-20261012/watch/receipts/final-sanitized.json",
+        "sha256": "d98b6869d0ba31366c8cd89f9a4cc9a801756bf920f75b3110a3f66cec955069",
+        "exact_store_digest_bound": true,
+        "validated_elf_count": 55,
+        "free_blocks": 6
+      }
+    }
+  },
+  "x4_cohort": {
+    "delta": {
+      "store": {
+        "changed": [
+          "boot.json",
+          "cohort.json",
+          "timecard.json"
+        ],
+        "identical_file_count": 103,
+        "identical_files_sha256": "45adcd12b9b71d11890305fe646542249dc1300db7af7284f5ba588787da1f78"
+      },
+      "SD": {
+        "changed": [
+          "Apps/timecard/manifest.json",
+          "Apps/timecard/timecard.elf"
+        ],
+        "identical_file_count": 88,
+        "identical_files_sha256": "35a87f8326919c5407144e118f7030afbea9ea6d7b5ef95236fc5eefe81eb759"
+      },
+      "components": {
+        "changed": [
+          "bank_state.bin",
+          "bootfs.bin"
+        ],
+        "identical_file_count": 5,
+        "identical_files_sha256": "9b45bcd047240ebaac0753b417cbfd782a6394b0ec85809e5176304ff29649c4"
+      }
+    },
+    "admission": {
+      "normal": {
+        "receipt": "/workspace/shared/timecard-shared-input-x4-published-qualification-20261012/normal/result.json",
+        "sha256": "bbdaca379c8e20dad598e855abed2b35bd99f19f29a9c79f011450b7bfbad440",
+        "every_internal_image_hash_matched": 43,
+        "every_selected_sd_image_hash_matched": 48,
+        "internal_image_digest": "02083684b158b8d934c6d76cbfd9c4ff006e8f975766f25fc31f3f3f25dba6a1",
+        "selected_sd_image_digest": "04c16edc32b1d20a591ac3415ab29c2bc895a664e1abe7df6ee7260282352228"
+      },
+      "asan-ubsan": {
+        "receipt": "/workspace/shared/timecard-shared-input-x4-published-qualification-20261012/asan-ubsan/result.json",
+        "sha256": "13ee14bb156931bae8c6a0da89fb3718023d5008c59a280c0a16460b9f0fe414",
+        "every_internal_image_hash_matched": 43,
+        "every_selected_sd_image_hash_matched": 48,
+        "internal_image_digest": "02083684b158b8d934c6d76cbfd9c4ff006e8f975766f25fc31f3f3f25dba6a1",
+        "selected_sd_image_digest": "04c16edc32b1d20a591ac3415ab29c2bc895a664e1abe7df6ee7260282352228"
+      }
+    },
+    "boot_semantic_delta_only_timecard_grant": true
+  },
+  "ui_and_tests": {
+    "all_tested_source_hashes_match_public_tree": true,
+    "local_report_sha256": "3357c54590f7718ccf76c403fe5c1f81e46740fc5b038595cc7aafb8b4163078",
+    "local_runs": 174,
+    "local_leak_detection": "disabled explicitly for local ptrace",
+    "pixel_and_ledger_parity": [
+      {
+        "device": "watch-production-adapter",
+        "sanitized": false,
+        "identical": true,
+        "actual_submitted_frames": [
+          "launch=springboard.elf",
+          "Watch real adapter/host parity PASS frames=7 hash=daa64c359ddcb45e writes=2 opens=0 closes=0 retained=0"
+        ]
+      },
+      {
+        "device": "watch",
+        "sanitized": false,
+        "identical": true,
+        "frames_and_ledger": [
+          "weeks 03507a1d634a421d",
+          "week d02e68ad02404f8c",
+          "day 0514f4bf5f2eb540",
+          "saved-day 8e4797e43d04c10c",
+          "saved-24-hour d2cb129d11a1110b",
+          "saved-week 0314a0cb194da394",
+          "weeks-return 21e4a7f2a3475f28",
+          "ledger 273e4aa52482976e"
+        ]
+      },
+      {
+        "device": "x4",
+        "sanitized": false,
+        "identical": true,
+        "frames_and_ledger": [
+          "weeks 1bd16577cf2fa94e",
+          "week d984130df1a015ff",
+          "day 2dd1b93e65cc2e54",
+          "saved-day 28b998938d4d8b49",
+          "saved-24-hour 6f95f24d2e85ea9b",
+          "saved-week 43b8261f490661a8",
+          "weeks-return c42ac91eaf8c8e53",
+          "ledger 273e4aa52482976e"
+        ]
+      },
+      {
+        "device": "watch-production-adapter",
+        "sanitized": true,
+        "identical": true,
+        "actual_submitted_frames": [
+          "launch=springboard.elf",
+          "Watch real adapter/host parity PASS frames=7 hash=daa64c359ddcb45e writes=2 opens=0 closes=0 retained=0"
+        ]
+      },
+      {
+        "device": "watch",
+        "sanitized": true,
+        "identical": true,
+        "frames_and_ledger": [
+          "weeks 03507a1d634a421d",
+          "week d02e68ad02404f8c",
+          "day 0514f4bf5f2eb540",
+          "saved-day 8e4797e43d04c10c",
+          "saved-24-hour d2cb129d11a1110b",
+          "saved-week 0314a0cb194da394",
+          "weeks-return 21e4a7f2a3475f28",
+          "ledger 273e4aa52482976e"
+        ]
+      },
+      {
+        "device": "x4",
+        "sanitized": true,
+        "identical": true,
+        "frames_and_ledger": [
+          "weeks 1bd16577cf2fa94e",
+          "week d984130df1a015ff",
+          "day 2dd1b93e65cc2e54",
+          "saved-day 28b998938d4d8b49",
+          "saved-24-hour 6f95f24d2e85ea9b",
+          "saved-week 43b8261f490661a8",
+          "weeks-return c42ac91eaf8c8e53",
+          "ledger 273e4aa52482976e"
+        ]
+      }
+    ],
+    "reviewed_retry_views": [
+      {
+        "ppm": "/workspace/shared/timecard-shared-input-productivity-20261012/build/timecard-shared-input/frames/x4-retry.ppm",
+        "ppm_sha256": "30cffd05ceb4be11adab0c2780b90a2d3d781069e49ac18aa95b17ab945d5441",
+        "png_sha256": "dab3135a7693e111025b9ad5ecd60ffd41552ca3b3e233bf489cf9ce63d56c92",
+        "dimensions": [
+          480,
+          800
+        ],
+        "visual_result": "Draft, Cancel, Retry and status legible; no clipping or obstruction."
+      },
+      {
+        "ppm": "/workspace/shared/timecard-shared-input-productivity-20261012/build/timecard-shared-input/frames/watch-retry-limit.ppm",
+        "ppm_sha256": "ae15bb98fc85073f47c425d525a480315bce854b1b1e690d12882148bfd7d071",
+        "png_sha256": "da3f2b5d9acc8a40cc5bdcbdbd1ec2fe6707ed14a2aec134447c36bb39fd8978",
+        "dimensions": [
+          240,
+          240
+        ],
+        "visual_result": "Draft, Cancel, Retry and status legible; no clipping or obstruction."
+      },
+      {
+        "ppm": "/workspace/shared/timecard-shared-input-productivity-20261012/build/timecard-shared-input/frames/watch-retry-invalid.ppm",
+        "ppm_sha256": "d82825bcfda172097d040a22b874d0ae7c833d170f888116332d2d5bc164b8f9",
+        "png_sha256": "9a667362857d50910496faf8642b1b4041c1b38208885cb797f842e2f62b456d",
+        "dimensions": [
+          240,
+          240
+        ],
+        "visual_result": "Draft, Cancel, Retry and status legible; no clipping or obstruction."
+      },
+      {
+        "ppm": "/workspace/shared/timecard-shared-input-productivity-20261012/build/timecard-shared-input/frames/watch-retry.ppm",
+        "ppm_sha256": "ae15bb98fc85073f47c425d525a480315bce854b1b1e690d12882148bfd7d071",
+        "png_sha256": "da3f2b5d9acc8a40cc5bdcbdbd1ec2fe6707ed14a2aec134447c36bb39fd8978",
+        "dimensions": [
+          240,
+          240
+        ],
+        "visual_result": "Draft, Cancel, Retry and status legible; no clipping or obstruction."
+      }
+    ],
+    "public_ci": {
+      "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
+      "commit": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+      "run_id": 38283829029,
+      "job_id": 114927297643,
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Productivity/actions/runs/38283829029",
+      "independently_fetched_job_success": true,
+      "leak_detection": "platform default; command omits --no-leak-checks",
+      "verified_log_lines": [
+        "2026-10-12T17:23:04.1705707Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +395c48de8fa10b672816c89c02dd9a5d4987a094:refs/remotes/origin/work/timecard-shared-input-20261012",
+        "2026-10-12T17:23:04.6460632Z  * [new ref]         395c48de8fa10b672816c89c02dd9a5d4987a094 -> origin/work/timecard-shared-input-20261012",
+        "2026-10-12T17:23:04.6970743Z 395c48de8fa10b672816c89c02dd9a5d4987a094",
+        "2026-10-12T17:23:08.4757863Z ##[group]Run python scripts/test_timecard_shared_input.py --system-apps .dependencies/system --utilities .dependencies/utilities --runtime .dependencies/runtime",
+        "2026-10-12T17:24:08.0984068Z 174 workflow/regression runs and 6 paired render/storage parity checks PASS"
+      ]
+    },
+    "historical_watch_frame_parity": [
+      "weeks 03507a1d634a421d",
+      "week d02e68ad02404f8c",
+      "day 0514f4bf5f2eb540",
+      "saved-day 8e4797e43d04c10c",
+      "saved-24-hour d2cb129d11a1110b",
+      "saved-week 0314a0cb194da394",
+      "weeks-return 21e4a7f2a3475f28",
+      "ledger 273e4aa52482976e"
+    ]
+  },
+  "result": "passed: complete source, target, fonts/metrics, exact-cohort custody, admission and rendered-view review"
+}

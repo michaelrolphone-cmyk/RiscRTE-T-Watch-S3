@@ -1,0 +1,29 @@
+name: Watch Scanner keyboard recipe
+on:
+  push:
+    branches: [integrate/watch-scanner-shared-input-20261012]
+  pull_request:
+    paths:
+      - 'scripts/build_watch_keyboard_scanner.py'
+      - 'scripts/test_watch_keyboard_scanner.py'
+      - 'tests/test_watch_keyboard_scanner_builder.py'
+      - 'tests/shared_keyboard/watch_scanner_host.c'
+      - '.github/workflows/watch-scanner-shared-input.yml'
+permissions:
+  contents: read
+jobs:
+  recipe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install -r scripts/requirements.txt
+      - run: |
+          python3 tests/test_watch_keyboard_scanner_builder.py
+          python3 tests/test_watch_keyboard_wifi_builder.py
+          python3 tests/test_shared_keyboard_recipe.py
+          python3 -m py_compile scripts/build_watch_keyboard_scanner.py scripts/test_watch_keyboard_scanner.py

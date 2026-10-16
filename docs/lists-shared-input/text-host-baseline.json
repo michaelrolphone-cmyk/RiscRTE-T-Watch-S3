@@ -1,0 +1,32 @@
+{
+  "schema": "lists.shared-text-host.baseline.v1",
+  "device": "watch",
+  "manifest": {
+    "architecture": "xtensa-esp32s3",
+    "driver_abi": 2,
+    "file_name": "driver.elf",
+    "id": "text-input-host",
+    "provides": [
+      {
+        "api": 1,
+        "capability": "ui.text-input"
+      }
+    ],
+    "requires": [
+      {
+        "api": 1,
+        "capability": "ui.scene"
+      }
+    ],
+    "type": "driver",
+    "version": "0.1.6"
+  },
+  "manifest_sha256": "3e030fa25b746474616dc36ee0dca3b6332614721bb4f1c2f083d6aa0311545d",
+  "elf_sha256": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+  "elf_bytes": 8872,
+  "boot_row": {
+    "manifest": "text-input/manifest.json"
+  },
+  "defines": [],
+  "fonts_owned_by_unchanged_scene_host": true
+}

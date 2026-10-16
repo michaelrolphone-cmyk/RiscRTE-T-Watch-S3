@@ -1,0 +1,31 @@
+{
+  "schema": "contexts.lifecycle-device-selection.v1",
+  "finalized": true,
+  "device": "watch",
+  "version": "0.4.4",
+  "sources": {
+    "system-apps": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+    "utilities": "d068784cb5d581f1e81b5021f5d96d2917e03ec3"
+  },
+  "baseline": {
+    "compiled_recipe_commit": "2cd9739a403d733a3b45d6925abd5220b1a1e743",
+    "combined_handoff_sha256": "b174cba70ab88df294a48e53611bf0fecb2f0e2c8976bd6ab56e7f5e22cf3065",
+    "receipt_sha256": "680163e5a33cac98c8a1eb0a7d21b078ee5b2c56971bc6611d54c8af2a1ec4ae",
+    "full_image_sha256": "018eddc6295203f2d817cc8db91d49dd52f40182f29cbaedfc99cddc4f48ac18",
+    "candidate_store_sha256": "f2a347376ce7679a2b6cc5b86cfdfd175e9d046f1255c4b86a5b873d50411536",
+    "free_spiffs_blocks": 3,
+    "sd_file_count": 0,
+    "handoff_file": "handoff-qualified-published-20261012T200947Z.json",
+    "normal_admission": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/receipts/final-normal.json",
+      "bytes": 33921,
+      "sha256": "680163e5a33cac98c8a1eb0a7d21b078ee5b2c56971bc6611d54c8af2a1ec4ae"
+    },
+    "sanitized_admission": {
+      "path": "/workspace/shared/lists-shared-input-components-20261012/watch-published/candidate/receipts/final-sanitized.json",
+      "bytes": 33921,
+      "sha256": "680163e5a33cac98c8a1eb0a7d21b078ee5b2c56971bc6611d54c8af2a1ec4ae"
+    }
+  },
+  "status": "Final published-source qualified Lists union selected; Contexts successor target qualification follows"
+}

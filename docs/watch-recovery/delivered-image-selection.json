@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "kind": "delivered-images",
+  "old": {
+    "filename": "WATCH-1.1.20-FULL-INITIAL-ERASES-DATA.bin",
+    "sha256": "f8195d2af2dfdcc9f2c0413883efd97f6efe4d62eb90cfd4e5cab5aec5332cb6"
+  },
+  "recovered": {
+    "filename": "T-Watch-S3-1.1.21-r1-AppData-Fix-full-0x0.bin",
+    "sha256": "4e43fc376021779a2d7a5cada96aee255735d5db1eb0e896c5aacf65bb3889bc",
+    "appdata_sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0"
+  }
+}

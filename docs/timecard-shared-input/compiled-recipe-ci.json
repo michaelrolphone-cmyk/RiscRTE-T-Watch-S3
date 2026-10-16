@@ -1,0 +1,14 @@
+{
+  "checks": [],
+  "commit": "9f3669771c75e6d472afd8c8af9861600dcc9e5a",
+  "conclusion": "no_applicable_runs_or_checks",
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "runs": [],
+  "schema": "timecard.compiled-recipe-ci.v1",
+  "status": {
+    "state": "pending",
+    "statuses": [],
+    "total_count": 0
+  },
+  "zero_status_note": "The legacy pending state with total_count 0 is not a pending check."
+}

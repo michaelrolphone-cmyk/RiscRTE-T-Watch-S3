@@ -1,0 +1,465 @@
+{
+  "schema": "rf.native-canvas.qualification.v1",
+  "hardware_verified": false,
+  "application_scope": "Waterfall RF only; microphone Audio Spectrum unchanged",
+  "recipe_change": [
+    "-DPORTABLE_RF_NATIVE_CANVAS"
+  ],
+  "system_source": {
+    "local": "4d767977a0c97ff05476c0d8a5a16469f269a4e8",
+    "published_equivalent": "e49bded76400ff746dc9851b107ee9b6ab0c629f"
+  },
+  "utilities_native_checkpoint": {
+    "local": "f7ca883fcc8267748b58b53e4d8c7e7a30be373e",
+    "published_equivalent": "80865ac3442eaf8ec9d3ee1ebc06e10f1ebfea93"
+  },
+  "utilities_status_checkpoint": "ec855f5d150e58e043941a358fc0d968998c4a62",
+  "predecessor": {
+    "utilities": "d03c6564814ff1588bf73af45b3f0288908466c3",
+    "system": "fe238022814c89e3c7cafb3df60a3997e34caf7b"
+  },
+  "runtime": "4107eaeedd8c801eeaf7deb1c7bc4a943cd27342",
+  "native_gate": {
+    "runs": 14,
+    "checks_per_run": 41,
+    "checks_total": 574,
+    "dimensions": [
+      [
+        160,
+        160
+      ],
+      [
+        200,
+        200
+      ],
+      [
+        240,
+        240
+      ],
+      [
+        240,
+        320
+      ],
+      [
+        320,
+        240
+      ],
+      [
+        410,
+        502
+      ],
+      [
+        640,
+        240
+      ]
+    ],
+    "normal_and_asan_ubsan": true,
+    "plot_axis_unchanged_hash_assertions": 56,
+    "status_changed_hash_assertions": 56,
+    "input": "Physical plot edges and cursor pill under pending async frame; freeze/history; Controls through last row, editor/receiver/footer"
+  },
+  "raster_gate": {
+    "runs": 8,
+    "comparisons_per_run": 79,
+    "comparisons_total": 632,
+    "glyph_band_max_rows": 15,
+    "replay_work_bound": "No more pixel visits than one immediate glyph pass; complete stride/padding/pixel equality and retained-custody fence",
+    "host_cpu_results": [
+      "native raster 160x160: comparisons=79 glyph-band-max=15 direct-pixels=44526 replay-pixels=25420 host-cpu-ms=7.343 PASS",
+      "native raster 160x160: comparisons=79 glyph-band-max=15 direct-pixels=44526 replay-pixels=25420 host-cpu-ms=11.649 PASS",
+      "native raster 240x240: comparisons=79 glyph-band-max=15 direct-pixels=60210 replay-pixels=34364 host-cpu-ms=4.475 PASS",
+      "native raster 240x240: comparisons=79 glyph-band-max=15 direct-pixels=60210 replay-pixels=34364 host-cpu-ms=17.132 PASS",
+      "native raster 410x502: comparisons=79 glyph-band-max=15 direct-pixels=96072 replay-pixels=54952 host-cpu-ms=16.653 PASS",
+      "native raster 410x502: comparisons=79 glyph-band-max=15 direct-pixels=96072 replay-pixels=54952 host-cpu-ms=100.457 PASS",
+      "native raster 640x240: comparisons=79 glyph-band-max=15 direct-pixels=133884 replay-pixels=76098 host-cpu-ms=17.331 PASS",
+      "native raster 640x240: comparisons=79 glyph-band-max=15 direct-pixels=133884 replay-pixels=76098 host-cpu-ms=31.220 PASS"
+    ]
+  },
+  "models": {
+    "normal_and_sanitized_runs": 6,
+    "result": "PASS"
+  },
+  "generic_controller": {
+    "passed": 102,
+    "total": 108,
+    "runtime_storage_passed": 2,
+    "runtime_storage_total": 2,
+    "clean": false,
+    "remaining_failed_scenes": [
+      "neural",
+      "sleep-stop",
+      "keyboard-cancel"
+    ],
+    "paired_failures": [
+      {
+        "scene": "rooms",
+        "phase": "original timing (resolved by ordered-edge pacing)",
+        "predecessor_and_candidate": [
+          {
+            "profile": "candidate",
+            "returncode": -6,
+            "assertion": "line 70 check signature_goal eq 0: got 64; page=4 polls=196 captures=108 message=NOMINAL RF / UNCALIBRATED"
+          },
+          {
+            "profile": "predecessor",
+            "returncode": -6,
+            "assertion": "line 70 check signature_goal eq 0: got 64; page=4 polls=196 captures=108 message=NOMINAL RF / UNCALIBRATED"
+          }
+        ]
+      },
+      {
+        "scene": "whole-event",
+        "phase": "original timing (resolved by ordered-edge pacing)",
+        "predecessor_and_candidate": [
+          {
+            "profile": "candidate",
+            "returncode": -6,
+            "assertion": "line 69 check event_ready eq 1: got 0; page=8 polls=328 captures=181 message=NOMINAL RF / UNCALIBRATED"
+          },
+          {
+            "profile": "predecessor",
+            "returncode": -6,
+            "assertion": "line 69 check event_ready eq 1: got 0; page=8 polls=328 captures=181 message=NOMINAL RF / UNCALIBRATED"
+          }
+        ]
+      },
+      {
+        "scene": "neural",
+        "phase": "pre-existing scene/assertion failure; cause unresolved",
+        "predecessor_and_candidate": [
+          {
+            "profile": "candidate",
+            "returncode": -6,
+            "assertion": "line 50 check neural_state eq 5: got 2; page=1 polls=5516 captures=3 message=STOPPED / RF OFF"
+          },
+          {
+            "profile": "predecessor",
+            "returncode": -6,
+            "assertion": "line 50 check neural_state eq 5: got 2; page=1 polls=5516 captures=3 message=STOPPED / RF OFF"
+          }
+        ]
+      },
+      {
+        "scene": "sleep-stop",
+        "phase": "pre-existing scene/assertion failure; cause unresolved",
+        "predecessor_and_candidate": [
+          {
+            "profile": "candidate",
+            "returncode": -6,
+            "assertion": "line 4 check sleep eq 1: got 0; page=0 polls=6 captures=3 message=NOMINAL RF / UNCALIBRATED"
+          },
+          {
+            "profile": "predecessor",
+            "returncode": -6,
+            "assertion": "line 4 check sleep eq 1: got 0; page=0 polls=6 captures=3 message=NOMINAL RF / UNCALIBRATED"
+          }
+        ]
+      },
+      {
+        "scene": "keyboard-cancel",
+        "phase": "pre-existing scene/assertion failure; cause unresolved",
+        "predecessor_and_candidate": [
+          {
+            "profile": "candidate",
+            "returncode": -6,
+            "assertion": "line 13 check page eq 2: got 3; page=3 polls=23 captures=16 message=NOMINAL RF / UNCALIBRATED"
+          },
+          {
+            "profile": "predecessor",
+            "returncode": -6,
+            "assertion": "line 13 check page eq 2: got 3; page=3 polls=23 captures=16 message=NOMINAL RF / UNCALIBRATED"
+          }
+        ]
+      }
+    ],
+    "application_checkpoint": "f7ca883fcc8267748b58b53e4d8c7e7a30be373e",
+    "application_source_sha256": "1b008807f826bdf29e451222e457851264896fec0bdcc064a27a1ff133704d9b",
+    "predecessor_application_sha256": "0e971e27ca468fc1a8abd99cad5e1a1e17db75bb3eb09da43e2169d848f3513a",
+    "paired_predecessor_sanitized": false,
+    "paired_predecessor_scope": "Normal predecessor runs reproduce the unchanged assertion, polls and captures; candidate failures recur normal/sanitized."
+  },
+  "product_profiles": {
+    "twatch": {
+      "passed": 240,
+      "total": 242,
+      "normal_and_sanitized": true,
+      "view_inventory": [
+        "startup",
+        "spectrum",
+        "waterfall",
+        "monitor",
+        "controls",
+        "controls-scrolled",
+        "frequency-label",
+        "signatures",
+        "signature-editor",
+        "events",
+        "event-editor",
+        "event-capture",
+        "event-examples",
+        "shared-rooms",
+        "shared-events",
+        "shared-editor",
+        "shared-capture",
+        "monitor-edit",
+        "receiver"
+      ],
+      "normal_sanitized_identical_image_count": 386,
+      "remaining_failures": [
+        {
+          "scene": "loss-open",
+          "sanitized": false,
+          "returncode": -6,
+          "assertion": "fake_diag: !native_retained&&!runtime_lost",
+          "classification": "pre-existing scene/assertion failure; cause unresolved"
+        },
+        {
+          "scene": "loss-open",
+          "sanitized": true,
+          "returncode": -6,
+          "assertion": "fake_diag: !native_retained&&!runtime_lost",
+          "classification": "pre-existing scene/assertion failure; cause unresolved"
+        }
+      ],
+      "fixture_source_sha256": "5e6c212d208acd1df53c38dd7e4f5b138710389e799e95301a23a92b1c4d813a",
+      "recipe_sha256": "27911993f5c368f67e3a9492ed22d14beffb8b0db28650ddddfc187f05a1b19a",
+      "paired_predecessor_assertion": "fake_diag: !native_retained&&!runtime_lost",
+      "paired_predecessor_sanitized": false
+    },
+    "wave": {
+      "passed": 240,
+      "total": 242,
+      "normal_and_sanitized": true,
+      "view_inventory": [
+        "startup",
+        "spectrum",
+        "waterfall",
+        "monitor",
+        "controls",
+        "controls-scrolled",
+        "frequency-label",
+        "signatures",
+        "signature-editor",
+        "events",
+        "event-editor",
+        "event-capture",
+        "event-examples",
+        "shared-rooms",
+        "shared-events",
+        "shared-editor",
+        "shared-capture",
+        "monitor-edit",
+        "receiver"
+      ],
+      "normal_sanitized_identical_image_count": 386,
+      "remaining_failures": [
+        {
+          "scene": "loss-open",
+          "sanitized": false,
+          "returncode": -6,
+          "assertion": "fake_diag: !native_retained&&!runtime_lost",
+          "classification": "pre-existing scene/assertion failure; cause unresolved"
+        },
+        {
+          "scene": "loss-open",
+          "sanitized": true,
+          "returncode": -6,
+          "assertion": "fake_diag: !native_retained&&!runtime_lost",
+          "classification": "pre-existing scene/assertion failure; cause unresolved"
+        }
+      ],
+      "fixture_source_sha256": "5e6c212d208acd1df53c38dd7e4f5b138710389e799e95301a23a92b1c4d813a",
+      "recipe_sha256": "af426e45f46e70dcb01d757659eef71a7e4dd47f32b275b79c2579375e818bc5",
+      "paired_predecessor_assertion": "fake_diag: !native_retained&&!runtime_lost",
+      "paired_predecessor_sanitized": false
+    }
+  },
+  "legacy_preservation": {
+    "runs": 8,
+    "normal_and_sanitized": true,
+    "profiles": [
+      "unselected240x240 color",
+      "rotated480x800 logical paper"
+    ],
+    "predecessor_image_equalities": 20,
+    "images": [
+      "spectrum",
+      "waterfall",
+      "controls",
+      "controls-scrolled",
+      "monitor"
+    ],
+    "compile_time_capacity_assertions": {
+      "spec_levels": 228,
+      "fall_levels": 438
+    },
+    "result": "PASS"
+  },
+  "target_builds": {
+    "wave": {
+      "bytes": 252240,
+      "bss_bytes": 1202504,
+      "baseline_bytes": 251648,
+      "byte_delta": 592,
+      "sha256": "a3f9e4f2ba63b5b035da6696a33c9b5bd3e3ecafd3dc86fc97ec096a0e21189a",
+      "recipe_flags": [
+        "-DPORTABLE_RF_NATIVE_CANVAS",
+        "-DPORTABLE_RUNTIME_APP_CATALOG",
+        "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_APP_HOME_GUARD",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+        "-DPORTABLE_LOW_BATTERY",
+        "-DPORTABLE_BLE_BROADCAST",
+        "-DPORTABLE_TOUCH_ROTATION=0",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DPORTABLE_FORCE_FULL_FRAMES",
+        "-DPORTABLE_INPUT_NAVIGATION",
+        "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+        "-DPORTABLE_APP_SLEEP_LOCAL",
+        "-DPORTABLE_ALARM_CLIENT",
+        "-DPORTABLE_QUICK_ACTIONS",
+        "-DPORTABLE_QUICK_RADIOS",
+        "-DPORTABLE_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DPORTABLE_NOVA_UI",
+        "-DPORTABLE_BLE_FOREGROUND",
+        "-DPORTABLE_RADIO_SESSION",
+        "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+        "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+        "-DRF_STORAGE_INSTANCE=13",
+        "-DRF_APP_DATA_INSTANCE=3",
+        "-DRF_RETURN_APP=\"springboard.elf\"",
+        "-DPORTABLE_APP_LAUNCH_GUARD",
+        "-DPORTABLE_CONTEXTS_CLIENT",
+        "-DPORTABLE_NAVIGATION_RETENTION",
+        "-DPORTABLE_ASYNC_RGB565",
+        "-DPORTABLE_WATCH_NATIVE_HEIGHT",
+        "-DPORTABLE_QUICK_ATOMIC_PREFERENCES",
+        "-DPORTABLE_HOME_AUTOMATIC_PREFERENCES"
+      ]
+    },
+    "twatch": {
+      "bytes": 243016,
+      "bss_bytes": 1201040,
+      "baseline_bytes": 238912,
+      "byte_delta": 4104,
+      "sha256": "62c25516e32c7c5e3ff878dd90b52df6a2987fd97cdbfe27ce55390f8c7df86e",
+      "recipe_flags": [
+        "-DPORTABLE_RF_NATIVE_CANVAS",
+        "-DPORTABLE_RUNTIME_APP_CATALOG",
+        "-DPORTABLE_RF_SHARED_TEXT_INPUT",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_APP_HOME_GUARD",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_HOME_APP=\"springboard.elf\"",
+        "-DPORTABLE_LOW_BATTERY",
+        "-DPORTABLE_BLE_BROADCAST",
+        "-DPORTABLE_TOUCH_ROTATION=0",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DPORTABLE_FORCE_FULL_FRAMES",
+        "-DPORTABLE_INPUT_NAVIGATION",
+        "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+        "-DPORTABLE_APP_SLEEP_LOCAL",
+        "-DPORTABLE_ALARM_CLIENT",
+        "-DPORTABLE_QUICK_ACTIONS",
+        "-DPORTABLE_QUICK_RADIOS",
+        "-DPORTABLE_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DPORTABLE_NOVA_UI",
+        "-DPORTABLE_BLE_FOREGROUND",
+        "-DPORTABLE_RADIO_SESSION",
+        "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+        "-DPORTABLE_RADIO_CONTINUOUS_CAPTURE",
+        "-DRF_STORAGE_INSTANCE=13",
+        "-DRF_APP_DATA_INSTANCE=3",
+        "-DRF_RETURN_APP=\"springboard.elf\"",
+        "-DPORTABLE_APP_LAUNCH_GUARD",
+        "-DPORTABLE_CONTEXTS_CLIENT",
+        "-DPORTABLE_NAVIGATION_RETENTION",
+        "-DPORTABLE_ASYNC_RGB565",
+        "-DPORTABLE_WATCH_NATIVE_HEIGHT"
+      ]
+    }
+  },
+  "new_full_frame_buffers": 0,
+  "history_capacity": {
+    "bursts": 228,
+    "frequency_rows_max": 438
+  },
+  "status_layout": {
+    "strip_height": 36,
+    "plot_top": 46,
+    "plot_width": "capability width - 12",
+    "plot_height": "capability height - 110",
+    "both_views": [
+      "Spectrum",
+      "Waterfall"
+    ],
+    "known_and_unknown": true,
+    "paper_unchanged": true
+  },
+  "not_claimed": [
+    "physical display/touch/RF hardware",
+    "complete generic scene-suite pass",
+    "official store admission",
+    "Runtime ELF loader execution"
+  ],
+  "application_sha256": {
+    "Apps/rf_application.inc": "47dc925d171317e9113caa19e75786f85fa11817600c383390fe0e8f33fa5b23",
+    "Apps/rf_controls.inc": "dc1e97c90ba3134ec3c661318aa103b247b42b6b320980c1fddc4d743711532c",
+    "Apps/audio_spectrum.c": "7a3f72e71d1beb1ec03129a01a4b70cafafe1deb766f4b25c43fee8f52c1cb36"
+  },
+  "commands": {
+    "native": "python scripts/test_rf_native_canvas.py --system-apps \"$SYSTEM\" --output \"$OUT/native\"",
+    "raster": "python \"$SYSTEM/scripts/test_rf_native_raster.py\" --output \"$OUT/raster\"",
+    "models": "python scripts/test_rf_models.py",
+    "legacy": "python scripts/test_rf_legacy_canvas.py --system-apps \"$SYSTEM\" --baseline-utilities \"$BASELINE_UTILITIES\" --output \"$OUT/legacy\"",
+    "controller": "python scripts/test_rf_application.py --system-apps \"$SYSTEM\" --runtime \"$RUNTIME\" --native-canvas --target watch --keep-going",
+    "profile_twatch": "python scripts/test_rf_shared_input.py --system-apps \"$SYSTEM\" --runtime \"$RUNTIME\" --watch-recipe \"$TWATCH_HOST_RECIPE\" --target watch --extra-define PORTABLE_RF_NATIVE_CANVAS --skip-baseline --keep-going --output \"$OUT/twatch\"",
+    "profile_wave": "python scripts/test_rf_shared_input.py --system-apps \"$SYSTEM\" --runtime \"$RUNTIME\" --watch-recipe \"$WAVE_HOST_RECIPE\" --target watch --extra-define PORTABLE_RF_NATIVE_CANVAS --skip-baseline --keep-going --native-height --output \"$OUT/wave\""
+  },
+  "demonstrated_fixture_corrections": {
+    "pacing": [
+      "rooms",
+      "whole-event"
+    ],
+    "native_semantic_coordinates": [
+      "ui-temporal",
+      "label-saved-home",
+      "label-pending-home-refused-back",
+      "capture-stop-restart"
+    ],
+    "native_coordinate_results": "All corrected Wave cases pass normal/sanitized; independent physical-coordinate native gate also passes"
+  },
+  "test_source_sha256": {
+    "scripts/test_rf_application.py": "2c2f3086bf85c00ac2ef9693c9b6ee4e1a377ca2dad590cd0b9607beb0fad73c",
+    "scripts/test_rf_native_canvas.py": "c67119a4dc036bc3fd6b1836fac9ffa80215f639d0231eaec8f37e854b866ae0",
+    "scripts/test_rf_shared_input.py": "2d03187abfd9a5295428b065aab7620a2ae289244eca6986abfe0e4f78c5f53b",
+    "scripts/test_rf_legacy_canvas.py": "e6a4f39407fcb4c89308d37bbe19f72311a38b76c0957930c32e76ad42b744ee",
+    "test/native_apps/rf_renderer_test.c": "f36c1a6c1c24078dc85015530945f3223057f4d2ebb67827ad1806ba5ce1e1e7",
+    "test/rf_shared_input/renderer.c": "5e6c212d208acd1df53c38dd7e4f5b138710389e799e95301a23a92b1c4d813a"
+  },
+  "system_test_source_sha256": {
+    "scripts/test_rf_native_raster.py": "2197ebe68140d169d8e62e60f3e87aebe3a5a453ef2c7ccc9fa1bbbeeeb5ece1",
+    "test/native_apps/rf_native_raster_test.c": "5bffafe24d1645253f22df2850678f4f900aa48edb000a90a38ac6e6abb7f02f"
+  },
+  "evidence_artifact_sha256": {
+    "status-native-input/evidence.json": "7adbd8f63dfbc915f4e86fdb90b8a3b5250c26759791250542aa206c51610d85",
+    "native-raster/evidence.json": "7de2258c8687732426e5f287a844e2ecdb32fdb87913d4e03b0b822795b5d594",
+    "legacy-canvas/evidence.json": "7fb9ec2da587e41b1bd3072cbbcd4cf01471959ad1ad5813969799eb8a703623",
+    "qualified-shared-wave/qualification.json": "e9c80e8a4459575c8bbbfe1b4f610d74d06ae5a59984f88294f3c4a26327f09b",
+    "qualified-shared-twatch/qualification.json": "718dfe43e07b12ab8342e0871ccfeef3c3b8969bd72d9ab89f433dc9293242b9",
+    "target-native/receipt.json": "123d9ad160b3396ef15dbfcd57526a9da9de61b5ec9ebf3cf6ae7a0dba137c55",
+    "status-checkpoint-contact.png": "597f92c3959d1dfc18664d6869d83f4ba1b86d4d0909d0c5d52e8d455ef36218"
+  },
+  "utilities_status_published_equivalent": "d60badc04c60ec4ef35262d6fd260afa5639eacd",
+  "utilities_status_published_tree": "fecd9a7ae7c8d7490a96670c249b9015b6f62a01"
+}

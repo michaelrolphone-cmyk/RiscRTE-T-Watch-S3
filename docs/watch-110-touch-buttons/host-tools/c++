@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+import os,sys
+args=[a for a in sys.argv[1:] if a != '-no-pie']
+os.execv('/usr/bin/clang++',['/usr/bin/clang++',*args,'-Wno-missing-braces'])
