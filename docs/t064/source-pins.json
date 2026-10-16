@@ -1,0 +1,11 @@
+{
+  "baseline_version": "1.1.32",
+  "baseline_sha256": "cc37711c0df356ad28bf79b9e8a273111aa1239999b22f8780c63fb228fc0646",
+  "version": "1.1.33",
+  "native_sha256": "bb140b07df3a1f862a2bf0291239e04567c548e8fe30cfddc1e91c1cd919f15f",
+  "native_unchanged": true,
+  "home_source": "87b17a368b32abe50a21787242f94616b2b26983",
+  "namespace": 61,
+  "sd_instance": null,
+  "hardware_tested": false
+}

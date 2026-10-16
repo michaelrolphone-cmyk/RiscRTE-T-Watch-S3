@@ -228,3 +228,13 @@ bool nova_watch_sleep_status(risc_display_surface_v1 *s,const char *label){
     for(unsigned y=203;y<231;y++)for(unsigned x=10;x<230;x++)put(at(&c,x,y),0);
     centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),label,222,128,ORANGE);return true;
 }
+
+bool nova_watch_context_message(risc_display_surface_v1*s,const char*message){
+ if(!s||!s->pixels||s->width!=240||s->height!=240||s->stride_bytes<480||s->size_bytes<s->stride_bytes*240u||!message)return false;
+ canvas c=CANVAS_INIT(s,((const nova_watch_state*)NULL));CANVAS_CLEAR(c);
+ char first[17]={0},second[17]={0};unsigned n=0;while(message[n]&&n<16){first[n]=message[n];n++;}unsigned j=0;while(message[n]&&j<16)second[j++]=message[n++];
+ centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),"CONTEXT",65,256,CYAN);
+ centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),first,112,0,0xffff);
+ centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),second,142,0,0xffff);
+ centered(&c,nova_date_glyphs,COUNT(nova_date_glyphs),"TAP TO DISMISS",190,0,MUTED);return CANVAS_OK(c);
+}

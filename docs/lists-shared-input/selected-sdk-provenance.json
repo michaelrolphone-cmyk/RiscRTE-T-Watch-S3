@@ -1,0 +1,122 @@
+{
+  "schema": "lists.selected-sdk-provenance.v1",
+  "prior_productivity": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+  "historical_sdk_sources": {
+    "runtime": "a9587bec00015ad56c302192a8359b6d70cde01a",
+    "system": "eec748ca081fe59346be03180600c65013cc7298"
+  },
+  "historical_sdk_raw_sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+  "historical_sdk_raw_bytes": 33192,
+  "historical_sdk_compacted_sha256": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+  "selected_x4_raw_exact_match": true,
+  "selected_watch_compacted_exact_match": true,
+  "current_sdk_raw_sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+  "actual_compile_headers": {
+    "RiscSceneResidentV1.h": {
+      "old_sha256": "a657fcd906217fdbb03894c15b10009b352d6a5b7466868afa603a03236b8851",
+      "current_sha256": "145ef678f3330e4fab85430395b5799dde8dd05ce056f7b2f02ad5a9f58d0414",
+      "changed": true
+    },
+    "RiscResidentShellV1.h": {
+      "old_sha256": "1a84715c03fcc7fae7f75cb72c0daf875e761567dda5d1b39ec0dc8b14fba8bd",
+      "current_sha256": "1a84715c03fcc7fae7f75cb72c0daf875e761567dda5d1b39ec0dc8b14fba8bd",
+      "changed": false
+    },
+    "RiscSceneLifecycleV1.h": {
+      "old_sha256": "df77c7efc4556c84f4016883b0f65ea0e64eec3d2b27a0204f989d576cfce92c",
+      "current_sha256": "df77c7efc4556c84f4016883b0f65ea0e64eec3d2b27a0204f989d576cfce92c",
+      "changed": false
+    },
+    "RiscRuntimeV1.h": {
+      "old_sha256": "0171988c0b4cb7ff1146e871fab17e408ad352a1220f5851abef4c152473e8ad",
+      "current_sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+      "changed": true
+    },
+    "SceneKeyboardV1.h": {
+      "old_sha256": "ae67bfa4dde956ba116f4608aecdff3da578c409abaa7b42e724906d4e74ec1d",
+      "current_sha256": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+      "changed": true
+    },
+    "RiscSceneV1.h": {
+      "old_sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+      "current_sha256": "11d99e7e2cb1b598c53fba42ca19681bf4a68cc90e223cc8a7fbe391ff7d3b24",
+      "changed": false
+    },
+    "RiscCivilClockV1.h": {
+      "old_sha256": "b3ef7e49bdfdedf6f5100b85587ad6714826feb3af69cc09a0811a8afd67022b",
+      "current_sha256": "b3ef7e49bdfdedf6f5100b85587ad6714826feb3af69cc09a0811a8afd67022b",
+      "changed": false
+    },
+    "RiscAppDataV1.h": {
+      "old_sha256": "df4e31c71ad360c856aa24388548feee07097126e380c081bc35a82c5b71f248",
+      "current_sha256": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+      "changed": true
+    },
+    "RiscSceneComponentsV1.h": {
+      "old_sha256": "756e12d47bba909dfe855a1bb8e555b09b32032bf35df39ffa877861b2786a1c",
+      "current_sha256": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+      "changed": true
+    }
+  },
+  "changed_used_headers": {
+    "RiscSceneResidentV1.h": {
+      "old_sha256": "a657fcd906217fdbb03894c15b10009b352d6a5b7466868afa603a03236b8851",
+      "current_sha256": "145ef678f3330e4fab85430395b5799dde8dd05ce056f7b2f02ad5a9f58d0414",
+      "changed": true
+    },
+    "RiscRuntimeV1.h": {
+      "old_sha256": "0171988c0b4cb7ff1146e871fab17e408ad352a1220f5851abef4c152473e8ad",
+      "current_sha256": "6e114c69b4de04a8faa254d89e92143b11549824f53d63b8e75d7e09cd216387",
+      "changed": true
+    },
+    "SceneKeyboardV1.h": {
+      "old_sha256": "ae67bfa4dde956ba116f4608aecdff3da578c409abaa7b42e724906d4e74ec1d",
+      "current_sha256": "f2f5c01d6e867926f5bec8fa776cb1d335263bafddfd415b8166c1c40427207c",
+      "changed": true
+    },
+    "RiscAppDataV1.h": {
+      "old_sha256": "df4e31c71ad360c856aa24388548feee07097126e380c081bc35a82c5b71f248",
+      "current_sha256": "9eb18840ea691f88e85cca6ede3de4833467745ec29225a51a58cb84c0aac84e",
+      "changed": true
+    },
+    "RiscSceneComponentsV1.h": {
+      "old_sha256": "756e12d47bba909dfe855a1bb8e555b09b32032bf35df39ffa877861b2786a1c",
+      "current_sha256": "95d63e4054144958f7a238b883df72c21efce1e6fdcd3f6218c0cacf025ed553",
+      "changed": true
+    }
+  },
+  "current_sdk_with_one_historical_header": {
+    "RiscSceneResidentV1.h": {
+      "sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+      "bytes": 33192,
+      "matches_selected_raw": true
+    },
+    "SceneKeyboardV1.h": {
+      "sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "bytes": 33192,
+      "matches_selected_raw": false
+    },
+    "RiscSceneComponentsV1.h": {
+      "sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "bytes": 33192,
+      "matches_selected_raw": false
+    },
+    "RiscRuntimeV1.h": {
+      "sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "bytes": 33192,
+      "matches_selected_raw": false
+    },
+    "RiscAppDataV1.h": {
+      "sha256": "dfb10951c8edc470dd7ef81d377e4faa2e0ca8cabba6a3772422924e9ecf2bb0",
+      "bytes": 33192,
+      "matches_selected_raw": false
+    }
+  },
+  "semantic_classification": {
+    "RiscSceneResidentV1.h": "Existing poll delegates with work_flags=0; existing dispatch delegates with flags=NULL. Added inhibit-mask/conditional-output branches are inactive for existing Lists calls. Header-only substitution reproduces exact selected raw ELF, isolating all binary change to this wrapper refactor.",
+    "RiscRuntimeV1.h": "Append-only diagnostic/monotonic/exit suffixes and size macros. Historical flag-off code never reads these suffixes; substituting this header alone has no binary effect. Shared Lists intentionally uses size-checked exit_requested.",
+    "RiscSceneComponentsV1.h": "Append-only node kinds, symbols and opt-in flags; all prior numeric values and ABI layout unchanged. Lists uses prior values; substitution alone has no binary effect.",
+    "SceneKeyboardV1.h": "Append-only visibility key/password/long-input constants and comments; ordinary existing 24-character Lists names do not select new flags. Substitution alone has no binary effect.",
+    "RiscAppDataV1.h": "Appends error constant RISC_APP_DATA_BUSY=-11, with no struct/function change. Existing Lists switch/default behavior unchanged; substitution alone has no binary effect."
+  }
+}

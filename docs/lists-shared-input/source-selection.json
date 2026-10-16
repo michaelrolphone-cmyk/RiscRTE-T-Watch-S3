@@ -1,0 +1,20 @@
+{
+  "schema": "lists.final-published-source-selection.v1",
+  "system": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+    "commit": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165"
+  },
+  "productivity": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-Productivity",
+    "commit": "f83d79a0753c2a451730000d2f553aa21fda7830"
+  },
+  "runtime": {
+    "watch": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "x4": "1c1ed8661ea30d47e7e9707c41d492ce3a2b4d70"
+  },
+  "selected_resident_helper_system": "eec748ca081fe59346be03180600c65013cc7298",
+  "x4_owner_selected_system": "0cae9c90b74982e784f5e59c655f246dfbc69178",
+  "baseline_handoff_sha256": "8547042d027bce9e193854fabf8e875c6c82d2d57ae7b5b797713d5ee76c0aa7",
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "hardware_verified": false
+}

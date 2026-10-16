@@ -1,0 +1,635 @@
+{
+  "product": "twatch",
+  "version": "1.1.39",
+  "baseline_version": "1.1.38",
+  "baseline_source_pending": true,
+  "producer_commit": "24270c36cd4bc1edb7bb2e8d860501eaa5105d43",
+  "adapter_source": "96742a20af660808cae6cd3a36eadd12a83a460f",
+  "runtime_revision": "4107eaeedd8c801eeaf7deb1c7bc4a943cd27342",
+  "native_changed": false,
+  "home_changed": false,
+  "springboard_changed": false,
+  "source_root": "/workspace/shared/watch-launch-brightness-20261015/system",
+  "strict_replay_root": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch",
+  "strict_receipt_sha256": "b96d193dd4c0f384dfbb9bfae6140185b4a9ac175f19529cd2d092c914bff472",
+  "apps": {
+    "alarms": {
+      "sha256": "c2c0294e0e3abb196215c91d508a2b23a2588d4ec6f0f03e31635a2f7ac758a2",
+      "bytes": 159616,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "b3c0b7bc0d4e5b95069ddd6b0d3c4114ab3c0f6e2e45eee81f47b141fedd3004",
+      "old_bytes": 155988,
+      "old_version": "0.2.4",
+      "version": "0.2.5",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/alarms.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "app_store": {
+      "sha256": "9f8df97f5bda7c86ff77f0e0a03f84016c65b079f1f3648cf612c408738e28da",
+      "bytes": 140376,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "deb25c5e9a42294c311e90f546cd5d1b69b6831398ba58ef9f8577e95b21f01c",
+      "old_bytes": 140088,
+      "old_version": "1.1.7",
+      "version": "1.1.8",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/app_store.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "audio_spectrum": {
+      "sha256": "914eb41db2494643a903f2af55a100f11f9866c6f668ff835602588ef17d0a31",
+      "bytes": 230644,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "0c9f4733febb6de93a6fa9e779bc3550d7017e82387eb443cc08a680d97ec690",
+      "old_bytes": 230644,
+      "old_version": "0.5.7",
+      "version": "0.5.8",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/audio_spectrum.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "battery": {
+      "sha256": "fdcb36ebee771f968c6febe53e1817a712276cd5c54752ad8250b8ecf32c1c6c",
+      "bytes": 155448,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "a6e21e1b0b0f79427b9e7469bd7471bbfc4de48c15ce60afacc328c39d096bd1",
+      "old_bytes": 155448,
+      "old_version": "1.1.2",
+      "version": "1.1.3",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/battery.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "ble_buttons": {
+      "sha256": "1572c24d52d7e68af5acf6e921f02b2941e7e4302e3f33bc167299dfcac37277",
+      "bytes": 157296,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "62097f65e5dd6bb3e58a847234467b21c7c1cbd5a27f02ea8f53bd37af39066f",
+      "old_bytes": 157000,
+      "old_version": "0.1.27",
+      "version": "0.1.28",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/ble_buttons.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "ble_scanner": {
+      "sha256": "fad13e4863ab34be7a7aca6f3b020a6e5c33766b78d48299e6ba6712f899787b",
+      "bytes": 159528,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "f41b94f7086e213487ae85a98a99f640e38e4697433855b8e4743bb6235659fe",
+      "old_bytes": 159528,
+      "old_version": "0.2.5",
+      "version": "0.2.6",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/ble_scanner.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "ble_touchpad": {
+      "sha256": "592da9c9f1c5a666dd9be187e93dbcd30612207611bd6068107134612264a0b3",
+      "bytes": 155748,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "17685c811647d706acd2bcf21d7edb55dd6b0e06154056336f2f1f8ce3e443a0",
+      "old_bytes": 155452,
+      "old_version": "0.1.16",
+      "version": "0.1.17",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/ble_touchpad.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "calculator": {
+      "sha256": "443fcf1396e5d4919ff67a8d45a86371bf3cf3386510ddc7758f19370b3ca985",
+      "bytes": 151420,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "60d3b426580b9b7c8607cce66859a865749578c91ee0dd0b459c94e33db16367",
+      "old_bytes": 151420,
+      "old_version": "0.1.8",
+      "version": "0.1.9",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/calculator.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "countdown": {
+      "sha256": "999b92b831125fe5772022113f0330cb8b2f1d2da7079484c8b3e28130c17160",
+      "bytes": 151376,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "1e8d268715c840a0efaf5ece011379445970337877198e11bbec53aa2104f911",
+      "old_bytes": 151376,
+      "old_version": "0.1.7",
+      "version": "0.1.8",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/countdown.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "file_browser": {
+      "sha256": "23ad4e1bce90d2616b710240eeda7aa1c44f6a5a44bf7ea437a4888f6e8a3b7c",
+      "bytes": 280924,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strchr",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp",
+          "strrchr",
+          "strstr"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "b5ab445689f4be7c7e626c4b1cc1d3a2740f624b3817d33ea6f0accf3fbe5a06",
+      "old_bytes": 280924,
+      "old_version": "1.5.39",
+      "version": "1.5.40",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/file_browser.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "frequency_generator": {
+      "sha256": "e787608d77eccece1086b41754131609d33a6cd720ddce55c7ebeafe0f6ff5fa",
+      "bytes": 143124,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "23ee79d3160436b8b0db5ae069b55c8055a0ae3b3b22a3c38492c58fb09ed9c8",
+      "old_bytes": 143124,
+      "old_version": "0.1.6",
+      "version": "0.1.7",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/frequency_generator.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "lora_messages": {
+      "sha256": "4b653784cd5c932d9c444e2ac2b5def35928cdc1a12cabfc14b5434fab60e5a1",
+      "bytes": 136960,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "81877ba548ae0c45f4ebbbe71c53753159a4b3a28282ac9ce3c5ef63ad90c0f5",
+      "old_bytes": 136960,
+      "old_version": "0.1.17",
+      "version": "0.1.18",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/lora_messages.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "ota_update": {
+      "sha256": "d8117c690a5b9c866a7cdf6397b7c125e4fef398302231c62d0a30478a60eaef",
+      "bytes": 140388,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "eec29479caf405dc62c1984704cf42a2a768242346f46a5b8a3abcf701b47870",
+      "old_bytes": 140100,
+      "old_version": "1.1.7",
+      "version": "1.1.8",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/ota_update.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "points_in_time": {
+      "sha256": "f9995e275e2d13b145016fc4def6e2eb65349a1cdb3ad22a6eb5297aa525255c",
+      "bytes": 159164,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "3748b6815766a24153f8beaed9427f2cc02d177f395af9fdd6502dcf0911aa3f",
+      "old_bytes": 159160,
+      "old_version": "0.6.20",
+      "version": "0.6.21",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/points_in_time.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "stopwatch": {
+      "sha256": "32647b984e87b1f10dac6a0c8d7ba2fc0f79ab967c3cbb67065f2ad1bda05915",
+      "bytes": 151352,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "c2453ff0ddb1f1710cc27aba79da41a16a1b06ca0ac2dc046819cb68b87cfd05",
+      "old_bytes": 151352,
+      "old_version": "0.1.8",
+      "version": "0.1.9",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/stopwatch.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "timecard": {
+      "sha256": "8c71c8fe6c45a4582a7f1c3d881fa4e4189b5dfd7d0be35cba81d0f374e6d3ad",
+      "bytes": 157436,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen",
+          "strncmp"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "6dd1fda10e49f032390633f558712df68571f28db8c07abd0b3c3a7582cc58fb",
+      "old_bytes": 157324,
+      "old_version": "0.2.15",
+      "version": "0.2.16",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/timecard.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "waterfall": {
+      "sha256": "2ea64e7e52452ffa5a94cf31a70f3d8ac951da272a1e8c730c48322196c4a479",
+      "bytes": 243016,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "62c25516e32c7c5e3ff878dd90b52df6a2987fd97cdbfe27ce55390f8c7df86e",
+      "old_bytes": 243016,
+      "old_version": "0.3.7",
+      "version": "0.3.8",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/waterfall.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    },
+    "wifi_settings": {
+      "sha256": "9d44fa73b99dad6fc2c58b82cd75838ae917d4a9caae19eca56a7b1e677c18b6",
+      "bytes": 148744,
+      "symbols": {
+        "imports": [
+          "free",
+          "malloc",
+          "memchr",
+          "memcmp",
+          "memcpy",
+          "memset",
+          "risc_runtime_get_api",
+          "snprintf",
+          "strcmp",
+          "strcpy",
+          "strlen"
+        ],
+        "exports": [
+          "app_main",
+          "app_module_fini",
+          "app_module_init"
+        ]
+      },
+      "old_sha256": "595ec0b90aad4b8dafbc5440a5bc7ec178717a137011d2f1cb8a209d0e0693a7",
+      "old_bytes": 145084,
+      "old_version": "1.1.31",
+      "version": "1.1.32",
+      "file": "/workspace/shared/watch-launch-brightness-20261015/strict-twatch/wifi_settings.elf",
+      "manifest_changes": [
+        "version"
+      ]
+    }
+  },
+  "changed_store_files": [
+    "alarms.elf",
+    "alarms.json",
+    "app_store.elf",
+    "app_store.json",
+    "audio_spectrum.elf",
+    "audio_spectrum.json",
+    "battery.elf",
+    "battery.json",
+    "ble_buttons.elf",
+    "ble_buttons.json",
+    "ble_scanner.elf",
+    "ble_scanner.json",
+    "ble_touchpad.elf",
+    "ble_touchpad.json",
+    "calculator.elf",
+    "calculator.json",
+    "cohort.json",
+    "countdown.elf",
+    "countdown.json",
+    "file_browser.elf",
+    "file_browser.json",
+    "frequency_generator.elf",
+    "frequency_generator.json",
+    "lora_messages.elf",
+    "lora_messages.json",
+    "ota_update.elf",
+    "ota_update.json",
+    "points_in_time.elf",
+    "points_in_time.json",
+    "stopwatch.elf",
+    "stopwatch.json",
+    "timecard.elf",
+    "timecard.json",
+    "waterfall.elf",
+    "waterfall.json",
+    "wifi_settings.elf",
+    "wifi_settings.json"
+  ]
+}

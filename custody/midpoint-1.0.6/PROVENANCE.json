@@ -1,0 +1,189 @@
+{
+  "commit": "9c8ecf7e2e20bdda24e6f5fb97273ffd7797a94a",
+  "files": {
+    "apps/current-apps-sources.json": {
+      "git_blob": "5c007136f6923747f97c5b0efe9d7dccba3e4fa4",
+      "sha256": "1768e09cce1b8b6b5b35fae7b179377829d0e019dd4f75961dd36a2f6c1982d4"
+    },
+    "apps/current-runtime-requirements.json": {
+      "git_blob": "de52e7af112cd19ca8f136c5e209ed668b56148f",
+      "sha256": "cb1e5f0a6137a43433926306871c6e8bb0fb69ea44890705bad485174aa62ed4"
+    },
+    "apps/midpoint-origin-baseline.json": {
+      "git_blob": "afbd5d0416a2c4d459d153bd9e604f3aac96793e",
+      "sha256": "5cb11868f1da6067a5d6f01f15b1048bf036df0ccc93a76b1406f19cababedd8"
+    },
+    "apps/sdr-upgrade-baseline.json": {
+      "git_blob": "25e972007c25c00dbdd6265f6a7f731bf0127682",
+      "sha256": "cd64237a6bb4fcb9cb88191a241b369114d61fe11d02fbfe17d6108bbd2c95de"
+    },
+    "apps/update-alarm-service-baseline.json": {
+      "git_blob": "f0989f57a9cc9de475e04790a746c0a138e2c4ff",
+      "sha256": "937cdf9fa05db59b1318b954f1ebec030009a6c16f977d1244ab475e540b207a"
+    },
+    "apps/wifi-preserved-elf-baseline.json": {
+      "git_blob": "a7b11c9a4c3aff22944a202751aa4f560ef3abe5",
+      "sha256": "f0e2bbdd0985a7a9cf8f933e2d3ed069138de2ca1f53f513be5e1b510a66c60c"
+    },
+    "release/product.json": {
+      "git_blob": "c6ea7cc375281c4d932705d12cf559227414acb2",
+      "sha256": "d13953440daa99ea9e908d8a6dbf930bcedd4e1bf7bb6d82856ed0de9a098388"
+    },
+    "release/sdr-test-acceptance.json": {
+      "git_blob": "c04e02ffb9c0d235735c8b4b35bc955e901cce33",
+      "sha256": "9b123fdd94eb75708f74b1042d3c5e87ad1397f8147f001b7ebd043e3e638763"
+    },
+    "scripts/build_alarm_apps.py": {
+      "git_blob": "42c6a7a272e9ccdd6ff1be5f08653f48284ee863",
+      "sha256": "581fbac9f3ca19960584f26281e203b2189df908fd33bdc92a151789f89be009"
+    },
+    "scripts/build_clock_app.py": {
+      "git_blob": "cd4e0648d229a1ed53d4a65841a1e7d71d3f072f",
+      "sha256": "6e1d44803e8e1146e44c2b5214d4132e3e8bdc06a75d6bc6879ab4ae2340fa73"
+    },
+    "scripts/build_clock_deployment.py": {
+      "git_blob": "4b7ba468fb2c5424c60b2854d2ac9ddfa2733777",
+      "sha256": "6632b44008b73ac2ae53a1f65b924189b8b5a173038a0c550f280d3ac268f596"
+    },
+    "scripts/build_launcher_apps.py": {
+      "git_blob": "2bfcbdd09f41207364742dcc16403e0e3dcc3027",
+      "sha256": "a3ebfeaf885a4c8c4cf3a1c0b1f9f52c593bf5035645f930f2fc33dc0166e5eb"
+    },
+    "scripts/build_legacy_sleep.py": {
+      "git_blob": "729e3d9a35b4e532c0cff0319c85d8616a4dd5e6",
+      "sha256": "42bc1ab27e30f09f96353b26d3de3e88a83296e3c8532e184560a690e87ce51e"
+    },
+    "scripts/build_next_watch_cohort.py": {
+      "git_blob": "71a6876320d7c45f0b0a9acd4109de16285c6aef",
+      "sha256": "aa8e1814632964bff2316c60c23e799f880f24a9fd8ebff8727694e5024c520d"
+    },
+    "scripts/build_update_apps.py": {
+      "git_blob": "ee5249216b216a5fbbdd6ba7021d67c59fa67ce6",
+      "sha256": "23ab9dd2781114c4646ae5d7a39366079f4d70df0c90dc53fb09d105f3269d38"
+    },
+    "scripts/build_update_common.py": {
+      "git_blob": "49e3280dbbcbbfc984ab100e58d1fc1a6b213936",
+      "sha256": "92485234e42215537bf57fc7035f5077c9d867408e0b85e5f4ea6530cdf4b491"
+    },
+    "scripts/build_update_flash_bundle.py": {
+      "git_blob": "b4f62b46a7329c2d754805ce13b288e00c6bce9f",
+      "sha256": "16c768aa4ca985ed34b16ee41b2086ee39a0fe48a07485dd5891dac82f3ca53f"
+    },
+    "scripts/build_wifi_common.py": {
+      "git_blob": "d8288af1aa039a9792106343e2fc3202d6eec28f",
+      "sha256": "860d5c701ae3d207d19ba83438388861c51fbe3ffbac8209c2f9033d70636794"
+    },
+    "scripts/build_wifi_store.py": {
+      "git_blob": "ee829e50a17ae088c086144ea5414ca1205b0b8b",
+      "sha256": "bb876881bf08b7aab2d0b57681662380b494f0ba9bf94340323bd6b0425b93fb"
+    },
+    "scripts/check_runtime_store_admission.py": {
+      "git_blob": "10f4a415bc0565a996fe00b743aa9e0b34400872",
+      "sha256": "bfc34c92aea7e1b702cfe300fb0ca0224cd528e2264122ac8c4d372b30370136"
+    },
+    "scripts/check_twatch_drivers.py": {
+      "git_blob": "f2fb914e44851c8e39d10a8df0e7935a5085155d",
+      "sha256": "b8fefb31b2eb86b16580ff3aca774915463196fe19cc13d0d47609b6bbe1e44f"
+    },
+    "scripts/compact_current_elf.py": {
+      "git_blob": "b3377809c2b986efc05cd609c8475723398a24f5",
+      "sha256": "07936b7ccbc53809ef8d907b19d434b047e4b7e4a2a8501bd32bd9465f691d55"
+    },
+    "scripts/current_bootfs.py": {
+      "git_blob": "76418f52d4fd9795b9ae2b8e023e03ac40cb798a",
+      "sha256": "3f902ef317e6a112be6b3496d2d6c9cd07376941baa61804b99cadaceb6f798a"
+    },
+    "scripts/current_cohort.py": {
+      "git_blob": "40f21e9aa34fc7556c4663e3bc08d51047a3d91d",
+      "sha256": "4a18b103a266331e86f5d99366920284554e66999765edfd6ae437e1c6438b4a"
+    },
+    "scripts/current_flash_layout.py": {
+      "git_blob": "b3f303e4c34065bea83d225f7514393da722e1fe",
+      "sha256": "aa1a5e2886a50493fd138e93a694f20f541b5eb3284380083477bb7328d8251a"
+    },
+    "scripts/midpoint_upgrade.py": {
+      "git_blob": "ca0f21d335511addb7e2c93ed72676b34f8e8683",
+      "sha256": "decd5a50e908d960fb85c9891e62d4c33f730f8b00b5fa338cb46aec93457a57"
+    },
+    "scripts/pmu_sleep_custody.py": {
+      "git_blob": "01ebe446a3d4fe9613bd7295f8606f6e4086139f",
+      "sha256": "e2c082150442c69de27e31cb467830cdbe8d94826fa92d3c34d9d89a6e9b735f"
+    },
+    "scripts/publish_sdr_test.py": {
+      "git_blob": "6c669927f416e1e78e47b0e260556f8cba3427d8",
+      "sha256": "4c61563f7ad340e7173269bd94fb71af78257586896555f096a8aeee4bf4e5fc"
+    },
+    "scripts/publish_watch_product.py": {
+      "git_blob": "d93b094a157517d479dd3fafcff1986b610269b7",
+      "sha256": "1d653e06fc1921252a4c9fc9f51c700954e594723ed62b036764cf03d293424f"
+    },
+    "scripts/read_only_spiffs.py": {
+      "git_blob": "a29d9704f04cc3b3083dd14803ad66dc6adca52f",
+      "sha256": "f50729234cd7f5efc3406cc9737a66e097e0de763df2f3c5efc148ab8c4674c6"
+    },
+    "scripts/update_test_production_store_runtime.py": {
+      "git_blob": "17690e8285e8058cd35ae48329948027c0889e67",
+      "sha256": "c78547f89bcc3843a9551e3fef03a0ec4b7a936b1a8930c0a136071a77e3e8b7"
+    },
+    "scripts/verify_update_deployment.py": {
+      "git_blob": "903cb3371ca0d97dc574707c6ddaab76a13c01bc",
+      "sha256": "17011f4467f987f4d2f0bc29b230f21e5d82ad7e3652737ed571be82e018a2ab"
+    },
+    "scripts/verify_update_elf.py": {
+      "git_blob": "8373cae2555eea8da9adb65cc5352d30cc037eb3",
+      "sha256": "f20c14954b2800aedcbd40bd6991a7e5343a64b046f71960297a1d6759933854"
+    },
+    "scripts/verify_wifi_deployment.py": {
+      "git_blob": "31f68f1bfae92784cf18f955ebb451469b474c24",
+      "sha256": "9d63bc71a7bd141c793f09887e8b9239ca51db50c3ca278ef5d1b42cd37be5c5"
+    },
+    "scripts/watch_main_product.py": {
+      "git_blob": "51489791dfd407528444f5238f069cae0786c754",
+      "sha256": "e4f46d8b2547b1575300ac4c9cc1e4eea8d9b1213435e0d7b0a2cf7714389e95"
+    },
+    "scripts/watch_release_index.py": {
+      "git_blob": "8bc50b9769736ed89c499a3546b6ff86b870a429",
+      "sha256": "0080bdb302f06bc938b3aca80337ebb428d19f7443f1b0b7c443a6d33ed23aa0"
+    },
+    "tests/midpoint_upgrade/catalog.cpp": {
+      "git_blob": "4c513a4efa079265a9a94aa633c1b35d8d1b6ee4",
+      "sha256": "42f78f5acbbd7fc00649c9c538b628fc66fec2b6c6dab1991061e08f812f5c4f"
+    },
+    "vendor/esp-idf-spiffs/spiffsgen.py": {
+      "git_blob": "b13d60a37cc7827deae4025ca1aaa8629f6e0cd7",
+      "sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466"
+    }
+  },
+  "modules": [
+    "build_alarm_apps",
+    "build_clock_app",
+    "build_clock_deployment",
+    "build_launcher_apps",
+    "build_legacy_sleep",
+    "build_next_watch_cohort",
+    "build_update_apps",
+    "build_update_common",
+    "build_update_flash_bundle",
+    "build_wifi_common",
+    "build_wifi_store",
+    "check_runtime_store_admission",
+    "check_twatch_drivers",
+    "compact_current_elf",
+    "current_bootfs",
+    "current_cohort",
+    "current_flash_layout",
+    "midpoint_upgrade",
+    "pmu_sleep_custody",
+    "publish_sdr_test",
+    "publish_watch_product",
+    "read_only_spiffs",
+    "update_test_production_store_runtime",
+    "verify_update_deployment",
+    "verify_update_elf",
+    "verify_wifi_deployment",
+    "watch_main_product",
+    "watch_release_index"
+  ],
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "schema": 1
+}

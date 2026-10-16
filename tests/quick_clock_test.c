@@ -177,7 +177,9 @@ static bool launch(const char*p){assert(!strcmp(p,"springboard.elf")&&!owned&&!p
   assert(!memcmp(pixels,expected_pixels,sizeof(pixels)));
  launches++;if(scenario==6)return false;launched=true;return true;}
 static const risc_runtime_api_v1 runtime={1,sizeof(runtime),health,yield,diagnostic,launch,acquire_cap,release_cap};
+#ifndef WATCH_TEST_RUNTIME_EXTERN
 const risc_runtime_api_v1*risc_runtime_get_api(uint32_t v){assert(v==1);return &runtime;}
+#endif
 int main(void){
  for(unsigned run=0;run<
 #ifdef WATCH_QUICK_RADIOS

@@ -11,7 +11,7 @@ from current_apps_overlay import ROOT, APPS as HISTORICAL_APPS, encoded
 from current_cohort import encode
 from contexts_profile import (APPS, CAPABILITY, GRANT, SERVICE_MANIFEST, VERSION,
     app_manifest, baseline_inputs, baseline_contract, catalog, check_policy, configuration, upgrade_boot)
-from build_contexts_cohort import definitions
+from build_contexts_cohort import definitions, LTO_APPS, COMPILER_HELPERS, optimization_policy
 
 class ContextsPolicyTests(unittest.TestCase):
     baseline = None
@@ -28,7 +28,7 @@ class ContextsPolicyTests(unittest.TestCase):
             self.following[name + '.json'] = encoded(app_manifest(name, old, self.c, self.boot))
             self.following[name + '.elf'] = ('explicitly-rebuilt-test:' + name).encode()
         self.following['contexts/driver.elf'] = b'explicit-new-contexts-service'
-        self.following[SERVICE_MANIFEST] = encoded({'type': 'driver', 'id': 'contexts-service', 'version': '0.1.0',
+        self.following[SERVICE_MANIFEST] = encoded({'type': 'driver', 'id': 'contexts-service', 'version': '0.1.1',
             'driver_abi': 2, 'architecture': 'xtensa-esp32s3', 'file_name': 'driver.elf',
             'provides': [CAPABILITY], 'requires': [{'capability': 'platform.clock', 'api': 1},
                 {'capability': 'audio.input', 'api': 1}, {'capability': 'radio.iq', 'api': 1}]})
@@ -50,16 +50,22 @@ class ContextsPolicyTests(unittest.TestCase):
         self.assertNotIn('contexts', HISTORICAL_APPS)
 
     def test_one_explicit_new_shared_namespace(self):
-        migration = self.boot['cohort_migration']
-        self.assertEqual(migration['from'], {k: self.identity[k] for k in ('product', 'version', 'source_revision')})
-        self.assertEqual(migration['to'], {'product': 'twatch-s3', 'version': '1.0.13'})
-        self.assertEqual(migration['shared_key_value'], [{'application_id': 'contexts', 'api': 1, 'namespace': 1}])
+        self.assertNotIn('cohort_migration',self.boot)
         before = json.loads(self.previous['boot.json'])
         for old, new in zip(before['app_capabilities'], self.boot['app_capabilities']):
             self.assertEqual(new['grants'], old['grants'] + [GRANT])
         context = self.boot['app_capabilities'][-1]
         self.assertEqual([g for g in context['grants'] if g['capability'].startswith('storage.')],
             [{'capability': 'storage.key-value', 'api': 1, 'instance_id': 1}])
+
+    def test_lto_is_limited_to_model_apps(self):
+        self.assertEqual(set(LTO_APPS), {'default','clock','audio_spectrum','waterfall','contexts'})
+        for name in APPS:
+            flags=definitions(name,self.c['app_versions'][name])
+            self.assertEqual('-flto' in flags,name in LTO_APPS)
+            roots=[x.removeprefix('-Wl,--undefined=') for x in flags if x.startswith('-Wl,--undefined=')]
+            self.assertEqual(roots,list(COMPILER_HELPERS.get(name,())))
+        self.assertFalse(optimization_policy()['boot_effect_lto'])
 
     def test_no_missing_app(self):
         self.reject(lambda f: f.pop('audio_spectrum.elf'))
@@ -95,16 +101,11 @@ class ContextsPolicyTests(unittest.TestCase):
         self.mutate_boot(lambda b: b['drivers'][-1].update({'key_value': [{'key': 'spectrum_s0', 'namespace': 7, 'access': 'read'}]}))
         self.reject(lambda f: None)
 
-    def test_migration_required(self):
-        self.mutate_boot(lambda b: b.pop('cohort_migration'))
-        self.reject(lambda f: None)
-
-    def test_migration_source_is_exact(self):
-        self.mutate_boot(lambda b: b['cohort_migration']['from'].update({'source_revision': 'f' * 40}))
-        self.reject(lambda f: None)
-
-    def test_migration_cannot_expand_an_existing_app(self):
-        self.mutate_boot(lambda b: b['cohort_migration']['shared_key_value'].append({'application_id': 'audio_spectrum', 'api': 2, 'namespace': 13}))
+    def test_consumed_migration_forbidden(self):
+        self.mutate_boot(lambda b: b.update({'cohort_migration': {'schema':1,
+            'from':{k:self.identity[k] for k in ('product','version','source_revision')},
+            'to':{'product':'twatch-s3','version':VERSION},
+            'shared_key_value':[{'application_id':'contexts','api':1,'namespace':1}]}}))
         self.reject(lambda f: None)
 
     def test_contexts_service_has_no_settings_authority(self):
@@ -134,7 +135,7 @@ class ContextsPolicyTests(unittest.TestCase):
                 self.assertIn('-DPORTABLE_CONTEXTS_CLIENT', flags);self.assertIn('-DPORTABLE_BLE_BROADCAST', flags)
                 self.assertIn('-include', flags)
             self.assertIn('-DPORTABLE_LOW_BATTERY', flags)
-        self.assertIn('-DPORTABLE_CONTEXTS_EDITOR', definitions('contexts', '0.1.0'))
+        self.assertIn('-DPORTABLE_CONTEXTS_EDITOR', definitions('contexts', '0.1.1'))
         self.assertIn('-DPORTABLE_CATALOG_LIMIT=21', definitions('springboard', '1.7.8'))
         self.assertNotIn('-DPORTABLE_CATALOG_LIMIT=20', definitions('springboard', '1.7.8'))
 

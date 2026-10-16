@@ -1,0 +1,124 @@
+{
+  "commands": [
+    [
+      "cc",
+      "-std=c11",
+      "-DTEST_IDLE_ELIGIBILITY",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/PortableApps/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/NativeApps/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/app",
+      "-c",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_test.c",
+      "-o",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/app.o"
+    ],
+    [
+      "c++",
+      "-std=c++17",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/test/native_nvs_shim",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/app",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/driver",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/hardware",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/lib/ArduinoJson/src",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_nvs.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/app.o",
+      "-o",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/test"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/test",
+      "write",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/test",
+      "reboot",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/test",
+      "fault",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/test",
+      "snapshot",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/normal/synthetic-nvs.bin"
+    ],
+    [
+      "cc",
+      "-std=c11",
+      "-DTEST_IDLE_ELIGIBILITY",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-function",
+      "-fsanitize=undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/PortableApps/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/NativeApps/include",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/app",
+      "-c",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_test.c",
+      "-o",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/app.o"
+    ],
+    [
+      "c++",
+      "-std=c++17",
+      "-fsanitize=undefined",
+      "-fno-sanitize-recover=all",
+      "-fno-omit-frame-pointer",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/test/native_nvs_shim",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/src",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/app",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/driver",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/sdk/hardware",
+      "-I/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/lib/ArduinoJson/src",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_nvs.cpp",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/app.o",
+      "-o",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/test"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/test",
+      "write",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/test",
+      "reboot",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/test",
+      "fault",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/synthetic-nvs.bin"
+    ],
+    [
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/test",
+      "snapshot",
+      "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/t051-evidence/watch-integrated-persistence/ubsan/synthetic-nvs.bin"
+    ]
+  ],
+  "inputs": {
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/Apps/wifi_settings_portable.inc": "021e92730e6263e6a590509d27d9a019ef93df1fc8a57486fe19dc196b7d031c",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_test.c": "240f83fc3cdbc4c4447a20f7a967a6343f02cdd1d129af6173457568be2e23f5",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/test/native_apps/wifi_persistence_nvs.cpp": "036676f17166ac44550703fdab22214a0418920fb69c7998b32f1ae313cac252",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task-2/native-watch-integration/src/ports/esp32s3/NvsKeyValue.h": "de4d0b97e506d5504a71fe19ef6d9a652591519d8b3cd843f5eeeeed481de4a6",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/PortableApps/include/PortableWifiProfiles.h": "3201c58bfb48fee81b05a27d7199c1cf6f6f49d4fa83422d0c0098c842de92d5",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-13/task/System-watch-t051/lib/PortableApps/include/PortableWifiCredentials.h": "a6fd61ac64d3607de04b01185633fe9653678df73a467c22e458f9cc43393d29"
+  },
+  "normal": true,
+  "ubsan": true,
+  "namespace": 6,
+  "native_namespace": "rte00000006",
+  "cold_restart": "Separate process, disk-backed synthetic NVS; not hardware flash durability",
+  "boundaries": "Production app/profile codec/native NVS adapter. Synthetic radio, outer grants, peripherals, and NVS SDK. Selected boot grants audited separately."
+}

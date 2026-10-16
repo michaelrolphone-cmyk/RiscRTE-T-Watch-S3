@@ -1,0 +1,5 @@
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID closed status=1 state=0 flags=31 error=0 generation=1
+Assertion failed: ((paper_profile?radio_control_calls==0:radio_control_calls>=2)&&hid_closes==1), function main, file hid_renderer_test.c, line 328.

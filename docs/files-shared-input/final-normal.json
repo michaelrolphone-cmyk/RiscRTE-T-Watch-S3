@@ -1,0 +1,114 @@
+{
+  "active_store_sha256": "1a70bf8c9b81cdbf6cccd3eaa92fcd8e628ef10ccf34a4598c0c7dab4f062b4d",
+  "app_policy_rows": 24,
+  "candidate_store_sha256": "e0005698ffa739ee16e302804e3d1ee614ba07622269e2a0772680823d882c04",
+  "changed_store_paths": [
+    "boot.json",
+    "cohort.json",
+    "file_browser.elf",
+    "file_browser.json",
+    "text-input/driver.elf",
+    "text-input/manifest.json",
+    "ui-scene/driver.elf",
+    "ui-scene/manifest.json"
+  ],
+  "cohort_validated": true,
+  "cooperative_yields": 174,
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "elf_count": 55,
+  "error": "",
+  "existing_apps_and_providers_preserved": true,
+  "free_spiffs_blocks": 4,
+  "full_image_bytes": 16777216,
+  "full_image_sha256": "779519d2f437ebc9048c7762fa500aec5299c9eac07d29d0ceca3fae6c89e248",
+  "full_initial_erases_data": true,
+  "grant_delta": [
+    {
+      "grant": {
+        "api": 1,
+        "capability": "ui.text-input",
+        "instance_id": 0
+      },
+      "manifest": "file_browser.json"
+    }
+  ],
+  "hardware_calls": 0,
+  "hardware_verified": false,
+  "native_composition": {
+    "bounds": {
+      "RISC_APP_POLICY_ROWS": 24,
+      "RISC_APP_REQUIREMENT_ROWS": 24,
+      "RISC_INSTALLED_APP_CAPACITY": 64,
+      "RISC_PROVIDER_CAPACITY": 32
+    },
+    "capacity_evidence": "explicit source-bound build profile; no native capacity marker",
+    "crown_profile_sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5",
+    "diagnostic_allocations": {
+      "_ZN15RiscDiagnostics11timestampedEPKcz": {
+        "address": 1107539120,
+        "bytes": 230
+      },
+      "_ZN8RiscPerf4dataE": {
+        "address": 1070182592,
+        "bytes": 5440
+      }
+    },
+    "diagnostic_flags": {
+      "RISC_PERFORMANCE_TRACE": 1,
+      "RISC_STAGE_LOGS": 1
+    },
+    "file_source_backend_allocations": {
+      "__wrap_esp_littlefs_format": {
+        "address": 1107482652,
+        "bytes": 33
+      },
+      "__wrap_esp_littlefs_format_partition": {
+        "address": 1107482688,
+        "bytes": 24
+      },
+      "__wrap_esp_partition_erase_range": {
+        "address": 1107482584,
+        "bytes": 66
+      },
+      "__wrap_esp_partition_read": {
+        "address": 1107482476,
+        "bytes": 36
+      },
+      "__wrap_esp_partition_write": {
+        "address": 1107482512,
+        "bytes": 69
+      },
+      "__wrap_esp_vfs_register": {
+        "address": 1107481868,
+        "bytes": 535
+      },
+      "__wrap_esp_vfs_unregister": {
+        "address": 1107482404,
+        "bytes": 70
+      }
+    },
+    "file_source_enabled": true,
+    "private_scratch_root": "/appdata/.risc-file-source",
+    "profile": "env:watch-file-source",
+    "row_evidence": "allocated native policy and requirement marker symbols",
+    "runtime_commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "runtime_profile_sha256": "076852391053e5783c08010adf2c2dacb2930a05dd887107b332031e58528874",
+    "sharing_evidence": "allocated native TCP listener and entropy ABI-1 symbols",
+    "source_profile_sha256": "23c3c818b992f2bc077373d4fbf8c9c6a49e093546f0b78977b6b412f5634d20",
+    "wake_profile_sha256": "f14b13c88ff15136a2ef0947969b7d10bac74a0a1156ce34a5d56c305fbfd6cb"
+  },
+  "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+  "native_unchanged": true,
+  "prepared": true,
+  "preserved_store_paths": 105,
+  "product": "Watch",
+  "product_source": "d3687db3ea6e6e5c8a36e5d01c5dfd2ba69ed453",
+  "product_tree": "8c34808ca97526a86a50be02892d506a1fe03f77",
+  "source_candidate": "ec667cd39babea571405d501f9f0ac3b5d32191c",
+  "storage_calls": 0,
+  "system_source": "e3fd26c2257cef91c8f6a7b98065b52f1db7a54d",
+  "system_tree": "05ca25fa292f9420a32743b1468f7efee6d2fc78",
+  "target_instructions_executed": false,
+  "version": "1.1.18"
+}

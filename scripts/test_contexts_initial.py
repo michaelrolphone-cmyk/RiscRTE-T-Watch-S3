@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from build_contexts_initial import (ENABLED_CASES, DISABLED_CASES, inventory, runtime_reports,
                                     validate_runtime_report, build_snapshot, initial_image, prepare)
-from build_contexts_cohort import SECTION_FLAGS, LINK_FLAGS
+from build_contexts_cohort import SECTION_FLAGS, LINK_FLAGS, optimization_policy
 from contexts_profile import baseline_contract, configuration
 from current_cohort import encode
 from check_runtime_store_admission import store_digest
@@ -20,7 +20,7 @@ class QualificationTests(unittest.TestCase):
     def setUp(self):
         self.head = 'a'*40
         self.config = configuration()
-        self.identity = {**baseline_contract()['accepted_cohort'],'version':'1.0.13','source_revision':self.head}
+        self.identity = {**baseline_contract()['accepted_cohort'],'version':'1.0.17','source_revision':self.head}
         self.files = {'cohort.json':encode(self.identity),'default.elf':b'fixture target bytes'}
         self.states = {name:{'commit':self.head,'tree':'b'*40,'tracked_changes':''}
                        for name in ('watch','runtime','system','utilities','drivers')}
@@ -46,7 +46,7 @@ class QualificationTests(unittest.TestCase):
                 'candidate_cohort':self.identity,'watch_source':self.head,'candidate_store_sha256':store_digest(self.files),
                 'candidate_files':inventory(self.files),'source_pins':self.config['sources'],'drivers_pin':self.config['drivers'],
                 'source_states':self.states,'source_hashes':self.hashes,'runner_sha256':'d'*64,'fixture_sha256':'d'*64,
-                'section_gc':{'compile_flags':SECTION_FLAGS,'link_flags':LINK_FLAGS},'provider_artifacts':23,
+                'section_gc':{'compile_flags':SECTION_FLAGS,'link_flags':LINK_FLAGS},'optimization':optimization_policy(),'provider_artifacts':23,
                 'provider_selections':24,'production_json_substitutions':0,'target_instructions_executed':False,
                 'hardware_qualified':False,'scenarios':results}
 
@@ -98,13 +98,13 @@ class QualificationTests(unittest.TestCase):
 
     def snapshot_fixture(self, directory):
         files = {**self.files,'contexts/driver.elf':b'fixture provider bytes'}
-        provider = {**metadata(files['contexts/driver.elf']),'exports':['t5_driver_get'],'compaction':None,
+        provider = {**metadata(files['contexts/driver.elf']),'exports':['t5_driver_get'],'compaction':{'retained_loader_sections_symbols_relocations_unchanged':True,'before_sha256':metadata(b'provider debug')['sha256'],'after_sha256':metadata(files['contexts/driver.elf'])['sha256']},
                     'defines':[],'imports':['memcpy'],
                     'section_gc':{'compile_flags':SECTION_FLAGS,'link_flags':LINK_FLAGS,'export_roots':['t5_driver_get']}}
         build = {'configuration':self.config,'packing':metadata(b'fixture bootfs'),'providers':{'contexts-service':provider}}
         members = {'files/'+name:raw for name,raw in files.items()}
         members.update({'contexts-build.json':encoded(build),'contexts-source-profile.json':encoded(self.config),
-                        'debug/default.elf':b'fixture debug','licenses/LICENSE':b'fixture license'})
+                        'debug/default.elf':b'fixture debug','debug/contexts-service.elf':b'provider debug','licenses/LICENSE':b'fixture license'})
         for name,raw in members.items():
             path=directory/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
         for name,raw in {'contexts-store.zip':zip_bytes(files),'contexts-apps.zip':zip_bytes(members),
@@ -124,11 +124,12 @@ class QualificationTests(unittest.TestCase):
     def test_snapshot_requires_new_provider_proof(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory=Path(temporary);build,files=self.snapshot_fixture(directory)
-            for mutation in ('missing','hash','flags'):
+            for mutation in ('missing','hash','flags','compaction'):
                 bad=copy.deepcopy(build)
                 if mutation=='missing':bad['providers']={}
                 elif mutation=='hash':bad['providers']['contexts-service']['sha256']='0'*64
-                else:bad['providers']['contexts-service']['section_gc']['link_flags']=[]
+                elif mutation=='flags':bad['providers']['contexts-service']['section_gc']['link_flags']=[]
+                else:bad['providers']['contexts-service']['compaction']['before_sha256']='0'*64
                 (directory/'contexts-build.json').write_bytes(encoded(bad))
                 members={name:path.read_bytes() for path in directory.rglob('*') if path.is_file()
                          for name in [path.relative_to(directory).as_posix()]
@@ -144,19 +145,22 @@ class QualificationTests(unittest.TestCase):
             assembly.assert_not_called()
 
     def test_failed_execution_proof_creates_no_output(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root=Path(temporary);output=root/'not-emitted'
-            with patch('build_contexts_initial.clean',return_value=self.head), \
-                 patch('build_contexts_initial.configuration',return_value=self.config), \
-                 patch('build_contexts_initial.baseline_inputs',return_value=self.files), \
-                 patch('build_contexts_initial.verify_build',return_value={}), \
-                 patch('build_contexts_initial.files_at',return_value=self.files), \
-                 patch('build_contexts_initial.build_snapshot',return_value={}), \
-                 patch('build_contexts_initial.validate_target_sources'), \
-                 patch('build_contexts_initial.runtime_reports',side_effect=ValueError('proof rejected')), \
-                 patch('build_contexts_initial.initial_image') as assembly:
-                with self.assertRaisesRegex(ValueError,'proof rejected'):
-                    prepare(root,root,root,root,root,root,root,root,[],output,root=root)
-                assembly.assert_not_called();self.assertFalse(output.exists())
+        for failing_gate in ('baseline','model'):
+            with self.subTest(gate=failing_gate), tempfile.TemporaryDirectory() as temporary:
+                root=Path(temporary);output=root/'not-emitted'
+                with patch('build_contexts_initial.clean',return_value=self.head), \
+                     patch('build_contexts_initial.configuration',return_value=self.config), \
+                     patch('build_contexts_initial.baseline_inputs',return_value=self.files), \
+                     patch('build_contexts_initial.verify_build',return_value={}), \
+                     patch('build_contexts_initial.files_at',return_value=self.files), \
+                     patch('build_contexts_initial.build_snapshot',return_value={}), \
+                     patch('build_contexts_initial.validate_target_sources'), \
+                     patch('build_contexts_initial.runtime_reports',return_value={}) as baseline, \
+                     patch('build_contexts_initial.model_runtime_reports',return_value={}) as models, \
+                     patch('build_contexts_initial.initial_image') as assembly:
+                    (baseline if failing_gate=='baseline' else models).side_effect=ValueError('proof rejected')
+                    with self.assertRaisesRegex(ValueError,'proof rejected'):
+                        prepare(root,root,root,root,root,root,root,root,[],output,root=root)
+                    assembly.assert_not_called();self.assertFalse(output.exists())
 
 if __name__=='__main__':unittest.main()

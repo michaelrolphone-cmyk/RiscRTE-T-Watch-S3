@@ -1,0 +1,22 @@
+{
+  "package_revision": "1.1.21-r1",
+  "full_image_sha256": "4e43fc376021779a2d7a5cada96aee255735d5db1eb0e896c5aacf65bb3889bc",
+  "native_source": "06da76aa7f074220b74a282badca0ed0061f1643",
+  "compiled_home_source": "b7a6cf0d2505ecf9b1c625bbfcc6d4048c13b471",
+  "files": 113,
+  "elfs": 55,
+  "free_spiffs_blocks": 2,
+  "appdata": {
+    "partition": "appdata",
+    "offset": 2555904,
+    "bytes": 524288,
+    "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+    "initial_flash_only": true,
+    "target_hardware_executed": false
+  },
+  "predecessor_checked": true,
+  "all_app_bytes_preserved": true,
+  "source_attribution": "cohort.source_revision identifies assembly tooling; native source is recorded separately",
+  "host_mount_test": "Run verify_factory_appdata_mount.py separately; byte admission alone is not mount proof",
+  "no_device_operation": true
+}

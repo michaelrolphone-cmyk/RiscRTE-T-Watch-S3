@@ -1,0 +1,42 @@
+{
+  "binding_source": "b6abe35ed3049174e53c89c8adb85edd3860da34",
+  "candidate_version": "1.0.17",
+  "downloads": {
+    "COMPLETE": {
+      "bytes": 36,
+      "sha256": "83be8500becfd7fcb4b8a076bde187b629b66665f62bf102612413ec4ec71d8f",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/COMPLETE"
+    },
+    "LICENSES.zip": {
+      "bytes": 776066,
+      "sha256": "3502f13485ab20dc8f986e614cf29ef0a08a8a94102b08d26d448f54a0baddfa",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/LICENSES.zip"
+    },
+    "binding.json": {
+      "bytes": 24705,
+      "sha256": "cea32cb5db95fe1937fddd5a33c50f3329aa0d92d2a8595d163bb7c0ca998336",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/binding.json"
+    },
+    "image.bin": {
+      "bytes": 5308416,
+      "sha256": "f7b43befc8e0b24347ef3bafc48c5f2c729f99c0b4f2f4956700b5cbec81e851",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/image.bin"
+    },
+    "payload.json": {
+      "bytes": 15102,
+      "sha256": "aa01fe1cc591b04e7d4522e4581326efdf1b171e0d2bf4abd4630cdf5a98f1ee",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/payload.json"
+    },
+    "seed.zip": {
+      "bytes": 8488153,
+      "sha256": "98491912a77f28cb3506d0561a9d84660e4cb7c402024d4476c6e51eb5b4c0fb",
+      "url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/ddbc8552c528f5f7bfc1e16c70ebb32a936f942b/provisioning/watch-1.0.17/seed.zip"
+    }
+  },
+  "inventory_sha256": "b3dd29d17752ac9e8b4eedc52957710405e3a5158acd3f68a113c7232bc18295",
+  "payload_revision": "ddbc8552c528f5f7bfc1e16c70ebb32a936f942b",
+  "runtime_source": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+  "schema": "riscrte.watch-image-deployment",
+  "schema_version": 1,
+  "scope": "Initial-only complete Watch1.0.17, including Contexts and qualified RF/Audio cleanup. Hardware provisioning UNRUN; never an existing-device update."
+}

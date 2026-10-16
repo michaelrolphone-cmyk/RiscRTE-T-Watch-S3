@@ -17,6 +17,14 @@ A clean reconstruction of the original pinned sources reproduced these bytes.
 The separate paired-update proof does not publish an OTA installation route.
 Generic firmware mechanisms remain in the separately pinned RiscRTE runtime.
 
+## Watch 1.1.17 shared Wi-Fi keyboard test increment
+
+See [scope, exact predecessor, reproduction and qualification limits](docs/shared-keyboard/watch-1.1.17.md).
+This adds real shared masked Wi-Fi entry while preserving the frozen native
+firmware, mounted Files and other applications. Remaining legacy editor migration
+is not claimed complete. Full initial flash erases saved data; hardware qualification
+is pending.
+
 ## Historical driver-package reference
 
 The following reference records the earlier standalone driver bring-up and its

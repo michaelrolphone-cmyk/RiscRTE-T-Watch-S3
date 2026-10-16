@@ -20,7 +20,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: michaelrolphone-cmyk/RiscRTE-System-Apps
-          ref: 851f389d72672f1ff33825940306b1a4e9931062
+          # Same System tree as the delivered canvas Clock; includes Context actions.
+          ref: 63532e4611749acad2060d0437a883b7c4ac8fd5
           path: .dependencies/system
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -39,6 +40,7 @@ jobs:
           python3 scripts/test_context_face.py
           python3 scripts/test_contexts_packaging.py --baseline .dependencies/baseline/accepted-store.zip
           python3 scripts/test_contexts_initial.py
+          python3 scripts/test_contexts_model_proof.py
       - uses: actions/upload-artifact@v4
         with:
           name: contexts-face-${{ github.sha }}

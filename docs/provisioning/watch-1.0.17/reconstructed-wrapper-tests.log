@@ -1,0 +1,23 @@
+test_archive_reproducible_and_sorted (__main__.Bounds.test_archive_reproducible_and_sorted) ... ok
+test_binding_license_expansion_refused_before_binder (__main__.Bounds.test_binding_license_expansion_refused_before_binder) ... ok
+test_binding_path_count_and_aggregate_bounds (__main__.Bounds.test_binding_path_count_and_aggregate_bounds) ... ok
+test_binding_snapshot_is_frozen_and_inventory_bounded (__main__.Bounds.test_binding_snapshot_is_frozen_and_inventory_bounded) ... ok
+test_binding_store_links_counts_and_file_bounds (__main__.Bounds.test_binding_store_links_counts_and_file_bounds) ... ok
+test_completion_is_last_and_failed_write_removes_output (__main__.Bounds.test_completion_is_last_and_failed_write_removes_output) ... ok
+test_directory_aggregate_and_individual_bounds (__main__.Bounds.test_directory_aggregate_and_individual_bounds) ... ok
+test_directory_limits_and_symlink_refusal (__main__.Bounds.test_directory_limits_and_symlink_refusal) ... ok
+test_recipe_commit_and_helper_custody (__main__.Bounds.test_recipe_commit_and_helper_custody) ... ok
+test_zip_duplicate_traversal_symlink_and_count_refusals (__main__.Bounds.test_zip_duplicate_traversal_symlink_and_count_refusals) ... ok
+test_zip_expansion_is_bounded_even_with_false_header_size (__main__.Bounds.test_zip_expansion_is_bounded_even_with_false_header_size) ... ok
+test_committed_byte_mismatch_and_existing_output_refused (__main__.Product.test_committed_byte_mismatch_and_existing_output_refused) ... ok
+test_exact_commit_pin_tree_refusal_and_url_validation (__main__.Product.test_exact_commit_pin_tree_refusal_and_url_validation) ... ok
+test_incomplete_and_extra_payload_refused (__main__.Product.test_incomplete_and_extra_payload_refused) ... ok
+test_real_full_store_and_native_admitted (__main__.Product.test_real_full_store_and_native_admitted) ... ok
+test_rehashed_image_tamper_refused (__main__.Product.test_rehashed_image_tamper_refused) ... ok
+test_rehashed_license_tamper_refused (__main__.Product.test_rehashed_license_tamper_refused) ... ok
+test_seed_duplicate_and_native_digest_tamper_refused (__main__.Product.test_seed_duplicate_and_native_digest_tamper_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 35.693s
+
+OK

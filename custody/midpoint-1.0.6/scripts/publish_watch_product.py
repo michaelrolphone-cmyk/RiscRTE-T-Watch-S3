@@ -1,0 +1,638 @@
+#!/usr/bin/env python3
+"""Publish the accepted Watch baseline unchanged; never access a physical device.
+
+Products use Reader's immutable release/index protocol. Components retain their
+own versions. Accepted Watch ELFs, not generic shared-app builds, are published.
+"""
+import argparse
+import copy
+from datetime import datetime
+import hashlib
+import io
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import subprocess
+import sys
+import tempfile
+import zipfile
+from urllib.parse import quote
+from watch_release_index import EMPTY_INDEX, REPOSITORY, require, serialize_index, update_index
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / 'release/product.json'
+
+
+def encoded(value):
+    return (json.dumps(value, indent=2, sort_keys=True) + '\n').encode()
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def command(*args, cwd=ROOT):
+    return subprocess.check_output(list(map(str, args)), cwd=cwd)
+
+
+def gh(*args):
+    return command('gh', *args)
+
+
+def api(endpoint):
+    return json.loads(gh('api', endpoint))
+
+
+def read_config():
+    p = json.loads(CONFIG.read_text())
+    if p.get('schema') == 2:
+        from watch_main_product import validate_config
+        return validate_config(p)
+    require(p['schema'] == 1 and p['repository'] == REPOSITORY, 'Product identity mismatch')
+    require(p['tag'] == 'firmware-v' + p['version'], 'Product tag/version mismatch')
+    require(p['component_versions']['default'] == p['accepted_build'], 'Accepted component mismatch')
+    return p
+
+
+def checked_zip(data):
+    z = zipfile.ZipFile(io.BytesIO(data))
+    names = z.namelist()
+    require(len(names) <= 1000 and len(names) == len(set(names)), 'ZIP inventory invalid')
+    require(sum(x.file_size for x in z.infolist()) <= 160 * 1024 * 1024, 'ZIP too large')
+    require(all(not PurePosixPath(n).is_absolute() and '..' not in PurePosixPath(n).parts and
+                '\\' not in n and str(PurePosixPath(n)) == n.rstrip('/') and n not in ('', '.')
+                for n in names), 'Unsafe ZIP path')
+    require(all((entry.external_attr >> 16) & 0o170000 != 0o120000 for entry in z.infolist()), 'ZIP symlink is not permitted')
+    require(z.testzip() is None, 'ZIP CRC failure')
+    return z
+
+
+def archive(files):
+    output = io.BytesIO()
+    with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        for name, data in sorted(files.items()):
+            entry = zipfile.ZipInfo(name, (2026, 1, 1, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o100644 << 16
+            z.writestr(entry, data)
+    return output.getvalue()
+
+
+def safe_input_path(path):
+    require(not any(item.is_symlink() for item in (path, *path.parents)), 'Input path must not contain symlinks')
+
+
+def write_input(path, data):
+    # Atomic replacement avoids following existing symlinks or modifying another
+    # file through an existing hard link. Never write through the destination.
+    safe_input_path(path)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.download-', delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(data)
+        safe_input_path(path)
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+
+
+def verify_watch_ancestry(accepted_sha, release_sha):
+    require(all(isinstance(value, str) and re.fullmatch('[0-9a-f]{40}', value)
+                for value in (accepted_sha, release_sha)), 'Exact Watch ancestry commits required')
+    result = subprocess.run(['git', 'merge-base', '--is-ancestor', accepted_sha, release_sha],
+                            cwd=ROOT, capture_output=True)
+    require(result.returncode == 0,
+            'Accepted Watch source is not a verified ancestor of the release source (unmerged or missing commit)')
+    return {'repository': REPOSITORY, 'accepted_sha': accepted_sha, 'release_source_sha': release_sha,
+            'method': 'git merge-base --is-ancestor', 'verified': True}
+
+
+def verify_current_source_ancestry(product):
+    """Resolve actual owning defaults live; configured ancestry claims are ignored."""
+    configuration = product.get('current_apps_configuration')
+    if configuration is None:
+        return []
+    sources = configuration['sources']
+    require(set(sources) == {'system-apps', 'utilities', 'productivity', 'runtime'},
+            'Complete current owning-source inventory required for integration proof')
+    evidence = []
+    for owner, pin in sorted(sources.items()):
+        repository, source_sha = pin['repository'], pin['commit']
+        require(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository) and
+                re.fullmatch('[0-9a-f]{40}', source_sha), 'Invalid owning-source identity')
+        metadata = api('repos/' + repository)
+        branch = metadata.get('default_branch')
+        require(metadata.get('full_name') == repository and isinstance(branch, str) and branch,
+                'Cannot resolve actual owning default branch: ' + owner)
+        default_head = api(f'repos/{repository}/commits/{quote(branch, safe="")}').get('sha')
+        require(isinstance(default_head, str) and re.fullmatch('[0-9a-f]{40}', default_head),
+                'Cannot resolve exact owning default head: ' + owner)
+        comparison = api(f'repos/{repository}/compare/{source_sha}...{default_head}')
+        require(comparison.get('base_commit', {}).get('sha') == source_sha and
+                comparison.get('merge_base_commit', {}).get('sha') == source_sha and
+                comparison.get('status') in ('ahead', 'identical') and comparison.get('behind_by') == 0,
+                'Current owning source is not merged into its actual default branch: ' + owner)
+        evidence.append({'owner': owner, 'repository': repository, 'source_sha': source_sha,
+                         'default_branch': branch, 'default_head': default_head,
+                         'merge_base': comparison['merge_base_commit']['sha'], 'status': comparison['status'],
+                         'comparison_url': f'https://github.com/{repository}/compare/{source_sha}...{default_head}'})
+    # Avoid reporting a stale renamed/moved default as the completion condition.
+    # A moving branch fails closed; repeat this read-only preflight on its new head.
+    for proof in evidence:
+        metadata = api('repos/' + proof['repository'])
+        require(metadata.get('full_name') == proof['repository'] and metadata.get('default_branch') == proof['default_branch'] and
+                api(f'repos/{proof["repository"]}/commits/{quote(proof["default_branch"], safe="")}').get('sha') == proof['default_head'],
+                'Owning default branch advanced during integration preflight: ' + proof['owner'])
+    return evidence
+
+
+def artifact_inputs(directory, download=False):
+    p = read_config()
+    safe_input_path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    if download and p['schema'] == 2:
+        from watch_main_product import verify_ci
+        accepted_run = verify_ci(p, sys.modules[__name__])
+    for name, item in p['artifacts'].items():
+        path = directory / (name + '.zip')
+        safe_input_path(path)
+        if download:
+            metadata = api(f'repos/{item["repository"]}/actions/artifacts/{item["artifact_id"]}')
+            require(not metadata['expired'] and metadata['workflow_run']['id'] == item['run_id'], 'Wrong or expired artifact')
+            if p['schema'] == 2:
+                require(metadata.get('id') == item['artifact_id'] and metadata.get('name') == item['name'] and
+                        metadata['workflow_run'].get('head_sha') == item['head_sha'], 'Artifact identity/source mismatch')
+                require(datetime.fromisoformat(accepted_run['run_started_at'].replace('Z', '+00:00')) <=
+                        datetime.fromisoformat(metadata['created_at'].replace('Z', '+00:00')) <=
+                        datetime.fromisoformat(accepted_run['updated_at'].replace('Z', '+00:00')),
+                        'Artifact does not belong to the accepted CI attempt')
+            data = gh('api', f'repos/{item["repository"]}/actions/artifacts/{item["artifact_id"]}/zip')
+            require(sha(data) == item['sha256'], 'Downloaded artifact hash mismatch')
+            write_input(path, data)
+        require(path.is_file() and not path.is_symlink() and sha(path.read_bytes()) == item['sha256'], 'Accepted input hash mismatch: ' + name)
+        checked_zip(path.read_bytes()).close()
+    return p
+
+
+def record(kind, identity, version, asset, data, **extra):
+    tag = f'{kind}-' + (identity + '-' if identity else '') + 'v' + version
+    return {'kind': kind, **({'id': identity} if identity else {}), 'version': version,
+            'tag': tag, 'asset': asset,
+            'url': f'https://github.com/{REPOSITORY}/releases/download/{tag}/{asset}',
+            'size': len(data), 'sha256': sha(data), **extra}
+
+
+def flashing_document(p):
+    if p['schema'] == 2:
+        from watch_main_product import flashing_document as main_document
+        return main_document(p)
+    name = f'twatch-s3-launcher-{p["version"]}.bin'
+    return f'''# Watch {p['version']}\n\nOriginal/non-Plus LILYGO T-Watch-S3, 16 MiB flash / 8 MiB OPI PSRAM.\n\nFlashable merged image: {name}, offset 0x0, exactly 8 MiB.\nSHA256: {p['accepted_bin_sha256']}\n\nThis is byte-for-byte the owner-accepted 0.5.2 integrated build, promoted to\nproduct 1.0.0. Clock remains 0.5.2 and Runtime remains 0.1.6. No firmware,\napplication, driver, board, grant, or persistent-store byte was changed.\n\nWARNING: flashing replaces the lower 8 MiB, including NVS/settings and saved\nStopwatch state. Upper 8 MiB is untouched. Back up first. No device was flashed\nby the release process. This is not an OTA update or a settings-preserving update.\n\nAfter your own backup and device selection:\npython -m esptool --chip esp32s3 --port PORT --baud 460800 write_flash 0x0 {name}\n\nThe original 0.5.2 custody ZIP is preserved unchanged; its historical pending\nhardware wording records the pre-delivery build state. Product provenance records\nthe subsequent owner acceptance, which does not qualify every optional peripheral.\n\nIndependent app ELFs/manifests use this Watch configuration. Drivers retain their\nexisting package ABI and versions. Merely downloading an ELF does not install it;\nuse the exact manifests, board mapping and grants in the custody bundle.\n'''.encode()
+
+def stage(inputs, accepted_watch, runtime_source, output):
+    p = artifact_inputs(inputs)
+    if p['schema'] == 2:
+        from watch_main_product import stage as stage_main
+        return stage_main(p, inputs, accepted_watch, runtime_source, output, sys.modules[__name__])
+    verify_watch_ancestry(p['sources']['watch']['accepted_sha'], command('git', 'rev-parse', 'HEAD').decode().strip())
+    for path, key in ((accepted_watch, 'watch'), (runtime_source, 'runtime')):
+        require(command('git', 'rev-parse', 'HEAD', cwd=path).decode().strip() == p['sources'][key]['accepted_sha'], 'Source checkout mismatch')
+        require(not command('git', 'status', '--porcelain', '--untracked-files=no', cwd=path).strip(), 'Source checkout dirty')
+    output.mkdir(parents=True, exist_ok=True)
+    source = command('git', 'rev-parse', 'HEAD').decode().strip()
+    with tempfile.TemporaryDirectory() as tmp:
+        built = Path(tmp) / 'accepted'
+        subprocess.run(['python', str(accepted_watch / 'scripts/build_launcher_flash_bundle.py'),
+                        '--runtime', str(inputs / 'runtime.zip'), '--artifact', str(inputs / 'launcher.zip'),
+                        '--pr-head', p['sources']['watch']['accepted_sha'], '--runtime-source', str(runtime_source),
+                        '--output', str(built)], check=True)
+        accepted_bin = (built / f'twatch-s3-launcher-{p["accepted_build"]}.bin').read_bytes()
+        accepted_bundle = (built / f'twatch-s3-launcher-{p["accepted_build"]}-flashing.zip').read_bytes()
+    require(len(accepted_bin) == p['bin_size'] and sha(accepted_bin) == p['accepted_bin_sha256'], 'Hardware-accepted BIN differs')
+    require(sha(accepted_bundle) == p['accepted_bundle_sha256'], 'Original custody ZIP differs')
+    with checked_zip(accepted_bundle) as z:
+        files = {n: z.read(n) for n in z.namelist()}
+    accepted_manifest = json.loads(files['manifest.json'])
+    for item in accepted_manifest['store']:
+        data = files['store/' + item['path']]
+        require(len(data) == item['size_bytes'] and sha(data) == item['sha256'], 'Store custody mismatch')
+    licenses = archive({n: b for n, b in files.items() if n.startswith(('licenses/', 'shared/')) or n == 'reproduce/RUNTIME-LICENSE'})
+    provenance = {**p, 'release_source_sha': source, 'binary_rebuilt': False,
+                  'version_scope': 'Product release only; every embedded component version and byte is unchanged.',
+                  'hardware_acceptance_scope': 'Owner accepted this exact integrated Watch BIN. No additional physical testing or peripheral qualification is claimed.',
+                  'accepted_manifest': accepted_manifest}
+    release_list = []
+    app_records = []
+    for name in ('default', 'clock', 'springboard', 'settings', 'battery', 'calculator', 'stopwatch'):
+        manifest_data = files['store/' + name + '.json']
+        manifest = json.loads(manifest_data)
+        data = files['store/' + name + '.elf']
+        require(manifest['version'] == p['component_versions'][name], 'Component version changed')
+        require(data[:7] == b'\x7fELF\x01\x01\x01' and data[16:20] == b'\x03\x00\x5e\x00', 'Invalid Xtensa application')
+        r = record('app', name, manifest['version'], name + '.elf', data, manifest=manifest,
+                   source_repo=REPOSITORY, source_sha=p['sources']['watch']['accepted_sha'],
+                   build_sources=p['sources'], configuration='accepted-watch-0.5.2')
+        app_records.append(r)
+        payloads = {name + '.elf': data, name + '.json': manifest_data, 'LICENSES.zip': licenses,
+                    'release-record.json': encoded(r)}
+        release_list.append(write_release(output, r, payloads, p['sources']['watch']['accepted_sha'], False))
+    (output / 'accepted-driver-artifact.zip').write_bytes((inputs / 'drivers.zip').read_bytes())
+    driver_records = []
+    with checked_zip((inputs / 'drivers.zip').read_bytes()) as z:
+        catalog = json.loads(z.read('catalog.json'))
+        require(len(catalog['packages']) == 17, 'Expected complete driver catalog')
+        for entry in catalog['packages']:
+            data = z.read(entry['archive'])
+            require(len(data) == entry['size_bytes'] and sha(data) == entry['sha256'], 'Driver archive custody mismatch')
+            with checked_zip(data) as package:
+                manifest = json.loads(package.read('.package.json'))
+                require(manifest['id'] == entry['id'] and manifest['version'] == entry['version'], 'Driver identity mismatch')
+                require(set(package.namelist()) == {x['name'] for x in manifest['entries']} | {'.package.json'}, 'Driver member mismatch')
+                for item in manifest['entries']:
+                    payload = package.read(item['name'])
+                    require(len(payload) == item['size_bytes'] and sha(payload) == item['sha256'], 'Driver payload mismatch')
+                short = entry['id'].removeprefix('twatch-')
+                deployed = 'store/' + short + '/driver.elf'
+                if deployed in files:
+                    require(package.read('driver.elf') == files[deployed], 'Independent driver differs from accepted BIN')
+                    require(json.loads(package.read('source-manifest.json')) == json.loads(files['store/' + short + '/manifest.json']), 'Driver manifest differs from accepted BIN')
+            r = record('driver', entry['id'], entry['version'], entry['archive'], data,
+                       format='rte.zip', architecture='xtensa-esp32s3', manifest=manifest,
+                       source_repo=REPOSITORY, included_in_accepted_bin=deployed in files)
+            driver_records.append(r)
+            destination = output / 'driver-assets' / entry['archive']
+            destination.parent.mkdir(exist_ok=True)
+            destination.write_bytes(data)
+    name = f'twatch-s3-launcher-{p["version"]}.bin'
+    firmware = record('firmware', '', p['version'], name, accepted_bin, source_sha=source,
+                      accepted_source_sha=p['sources']['watch']['accepted_sha'], component_versions=p['component_versions'])
+    index = copy.deepcopy(EMPTY_INDEX)
+    index = update_index(index, 'firmware', firmware)
+    for r in app_records:
+        index = update_index(index, 'apps', r)
+    for r in driver_records:
+        index = update_index(index, 'drivers', r)
+    flashing = flashing_document(p)
+    payloads = {name: accepted_bin, f'twatch-s3-launcher-{p["accepted_build"]}-flashing.zip': accepted_bundle,
+                'release-record.json': encoded(firmware), 'product-provenance.json': encoded(provenance),
+                'release-index.json': serialize_index(index).encode(), 'FLASHING.md': flashing}
+    release_list.append(write_release(output, firmware, payloads, source, True))
+    plan = {'schema': 1, 'repository': REPOSITORY, 'source_sha': source, 'product': p,
+            'releases': release_list, 'driver_records': driver_records, 'index': index}
+    (output / 'publication-plan.json').write_bytes(encoded(plan))
+    verify_stage(output)
+    print(f'Staged Watch {p["version"]}: exact accepted BIN, seven apps, seventeen driver references')
+
+
+def write_release(output, record, files, source, latest):
+    sums = ''.join(f'{sha(data)}  {name}\n' for name, data in sorted(files.items()))
+    files['SHA256SUMS'] = sums.encode()
+    directory = output / record['tag']
+    directory.mkdir(exist_ok=True)
+    for name, data in files.items():
+        require(PurePosixPath(name).name == name, 'Release asset must be a basename')
+        (directory / name).write_bytes(data)
+    return {'tag': record['tag'], 'source_sha': source, 'latest': latest,
+            'assets': {name: {'size': len(data), 'sha256': sha(data)} for name, data in sorted(files.items())}}
+
+
+def verify_stage(output):
+    plan = json.loads((output / 'publication-plan.json').read_text())
+    p = read_config()
+    if p['schema'] == 2:
+        from watch_main_product import verify_stage as verify_main
+        return verify_main(p, output, sys.modules[__name__])
+    source = command('git', 'rev-parse', 'HEAD').decode().strip()
+    require(plan['schema'] == 1 and plan['repository'] == REPOSITORY and plan['product'] == p, 'Staged product mismatch')
+    require(plan['source_sha'] == source, 'Stage belongs to another release commit')
+    verify_watch_ancestry(p['sources']['watch']['accepted_sha'], source)
+    firmware_dir = output / p['tag']
+    bundle_name = f'twatch-s3-launcher-{p["accepted_build"]}-flashing.zip'
+    bundle = (firmware_dir / bundle_name).read_bytes()
+    require(sha(bundle) == p['accepted_bundle_sha256'], 'Original accepted custody ZIP changed')
+    with checked_zip(bundle) as z:
+        frozen = {n: z.read(n) for n in z.namelist()}
+    original_bin = frozen[f'twatch-s3-launcher-{p["accepted_build"]}.bin']
+    require(len(original_bin) == p['bin_size'] and sha(original_bin) == p['accepted_bin_sha256'], 'Accepted ZIP/BIN mismatch')
+    licenses = archive({n: b for n, b in frozen.items() if n.startswith(('licenses/', 'shared/')) or n == 'reproduce/RUNTIME-LICENSE'})
+    expected = {}
+    index = copy.deepcopy(EMPTY_INDEX)
+    for name in ('default', 'clock', 'springboard', 'settings', 'battery', 'calculator', 'stopwatch'):
+        manifest_data, data = frozen['store/' + name + '.json'], frozen['store/' + name + '.elf']
+        manifest = json.loads(manifest_data)
+        require(manifest['version'] == p['component_versions'][name], 'Accepted app version mismatch')
+        r = record('app', name, manifest['version'], name + '.elf', data, manifest=manifest,
+                   source_repo=REPOSITORY, source_sha=p['sources']['watch']['accepted_sha'],
+                   build_sources=p['sources'], configuration='accepted-watch-0.5.2')
+        index = update_index(index, 'apps', r)
+        payloads = {name + '.elf': data, name + '.json': manifest_data, 'LICENSES.zip': licenses,
+                    'release-record.json': encoded(r)}
+        expected[r['tag']] = (payloads, p['sources']['watch']['accepted_sha'], False)
+    artifact = (output / 'accepted-driver-artifact.zip').read_bytes()
+    require(sha(artifact) == p['artifacts']['drivers']['sha256'], 'Accepted driver artifact changed')
+    driver_records = []
+    with checked_zip(artifact) as z:
+        catalog = json.loads(z.read('catalog.json'))
+        require(len(catalog['packages']) == 17, 'Incomplete accepted driver catalog')
+        for item in catalog['packages']:
+            data = z.read(item['archive'])
+            require(len(data) == item['size_bytes'] and sha(data) == item['sha256'], 'Accepted driver catalog mismatch')
+            with checked_zip(data) as package:
+                manifest = json.loads(package.read('.package.json'))
+            deployed = 'store/' + item['id'].removeprefix('twatch-') + '/driver.elf'
+            r = record('driver', item['id'], item['version'], item['archive'], data,
+                       format='rte.zip', architecture='xtensa-esp32s3', manifest=manifest,
+                       source_repo=REPOSITORY, included_in_accepted_bin=deployed in frozen)
+            driver_records.append(r)
+            path = output / 'driver-assets' / r['asset']
+            require(path.is_file() and not path.is_symlink() and path.read_bytes() == data, 'Staged driver changed')
+            index = update_index(index, 'drivers', r)
+    name = f'twatch-s3-launcher-{p["version"]}.bin'
+    firmware = record('firmware', '', p['version'], name, original_bin, source_sha=source,
+                      accepted_source_sha=p['sources']['watch']['accepted_sha'], component_versions=p['component_versions'])
+    index = update_index(index, 'firmware', firmware)
+    require(plan['index'] == index and plan['driver_records'] == driver_records, 'Publication/index records differ from accepted components')
+    provenance = {**p, 'release_source_sha': source, 'binary_rebuilt': False,
+                  'version_scope': 'Product release only; every embedded component version and byte is unchanged.',
+                  'hardware_acceptance_scope': 'Owner accepted this exact integrated Watch BIN. No additional physical testing or peripheral qualification is claimed.',
+                  'accepted_manifest': json.loads(frozen['manifest.json'])}
+    flashing = flashing_document(p)
+    payloads = {name: original_bin, bundle_name: bundle, 'release-record.json': encoded(firmware),
+                'product-provenance.json': encoded(provenance), 'release-index.json': serialize_index(index).encode(),
+                'FLASHING.md': flashing}
+    expected[p['tag']] = (payloads, source, True)
+    require(len(plan['releases']) == len(expected) and {r['tag'] for r in plan['releases']} == set(expected), 'Wrong release inventory')
+    for release in plan['releases']:
+        payloads, target, latest = expected[release['tag']]
+        payloads['SHA256SUMS'] = ''.join(f'{sha(data)}  {name}\n' for name, data in sorted(payloads.items())).encode()
+        require(release['source_sha'] == target and release['latest'] is latest, 'Wrong release source or latest flag')
+        exact_assets = {name: {'size': len(data), 'sha256': sha(data)} for name, data in sorted(payloads.items())}
+        require(release['assets'] == exact_assets, 'Asset record differs from accepted payloads')
+        directory = output / release['tag']
+        require({x.name for x in directory.iterdir()} == set(payloads), 'Unexpected staged assets')
+        for name, data in payloads.items():
+            path = directory / name
+            require(path.is_file() and not path.is_symlink() and path.read_bytes() == data, 'Staged asset differs from accepted bytes')
+    return plan
+
+
+def release_by_tag(tag):
+    # Tag-specific REST lookup omits drafts. Listing includes owned drafts;
+    # use the stable creation ID below when verifying a newly created draft.
+    pages = json.loads(gh('api', f'repos/{REPOSITORY}/releases?per_page=100', '--paginate', '--slurp'))
+    matches = [r for page in pages for r in page if r['tag_name'] == tag]
+    require(len(matches) <= 1, 'Duplicate release tag')
+    return matches[0] if matches else None
+
+
+def verify_downloads(release, expected, destination):
+    names = [a['name'] for a in release['assets']]
+    require(len(names) == len(set(names)) and set(names) == set(expected), 'Release inventory mismatch')
+    destination.mkdir()
+    for asset in release['assets']:
+        data = gh('api', f'repos/{REPOSITORY}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream')
+        (destination / asset['name']).write_bytes(data)
+    require({p.name for p in destination.iterdir()} == set(expected), 'Downloaded inventory mismatch')
+    for name, meta in expected.items():
+        data = (destination / name).read_bytes()
+        require(len(data) == meta['size'] and sha(data) == meta['sha256'], 'Downloaded release bytes differ')
+
+
+def publish_one(release, output, *, title=None, notes=None, prerelease=False):
+    tag = release['tag']
+    target = release['source_sha']
+    existing = release_by_tag(tag)
+    tag_lookup = subprocess.run(['gh', 'api', f'repos/{REPOSITORY}/git/ref/tags/{tag}'], cwd=ROOT, capture_output=True)
+    if tag_lookup.returncode == 0:
+        require(api(f'repos/{REPOSITORY}/commits/{tag}')['sha'] == target, 'Existing tag source collision')
+    else:
+        require(b'HTTP 404' in tag_lookup.stderr, 'Tag lookup failed')
+    supplied_notes = notes
+    if existing is None:
+        p = read_config()
+        notes = ('Watch 1.0.0 stable baseline. Exact owner-accepted 0.5.2 bytes; component versions retained. '
+                 'Flash offset 0x0 replaces lower 8 MiB including settings. See FLASHING.md and product-provenance.json.'
+                 if release['latest'] else 'Independent accepted Watch-configured application. '
+                 'ELF and manifest are byte-identical to the accepted Watch 0.5.2 deployment. '
+                 'Component version is unchanged. See release-record.json and LICENSES.zip; no device installation performed.')
+        if p['schema'] == 2:
+            from watch_main_product import SCOPE, known_limitations_text
+            notes = (f'Watch {p["version"]}. Exact frozen CI-accepted main-style bytes. '
+                     'Full 16 MiB flash replacement erases both banks and saved state. '
+                     'See FLASHING.md and product-provenance.json. ' + SCOPE
+                     if release['latest'] else 'Independent Watch-configured application; ELF and manifest '
+                     'are byte-identical to the frozen CI-accepted main image. '
+                     'Component version is retained. See release-record.json and LICENSES.zip. ' + SCOPE)
+            if release['latest'] and p.get('known_limitations'):
+                notes += '\n\n' + known_limitations_text(p)
+        if supplied_notes is not None:
+            notes = supplied_notes
+        existing = json.loads(gh('api', f'repos/{REPOSITORY}/releases', '--method', 'POST',
+                                 '-f', 'tag_name=' + tag, '-f', 'target_commitish=' + target,
+                                 '-f', 'name=' + (title or ('Watch ' + p['version'] if release['latest'] else tag)),
+                                 '-f', 'body=' + notes, '-F', 'draft=true',
+                                 '-F', 'prerelease=' + str(prerelease).lower()))
+    require(existing['target_commitish'] == target, 'Existing release source collision')
+    require(existing.get('prerelease', False) is prerelease, 'Release prerelease status differs')
+    names = [a['name'] for a in existing['assets']]
+    require(len(names) == len(set(names)) and set(names) <= set(release['assets']), 'Unexpected existing assets')
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        for name in names:
+            destination = tmp / name
+            asset = next(a for a in existing['assets'] if a['name'] == name)
+            destination.write_bytes(gh('api', f'repos/{REPOSITORY}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream'))
+            require(destination.read_bytes() == (output / tag / name).read_bytes(), 'Immutable uploaded asset collision')
+        for name in sorted(set(release['assets']) - set(names)):
+            require(existing['draft'], 'Published release has missing assets')
+            gh('api', f'https://uploads.github.com/repos/{REPOSITORY}/releases/{existing["id"]}/assets?name={name}', '--method', 'POST', '--input', output / tag / name, '-H', 'Content-Type: application/octet-stream')
+        uploaded = api(f'repos/{REPOSITORY}/releases/{existing["id"]}')
+        require(uploaded is not None, 'Cannot verify uploaded draft')
+        verify_downloads(uploaded, release['assets'], tmp / 'verify')
+    if existing['draft']:
+        gh('api', f'repos/{REPOSITORY}/releases/{existing["id"]}', '--method', 'PATCH', '-F', 'draft=false', '-f', 'make_latest=' + str(release['latest']).lower())
+    published = api(f'repos/{REPOSITORY}/releases/{existing["id"]}')
+    require(published is not None and not published['draft'], 'Publication not confirmed')
+    require(api(f'repos/{REPOSITORY}/commits/{tag}')['sha'] == target, 'Published tag source mismatch')
+    print('Verified release:', published['html_url'])
+
+
+def verify_driver_releases(plan, output):
+    # Driver automation retains its original immutable catalog/release records.
+    # Download the live asset and compare it with accepted CI, not a fresh build.
+    for r in plan['driver_records']:
+        release = release_by_tag(r['tag'])
+        require(release is not None and not release['draft'], 'Driver publication still pending: ' + r['tag'])
+        names = [a['name'] for a in release['assets']]
+        require(len(names) == len(set(names)) and set(names) == {r['asset'], 'release-record.json'}, 'Driver release inventory differs')
+        require(not release.get('prerelease', False), 'Driver release is not stable')
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            for asset in release['assets']:
+                (path / asset['name']).write_bytes(gh('api', f'repos/{REPOSITORY}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream'))
+            require((path / r['asset']).read_bytes() == (output / 'driver-assets' / r['asset']).read_bytes(), 'Published driver differs from accepted source')
+            record = json.loads((path / 'release-record.json').read_text())
+        require(record['id'] == r['id'] and record['version'] == r['version'] and record['sha256'] == r['sha256'] and record['size_bytes'] == r['size'], 'Driver release record mismatch')
+        require(record.get('kind') == 'driver' and record.get('architecture') == r['architecture'] and
+                record.get('archive') == r['asset'] and record.get('tag') == r['tag'], 'Driver published identity mismatch')
+        with checked_zip((output / 'driver-assets' / r['asset']).read_bytes()) as package:
+            require(json.loads(package.read('.package.json')) == r['manifest'], 'Published driver package manifest mismatch')
+        if 'source_sha' in r:
+            require(r['source_sha'] == record['source_sha'], 'Reused driver source provenance mismatch')
+        require(release.get('target_commitish') == record['source_sha'], 'Driver release source mismatch')
+        require(api(f'repos/{REPOSITORY}/commits/{r["tag"]}')['sha'] == record['source_sha'], 'Driver tag source mismatch')
+
+
+def current_release_index():
+    old = command('git', 'ls-remote', 'origin', 'refs/heads/release-index').decode().strip()
+    parent = old.split()[0] if old else None
+    current = copy.deepcopy(EMPTY_INDEX)
+    if parent:
+        command('git', 'fetch', 'origin', 'refs/heads/release-index')
+        require(command('git', 'rev-parse', 'FETCH_HEAD').decode().strip() == parent, 'Index changed while fetching')
+        current = json.loads(command('git', 'show', parent + ':release-index.json'))
+    return parent, current
+
+
+def merged_index(current, index):
+    result = update_index(current, 'firmware', index['firmware'])
+    for product in ('apps', 'drivers'):
+        for record in index[product]:
+            result = update_index(result, product, record)
+    return result
+
+
+def publication_preflight(plan, output):
+    """Read-only collision gate for the WHOLE plan before creating any release.
+
+    Recheck during each publication too. A concurrently changed remote still
+    fails closed, and the final non-force index push remains monotonic.
+    """
+    _, current = current_release_index()
+    reused = plan.get('product', {}).get('reused_driver_records', {})
+    if reused:
+        existing = current.get('drivers', [])
+        require(len({r['id'] for r in existing}) == len(existing), 'Duplicate existing driver index identity')
+        by_id = {r['id']: r for r in existing}
+        require(all(by_id.get(identity) == record for identity, record in reused.items()),
+                'Reviewed reused driver record differs from current immutable index')
+    reused_apps = plan.get('product', {}).get('reused_app_records', {})
+    if reused_apps:
+        existing = current.get('apps', [])
+        require(len({r['id'] for r in existing}) == len(existing), 'Duplicate existing app index identity')
+        by_id = {r['id']: r for r in existing}
+        for identity, record in reused_apps.items():
+            require(by_id.get(identity) == record, 'Reviewed reused app differs from immutable index')
+            release = release_by_tag(record['tag'])
+            require(release and not release['draft'] and not release.get('prerelease', False), 'Reused app release is not published')
+            require(release['target_commitish'] == record['source_sha'] and
+                    api(f'repos/{REPOSITORY}/commits/{record["tag"]}')['sha'] == record['source_sha'],
+                    'Reused app source/tag differs')
+            assets = {a['name']: a for a in release['assets']}
+            require(len(assets) == len(release['assets']), 'Duplicate reused app assets')
+            def read(name):
+                require(name in assets, 'Missing reused app asset: ' + name)
+                return gh('api', f'repos/{REPOSITORY}/releases/assets/{assets[name]["id"]}', '-H', 'Accept: application/octet-stream')
+            raw = read(record['asset'])
+            require(len(raw) == record['size'] and sha(raw) == record['sha256'], 'Reused app payload differs')
+            require(json.loads(read(identity + '.json')) == record['manifest'] and
+                    json.loads(read('release-record.json')) == record, 'Reused app manifest/provenance differs')
+    merged_index(current, plan['index'])
+    integration = {'watch': verify_watch_ancestry(plan['product']['sources']['watch']['accepted_sha'], plan['source_sha']),
+                   'owning_sources': verify_current_source_ancestry(plan['product'])}
+    verify_driver_releases(plan, output)
+    release_preflight(plan['releases'], output)
+    print('Verified source integration before publication:\n' + encoded(integration).decode())
+    return integration
+
+
+def release_preflight(releases, output, *, prerelease=False):
+    """Read-only immutable tag/asset collision check, shared by manual publishers."""
+    for release in releases:
+        tag, target = release['tag'], release['source_sha']
+        existing = release_by_tag(tag)
+        lookup = subprocess.run(['gh', 'api', f'repos/{REPOSITORY}/git/ref/tags/{tag}'], cwd=ROOT, capture_output=True)
+        if lookup.returncode == 0:
+            require(api(f'repos/{REPOSITORY}/commits/{tag}')['sha'] == target, 'Existing tag source collision: ' + tag)
+        else:
+            require(b'HTTP 404' in lookup.stderr, 'Tag lookup failed: ' + tag)
+        if existing is None:
+            continue
+        require(existing.get('target_commitish') == target, 'Existing release source collision: ' + tag)
+        require(existing['draft'] or lookup.returncode == 0, 'Published release tag missing: ' + tag)
+        require(existing.get('prerelease', False) is prerelease, 'Release prerelease status differs')
+        names = [a['name'] for a in existing['assets']]
+        require(len(names) == len(set(names)) and set(names) <= set(release['assets']), 'Unexpected existing assets: ' + tag)
+        require(existing['draft'] or set(names) == set(release['assets']), 'Published release has missing assets: ' + tag)
+        for asset in existing['assets']:
+            raw = gh('api', f'repos/{REPOSITORY}/releases/assets/{asset["id"]}', '-H', 'Accept: application/octet-stream')
+            require(raw == (output / tag / asset['name']).read_bytes(), 'Immutable uploaded asset collision: ' + tag)
+
+
+def publish_index(index, *, expected_parent=None, expected_current=None):
+    # Same branch-only, monotonic, non-force protocol as Reader. Plumbing avoids
+    # copying main's source files into the dedicated index branch.
+    parent, current = current_release_index()
+    if expected_parent is not None:
+        require(parent == expected_parent and current == expected_current,
+                'Live index predecessor changed; review before retrying publication')
+    result = merged_index(current, index)
+    if current == result:
+        print('Release index already verified unchanged')
+        return
+    data = serialize_index(result).encode()
+    blob = subprocess.check_output(['git', 'hash-object', '-w', '--stdin'], input=data, cwd=ROOT).decode().strip()
+    tree = subprocess.check_output(['git', 'mktree'], input=f'100644 blob {blob}\trelease-index.json\n'.encode(), cwd=ROOT).decode().strip()
+    args = ['git', '-c', 'user.name=github-actions[bot]', '-c', 'user.email=41898282+github-actions[bot]@users.noreply.github.com', 'commit-tree', tree]
+    if parent:
+        args += ['-p', parent]
+    commit = subprocess.check_output(args + ['-m', 'Index verified Watch ' + index['firmware']['version'] + ' and independent components'], cwd=ROOT).decode().strip()
+    command('git', 'push', 'origin', commit + ':refs/heads/release-index')
+    require(command('git', 'ls-remote', 'origin', 'refs/heads/release-index').decode().split()[0] == commit, 'Index publication not confirmed')
+    print('Verified release index:', f'https://github.com/{REPOSITORY}/blob/release-index/release-index.json')
+
+
+def publish(output):
+    require(CONFIG == ROOT / 'release/product.json', 'Publication requires the canonical committed product manifest')
+    require(not command('git', 'status', '--porcelain', '--untracked-files=no').strip(), 'Release source checkout dirty')
+    require(command('git', 'show', 'HEAD:release/product.json') == CONFIG.read_bytes(), 'Product manifest is not committed at release source')
+    plan = verify_stage(output)
+    verify_watch_ancestry(plan['product']['sources']['watch']['accepted_sha'], plan['source_sha'])
+    repository = api('repos/' + REPOSITORY)
+    require(os.environ.get('GITHUB_REPOSITORY') == REPOSITORY, 'Wrong publishing repository')
+    require(os.environ.get('GITHUB_REF') == 'refs/heads/' + repository['default_branch'], 'Publication requires current default branch')
+    require(os.environ.get('GITHUB_EVENT_NAME') in ('push', 'workflow_dispatch', 'workflow_run'), 'Publication requires default-branch release workflow or explicit dispatch')
+    require(api(f'repos/{REPOSITORY}/commits/{repository["default_branch"]}')['sha'] == plan['source_sha'], 'Default branch advanced; review current release source')
+    if plan['product']['schema'] == 2:
+        from watch_main_product import verify_ci
+        verify_ci(plan['product'], sys.modules[__name__])
+    publication_preflight(plan, output)
+    for r in plan['releases']:
+        publish_one(r, output)
+    publish_index(plan['index'])
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('action', choices=['download', 'stage', 'verify', 'preflight', 'publish'])
+    parser.add_argument('--config', type=Path, default=CONFIG)
+    parser.add_argument('--inputs', type=Path, default=ROOT / 'dist/product-inputs')
+    parser.add_argument('--accepted-watch', type=Path)
+    parser.add_argument('--runtime-source', type=Path)
+    parser.add_argument('--output', type=Path, default=ROOT / 'dist/watch-product')
+    a = parser.parse_args()
+    CONFIG = a.config.resolve()
+    if a.action == 'download':
+        artifact_inputs(a.inputs.resolve(), download=True)
+    elif a.action == 'stage':
+        require(a.accepted_watch and a.runtime_source, 'Exact accepted source checkouts required')
+        stage(a.inputs.resolve(), a.accepted_watch.resolve(), a.runtime_source.resolve(), a.output.resolve())
+    elif a.action == 'verify':
+        verify_stage(a.output.resolve())
+    elif a.action == 'preflight':
+        publication_preflight(verify_stage(a.output.resolve()), a.output.resolve())
+    else:
+        publish(a.output.resolve())
