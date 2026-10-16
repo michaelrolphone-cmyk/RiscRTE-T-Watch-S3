@@ -1,0 +1,50 @@
+[
+  {
+    "product": "x4",
+    "active_bank": 0,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  },
+  {
+    "product": "x4",
+    "active_bank": 1,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  },
+  {
+    "product": "wave",
+    "active_bank": 0,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  },
+  {
+    "product": "wave",
+    "active_bank": 1,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  },
+  {
+    "product": "watch",
+    "active_bank": 0,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  },
+  {
+    "product": "watch",
+    "active_bank": 1,
+    "wrapper_pass": true,
+    "readbacks_pass": true,
+    "corruption_refused": true,
+    "software_fixture": true
+  }
+]

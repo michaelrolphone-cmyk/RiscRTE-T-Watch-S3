@@ -1,0 +1,20 @@
+name: Watch mounted Files recipe
+on:
+  push:
+    branches: [integrate/watch-1.1.16-mounted-files]
+  pull_request:
+    paths:
+      - 'scripts/assemble_watch_mounted_files.py'
+      - 'tests/test_mounted_files_recipe.py'
+      - '.github/workflows/mounted-files-recipe.yml'
+permissions:
+  contents: read
+jobs:
+  recipe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - run: python3 tests/test_mounted_files_recipe.py

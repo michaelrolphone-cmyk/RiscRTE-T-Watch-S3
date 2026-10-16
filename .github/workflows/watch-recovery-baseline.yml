@@ -1,0 +1,61 @@
+name: Watch recovered baseline and factory mount
+on:
+  push:
+    branches: [work/watch-recovery-baseline-20261013]
+  pull_request:
+    paths:
+      - 'scripts/watch_factory_appdata.py'
+      - 'scripts/test_watch_factory_appdata.py'
+      - 'scripts/verify_watch_recovery.py'
+      - 'scripts/verify_factory_appdata_mount.py'
+      - 'scripts/factory_appdata_mount_test.cpp'
+      - 'scripts/make_factory_appdata_fixtures.py'
+      - 'docs/watch-recovery/**'
+      - '.github/workflows/watch-recovery-baseline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  factory-storage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 06da76aa7f074220b74a282badca0ed0061f1643
+          path: .dependencies/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: littlefs-project/littlefs
+          ref: f53a0cc961a8acac85f868b431d2f3e58e447ba3
+          path: .dependencies/littlefs
+          persist-credentials: false
+      - name: Reproduce empty target filesystem and packaging refusals
+        run: |
+          python scripts/watch_factory_appdata.py format --runtime .dependencies/runtime --littlefs-source .dependencies/littlefs --output "$RUNNER_TEMP/appdata"
+          python scripts/test_watch_factory_appdata.py --appdata "$RUNNER_TEMP/appdata/appdata.bin" -v
+      - name: Create nonbootable storage-only fixtures
+        run: |
+          xxd -r -p docs/watch-recovery/partition-table.hex > "$RUNNER_TEMP/partitions.bin"
+          python scripts/make_factory_appdata_fixtures.py --partition-table "$RUNNER_TEMP/partitions.bin" --formatted-appdata "$RUNNER_TEMP/appdata/appdata.bin" --output "$RUNNER_TEMP/fixtures"
+      - name: Production mount and FileSource, normal plus ASan/UBSan
+        run: |
+          python scripts/verify_factory_appdata_mount.py --runtime .dependencies/runtime --old-image "$RUNNER_TEMP/fixtures/old-host-fixture.bin" --recovered-image "$RUNNER_TEMP/fixtures/recovered-host-fixture.bin" --selection "$RUNNER_TEMP/fixtures/selection.json" --output "$RUNNER_TEMP/mount"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: watch-factory-storage-evidence
+          path: |
+            ${{ runner.temp }}/appdata/appdata-image.json
+            ${{ runner.temp }}/fixtures/selection.json
+            ${{ runner.temp }}/mount/report.json
+            ${{ runner.temp }}/mount/*/run.log
+          if-no-files-found: error

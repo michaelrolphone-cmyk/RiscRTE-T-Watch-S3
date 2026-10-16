@@ -1,0 +1,191 @@
+{
+  "springboard": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 230504,
+    "after_bytes": 147612,
+    "before_sha256": "7be3681ead68fbc47b065b20aec03f08555abe3a574e316b2059c136ebd9a846",
+    "after_sha256": "e61b6c2e409f18a94782b811b41a7c1c576a11af2b85a002dfe471449fac55b4",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "battery": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 200332,
+    "after_bytes": 129440,
+    "before_sha256": "542989bf7fad9fb107c973f89b25eebf729c21a8be6b8f3e1c6312343a08e1d0",
+    "after_sha256": "2068836e535d4663ce2445e5661c5bddcc6d74e8b4aefa14622aeda23b09cf38",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "calculator": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 195584,
+    "after_bytes": 125508,
+    "before_sha256": "6de01c8255d7fc27dbc45987cb24c6cb07707bd939837f36166b87193d969c83",
+    "after_sha256": "26fef35a1443ec0f5971d108448ea9cf00e850806fad4f04ed0e8e547244d473",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "stopwatch": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 196356,
+    "after_bytes": 126800,
+    "before_sha256": "252e94a2308efbfe8ed6c7532e60615876a5528f5e158594083a338f233d2c3a",
+    "after_sha256": "03e456e49dc7bebe6b4314d7c44b786139eaf4c92a6b362264c0d4b29a9942fc",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "frequency_generator": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 183832,
+    "after_bytes": 118440,
+    "before_sha256": "bad33a3736694acc6ed489353d00a9d2b8a27c1930889e6c145b188530611358",
+    "after_sha256": "d96416097b0714e99fadee0ac2cfe92cb030a41c4016bdd5f967d45df8807e54",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "alarms": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 206336,
+    "after_bytes": 133184,
+    "before_sha256": "9270637454078d425aa6af01a25e3d550496a717cdfcf845308df5afd3afae51",
+    "after_sha256": "eee14389b4eab372510ed11844f16e02bbec3b41bfe220836460bd617b11adf5",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "countdown": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 198600,
+    "after_bytes": 128384,
+    "before_sha256": "f367906e8bc213284b75b03cfd202738674b5ce47560978e8d969a2f52d941df",
+    "after_sha256": "1b148ce07eb6eb3d50c0c51f70a880e7e907d7f5dc1396cb4b329b000ce9e4ce",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "ble_touchpad": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 204372,
+    "after_bytes": 133088,
+    "before_sha256": "508e199724e9b989a75a9e4a20aab53fca1d4d78ff65631ac749dc57dffa9012",
+    "after_sha256": "88c7b54ef76d69fc52bdb0a25533117761a9f84bf2c59510f8be94d984cfadf7",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  },
+  "ble_buttons": {
+    "profile": "loader-metadata-v3",
+    "before_bytes": 205444,
+    "after_bytes": 133948,
+    "before_sha256": "c41eef72a36e023d4970ccb7a87aeb8eef576d49031d5efde1f8597096fa34bd",
+    "after_sha256": "595103077c5f6fd6808b7bc674b21093771588719c21174eeb206531c8e48c54",
+    "removed_sections": [
+      ".xt.lit",
+      ".xt.prop"
+    ],
+    "retained_loader_sections_symbols_relocations_unchanged": true,
+    "original_elf_retained": true,
+    "tool": "GNU objcopy (crosstool-NG esp-2021r2-patch5) 2.35.1.20201223",
+    "options": [
+      "--remove-section=.xt.lit",
+      "--remove-section=.xt.prop",
+      "--discard-all"
+    ],
+    "validation": "Native ELF structural validation tests passed\n",
+    "system_revision": "f74db7dda4d4a6d5fffa048a1e9384addab1540c"
+  }
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NOVA-7 Watch Face — 240×240</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--c:#19e3ff;--cd:#0e4f5c;--a:#ff9e1f;--g:#3dff9a;--bg:#000;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:#000;color:#6b7c80}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-family:'Rajdhani','Segoe UI',sans-serif}
+.case{padding:12px;border-radius:66px;background:linear-gradient(145deg,#2a2d30,#0a0b0c);box-shadow:0 0 0 2px #1b1d1f,0 0 40px rgba(25,227,255,.12),0 20px 40px #000}
+svg{display:block;width:240px;height:240px;border-radius:54px;background:#000}
+.o{font-family:'Orbitron','Rajdhani','Segoe UI',monospace}
+.r{font-family:'Rajdhani','Segoe UI',sans-serif}
+.spin{transform-box:fill-box;transform-origin:center;animation:spin 90s linear infinite}
+.spin2{transform-box:fill-box;transform-origin:center;animation:spin 40s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+p{margin:0;font-size:13px;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<div class="case">
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" aria-label="Smartwatch face">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <g id="ticks"></g>
+  <circle cx="120" cy="120" r="98" fill="none" stroke="#0b1719" stroke-width="2.5"/>
+  <circle id="sec" cx="120" cy="120" r="98" fill="none" stroke="#19e3ff" stroke-width="2.5" stroke-linecap="round" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 120 120)" filter="url(#glow)"/>
+  <circle id="dot" r="3.4" fill="#fff" filter="url(#glow)"/>
+  <circle class="spin" cx="120" cy="120" r="82" fill="none" stroke="#0e4f5c" stroke-width="1" stroke-dasharray="2 7"/>
+  <circle class="spin2" cx="120" cy="120" r="76" fill="none" stroke="#19e3ff" stroke-opacity=".35" stroke-width="1" stroke-dasharray="24 60 6 60"/>
+  <g stroke="#19e3ff" stroke-opacity=".7" stroke-width="1.2" fill="none"><path d="M44 96V88h8M196 96V88h-8M44 148v8h8M196 148v8h-8"/></g>
+
+  <text id="date" x="120" y="62" text-anchor="middle" class="r" font-size="12" font-weight="600" letter-spacing="2.5" fill="#19e3ff" fill-opacity=".8">SAT 03 OCT</text>
+  <text x="120" y="126" text-anchor="middle" class="o" font-size="40" font-weight="700" fill="#fff" textLength="132" lengthAdjust="spacingAndGlyphs" filter="url(#glow)"><tspan id="hh">10</tspan><tspan id="colon" fill="#19e3ff">:</tspan><tspan id="mm">42</tspan></text>
+  <circle cx="92" cy="144" r="2" fill="#3dff9a"/>
+  <text x="99" y="147" class="r" font-size="9" letter-spacing="2" fill="#6b7c80">SYNCED</text>
+  <text id="ss" x="151" y="147" class="o" font-size="9" fill="#19e3ff" fill-opacity=".8">00</text>
+
+  <line x1="46" y1="158" x2="194" y2="158" stroke="#0e4f5c" stroke-width="1"/>
+
+  <g text-anchor="middle">
+    <text x="120" y="171" class="r" font-size="9" letter-spacing="2" fill="#6b7c80">BATTERY</text>
+    <text x="120" y="185" class="o" font-size="13" font-weight="500" fill="#3dff9a">84%</text>
+    <rect x="105" y="190" width="30" height="2" rx="1" fill="#0a2014"/><rect x="105" y="190" width="25.2" height="2" rx="1" fill="#3dff9a"/>
+  </g>
+</svg>
+</div>
+<p>240 × 240 · NOVA-7</p>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg',g=document.getElementById('ticks');
+  for(var i=0;i<60;i++){
+    var a=(i*6-90)*Math.PI/180,q=i%15===0,m=i%5===0,r2=q?101:m?105:110;
+    var l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',120+116*Math.cos(a));l.setAttribute('y1',120+116*Math.sin(a));
+    l.setAttribute('x2',120+r2*Math.cos(a));l.setAttribute('y2',120+r2*Math.sin(a));
+    l.setAttribute('stroke',q?'#ffffff':m?'#19e3ff':'#0e4f5c');
+    l.setAttribute('stroke-width',q?3:m?2:1);
+    if(q)l.setAttribute('stroke-linecap','round');
+    g.appendChild(l);
+  }
+  var sec=document.getElementById('sec'),dot=document.getElementById('dot'),
+      hh=document.getElementById('hh'),mm=document.getElementById('mm'),
+      ss=document.getElementById('ss'),dt=document.getElementById('date'),
+      col=document.getElementById('colon');
+  var p=function(n){return n<10?'0'+n:''+n};
+  function tick(){
+    var d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1000;
+    sec.setAttribute('stroke-dasharray',Math.max(s,.01)+' 60');
+    var a=(s*6-90)*Math.PI/180;
+    dot.setAttribute('cx',120+98*Math.cos(a));dot.setAttribute('cy',120+98*Math.sin(a));
+    hh.textContent=p(d.getHours());mm.textContent=p(d.getMinutes());ss.textContent=p(d.getSeconds());
+    col.setAttribute('fill-opacity',d.getMilliseconds()<500?1:.25);
+    var wd=d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),mo=d.toLocaleDateString('en-US',{month:'short'}).toUpperCase();
+    dt.textContent=wd+' '+p(d.getDate())+' '+mo;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

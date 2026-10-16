@@ -1,0 +1,9 @@
+{
+  "expected_sha256": "c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a",
+  "expected_bytes": 16777216,
+  "archive_member": "Watch/TWatch-S3-1.1.0-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin",
+  "candidate_paths_compared": 10,
+  "matches": [],
+  "baseline_custody_verified_locally": false,
+  "status": "awaiting confirmed Watch-only Library input"
+}

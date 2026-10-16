@@ -160,6 +160,32 @@ int main(void) {
         assert(pmu_api->resume(NULL));masks_restored();forced_irq_low=false;
         prepared();end();
     }
+    /* A completed preparation is no longer armed once restoration starts.
+     * A single failed awake-mask write must not admit any native sleep entry,
+     * even after the bus fault disappears. Only verified rollback clears it. */
+    for(unsigned failure=1;failure<=3;++failure) {
+        begin(0);assert(pmu_api->prepare_sleep(NULL));
+        const uint8_t charger=m_regs[0x18],current=m_regs[0x62],thermal=m_regs[0x50];
+        transfers=0;fail_transfer=failure;assert(!pmu_api->resume(NULL));
+        assert(sleep_changed && !sleep_prepared);fail_transfer=0;
+        for(unsigned retry=0;retry<3;++retry) {
+            unsigned calls=light_calls+deep_calls;
+            assert(!pmu_api->prepare_sleep(NULL));
+            risc_light_sleep_result_v1 result={sizeof(result),0};
+            assert(pmu_api->light_sleep(NULL,&result)==RISC_LIGHT_SLEEP_INVALID);
+            assert(pmu_api->light_sleep_for(NULL,1000,&result)==RISC_LIGHT_SLEEP_INVALID);
+            assert(pmu_api->light_sleep_set(NULL,1000,&result)==RISC_LIGHT_SLEEP_INVALID);
+            assert(pmu_api->deep_sleep(NULL)==RISC_DEEP_SLEEP_INVALID);
+            assert(pmu_api->deep_sleep_for(NULL,1000)==RISC_DEEP_SLEEP_INVALID);
+            assert(pmu_api->deep_sleep_set(NULL,1000)==RISC_DEEP_SLEEP_INVALID);
+            bool pending=false;assert(!pmu_api->sleep_wake_pending(NULL,&pending));
+            assert(calls==light_calls+deep_calls);
+            assert(m_regs[0x18]==charger && m_regs[0x62]==current && m_regs[0x50]==thermal);
+        }
+        assert(pmu_api->resume(NULL));masks_restored();
+        prepared();assert(m_regs[0x18]==charger && m_regs[0x62]==current && m_regs[0x50]==thermal);
+        end();
+    }
     assert(light_calls && deep_calls==light_calls);
     puts("PMU cold boot: no-crown autosleep, held startup/later, release, edge races, all preparation I/O faults, repeated refusal/restore PASS");
     return 0;

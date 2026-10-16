@@ -108,9 +108,9 @@ def main():
     selections = {}
     compiled_sources = []
     source_manifests = {json.loads(path.read_text())['id']: path for path in (watch/'drivers').glob('*/manifest.json')}
-    from build_legacy_sleep import legacy_inputs
-    legacy=legacy_inputs(watch)
-    source_manifests.update({json.loads(p.read_text())['id']:p for p in (legacy/'drivers').glob('*/manifest.json')})
+    from build_legacy_sleep import legacy_manifests
+    frozen_manifests = {json.loads(p.read_text())['id']: p for p in legacy_manifests(watch)}
+    source_manifests.update(frozen_manifests)
     variants = {(source/'points_in_time.json').exists() for source in stores}
     assert len(variants) == 1, 'Run Alarm and Points/Wi-Fi stores separately with their exact source pins'
     points = variants.pop()
@@ -156,7 +156,9 @@ def main():
             assert len(candidates) == 1, name
             source = candidates[0]
             module_includes = includes
-            if name in ('twatch-gpio','twatch-pmu'):module_includes=['-I'+str(legacy/p) for p in ('sdk/driver','include')]+includes
+            if name in frozen_manifests:
+                frozen_root = frozen_manifests[name].parents[2]
+                module_includes=['-I'+str(frozen_root/p) for p in ('sdk/driver','include')]+includes
         run([cc, '-std=c11', *flags, '-fPIC', '-shared', '-fvisibility=hidden', *module_includes,
              *extra, source, '-o', output])
         compiled_sources.append(source)

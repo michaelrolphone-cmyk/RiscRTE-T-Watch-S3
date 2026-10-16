@@ -1,0 +1,10 @@
+{
+  "acceptance_scope": "The delivered integrated Watch build; no new or exhaustive physical qualification is inferred.",
+  "accepted_image_sha256": "af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff",
+  "embedded_provenance_unchanged": true,
+  "owner_report": "The last build you gave me seems to be good. I'm sure it's got bugs in it, but it seems stable, reliable.",
+  "paired_update_catalog_published": false,
+  "release_authorized": true,
+  "schema": 1,
+  "version": "1.0.12"
+}

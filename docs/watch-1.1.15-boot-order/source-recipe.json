@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "product": "twatch-s3",
+  "version": "1.1.15",
+  "packaging_only": true,
+  "baseline_product": "b3fd14f78a1100fae5cea2f4b34a7f48b4fa01d9",
+  "baseline_full_image_sha256": "0a85cc204e53c969af466e5a02f22a2865b4e1ea6efe85d5319c77211b13512d",
+  "runtime_source": "267aab6d9382ce4921a1536fab1620749b2f5301",
+  "native_firmware_sha256": "f9cc819421775cfb9e55a8c7b2c1f2174c9a61b1a85560446cf4f680d14a7726",
+  "native_elf_sha256": "7025c5158323a0b26a62c3608684a3eecdbfd74e42049ba760f57822315307f0",
+  "clock_version": "0.11.5",
+  "clock_source": "e9df61067f1e1cc35e7327993143ca084c2ce4cb",
+  "files_version": "1.5.30",
+  "store_files": 111,
+  "applications": 25,
+  "provider_instances": 30,
+  "elfs": 54,
+  "content_changes": [
+    "cohort.json product version and source_revision only"
+  ],
+  "assembly_script": "scripts/assemble_watch_boot_order.py",
+  "packing_script": "scripts/watch_boot_order_spiffs.py",
+  "first_frame_plans": "Source-derived Clock dependency closure; metadata plan from actual Runtime.prepare fopen trace",
+  "hardware_timing_measured": false
+}

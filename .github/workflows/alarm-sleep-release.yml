@@ -1,0 +1,217 @@
+name: TWatch 1.1.41 shared alarm sleep repair
+on:
+  push:
+    branches: [release/alarm-sleep-1.1.41]
+    paths:
+      - .github/workflows/alarm-sleep-release.yml
+      - scripts/package_alarm_sleep.py
+      - scripts/test_alarm_sleep_package.py
+      - docs/alarm-sleep/**
+permissions:
+  contents: read
+concurrency:
+  group: twatch-alarm-sleep-1.1.41
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+    working-directory: product
+env:
+  PRODUCT_REPOSITORY: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+  BASELINE_TAG: test-native-idf61-1.1.40
+  RELEASE_TAG: test-alarm-sleep-1.1.41
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  package:
+    if: github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    outputs:
+      publication_enabled: ${{ steps.pins.outputs.publication_enabled }}
+      checksums_sha256: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: product
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - id: pins
+        run: |
+          python3 - <<'PY'
+          import os,sys
+          sys.path.insert(0,'scripts')
+          from package_alarm_sleep import pins
+          p=pins()
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              print('publication_enabled='+str(p['publication_enabled']).lower(),file=out)
+              for name,revision in p['sources'].items(): print(name+'='+revision,file=out)
+          PY
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: sources/runtime
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ steps.pins.outputs.system }}
+          path: sources/system
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: ${{ steps.pins.outputs.watch }}
+          path: sources/watch
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ steps.pins.outputs.utilities }}
+          path: sources/utilities
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+          ref: ${{ steps.pins.outputs.image_helper }}
+          path: sources/image-helper
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: espressif/esp-idf
+          ref: ${{ steps.pins.outputs.sdk }}
+          path: sources/sdk
+          persist-credentials: false
+      - name: Prepare exact official GCC15.2 and package dependencies
+        run: |
+          set -euo pipefail
+          python3 -m pip install pyelftools==0.32
+          python3 - <<'PY'
+          import hashlib,json,urllib.request
+          from pathlib import Path
+          p=json.loads(Path('docs/alarm-sleep/source-pins.json').read_text())
+          with urllib.request.urlopen(p['toolchain_archive_url'],timeout=180) as response:
+              data=response.read()
+          assert hashlib.sha256(data).hexdigest()==p['toolchain_archive_sha256']
+          Path('../toolchain.tar.xz').write_bytes(data)
+          PY
+          mkdir ../toolchain
+          tar -xJf ../toolchain.tar.xz -C ../toolchain
+          python3 scripts/test_alarm_sleep_package.py
+      - name: Download exact official native baseline and verify tag identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir ../inputs
+          gh api "repos/$PRODUCT_REPOSITORY/releases/tags/$BASELINE_TAG" > ../inputs/baseline-release.json
+          gh api "repos/$PRODUCT_REPOSITORY/git/ref/tags/$BASELINE_TAG" > ../inputs/baseline-tag.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('docs/alarm-sleep/source-pins.json').read_text())
+          r=json.loads(Path('../inputs/baseline-release.json').read_text())
+          t=json.loads(Path('../inputs/baseline-tag.json').read_text())
+          assert r['tag_name']=='test-native-idf61-'+p['baseline_version'] and not r['draft']
+          assert t['object']['type']=='commit' and t['object']['sha']==p['baseline_source']
+          assert len({a['name'] for a in r['assets']})==len(r['assets'])
+          PY
+          gh release download "$BASELINE_TAG" --repo "$PRODUCT_REPOSITORY" \
+            --pattern 'TWatch-1.1.40-Native-IDF61-factory-erases-data-0x0.bin' \
+            --pattern 'TWatch-1.1.40-Native-IDF61-Evidence.zip' \
+            --pattern 'runtime-release-manifest.json' --dir ../inputs
+      - name: Replay shared service twice and qualify exact unchanged native composition
+        run: |
+          set -euo pipefail
+          export PATH="$GITHUB_WORKSPACE/toolchain/xtensa-esp-elf/bin:$PATH"
+          python3 scripts/package_alarm_sleep.py \
+            --baseline ../inputs/TWatch-1.1.40-Native-IDF61-factory-erases-data-0x0.bin \
+            --evidence ../inputs/TWatch-1.1.40-Native-IDF61-Evidence.zip \
+            --runtime-manifest ../inputs/runtime-release-manifest.json \
+            --runtime ../sources/runtime --system ../sources/system --watch ../sources/watch \
+            --utilities ../sources/utilities --image-helper ../sources/image-helper --sdk ../sources/sdk \
+            --compiler ../toolchain/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc \
+            --source-revision "$GITHUB_SHA" --output ../outputs
+          git diff --exit-code
+          (cd ../outputs && sha256sum --check --strict SHA256SUMS)
+      - id: digest
+        run: echo "sha256=$(sha256sum ../outputs/SHA256SUMS | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: twatch-alarm-sleep-${{ github.sha }}
+          path: outputs/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+  publish:
+    needs: package
+    if: needs.package.outputs.publication_enabled == 'true' && github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3' && github.ref == 'refs/heads/release/alarm-sleep-1.1.41'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: product
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: twatch-alarm-sleep-${{ github.sha }}
+          path: release-assets
+      - name: Verify exact complete source-bound assets
+        env:
+          EXPECTED_SHA: ${{ needs.package.outputs.checksums_sha256 }}
+        run: |
+          python3 - <<'PY'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          from package_alarm_sleep import verify_output
+          verify_output(Path('../release-assets'),os.environ['EXPECTED_SHA'],os.environ['GITHUB_SHA'])
+          PY
+      - name: Publish new prerelease without replacing tags or assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" >/dev/null 2>&1; then exit 1; fi
+          gh api "repos/$PRODUCT_REPOSITORY/git/matching-refs/tags/" > "$RUNNER_TEMP/tags.json"
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          rows=json.loads((Path(os.environ['RUNNER_TEMP'])/'tags.json').read_text())
+          assert not any(re.search(r'(?<![0-9])1\.1\.41(?![0-9])',row['ref']) for row in rows)
+          PY
+          gh api --method POST "repos/$PRODUCT_REPOSITORY/git/refs" \
+            -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA" > "$RUNNER_TEMP/created-tag.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          t=json.loads((Path(os.environ['RUNNER_TEMP'])/'created-tag.json').read_text())
+          assert t['ref']=='refs/tags/'+os.environ['RELEASE_TAG'] and t['object']['type']=='commit' and t['object']['sha']==os.environ['GITHUB_SHA']
+          PY
+          gh release create "$RELEASE_TAG" ../release-assets/* --repo "$PRODUCT_REPOSITORY" \
+            --verify-tag --target "$GITHUB_SHA" --prerelease --latest=false \
+            --title 'TWatch 1.1.41 shared alarm sleep repair, hardware pending' \
+            --notes-file ../release-assets/RELEASE-NOTES.txt
+      - name: Verify official tag and redownload every published asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ needs.package.outputs.checksums_sha256 }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$PRODUCT_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq .object.sha)" = "$GITHUB_SHA"
+          test "$(gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --json isPrerelease --jq .isPrerelease)" = true
+          gh release download "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --dir ../downloaded-release
+          python3 - <<'PY'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          from package_alarm_sleep import verify_output
+          verify_output(Path('../downloaded-release'),os.environ['EXPECTED_SHA'],os.environ['GITHUB_SHA'])
+          PY

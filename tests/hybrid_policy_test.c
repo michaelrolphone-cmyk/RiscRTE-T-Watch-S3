@@ -8,6 +8,9 @@
 static unsigned scenario,light_calls,timed_calls,deep_calls,panel_prepares,deep_prepares,pmu_prepares,resumes,observations,diagnostics;
 static uint32_t elapsed;
 static bool terminal;
+static unsigned typed_resumes;
+static int32_t restore_result;
+static int32_t typed_resume(void*c){(void)c;typed_resumes++;return restore_result;}
 static bool log_message(const char*s){assert(s);diagnostics++;return true;}
 static bool panel_prepare(void*c){(void)c;panel_prepares++;return scenario!=1;}
 static bool pmu_prepare(void*c){(void)c;assert(panel_prepares||deep_prepares);pmu_prepares++;return scenario!=2;}
@@ -52,5 +55,25 @@ int main(void){
   pid_t p=fork();assert(p>=0);if(!p){reset(0);terminal=true;(void)watch_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_HYBRID,log_message);_exit(99);}
   int status;assert(waitpid(p,&status,0)==p&&WIFEXITED(status)&&WEXITSTATUS(status)==77);
  }
+ /* Typed cleanup is authoritative whenever the append-only suffix exists.
+  * A retained native unhold must not become an ordinary foreground failure. */
+ for(unsigned mode=PORTABLE_SLEEP_LIGHT;mode<=PORTABLE_SLEEP_HYBRID;mode++) {
+  for(unsigned cycle=0;cycle<3;cycle++) {
+   reset(3);panel.resume_status=typed_resume;typed_resumes=0;
+   restore_result=RISC_DEEP_SLEEP_RETAINED;
+   assert(watch_sleep_prepared(&panel,&pmu,mode,log_message)==WATCH_SLEEP_RETAINED);
+   assert(typed_resumes==1 && resumes==1);
+   reset(3);restore_result=RISC_LIGHT_SLEEP_PLATFORM;typed_resumes=0;
+   assert(watch_sleep_prepared(&panel,&pmu,mode,log_message)==WATCH_SLEEP_FAILED);
+   assert(typed_resumes==1 && resumes==1);
+   reset(3);restore_result=RISC_LIGHT_SLEEP_OK;typed_resumes=0;
+   assert(watch_sleep_prepared(&panel,&pmu,mode,log_message)==
+          (mode==PORTABLE_SLEEP_DEEP?WATCH_SLEEP_REFUSED:WATCH_SLEEP_WOKE));
+   assert(typed_resumes==1 && resumes==1);
+  }
+ }
+ reset(3);panel.base.struct_size=TWATCH_PANEL_DEEP_SLEEP_SIZE;typed_resumes=0;
+ assert(watch_sleep_prepared(&panel,&pmu,PORTABLE_SLEEP_LIGHT,log_message)==WATCH_SLEEP_WOKE);
+ assert(!typed_resumes && resumes==2);panel.resume_status=NULL;
  puts("Hybrid policy: exact timer, early/user/other wake, both crown boundary samples, preparation/refusal/retention, old ABI, manual modes and terminal fresh boots PASS");
 }

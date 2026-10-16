@@ -1,0 +1,49 @@
+{
+  "bundle": {
+    "file": "watch-sources.bundle",
+    "sha256": "b32aa67bba364d169d6cde6f125f8987ab0242a7d7d74a47315c48faff37e750",
+    "size_bytes": 147818
+  },
+  "dependency_repositories_included": false,
+  "heads": {
+    "artifact-graph-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.19/artifact-graph-tests",
+      "commit": "160b683ae92ac9688b299b4ad589ce668100d510",
+      "tree": "2b867c5342969c94aaaa5c890d3422faf8af01ef"
+    },
+    "late-policy-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.19/late-policy-tests",
+      "commit": "44199778c5269f10c9dc687ac8c13157cea2f387",
+      "tree": "1d3ad8ba268e6abb3a844ec8f0f18e082bcc4fbe"
+    },
+    "package": {
+      "bundle_ref": "refs/watch-custody/1.0.19/package",
+      "commit": "39fe8cbfc6d8f4e9db51ec06c5f64e83c849042c",
+      "tree": "f60d847f2f28095f68c8883c8010e4c5bd813a6b"
+    },
+    "package-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.19/package-tests",
+      "commit": "b54d234649a7227f78367331653feef6f2c2b941",
+      "tree": "ec24b86f42818124d4cfa03335647b200dad0382"
+    },
+    "preserving-tests": {
+      "bundle_ref": "refs/watch-custody/1.0.19/preserving-tests",
+      "commit": "dbbebf7fd5737fd4bf76608c491a95558bcf74ca",
+      "tree": "97f6c65fdd18972be6542df6eb567017ab85901c"
+    },
+    "selected-state-replay": {
+      "bundle_ref": "refs/watch-custody/1.0.19/selected-state-replay",
+      "commit": "f48eac7cac4565975da7b4bdd0bc2fe029a1295b",
+      "tree": "941a8e403855e2930e04db6a22f3cf77f90ed2a0"
+    }
+  },
+  "new_object_count": 282,
+  "provisioning_payloads_included": false,
+  "public_prerequisite": "a0f2894bb3513d024653e71ce7e52733804e19e8",
+  "schema": 1,
+  "scope": "Original Watch-only policy packaging and qualification source; no app/provider/native byte changes",
+  "selected_source_files": {
+    "scripts/package_demand_retained.py": "package",
+    "scripts/test_demand_policy_package.py": "package-tests"
+  }
+}

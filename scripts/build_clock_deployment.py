@@ -66,12 +66,14 @@ def build(profile_path, root=ROOT, launcher=False, alarms=False, points=False, w
     source_sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     catalog = json.loads((root / 'dist/catalog.json').read_text())['packages']
     manifests = [json.loads(p.read_text()) for p in (root / 'drivers').glob('*/manifest.json')]
-    # Historical deployment/custody lanes retain their frozen GPIO/PMU ABI.
-    from build_legacy_sleep import legacy_inputs
-    legacy=legacy_inputs(root)
+    # Historical lanes retain byte-exact GPIO/PMU/panel packages. Current apps
+    # select live drivers separately and must not inherit this catalog overlay.
+    from build_legacy_sleep import legacy_manifests
+    frozen_manifests=[json.loads(p.read_text()) for p in legacy_manifests(root)]
+    frozen_ids={m['id'] for m in frozen_manifests}
     legacy_catalog=json.loads((root/'dist/legacy-sleep/catalog.json').read_text())['packages']
-    catalog=[p for p in catalog if p['id'] not in ('twatch-gpio','twatch-pmu')]+legacy_catalog
-    manifests=[m for m in manifests if m['id'] not in ('twatch-gpio','twatch-pmu')]+[json.loads(p.read_text()) for p in (legacy/'drivers').glob('*/manifest.json')]
+    catalog=[p for p in catalog if p['id'] not in frozen_ids]+legacy_catalog
+    manifests=[m for m in manifests if m['id'] not in frozen_ids]+frozen_manifests
     sdk = json.loads((root / 'sdk/app/SOURCES.json').read_text())
     runtime = json.loads((root / ('apps/update-runtime-requirements.json' if updates is not None else 'apps/wifi-runtime-requirements.json' if wifi else 'apps/alarm-runtime-requirements.json' if alarms else 'apps/clock/runtime-requirements.json')).read_text())
     time_policy = json.loads((root / 'apps/clock/time-policy.json').read_text())

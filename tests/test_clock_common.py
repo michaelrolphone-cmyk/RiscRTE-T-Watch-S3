@@ -61,7 +61,8 @@ class CommonClock(unittest.TestCase):
                              'archive': name, 'sha256': deployment.sha(archive.read_bytes())})
         (cls.root / 'dist/catalog.json').write_bytes(deployment.encoded({'packages': packages}))
         legacy=[]
-        for path in sorted((cls.root/'custody/sleep-prefix/drivers').glob('*/manifest.json')):
+        from build_legacy_sleep import legacy_manifests
+        for path in legacy_manifests(cls.root):
             manifest=json.loads(path.read_text());name=f"driver-{manifest['id']}-{manifest['version']}.rte.zip";archive=cls.root/'dist'/name
             write_zip(archive,{'source-manifest.json':deployment.encoded(manifest),'driver.elf':elf_fixture(manifest['id'])})
             legacy.append({'id':manifest['id'],'version':manifest['version'],'archive':name,'sha256':deployment.sha(archive.read_bytes())})
@@ -72,6 +73,19 @@ class CommonClock(unittest.TestCase):
             for profile in sorted((cls.root / 'hardware').glob('*.json')):
                 deployment.build(profile, root=cls.root)
         cls.archives = sorted((cls.root / 'dist/clock-deployments').glob('*.zip'))
+
+    def test_historical_panel_selection_ignores_live_repair(self):
+        live=json.loads((self.root/'drivers/twatch_panel/manifest.json').read_text())
+        self.assertEqual(live['version'],'0.4.2')
+        for path in self.archives:
+            with zipfile.ZipFile(path) as archive:
+                old=json.loads(archive.read('store/panel/manifest.json'))
+                self.assertEqual(old['version'],'0.4.1')
+                record=json.loads(archive.read('deployment-record.json'))
+                panel=next(row for row in record['drivers'] if row['id']=='twatch-panel')
+                self.assertEqual(panel['version'],'0.4.1')
+                self.assertIn('packages/'+panel['archive'],archive.namelist())
+                self.assertFalse(any('panel-0.4.2' in name for name in archive.namelist()))
 
     def mutate(self, directory, mutate):
         original = self.archives[0]

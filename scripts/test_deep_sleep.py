@@ -14,7 +14,7 @@ def main():
         exe=out/name
         flags=['-std=c11','-g','-fsanitize=undefined','-fno-sanitize-recover=all']
         subprocess.run([os.environ.get('CC','cc'),*flags,*['-I'+str(p) for p in [ROOT/'sdk/driver',ROOT/'include',out,ROOT]],f'-DTEST_KIND={kind}',f'-DDRIVER_SOURCE="{ROOT}/drivers/twatch_{name}/driver.c"',str(ROOT/'tests/deep_sleep_driver_test.c'),'-o',str(exe)],check=True)
-        for scenario in (['normal','hold-error','static-error','retained-hold','retained-unhold','resume-spi-error'] if kind==5 else ['normal']):
+        for scenario in (['normal','hold-error','static-error','retained-hold','retained-unhold','resume-spi-error','resume-pwm-error'] if kind==5 else ['normal']):
             subprocess.run([str(exe),scenario],check=True)
     exe=out/'clock'
     subprocess.run([os.environ.get('CC','cc'),'-std=c11','-O2','-Wall','-Wextra','-Werror','-fsanitize=undefined','-fno-sanitize-recover=all',*['-I'+str(ROOT/p) for p in ('sdk/app','sdk/driver','include','.')],str(ROOT/'tests/deep_sleep_app_test.c'),'-o',str(exe)],check=True)

@@ -7,6 +7,11 @@ static bool acquire_ok,release_ok,storage_ok,storage_release_ok,info_ok,configur
 static uint16_t profile,configured_value;
 static int storage_status;
 static uint8_t record[8];
+static char client_diagnostic[96];
+static unsigned client_diagnostics;
+static bool log_client(const char *line){
+ assert(strlen(line)<sizeof(client_diagnostic));strcpy(client_diagnostic,line);client_diagnostics++;return true;
+}
 static int32_t read_preference(void*c,const char*key,void*data,uint32_t capacity,uint32_t*length){
  (void)c;assert(!strcmp(key,PORTABLE_TAP_KEY)&&capacity==8);*length=0;
  if(storage_status==RISC_KEY_VALUE_OK){memcpy(data,record,8);*length=8;}return storage_status;
@@ -28,9 +33,10 @@ static bool release_motion(risc_runtime_capability_v1* grant){
  if(grant->api==&store){storage_released++;return storage_release_ok;}
  assert(grant->api==&motion);released++;return release_ok;
 }
-static const risc_runtime_api_v1 rt={.api_version=1,.struct_size=sizeof(rt),.diagnostic=diagnostic,.acquire=acquire_motion,.release=release_motion};
+static const risc_runtime_api_v1 rt={.api_version=1,.struct_size=sizeof(rt),.diagnostic=log_client,.acquire=acquire_motion,.release=release_motion};
 static void client_reset(void){
  motion_reset();acquired=released=storage_acquired=storage_released=configured=0;
+ client_diagnostic[0]=0;client_diagnostics=0;
  acquire_ok=release_ok=storage_ok=storage_release_ok=info_ok=configure_ok=true;storage_status=RISC_KEY_VALUE_NOT_FOUND;profile=1;
  motion.tap_info=info;motion.tap_configure=configure;motion.tap_observe_begin=begin_observe;motion.tap_observe=observe;
 }
@@ -56,11 +62,39 @@ int main(void){
   assert(got==(mode==PORTABLE_SLEEP_DEEP?WATCH_SLEEP_RETAINED:WATCH_SLEEP_WOKE));
   assert(!acquired&&!released&&!configured&&!motion_prepares&&!set_calls && (mode==PORTABLE_SLEEP_DEEP?deep_calls:light_calls));
  }
- client_reset();storage_ok=false;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&!acquired);
+ for(unsigned missing=0;missing<2;missing++){
+  client_reset();risc_runtime_api_v1 unavailable=rt;
+  if(missing)unavailable.release=NULL;else unavailable.acquire=NULL;
+  assert(watch_motion_sleep(&unavailable,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED);
+  assert(!strcmp(client_diagnostic,"WATCH_SLEEP error=runtime-api-missing")&&client_diagnostics==1);
+  assert(watch_sleep_stage==11&&watch_sleep_detail==0);
+  assert(!storage_acquired&&!storage_released&&!acquired&&!released&&!motion_prepares&&!light_calls&&!deep_calls);
+  unavailable.diagnostic=NULL;
+  assert(watch_motion_sleep(&unavailable,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED);
+  assert(client_diagnostics==1&&!storage_acquired&&!acquired);
+ }
+ client_reset();storage_ok=false;
+ risc_runtime_api_v1 quiet=rt;quiet.diagnostic=NULL;
+ assert(watch_motion_sleep(&quiet,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&watch_sleep_stage==9&&!client_diagnostics);
+ client_reset();storage_ok=false;
+ for(unsigned attempt=1;attempt<=3;attempt++){
+  assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED);
+  assert(watch_sleep_stage==9&&watch_sleep_detail==0&&client_diagnostics==attempt);
+  assert(!strcmp(client_diagnostic,"WATCH_SLEEP error=settings-acquire capability=storage.key-value instance=1"));
+  assert(storage_acquired==attempt&&!storage_released&&!acquired&&!released&&!motion_prepares&&!light_calls&&!deep_calls);
+ }
+ client_reset();acquire_ok=false;
+ assert(watch_motion_sleep(&quiet,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&watch_sleep_stage==10&&!client_diagnostics);
  client_reset();storage_release_ok=false;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_RETAINED&&!acquired);
  client_reset();storage_status=RISC_KEY_VALUE_IO;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&!acquired&&light_calls==1);
  client_reset();stored(true,3,12);record[7]^=1;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&!acquired&&light_calls==1);
- client_reset();acquire_ok=false;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&!released&&!motion_prepares);
+ client_reset();acquire_ok=false;
+ for(unsigned attempt=1;attempt<=3;attempt++){
+  assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED);
+  assert(watch_sleep_stage==10&&watch_sleep_detail==0&&client_diagnostics==attempt);
+  assert(!strcmp(client_diagnostic,"WATCH_SLEEP error=motion-acquire capability=motion.accel instance=7"));
+  assert(storage_acquired==attempt&&storage_released==attempt&&acquired==attempt&&!released&&!motion_prepares&&!light_calls&&!deep_calls);
+ }
  client_reset();motion.struct_size=TWATCH_MOTION_SAMPLE_SIZE;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&released==1&&!motion_prepares);
  client_reset();motion.struct_size=TWATCH_MOTION_DIAGNOSTIC_SIZE;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&released==1&&!motion_prepares);
  client_reset();pmu.base.struct_size=TWATCH_PMU_TIMED_DEEP_SLEEP_SIZE;assert(watch_motion_sleep(&rt,&panel,&pmu,0,&api)==WATCH_SLEEP_REFUSED&&released==1&&!motion_prepares);

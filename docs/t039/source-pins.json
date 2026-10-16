@@ -1,0 +1,12 @@
+{
+  "utilities_production": "bc60efe2e3936d5821ea89a2349a4d09438ebc93",
+  "system": "f74db7dda4d4a6d5fffa048a1e9384addab1540c",
+  "shared_hid": "58ad37140bd86bd2247bfa3244c4acc8942b2bd8",
+  "color_bridges_RiscRTE_Watch": "6e82fdcaec0b73ed700d2104cfb4d94f011c19d4",
+  "color_runtime_sdk": "d493ca3ede561d410a858440ee2db9073c963426",
+  "color_alarm_header_Utilities": "80efb298c9ca8d0f62f9a31840c9e51d380b40f6",
+  "inherited_product_commit": "5253d91cd48c38aba8104ac3aadcadbb77514b0a",
+  "compiler": "Espressif 8.4.0 esp-2021r2-patch5",
+  "target_repeated_identically": true,
+  "hardware_tested": false
+}

@@ -1,0 +1,171 @@
+name: T-Watch 1.1.40 exact native candidate transport
+on:
+  push:
+    branches: [work/native-idf-6.1]
+    paths:
+      - docs/native-idf61/release-transport.json
+permissions:
+  contents: read
+concurrency:
+  group: twatch-native-idf61-1.1.40
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+env:
+  PRODUCT_REPOSITORY: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+  RUNTIME_REPOSITORY: michaelrolphone-cmyk/RiscRTE
+  RUNTIME_TAG: firmware-v0.4.0
+  RUNTIME_MANIFEST: Runtime-0.4.0-release-manifest.json
+  RELEASE_TAG: test-native-idf61-1.1.40
+  PYTHONDONTWRITEBYTECODE: '1'
+jobs:
+  pins:
+    if: github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
+    runs-on: ubuntu-24.04
+    outputs:
+      finalized: ${{ steps.pins.outputs.finalized }}
+      publication_enabled: ${{ steps.pins.outputs.publication_enabled }}
+      evidence_asset: ${{ steps.pins.outputs.evidence_asset }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: pins
+        run: |
+          python3 - <<'PYTHON'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          import transport_native_idf61_release as t
+          pins=t.decode(Path('docs/native-idf61/release-transport.json').read_bytes())
+          assert type(pins.get('finalized')) is bool and type(pins.get('publication_enabled')) is bool
+          if pins['finalized']: t.final_contract(pins)
+          else: assert pins['publication_enabled'] is False and pins.get('disabled_reason')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              print('finalized='+str(pins['finalized']).lower(),file=out)
+              print('publication_enabled='+str(pins['publication_enabled']).lower(),file=out)
+              if pins['finalized']: print('evidence_asset='+pins['evidence_asset'],file=out)
+          PYTHON
+  transport:
+    needs: pins
+    if: needs.pins.outputs.finalized == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      checksums_sha256: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify public Runtime release identity and download exact named assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVIDENCE_ASSET: ${{ needs.pins.outputs.evidence_asset }}
+        run: |
+          set -euo pipefail
+          mkdir .inputs
+          gh api "repos/$RUNTIME_REPOSITORY/releases/tags/$RUNTIME_TAG" > .inputs/runtime-release.json
+          gh api "repos/$RUNTIME_REPOSITORY/git/ref/tags/$RUNTIME_TAG" > .inputs/runtime-tag.json
+          python3 - <<'PYTHON'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path('docs/native-idf61/release-transport.json').read_bytes())
+          r=json.loads(Path('.inputs/runtime-release.json').read_bytes())
+          tag=json.loads(Path('.inputs/runtime-tag.json').read_bytes())
+          assert r['tag_name']==p['runtime_tag'] and r['draft'] is False
+          assert tag['object']['type']=='commit' and tag['object']['sha']==p['runtime_release_revision']
+          names=[a['name'] for a in r['assets']]
+          for name in (os.environ['RUNTIME_MANIFEST'],p['evidence_asset']): assert names.count(name)==1
+          PYTHON
+          gh release download "$RUNTIME_TAG" --repo "$RUNTIME_REPOSITORY" --pattern "$RUNTIME_MANIFEST" --dir .inputs
+          gh release download "$RUNTIME_TAG" --repo "$RUNTIME_REPOSITORY" --pattern "$EVIDENCE_ASSET" --dir .inputs
+      - name: Verify custody and copy qualified bytes without rebuilding
+        env:
+          EVIDENCE_ASSET: ${{ needs.pins.outputs.evidence_asset }}
+        run: |
+          set -euo pipefail
+          python3 scripts/transport_native_idf61_release.py \
+            --contract docs/native-idf61/release-transport.json \
+            --runtime-manifest ".inputs/$RUNTIME_MANIFEST" --evidence ".inputs/$EVIDENCE_ASSET" \
+            --source-revision "$GITHUB_SHA" --output dist/native-release
+          git diff --exit-code
+          (cd dist/native-release && sha256sum --check --strict SHA256SUMS)
+      - id: digest
+        run: echo "sha256=$(sha256sum dist/native-release/SHA256SUMS | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: twatch-native-release-${{ github.sha }}
+          path: dist/native-release/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+  publish:
+    needs: [pins,transport]
+    if: needs.pins.outputs.publication_enabled == 'true' && github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3' && github.ref == 'refs/heads/work/native-idf-6.1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: twatch-native-release-${{ github.sha }}
+          path: release-assets
+      - name: Verify exact source-bound complete asset set
+        env:
+          EXPECTED_SHA: ${{ needs.transport.outputs.checksums_sha256 }}
+        run: |
+          python3 - <<'PYTHON'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          from transport_native_idf61_release import verify_output
+          verify_output(Path('release-assets'),os.environ['EXPECTED_SHA'],os.environ['GITHUB_SHA'])
+          PYTHON
+      - name: Publish new prerelease without replacing existing tags or assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" >/dev/null 2>&1; then exit 1; fi
+          gh api "repos/$PRODUCT_REPOSITORY/git/matching-refs/tags/$RELEASE_TAG" > "$RUNNER_TEMP/tags.json"
+          python3 - <<'PYTHON'
+          import json,os
+          from pathlib import Path
+          assert not any(row['ref']=='refs/tags/'+os.environ['RELEASE_TAG'] for row in json.loads((Path(os.environ['RUNNER_TEMP'])/'tags.json').read_text()))
+          PYTHON
+          gh api --method POST "repos/$PRODUCT_REPOSITORY/git/refs" \
+            -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$GITHUB_SHA" > "$RUNNER_TEMP/created-tag.json"
+          python3 - <<'PYTHON'
+          import json,os
+          from pathlib import Path
+          tag=json.loads((Path(os.environ['RUNNER_TEMP'])/'created-tag.json').read_text())
+          assert tag['ref']=='refs/tags/'+os.environ['RELEASE_TAG']
+          assert tag['object']['type']=='commit' and tag['object']['sha']==os.environ['GITHUB_SHA']
+          PYTHON
+          gh release create "$RELEASE_TAG" release-assets/* --repo "$PRODUCT_REPOSITORY" --verify-tag --target "$GITHUB_SHA" \
+            --prerelease --latest=false --title 'T-Watch 1.1.40 native IDF 6.1 hardware-pending candidate' \
+            --notes-file release-assets/RELEASE-NOTES.txt
+      - name: Verify published source and redownload every asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ needs.transport.outputs.checksums_sha256 }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$PRODUCT_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq .object.sha)" = "$GITHUB_SHA"
+          test "$(gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --json isPrerelease --jq .isPrerelease)" = true
+          gh release download "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --dir downloaded-release
+          python3 - <<'PYTHON'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts')
+          from transport_native_idf61_release import verify_output
+          verify_output(Path('downloaded-release'),os.environ['EXPECTED_SHA'],os.environ['GITHUB_SHA'])
+          PYTHON

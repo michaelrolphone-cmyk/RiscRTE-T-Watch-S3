@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/scripts/test_low_battery.py", line 7, in <module>
+    assert (ROOT/'apps/clock/PortableSleepPolicy.h').read_bytes()==(system/'lib/PortableApps/include/PortableSleepPolicy.h').read_bytes()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

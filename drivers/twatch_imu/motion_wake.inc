@@ -45,6 +45,10 @@ static bool resume_wake(void *context){
     (void)context;if(!wake_enrolled && !wake_changed)return true;
     if(!started || !claim || !irq_claim)return false;
     if(wake_changed){
+        /* Reset/partial restoration invalidates the armed detector. Retain
+         * enrollment and the register snapshot for rollback, never its old
+         * prepared/observation proof after an incomplete cleanup attempt. */
+        wake_prepared=observe_active=false;
         io_failed=false;
         if(!sensor_wait_us(450))return false; /* Guard uncertain prior bus completion. */
         /* Reset is the documented disable/ack boundary for both feature engines.

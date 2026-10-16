@@ -1,0 +1,82 @@
+{
+  "hardware_tested": false,
+  "synthetic_candidate": false,
+  "synthetic_device_readbacks": true,
+  "results": [
+    {
+      "baseline_sha256": "a70fd9b7b93193ab6702e8991176a608d4f1f6f3ef96fe29cd7c257ac81f695d",
+      "candidate_sha256": "48145adc023a334885207100ce29596edef3f02c07a6d830ca53e3ab1fbf5993",
+      "store_abi": 2,
+      "cases": [
+        {
+          "source_bank": 0,
+          "sector_boundaries": 1704,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        },
+        {
+          "source_bank": 1,
+          "sector_boundaries": 1704,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        }
+      ]
+    },
+    {
+      "baseline_sha256": "ec294d37dcfaaf5fdac8ead5ded52e29a8eafa408de00d48d627bb284e564a32",
+      "candidate_sha256": "464079ea8735175e7042ada02ede02f9bffe281791aa9f2dd6c62c666f5f1422",
+      "store_abi": 3,
+      "cases": [
+        {
+          "source_bank": 0,
+          "sector_boundaries": 1777,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        },
+        {
+          "source_bank": 1,
+          "sector_boundaries": 1777,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        }
+      ]
+    },
+    {
+      "baseline_sha256": "cc37711c0df356ad28bf79b9e8a273111aa1239999b22f8780c63fb228fc0646",
+      "candidate_sha256": "077676642f2a3e938cf6fea497e6322dad198e1c2e98236d9367fb6bb5dcefca",
+      "store_abi": 3,
+      "cases": [
+        {
+          "source_bank": 0,
+          "sector_boundaries": 1719,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        },
+        {
+          "source_bank": 1,
+          "sector_boundaries": 1719,
+          "selection_cuts": 33,
+          "preservation": true,
+          "candidate_integrity": true,
+          "invalid_inputs_rejected": true,
+          "rollback_model": true
+        }
+      ]
+    }
+  ]
+}

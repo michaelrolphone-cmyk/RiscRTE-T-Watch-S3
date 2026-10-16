@@ -1,0 +1,20 @@
+{
+  "RiscRealtimeV1.h": {
+    "repository": "michaelrolphone-cmyk/RiscRTE",
+    "commit": "5426ade43dbe74a45e85577d087035099a1abf1b",
+    "path": "sdk/app/RiscRealtimeV1.h",
+    "sha256": "639781f728841cda6d40c3033877436b9e5d59519a4b15e11a9bc99b2365395d"
+  },
+  "RiscProviderPromotionV1.h": {
+    "repository": "michaelrolphone-cmyk/RiscRTE",
+    "commit": "5426ade43dbe74a45e85577d087035099a1abf1b",
+    "path": "sdk/app/RiscProviderPromotionV1.h",
+    "sha256": "b7765248e6c9d959df648417344e134b55a87a11702ba0c78dde19e7bc332295"
+  },
+  "RiscRetainedWakeV1.h": {
+    "repository": "michaelrolphone-cmyk/RiscRTE",
+    "commit": "5426ade43dbe74a45e85577d087035099a1abf1b",
+    "path": "sdk/app/RiscRetainedWakeV1.h",
+    "sha256": "36066ff656dbdfbd6546b8ee92b62f7a74c3ba501bda34602e39811035fa7296"
+  }
+}

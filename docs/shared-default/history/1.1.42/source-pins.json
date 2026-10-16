@@ -1,0 +1,38 @@
+{
+  "alarm_sha256": "189ce61b0e4a2b08cbd83ff90564a4c79a6c5e9a3d74b4ad4dcc2a61b4b51604",
+  "baseline_contract_sha256": "475396e773b07243389efd9e27e77c7a137f5a5fc47c9e00cbac3e437ac4cd8e",
+  "baseline_version": "1.1.41",
+  "changed_store_files": [
+    "boot.json",
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "default_bytes": 616752,
+  "default_manifest_sha256": "d75c5a1945fe59f573043280cfa1a3be948063757416df4afd305f9eab477db5",
+  "default_sha256": "b60579dddf0123907e11b6c3ec862e28c76547482bcc325de349e55f06db2dd6",
+  "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
+  "finalized": true,
+  "historical_contracts": {
+    ".github/workflows/alarm-sleep-release.yml": "7fbcf43ad365232a338e74e534770f1db521950160832ba70f124715c527565b",
+    "docs/alarm-sleep/source-pins.json": "ba41f077bf176bbe084d33965f5f452e2acc396e2c2f7001f75d7b9a4ea969c5",
+    "docs/native-idf61/release-transport.json": "14c91d012d0af6cbf8410da8b7e9750f1dd2ba8750fafd1b4b8836afa5243a5b",
+    "scripts/native_idf61_build.py": "6221d18e2557e024e9fc38881c046dc5b953b72f00466a8a324b8e889052d796",
+    "scripts/native_idf61_candidate.py": "7702030e1c3da058ada8b79b98999f7d343869ba9bc941417c6a6dc2275975a9",
+    "scripts/native_idf61_qualification.py": "7626be8291240b17889a9158fdb289f5bcc6ce391ce4a6a9a757f8a112a8a619",
+    "scripts/package_alarm_sleep.py": "7d970f87ddab2ea15cdaef50e67d8c934601c0a64535bb0ecea488a5b4bb7cc4",
+    "scripts/test_alarm_sleep_package.py": "05de35f9921036b1f16b36904c839d84e35c5ca5b214e4b6c4931b17b880e18c"
+  },
+  "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+  "product": "twatch",
+  "publication_enabled": true,
+  "release_branch": "release/shared-default-1.1.42",
+  "release_tag": "test-shared-default-1.1.42",
+  "runtime_revision": "e697c3677eca661892517c2bf4c0c6b2f764985c",
+  "schema": 1,
+  "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "system_revision": "cb483470887b5198e2f3cd2457586ef6622142a9",
+  "utilities_revision": "fc9f93402050f020a3422ee889620b2414c7ad5d",
+  "version": "1.1.42",
+  "watch_revision": "4937fc4612edc6904c7ceae2855db7147fb680e9"
+}

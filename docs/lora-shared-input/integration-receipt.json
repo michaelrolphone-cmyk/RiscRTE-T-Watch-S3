@@ -1,0 +1,230 @@
+{
+  "schema": "lora.shared-input.integration.v1",
+  "status": "Qualified independent component overlay; delivery held",
+  "hold_until_utc": "2026-10-12T23:30:00Z",
+  "delivered": false,
+  "hardware_verified": false,
+  "full_image_materialized": false,
+  "source": {
+    "system": {
+      "published_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+      "tree": "13e157640f5ba11758ce3177192cb7a9e5f38afb",
+      "branch": "work/lora-long-text-20261012",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-System-Apps/commit/7fb13b09b4dac275a8111b224784f8a472f39264",
+      "published_base": "45672b4602df1bf8029e517c2f4ec0945345fee2",
+      "local_integration_base": "52ad3d545b7da6c71048b89f8b3c33ecfa1bce22",
+      "local_long_delta": "52ad3d545b7da6c71048b89f8b3c33ecfa1bce22..9e96b072772076fa271fdad88e6293f9568e8b4f",
+      "local_font_delta": "9e96b072772076fa271fdad88e6293f9568e8b4f..d28e05f2dda1251d1ae52984e838519d80624a74",
+      "already_published_watch_profile_delta": "9c0ad2fa..9550949bab67e820aa19984ef7bc20322756feb3"
+    },
+    "utilities": {
+      "published_commit": "e85eff650e9f748ae162fb725fb6e14eb6df876a",
+      "tree": "aa8e8d77a175b5e953592d922f0a927731eea599",
+      "branch": "work/lora-shared-text-20261012",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/commit/e85eff650e9f748ae162fb725fb6e14eb6df876a",
+      "published_base": "3385d634db829066e3f7f0d84474df5ed54bf143",
+      "local_integration_base": "ed242dde78868ddbc0cadb44784d5af1f962007a",
+      "local_integration_head": "87b25206ca864938777323d99825364ccfe0916e",
+      "only_integration_commits": [
+        "cf294cd61d1d0f971d2b631670a6eb2858af4711",
+        "87b25206ca864938777323d99825364ccfe0916e"
+      ]
+    },
+    "watch": {
+      "compiled_recipe_commit": "a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+      "tree": "230dcd66ecf2f35e12b542513d5d5faf793351e6",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+      "published_parent": "94948c6ab4e220a1b78047e8b485a40b8de730bf",
+      "parent_compiled_recipe": "d3687db3ea6e6e5c8a36e5d01c5dfd2ba69ed453",
+      "local_equivalent_recipe": "6f84d744919eab4dfe74e325cce84618ffe0c975"
+    },
+    "runtime": {
+      "unchanged": true,
+      "commit": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9"
+    },
+    "unpublished_sd_changes_exported": false,
+    "depends_on_unpublished_sd_changes": false
+  },
+  "scope": {
+    "watch_lora": "0.1.13 -> 0.1.14",
+    "text_host": "0.1.5 -> 0.1.6",
+    "scene_host": "0.4.4 -> 0.4.5",
+    "x4": "No LoRa payload, manifest, boot policy, selected SD entry or radio.lora provider in named candidate; no X4 change",
+    "other_apps_migrated": []
+  },
+  "behavior": {
+    "message_limit_ascii_bytes": 240,
+    "rf_value_limit_ascii_bytes": 11,
+    "rf_fields": 6,
+    "done_sends": false,
+    "cancel_preserves_draft": true,
+    "explicit_send_model_unchanged_sha256": "f016d871020b8f6f2cb5757cb68beb258638e7978779d87191b90d588f8be9a3",
+    "home_back_cleanup": true,
+    "radio_progress_and_rapid_input_independent_of_present": true,
+    "existing_72_128_abi_preserved": true,
+    "long_suffix_capacity": 256,
+    "same_nova_glyph_metrics": true
+  },
+  "qualification": {
+    "workflow_runs": 58,
+    "normal_runs": 29,
+    "asan_ubsan_runs": 29,
+    "screenshots_pixel_identical": 25,
+    "non_editor_screenshots_pixel_identical": 17,
+    "glyph_pixel_cases": 9120,
+    "scanner_workflow_runs": 46,
+    "points_workflow_runs": 70,
+    "old_host_client_checks_normal_and_sanitized_each": 141,
+    "runtime_checks_each": 160,
+    "files_checks_each": 69,
+    "wifi_checks_each": 57,
+    "leak_sanitizer": "Disabled for executor ptrace; fixture asserts clean ownership and allocation counters",
+    "hardware_rf_pmu_sleep": "Not tested"
+  },
+  "target": {
+    "lora": {
+      "version": "0.1.14",
+      "bytes": 124724,
+      "sha256": "bb91f9e5fc41f57dfc924e127638a1e2b28c3679907b17d7f8e54473675a2cc5",
+      "compiler": "xtensa-esp32s3-elf-gcc (crosstool-NG esp-2021r2-patch5) 8.4.0",
+      "defines": [
+        "-DPORTABLE_LOW_BATTERY",
+        "-DPORTABLE_BLE_BROADCAST",
+        "-DPORTABLE_TOUCH_ROTATION=0",
+        "-DPORTABLE_RTC_UTC8_DENVER",
+        "-DPORTABLE_FORCE_FULL_FRAMES",
+        "-DPORTABLE_INPUT_NAVIGATION",
+        "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+        "-DPORTABLE_APP_SLEEP_LOCAL",
+        "-DPORTABLE_ALARM_CLIENT",
+        "-DPORTABLE_QUICK_ACTIONS",
+        "-DPORTABLE_QUICK_RADIOS",
+        "-DPORTABLE_MOTION_WAKE",
+        "-DWATCH_ALARM_SLEEP_RESUME",
+        "-DPORTABLE_NOVA_UI",
+        "-DPORTABLE_RADIO_SESSION",
+        "-DPORTABLE_APP_OWNS_TOUCH_CHROME",
+        "-DLORA_RETURN_APP=\"springboard.elf\"",
+        "-DPORTABLE_CONTEXTS_CLIENT",
+        "-include",
+        "/workspace/shared/watch-scroll-regression-20261011/watch-profile/apps/clock/faces/ContextsFaces.h",
+        "-DPORTABLE_ASYNC_RGB565",
+        "-include",
+        "/workspace/shared/lora-shared-input-components-20261012/lora/watch-alarm-profile.h",
+        "-flto",
+        "-DPORTABLE_TEXT_INPUT_CLIENT",
+        "-DPORTABLE_CHECKED_STORAGE_RUNTIME",
+        "-DPORTABLE_NATIVE_CUSTODY_FENCE",
+        "-DPORTABLE_ALARM_TERMINAL_RETENTION",
+        "-DPORTABLE_LORA_SHARED_TEXT_INPUT",
+        "-DPORTABLE_APP_LAUNCH_GUARD",
+        "-DPORTABLE_WATCH_COLOR_ONLY",
+        "-DPORTABLE_WATCH_FROZEN_ICONS",
+        "-DPORTABLE_NOVA_TEXT_FACES_012",
+        "-mno-target-align"
+      ],
+      "baseline_feature_flags_preserved": true,
+      "baseline_grants_preserved": true,
+      "full_contexts_catalog_preserved": true,
+      "component_budget_bytes": 128000
+    },
+    "hosts": {
+      "scene": {
+        "version": "0.4.5",
+        "size_bytes": 159296,
+        "sha256": "9b89bca7a6fa1a8f8ae58c5205785bb1aed0ca8328ca47afa4c8594ea1653cfe",
+        "system_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+        "system_tree": "13e157640f5ba11758ce3177192cb7a9e5f38afb"
+      },
+      "text": {
+        "version": "0.1.6",
+        "size_bytes": 8872,
+        "sha256": "3b71583ae513ab3b523fcd84e80f5871835455abe1fbee368914fc6bf2e4c2cb",
+        "system_commit": "7fb13b09b4dac275a8111b224784f8a472f39264",
+        "system_tree": "13e157640f5ba11758ce3177192cb7a9e5f38afb"
+      }
+    }
+  },
+  "cohort": {
+    "product_source": "a0ad6032d7969816d63e6593e6863bc23e18d6d8",
+    "source_candidate": "d3687db3ea6e6e5c8a36e5d01c5dfd2ba69ed453",
+    "candidate_store_sha256": "6b82cf31e572210a26153659c38b6f22ce985cf6248bae6f337a7071e046de8c",
+    "active_store_sha256": "e0005698ffa739ee16e302804e3d1ee614ba07622269e2a0772680823d882c04",
+    "native_elf_sha256": "b5b2c6f53404500d3db7e53a1208adf04af2c6f64d8466881362eae66f58e5f7",
+    "native_unchanged": true,
+    "elf_count": 55,
+    "changed_store_paths": [
+      "boot.json",
+      "cohort.json",
+      "lora_messages.elf",
+      "lora_messages.json",
+      "text-input/driver.elf",
+      "text-input/manifest.json",
+      "ui-scene/driver.elf",
+      "ui-scene/manifest.json"
+    ],
+    "preserved_store_paths": 105,
+    "free_spiffs_blocks": 3,
+    "cohort_validated": true,
+    "target_instructions_executed": false,
+    "full_image_sha256": "233e9153068ac25a3870f4b9ceeb0c5e2980528f92598adccc0074fb7c13135f",
+    "full_image_bytes": 16777216
+  },
+  "cohort_normal_and_sanitized_identical": true,
+  "minimum_reserve_blocks": 2,
+  "store_files": 113,
+  "ci": {
+    "utilities": [
+      {
+        "id": 38266807625,
+        "name": "Nova7 paper utilities",
+        "head_sha": "e85eff650e9f748ae162fb725fb6e14eb6df876a",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-Utilities/actions/runs/38266807625"
+      }
+    ],
+    "system": {
+      "run_count": 0,
+      "check_count": 0,
+      "status_count": 0,
+      "no_pass_claimed": true
+    },
+    "watch_recipe": {
+      "run_count": 0,
+      "no_pass_claimed": true
+    }
+  },
+  "archive": {
+    "path": "qualified-components.tar.xz",
+    "bytes": 238280,
+    "sha256": "1ae510a350933c40d453a2a80ac3eb6de4c9dec60a70510f3f8667e8f669e78e",
+    "manifest": "archive-manifest.json",
+    "contains": "Eight-file component overlay, exact build/cohort receipts, final workflow logs/screenshots, compatibility summaries and read-only inventory; no full firmware image"
+  },
+  "remaining_keyboard_inventory": {
+    "path": "remaining-keyboards.json",
+    "count": 9,
+    "Watch": [
+      "Audio Spectrum",
+      "Waterfall",
+      "Timecard",
+      "Contexts",
+      "Lists"
+    ],
+    "X4": [
+      "Waterfall",
+      "Timecard",
+      "Contexts",
+      "Lists"
+    ],
+    "read_only": true,
+    "candidate_not_flash_inventory": true
+  },
+  "integration": {
+    "use_only_exact_components": "Overlay contains only the eight listed paths. For a newer union, transplant LoRa and compatible scene/text components, append only LoRa ui.text-input policy and preserve all unrelated files/grants. Recompute cohort source identity and bank/store digests; run normal and sanitizer full-cohort admission again.",
+    "do_not_overwrite": "Preserve paused local SD source branches and all newer product artifacts. This published isolated recipe is not their replacement.",
+    "local_component_root": "/workspace/shared/lora-shared-input-components-20261012",
+    "local_evidence_root": "/workspace/shared/lora-shared-input-evidence-20261012"
+  }
+}
