@@ -35,6 +35,7 @@ jobs:
           python scripts/test_contracts.py
           python scripts/test_motion_wake.py
           python -m unittest discover -s tests -p test_motion_source_custody.py -v
+          python -m unittest discover -s tests -p test_legacy_clock_custody.py -v
           python scripts/test_alarm_outputs.py
           python scripts/test_panel_throughput.py
           python -m unittest discover -s tests -p test_clock_performance.py -v
@@ -46,6 +47,7 @@ jobs:
         run: |
           python scripts/check_twatch_drivers.py
           python -m unittest discover -s tests -p test_pmu_sleep_custody.py -v
+          python -m unittest discover -s tests -p test_legacy_panel_custody.py -v
       - name: Clock app behavior with UBSan
         run: |
           python scripts/test_clock.py
@@ -1202,6 +1204,7 @@ jobs:
         run: |
           python .low-battery/system/scripts/test_low_battery.py
           python scripts/test_low_battery.py --system-apps .low-battery/system
+          python scripts/test_portable_sleep_lifecycle.py --system-apps .low-battery/system
           bash .low-battery/runtime/test/run_radio_iq_test.sh
           SANITIZE=1 bash .low-battery/runtime/test/run_radio_iq_test.sh
           python .low-battery/utilities/scripts/test_hid_renderer.py --system-apps .low-battery/system --watch . --runtime .low-battery/runtime --low-battery
@@ -1210,6 +1213,7 @@ jobs:
           python -m unittest discover -s tests -p test_low_battery_profile.py -v
           python -m unittest discover -s tests -p test_current_execution_sources.py -v
           python -m unittest discover -s tests -p test_midpoint_publication.py -v
+          python -m unittest discover -s tests -p test_midpoint_source_custody.py -v
       - uses: actions/download-artifact@v4
         with:
           name: twatch-update-integration-${{ github.event.pull_request.head.sha || github.sha }}

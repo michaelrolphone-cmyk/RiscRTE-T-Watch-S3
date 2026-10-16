@@ -1,0 +1,3 @@
+Excluded linker-emitted trailing R_XTENSA_NONE entries: 0
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/touch-target-final/driver.elf relative pointers verified: 74
+28513252f3dc6c9077bdb028ef597412d7e7951c947618ed3ddf354025028368 13240

@@ -1,0 +1,30 @@
+Result: The prior exact T-Watch shortage survives corrected chunked packing.
+
+Scope: This rechecks the older 119-file compact Home/UI/catalog/grants measurement only. It does not include newer Contexts/full-scene bytes. No partition/profile/app contents were edited, no layout was selected or approved, no native firmware was built, and nothing was published.
+
+Exact minimum allocation:
+- All ten cases from the prior capacity JSON reproduced exactly, without overwriting it.
+- The compact full-metadata selection contains 4,826,608 payload bytes and 19,541 live SPIFFS data/index pages.
+- At 15 usable pages per block, this is 1,303 occupied blocks. Existing geometry is 1,296 blocks. With the existing two-block reserve, the shortage remains nine blocks (36,864 bytes of block capacity).
+- The product builder already uses the pinned direct-page ESP-IDF generator. It performs no incremental byte writes or GC. Its count has no deleted-page inflation.
+
+Actual tests using existing local sources and 8,192-byte writes:
+- Exact compact selection at existing 0x510000: direct-page generator raises SpiffsFullError. The C writer returns SPIFFS_ERR_FULL after 113 of 119 complete files; those completed files survive remount/readback and independent decoding. Its incomplete image is not an admissible store.
+- Measurement-only hypothetical 0x550000, never selected or approved: direct-page generator round-trips all 119 files with exactly 19,541 live pages, zero deleted pages, 1,303 occupied blocks and 57 empty blocks.
+- The same hypothetical geometry and same bytes through the C writer round-trip all 119 files, both through the real SPIFFS API after remount and through the independent Python decoder. It has the same 19,541 live pages plus 694 deleted pages, 1,349 occupied blocks and 11 empty blocks. Writer overhead is 46 blocks above direct allocation, not extra usable capacity.
+- Control: recovered 113-file store at existing geometry succeeds with direct generation (1,294 blocks, zero deleted pages, two empty blocks). The chunked runtime writer reaches its write/GC limit early (111 complete files). This distinguishes runtime-writer overhead from the product generator's actual capacity.
+
+Evidence:
+- recheck-results.json contains the complete exact-input manifest, source/config hashes, image hashes, count results, preservation checks and both readback outcomes.
+- recheck.py reconstructs the old selection by running only the existing measurement's non-writing prefix and checks all prior cases for exact equality.
+- chunked_store_probe.c is the measurement-only C harness. It uses the pre-existing local ESP-IDF SPIFFS sources and shim, emulates flash writes with bitwise AND, and verifies all complete file bytes after remount.
+- Temporary input copies and test images were removed. No measurement image was retained or delivered. The hypothetical decoder change exists only in memory and admits the one labeled test geometry; product decoder source is unchanged.
+- All Git reads used GIT_NO_LAZY_FETCH=1. No missing objects were fetched and no network commands ran.
+
+Interpretation: The Waveshare deleted-page defect does not explain this Watch shortage. Corrected packing cannot beat the exact required 19,541 live-page lower bound. This is not authorization or a recommendation to change partitions; final selected newer content still needs its own exact recount and actual pack/readback.
+
+Additional preserved-ELF inventory:
+- All 52 preserved older ELFs have SHA-256 identities matching the prior loader-metadata-v3 probe, which left each one byte-identical and saved zero bytes.
+- No eligible .xt.lit, .xt.prop, .debug_* or .zdebug_* sections remain.
+- Remaining local static entries are STT_SECTION (749) or STT_FILE (286); the existing v3 transformation retains these. They are not a demonstrated v3 saving opportunity. No new stripping or compaction was performed.
+- preserved-elf-inventory.json records each exact path/hash, the matching prior probe, section inventory and retained symbol classification.

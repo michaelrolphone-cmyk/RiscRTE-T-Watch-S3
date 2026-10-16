@@ -1,0 +1,33 @@
+{
+  "scope": "Public shared source chain only; no product selection, layout change, final store admission or firmware delivery",
+  "shared_home": "ec768c7fae6fdb484fef28c6ec87f129b0a7f585",
+  "default_elf_sha256": "7397f8ba6a036299a71bf7c62ba7882065e9ffca0ea87f0175a7eb35908cfbc1",
+  "clock_elf_sha256": "cfd7de71d1949e415ba6662862feba4733e384258670ec73760425436d3fcde1",
+  "generic_bridges": "6e82fdcaec0b73ed700d2104cfb4d94f011c19d4",
+  "runtime_catalog_recovery_lineage": "a6c7f273025a59b1383e9c2795fa0ff0a8e9efad",
+  "shared_ui_compiled_system": "72f435fcee376ec62d17ece6180753385ea547d9",
+  "shared_ui_test_recipe_system": "b580e32d5821d4a80e80c896bf7c085214f2b590",
+  "settings_compact_sha256": "0866d709f94e29e1f3979e41d7822b7878b2e9860e0115ef826df09a81451634",
+  "springboard_compact_sha256": "68b7a818a9c3ade67c7ec6c0621d3e30bed22e4ec8e1615615779172d5983f49",
+  "metadata_stager_watch": "362537417c4f37bbb240879d5ba756686511fec1",
+  "contexts_compiled_utilities": "186ba80899fc9746609860821df61c7bbe0e2dc8",
+  "contexts_elf_sha256": "8db9d4be5801635bdb58e3f5ddaa41bcbdb744243a0e875a4a8252496cd24402",
+  "contexts_provider_pair_ci_utilities": "9e8d24da3de3c6d45a31014427e9209c1fad0d25",
+  "scene_text_system": "f4b30f8ebcc6d8cb905c8e90c91b1691acbe8165",
+  "provider_pair_ci": {
+    "run": 38384772641,
+    "cases": 808,
+    "status": "success",
+    "additional_inherited_success_runs": [
+      38384772744,
+      38384772536,
+      38384772629
+    ]
+  },
+  "limitations": [
+    "This capacity audit measures the older Home/UI/catalog selection, before new Contexts and full scene substitutions.",
+    "No proposed partition change is approved or selected by this evidence.",
+    "The Contexts chooser remains smooth with at most 95 catalog rows plus Refresh; larger input visibly refuses without truncation.",
+    "Physical hardware and final T-Watch native/store/cohort admission remain unqualified."
+  ]
+}

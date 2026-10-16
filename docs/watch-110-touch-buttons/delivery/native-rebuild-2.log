@@ -1,0 +1,107 @@
+Processing esp32s3-16mb-appdata-iq-policy24 (platform: espressif32@6.13.0; framework: arduino; board: esp32-s3-devkitc-1)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-s3-devkitc-1.html
+PLATFORM: Espressif 32 (6.13.0) > Espressif ESP32-S3-DevKitC-1-N8 (8 MB QD, No PSRAM)
+HARDWARE: ESP32S3 240MHz, 320KB RAM, 8MB Flash
+DEBUG: Current (esp-builtin) On-board (esp-builtin) External (cmsis-dap, esp-bridge, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20017.241212+sha.dcc1105b 
+ - tool-esptoolpy @ 2.41100.260830 (4.11.0) 
+ - toolchain-riscv32-esp @ 8.4.0+2021r2-patch5 
+ - toolchain-xtensa-esp32s3 @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 35 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- hal
+|-- elf_loader @ 1.3.3
+|-- ArduinoJson @ 7.4.2
+Building in release mode
+Building .pio/build/esp32s3-16mb-appdata-iq-policy24/bootloader.bin
+esptool.py v4.11.0
+Creating esp32s3 image...
+Merged 1 ELF section
+Successfully created esp32s3 image.
+Generating partitions .pio/build/esp32s3-16mb-appdata-iq-policy24/partitions.bin
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/arch/esp_elf_xtensa.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/dlso/dlfcn.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/dlso/dlmod.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_elf.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_elf_adapter.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_elf_symbol.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_elf_validate.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_privileged_elf.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_privileged_imports.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_privileged_manifest_imports.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/elf_loader/esp_privileged_os_cpu.c.o
+Archiving .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/libelf_loader.a
+Indexing .pio/build/esp32s3-16mb-appdata-iq-policy24/lib3b7/libelf_loader.a
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/Esp.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/FirmwareMSC.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/FunctionalInterrupt.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/HWCDC.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/HardwareSerial.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/IPAddress.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/IPv6Address.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/MD5Builder.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/Print.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/Stream.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/StreamString.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/Tone.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/USB.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/USBCDC.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/USBMSC.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/WMath.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/WString.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/base64.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/cbuf.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-adc.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-bt.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-cpu.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-dac.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-gpio.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-i2c-slave.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-i2c.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-ledc.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-matrix.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-misc.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-psram.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-rgb-led.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-rmt.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-sigmadelta.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-spi.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-time.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-timer.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-tinyusb.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-touch.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/esp32-hal-uart.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/firmware_msc_fat.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/libb64/cdecode.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/libb64/cencode.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/main.cpp.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/stdlib_noniso.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/wiring_pulse.c.o
+Compiling .pio/build/esp32s3-16mb-appdata-iq-policy24/FrameworkArduino/wiring_shift.c.o
+Archiving .pio/build/esp32s3-16mb-appdata-iq-policy24/libFrameworkArduino.a
+Indexing .pio/build/esp32s3-16mb-appdata-iq-policy24/libFrameworkArduino.a
+Linking .pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf
+verify([".pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf"], [".pio/build/esp32s3-16mb-appdata-iq-policy24/src/bootstrap/Board.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/bootstrap/EmbeddedStore.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/bootstrap/Json.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/bootstrap/Runtime.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/main.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/native/NativeAppMemory.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/CpuPort.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeAppData.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeBankStore.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeBootstrap.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeFailureEvidence.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeHardware.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeRealtime.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeRetainedWake.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NativeSntp.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/NvsKeyValue.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/OwnerNvsInstaller.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/ProviderDiagnostics.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/ports/esp32s3/SleepDiagnostics.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/drivers/ProviderGraphV2.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/drivers/ProviderModuleV2.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/BootstrapInput.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/Coordinator.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/Installer.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/Maintenance.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/Profile.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/provisioning/StoreFiles.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/storage/AppDataFiles.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/storage/ScopedUserVolume.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/storage/ScopedUserVolumeBinding.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/streams/AppStreamSessions.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/streams/ProviderQueueHost.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/update/PairedBank.cpp.o", ".pio/build/esp32s3-16mb-appdata-iq-policy24/src/runtime/update/StoreAudit.cpp.o"])
+Verified IQ bank reservation and DRAM/IRAM alias exclusion: 0x3fcb0000
+Retrieving maximum program size .pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf
+Checking size .pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [==        ]  19.8% (used 64976 bytes from 327680 bytes)
+Flash: [=====     ]  53.5% (used 1332517 bytes from 2490368 bytes)
+Building .pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.bin
+esptool.py v4.11.0
+Creating esp32s3 image...
+Merged 3 ELF sections
+Successfully created esp32s3 image.
+========================= [SUCCESS] Took 13.40 seconds =========================
+
+Environment                       Status    Duration
+--------------------------------  --------  ------------
+esp32s3-16mb-appdata-iq-policy24  SUCCESS   00:00:13.395
+========================= 1 succeeded in 00:00:13.395 =========================

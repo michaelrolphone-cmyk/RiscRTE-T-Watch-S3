@@ -1,0 +1,78 @@
+name: Check Watch RF and power profiles
+on:
+  pull_request:
+    paths:
+      - 'apps/rf-spectrum-*.json'
+      - 'apps/power-repair-*.json'
+      - 'apps/power-1.0.10-origin.json'
+      - 'apps/cutoff-1.0.11-selection.json'
+      - 'docs/CUTOFF_2026_10_07.md'
+      - 'apps/clock/power-repair-manifest.json'
+      - 'scripts/*power*.py'
+      - 'tests/test_power_repair_profile.py'
+      - 'tests/test_power_watch_origins.py'
+      - 'docs/POWER_REPAIR_CANDIDATE.md'
+      - 'apps/clock/rf-spectrum-manifest.json'
+      - 'scripts/*rf*profile*.py'
+      - 'scripts/*rf_spectrum*.py'
+      - 'scripts/rf_watch_candidate.py'
+      - 'scripts/build_rf_watch_candidate.py'
+      - 'scripts/test_rf_watch_upgrade.py'
+      - 'scripts/check_rf_installed_catalog.py'
+      - 'scripts/build_current_apps.py'
+      - 'scripts/build_clock_app.py'
+      - 'scripts/current_apps_overlay.py'
+      - 'scripts/check_runtime_store_admission.py'
+      - 'tests/test_rf_spectrum_profile.py'
+      - 'tests/test_rf_watch_candidate.py'
+      - 'tests/rf_watch_upgrade/**'
+      - 'tests/runtime_store_admission.cpp'
+      - '.github/workflows/rf-spectrum-profile.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  profile:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r scripts/requirements.txt
+      - name: Read immutable accepted Runtime pin
+        id: pins
+        run: |
+          python - <<'PY'
+          import os,sys
+          sys.path.insert(0,'scripts')
+          from rf_spectrum_profile import runtime_requirements
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('runtime='+runtime_requirements()['source_sha']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ steps.pins.outputs.runtime }}
+          path: .rf-profile/runtime
+          persist-credentials: false
+      - name: Profile and unchanged accepted/frozen custody
+        run: |
+          python -m unittest discover -s tests -p test_power_repair_profile.py -v
+          python -m unittest discover -s tests -p test_power_watch_origins.py -v
+          python -m unittest discover -s tests -p test_rf_spectrum_profile.py -v
+          python -m unittest discover -s tests -p test_rf_watch_candidate.py -v
+          python -m unittest discover -s tests -p test_low_battery_profile.py -v
+          python -m unittest discover -s tests -p test_current_apps_overlay.py -v
+          python -m unittest discover -s tests -p test_current_clock_manifest.py -v
+          python -m unittest discover -s tests -p test_current_execution_sources.py -v
+          python -m unittest discover -s tests -p test_complete_watch_release.py -v
+          python -m unittest discover -s tests -p test_midpoint_publication.py -v
+      - name: Real Runtime private namespace and migration admission
+        run: |
+          python scripts/test_rf_profile_runtime.py --runtime .rf-profile/runtime
+          SANITIZE=1 python scripts/test_rf_profile_runtime.py --runtime .rf-profile/runtime

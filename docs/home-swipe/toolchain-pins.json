@@ -1,0 +1,17 @@
+{
+  "files": {
+    "bin/xtensa-esp32s3-elf-gcc": "732bebd44b70a21687ffa3ac5da55edc9b555080ad21cfd74503b2288a143d3f",
+    "bin/xtensa-esp32s3-elf-g++": "5b30f4eb7c41b7954acd4f183895f03abdb612d8470346436d850208b8be2c98",
+    "bin/xtensa-esp32s3-elf-objcopy": "e366061dda019ed36a3cf902f7abf5b48a0ac2f8c47ae7ad4794f5e4c0658203",
+    "bin/xtensa-esp32s3-elf-nm": "af632d7578c77d53fe9767298b0fc0b46763f855df5cab7d40343f51e9b2f0bf",
+    "bin/xtensa-esp32s3-elf-as": "b32b0754d6d295a9164e85f30ce8aef9de2de8ec82ece5614ef8a3705a9c8795",
+    "bin/xtensa-esp32s3-elf-ld": "80f327fd5845e3ce63ebb09c9b00cd0ac88aa61f7d000a9530209ef6b1d5d1a4",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/cc1": "a3ad92e339cb5e29da80ebd2ce152c1eee6b21b0e426dbb3245b953fc2882d4c",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/cc1plus": "cb69f7b10083f606fbdefec93276bf4df506dcb137f0afad749af683e218e515",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/collect2": "80832e47f41c72ac62d4f14a09c7aeda39b9cfa6e43bd1f7d98eb83a6fb5d101",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/lto1": "96447073cd4f5524db7813b44fe1184116e30aced92afd344e3b4640a485e89f",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/lto-wrapper": "a3fc91d80eab68a3a4942ff5d8a3413067a712b41cba79756416369e2f3268fd",
+    "libexec/gcc/xtensa-esp32s3-elf/8.4.0/liblto_plugin.so": "42c965cfa8d66930576cb38e796cf5f49c63775ba61c9b16f5a882574c8f42ac",
+    "lib/gcc/xtensa-esp32s3-elf/8.4.0/libgcc.a": "8acd9cddf644a17c9d2005ad84b1a489d67be4f74e3139fb9d72edb68cb64d2c"
+  }
+}

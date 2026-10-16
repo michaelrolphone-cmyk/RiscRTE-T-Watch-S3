@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "product": {
+    "schema": 1,
+    "product": "twatch-s3",
+    "version": "1.1.2",
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3"
+  },
+  "reservation_issue": 65,
+  "baseline": "089868395268b696c05651c33816345bfe0425df",
+  "runtime": "81845e8027b94abc5c7a36a45e0004884ada73b6",
+  "system_builder": "b7c982579a7186e7690a7d9c59e594f8e26b0b0c",
+  "system_files": "28f8cfa85211b1be422fe44705a2f48950e4207b",
+  "x4_native_source": null,
+  "ble_provider": "72ab7038732c62ece220d48fd33da873575c122f",
+  "ble_source_branch": "feat/shared-files-ble-qualified",
+  "tools": "db5f6c5ba1a71ed3fcc22ff29847397a050b7ee4",
+  "scope": "Product metadata-only correction; preserve exact qualified native/app/provider bytes; regenerate cohort, bootfs and paired image records. No unfinished installer source.",
+  "product_metadata": "docs/shared-files/product.json"
+}

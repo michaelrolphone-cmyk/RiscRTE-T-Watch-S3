@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "product": "twatch-s3",
+  "version": "1.1.12",
+  "status": "focused clock-first wake test; physical qualification pending",
+  "predecessor": {
+    "version": "1.1.11",
+    "product_source": "058adc7c9567bd0cb47dc4b04f3d8e8935096b3a",
+    "full_image_sha256": "05d816adeaf580bb77aa5d7d1359ab7dfd15a9ddbab3f834d765f6b02a55f635"
+  },
+  "native": {
+    "runtime_commit": "1ecb091ae65f1cf202e034ba0a90860b24f9d493",
+    "runtime_tree": "30d8bb6536a4a8a07a32fdbd2ee778a1e92aa6f9",
+    "runtime_version": "0.2.23",
+    "firmware_source": "GitHub Actions exact-head crown/deep-wake qualification",
+    "run_url": "https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/38188693165",
+    "artifact_id": 11720349174,
+    "artifact_sha256": "f0a768d5cad4a5c6ec3f15dc1509d541c024d170a87e8616269c1a099bf82a8a",
+    "boot_components": "Byte-identical bootloader and partition table retained from delivered Watch 1.1.11; partition definitions and crown build profile unchanged",
+    "files": {
+      "bootloader.bin": {
+        "bytes": 15104,
+        "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+      },
+      "crown-build.ini": {
+        "bytes": 306,
+        "sha256": "374951ce4857bf55210c5add3e8ca60fcc45321914790f68416e7263d850f3a5"
+      },
+      "crown-runtime-source.tar.gz": {
+        "bytes": 2425684,
+        "sha256": "f5e9c5bef1f99c53c592e8a83072bf3d9293fc3c52aeeae347f9b6bfcf1c3e39"
+      },
+      "firmware.bin": {
+        "bytes": 1417808,
+        "sha256": "22ddd0d05d98c6cd4695828425df3a837287d7d13025fe354500ec6e0002fa15"
+      },
+      "firmware.elf": {
+        "bytes": 23796368,
+        "sha256": "bd421af9b1249b5179c5f48d53544a38aaab15ece3a0e978a08e8954c41d0593"
+      },
+      "partitions.bin": {
+        "bytes": 3072,
+        "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+      }
+    },
+    "source_tar_verified_against_exact_tree": true
+  },
+  "clock": {
+    "version": "0.11.3",
+    "product_commit": "926e1a44f01b64b558eed4fd1d2d53878bb732cf",
+    "product_tree": "5858cf7f282dd88075f81376041975658dca3abc",
+    "system_commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+    "utilities_commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+    "crown_source_sha256": "77e558e3a0d89dbfba5611ce7107bdd4105230408c96497350fbe082625aeec4",
+    "builder": "scripts/build_watch_fast_wake_clock.py",
+    "build_receipt_sha256": "f357857a46d4d0a18beedf70b7c11e36fb0900ce25d5bf6442addeadc2e14b65",
+    "dependency_count": 98,
+    "changed_dependency_keys": [
+      "watch:apps/clock/crown.c"
+    ],
+    "delivered_original_reproduced_exactly": true,
+    "files": {
+      "default.elf": {
+        "bytes": 858772,
+        "sha256": "17cee5e0ce7bcdfa93749acbe71705cd735c26f31e7e2983d2b6cfcea69a58e1"
+      },
+      "default.json": {
+        "bytes": 1203,
+        "sha256": "91524205248538e10b09f8b968a6bb820a9dfa6b6cf3a9d8143bde5beeda1818"
+      }
+    },
+    "symbols": {
+      "file": "debug/fast.elf",
+      "bytes": 922008,
+      "sha256": "1da2475acc6eba790e5328a9312d68750e0568e44edd8be15b2db94da42da4f2"
+    }
+  },
+  "preserved_sources": {
+    "runtime": "3b90cd11cf0ff4e8116bb54d2d9eb9c7c67a148b",
+    "watch_canvas_system": "14762601b3fa7bbeeac5ed565a6825534bf74dca",
+    "modern_system": "1aaf53e23ca9651a5cf9d1debe44941c9d7d0e58",
+    "utilities": "fc0bdbbbc600ce891e60c44d091fce0586ade7d8",
+    "watch_scanner_utilities": "377d471d284cf18e13927481362d011bc981dfee",
+    "productivity": "0b8667d64e76a6b4bbd325a1c963405f3af57404",
+    "watch_build_profile": "089868395268b696c05651c33816345bfe0425df",
+    "drivers_sdk": "aac1cb342696e96345d4546e2c69023834c6c8d4"
+  },
+  "system_assembly_source": "1aaf53e23ca9651a5cf9d1debe44941c9d7d0e58",
+  "change": "Replace native runtime and default Clock ELF/manifest only; regenerate cohort identity, bootfs and paired-bank checksum record. Every other store file remains byte-identical to delivered 1.1.11.",
+  "layout": {
+    "apps": 25,
+    "providers": 30,
+    "store_files": 111,
+    "store_bytes": 5308416,
+    "initial_flash_erases_internal_data": true,
+    "shared_settings_opt_in": false
+  },
+  "files_version": "1.5.30",
+  "physical_qualification": false,
+  "full_initial_flash_erases_internal_data": true,
+  "native_regressions": [
+    "Clean deep-entry refusal restores caller display instead of permanent dark retention",
+    "Pending acknowledged or held crown event vetoes deep entry",
+    "External deep-wake crown gesture cannot become a second sleep/navigation action"
+  ],
+  "wake_performance": {
+    "clock_first_frame_and_input_before_nonessential_services": true,
+    "soft_wake_splash_removed": true,
+    "metadata_io_max_read_bytes": 512,
+    "metadata_checkpoint_byte_budget": 32768,
+    "metadata_checkpoint_work_budget_ms": 2,
+    "extra_wake_time_checksums_or_revalidation_added": false,
+    "software_counts_are_not_hardware_timing": true
+  },
+  "qualification_run": "https://github.com/michaelrolphone-cmyk/RiscRTE/actions/runs/38188693165"
+}

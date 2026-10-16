@@ -1,0 +1,209 @@
+name: T-Watch 1.1.39 qualified launch brightness
+
+on:
+  push:
+    branches: [release/twatch-1.1.39-launch-brightness]
+    paths:
+      - '.github/workflows/launch-brightness-release.yml'
+      - 'docs/launch-brightness/**'
+      - 'scripts/*launch_brightness*.py'
+permissions:
+  contents: read
+concurrency:
+  group: twatch-launch-brightness-1.1.39
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+env:
+  PRODUCT_REPOSITORY: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+  BASELINE_TAG: test-native-faces-1.1.38
+  NATIVE_EVIDENCE_TAG: test-native-sdr-1.1.37
+  RELEASE_TAG: test-launch-brightness-1.1.39
+  PYTHONDONTWRITEBYTECODE: '1'
+  PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'No'
+  ASAN_OPTIONS: detect_leaks=0
+jobs:
+  pins:
+    if: github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
+    runs-on: ubuntu-24.04
+    outputs:
+      finalized: ${{ steps.pins.outputs.finalized }}
+      publication_enabled: ${{ steps.pins.outputs.publication_enabled }}
+      runtime_revision: ${{ steps.pins.outputs.runtime_revision }}
+      producer_revision: ${{ steps.pins.outputs.producer_revision }}
+      preserved_springboard_system_revision: ${{ steps.pins.outputs.preserved_springboard_system_revision }}
+      qualification_utilities_revision: ${{ steps.pins.outputs.qualification_utilities_revision }}
+      bridges_revision: ${{ steps.pins.outputs.bridges_revision }}
+      adapter_revision: ${{ steps.pins.outputs.adapter_revision }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - id: pins
+        run: |
+          python3 - <<'PYTHON'
+          import os,sys
+          sys.path.insert(0,'scripts')
+          from watch_launch_brightness import PINS,require_final
+          if PINS['finalized']:require_final()
+          with open(os.environ['GITHUB_OUTPUT'],'a') as output:
+              for key in ('finalized','publication_enabled','runtime_revision','producer_revision','preserved_springboard_system_revision','qualification_utilities_revision','bridges_revision','adapter_revision'):
+                  print(key+'='+str(PINS.get(key,'')).lower(),file=output)
+          PYTHON
+  package:
+    needs: pins
+    if: needs.pins.outputs.finalized == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    outputs:
+      checksums_sha256: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: ${{ needs.pins.outputs.runtime_revision }}
+          path: .source/runtime
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ needs.pins.outputs.producer_revision }}
+          path: .source/producer
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: ${{ needs.pins.outputs.preserved_springboard_system_revision }}
+          path: .source/springboard
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: ${{ needs.pins.outputs.qualification_utilities_revision }}
+          path: .source/utilities
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: ${{ needs.pins.outputs.bridges_revision }}
+          path: .source/bridges
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install exact compiler and Python dependencies
+        run: |
+          set -euo pipefail
+          python3 -m pip install platformio==6.1.19 esptool==4.11.0 pyelftools==0.32
+          pio pkg install --global --tool 'espressif/toolchain-xtensa-esp32s3@8.4.0+2021r2-patch5'
+      - name: Download exact native Home baseline and original native evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .inputs
+          gh release download "$BASELINE_TAG" --repo "$PRODUCT_REPOSITORY" --pattern 'TWatch-1.1.38-Native-Faces-factory-erases-data-0x0.bin' --dir .inputs
+          gh release download "$NATIVE_EVIDENCE_TAG" --repo "$PRODUCT_REPOSITORY" --pattern 'TWatch-1.1.37-Native-SDR-Evidence.zip' --dir .inputs
+          python3 - <<'PYTHON'
+          import hashlib,json
+          from pathlib import Path
+          pins=json.loads(Path('docs/launch-brightness/source-pins.json').read_text())
+          native=json.loads(Path('docs/launch-brightness/native-baseline.json').read_text())
+          assert hashlib.sha256(Path('.inputs/TWatch-1.1.38-Native-Faces-factory-erases-data-0x0.bin').read_bytes()).hexdigest()==pins['baseline_sha256']
+          assert hashlib.sha256(Path('.inputs/TWatch-1.1.37-Native-SDR-Evidence.zip').read_bytes()).hexdigest()==native['evidence_sha256']
+          PYTHON
+          test "$(gh api "repos/$PRODUCT_REPOSITORY/git/ref/tags/$BASELINE_TAG" --jq .object.sha)" = "$(python3 -c "import json;print(json.load(open('docs/launch-brightness/source-pins.json'))['baseline_source'])")"
+      - name: Fresh strict 18-app replay, host regressions, admission and preservation
+        run: |
+          set -euo pipefail
+          python3 scripts/build_launch_brightness_release.py \
+            --baseline .inputs/TWatch-1.1.38-Native-Faces-factory-erases-data-0x0.bin \
+            --evidence .inputs/TWatch-1.1.37-Native-SDR-Evidence.zip \
+            --runtime .source/runtime --producer .source/producer --utilities .source/utilities \
+            --springboard .source/springboard --bridges .source/bridges \
+            --compiler "$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc" \
+            --source-revision "$GITHUB_SHA" --output dist/launch-brightness
+          git diff --exit-code
+          (cd dist/launch-brightness/assets && sha256sum --check --strict SHA256SUMS)
+      - id: digest
+        run: echo "sha256=$(sha256sum dist/launch-brightness/assets/SHA256SUMS | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: twatch-launch-brightness-${{ github.sha }}
+          path: dist/launch-brightness/assets/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+  publish:
+    needs: [pins,package]
+    if: needs.pins.outputs.publication_enabled == 'true' && github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3' && github.ref == 'refs/heads/release/twatch-1.1.39-launch-brightness'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: twatch-launch-brightness-${{ github.sha }}
+          path: release-assets
+      - name: Verify source-bound manifest and complete immutable asset set
+        env:
+          EXPECTED_CHECKSUMS_SHA256: ${{ needs.package.outputs.checksums_sha256 }}
+          PRODUCER_REVISION: ${{ needs.pins.outputs.producer_revision }}
+          ADAPTER_REVISION: ${{ needs.pins.outputs.adapter_revision }}
+          RUNTIME_REVISION: ${{ needs.pins.outputs.runtime_revision }}
+        run: |
+          set -euo pipefail
+          cd release-assets
+          echo "$EXPECTED_CHECKSUMS_SHA256  SHA256SUMS" | sha256sum --check --strict
+          sha256sum --check --strict SHA256SUMS
+          python3 - <<'PYTHON'
+          import json,os
+          from pathlib import Path
+          release=json.loads(Path('release.json').read_text())
+          for key,env in (('source_revision','GITHUB_SHA'),('producer_revision','PRODUCER_REVISION'),('adapter_revision','ADAPTER_REVISION'),('runtime_revision','RUNTIME_REVISION')):
+              assert release[key]==os.environ[env]
+          assert release['baseline_native_bytes_preserved'] and release['all_18_apps_reproduced_from_pinned_sources'] and release['home_bytes_preserved']
+          assert len(release['changed_store_files'])==37 and release['unchanged_store_files']==84
+          names={line.split('  ',1)[1] for line in Path('SHA256SUMS').read_text().splitlines()}
+          assert {p.name for p in Path('.').iterdir()}==names|{'SHA256SUMS'}
+          PYTHON
+      - name: Publish new prerelease without overwriting tags or assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" >/dev/null 2>&1; then exit 1; fi
+          gh api "repos/$PRODUCT_REPOSITORY/git/matching-refs/tags/$RELEASE_TAG" > "$RUNNER_TEMP/tags.json"
+          python3 - <<'PYTHON'
+          import json,os
+          from pathlib import Path
+          assert not any(row['ref']=='refs/tags/'+os.environ['RELEASE_TAG'] for row in json.loads((Path(os.environ['RUNNER_TEMP'])/'tags.json').read_text()))
+          PYTHON
+          gh release create "$RELEASE_TAG" release-assets/* --repo "$PRODUCT_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --latest=false --title 'T-Watch 1.1.39 launch brightness' --notes-file release-assets/RELEASE-NOTES.txt
+      - name: Verify published source and re-downloaded assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_CHECKSUMS_SHA256: ${{ needs.package.outputs.checksums_sha256 }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$PRODUCT_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq .object.sha)" = "$GITHUB_SHA"
+          test "$(gh release view "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --json isPrerelease --jq .isPrerelease)" = true
+          mkdir downloaded-release
+          gh release download "$RELEASE_TAG" --repo "$PRODUCT_REPOSITORY" --dir downloaded-release
+          cd downloaded-release
+          echo "$EXPECTED_CHECKSUMS_SHA256  SHA256SUMS" | sha256sum --check --strict
+          sha256sum --check --strict SHA256SUMS

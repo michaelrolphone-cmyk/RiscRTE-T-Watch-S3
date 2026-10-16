@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "requested_ui_sources": {
+    "system": "088c88bd2ffee0c38fd3b07631a1713c5ca85146",
+    "shared": "07f3972b2013db987bad23adb4fb5f7bd3abe8ae",
+    "runtime": "d493ca3ede561d410a858440ee2db9073c963426",
+    "waveshare": "5a58bc01ede12dddcf23fa82dfa73b67b198caec"
+  },
+  "combined_sources": {
+    "system": "088c88bd2ffee0c38fd3b07631a1713c5ca85146",
+    "shared": "b62a0e5f53de250526fe68aec84c9146bded8356",
+    "runtime": "d493ca3ede561d410a858440ee2db9073c963426",
+    "utilities-current": "ca7fe82f43adc4ad8a8fa477a5336c8f5c693770",
+    "native-watch-integration": "26a54ff7769f7c9072a2a133790cd293b72abcba"
+  },
+  "shared_addition": "Lossless calendar text atlas compression; byte-exact and golden-frame qualification.",
+  "native_watch_base": "0d51e857ed6f093511566cebd64c06e8edc2deb4",
+  "native_wave_profile": "native/expanded-candidate.ini",
+  "native_wave_vendor_display_sha256": "ef0932a41c28837b8562bceeb1ee4010a7c1730898bde02244a2cf108551d2e5",
+  "versions": {
+    "waveshare": "0.1.25",
+    "watch": "1.1.26"
+  },
+  "sd_contents": "Unchanged from Waveshare-corrected-SD-card.zip sha256 8d7ff731133b47b3bec3e8ba6d183c68b3024cdeb2e31e961b30f7a73c7b6af0",
+  "hardware_verified": false
+}

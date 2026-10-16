@@ -1,0 +1,36 @@
+name: Watch compact image provisioning
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  provisioning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: b587df55298e0bb8e676b3d59ca13679c0267bf7
+          path: .dependencies/provision-runtime
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r scripts/requirements.txt -r .dependencies/provision-runtime/requirements-ci.txt
+      - name: Check bounded inputs and completion ordering
+        run: python scripts/test_watch_image_provisioning.py --runtime .dependencies/provision-runtime -v
+      - name: Restore original Watch build source IDs
+        if: ${{ hashFiles('docs/provisioning/watch-1.0.17/watch-original-sources.bundle') != '' }}
+        run: git bundle unbundle docs/provisioning/watch-1.0.17/watch-original-sources.bundle
+      - name: Verify exact native and complete product payload
+        if: ${{ hashFiles('provisioning/watch-1.0.17/COMPLETE') != '' }}
+        run: python scripts/test_watch_image_provisioning.py --runtime .dependencies/provision-runtime --payload provisioning/watch-1.0.17 -v

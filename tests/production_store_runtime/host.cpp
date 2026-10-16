@@ -98,7 +98,11 @@ int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_
   if(ns==10){
     // The lazy HID provider reads only its four bound records at startup.
     // Empty bonds must not cause radio activity or persistent writes.
+#ifdef WATCH_RUNTIME_FEATURES_TEST
+    assert(bytes&&cap==64); // Demand promotion happens inside default app_main.
+#else
     assert(!m.appLoaded&&bytes&&cap==64);
+#endif
     assert(!strcmp(key,"hid_ours")||!strcmp(key,"hid_peer")||!strcmp(key,"hid_ccc")||!strcmp(key,"hid_identity"));
     ++m.hidBondReads;return RISC_KEY_VALUE_NOT_FOUND;
   }
@@ -106,7 +110,13 @@ int32_t kvGet(void*,uint32_t ns,const char* key,void* bytes,uint32_t cap,uint32_
   assert(ns>=1&&ns<=5);
   // Before Clock's first yield no provider poll has run. These are direct
   // namespace reads by production crown.c, after all providers started.
+#ifdef WATCH_RUNTIME_FEATURES_TEST
+  // Demand activation may yield while starting dependencies before app prefs.
+  // Count the authorized app-session reads independently of the first yield.
+  if(m.appLoaded){
+#else
   if(m.appLoaded&&!m.firstAppDelay){
+#endif
     if(ns==1&&(!strcmp(key,"watch_face")||!strcmp(key,"time_format")))++m.appSettingsReads;
     if(ns==5&&!strcmp(key,"points_cfg"))++m.appPointsReads;
     if(ns==1&&(!strcmp(key,"brightness")||!strcmp(key,"alarm_volume")||!strcmp(key,"quick_volume")||!strcmp(key,"quick_radio")))++m.quickSettingsReads;

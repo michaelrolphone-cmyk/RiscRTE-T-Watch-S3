@@ -1,0 +1,22 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "entry": "app_main",
+  "file_name": "default.elf",
+  "id": "twatch-clock",
+  "requires": [
+    {
+      "api": 1,
+      "capability": "display.output"
+    },
+    {
+      "api": 2,
+      "capability": "rtc.clock"
+    },
+    {
+      "api": 1,
+      "capability": "board.battery"
+    }
+  ],
+  "type": "application",
+  "version": "0.10.6"
+}

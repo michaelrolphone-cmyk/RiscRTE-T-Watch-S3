@@ -81,12 +81,13 @@ int portable_app_sleep(const risc_runtime_api_v1 *rt,const risc_display_output_a
 #else
         rc=watch_alarm_sleep_prepared(panel,pmu,PORTABLE_SLEEP_HYBRID,alarms,rt->diagnostic);
 #endif
-        /* Preserve this image and the original app's grants. No yield (which
-           polls providers), free, restore or stop-only after native retention. */
-        if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
 #else
         rc=watch_sleep_prepared(panel,pmu,PORTABLE_SLEEP_HYBRID,rt->diagnostic);
 #endif
+        /* Preserve this image and the original app's grants in either build.
+         * No yield (which polls providers), free, restore or stop-only after
+         * native retention, including retained panel-unhold cleanup. */
+        if(rc==WATCH_SLEEP_RETAINED)return WATCH_SLEEP_RETAINED;
         if(rc>=0) {
             /* Resume stays dark until a complete previous-app frame arrives.
              * The caller then continues in its original stack and app state. */

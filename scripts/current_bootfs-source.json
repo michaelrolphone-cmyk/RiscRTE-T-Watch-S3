@@ -1,0 +1,9 @@
+{
+  "repository": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+  "source": "e879b30c1eeb92eed75d3a234e56874e1f01a018",
+  "files": {
+    "scripts/current_bootfs.py": "3f902ef317e6a112be6b3496d2d6c9cd07376941baa61804b99cadaceb6f798a",
+    "vendor/esp-idf-spiffs/spiffsgen.py": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466"
+  },
+  "reason": "Reuse the existing qualified static producer with unchanged geometry and two-block reserve."
+}

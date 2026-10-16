@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "release_tag": "firmware-v1.0.2",
+  "source_sha": "27876749f08deaa78910cbd16aa54345684b6bf7",
+  "release_bin_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/firmware-v1.0.2/twatch-s3-launcher-1.0.2.bin",
+  "release_bin_sha256": "849e57783b25bca4bdb25aa7815867ad06714425f605aefe760d211ea1d21c04",
+  "runtime_source": "e08609b465d9368d4e6efc45e377adbdbbb706a1",
+  "index_source": "dbed8d887be0e4d8a4f29fc97487d457dde94783",
+  "index_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/dbed8d887be0e4d8a4f29fc97487d457dde94783/release-index.json"
+}
