@@ -1,0 +1,64 @@
+name: T-Watch catalog payload admission audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/audit_catalog_payload.py
+      - scripts/test_catalog_payload.py
+      - docs/catalog-payload/**
+      - .github/workflows/catalog-payload-audit.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit_catalog_payload.py
+      - scripts/test_catalog_payload.py
+      - docs/catalog-payload/**
+      - .github/workflows/catalog-payload-audit.yml
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Obtain exact read-only source inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin aa91c1cd7eb664d9a5bd78df05cab53b2c683f18
+          git init "$RUNNER_TEMP/runtime"
+          git -C "$RUNNER_TEMP/runtime" remote add origin https://github.com/michaelrolphone-cmyk/RiscRTE.git
+          git -C "$RUNNER_TEMP/runtime" fetch --depth=1 origin 21c6d64c51470158e1e8fb26d403b194f27ea38c 788c8640906a3baf90a68be33f2253bd05a0bc8c
+          git -C "$RUNNER_TEMP/runtime" checkout --detach 21c6d64c51470158e1e8fb26d403b194f27ea38c
+          git init "$RUNNER_TEMP/littlefs"
+          git -C "$RUNNER_TEMP/littlefs" remote add origin https://github.com/littlefs-project/littlefs.git
+          git -C "$RUNNER_TEMP/littlefs" fetch --depth=1 origin f53a0cc961a8acac85f868b431d2f3e58e447ba3
+          git -C "$RUNNER_TEMP/littlefs" checkout --detach FETCH_HEAD
+      - name: Audit complete public inventory and reject false mappings
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/results"
+          python3 scripts/audit_catalog_payload.py --assets "$RUNNER_TEMP/assets" --runtime "$RUNNER_TEMP/runtime" --download --output "$RUNNER_TEMP/results/audit.json"
+          python3 scripts/test_catalog_payload.py --assets "$RUNNER_TEMP/assets" --runtime "$RUNNER_TEMP/runtime" -v 2>&1 | tee "$RUNNER_TEMP/results/tests.log"
+      - name: Reproduce and compare empty factory AppData
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$RUNNER_TEMP/runtime/scripts/app_data_image.py" --littlefs-source "$RUNNER_TEMP/littlefs" --output "$RUNNER_TEMP/empty-appdata" > "$RUNNER_TEMP/results/empty-appdata.log"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          factory = (root / 'assets/TWatch-1.1.43-Shared-Default-factory-erases-data-0x0.bin').read_bytes()
+          if (root / 'empty-appdata/appdata.bin').read_bytes() != factory[0x270000:0x2f0000]:
+              raise ValueError('Factory AppData is not the reproduced empty image')
+          (root / 'results/empty-appdata.json').write_bytes((root / 'empty-appdata/appdata-image.json').read_bytes())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: twatch-1.1.43-payload-admission-audit
+          path: ${{ runner.temp }}/results

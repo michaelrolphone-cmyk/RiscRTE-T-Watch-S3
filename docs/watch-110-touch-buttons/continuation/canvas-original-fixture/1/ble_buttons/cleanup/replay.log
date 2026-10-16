@@ -1,0 +1,8 @@
+launch=springboard.elf
+HID Runtime logger: USB-shim output and post-return diagnostic replay passed
+HID production app/adapter: 2 frames, 31 polls; 0 mouse/0 key reports; all grants released, neutral reports and stride guards verified
+HID state from=0 to=5 flags=31 error=0 generation=1
+HID stop reason=Stopped
+HID suspend status=1 state=5 flags=31 error=0 generation=1
+HID cleanup pending; retaining invocation
+HID closed status=1 state=0 flags=31 error=0 generation=1

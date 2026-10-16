@@ -29,23 +29,43 @@ static bool launcher_touch_open(watch_launcher_touch *t) {
 }
 /* Drain queued notifications, then use the provider's authoritative snapshot.
  * A gap/multitouch/id replacement cancels every gesture until neutral. */
-static unsigned launcher_touch_sample(watch_launcher_touch *t,watch_face_picker *picker,uint32_t now,bool *activity) {
-    *activity=false;if(!t->subscription)return WATCH_FACE_NONE;
+typedef struct {
+    uint32_t now;
+    uint16_t x,y;
+    uint8_t count,id;
+    bool valid,activity;
+} watch_launcher_observation;
+/* Capture does not mutate either gesture recognizer. The renderer may collect
+ * these observations, then replay them in order after all frame writes stop. */
+static watch_launcher_observation launcher_touch_capture(watch_launcher_touch *t,uint32_t now) {
+    watch_launcher_observation o={.now=now};
+    if(!t->subscription)return o;
     bool ok=t->api->poll(t->api->context,1);
     for(unsigned n=0;n<RISC_TOUCH_QUEUE_LENGTH;n++) {
         risc_touch_event_v1 e={0};int32_t count=t->api->next(t->api->context,t->subscription,&e);
-        if(count<=0){if(count<0)ok=false;break;}*activity=true;
+        if(count<=0){if(count<0)ok=false;break;}o.activity=true;
     }
     risc_touch_snapshot_v1 s={0};
-    bool valid=t->api->snapshot(t->api->context,&s)&&ok&&s.width==240&&s.height==240;
-    if(s.contact_count)*activity=true;
+    o.valid=t->api->snapshot(t->api->context,&s)&&ok&&s.width==240&&s.height==240;
+    o.count=s.contact_count;o.id=s.contacts[0].id;o.x=s.contacts[0].x;o.y=s.contacts[0].y;
+    if(o.count)o.activity=true;
+    return o;
+}
+static unsigned launcher_touch_observe(watch_face_picker *picker,const watch_launcher_observation *o) {
+    uint32_t now=o->now;bool valid=o->valid;
 #ifdef WATCH_QUICK_ACTIONS
-    bool consumed=pqa_input(&clock_quick.ui,now,valid,s.contact_count,s.contacts[0].id,s.contacts[0].x,s.contacts[0].y,!picker->open);
+    bool consumed=pqa_input(&clock_quick.ui,now,valid,o->count,o->id,o->x,o->y,!picker->open);
     if(consumed){watch_face_reset_contact(picker);return WATCH_FACE_NONE;}
     if(clock_quick.ui.route==PQA_REPLAY) {
         (void)watch_face_input(picker,clock_quick.ui.start_ms,true,0,0,0,0);
         (void)watch_face_input(picker,clock_quick.ui.start_ms,true,1,clock_quick.ui.start_id,(unsigned)clock_quick.ui.start_x,(unsigned)clock_quick.ui.start_y);
     }
 #endif
-    return watch_face_input(picker,now,valid,s.contact_count,s.contacts[0].id,s.contacts[0].x,s.contacts[0].y);
+    return watch_face_input(picker,now,valid,o->count,o->id,o->x,o->y);
+}
+static unsigned launcher_touch_sample(watch_launcher_touch *t,watch_face_picker *picker,uint32_t now,bool *activity) {
+    *activity=false;if(!t->subscription)return WATCH_FACE_NONE;
+    watch_launcher_observation o=launcher_touch_capture(t,now);
+    *activity=o.activity;
+    return launcher_touch_observe(picker,&o);
 }

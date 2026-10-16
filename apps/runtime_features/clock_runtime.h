@@ -108,10 +108,9 @@ static bool watch_runtime_open(watch_clock_runtime *c,const risc_runtime_api_v1 
 static bool watch_runtime_seed(watch_clock_runtime *c,const twatch_rtc_api_v1 *rtc) {
  risc_realtime_snapshot_v1 sample;
  if(!watch_runtime_snapshot(c,&sample))return false;
- /* A classified deep boot preserves native time, even if this app has no
-  * checkpoint. A normal invocation reseeds from the same persisted RTC basis,
-  * so a completed Settings time edit takes effect on its Clock return. */
- if(c->cause>=RISC_BOOT_DEEP_TIMER && sample.validity==RISC_REALTIME_VALID)return true;
+ /* A valid retained native sample is an interpolation source, not an
+  * accuracy check against the external RTC. Reconcile whenever the caller
+  * supplies that RTC, including deep/light wake. Never write the RTC. */
  twatch_rtc_time_v1 date={0};int64_t epoch=0;
  if(!rtc || !rtc->read)return true; /* Explicit TIME UNSET remains visible. */
  if(!rtc->read(rtc->context,&date))return false;

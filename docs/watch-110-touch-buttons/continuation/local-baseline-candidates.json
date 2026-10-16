@@ -1,0 +1,62 @@
+{
+  "roots": [
+    "/Users/micahelbyrns/Documents/Codex",
+    "/Users/micahelbyrns/Downloads",
+    "/Users/micahelbyrns/Desktop",
+    "/tmp"
+  ],
+  "known_zip_size": 7409174,
+  "hash_provided_in_delegation": false,
+  "candidates": [
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-01/task-6/lab-records/x4-pr350-artifact/full-afebe/x4-full-flash-backup.bin",
+      "bytes": 16777216,
+      "sha256": "82fca32e37ff6577eafd6f102c1e78d10ac8f58d233e7d6b9b1fbdc15147b75e"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/inputs/X4-0.1.77-Reader-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "b91e38003fe485c90ad554e956b3f866ddf55a670e4af158669676af20b900de"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/deliverables/X4-0.1.78-Reader-Daily-Paper-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "1d24836ca58c1f6ca841d3d9a41c38a3ad459e95746760de363a32e5ba04e7b5"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/inputs/X4-0.1.77-Daily-Paper-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "3af02355beccb3acaba5c258d9d8e70cc60b5eadb8a57d05cb2f2c88ede4b0f3"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/inputs/X4-0.1.76-Reader-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "5a00e718132b8381f0e58a8af1f1b40301580ba9d73f164c20561fae98b962c5"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/deliverables080/X4-0.1.80-WiFi-USB-Batching-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "7df95c429d1391ed6e5e8ebd144a0672101e9096354706804632adf3c07a407f"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/deliverables079/X4-0.1.79-WiFi-MSC-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "8e42978eb7d7196d80bc6bbb61178ff5169e99e288c84b5f16a78c2c03ed8420"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/final080/X4-0.1.80-WiFi-USB-Batching-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "7df95c429d1391ed6e5e8ebd144a0672101e9096354706804632adf3c07a407f"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/final079/X4-0.1.79-WiFi-MSC-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "8e42978eb7d7196d80bc6bbb61178ff5169e99e288c84b5f16a78c2c03ed8420"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task/final078/X4-0.1.78-Reader-Daily-Paper-Panel-0.1.12-full-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "1d24836ca58c1f6ca841d3d9a41c38a3ad459e95746760de363a32e5ba04e7b5"
+    }
+  ]
+}

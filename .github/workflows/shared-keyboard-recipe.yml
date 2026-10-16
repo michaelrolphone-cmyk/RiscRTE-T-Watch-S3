@@ -1,0 +1,31 @@
+name: Watch shared keyboard recipe
+on:
+  push:
+    branches: [integrate/watch-1.1.17-shared-keyboard]
+  pull_request:
+    paths:
+      - 'scripts/assemble_watch_shared_keyboard.py'
+      - 'scripts/build_watch_keyboard_wifi.py'
+      - 'tests/test_shared_keyboard_recipe.py'
+      - 'tests/test_watch_keyboard_wifi_builder.py'
+      - 'scripts/test_watch_keyboard_wifi.py'
+      - 'tests/shared_keyboard/**'
+      - '.github/workflows/shared-keyboard-recipe.yml'
+permissions:
+  contents: read
+jobs:
+  recipe:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install -r scripts/requirements.txt
+      - run: |
+          python3 tests/test_shared_keyboard_recipe.py
+          python3 tests/test_watch_keyboard_wifi_builder.py
+          python3 -m py_compile scripts/assemble_watch_shared_keyboard.py scripts/build_watch_keyboard_wifi.py scripts/test_watch_keyboard_wifi.py

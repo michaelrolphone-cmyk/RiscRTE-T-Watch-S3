@@ -1,0 +1,4 @@
+Actual CPU light sleep: repeated wake, owner/input/stale/foreign tokens, active wake, held SPI/reentrant I2C, failed arm/entry, cleanup retention PASS
+Actual CPU cleanup RETAINED plus deferred USB recovery: native result, claims and exit barrier preserved PASS
+Actual CPU light sleep: repeated wake, owner/input/stale/foreign tokens, active wake, held SPI/reentrant I2C, failed arm/entry, cleanup retention PASS
+Actual CPU SPI: explicit 40MHz, legacy cap, owner/token/mode/deadline and failed-end retention PASS

@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "status": "software-qualified-normal-and-ubsan; hardware-unqualified",
+  "image": {
+    "bytes": 16777216,
+    "flash_offset": 0,
+    "name": "TWatch-S3-1.1.1-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin",
+    "sha256": "799eb39937a380ac5d11eb5eaf1eaf0e8416edddd2ad5fa8e02030db6785f356"
+  },
+  "baseline_library_file_id": "libfile_18a0d7ed70548191bc0df13b5351a71f",
+  "baseline_zip_sha256": "387064773f032955a71e528b75442cb9f70d6c6b0f27b972011f305dd7816dbd",
+  "baseline_full_sha256": "c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a",
+  "native_rebuilt": true,
+  "original_native_elf_recovered": false,
+  "host_sanitizers": [
+    "undefined"
+  ],
+  "address_sanitizer_qualified": false,
+  "hardware_tested": false,
+  "merge_performed": false,
+  "flash_performed": false,
+  "counts": {
+    "apps": 25,
+    "providers": 27,
+    "elfs": 51,
+    "store_files": 105
+  },
+  "clock_byte_reproduced": true,
+  "springboard_byte_reproduced": true,
+  "unchanged_store_files": 100,
+  "changed_store_paths": [
+    "ble_buttons.elf",
+    "ble_buttons.json",
+    "cohort.json",
+    "touch/driver.elf",
+    "touch/manifest.json"
+  ],
+  "limits": [
+    "No hardware/RF or physical sleep-current qualification",
+    "No preserving-update qualification; full initial image overwrites internal data",
+    "ASan startup unavailable on this Mac; UBSan is explicit",
+    "Host peripheral/background doubles do not execute delivered BLE battery broadcaster or Contexts",
+    "Unsupported synthetic Home scenarios excluded; Back navigation tested",
+    "Newer diagnostic policy8a power-union test does not replace delivered source policy"
+  ]
+}

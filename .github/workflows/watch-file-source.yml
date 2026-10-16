@@ -1,0 +1,28 @@
+name: Watch source Open composition
+on:
+  push:
+    branches: [feat/watch-file-source]
+  pull_request:
+    paths:
+      - 'scripts/*file_source*'
+      - 'scripts/check_runtime_store_admission.py'
+      - 'tests/*file_source*'
+      - 'tests/runtime_store_admission.cpp'
+      - 'docs/file-source/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  binding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install pyelftools==0.32
+      - name: Preserve exact source and Scanner authority unions
+        run: |
+          python3 tests/test_file_source_binding.py
+          python3 tests/test_file_source_union.py
+          python3 -m unittest discover -s tests -p 'test_native_composition_admission.py'
+          python3 -m unittest discover -s tests -p 'test_watch_keyboard_scanner_builder.py'
