@@ -1,12 +1,13 @@
 name: Shared default native firmware
 on:
   push:
-    branches: [work/shared-default-package, release/shared-default-1.1.42]
+    branches: [work/serial-files-native, release/shared-default-1.1.43]
     paths:
       - .github/workflows/shared-default-native.yml
       - scripts/build_shared_default_native.py
       - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
+      - scripts/serial_files_product.py
       - scripts/shared_default_release.py
       - scripts/publish_shared_default_release.py
       - scripts/test_shared_default_release.py

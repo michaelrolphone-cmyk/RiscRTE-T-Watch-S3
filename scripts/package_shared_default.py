@@ -14,6 +14,8 @@ from pathlib import Path
 import re
 import sys
 
+import serial_files_product as serial_files
+
 from package_alarm_sleep import encoded, record, require, sha, clean_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,6 +38,10 @@ def pins():
         require(re.fullmatch('[0-9a-f]{40}', p[role + '_revision']), 'Immutable source pin required: ' + role)
     if p['finalized'] or p['publication_enabled']:
         require(p['finalized'] and re.fullmatch('[0-9a-f]{40}', p.get('runtime_revision') or ''), 'Final Runtime pin required')
+    require(p['serial_files'] == serial_files.check_profile((ROOT / 'profiles/native-idf61.cmake').read_text(), p['product'],
+        (ROOT / p['previous_release_profile']).read_text()), 'Serial product authority differs')
+    for path, expected in p['native_input_sha256'].items():
+        require(sha((ROOT / path).read_bytes()) == expected, 'Native product input differs: ' + path)
     return p
 
 

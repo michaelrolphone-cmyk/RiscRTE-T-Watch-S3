@@ -51,6 +51,8 @@ def qualify(args, sources, proof):
     # descriptor, board target, physical hooks and partition layout are retained.
     native_contract = json.loads(native.CONTRACT.read_bytes())
     blobs, native_proof = native.verify_native(lock, sources, args.native_build, args.compiler, native_contract, baseline)
+    serial_proof = package.serial_files.check_native(blobs, native_proof, p['product'], sources['runtime'],
+        (package.ROOT / 'profiles/native-idf61.cmake').read_text())
     default, manifest, canonical_proof = canonical(args, sources, p)
     after = package.compose(before, default, manifest, p, lock['sources']['product']['revision'], blobs['firmware_bin'])
     imports = native.reject_private(after, sources['runtime'])
@@ -71,7 +73,7 @@ def qualify(args, sources, proof):
                   product=p['product'], version=p['version'], source_revision=lock['sources']['product']['revision'],
                   hardware_tested=False, device_accessed=False, factory_erases_data=True, preserving_update_kit_emitted=False,
                   input_lock=lock, controlled_build=closure, native=native_proof, native_rebuilt=True,
-                  default=canonical_proof, baseline_contract=contract, preservation=preservation, public_imports=imports,
+                  default=canonical_proof, serial_files=serial_proof, baseline_contract=contract, preservation=preservation, public_imports=imports,
                   admission=admission, admission_sanitized=admission_sanitized, preservation_software_model=fault_model,
                   packing=packing, artifacts={n: record(b) for n, b in assets.items()})
     assets.update({'qualification.json': encoded(report), 'source-lock.json': args.lock.read_bytes(),
