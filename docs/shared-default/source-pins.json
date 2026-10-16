@@ -11,6 +11,7 @@
   "default_bytes": 616752,
   "default_manifest_sha256": "d75c5a1945fe59f573043280cfa1a3be948063757416df4afd305f9eab477db5",
   "default_sha256": "b60579dddf0123907e11b6c3ec862e28c76547482bcc325de349e55f06db2dd6",
+  "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
   "finalized": false,
   "historical_contracts": {
     ".github/workflows/alarm-sleep-release.yml": "7fbcf43ad365232a338e74e534770f1db521950160832ba70f124715c527565b",
@@ -27,7 +28,7 @@
   "publication_enabled": false,
   "release_branch": "release/shared-default-1.1.42",
   "release_tag": "test-shared-default-1.1.42",
-  "runtime_revision": null,
+  "runtime_revision": "5876c94c4e957ed13c17d9ee7e093def744e8e40",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
   "system_revision": "cb483470887b5198e2f3cd2457586ef6622142a9",
