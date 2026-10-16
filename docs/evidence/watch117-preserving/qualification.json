@@ -1,0 +1,143 @@
+{
+  "actual_installed_updater_cases": 32,
+  "aggregate_receipt": {
+    "file": "watch117-preserving-qualification.json",
+    "sha256": "24bcfc06f3271fb1c8fdf1bbf43cbd5a9464a88f3ef1046615ea7569b2eef2cb",
+    "size_bytes": 30666
+  },
+  "appdata_sha256": "89434fc512f1f2bc1c643290178e795e95553e388acc21792743a90b5532be37",
+  "chain_final_snapshot": {
+    "sha256": "5229e2c7e35ded8ea4a4b9ddbb601b4e772a1cf4a5d1240085fc9830bc68fdf1",
+    "size_bytes": 16777216
+  },
+  "chain_intermediate_snapshot": {
+    "sha256": "437c14b876f050bfe3b9e3eef60520d2648c7c587c0111c82908e46e4628041b",
+    "size_bytes": 16777216
+  },
+  "device_health_confirmation_executed": false,
+  "direct_origins": [
+    "1.0.13",
+    "1.0.14",
+    "1.0.15"
+  ],
+  "full_initial_image": {
+    "sha256": "b3f342edacdc62bc0fd4447aa635b1a7819c179a5f84f7997848a5049669b1d0",
+    "size_bytes": 16777216
+  },
+  "kind": "watch117-complete-preserving-software-qualification",
+  "legacy_bank_path": [
+    0,
+    1,
+    0
+  ],
+  "legacy_catalog_routing": "Installed clients parse one firmware record. Source-specific bootstrap/target offers must still be staged; the new optional source-routes provider is not installed in these frozen products.",
+  "legacy_origin": "1.0.12",
+  "legacy_route": [
+    "1.0.12",
+    "1.0.15",
+    "1.0.17"
+  ],
+  "live_catalog_deployed": false,
+  "negative_catalog_bindings": 24,
+  "negative_package_mutations": 12,
+  "normal_sanitized_results_equal_except_flag": true,
+  "nvs_sha256": "2a7bf2a28a637b43e9e8c18b252b2548d27b0ecfbd9637887346ab4cf3ac2301",
+  "original_receipts": {
+    "a02d6c4-bound17-from13-normal.json": {
+      "sha256": "2096f0dbf73bc06f7fa529bd1cd1bfda94bc69422a95196ec43ecdeca4f46873",
+      "size_bytes": 250178
+    },
+    "a02d6c4-bound17-from13-san.json": {
+      "sha256": "c2b3892df5221512b7e44abc568d10c01078335824bb0125df7e00ef2520a944",
+      "size_bytes": 250177
+    },
+    "a02d6c4-bound17-from14-normal.json": {
+      "sha256": "1e1835191295a0c9e7aef6e101f6d3370c12a2d9e0bbc7cdd4eaf8829625ead3",
+      "size_bytes": 250178
+    },
+    "a02d6c4-bound17-from14-san.json": {
+      "sha256": "66425b7c2ba73d392b278fead020784bab2e5bf668f8ca7563f23a6fa1539eea",
+      "size_bytes": 250177
+    },
+    "a02d6c4-bound17-from15-normal.json": {
+      "sha256": "af97fb55e8d2f3624742f1cd0615cd3ae92106e5a493acd449c6deb21099b132",
+      "size_bytes": 250178
+    },
+    "a02d6c4-bound17-from15-san.json": {
+      "sha256": "536d720c98b786a11532aa7d472b11ce4125fe5c969675fc9ca8a0237a92d800",
+      "size_bytes": 250177
+    },
+    "bound17-from13-service.json": {
+      "sha256": "a40799405c80e1065cfbe8892e98b57e81bea3f2e179bf75dff8442350474fe2",
+      "size_bytes": 32218
+    },
+    "bound17-from14-service.json": {
+      "sha256": "2f6bf4daa86482026f73581ae4ecde5d110a38206f86305fef7ec1212325f0e2",
+      "size_bytes": 32218
+    },
+    "bound17-from15-service.json": {
+      "sha256": "00a80aa58b8bd2a463c26e3243e8acd15c6fb4d15531c1e97571cbc58d263012",
+      "size_bytes": 32218
+    },
+    "bound17-package-mutations.json": {
+      "sha256": "48d5e5ce9a8c86babedfd4f838168ba8f3afccdeb53a1bd874d463932dabc07b",
+      "size_bytes": 16902
+    },
+    "chain-normal/chain.json": {
+      "sha256": "a9bb65d97a573ff83a6b3f1a894c044581672607acb5f2c9c59fbb850600dd18",
+      "size_bytes": 2653
+    },
+    "chain-normal/first-hop.json": {
+      "sha256": "bf00db34365771a0d72916276ad50110743bdf868de1ef4d16a7f3cdfc8d4ee3",
+      "size_bytes": 224120
+    },
+    "chain-normal/second-hop.json": {
+      "sha256": "ef5c352d2ca7b04bf50066c4b41949895d3d6464edf3735f31383c1aa3f41603",
+      "size_bytes": 250361
+    },
+    "chain-san/chain.json": {
+      "sha256": "68f4523ca113813915a3e1af93c11eb4f3fe2cbb9ee67bec5dcb32aaa9cd5ec6",
+      "size_bytes": 2652
+    },
+    "chain-san/first-hop.json": {
+      "sha256": "145e448fed2d9d92be0de9c6611944433e7c4de70e5d0e1e11b7913a11e99a9f",
+      "size_bytes": 224119
+    },
+    "chain-san/second-hop.json": {
+      "sha256": "6fc67b6521f6b5d8c074ebf61d0e8b052bcfba389842c3c69f39efa4741e978b",
+      "size_bytes": 250360
+    },
+    "from12-bound-service.json": {
+      "sha256": "84cabe6863777d952bd0b9b90176f7e21f9478e986ba7c3eed414ad089feccdb",
+      "size_bytes": 5912
+    }
+  },
+  "payload": {
+    "sha256": "7849d14c935dbef5eaa66bb003838ea26a2a578c7a51dad98eb1ccbaa13236ba",
+    "size_bytes": 6577888
+  },
+  "physical_flash_tls_spiffs_and_target_instructions_executed": false,
+  "public_source_scope": "Standalone proof/packaging source; selected helper, fixture and profile bytes match the tested source. Product model/UI changes are separate.",
+  "schema": 1,
+  "source_commits": {
+    "chain_test": "8e5c33292a9b2eb47855e198df9d50a081c9215c",
+    "direct_test": "a02d6c4fa04770bf85cf5e1fb62c47ad03c1a0f1",
+    "packager": "7cba7a150f907ed773c0c883a7c8b439141b603c",
+    "strict_package_verifier": "978321a478e263185a4d4dd7cfbb2d120455cf16"
+  },
+  "target_cohort": {
+    "firmware_sha256": "55cb002b840fe4b8db74236fc34af8d021b4bf292bbf691c8e835febf7a1f7f1",
+    "firmware_size": 1269472,
+    "layout": "riscrte-paired-appdata-v2",
+    "product": "twatch-s3",
+    "runtime_version": "0.1.73",
+    "schema": "riscrte.cohort",
+    "schema_version": 1,
+    "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
+    "source_revision": "b6abe35ed3049174e53c89c8adb85edd3860da34",
+    "store_abi": 2,
+    "version": "1.0.17"
+  },
+  "total_negative_admissions": 160,
+  "total_process_cases": 1590
+}

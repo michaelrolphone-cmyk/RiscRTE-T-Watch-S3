@@ -1,4 +1,4 @@
-# Contexts 1.0.13 development cohort
+# Watch 1.0.15 navigation development cohort
 
 This is a separate build lane. Accepted Watch 1.0.12, its receipts, historical
 builders, Runtime 0.1.55 and all 22 installed provider artifacts remain intact.
@@ -101,13 +101,16 @@ and section removal flags. A source change during execution rejects the proof.
 
 `scripts/build_contexts_initial.py` requires the target build, exact published
 1.0.12 accepted store/provenance, verified 0.1.55 native inputs and all four
-schema 2 execution reports. It checks the current target dependency closure
+schema 2 execution reports, plus normal and sanitized model-import reports.
+The model reports must be produced from this same clean Watch checkout.
+It checks the current target dependency closure
 and proof source hashes, reruns actual installed-to-candidate and self admission
 in ordinary and ASan/UBSan modes, and only then assembles an initial image.
 The original native candidate/provenance is included without rebuilding it.
 
 ```
 python scripts/test_contexts_initial.py
+python scripts/test_contexts_model_proof.py
 python scripts/build_contexts_initial.py --build /new/contexts-build \
   --accepted /published/firmware-v1.0.12 --runtime /source/runtime \
   --native /verified/runtime-0.1.55 --system /source/system \
@@ -115,7 +118,9 @@ python scripts/build_contexts_initial.py --build /new/contexts-build \
   --drivers /source/drivers --runtime-report /proof/disabled-normal.json \
   --runtime-report /proof/disabled-sanitized.json \
   --runtime-report /proof/enabled-normal.json \
-  --runtime-report /proof/enabled-sanitized.json --output /new/initial-candidate
+  --runtime-report /proof/enabled-sanitized.json \
+  --model-runtime-report /proof/models-normal.json \
+  --model-runtime-report /proof/models-sanitized.json --output /new/initial-candidate
 ```
 
 This separate packager has no OTA mode. The explicitly named 16 MiB image at
@@ -123,3 +128,46 @@ offset zero erases saved settings, credentials, bonds, alarms, Points, all
 app-data and both banks. Its output is an offline development candidate with
 physical qualification pending; no release publication or device action is
 performed. Output appears atomically after every required check passes.
+
+## Preserved model-import increment
+
+The preceding isolated product is 1.0.14. Contexts service/app 0.1.1 reuse saved temporal
+positive/negative sequences and validated neural checkpoints exported by Audio
+Spectrum 0.4.12 and Waterfall 0.2.8 through their own existing namespaces. Missing,
+stale and invalid models remain explicit; Contexts does not train or write models.
+Clock/default move to 0.10.9. Native 0.1.55 and the 22 earlier provider artifacts
+stay byte-exact.
+
+To fit the added inference code, only those five app deployments select GCC 8.4
+link-time optimization. Their existing compiler support routines are explicit
+link roots; the boot effect object keeps its original compilation mode. The new
+service uses the existing verified metadata compactor, with its original ELF in
+the debug evidence. The optimization policy remains unchanged in 1.0.15. All 22 app ELF/manifest
+pairs other than Springboard must match the frozen 1.0.14 inventory in
+apps/contexts-models-preserved.json exactly. The build refuses
+to produce a verified store if any unrelated pair changes or capacity falls below
+the existing two-block reserve. Runtime execution reports bind these optimization
+choices as well as the exact source/store identities.
+
+`scripts/test_contexts_model_runtime.py` adds five cases per instrumentation mode
+using the actual Runtime, provider graph, Clock and both owner apps. Canonical
+trainers create the test-only temporal banks and promoted neural checkpoints.
+The real owners read their existing namespaces; the service must report the
+expected positive/negative examples and temporal/neural readiness. Four more
+cases return true AppData RETAINED at each owner's stat/read boundary and assert
+no subsequent hardware, storage, display or module activity. Native PCM remains
+empty, so these import cases do not claim recognition accuracy. They complement
+the bounded capture/matcher tests in Utilities. See
+`tests/contexts_models_store/README.md` for commands and scope.
+
+This source is in development. A new image requires the complete target,
+execution, allocation/relocation and initial-image gates; it is not a release.
+
+## Nova page-swiping increment
+
+Watch 1.0.15 changes only the Springboard deployment to 1.7.12. The complete
+23-app target build verifies every other app ELF/manifest pair against the
+qualified 1.0.14 store, while preserving the Contexts model service and native
+Runtime. The same six Runtime reports and initial-image admission gates remain
+required for the new exact source/store identity. This is an isolated navigation
+development candidate; it does not overwrite either delivered Contexts image.

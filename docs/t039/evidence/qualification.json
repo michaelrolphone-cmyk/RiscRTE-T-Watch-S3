@@ -1,0 +1,17 @@
+{
+  "touch_queue_normal_and_asan_ubsan": 32,
+  "x4_slow_display_normal_and_asan_ubsan": 26,
+  "wave_four_assignments_twice_normal_and_asan_ubsan": true,
+  "configuration_persistence_mouse_touchpad_normal_and_asan_ubsan": true,
+  "wire_report_and_boot": {
+    "queued_taps": 15,
+    "repeat_after_saved_bond_reconnect": true,
+    "report_protocol_asan_ubsan": true
+  },
+  "hid_complete_protocol_normal_and_asan_ubsan": true,
+  "utilities_checkpoint": "da31d0a1c75463baba4b4ac279030f3045364375",
+  "drivers_qualification_checkpoint": "4b04ad7eb28f86dcf94cfabd695d4be18d41eefd",
+  "internal_elfs_admitted": 59,
+  "x4_sd_strict_elfs_admitted": 0,
+  "hardware_tested": false
+}

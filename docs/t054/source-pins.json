@@ -1,0 +1,27 @@
+[
+  {
+    "checkout": "Shared-t054",
+    "commit": "0e41c356822a87bea15d4c068c0d4c78bc25f45b"
+  },
+  {
+    "checkout": "System-rgb-t054",
+    "commit": "9dcb2bbef44853e533d980a658a814d2c787a4fa"
+  },
+  {
+    "checkout": "System-t054",
+    "commit": "ce77aa646d06b430d78ee192b823b240f6d57d30"
+  },
+  {
+    "checkout": "Utilities-t054",
+    "commit": "cc56de34f2a1c6efa9761b28d92ed1cb8e8240e5"
+  },
+  {
+    "checkout": "Runtime-wave-t054",
+    "commit": "c258c4ba144247b6eaa4c6f28675ffccec582fe1"
+  },
+  {
+    "checkout": "native-watch-integration",
+    "commit": "26a54ff7769f7c9072a2a133790cd293b72abcba",
+    "native_elf_sha256": "090bca2f98f037f0153c967374d33e4b0d1460397fb164cf8b4be021372a9a94"
+  }
+]

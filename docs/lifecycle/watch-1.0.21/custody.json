@@ -1,0 +1,57 @@
+{
+  "bundle": {
+    "file": "watch-hid-sources.bundle",
+    "sha256": "663fdae65c40e6a5d0983c73f0bb72e5230360b098717da8a2baa75a9b727b0e",
+    "size_bytes": 30647
+  },
+  "heads": {
+    "watch20": {
+      "commit": "15624cb108c2ba65b35cd6b20283a2edff2bb415",
+      "ref": "refs/watch-hid-custody/watch20",
+      "tree": "1cd44b37d6af34f47f0ee3941cc13f55d6a45bb6"
+    },
+    "watch21": {
+      "commit": "b44d8ee0159464e9fd2be20c02092c6596573860",
+      "ref": "refs/watch-hid-custody/watch21",
+      "tree": "67f027203741e309754e77fe4f9e43a0560b44f0"
+    }
+  },
+  "prerequisite": "896663b6bbe4a1a5b5d4183fadd83a2602444adb",
+  "proofs": {
+    "watch20-admission.json": {
+      "sha256": "04b4a07c9a59b24a87fa38cec128522e07146f6f7806e9c618869fd6808d9e5a",
+      "size_bytes": 2272
+    },
+    "watch20-build.json": {
+      "sha256": "9e43f7dd409478c9d29e56bcbd9ff9801a9b1cdba9d7fca7892d93bda47ca549",
+      "size_bytes": 65376
+    },
+    "watch20-scope-refusals.json": {
+      "sha256": "72c7e7aa8916194b2e6f905c9ab07528be38e39c9e09342a817a7ccfb3efa990",
+      "size_bytes": 17984
+    },
+    "watch21-admission.json": {
+      "sha256": "815a67baad9786ee56147219210d511ddfe1b55cde5f5a8890cd42641a00d670",
+      "size_bytes": 2194
+    },
+    "watch21-build.json": {
+      "sha256": "a2d454838fc713680b666215f190ac1702fbcf58378543e67998310a5bd37327",
+      "size_bytes": 25003
+    },
+    "watch21-scope-refusals.json": {
+      "sha256": "dff66af0e394f4630e3399041296a53ae347379b8cc9bb3fbcc0d109cf7b8cd9",
+      "size_bytes": 3524
+    }
+  },
+  "schema": 1,
+  "scope": "Watch-only original20/21 packaging sources and host proof receipts; no dependency repositories",
+  "selected_files": [
+    "apps/ble-reconnect-121.json",
+    "apps/touchpad-increment-120.json",
+    "docs/watch20-touchpad-increment.md",
+    "docs/watch21-ble-reconnect.md",
+    "scripts/build_ble_reconnect_increment.py",
+    "scripts/build_touchpad_increment.py",
+    "scripts/check_touchpad_increment_scope.py"
+  ]
+}

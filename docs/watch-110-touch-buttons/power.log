@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch/scripts/test_selected_power_union.py", line 32, in <module>
+    assert (sdk / name).read_bytes() == (runtime / 'sdk/app' / name).read_bytes(), name
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RiscRuntimeV1.h

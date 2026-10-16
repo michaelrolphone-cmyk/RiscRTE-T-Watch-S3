@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "version": "1.0.16",
+  "runtime_version": "0.1.55",
+  "runtime_source": "2abc312217fadb04ac0d9c994ecb38edc15edf6a",
+  "executable_baseline": "1.0.15",
+  "scope": "packaging-only; unchanged executable and provider bytes",
+  "firmware": {
+    "size_bytes": 1251952,
+    "sha256": "d6474c004a8da30945930de5d0757d1c80e25db7ecda7e13d07d32f805ca30fd"
+  },
+  "origins": {
+    "1.0.12": {
+      "image_sha256": "af958e480a3183bde3f448e97930d56b9aeea567a664428892b917a878d014ff",
+      "hardware_accepted": true
+    },
+    "1.0.13": {
+      "image_sha256": "c6caf737c0158d3bccca520ae1bdc6a596cfe7e403b986469a8236c0895fa7e2",
+      "hardware_accepted": false
+    },
+    "1.0.14": {
+      "image_sha256": "8605ec430d9c1921db00b251c0b114bdde3e3960704c349769de6ba41c34c8e3",
+      "hardware_accepted": false
+    },
+    "1.0.15": {
+      "image_sha256": "2dff9076e78a328ccdc57685dded25da4aa91e7b075127f9edf3c39b10144b2a",
+      "hardware_accepted": false
+    }
+  },
+  "routes": {
+    "1.0.12": "1.0.15",
+    "1.0.13": "1.0.16",
+    "1.0.14": "1.0.16",
+    "1.0.15": "1.0.16"
+  },
+  "catalog_limitation": "Installed clients parse one fixed firmware record; these routes cannot be published as one automatically selected legacy catalog."
+}

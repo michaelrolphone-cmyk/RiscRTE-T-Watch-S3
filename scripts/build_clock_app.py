@@ -39,9 +39,11 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
     # Clock bytes. Only the current shared defaults schema expands labels.
     current_points = bool(points_utilities and b'#define POINTS_DEFAULTS_AVAILABLE '
                           in (points_utilities/'lib/Alarm/include/PointsRecords.h').read_bytes())
-    sources = json.loads((ROOT/'sdk/app/SOURCES.json').read_text())
+    clock_source = ROOT/'apps/clock' if current else legacy_clock(ROOT)
+    driver_source = ROOT if current else legacy_inputs(ROOT)
+    sources = json.loads((driver_source/'sdk/app/SOURCES.json').read_text())
     for name,source in sources.items():
-        if hashlib.sha256((ROOT/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
+        if hashlib.sha256((driver_source/'sdk/app'/name).read_bytes()).hexdigest()!=source['sha256']:
             raise ValueError('Canonical app SDK hash mismatch')
     if runtime_features:
         feature_sdk=json.loads((ROOT/'apps/runtime_features/sdk/SOURCES.json').read_text())
@@ -50,15 +52,13 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                 raise ValueError('Runtime features SDK hash mismatch: '+name)
     out = ROOT/('dist/update-launcher' if paired else 'dist/wifi-launcher' if wifi else 'dist/points-launcher' if points_utilities else 'dist/alarm-launcher' if alarm_system else 'dist/launcher' if launcher else 'dist/clock')
     out.mkdir(parents=True, exist_ok=True)
-    clock_source = ROOT/'apps/clock' if current else legacy_clock(ROOT)
-    driver_source = ROOT if current else legacy_inputs(ROOT)
     elf = out/('clock.elf' if returning else 'default.elf')
     exports_map=out/'exports.map'
     exports_map.write_text('{ global: app_main; local: *; };\n')
     effect_obj=out/'boot-effect.o'
     subprocess.run([cc.removesuffix('gcc')+'g++','-std=c++11','-Os','-fPIC','-mtext-section-literals','-mlongcalls',
         '-fvisibility=hidden','-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-ffreestanding','-fno-builtin',
-        '-Wall','-Wextra','-Werror','-I'+str(driver_source/'sdk/driver'),'-c',str(ROOT/'apps/clock/effects/boot.cpp'),'-o',str(effect_obj)],check=True)
+        '-Wall','-Wextra','-Werror','-I'+str(driver_source/'sdk/driver'),'-c',str(clock_source/'effects/boot.cpp'),'-o',str(effect_obj)],check=True)
     command = [cc,'-std=c11' ,'-Os','-fPIC','-mtext-section-literals','-mlongcalls',
                     '-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles',
                     '-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(exports_map),'-Wall','-Wextra','-Werror',
@@ -71,9 +71,9 @@ def build(launcher=False, returning=False, alarm_system=None, points_utilities=N
                     *(['-DWATCH_QUICK_ACTIONS','-DWATCH_QUICK_RADIOS','-DWATCH_MOTION_WAKE','-DWATCH_ALARM_SLEEP_RESUME'] if current else []),
                     *(['-DWATCH_CLOCK_ALARMS','-I'+str(alarm_system/'lib/PortableApps/include')] if alarm_system else []),
                     *(['-DWATCH_CLOCK_POINTS','-DPORTABLE_RTC_UTC8_DENVER','-I'+str(points_utilities/'lib/Alarm/include')] if points_utilities else []),
-                    '-I'+str(ROOT/'sdk/app'),'-I'+str(driver_source/'sdk/driver'),'-I'+str(driver_source/'include'),
+                    '-I'+str(driver_source/'sdk/app'),'-I'+str(driver_source/'sdk/driver'),'-I'+str(driver_source/'include'),
                     str(clock_source/'crown.c'),str(clock_source/'nova/nova.c'),
-                    *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')] if current else []),*([str(ROOT/'apps/clock/points_projection.c')] if points_utilities else []),str(ROOT/'apps/clock/effects/divdi3.c'),str(effect_obj),
+                    *([str(alarm_system/'lib/PortableApps/src'/n) for n in ('quick_actions.c','quick_render.c','quick_session.c','quick_radios.c')] if current else []),*([str(clock_source/'points_projection.c')] if points_utilities else []),str(clock_source/'effects/divdi3.c'),str(effect_obj),
                     '-lgcc','-o',str(elf)]
     subprocess.run(command,check=True)
     compaction_proof=None

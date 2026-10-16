@@ -1,0 +1,12 @@
+In file included from /Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/src/bootstrap/Runtime.cpp:711:
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/src/bootstrap/ProviderPromotionRuntime.inc:17:10: error: variable 'active' set but not used [-Werror,-Wunused-but-set-variable]
+   17 |   size_t active=0;
+      |          ^
+In file included from /Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/src/bootstrap/Runtime.cpp:1:
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/src/bootstrap/Runtime.h:432:23: error: private field 'appImages_' is not used [-Werror,-Wunused-private-field]
+  432 |   esp_dl_image_cache* appImages_=nullptr;
+      |                       ^
+/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/src/bootstrap/Runtime.h:433:8: error: private field 'reclaimingAppImages_' is not used [-Werror,-Wunused-private-field]
+  433 |   bool reclaimingAppImages_=false;
+      |        ^
+3 errors generated.

@@ -19,16 +19,16 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     for name,pin in json.loads((system/'lib/PortableApps/SOURCES.json').read_text()).items():
         if hashlib.sha256((system/'lib/PortableApps/include'/name).read_bytes()).hexdigest()!=pin['sha256']:
             raise ValueError('Shared canonical SDK hash mismatch: '+name)
-    for relative,watch_path in [('display_time.h','apps/clock/display_time.h'),('twatch_calendar.h','include/twatch_calendar.h')]:
-        if (system/'lib/PortableApps/time/denver'/relative).read_bytes()!=(ROOT/watch_path).read_bytes():
-            raise ValueError('Shared RTC forward policy differs from deployed Clock: '+relative)
-    if (system/'lib/PortableApps/include/PortableTransition.h').read_bytes()!=(ROOT/'apps/clock/transitions/PortableTransition.h').read_bytes():
-        raise ValueError('Clock and shared app transition implementations differ')
     sleep_source=legacy_clock(ROOT);driver_source=legacy_inputs(ROOT)
+    for relative,watch_path in [('display_time.h',sleep_source/'display_time.h'),('twatch_calendar.h',driver_source/'include/twatch_calendar.h')]:
+        if (system/'lib/PortableApps/time/denver'/relative).read_bytes()!=watch_path.read_bytes():
+            raise ValueError('Shared RTC forward policy differs from deployed Clock: '+relative)
+    if (system/'lib/PortableApps/include/PortableTransition.h').read_bytes()!=(sleep_source/'transitions/PortableTransition.h').read_bytes():
+        raise ValueError('Clock and shared app transition implementations differ')
     verify_sleep_policy(system,sleep_source)
-    if alarms and (system/'lib/PortableApps/include/PortableTimeFormat.h').read_bytes()!=(ROOT/'apps/clock/PortableTimeFormat.h').read_bytes():
+    if alarms and (system/'lib/PortableApps/include/PortableTimeFormat.h').read_bytes()!=(sleep_source/'PortableTimeFormat.h').read_bytes():
         raise ValueError('Clock and Settings time-format record differ')
-    if (system/'lib/PortableApps/include/RiscKeyValueV1.h').read_bytes()!=(ROOT/'sdk/app/RiscKeyValueV1.h').read_bytes():
+    if (system/'lib/PortableApps/include/RiscKeyValueV1.h').read_bytes()!=(driver_source/'sdk/app/RiscKeyValueV1.h').read_bytes():
         raise ValueError('Clock and Settings key-value ABI differ')
     cc=os.environ.get('TWATCH_CC') or shutil.which('xtensa-esp32s3-elf-gcc') or str(Path.home()/'.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc')
     out=ROOT/('dist/update-launcher' if updates is not None else 'dist/wifi-launcher' if wifi else 'dist/points-launcher' if productivity else 'dist/alarm-launcher' if alarms else 'dist/launcher');out.mkdir(parents=True,exist_ok=True)
@@ -62,7 +62,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
     for name,repo,source in [('springboard',system,system/'Apps/springboard.c'),('battery',utilities,utilities/'Apps/battery.c'),('settings',system,system/'Apps/settings.c'),('calculator',utilities,utilities/'Apps/calculator.c'),('stopwatch',utilities,utilities/'Apps/stopwatch.c')]+([('alarms',utilities,utilities/'Apps/alarms.c'),('countdown',utilities,utilities/'Apps/countdown.c')] if alarms else [])+([('wifi_settings',system,system/'Apps/wifi_settings.c')] if wifi else [])+([('points_in_time',productivity,productivity/'Apps/points_in_time.c')] if productivity else [])+([(n,system,system/'Apps'/(n+'.c')) for n in updates] if updates is not None else []):
         exports=['app_main','app_module_init','app_module_fini']
         mapping=out/(name+'.map');mapping.write_text('{ global: '+'; '.join(exports)+'; local: *; };\n')
-        sources=[source,system/'lib/PortableApps/src/adapter.c',out/('daily_catalog.c' if name=='springboard' else 'catalog.c'),ROOT/'apps/clock/portable_navigation.c',sleep_source/'portable_sleep.c']
+        sources=[source,system/'lib/PortableApps/src/adapter.c',out/('daily_catalog.c' if name=='springboard' else 'catalog.c'),sleep_source/'portable_navigation.c',sleep_source/'portable_sleep.c']
         if name=='springboard':sources.append(system/'lib/NativeApps/src/SingleFloatDivisionCompat.c')
         flags=['-DPORTABLE_TOUCH_ROTATION=0','-DPORTABLE_RTC_UTC8_DENVER','-DPORTABLE_FORCE_FULL_FRAMES','-DPORTABLE_INPUT_NAVIGATION','-DPORTABLE_INPUT_NAVIGATION_LOCAL','-DPORTABLE_APP_SLEEP_LOCAL']
         if alarms:flags.append('-DPORTABLE_ALARM_CLIENT')
@@ -74,7 +74,7 @@ def build(system,utilities,alarms=False,runtime=None,productivity=None,wifi=Fals
         if name=='points_in_time' and 'points_nova7.inc' in source.read_text():flags.append('-DPORTABLE_NOVA_UI')
         flags.append(('-DPOINTS_RETURN_APP=' if name=='points_in_time' else '-DWIFI_RETURN_APP=' if name=='wifi_settings' else '-DUPDATE_RETURN_APP=' if updates is not None and name in updates else '-DPORTABLE_RETURN_APP=')+'"'+('clock.elf' if name=='springboard' else 'springboard.elf')+'"')
         elf=out/(name+'.elf')
-        subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',system/'Apps',utilities/'lib/Alarm/include',ROOT/'sdk/app',driver_source/'sdk/driver',driver_source/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
+        subprocess.run([cc,'-std=c11','-Os','-fPIC','-mtext-section-literals','-mlongcalls','-fvisibility=hidden','-ffreestanding','-fno-builtin','-nostdlib','-nostartfiles','-shared','-Wl,--no-relax','-Wl,--hash-style=sysv','-Wl,--version-script='+str(mapping),'-Wall','-Wextra','-Werror',*flags,*['-I'+str(x) for x in [system/'lib/PortableApps/include',system/'lib/NativeApps/include',system/'Apps',utilities/'lib/Alarm/include',driver_source/'sdk/app',driver_source/'sdk/driver',driver_source/'include']],*[str(x) for x in sources],'-lgcc','-o',str(elf)],check=True)
         symbols=subprocess.check_output([cc.removesuffix('gcc')+'nm','-D',str(elf)],text=True)
         imports={line.split()[-1] for line in symbols.splitlines() if ' U ' in ' '+line}
         allowed={'risc_runtime_get_api','memcpy','memset','memcmp','strcmp','strlen','snprintf','malloc','free','strcpy'}

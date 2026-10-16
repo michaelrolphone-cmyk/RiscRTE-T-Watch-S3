@@ -10,7 +10,7 @@ from build_wifi_common import read_zip
 from current_cohort import parse as parse_cohort
 
 PROFILE = 'watch-contexts-cohort-v1'
-VERSION = '1.0.13'
+VERSION = '1.0.17'
 RUNTIME_VERSION = '0.1.55'
 APPS = (*PRIOR_APPS, 'contexts')
 CAPABILITY = {'capability': 'contexts.service', 'api': 1}
@@ -41,7 +41,7 @@ def configuration(root=ROOT, *, allow_pending=False):
         require(version(c['app_versions'][name]) > version(old['app_versions'][name]), 'Rebuilt app version did not advance: ' + name)
     for value in c['source_app_versions'].values():
         version(value)
-    require(c['app_versions']['contexts'] == '0.1.0' and c['contexts_service'] == {'id': 'contexts-service', 'version': '0.1.0'}, 'Wrong new component identity')
+    require(c['app_versions']['contexts'] == '0.1.1' and c['contexts_service'] == {'id': 'contexts-service', 'version': '0.1.1'}, 'Wrong new component identity')
     require(set(c['sources']) == set(old['sources']), 'Changed source repository scope')
     for name, source in c['sources'].items():
         require(source['repository'] == old['sources'][name]['repository'], 'Changed source repository: ' + name)
@@ -96,10 +96,9 @@ def upgrade_boot(previous, identity):
     require(all(shared in row['grants'] for row in previous['app_capabilities']), 'Namespace 1 is not universally shared')
     exemplar = next(r for r in b['app_capabilities'] if r['manifest'] == 'springboard.json')
     b['app_capabilities'].append({'manifest': 'contexts.json', 'grants': copy.deepcopy(exemplar['grants'])})
-    b['cohort_migration'] = {'schema': 1,
-        'from': {k: identity[k] for k in ('product', 'version', 'source_revision')},
-        'to': {'product': identity['product'], 'version': VERSION},
-        'shared_key_value': [{'application_id': 'contexts', 'api': 1, 'namespace': 1}]}
+    # New initial provisioning carries no previously consumed migration.
+    # Preserving updates from the Contexts lineage keep every owner unchanged;
+    # the exact12 bridge remains a separately qualified source-bound route.
     require(len(b['app_capabilities']) == 23 and len(b['drivers']) == 24, 'Context policy capacity differs')
     return b
 

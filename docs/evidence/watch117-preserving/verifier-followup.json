@@ -1,0 +1,178 @@
+{
+  "compiler_regressions": 9,
+  "device_accessed": false,
+  "existing_source_selection_tests": 10,
+  "focused_final_snapshot": {
+    "sha256": "5229e2c7e35ded8ea4a4b9ddbb601b4e772a1cf4a5d1240085fc9830bc68fdf1",
+    "size_bytes": 16777216
+  },
+  "focused_transactions": [
+    {
+      "active_bank": 1,
+      "active_is_candidate": false,
+      "api_begin_result": 0,
+      "build_runtime_version": "0.1.55",
+      "confirms": 0,
+      "error": 0,
+      "failure_state": 0,
+      "fault_injected": false,
+      "graph_callbacks": 1,
+      "graph_validated": true,
+      "hardware_calls": 0,
+      "host_idf_valid_state": true,
+      "modeled_host_app_active": true,
+      "modeled_idf_selection": true,
+      "native_api_used": true,
+      "native_bytes": 1269472,
+      "nvs_appdata_preserved": true,
+      "payload_bytes": 6577888,
+      "previous_pair_preserved": true,
+      "production_graph_validator_used": true,
+      "rollback_calls": 0,
+      "scenario": "success",
+      "selected": true,
+      "selectors": 1,
+      "storage_calls": 0,
+      "target_bank": 0,
+      "target_executed": false,
+      "transaction_state": 7,
+      "writes": 4826
+    },
+    {
+      "active_bank": 0,
+      "active_is_candidate": true,
+      "api_begin_result": 0,
+      "build_runtime_version": "0.1.73",
+      "confirms": 0,
+      "error": 0,
+      "failure_state": 0,
+      "fault_injected": false,
+      "graph_callbacks": 0,
+      "graph_validated": false,
+      "hardware_calls": 0,
+      "host_idf_valid_state": false,
+      "modeled_host_app_active": false,
+      "modeled_idf_selection": true,
+      "native_api_used": false,
+      "native_bytes": 1269472,
+      "nvs_appdata_preserved": true,
+      "payload_bytes": 6577888,
+      "previous_pair_preserved": true,
+      "production_graph_validator_used": false,
+      "rollback_calls": 0,
+      "scenario": "boot",
+      "selected": false,
+      "selectors": 0,
+      "storage_calls": 0,
+      "target_bank": 1,
+      "target_executed": false,
+      "transaction_state": 0,
+      "writes": 0
+    },
+    {
+      "active_bank": 0,
+      "active_is_candidate": true,
+      "api_begin_result": 0,
+      "build_runtime_version": "0.1.73",
+      "confirms": 0,
+      "error": 0,
+      "failure_state": 0,
+      "fault_injected": false,
+      "graph_callbacks": 0,
+      "graph_validated": false,
+      "hardware_calls": 0,
+      "host_idf_valid_state": true,
+      "modeled_host_app_active": false,
+      "modeled_idf_selection": true,
+      "native_api_used": false,
+      "native_bytes": 1269472,
+      "nvs_appdata_preserved": true,
+      "payload_bytes": 6577888,
+      "previous_pair_preserved": true,
+      "production_graph_validator_used": false,
+      "rollback_calls": 0,
+      "scenario": "boot-healthy",
+      "selected": false,
+      "selectors": 0,
+      "storage_calls": 0,
+      "target_bank": 1,
+      "target_executed": false,
+      "transaction_state": 0,
+      "writes": 0
+    }
+  ],
+  "graph_admissions": [
+    {
+      "active_store_sha256": "471464a74d174e29b9660ecbbf5f9fbf805c1aa1ab2d2faee91d1d8f2ce3d023",
+      "candidate_store_sha256": "1a6f29d2bc15ad6814b158f4feac172ea8ae2ea5fe2ee5c211004b28195f03ea",
+      "cohort_validated": true,
+      "cooperative_yields": 142,
+      "elf_count": 46,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "runtime": "installed",
+      "storage_calls": 0
+    },
+    {
+      "active_store_sha256": "1a6f29d2bc15ad6814b158f4feac172ea8ae2ea5fe2ee5c211004b28195f03ea",
+      "candidate_store_sha256": "1a6f29d2bc15ad6814b158f4feac172ea8ae2ea5fe2ee5c211004b28195f03ea",
+      "cohort_validated": true,
+      "cooperative_yields": 142,
+      "elf_count": 46,
+      "error": "",
+      "hardware_calls": 0,
+      "prepared": true,
+      "runtime": "target",
+      "storage_calls": 0
+    }
+  ],
+  "historical_detailed_receipts_unchanged": 17,
+  "historical_matrix_rerun": false,
+  "live_catalog_deployed": false,
+  "package_mutation_count": 16,
+  "package_mutation_receipt": {
+    "sha256": "5db5becc16bf6f48b9300e92a0fd9dee85750a3981fba9fa806709ffe79c0c69",
+    "size_bytes": 17396
+  },
+  "package_mutation_source": "2d284a13dcdd3f5b33ad28f36e82b546a2d595e6",
+  "package_verifier_unchanged_since_mutation_run": true,
+  "physical_qualification": false,
+  "real_guarded_compiles": [
+    {
+      "graph": true,
+      "runtime": "2abc312217fadb04ac0d9c994ecb38edc15edf6a",
+      "transaction": true,
+      "version": "0.1.55"
+    },
+    {
+      "graph": true,
+      "runtime": "b587df55298e0bb8e676b3d59ca13679c0267bf7",
+      "transaction": true,
+      "version": "0.1.73"
+    }
+  ],
+  "sanitizers_run_in_this_followup": false,
+  "schema": 1,
+  "scope": "preserving-proof-verifier-admission-followup",
+  "source": "1a854418296ab24ef8f6ecec034dd65e7ee2445e",
+  "target_instructions_executed": false,
+  "unit_suites": [
+    {
+      "log": {
+        "sha256": "bd487fc14c9ff42aed94d5881fc2e4fd6651d8936501d4253cd93022d22fa733",
+        "size_bytes": 1431
+      },
+      "passed": true,
+      "suite": "test_preserving_verifier_guards.py"
+    },
+    {
+      "log": {
+        "sha256": "440039beabebaa7d2aa948523390f7e9dafdab86228950ef7b3b84bef2385089",
+        "size_bytes": 1823
+      },
+      "passed": true,
+      "suite": "test_current_execution_sources.py"
+    }
+  ]
+}

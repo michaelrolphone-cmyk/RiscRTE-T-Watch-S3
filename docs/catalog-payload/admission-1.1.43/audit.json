@@ -1,0 +1,1604 @@
+{
+  "archive_members": {
+    "TWatch-1.1.43-Shared-Default-Evidence.zip": {
+      "build-evidence/app_commands.txt": {
+        "bytes": 6066123,
+        "sha256": "02c62ba3b73f6aca6fb089100e84621aa2975e937c0128eaaa5ea652eda7454b"
+      },
+      "build-evidence/app_deps.txt": {
+        "bytes": 9207059,
+        "sha256": "1ca57e7cd00d1330dd0aa0b120c4b034cd2e957962d7f4155dff707bb9349076"
+      },
+      "build-evidence/app_inputs.txt": {
+        "bytes": 147719,
+        "sha256": "809603cc3f01d75d231684b057d4fab3da6d3258e8bd2413d4098b2b720720ee"
+      },
+      "build-evidence/app_phony_queries.txt": {
+        "bytes": 148467,
+        "sha256": "1c234d92456f3c5dbe9cb9477844f82ad54ef8440b505dc88f7595b8f39482c1"
+      },
+      "build-evidence/bootloader_commands.txt": {
+        "bytes": 565551,
+        "sha256": "28c819cbccabd7dbacce7748d37c7c5f296269afd044a9f1b39af9a269a7ae58"
+      },
+      "build-evidence/bootloader_deps.txt": {
+        "bytes": 601724,
+        "sha256": "e5fea003ca9376cb933b08c72e1b533cb1fdcd97d4d46a05b564f0a07a9e7377"
+      },
+      "build-evidence/bootloader_inputs.txt": {
+        "bytes": 20563,
+        "sha256": "d56ff2b3936c802304909fcd9518368a5b1769f369547c6a64d79389e7b6b640"
+      },
+      "build-evidence/bootloader_phony_queries.txt": {
+        "bytes": 25761,
+        "sha256": "f8f8c001f83a5d93acd7cc21ca216d8c9e72d63b4770f7eeac19f4f90deb6d05"
+      },
+      "build-evidence/build-closure.json": {
+        "bytes": 1172643,
+        "sha256": "9ea2fae753a48994c596eb364ca03f1cda81b791d1243881cc41130659d96aa2"
+      },
+      "build-evidence/source-lock.json": {
+        "bytes": 10148,
+        "sha256": "f8e51434c1ed15d65296d5aa8b7a5490ef4f8a4a2d8cf77c368fc679b4683c02"
+      },
+      "build/bootloader/bootloader.bin": {
+        "bytes": 22640,
+        "sha256": "1ce73d93eff82e0117270beb7c8ba5f2dbe47ba25737481f8e025b67b456eb22"
+      },
+      "build/bootloader/bootloader.elf": {
+        "bytes": 629724,
+        "sha256": "1df7519f4722bfb0ea4b839cfa099264a79b1c7f518958c9073d3e516537f666"
+      },
+      "build/bootloader/compile_commands.json": {
+        "bytes": 548680,
+        "sha256": "73f62846be7dc3207b52f164b40f3c6d03c405a2a72d94a975110296ecf217fa"
+      },
+      "build/bootloader/config/sdkconfig.h": {
+        "bytes": 29060,
+        "sha256": "be2e5c6baac023afe1a71f1e5c16b087d076fe071935fb4d7285d896bdce7cc3"
+      },
+      "build/bootloader/config/sdkconfig.json": {
+        "bytes": 29639,
+        "sha256": "1f174aaa5fdfcdae0c08f622b1b28b2873845b58ef6e3a4ffbf4bc63b5893bbd"
+      },
+      "build/bootloader/toolchain/asmflags": {
+        "bytes": 71,
+        "sha256": "21b4c8d43b0d85f90f37512b6a9b85a4cc7e93f93133886dba9593e2eee10a70"
+      },
+      "build/bootloader/toolchain/cflags": {
+        "bytes": 71,
+        "sha256": "21b4c8d43b0d85f90f37512b6a9b85a4cc7e93f93133886dba9593e2eee10a70"
+      },
+      "build/bootloader/toolchain/cxxflags": {
+        "bytes": 81,
+        "sha256": "d2cb1b25e1da83fffb033feb70d34f9ac51fbe242fc7b029415987e7e9cff443"
+      },
+      "build/bootloader/toolchain/ldflags": {
+        "bytes": 24,
+        "sha256": "0882bd89337f1e7949a99b6d96b1fff733639561359a71d6f0507168ac7c42dc"
+      },
+      "build/compile_commands.json": {
+        "bytes": 5994612,
+        "sha256": "aa32f63d70ef3b0551be55bdac6c9f467e5fa7b2112ee8ccb088d9b581c413b9"
+      },
+      "build/config/sdkconfig.h": {
+        "bytes": 52498,
+        "sha256": "d9140ca51ae13ef985dee56e6404ecb06e1158e52ee51270155d6572fc9b6acb"
+      },
+      "build/config/sdkconfig.json": {
+        "bytes": 60206,
+        "sha256": "b91659343b6e6da1353a339561ec42f3448a215d0b44ad63d35dccc6bab3c695"
+      },
+      "build/flasher_args.json": {
+        "bytes": 1065,
+        "sha256": "eac8a848f96da3ebaf107684456a2709e475f8c3b72e484e67a1fb3f9ed7e337"
+      },
+      "build/partition_table/partition-table.bin": {
+        "bytes": 3072,
+        "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+      },
+      "build/project_description.json": {
+        "bytes": 195886,
+        "sha256": "3bd159bbd17ccfafbfc072f95cf5d85aa75fe481459dbfb46c918652a8b22590"
+      },
+      "build/riscrte_native.bin": {
+        "bytes": 1592080,
+        "sha256": "de30dea304e5e201a4fccf494d7aab5a0505865151e4169741e7b8ec40720476"
+      },
+      "build/riscrte_native.elf": {
+        "bytes": 18834212,
+        "sha256": "3a01c2f7dd851a523c1b96740f03367d00a06070e7efba2647f23c1231782596"
+      },
+      "build/riscrte_native.map": {
+        "bytes": 13085848,
+        "sha256": "25abd7fe85ccde83028d0d57ed8e4941f30da39e6413b92ec6172d896114c482"
+      },
+      "build/sdkconfig": {
+        "bytes": 93608,
+        "sha256": "b997181a4732360fa2b4e539d8d83edc3d26206e59176662da2721633b86a149"
+      },
+      "build/toolchain/asmflags": {
+        "bytes": 98,
+        "sha256": "8d77b3e2357b4da3073a354dc18e17e3790259eb28ea4d188a14c8c97beb0043"
+      },
+      "build/toolchain/cflags": {
+        "bytes": 98,
+        "sha256": "8d77b3e2357b4da3073a354dc18e17e3790259eb28ea4d188a14c8c97beb0043"
+      },
+      "build/toolchain/cxxflags": {
+        "bytes": 108,
+        "sha256": "50190b4d3a273c3a2ccc13a3a908cda254f065b34ea9949f9fedc2477ef4f889"
+      },
+      "build/toolchain/ldflags": {
+        "bytes": 24,
+        "sha256": "0882bd89337f1e7949a99b6d96b1fff733639561359a71d6f0507168ac7c42dc"
+      },
+      "canonical-a.json": {
+        "bytes": 101980,
+        "sha256": "94c0f1145b2375f3b71735d4d6d6cccfffe8ee3c97f11d9699835ae5384cff8c"
+      },
+      "canonical-b.json": {
+        "bytes": 101980,
+        "sha256": "94c0f1145b2375f3b71735d4d6d6cccfffe8ee3c97f11d9699835ae5384cff8c"
+      },
+      "default.elf": {
+        "bytes": 617424,
+        "sha256": "9f10c7150cdc175ff5af0dbc1410e455ead4f18868dd56555e10860781103f2f"
+      },
+      "default.json": {
+        "bytes": 1551,
+        "sha256": "0888f82c0f69d48210d94bd9507e359833200d2756a1327323580324f314e3b1"
+      },
+      "qualification.json": {
+        "bytes": 1386297,
+        "sha256": "dd781ff81977fe2d7e88914620f916c604e473d31ba925d8c463c9931734823d"
+      }
+    },
+    "ci-provenance.zip": {
+      "baseline-release.json": {
+        "bytes": 29958,
+        "sha256": "d2a77f94387cf66ab2fd98e2067c85dd96b338181a862f4b4a5539867512d9ce"
+      },
+      "baseline-tag.json": {
+        "bytes": 478,
+        "sha256": "d4fc9861185a6583aa034fa3e79a682c08b98b63c01d0027a299e0ae83052ba7"
+      },
+      "ci-run.json": {
+        "bytes": 474,
+        "sha256": "aed71ae91c2f951b2add996a7c08650e1162e21ca0cd319f585d05a22e0e46fe"
+      },
+      "compiler-version.txt": {
+        "bytes": 263,
+        "sha256": "ed21da1d0b473173d364e78a27c81f8f4b2537477bf9c54b34b645fe1268b18e"
+      },
+      "iq-linked.json": {
+        "bytes": 2611,
+        "sha256": "eb4b5b90e0438d6d468388bfd3239cbd11ee3dc50c803c90a49bea18dc3e72e5"
+      },
+      "workflow.yml": {
+        "bytes": 4986,
+        "sha256": "2ccefd2d9c33c49dae5b82f5b7c7e568f9669487db87b727d95433fd97affbb9"
+      }
+    }
+  },
+  "asset_roles": {
+    "RELEASE-NOTES.txt": "release metadata, instructions or qualification",
+    "SHA256SUMS": "release metadata, instructions or qualification",
+    "TESTING.txt": "release metadata, instructions or qualification",
+    "TWatch-1.1.43-Shared-Default-Evidence.zip": "build/qualification evidence, not a consumer payload",
+    "TWatch-1.1.43-Shared-Default-factory-erases-data-0x0.bin": "factory firmware/store/bootstrap image",
+    "bootloader.bin": "firmware/store component; not independently flashable",
+    "ci-provenance.zip": "build/qualification evidence, not a consumer payload",
+    "default.elf": "duplicate internal default application",
+    "default.json": "duplicate internal default application",
+    "firmware.bin": "firmware/store component; not independently flashable",
+    "partitions.bin": "firmware/store component; not independently flashable",
+    "qualification.json": "release metadata, instructions or qualification",
+    "release.json": "release metadata, instructions or qualification",
+    "source-lock.json": "release metadata, instructions or qualification",
+    "source-pins.json": "release metadata, instructions or qualification",
+    "store.bin": "firmware/store component; not independently flashable"
+  },
+  "associated_serial_payload": {
+    "files": [],
+    "required_file_count": 0,
+    "status": "no existing companion consumer or writable firmware-store mapping"
+  },
+  "audit_status": "passed",
+  "blockers": [
+    "No admitted serial destination reaches the actual firmware-associated boot-store files",
+    "No existing companion payload or application consumer of the private serial workspace",
+    "Frozen payload 1.0.0 requires nonempty files and volumes; an empty manifest is invalid"
+  ],
+  "candidate_version_reserved": false,
+  "catalog": {
+    "flash": {
+      "asset_name": "TWatch-1.1.43-Shared-Default-factory-erases-data-0x0.bin",
+      "offset": 0,
+      "profile": "watch",
+      "size": 16777216
+    },
+    "hardware_profiles": [
+      "watch"
+    ],
+    "id": "RiscRTE-T-Watch-S3:test-shared-default-1.1.43",
+    "payload_manifest_present": false,
+    "payloads_present": false,
+    "revision": 2
+  },
+  "factory_appdata": {
+    "bytes": 524288,
+    "contents": "empty",
+    "proof": "matches pinned empty-image hash; generator/remount reproduction is recorded separately",
+    "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0"
+  },
+  "factory_partitions": [
+    {
+      "bytes": 24576,
+      "erased": true,
+      "flags": 0,
+      "name": "nvs",
+      "offset": 36864,
+      "sha256": "1df8949b2e345ab8c00cb81fb6b83686e20a4080f969e5cd8b8d520a07cdaba2",
+      "subtype": 2,
+      "type": 1
+    },
+    {
+      "bytes": 2490368,
+      "erased": false,
+      "flags": 0,
+      "name": "app0",
+      "offset": 65536,
+      "sha256": "c9a01f1389e81bfcf4fe3f402d90af565b1aa04c61e12f77a46ab33239a7b5bd",
+      "subtype": 16,
+      "type": 0
+    },
+    {
+      "bytes": 524288,
+      "erased": false,
+      "flags": 0,
+      "name": "appdata",
+      "offset": 2555904,
+      "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+      "subtype": 65,
+      "type": 1
+    },
+    {
+      "bytes": 5570560,
+      "erased": false,
+      "flags": 0,
+      "name": "bootfs0",
+      "offset": 3080192,
+      "sha256": "760372b13f07d5bcab5cf3cbee13303d864afbd93c816ec91cdba2f145b35cf7",
+      "subtype": 130,
+      "type": 1
+    },
+    {
+      "bytes": 2490368,
+      "erased": true,
+      "flags": 0,
+      "name": "app1",
+      "offset": 8650752,
+      "sha256": "1094abc604413b629624bca536b19eb7d894d68ab0b4b9ed00e60558ffc54736",
+      "subtype": 17,
+      "type": 0
+    },
+    {
+      "bytes": 5570560,
+      "erased": true,
+      "flags": 0,
+      "name": "bootfs1",
+      "offset": 11141120,
+      "sha256": "f70da1d3d30a005555dc5ed7f5d35471873d74411d4e5d9fe04ef666c95a0d42",
+      "subtype": 130,
+      "type": 1
+    },
+    {
+      "bytes": 8192,
+      "erased": false,
+      "flags": 0,
+      "name": "otadata",
+      "offset": 16711680,
+      "sha256": "8ba3b110139f45443d4f268d1a3373ef99a1718b71d51664531b83ee2d4b91a3",
+      "subtype": 0,
+      "type": 1
+    },
+    {
+      "bytes": 8192,
+      "erased": false,
+      "flags": 0,
+      "name": "bank_state",
+      "offset": 16719872,
+      "sha256": "ddcc3213643d2ce579e5800888a185963c001658ad6e4c864e9d200081481de6",
+      "subtype": 64,
+      "type": 1
+    }
+  ],
+  "firmware_store": {
+    "application_count": 26,
+    "application_storage_grants": [
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          }
+        ],
+        "manifest": "alarms.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 6
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "app_store.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 2,
+            "capability": "storage.key-value",
+            "instance_id": 7
+          },
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "audio_spectrum.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "battery.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 11
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          }
+        ],
+        "manifest": "ble_buttons.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "ble_scanner.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          }
+        ],
+        "manifest": "ble_touchpad.json"
+      },
+      {
+        "grants": [],
+        "manifest": "bringup.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "calculator.json"
+      },
+      {
+        "grants": [],
+        "manifest": "clock.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "contexts.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          }
+        ],
+        "manifest": "countdown.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 5
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 61
+          },
+          {
+            "api": 1,
+            "capability": "storage.preferences",
+            "instance_id": 1
+          }
+        ],
+        "manifest": "default.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.installed-files",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.app-data.export",
+            "instance_id": 0
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 6
+          }
+        ],
+        "manifest": "file_browser.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "frequency_generator.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 62
+          }
+        ],
+        "manifest": "lists.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 9
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "lora_messages.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 64
+          }
+        ],
+        "manifest": "model_viewer.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 6
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "ota_update.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 5
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "points_in_time.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "settings.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "springboard.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "stopwatch.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "timecard.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 2,
+            "capability": "storage.key-value",
+            "instance_id": 13
+          },
+          {
+            "api": 1,
+            "capability": "storage.app-data",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "waterfall.json"
+      },
+      {
+        "grants": [
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 6
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 1
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 2
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-fingerprints.cfp",
+            "instance_id": 3
+          },
+          {
+            "api": 1,
+            "capability": "storage.shared-data",
+            "file": "context-rules.ctx",
+            "instance_id": 4
+          },
+          {
+            "api": 1,
+            "capability": "storage.key-value",
+            "instance_id": 3
+          }
+        ],
+        "manifest": "wifi_settings.json"
+      }
+    ],
+    "bytes": 4957966,
+    "driver_instance_count": 34,
+    "driver_manifest_count": 33,
+    "elf_count": 59,
+    "external_executable_sources": [],
+    "file_count": 121,
+    "json_count": 62,
+    "manifest_consumers": {
+      "alarm-service/manifest.json": {
+        "executable": "alarm-service/driver.elf",
+        "type": "driver"
+      },
+      "alarms.json": {
+        "executable": "alarms.elf",
+        "type": "application"
+      },
+      "app_store.json": {
+        "executable": "app_store.elf",
+        "type": "application"
+      },
+      "audio_spectrum.json": {
+        "executable": "audio_spectrum.elf",
+        "type": "application"
+      },
+      "battery-telem/manifest.json": {
+        "executable": "battery-telem/driver.elf",
+        "type": "driver"
+      },
+      "battery.json": {
+        "executable": "battery.elf",
+        "type": "application"
+      },
+      "ble-hid/manifest.json": {
+        "executable": "ble-hid/driver.elf",
+        "type": "driver"
+      },
+      "ble-sensors/manifest.json": {
+        "executable": "ble-sensors/driver.elf",
+        "type": "driver"
+      },
+      "ble-telemetry/manifest.json": {
+        "executable": "ble-telemetry/driver.elf",
+        "type": "driver"
+      },
+      "ble/manifest.json": {
+        "executable": "ble/driver.elf",
+        "type": "driver"
+      },
+      "ble_buttons.json": {
+        "executable": "ble_buttons.elf",
+        "type": "application"
+      },
+      "ble_scanner.json": {
+        "executable": "ble_scanner.elf",
+        "type": "application"
+      },
+      "ble_touchpad.json": {
+        "executable": "ble_touchpad.elf",
+        "type": "application"
+      },
+      "bringup.json": {
+        "executable": "bringup.elf",
+        "type": "application"
+      },
+      "broadcast/manifest.json": {
+        "executable": "broadcast/driver.elf",
+        "type": "driver"
+      },
+      "calculator.json": {
+        "executable": "calculator.elf",
+        "type": "application"
+      },
+      "civil-clock/manifest.json": {
+        "executable": "civil-clock/driver.elf",
+        "type": "driver"
+      },
+      "clock.json": {
+        "executable": "clock.elf",
+        "type": "application"
+      },
+      "contexts.json": {
+        "executable": "contexts.elf",
+        "type": "application"
+      },
+      "contexts/manifest.json": {
+        "executable": "contexts/driver.elf",
+        "type": "driver"
+      },
+      "countdown.json": {
+        "executable": "countdown.elf",
+        "type": "application"
+      },
+      "default.json": {
+        "executable": "default.elf",
+        "type": "application"
+      },
+      "display-power/manifest.json": {
+        "executable": "display-power/driver.elf",
+        "type": "driver"
+      },
+      "file_browser.json": {
+        "executable": "file_browser.elf",
+        "type": "application"
+      },
+      "frequency_generator.json": {
+        "executable": "frequency_generator.elf",
+        "type": "application"
+      },
+      "gpio/manifest.json": {
+        "executable": "gpio/driver.elf",
+        "type": "driver"
+      },
+      "haptic/manifest.json": {
+        "executable": "haptic/driver.elf",
+        "type": "driver"
+      },
+      "i2c/manifest.json": {
+        "executable": "i2c/driver.elf",
+        "type": "driver"
+      },
+      "imu/manifest.json": {
+        "executable": "imu/driver.elf",
+        "type": "driver"
+      },
+      "lists.json": {
+        "executable": "lists.elf",
+        "type": "application"
+      },
+      "lora/manifest.json": {
+        "executable": "lora/driver.elf",
+        "type": "driver"
+      },
+      "lora_messages.json": {
+        "executable": "lora_messages.elf",
+        "type": "application"
+      },
+      "mic/manifest.json": {
+        "executable": "mic/driver.elf",
+        "type": "driver"
+      },
+      "model_viewer.json": {
+        "executable": "model_viewer.elf",
+        "type": "application"
+      },
+      "ota_update.json": {
+        "executable": "ota_update.elf",
+        "type": "application"
+      },
+      "panel/manifest.json": {
+        "executable": "panel/driver.elf",
+        "type": "driver"
+      },
+      "pmu/manifest.json": {
+        "executable": "pmu/driver.elf",
+        "type": "driver"
+      },
+      "points_in_time.json": {
+        "executable": "points_in_time.elf",
+        "type": "application"
+      },
+      "power-sleep/manifest.json": {
+        "executable": "power-sleep/driver.elf",
+        "type": "driver"
+      },
+      "powerkey/manifest.json": {
+        "executable": "powerkey/driver.elf",
+        "type": "driver"
+      },
+      "rtc/manifest.json": {
+        "executable": "rtc/driver.elf",
+        "type": "driver"
+      },
+      "s3-radio-iq/manifest.json": {
+        "executable": "s3-radio-iq/driver.elf",
+        "type": "driver"
+      },
+      "settings.json": {
+        "executable": "settings.elf",
+        "type": "application"
+      },
+      "sharing-ble/manifest.json": {
+        "executable": "sharing-ble/driver.elf",
+        "type": "driver"
+      },
+      "sharing-entropy/manifest.json": {
+        "executable": "sharing-entropy/driver.elf",
+        "type": "driver"
+      },
+      "sharing-tcp/manifest.json": {
+        "executable": "sharing-tcp/driver.elf",
+        "type": "driver"
+      },
+      "speaker/manifest.json": {
+        "executable": "speaker/driver.elf",
+        "type": "driver"
+      },
+      "springboard.json": {
+        "executable": "springboard.elf",
+        "type": "application"
+      },
+      "stopwatch.json": {
+        "executable": "stopwatch.elf",
+        "type": "application"
+      },
+      "text-input/manifest.json": {
+        "executable": "text-input/driver.elf",
+        "type": "driver"
+      },
+      "timecard.json": {
+        "executable": "timecard.elf",
+        "type": "application"
+      },
+      "touch/manifest.json": {
+        "executable": "touch/driver.elf",
+        "type": "driver"
+      },
+      "ui-profile/manifest.json": {
+        "executable": "ui-profile/driver.elf",
+        "type": "driver"
+      },
+      "ui-scene/manifest.json": {
+        "executable": "ui-scene/driver.elf",
+        "type": "driver"
+      },
+      "update-apps/manifest.json": {
+        "executable": "update-apps/driver.elf",
+        "type": "driver"
+      },
+      "update-fw/manifest.json": {
+        "executable": "update-fw/driver.elf",
+        "type": "driver"
+      },
+      "waterfall.json": {
+        "executable": "waterfall.elf",
+        "type": "application"
+      },
+      "wifi/manifest.json": {
+        "executable": "wifi/driver.elf",
+        "type": "driver"
+      },
+      "wifi_settings.json": {
+        "executable": "wifi_settings.elf",
+        "type": "application"
+      }
+    },
+    "missing_internal_executables": [],
+    "ownership": "firmware-owned paired boot store; no serial write destination"
+  },
+  "flash": {
+    "bytes": 16777216,
+    "current_usable_order": "factory image already includes required internal store",
+    "future_factory_pair_order": "firmware, then payload, then full readback and consumer verification",
+    "offset": 0,
+    "preserving_update_kit": false,
+    "saved_settings_and_internal_data": "erased",
+    "separate_payload_order": "unavailable without a usable payload/consumer mapping",
+    "supported_asset": "TWatch-1.1.43-Shared-Default-factory-erases-data-0x0.bin"
+  },
+  "hardware_tested": false,
+  "inherited_qualification": {
+    "hardware_tested": false,
+    "native_artifacts_checked": 23,
+    "native_elf": {
+      "bytes": 18834212,
+      "sha256": "3a01c2f7dd851a523c1b96740f03367d00a06070e7efba2647f23c1231782596"
+    },
+    "normal_and_sanitized_elf_count": 59,
+    "source_files_checked": 7,
+    "status": "published-receipts-identity-verified-not-rerun"
+  },
+  "missing_builder_inputs": [
+    "trusted supported installer method ID",
+    "accepted hardware revision bounds",
+    "trusted namespace capability/budget profile",
+    "immutable manifest/container catalog association after a usable product mapping exists"
+  ],
+  "paired_candidate_available": false,
+  "paired_manifest_generated": false,
+  "preservation": {
+    "replacement": "explicit destructive non-atomic per-file replacement",
+    "serial_mutation_scope": "selected individual files and necessary parents only",
+    "unrelated_store_files_identical_to_release_baseline": 117
+  },
+  "product": "twatch",
+  "product_release_published": false,
+  "public_assets": {
+    "RELEASE-NOTES.txt": {
+      "bytes": 819,
+      "sha256": "549baaf98058a6b7f4b441820b73a044ee59136967d468a2cf675653e02ad36b"
+    },
+    "SHA256SUMS": {
+      "bytes": 1281,
+      "sha256": "e0ec4d608a1489017d6c0dfa6c75f59490363a7ae21483b4e01c7c72619bf34a"
+    },
+    "TESTING.txt": {
+      "bytes": 1854,
+      "sha256": "6b5f7b3aff9d71367ef8309a24aefe7ce3d4c543767838d62ba85578220cdd72"
+    },
+    "TWatch-1.1.43-Shared-Default-Evidence.zip": {
+      "bytes": 11123665,
+      "sha256": "78c994c45afb1d58ed2624a4e79ec333a06b52efb0d290b19132d018cd1317db"
+    },
+    "TWatch-1.1.43-Shared-Default-factory-erases-data-0x0.bin": {
+      "bytes": 16777216,
+      "sha256": "f6b600197087ae93c93752507b89d6be0c248abb528c010da2d280f7a0166f36"
+    },
+    "bootloader.bin": {
+      "bytes": 22640,
+      "sha256": "1ce73d93eff82e0117270beb7c8ba5f2dbe47ba25737481f8e025b67b456eb22"
+    },
+    "ci-provenance.zip": {
+      "bytes": 6675,
+      "sha256": "85abc184fd3541b4c7e9094ea7f46e23f0431d28fa10edf3d2ba05eb3c8de427"
+    },
+    "default.elf": {
+      "bytes": 617424,
+      "sha256": "9f10c7150cdc175ff5af0dbc1410e455ead4f18868dd56555e10860781103f2f"
+    },
+    "default.json": {
+      "bytes": 1551,
+      "sha256": "0888f82c0f69d48210d94bd9507e359833200d2756a1327323580324f314e3b1"
+    },
+    "firmware.bin": {
+      "bytes": 1592080,
+      "sha256": "de30dea304e5e201a4fccf494d7aab5a0505865151e4169741e7b8ec40720476"
+    },
+    "partitions.bin": {
+      "bytes": 3072,
+      "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+    },
+    "qualification.json": {
+      "bytes": 1386297,
+      "sha256": "dd781ff81977fe2d7e88914620f916c604e473d31ba925d8c463c9931734823d"
+    },
+    "release.json": {
+      "bytes": 13841,
+      "sha256": "4cb1903a1772649db26bade409af98567fe0a90a4a4aec3cc94f1b216b04197b"
+    },
+    "source-lock.json": {
+      "bytes": 10148,
+      "sha256": "f8e51434c1ed15d65296d5aa8b7a5490ef4f8a4a2d8cf77c368fc679b4683c02"
+    },
+    "source-pins.json": {
+      "bytes": 3105,
+      "sha256": "d813d8428f6c4ff35d3c9bda5fc95c7e697fe5537d578efad8453bc236c02e38"
+    },
+    "store.bin": {
+      "bytes": 5570560,
+      "sha256": "760372b13f07d5bcab5cf3cbee13303d864afbd93c816ec91cdba2f145b35cf7"
+    }
+  },
+  "release_tag": "test-shared-default-1.1.43",
+  "runtime_revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+  "schema": 1,
+  "serial_admission": {
+    "active_boot_bank_writable": false,
+    "application_grants_reused": false,
+    "boot_export_enabled": false,
+    "dispatch": "settled-owner-checkpoint",
+    "flags": {
+      "RISC_NATIVE_SERIAL_APPDATA_FILES": 1,
+      "RISC_NATIVE_SERIAL_FILES": 1
+    },
+    "hardware_tested": false,
+    "namespaces": [
+      {
+        "id": 2,
+        "label": "Serial files",
+        "private_root": "/appdata/.serial-files",
+        "writable": true
+      }
+    ]
+  },
+  "source_evidence": [
+    {
+      "bytes": 2778,
+      "path": "scripts/read_only_spiffs.py",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "e48d3b2422c60f81fdae6371ff3c5b65c5cbaa9dd250b4a2925c74c0b45f040d",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/scripts/read_only_spiffs.py"
+    },
+    {
+      "bytes": 3602,
+      "path": "scripts/serial_files_product.py",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "d415cd8d216a0d84b44759eb73c8632fd671d03b38d688e52d9eb433f2d0ee82",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/scripts/serial_files_product.py"
+    },
+    {
+      "bytes": 5230,
+      "path": "scripts/watch_factory_appdata.py",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "7acb1cdfb8dd88e6b9324a3ef5f458520ff3557920e120e0f26583d8978ad96f",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/scripts/watch_factory_appdata.py"
+    },
+    {
+      "bytes": 1402,
+      "path": "profiles/native-idf61.cmake",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "6e87b761aa0d3abdaa4154481c0a2b0c7be7ffdc6b12b548e96dcc325e58fc75",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/profiles/native-idf61.cmake"
+    },
+    {
+      "bytes": 3105,
+      "path": "docs/shared-default/source-pins.json",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "d813d8428f6c4ff35d3c9bda5fc95c7e697fe5537d578efad8453bc236c02e38",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/docs/shared-default/source-pins.json"
+    },
+    {
+      "bytes": 24030,
+      "path": "src/main.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "aeb0e256a82c48c5929cf1feb82f3ab2e66239ad97f14cd015c72cf353bb865c",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/main.cpp"
+    },
+    {
+      "bytes": 4147,
+      "path": "src/ports/esp32s3/NativeSerialStorage.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "56ac6b966c1c7923ebb4d246a25ff50ded2b61a428e79f69a958a38cd4b404bc",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/ports/esp32s3/NativeSerialStorage.cpp"
+    },
+    {
+      "bytes": 1372,
+      "path": "src/ports/esp32s3/NativeSerialStorage.h",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "8796c28c66f3fbd21b06090e548d7bbc807ebc6101a3636df869b47293e6b2f1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/ports/esp32s3/NativeSerialStorage.h"
+    },
+    {
+      "bytes": 3016,
+      "path": "src/ports/esp32s3/NativeSerialFiles.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "ad806997dc86b70224c7cd3e817b446152a1933ae58a91037ae0a3ad8a542628",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/ports/esp32s3/NativeSerialFiles.cpp"
+    },
+    {
+      "bytes": 7417,
+      "path": "src/ports/esp32s3/NativeAppData.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "d70e83bccfb5e549c6b6eeb372ae6885bece2c7796976ef34b25815a8518bca2",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/ports/esp32s3/NativeAppData.cpp"
+    },
+    {
+      "bytes": 9208,
+      "path": "src/runtime/storage/AppDataFiles.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "cdc78e97a91e6e879ebc154cd3cbb184e0300e8790fd130450ad70cc468e4be0",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/runtime/storage/AppDataFiles.cpp"
+    },
+    {
+      "bytes": 12930,
+      "path": "src/runtime/storage/ReopenedFiles.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "48080cc125434a2d9cce917cc5df5fdbd27687f420bba1730ed73eddb7c7a716",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/runtime/storage/ReopenedFiles.cpp"
+    },
+    {
+      "bytes": 9974,
+      "path": "src/runtime/serial/Files.cpp",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "27cb0118c33f4a56302431b3398f016f6b2917098da12ba372ac197751335d6f",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/src/runtime/serial/Files.cpp"
+    },
+    {
+      "bytes": 7497,
+      "path": "scripts/app_data_image.py",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "142e5157462e9bcd231446156d334f76cf399df9b75c544553e1a9f43418d4a1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/scripts/app_data_image.py"
+    },
+    {
+      "bytes": 2213,
+      "path": "scripts/app_data_format.c",
+      "repository": "runtime",
+      "revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
+      "sha256": "e62cfaead3f72d12fb3d888b6b16732375aa2c2bc115ffdfd3106dbb8c4999b9",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/21c6d64c51470158e1e8fb26d403b194f27ea38c/scripts/app_data_format.c"
+    },
+    {
+      "bytes": 18579,
+      "path": "docs/catalog-payload/1.0.0/manifest.schema.json",
+      "repository": "schema",
+      "revision": "788c8640906a3baf90a68be33f2253bd05a0bc8c",
+      "sha256": "735c3895826bcec9feba7cc8b4cd10d6610cbeae8d011e398287aa885daf4333",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/788c8640906a3baf90a68be33f2253bd05a0bc8c/docs/catalog-payload/1.0.0/manifest.schema.json"
+    },
+    {
+      "bytes": 13908,
+      "path": "docs/catalog-payload/1.0.0/BUILDER.md",
+      "repository": "schema",
+      "revision": "788c8640906a3baf90a68be33f2253bd05a0bc8c",
+      "sha256": "330161d4e939074ea8e9964ced03423063dd9ae430821a80cdc5e31734205fb3",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE/blob/788c8640906a3baf90a68be33f2253bd05a0bc8c/docs/catalog-payload/1.0.0/BUILDER.md"
+    },
+    {
+      "bytes": 4986,
+      "path": ".github/workflows/shared-default-native.yml",
+      "repository": "product",
+      "revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+      "sha256": "2ccefd2d9c33c49dae5b82f5b7c7e568f9669487db87b727d95433fd97affbb9",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/blob/aa91c1cd7eb664d9a5bd78df05cab53b2c683f18/.github/workflows/shared-default-native.yml"
+    }
+  ],
+  "source_revision": "aa91c1cd7eb664d9a5bd78df05cab53b2c683f18",
+  "upstream_release_id": 415195233
+}

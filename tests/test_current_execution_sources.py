@@ -63,7 +63,8 @@ class CurrentExecutionSources(unittest.TestCase):
   for declaration,enabled in [('radioIqReady',False),('radioIqReady radioIqPrepare radioIqCleanup',True)]:
    with self.subTest(declaration=declaration),tempfile.TemporaryDirectory() as temp:
     root=Path(temp);header=root/'src/ports/esp32s3/CpuPort.h';header.parent.mkdir(parents=True);header.write_text(declaration)
-    with patch.object(admission.subprocess,'run') as run:
+    runtime_header=root/'src/bootstrap/Runtime.h';runtime_header.parent.mkdir(parents=True);runtime_header.write_text('')
+    with patch.object(admission,'source_head',return_value='a'*40),patch.object(admission,'run_qualified') as run:
      admission.compile_harness(root,root/'admit')
     self.assertEqual('-DSTORE_ADMISSION_IQ_LIFECYCLE' in run.call_args.args[0],enabled)
  def test_execution_iq_lifecycle_tracks_selected_runtime(self):
@@ -77,14 +78,15 @@ class CurrentExecutionSources(unittest.TestCase):
  def test_transaction_links_provisioning_only_when_present(self):
   for enabled in (False,True):
    with self.subTest(enabled=enabled),tempfile.TemporaryDirectory() as temp:
-    root=Path(temp);header=root/'src/runtime/provisioning/StoreFiles.h'
+    root=Path(temp).resolve();header=root/'src/runtime/provisioning/StoreFiles.h'
     fixture=root/'test/run_native_bank_test.sh';fixture.parent.mkdir();fixture.write_text('--wrap=fclose' if enabled else '')
     if enabled:header.parent.mkdir(parents=True);header.touch()
-    with patch.object(upgrade,'run') as run:
+    def compile_output(command,**kwargs):Path(command[command.index('-o')+1]).write_bytes(b'test object')
+    with patch.object(upgrade,'source_head',return_value='a'*40),patch.object(upgrade,'run_qualified',side_effect=compile_output) as run:
      upgrade.compile_transaction(root,root/'build','0.1.37')
-    self.assertEqual(header.with_suffix('.cpp') in run.call_args.args,enabled)
-    self.assertEqual('-Wl,--wrap=fclose' in run.call_args.args,enabled)
-    self.assertEqual(root/'src/runtime/provisioning/Coordinator.cpp' in run.call_args.args,enabled)
+    self.assertEqual(header.with_suffix('.cpp') in run.call_args.args[0],enabled)
+    self.assertEqual('-Wl,--wrap=fclose' in run.call_args.args[0],enabled)
+    self.assertEqual(root/'src/runtime/provisioning/Coordinator.cpp' in run.call_args.args[0],enabled)
  def test_negative_private_namespace_targets_hid_not_last_provider(self):
   previous,following=live_fixture()
   original=json.loads(following['boot.json'])

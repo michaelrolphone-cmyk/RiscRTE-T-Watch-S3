@@ -18,6 +18,31 @@ from contexts_profile import (APPS, PRIOR_APPS, PROFILE, VERSION, SERVICE_MANIFE
     configuration, baseline_inputs, baseline_contract, catalog, upgrade_boot, app_manifest, check_policy)
 SECTION_FLAGS = ['-ffunction-sections', '-fdata-sections']
 LINK_FLAGS = ['-Wl,--gc-sections']
+LTO_APPS = frozenset(('default','clock','audio_spectrum','waterfall','contexts'))
+COMPILER_HELPERS = {'waterfall':('__divsf3',),
+    'default':('__udivdi3','__umoddi3','__divdi3','__moddi3'),
+    'clock':('__udivdi3','__umoddi3','__divdi3','__moddi3')}
+
+
+def optimization_policy():
+    return {'lto_apps':sorted(LTO_APPS),'compiler_helpers':{k:list(v) for k,v in sorted(COMPILER_HELPERS.items())},
+            'boot_effect_lto':False,'service_compaction':True}
+
+def verify_preserved_apps(files,root=ROOT):
+    reference=json.loads((Path(root)/'apps/contexts-models-preserved.json').read_text())
+    require(reference['schema']==1 and reference['source_version']=='1.0.15' and
+            reference['source_revision']=='02f0225b1858ed4d3586891a9b22dd9af36ef210', 'Wrong frozen Contexts comparison')
+    require(set(reference['changed_apps'])=={'audio_spectrum','waterfall'} and
+            set(reference['preserved_apps'])==set(APPS)-{'audio_spectrum','waterfall'}, 'Capture cleanup rebuild scope differs')
+    expected={name+suffix for name in reference['preserved_apps'] for suffix in ('.elf','.json')}
+    require(set(reference['files'])==expected and len(expected)==42, 'Incomplete unchanged app inventory')
+    for name,wanted in reference['files'].items():
+        require(name in files and metadata(files[name])==wanted, 'Unrelated app changed from frozen1.0.15: '+name)
+    require(set(reference['providers'])=={'contexts/driver.elf','contexts/manifest.json'},
+            'Frozen model service inventory differs')
+    for name,wanted in reference['providers'].items():
+        require(name in files and metadata(files[name])==wanted, 'Model service changed from frozen1.0.15: '+name)
+    return reference
 
 def git(path, *args):
     return subprocess.check_output(['git', '-C', str(path), *args], text=True).strip()
@@ -39,6 +64,9 @@ def definitions(name, version, root=ROOT):
         flags += ['-DPORTABLE_CATALOG_LIMIT=21']
     if name == 'contexts':
         flags += ['-DPORTABLE_APP_OWNS_TOUCH_CHROME', '-DPORTABLE_CONTEXTS_EDITOR']
+    if name in LTO_APPS:
+        flags += ['-flto']
+        flags += ['-Wl,--undefined=' + symbol for symbol in COMPILER_HELPERS.get(name,())]
     return flags
 
 def source_manifest(repo, name):
@@ -131,6 +159,7 @@ def verify_build(directory, baseline, root=ROOT):
     record = json.loads((directory / 'contexts-build.json').read_text())
     require(record['schema'] == 1 and record['profile'] == PROFILE, 'Wrong Contexts build evidence')
     require(record['configuration'] == configuration(root), 'Context build source profile differs')
+    require(record['optimization']==optimization_policy(), 'Context optimization policy differs')
     require(record['watch_source'] == git(root, 'rev-parse', 'HEAD'), 'Context build Watch source differs')
     previous = baseline_inputs(baseline, root)
     files = {p.relative_to(directory / 'files').as_posix(): p.read_bytes() for p in (directory / 'files').rglob('*') if p.is_file()}
@@ -146,6 +175,11 @@ def verify_build(directory, baseline, root=ROOT):
         debug = directory / 'debug' / (name + '.elf')
         require(proof['compaction']['before_sha256'] == hashlib.sha256(debug.read_bytes()).hexdigest() and
                 proof['compaction']['after_sha256'] == metadata(files[name + '.elf'])['sha256'], 'Context compaction custody differs: ' + name)
+    require(record['preserved_from_1_0_15']==verify_preserved_apps(files,root), 'Unchanged app proof differs')
+    provider=record['providers']['contexts-service'];compaction=provider['compaction']
+    require(compaction['retained_loader_sections_symbols_relocations_unchanged'] is True and
+            compaction['before_sha256']==metadata((directory/'debug/contexts-service.elf').read_bytes())['sha256'] and
+            compaction['after_sha256']==metadata(files['contexts/driver.elf'])['sha256'], 'Provider compaction custody differs')
     from read_only_spiffs import read_image
     from current_bootfs import IMAGE_SIZE
     bootfs = (directory / 'contexts-bootfs.bin').read_bytes()
@@ -182,13 +216,13 @@ def build(system, utilities, productivity, runtime, drivers, baseline, out, *, r
     identity = json.loads(previous['cohort.json'])
     boot = upgrade_boot(json.loads(previous['boot.json']), identity)
     following = dict(previous)
-    following['boot.json'] = encoded(boot)
+    following['boot.json'] = (json.dumps(boot,sort_keys=True,separators=(',',':'))+'\n').encode()
     following['cohort.json'] = encode_cohort({**identity, 'version': VERSION, 'source_revision': head})
     record = {'schema': 1, 'profile': PROFILE, 'configuration': c, 'watch_source': head,
         'compiler': compiler_version, 'baseline': baseline_contract(root)['artifacts']['accepted-store.zip'],
         'native_changed': False, 'native_rebuilt': False, 'physical_verification': False,
         'catalog': rows, 'apps': {}, 'providers': {}, 'source_cohort': identity,
-        'target_cohort': json.loads(following['cohort.json'])}
+        'target_cohort': json.loads(following['cohort.json']),'optimization':optimization_policy()}
     for name in APPS:
         if name in CLOCK_APPS:
             continue
@@ -235,10 +269,11 @@ def build(system, utilities, productivity, runtime, drivers, baseline, out, *, r
     require(service_manifest['id'] == c['contexts_service']['id'] and service_manifest['version'] == c['contexts_service']['version'], 'Wrong Contexts service source')
     raw, proof = compiler.build('contexts-service', [service / 'service.c'], [],
         [repos['utilities'] / 'Apps', repos['utilities'] / 'lib/Contexts/include', drivers / 'sdk/driver'],
-        {'t5_driver_get'}, {'memcpy', 'memset', 'memcmp', 'memchr', 'strcmp', 'strlen'}, compact_app=False)
+        {'t5_driver_get'}, {'memcpy', 'memset', 'memcmp', 'memchr', 'strcmp', 'strlen'}, compact_app=True)
     following['contexts/driver.elf'] = raw;following[SERVICE_MANIFEST] = encoded(service_manifest)
     record['providers']['contexts-service'] = proof
     record['policy'] = check_policy(previous, following, c, root)
+    record['preserved_from_1_0_15']=verify_preserved_apps(following,root)
     record['files'] = {name: metadata(raw) for name, raw in sorted(following.items())}
     record['preserved_providers'] = {name: metadata(raw) for name, raw in previous.items() if '/' in name}
     for name, raw in following.items():

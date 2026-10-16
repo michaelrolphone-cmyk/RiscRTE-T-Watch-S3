@@ -1,0 +1,71 @@
+{
+  "status": "progress-published-baseline-and-full-image-still-blocked",
+  "transfer_attempts": [
+    {
+      "attempt": 1,
+      "execution": "workspace sandbox",
+      "exit_code": 1,
+      "combined_output": "library file transfer failed: download failed\n",
+      "approval_denied": false
+    },
+    {
+      "attempt": 2,
+      "execution": "approved require_escalated retry",
+      "exit_code": 1,
+      "combined_output": "library file transfer failed: download failed\n",
+      "approval_denied": false
+    }
+  ],
+  "transfer_error_limit": "The unchanged helper emitted no HTTP code, URL diagnostic, exception or lower-level cause; no further transfer was attempted.",
+  "local_search": "No matching named canvas output or exact-size ZIP; 10 full-sized BIN paths hashed. Expected authoritative receipt/BIN hash was not supplied to this executor; no file accepted or substituted.",
+  "runtime_light": "PASS normal: exact e96f2aff native CPU Light, cleanup RETAINED + deferred USB recovery, SPI lifecycle; host-only compiler warning adaptations documented",
+  "canonical_power": "10 PASS normal/UBSan using canvas Watch/System, pinned Runtime 0.2.4 API, Utilities Alarm suffix, explicitly selected 8a758629 policy header. Diagnostic SDK binding; not evidence of byte-equivalent delivered Clock.",
+  "canvas_adapter": {
+    "original_matrix": {
+      "executions": 48,
+      "passed": 42,
+      "failures": [
+        "quick-controls",
+        "home",
+        "edit-home"
+      ],
+      "each_failure_repeated_under_ubsan": true,
+      "same_failures_with_touch_021": true
+    },
+    "correct_profile": {
+      "executions": 44,
+      "passed": 44,
+      "instrumentation": [
+        "normal",
+        "UBSan"
+      ],
+      "quick_input_correction": "actual Contexts-shifted radio tiles; original assertions unchanged",
+      "excluded": [
+        "synthetic Home",
+        "synthetic edit-Home"
+      ],
+      "exclusion_reason": "selected adapter explicitly masks navigation to Back/Confirm/arrows; no Home mapping",
+      "background_services": "declared OFF Contexts/telemetry host doubles; no physical acquisition/broadcast qualification"
+    }
+  },
+  "hid_wire": {
+    "report_protocol": "PASS normal and UBSan seam",
+    "boot_protocol": "PASS normal and UBSan seam",
+    "provider_source": "4088b6892c2e2654b0342f04a7d191068e4a8e2e",
+    "provider_manifest": "ble-hid 0.1.2",
+    "nimble_instrumentation": "normal host build; not newly sanitized",
+    "host_build": "Mac dylib linker flags only; production source unchanged"
+  },
+  "asan": "Minimal puts-only program also timed out after 8 seconds without stdout/stderr. Host startup limitation; no ASan pass claimed.",
+  "remaining": [
+    "authoritative baseline receipt/hash and exact bytes",
+    "byte-preservation stage execution",
+    "exact native-source custody and all 51 ELFs/whole graph admission",
+    "final deterministic full BIN assembly/readback/pair hashes",
+    "ASan host/environment repair or equivalent supported executor"
+  ],
+  "full_bin_produced": false,
+  "hardware_tested": false,
+  "master_merged": false,
+  "hardware_flashed": false
+}

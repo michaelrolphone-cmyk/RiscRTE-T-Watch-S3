@@ -1,0 +1,19 @@
+TWatch 1.1.41: shared alarm sleep repair
+
+Software-qualified candidate; physical hardware testing remains pending.
+
+Shared alarm service 0.4.12 retries transient storage BUSY during reconciliation.
+The shared capability-based sleep contract stays in place. Persistent busy and
+hard failures still fence unsafe sleep. Alarm identity, settings, dependencies,
+and all other ordinary app/provider ELFs remain unchanged.
+
+Resident ESP-IDF 6.1 firmware, bootloader and partition bytes are copied exactly
+from the verified official 1.1.40 native release. Only the alarm service ELF and
+its version manifest, cohort version/source, and paired store hash state change.
+The same GCC15.2-built shared service is used on both watches.
+
+WARNING: the factory image erases internal saved settings and data.
+No data-preserving update or SDK migration kit is supplied. Separate native and
+store files are verification evidence, not a flashing procedure.
+Physical boot, sleep/wake, health confirmation, rollback and alarm delivery
+remain untested for this candidate. No device was accessed.

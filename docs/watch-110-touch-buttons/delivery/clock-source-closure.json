@@ -1,0 +1,39 @@
+{
+  "springboard": {
+    "matched": 94,
+    "mismatches": [],
+    "unmapped": [
+      "/workspace/scratch/fa8487f96167/migration-build/watch-launchers/catalog.c"
+    ],
+    "sha256": "8c97414a58e35901349a31a59a09e1e12dccbcbae1c6a362642fba2604045cc9",
+    "keys": [
+      "command",
+      "dependencies",
+      "sha256",
+      "bytes",
+      "version",
+      "imports",
+      "exports",
+      "compaction",
+      "hardware_verified"
+    ]
+  },
+  "default": {
+    "matched": 98,
+    "mismatches": [],
+    "unmapped": [],
+    "sha256": "0470fd3fe48e144a6c0da45ee967b8808eff6dd321d39b0d10c2d193aebd16d2",
+    "keys": [
+      "command",
+      "dependencies",
+      "sha256",
+      "bytes",
+      "version",
+      "imports",
+      "exports",
+      "compaction",
+      "hardware_verified",
+      "boot_effect_sources"
+    ]
+  }
+}
