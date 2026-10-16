@@ -30,7 +30,7 @@
   "native_input_sha256": {},
   "previous_release_profile": "docs/shared-default/history/1.1.42/native-idf61.cmake",
   "product": "twatch",
-  "publication_enabled": false,
+  "publication_enabled": true,
   "release_branch": "release/shared-default-1.1.43",
   "release_tag": "test-shared-default-1.1.43",
   "runtime_revision": "21c6d64c51470158e1e8fb26d403b194f27ea38c",
