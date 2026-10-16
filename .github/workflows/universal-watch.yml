@@ -1,0 +1,97 @@
+name: Universal watch integration
+on:
+  push:
+    branches: [feat/universal-watch-integration]
+    paths: ['profiles/**', 'scripts/*universal*', 'tests/test_universal_composition.py', '.github/workflows/universal-watch.yml']
+  pull_request:
+    paths: ['profiles/**', 'scripts/*universal*', 'tests/test_universal_composition.py', '.github/workflows/universal-watch.yml']
+permissions:
+  contents: read
+jobs:
+  components:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 5323d1e834bdcc8e5e9fb0e8f76c383e46626801
+          path: .source/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: 76aa47728192531ca9812f3e026057e0b174cb00
+          path: .source/shared
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 14762601b3fa7bbeeac5ed565a6825534bf74dca
+          path: .source/system
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: fc0bdbbbc600ce891e60c44d091fce0586ade7d8
+          path: .source/utilities
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Drivers
+          ref: 422e1e81a498fb6bdab9abf086325afc05a532dc
+          path: .source/generic
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test shared composition, Home and crown/wake transport
+        run: |
+          python -m pip install platformio==6.1.18 pyelftools==0.32
+          python tests/test_universal_composition.py
+          python .source/shared/tests/test_stage_product.py
+          python .source/shared/scripts/test_fast_wake_clock.py --system-apps .source/system --utilities .source/utilities
+          python .source/shared/scripts/test_capabilities.py --sanitize
+          python .source/shared/scripts/test_viewport.py --sanitize
+          python .source/shared/scripts/test_return_default.py --runtime .source/runtime --sanitize
+          bash .source/runtime/test/run_crown_recovery_test.sh
+          bash .source/runtime/test/run_deep_prepare_test.sh
+      - name: Build device native profile
+        run: |
+          cp profiles/universal-native.ini .source/runtime/universal-native.ini
+          cd .source/runtime
+          pio run --project-conf universal-native.ini -e twatch-universal
+      - name: Compile one shared application pair and generic adapters
+        run: |
+          CC="$HOME/.platformio/packages/toolchain-xtensa-esp32s3/bin/xtensa-esp32s3-elf-gcc"
+          python .source/shared/scripts/build.py --system .source/system --utilities .source/utilities --cc "$CC" --output dist/shared
+          python .source/generic/scripts/build_legacy_power_bridge.py --watch-sdk .source/shared --cc "$CC" --validator dist/shared/validate-elf --output dist/generic-power
+      - name: Package source-bound components and verify native profile
+        run: |
+          mkdir -p dist/native
+          cp .source/runtime/.pio/build/twatch-universal/{firmware.elf,firmware.bin,bootloader.bin,partitions.bin} dist/native/
+          cp profiles/universal-native.ini dist/native/
+          git -C .source/runtime rev-parse HEAD > dist/native/COMMIT.txt
+          git -C .source/shared rev-parse HEAD > dist/shared/COMMIT.txt
+          git -C .source/shared archive HEAD | gzip > dist/shared/source.tar.gz
+          git rev-parse HEAD > dist/DEVICE_COMMIT.txt
+          PYTHONPATH=scripts python - <<'PY'
+          import json
+          from pathlib import Path
+          from universal_native import composition
+          from assemble_watch_universal import check_native_bytes
+          p=Path('dist/native');elf=(p/'firmware.elf').read_bytes()
+          check_native_bytes((p/'firmware.bin').read_bytes(),elf)
+          proof=composition(Path('.source/runtime'),elf,p/'universal-native.ini',32)
+          (p/'native-proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: universal-watch-integration-components
+          path: dist
+          retention-days: 30
+          if-no-files-found: error
