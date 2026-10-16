@@ -1,0 +1,3 @@
+Real NimBLE Secure Connections numeric comparison, ECDH/CMAC checks and persisted bond: PASS
+ATT service/characteristic/descriptor discovery, long report map, encrypted CCCs: PASS
+Actual FT6336U Buttons -> secure NimBLE -> exact ATT press/neutral FIFO: PASS boot [['1b230005004c0000000000', '1b23000000000000000000'], ['1b230005004c0000000000', '1b23000000000000000000']]

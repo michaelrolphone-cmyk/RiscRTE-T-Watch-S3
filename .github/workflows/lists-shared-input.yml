@@ -1,0 +1,21 @@
+name: Lists shared-input recipe
+on:
+  push:
+    branches: [work/lists-shared-input-20261012]
+  pull_request:
+    paths: ['**/*lists_*', '**/lists-shared-input/**', '.github/workflows/lists-shared-input.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 tests/test_lists_shared_input_recipe.py
+      - run: python3 -m py_compile scripts/build_lists_shared_input.py scripts/build_lists_text_host.py scripts/build_lists_scene_host.py scripts/test_lists_scene_predecessor.py scripts/inspect_lists_text_target.py scripts/inspect_lists_scene_target.py scripts/test_lists_text_predecessor.py scripts/assemble_watch_lists_shared_input.py scripts/inspect_lists_target_stack.py scripts/test_lists_flagoff_target.py

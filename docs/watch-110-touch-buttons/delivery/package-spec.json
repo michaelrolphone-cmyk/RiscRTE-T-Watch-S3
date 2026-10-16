@@ -1,0 +1,104 @@
+{
+  "sources": {
+    "product": {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch",
+      "commit": "a1d785edb3a58cebe51aa47ae43b3f06d3ebe19c",
+      "tree": "a2c6d9404d7aaeb3cce766a9f8d9ec1b5a0a08f3"
+    },
+    "runtime": {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime",
+      "commit": "e96f2affc691b929e89b624a998f0687a2746fd6",
+      "tree": "3aa15af65246a6491110f01f4bb4bf9a51b4bd56"
+    },
+    "system": {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/system",
+      "commit": "63532e4611749acad2060d0437a883b7c4ac8fd5",
+      "tree": "647b523b197de59f36b6db4101854635557c4843"
+    },
+    "utilities": {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities",
+      "commit": "814502e51125d799a7ca625b78707753ca12d4e5",
+      "tree": "c2f1092b7d07ae9eb639e0d40141b2d84658fbbe"
+    },
+    "recovery-tools": {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/recovery-source",
+      "commit": "dfa5ebddfbbbb1d43d4e8bb5457d97e98ed8965d",
+      "tree": "b1449744de28cf540821cce00e36d713612c45aa"
+    }
+  },
+  "compiled_inputs": {
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/host-tools/cc": "2fc38f18c302d13241e6b9abfc9392c2a306dc152ed9aee7489a00a786994294",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/host-tools/c++": "a2326150b0177d1c68a75e3111f6c5fdf6286a7609307ede28fc65d33b2b9164",
+    "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/utilities/scripts/package_canvas_cohort.py": "c0f7851834edac79b3162b4c2e800f9dba563cebad1a75435e7d2b756ec7dd84"
+  },
+  "qualifications": [
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/continuation/canvas-correct-profile/qualification.json",
+      "bytes": 60416,
+      "sha256": "7c7f4258b16c798592149f9790227aedf278c86c27f01b400d6d91ce35eb97f9"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/continuation/wire-report-ubsan.json",
+      "bytes": 985,
+      "sha256": "ffb4fb0a3577958e2472c0c455956366592edf34256409d47645de53242ba5ba"
+    },
+    {
+      "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/clock-reproduction/build.json",
+      "bytes": 44095,
+      "sha256": "12785d225ea7aec2669f0a2e653eff9d9ac105e0d86907cba119cd562c01933e"
+    }
+  ],
+  "runtime": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime",
+  "watch_tools": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/watch",
+  "recovery_tools": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/recovery-source/minimal/recovery_tools",
+  "baseline": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/baseline-watch-only/extracted/Watch/TWatch-S3-1.1.0-Canvas-Apps-FULL-INITIAL-ERASES-DATA.bin",
+    "bytes": 16777216,
+    "sha256": "c4827bc7f2157cc14fd041b9c617f5f716264f8c1ee28d7415b5175782d0263a"
+  },
+  "baseline_version": "1.1.0",
+  "stage": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/successor-stage",
+  "stage_receipt": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/evidence/successor-stage-stage.json",
+    "bytes": 45447,
+    "sha256": "1a0cf52ae896ea50ef1cc1b23614809f0f72ee54104b61ef4300cbcfa8845e5e"
+  },
+  "runtime_version": "0.2.4",
+  "version": "1.1.1",
+  "product_revision": "a1d785edb3a58cebe51aa47ae43b3f06d3ebe19c",
+  "app_count": 25,
+  "target": "TWatch-S3",
+  "host_sanitizers": "undefined",
+  "address_sanitizer_qualified": false,
+  "native_rebuilt": true,
+  "original_native_elf_recovered": false,
+  "changed_paths": [
+    "ble_buttons.elf",
+    "ble_buttons.json",
+    "touch/driver.elf",
+    "touch/manifest.json",
+    "cohort.json"
+  ],
+  "firmware": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.bin",
+    "bytes": 1332928,
+    "sha256": "8ff4a6f244f267724e5002feb1f202833b036a094621cc2b79a78671a6277194"
+  },
+  "native_elf": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/firmware.elf",
+    "bytes": 21782668,
+    "sha256": "07041d48dd2c6a9fe6e7cea775e44b3ba71837adb20d24c7624b0516dbbd7cfc"
+  },
+  "bootloader": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/bootloader.bin",
+    "bytes": 15104,
+    "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363"
+  },
+  "partitions": {
+    "path": "/Users/micahelbyrns/Documents/Codex/2026-10-11/task-6/runtime/.pio/build/esp32s3-16mb-appdata-iq-policy24/partitions.bin",
+    "bytes": 3072,
+    "sha256": "475bd8da863027242a38a6401d45ee2251084037e92b19631f6468ad5ae5efc9"
+  },
+  "mkspiffs": "/Users/micahelbyrns/.platformio/packages/tool-mkspiffs/mkspiffs_espressif32_arduino",
+  "mkspiffs_sha256": "c6705f8dfc0b0a51a91ed35e1f8a83a312395a36ba872ed2268d3d60b24cefe2"
+}

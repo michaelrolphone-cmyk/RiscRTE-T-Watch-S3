@@ -1,0 +1,196 @@
+{
+  "schema": "lora.remaining-keyboards.v1",
+  "scope": "Read-only inventory of the named packaged candidates; not proof of installed/flashed devices",
+  "watch_candidate": "/workspace/shared/watch-files-shared-input-candidate-20261012",
+  "x4_candidate": "/workspace/shared/x4-files-shared-input-candidate-20261012",
+  "candidate_delivered": false,
+  "candidate_flashed": false,
+  "hardware_tested": false,
+  "entries_before_lora": 10,
+  "remaining_entries_after_lora": 9,
+  "remaining": [
+    {
+      "product": "Watch",
+      "app": "audio_spectrum",
+      "version": "0.5.3",
+      "payload": "/workspace/shared/watch-files-shared-input-candidate-20261012/store/audio_spectrum.elf",
+      "bytes": 234144,
+      "sha256": "dc9c242b385f0a38e6c80d4688935b8975404d635aa8ecf7d5b3bf227e502635",
+      "editors": [
+        "label",
+        "signature",
+        "temporal event",
+        "shared context signal"
+      ],
+      "limit_characters": 16,
+      "keyboard": "PortableWatchKeyboard",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "Watch",
+      "app": "waterfall",
+      "version": "0.3.3",
+      "payload": "/workspace/shared/watch-files-shared-input-candidate-20261012/store/waterfall.elf",
+      "bytes": 241200,
+      "sha256": "f05b5ec08db1b1a7f8c7e3133c69b504e8e293d90f76bedcf2d93f0089b1c46b",
+      "editors": [
+        "RF label",
+        "signature",
+        "temporal event",
+        "shared context signal"
+      ],
+      "limit_characters": 16,
+      "keyboard": "PortableWatchKeyboard",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "Watch",
+      "app": "timecard",
+      "version": "0.2.12",
+      "payload": "/workspace/shared/watch-files-shared-input-candidate-20261012/store/timecard.elf",
+      "bytes": 132536,
+      "sha256": "8d241dc09e9f6181778200527ee3456d40f9542c0aa8c84a113937ae5eb0423d",
+      "editors": [
+        "Clock in",
+        "Lunch start",
+        "Lunch end",
+        "Clock out"
+      ],
+      "limit_characters": 12,
+      "keyboard": "PortableWatchKeyboard",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "Watch",
+      "app": "contexts",
+      "version": "0.4.2",
+      "payload": "/workspace/shared/watch-files-shared-input-candidate-20261012/store/contexts.elf",
+      "bytes": 55696,
+      "sha256": "4896654c86b0c1c203af5e07a20425157a512c48b68dd5bca1c86756ca7dfe9a",
+      "editors": [
+        "library name",
+        "rule/context name",
+        "trigger name",
+        "workflow message"
+      ],
+      "limit_characters": {
+        "names": 16,
+        "message": 32
+      },
+      "keyboard": "ui.scene keyboard node",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "Watch",
+      "app": "lists",
+      "version": "0.1.0",
+      "payload": "/workspace/shared/watch-files-shared-input-candidate-20261012/store/lists.elf",
+      "bytes": 22488,
+      "sha256": "79dcedcce8ea351e9ae16d4745aee5311f72832e0d8d71841a14b7468185d9da",
+      "editors": [
+        "new/custom list name",
+        "new/custom task name",
+        "rename list",
+        "rename task"
+      ],
+      "limit_characters": 24,
+      "keyboard": "ui.scene keyboard node",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "X4",
+      "app": "waterfall",
+      "version": "0.3.3",
+      "payload": "/workspace/shared/x4-files-shared-input-candidate-20261012/SD/Apps/waterfall/waterfall.elf",
+      "bytes": 276932,
+      "sha256": "8dc03063f3c21d55ebba7fb4428363819f60b52a127e1c8b7a56e3d57405dd11",
+      "editors": [
+        "RF label",
+        "signature",
+        "temporal event",
+        "shared context signal"
+      ],
+      "limit_characters": 16,
+      "keyboard": "PortableWatchKeyboard",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "X4",
+      "app": "timecard",
+      "version": "0.2.15",
+      "payload": "/workspace/shared/x4-files-shared-input-candidate-20261012/SD/Apps/timecard/timecard.elf",
+      "bytes": 167200,
+      "sha256": "7b74d87f3a568b4b9d968c1695870ab79a06cac2f5f91099885291b40b69cf71",
+      "editors": [
+        "Clock in",
+        "Lunch start",
+        "Lunch end",
+        "Clock out"
+      ],
+      "limit_characters": 12,
+      "keyboard": "PortableWatchKeyboard",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "X4",
+      "app": "contexts",
+      "version": "0.4.2",
+      "payload": "/workspace/shared/x4-files-shared-input-candidate-20261012/SD/Apps/contexts/image-f2fd480a5d3135cf01decbaec4b7288285cee5677e29251d12badcb10928babb/contexts.elf",
+      "bytes": 77180,
+      "sha256": "f2fd480a5d3135cf01decbaec4b7288285cee5677e29251d12badcb10928babb",
+      "editors": [
+        "library name",
+        "rule/context name",
+        "trigger name",
+        "workflow message"
+      ],
+      "limit_characters": {
+        "names": 16,
+        "message": 32
+      },
+      "keyboard": "ui.scene keyboard node",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    },
+    {
+      "product": "X4",
+      "app": "lists",
+      "version": "0.1.1",
+      "payload": "/workspace/shared/x4-files-shared-input-candidate-20261012/SD/Apps/lists/lists.elf",
+      "bytes": 33192,
+      "sha256": "716458214fe30123c186d1972a6950332820f5922397a7a506b3802edffbb582",
+      "editors": [
+        "new/custom list name",
+        "new/custom task name",
+        "rename list",
+        "rename task"
+      ],
+      "limit_characters": 24,
+      "keyboard": "ui.scene keyboard node",
+      "shared_text_requirement": false,
+      "shared_text_grant": false
+    }
+  ],
+  "evidence": {
+    "lora": "Exact payload/feature/source record: /workspace/shared/watch-points-components-20261012/recipes/predecessor-clients.json lora_messages; original 120060 B 78330859193967d82d0fd71abbb8dc2db8ff1a68a29954c6b1baf2f7d7e2ae11; migrated only in this task.",
+    "watch_apps": "audio_spectrum/waterfall/timecard/contexts candidate hashes match predecessor-clients.json entries. Existing selected feature flags preserved; no other app edited.",
+    "x4_waterfall": "evening-composition.json rf_build.waterfall.command and selected_sd_images identify 0.3.3; inherited sd_lifecycle still names obsolete 0.3.2 and is not used as current identity.",
+    "x4_timecard": "Selected 0.2.15 ELF preserved from delivered 0.1.89 SD baseline. Source-family TIMECARD_NATIVE_TIME/TIMECARD_APP_DATA/TIMECARD_PAPER selectors identified, but no exact hash-matching 0.2.15 command recovered.",
+    "contexts": "Current renderer is Apps/contexts_scene_view.inc and ui.scene keyboard node; old direct-render contexts_ui.inc keyboard branch is unshipped.",
+    "lists": "Common Apps/lists_scene.c, Apps/ListsScene.c, lib/Lists/ListsModel.c and ListsStore.c from published Productivity. Watch 0.1.0 and selected X4 0.1.1 ELF allocated sections, dynamic tables and relocations are byte-identical; metadata differs. docs/lists/verification.json lists common application for both profiles and Watch touch cancellation. LISTS_NAME=25."
+  },
+  "excluded": [
+    "Files, Wi-Fi Settings, BLE Scanner and Points in Time already use ui.text-input",
+    "No LoRa or Audio Spectrum payload/manifest/boot policy/selected SD entry in X4; no X4 radio.lora provider",
+    "App Store/Firmware Update keyboard strings are inactive generic adapter remnants",
+    "BLE Buttons/Touchpad keyboard strings are outbound HID actions",
+    "Source-only text_editor and obsolete direct-render keyboard branches are not deployed consumers"
+  ]
+}

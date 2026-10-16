@@ -1,0 +1,96 @@
+{
+  "all_inherited_defines_and_fonts_retained": true,
+  "application_source": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+  "boot_json_bytes": {
+    "after": 27085,
+    "before": 50487
+  },
+  "boot_json_decoded_tree_equal_to_predecessor_plus_single_grant": true,
+  "compiled_recipe_commit": "9f3669771c75e6d472afd8c8af9861600dcc9e5a",
+  "compiled_recipe_tree": "a80b7f622a9800f56e4563463796bf33ce64112d",
+  "counts": {
+    "internal_elfs": 55,
+    "preserved_store_paths": 109,
+    "selected_sd_elfs": 0,
+    "store_paths": 113
+  },
+  "delivered": false,
+  "delivery_hold_until_utc": "2026-10-12T23:30:00Z",
+  "device": "watch",
+  "free_spiffs_blocks": 6,
+  "full_image_bytes": 16777216,
+  "full_image_materialized": false,
+  "full_image_sha256": "61fe21d1de3666993b9578abc9a6f69daf27543c3b26a145c418360821f76920",
+  "full_initial_erases_internal_data": true,
+  "grant_delta": [
+    {
+      "grant": {
+        "api": 1,
+        "capability": "ui.text-input",
+        "instance_id": 0
+      },
+      "manifest": "timecard.json"
+    }
+  ],
+  "hardware_verified": false,
+  "local_cohort_sanitizers": "address,undefined; ASAN_OPTIONS=detect_leaks=0",
+  "normal_admission_passed": true,
+  "receipt_commit_changes_build_inputs": false,
+  "receipt_files": {
+    "candidate-custody.json": {
+      "bytes": 3886,
+      "sha256": "d98b6869d0ba31366c8cd89f9a4cc9a801756bf920f75b3110a3f66cec955069"
+    },
+    "compiled-recipe-ci.json": {
+      "bytes": 419,
+      "sha256": "58445e286daa8638c30068730db3b082a067272b02f52672e6f5197eb305ce57"
+    },
+    "independent-public-review.json": {
+      "bytes": 17676,
+      "sha256": "127150da63f218fc0afbb5ed037ccff725ee4ea8be495c11df0e558c7543e775"
+    },
+    "normal-admission.json": {
+      "bytes": 3886,
+      "sha256": "d98b6869d0ba31366c8cd89f9a4cc9a801756bf920f75b3110a3f66cec955069"
+    },
+    "packing.json": {
+      "bytes": 4029,
+      "sha256": "570d0276349da856e2c6b106c2903e27cced6d0430b6ef81afc880fa288a9a6b"
+    },
+    "productivity-ci.json": {
+      "bytes": 3840,
+      "sha256": "dafec6cfe796c59bc22f65046139b748fef37c0af3ab7a86ed450a04e7ad62d9"
+    },
+    "sanitized-admission.json": {
+      "bytes": 3886,
+      "sha256": "d98b6869d0ba31366c8cd89f9a4cc9a801756bf920f75b3110a3f66cec955069"
+    },
+    "target-build.json": {
+      "bytes": 30565,
+      "sha256": "7edaca716f522b1f5528d8081fc7942c656a7a28b237efe971fd1c5736647e4f"
+    },
+    "target-stack.json": {
+      "bytes": 1988,
+      "sha256": "ede1f93fce7f42e2cdeaeabf96b2c7e15cff335a61b644c3e8ffe6847a0d970f"
+    }
+  },
+  "required_free_spiffs_blocks": 2,
+  "sanitized_admission_passed": true,
+  "schema": "timecard.published-device-qualification.v1",
+  "source_ci_leak_detection": "platform-default; not disabled",
+  "source_render_storage_parity_comparisons": 6,
+  "source_workflow_runs": 174,
+  "sources": {
+    "productivity": "395c48de8fa10b672816c89c02dd9a5d4987a094",
+    "runtime": "64c8e52e46fd91e8fdafd636db04eed88f0c51a9",
+    "system-apps": "7fb13b09b4dac275a8111b224784f8a472f39264",
+    "utilities": "4beb9778d300ec9f6b18448e1ec86317e063c98c",
+    "watch": "089868395268b696c05651c33816345bfe0425df"
+  },
+  "target_dependency_count": 121,
+  "target_instructions_executed": false,
+  "timecard_elf_bytes": 146272,
+  "timecard_elf_sha256": "6386c04fcd93e9fabc0e2106130193cdfbda608291134d1aa5998f2bb5beee03",
+  "timecard_version": "0.2.13",
+  "unpublished_sd_settings_consumed": false
+}

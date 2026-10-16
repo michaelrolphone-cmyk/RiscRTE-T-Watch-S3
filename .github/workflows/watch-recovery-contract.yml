@@ -1,0 +1,37 @@
+name: Complete Watch recovery contract
+on:
+  pull_request:
+    paths:
+      - 'scripts/*recovery*'
+      - 'scripts/verify_update_elf.py'
+      - 'scripts/check_runtime_store_admission.py'
+      - 'tests/test_watch_recovery_contract.py'
+      - 'tests/test_*admission*'
+      - '.github/workflows/watch-recovery-contract.yml'
+  push:
+    branches: [integrate/watch-1.1.6-recovery, integrate/watch-1.1.7-scrolling, integrate/watch-1.1.8-raster-recovery, integrate/watch-1.1.10-peer-handoff]
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  PLATFORMIO_SETTING_ENABLE_TELEMETRY: 'no'
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pyelftools==0.32
+      - name: Complete-store authority and preservation refusal tests
+        run: python -m unittest discover -s tests -p test_watch_recovery_contract.py -v
+      - name: Canonical ELF admission and source-bound native composition
+        run: |
+          python -m unittest discover -s tests -p test_update_elf_admission_headers.py -v
+          python -m unittest discover -s tests -p test_native_composition_admission.py -v
+      - name: Syntax validation of recovery composer and production admission adapters
+        run: python -m py_compile scripts/build_watch_crown_recovery.py scripts/watch_recovery_contract.py scripts/verify_update_elf.py scripts/check_runtime_store_admission.py

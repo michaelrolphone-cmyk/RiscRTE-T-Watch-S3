@@ -1,0 +1,22 @@
+{
+  "schema": "spectrum.modal-policy.selection.v1",
+  "finalized": true,
+  "device": "watch",
+  "version": "0.5.5",
+  "sources": {
+    "system-apps": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "utilities": "b1b2ba9466cc7243570471c0f9e728367dd4bafe"
+  },
+  "baseline": {
+    "compiled_recipe_commit": "e491c63b51f20447aafbdd938c560ec5bae59ae1",
+    "system_commit": "fd4b1e52fe2a49c3c4c22f9ccd4c98a91f88afa0",
+    "combined_handoff_sha256": "ffa543d396fad39b22ac8141a4a6d28b845b49329c9b54ae78b0c19ed9731ef3",
+    "receipt_sha256": "b50b26a3c294758002284f54ef319335809eef8a822cc252b8e054daf3bb3305",
+    "full_image_sha256": "f5d6682c66fb61765ed5ce299b7a1102734c2aad84cb72d0ae7b0c5f08edf4fc",
+    "candidate_store_sha256": "d5515b1423f955e44bfc5de9335e0c93ffe29d0010c66da65ea72bb03186e85c",
+    "free_spiffs_blocks": 2,
+    "sd_file_count": 0,
+    "spectrum_predecessor_record_sha256": "db08c81ca8ed7706c9748c20a7878df9a8bb38a8a5e01d7fca65c8e420e9ceb8"
+  },
+  "source_publication": "public-exact-commit"
+}

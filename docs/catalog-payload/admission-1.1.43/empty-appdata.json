@@ -1,0 +1,27 @@
+{
+  "block_size": 4096,
+  "cache_size": 512,
+  "contents": "empty",
+  "core_mount_verified": true,
+  "disk_version": "2.1",
+  "generator_sha256": "e62cfaead3f72d12fb3d888b6b16732375aa2c2bc115ffdfd3106dbb8c4999b9",
+  "initial_provisioning_image": true,
+  "kind": "initial-app-data-image",
+  "layout": "riscrte-paired-appdata-v2",
+  "littlefs_commit": "f53a0cc961a8acac85f868b431d2f3e58e447ba3",
+  "native_mount_verified": false,
+  "offset": 2555904,
+  "partition": "appdata",
+  "prog_size": 128,
+  "read_size": 128,
+  "schema": 1,
+  "scope": "Initial provisioning only. Exact target LittleFS core/configuration; ESP adapter and physical flash qualification separate. Installation overwrites app-data; never include in a routine data-preserving update. No device or migration action.",
+  "sha256": "5f03c248f2de31c4da9ae8d9bc2033df064cee5e37694a9982f70fbb2f1d2ef0",
+  "size_bytes": 524288,
+  "source_sha256": {
+    "lfs.c": "0b9845f350c33aa448a916847d2246b76c8e296eed8e7e296ae0430242cfda6c",
+    "lfs.h": "a8c8d70f0863fbbc46ce17c5dc7673b40f1b3c9e7e10f3bf33fd28f03dc67703",
+    "lfs_util.c": "f2fbde533670560434bd9f5a547174cc7c5a4670a02c47b4bd85180dced8b2ec",
+    "lfs_util.h": "03e912a6e9894c9d10c61f5da22b89ebe0bb778af67972d7b67a5f160731bf72"
+  }
+}

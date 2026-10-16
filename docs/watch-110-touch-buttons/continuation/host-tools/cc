@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+import os,sys
+args=[a for a in sys.argv[1:] if a != '-no-pie']
+if os.environ.get('HOST_UBSAN_ONLY')=='1':args=[a.replace('-fsanitize=address,undefined','-fsanitize=undefined') for a in args]
+os.execv('/usr/bin/clang',['/usr/bin/clang',*args])

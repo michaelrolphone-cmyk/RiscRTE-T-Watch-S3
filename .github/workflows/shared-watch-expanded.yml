@@ -1,0 +1,33 @@
+name: Shared Watch expanded source and factory contracts
+on:
+  push:
+    branches: [work/watch-1.1.22-shared-expanded-20261013]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned validation readers
+        run: python -m pip install pyelftools==0.32 esptool==4.11.0 jsonschema==4.23.0
+      - name: Explicit layout, component custody, admission and factory contracts
+        run: |
+          python -m unittest discover -s tests -p test_watch_files_source_replay.py -v
+          python -m unittest discover -s tests -p test_expanded_layout.py -v
+          python -m unittest discover -s tests -p test_native_composition_admission.py -v
+          python -m unittest discover -s tests -p test_update_elf_admission_headers.py -v
+          python -m unittest discover -s tests -p test_shared_watch_expanded_store.py -v
+          python -m unittest discover -s tests -p test_seal_shared_watch_factory.py -v
+      - name: Qualification limits
+        if: always()
+        run: |
+          echo 'Source contract checks only. Exact-input cases are explicitly skipped without their artifacts. Complete 58-ELF normal/sanitized admission, SPIFFS readback, target linked-memory and final factory checks remain required artifact gates. No hardware execution.' >> "$GITHUB_STEP_SUMMARY"
