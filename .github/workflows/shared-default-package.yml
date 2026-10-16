@@ -4,6 +4,8 @@ on:
     branches: [work/shared-default-package]
     paths:
       - .github/workflows/shared-default-package.yml
+      - scripts/build_shared_default_native.py
+      - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
       - scripts/test_shared_default_package.py
       - docs/shared-default/**
@@ -11,6 +13,8 @@ on:
   pull_request:
     paths:
       - .github/workflows/shared-default-package.yml
+      - scripts/build_shared_default_native.py
+      - scripts/shared_default_qualification.py
       - scripts/package_shared_default.py
       - scripts/test_shared_default_package.py
       - docs/shared-default/**

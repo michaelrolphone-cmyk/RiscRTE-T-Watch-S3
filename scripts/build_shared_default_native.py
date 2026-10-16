@@ -26,7 +26,7 @@ def canonical(args, sources, p):
     elf, manifest, first = verifier.check_build(args.first)
     require(first['verified_dependencies']['system']['commit'] == p['system_revision'], 'Canonical System dependency differs')
     require(first['verified_dependencies']['utilities']['commit'] == p['utilities_revision'], 'Canonical Utilities dependency differs')
-    require(first['compiler_sha256'] == sha(args.compiler.read_bytes()), 'Canonical compiler differs from native compiler')
+    require(first['compiler_sha256'] == controlled.compiler_family(args.compiler)['s3-gcc']['sha256'], 'Canonical compiler differs from pinned native S3 wrapper')
     return elf, manifest, receipt
 
 
