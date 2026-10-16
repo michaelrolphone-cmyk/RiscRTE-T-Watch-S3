@@ -28,7 +28,7 @@
   "publication_enabled": false,
   "release_branch": "release/shared-default-1.1.42",
   "release_tag": "test-shared-default-1.1.42",
-  "runtime_revision": "5876c94c4e957ed13c17d9ee7e093def744e8e40",
+  "runtime_revision": "e697c3677eca661892517c2bf4c0c6b2f764985c",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
   "system_revision": "cb483470887b5198e2f3cd2457586ef6622142a9",
