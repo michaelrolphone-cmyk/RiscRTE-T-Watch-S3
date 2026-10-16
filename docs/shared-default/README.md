@@ -1,11 +1,13 @@
-# Serial-enabled shared default candidate 1.1.43
+# Serial-enabled shared default release 1.1.43
 
-This source-only candidate uses the existing fresh-build, exact-source shared-default
-release machinery. Source pins are finalized; publication is disabled. Runtime is
+This release uses the existing fresh-build, exact-source shared-default
+release machinery. Source pins are finalized; publication is enabled. Runtime is
 `21c6d64c51470158e1e8fb26d403b194f27ea38c`; Watch is
-`8132d73c828c0e4763f6c89a3d6a4a883314056a`. Fresh full native qualification
-and release enablement remain required. A source pin or previous qualification
-receipt alone does not qualify this candidate.
+`8132d73c828c0e4763f6c89a3d6a4a883314056a`. Native preflight [38935210193](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38935210193) passed on exact source 0fb7fa3697f15fc2a8b8a90f8072b5b6f6985868.
+Independent verification accepted all 16 source-bound assets, complete 59-ELF
+normal/sanitized admission, and unchanged unrelated payloads. The final release
+branch rebuilds and verifies its own exact source before publishing; the preflight
+does not substitute for that final run or the public-asset audit.
 
 The common Home 0.18.0 default is identical for both products: 617424 bytes,
 SHA256 `9f10c7150cdc175ff5af0dbc1410e455ead4f18868dd56555e10860781103f2f`.
@@ -44,7 +46,8 @@ remain byte-identical. Existing native qualification also checks every profile
 flag in actual compile commands. The serial gate additionally checks exact
 compiled Runtime source digests, linked implementations and the private root.
 Full normal/sanitized production-loader admission and independent factory
-extraction remain required. These are software checks, not hardware qualification.
+extraction passed for the preflight and remain mandatory for the final release.
+These are software checks, not hardware qualification.
 
 The previous 1.1.42 pins, native profile and qualification narrative are archived unchanged
 under `history/1.1.42/` and hash-guarded. Its receipts apply only to that release.
