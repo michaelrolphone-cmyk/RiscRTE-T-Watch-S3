@@ -37,3 +37,26 @@ Git source inspection supplies the implementation evidence while indexing procee
 Native firmware runs only in exact-source GitHub CI. First-start provisioning,
 physical profile acceptance, power interruption and real-flash SDK6 NVS faults
 remain separate hardware checks.
+
+## Draft capacity result
+
+The additive store composes 125 files and 61 ELFs, preserving 58 retained ELFs
+byte-for-byte, including Settings and Springboard. Only boot/cohort/Home inputs
+change; installed-apps and pkg-internal are added. New provider metadata is
+compacted with the pinned Watch loader-equivalence checker and full originals
+retained as build sidecars. Compact boot JSON preserves its exact decoded value.
+
+A local packing probe with a synthetic firmware identity produces 20,369 occupied
+pages and two wholly free blocks. Runtime711 requires four free blocks and rejects
+this image. At least 29 pages (approximately 7,279 payload bytes) need recovery;
+this is not a qualified firmware candidate. Provider-only optimization probes
+save at most 2,908 bytes and have not changed the selected recipe. The four-block
+production guard and existing retained payload protection remain intact. Native
+CI is pending closure of this capacity issue and review of the draft adapters.
+
+The feed uses the production controller's complete nonempty boot_profiles.core
+inventory, with exact file and native/store identity. Its separate dynamic apps
+list is empty. The production-controller request proof is staged but has not yet
+run because the complete image correctly fails the capacity guard. Preserving
+1.1.43-to-candidate admission and fresh-factory self-admission are distinct tests;
+Home's new namespace6 grant must not bypass existing ownership.

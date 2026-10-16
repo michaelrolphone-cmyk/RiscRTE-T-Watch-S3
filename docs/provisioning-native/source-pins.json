@@ -31,6 +31,24 @@
   "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
   "product": "twatch",
   "product_id": "twatch-s3",
+  "providers": {
+    "installed-apps/driver.elf": {
+      "bytes": 85852,
+      "sha256": "9f559cea0458830ec2692f7b5a349fec7161d563eb8d5db0845d588727de87ea"
+    },
+    "installed-apps/manifest.json": {
+      "bytes": 643,
+      "sha256": "c2558c3f7f90aff674d4063070ca08310b825c392ca1ec98fa484993d0a52f70"
+    },
+    "pkg-internal/driver.elf": {
+      "bytes": 3164,
+      "sha256": "ed994405adad60aad06d297d53dddc613f38739ac0206fc579837ede37882a6b"
+    },
+    "pkg-internal/manifest.json": {
+      "bytes": 287,
+      "sha256": "1ec2aeb0c601c2aad2ce26b0d4cea1f8b87bb3fbd51b2288a8e6d9f6fddd2211"
+    }
+  },
   "release_branch": "release/provisioning-1.1.44",
   "release_tag": "test-provisioning-1.1.44",
   "runtime_revision": "7110261067ea4a0030becb0632f92796fbf41534",
