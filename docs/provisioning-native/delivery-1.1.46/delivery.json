@@ -32,13 +32,60 @@
     "conclusion": "success",
     "jobs": 10
   },
-  "post_merge_ci_status": "running",
+  "post_merge_ci_status": "passed",
   "post_merge_runs": [
-    39027502486,
-    39027484913,
-    39027484977,
-    39027484929,
-    39027484937,
-    39027484984
-  ]
+    {
+      "id": 39027502486,
+      "attempt": 1,
+      "conclusion": "success"
+    },
+    {
+      "id": 39027484929,
+      "attempt": 1,
+      "conclusion": "success"
+    },
+    {
+      "id": 39027484937,
+      "attempt": 1,
+      "conclusion": "success"
+    },
+    {
+      "id": 39027484913,
+      "attempt": 1,
+      "conclusion": "success"
+    },
+    {
+      "id": 39027484984,
+      "attempt": 1,
+      "conclusion": "success"
+    },
+    {
+      "id": 39027484977,
+      "attempt": 1,
+      "conclusion": "success"
+    }
+  ],
+  "source_index_coverage": {
+    "product": {
+      "revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+      "scanned_files": 1778,
+      "text_files": 1744,
+      "exclusions": 33,
+      "gaps": 1,
+      "gap_scope": "Historical ZIP exceeds 8 MiB; no indexing recovery required for delivered source qualification"
+    },
+    "watch": {
+      "revision": "416fa9f144fa5bd5471e6f4c9cefff21455c8361",
+      "text_files": 348,
+      "excluded_fonts": 5,
+      "gaps": 0
+    }
+  },
+  "mycelium_qualification": {
+    "record": "twatch-146-shared-home-qualification",
+    "revision": 6,
+    "scope": "Source and software evidence; physical qualification remains separate"
+  },
+  "software_delivery_status": "complete",
+  "qualification_scope": "Software, exact shared ELF, native linked/admission, retained payloads, public release/feed/catalog and source integration; physical testing remains separate"
 }
