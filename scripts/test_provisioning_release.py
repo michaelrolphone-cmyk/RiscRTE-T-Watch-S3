@@ -183,6 +183,22 @@ class ReleaseContracts(unittest.TestCase):
             digest=self.write_output(root,bad,report)
             with self.assertRaises(ValueError):release.verify_output(root,digest,rev)
 
+    def test_all_selected_ci_branches_and_unrelated_branch_rejected(self):
+        import io,zipfile
+        files,report,p,rev=self.output_fixture()
+        with zipfile.ZipFile(io.BytesIO(files['ci-provenance.zip'])) as z:metadata={n:z.read(n) for n in z.namelist()}
+        branches=['feat/twatch-provisioning-20261016','feat/twatch-optimized-home-20261017',p['release_branch'],'feat/unrelated']
+        for branch in branches:
+            ci=json.loads(metadata['ci-run.json']);ci['GITHUB_REF']='refs/heads/'+branch
+            ci['GITHUB_WORKFLOW_REF']=ci['GITHUB_REPOSITORY']+'/.github/workflows/provisioning-native.yml@'+ci['GITHUB_REF']
+            changed=dict(metadata);changed['ci-run.json']=package.encoded(ci)
+            bad=dict(files);bad['ci-provenance.zip']=release.make_archive(changed)
+            with self.subTest(branch=branch),tempfile.TemporaryDirectory() as d,patch.object(package,'pins',return_value=p):
+                root=Path(d);digest=self.write_output(root,bad,report)
+                if branch=='feat/unrelated':
+                    with self.assertRaisesRegex(ValueError,'Unexpected CI source branch'):release.verify_output(root,digest,rev)
+                else:release.verify_output(root,digest,rev)
+
     def test_immutable_publication_resume(self):
         rev='1'*40; tag='test-shared-default-1.2.3'; name='refs/tags/'+tag
         row={'ref':name,'object':{'type':'commit','sha':rev}}

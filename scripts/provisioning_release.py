@@ -177,7 +177,7 @@ def verify_ci_provenance(path, p, revision, native_proof):
     with zipfile.ZipFile(path) as z:
         ci = decode(z.read('ci-run.json'))
         require(ci['GITHUB_REPOSITORY'] == repo and ci['GITHUB_SHA'] == revision and ci['GITHUB_WORKFLOW_SHA'] == revision, 'CI source identity differs')
-        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
+        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/feat/twatch-optimized-home-20261017', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
         require(ci['GITHUB_WORKFLOW_REF'] == repo + '/.github/workflows/provisioning-native.yml@' + ci['GITHUB_REF'], 'CI workflow identity differs')
         require(all(re.fullmatch('[1-9][0-9]*', ci[k]) for k in ('GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')), 'CI run identity missing')
         require(z.read('workflow.yml') == (package.ROOT / '.github/workflows/provisioning-native.yml').read_bytes(), 'Published workflow snapshot differs')
