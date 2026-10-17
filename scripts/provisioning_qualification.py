@@ -68,7 +68,7 @@ bool bind(RiscBoot::Runtime& runtime) {
     return source
 
 
-def admit_product(sources, native, before, after, native_proof, sanitized=False):
+def admit_product(sources, native, before, after, native_proof, sanitized=False, receipt_dir=None):
     import check_runtime_store_admission as admission
     import verify_update_elf as verify
     runtime, product, helper = (sources[n] for n in ('runtime', 'product', 'image_helper'))
@@ -138,14 +138,30 @@ static bool file(void* context,const char* path,bool provider){
             shutil.copyfile(helper / 'tests/app_data_admission_backend.h', root / 'tests/app_data_admission_backend.h')
             admission.ROOT = root
             from provisioning_factory_admission import factory_admission
+            scenario_count = 0
+            def measured_cohort(active, candidate, expected):
+                nonlocal scenario_count
+                scenario_count += 1
+                row = admission.admit_cohort(runtime, native, active, candidate, expected_valid=expected,
+                    app_policy_rows=32, native_profile=product / 'profiles/native-provisioning.cmake')
+                receipt = dict(result=row, expected_valid=expected, sanitized=sanitized,
+                    native_elf_sha256=sha(native), fixture_sha256=sha(source.encode()),
+                    commands=commands, selected_platform_capacity=32)
+                label = ('sanitized' if sanitized else 'plain') + '-' + str(scenario_count)
+                if receipt_dir is not None:
+                    Path(receipt_dir).mkdir(parents=True, exist_ok=True)
+                    (Path(receipt_dir) / ('admission-' + label + '.json')).write_text(
+                        json.dumps(receipt, sort_keys=True, indent=2) + '\n')
+                print('PROVISION_ADMISSION ' + label + ' ' + json.dumps(row, sort_keys=True), flush=True)
+                return row
             result = factory_admission(
-                lambda active, candidate, expected: admission.admit_cohort(runtime, native, active, candidate, expected_valid=expected, app_policy_rows=32, native_profile=product / 'profiles/native-provisioning.cmake'),
+                measured_cohort,
                 before, after, contract['elf_count'] + 2, admission.store_digest)
             result.update(sanitized=sanitized, fixture_sha256=sha(source.encode()),
                           hardware_calls=0, storage_calls=0, target_instructions_executed=False)
             require(result['elf_count'] == contract['elf_count'] + 2, 'Released ELF inventory not completely admitted')
-            require(result['active_platform_count'] == result['candidate_platform_count'] == 22,
-                    'Exact T-Watch platform graph count changed; remeasure capacity')
+            require(result['active_platform_count'] == result['candidate_platform_count'] == 21,
+                    'Exact T-Watch platform graph count changed: ' + json.dumps({k: result[k] for k in ('active_platform_count', 'candidate_platform_count')}))
             result['selected_platform_capacity'] = 32
             return result
     finally:

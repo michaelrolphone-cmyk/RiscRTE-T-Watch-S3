@@ -1,0 +1,22 @@
+{
+  "correct_native_selected_active_count": 21,
+  "correct_native_selected_candidate_count": 21,
+  "diagnostic_scope": "real Runtime graph preparation and validateCohort; inventory callback only; not ELF admission",
+  "failed_exact_native_run": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/38989873077",
+  "failed_product_revision": "790afc8606cdb9ce2e047c2cb4a19f7d22d00747",
+  "hardware_calls": 0,
+  "incorrect_expected_count": 22,
+  "inventory_entries": 61,
+  "post_admission_result": "{\"prepared\":true,\"cohort_validated\":true,\"error\":\"\",\"hardware_calls\":0,\"storage_calls\":0,\"elf_count\":61,\"cooperative_yields\":196}\nPLATFORM platform.clock 1 0 0\nPLATFORM platform.radio.iq.resource 1 0 0\nPLATFORM platform.entropy 1 0 0\nPLATFORM platform.tcp-listener 1 0 0\nPLATFORM platform.gpio 1 1 1\nPLATFORM platform.i2c.controller 1 1 2\nPLATFORM platform.i2c.controller 1 1 3\nPLATFORM platform.gpio 1 1 5\nPLATFORM spi.bus 1 1 5\nPLATFORM platform.i2s.controller 1 1 12\nPLATFORM platform.i2s.controller 1 1 13\nPLATFORM platform.radio 1 1 15\nPLATFORM platform.hci.controller 1 1 16\nPLATFORM platform.gpio 1 1 11\nPLATFORM spi.bus 1 1 11\nPLATFORM platform.provision-request 1 0 0\nPLATFORM platform.package-volume 1 0 0\nPLATFORM platform.diagnostic-source 1 0 0\nPLATFORM platform.http-client 1 0 0\nPLATFORM platform.bank-store 1 0 0\nPLATFORM platform.installation 1 0 0\nPLATFORM_COUNT 21\nCANDIDATE_PLATFORM_COUNT 21\n",
+  "prepare_results": {
+    "32": "{\"prepared\":true,\"error\":\"\",\"hardware_calls\":0,\"storage_calls\":0,\"i2s_tables\":2}\nPLATFORM platform.clock 1 0 0\nPLATFORM platform.radio.iq.resource 1 0 0\nPLATFORM platform.entropy 1 0 0\nPLATFORM platform.tcp-listener 1 0 0\nPLATFORM platform.gpio 1 1 1\nPLATFORM platform.i2c.controller 1 1 2\nPLATFORM platform.i2c.controller 1 1 3\nPLATFORM platform.gpio 1 1 5\nPLATFORM spi.bus 1 1 5\nPLATFORM platform.i2s.controller 1 1 12\nPLATFORM platform.i2s.controller 1 1 13\nPLATFORM platform.radio 1 1 15\nPLATFORM platform.hci.controller 1 1 16\nPLATFORM platform.gpio 1 1 11\nPLATFORM spi.bus 1 1 11\nPLATFORM platform.provision-request 1 0 0\nPLATFORM platform.package-volume 1 0 0\nPLATFORM platform.diagnostic-source 1 0 0\nPLATFORM platform.http-client 1 0 0\nPLATFORM platform.bank-store 1 0 0\nPLATFORM platform.installation 1 0 0\nPLATFORM_COUNT 21\n",
+    "40": "{\"prepared\":true,\"error\":\"\",\"hardware_calls\":0,\"storage_calls\":0,\"i2s_tables\":2}\nPLATFORM platform.clock 1 0 0\nPLATFORM platform.radio.iq.resource 1 0 0\nPLATFORM platform.entropy 1 0 0\nPLATFORM platform.tcp-listener 1 0 0\nPLATFORM platform.gpio 1 1 1\nPLATFORM platform.i2c.controller 1 1 2\nPLATFORM platform.i2c.controller 1 1 3\nPLATFORM platform.gpio 1 1 5\nPLATFORM spi.bus 1 1 5\nPLATFORM platform.i2s.controller 1 1 12\nPLATFORM platform.i2s.controller 1 1 13\nPLATFORM platform.radio 1 1 15\nPLATFORM platform.hci.controller 1 1 16\nPLATFORM platform.gpio 1 1 11\nPLATFORM spi.bus 1 1 11\nPLATFORM platform.provision-request 1 0 0\nPLATFORM platform.package-volume 1 0 0\nPLATFORM platform.diagnostic-source 1 0 0\nPLATFORM platform.http-client 1 0 0\nPLATFORM platform.bank-store 1 0 0\nPLATFORM platform.installation 1 0 0\nPLATFORM_COUNT 21\n"
+  },
+  "probe_sha256": "64c5df4f269cca68bf7b74ed7f11b3dafe613d5eeeb37472eb1f14f8d56fa8f8",
+  "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+  "schema": 1,
+  "selected_platform_capacity": 32,
+  "source_sha256": "3dfbe74a87c1307a0751dfe16e2edc8c6a58dd45f97cb1cb459ce60c65a38d2d",
+  "storage_calls": 0,
+  "usb_phy_selected": false
+}

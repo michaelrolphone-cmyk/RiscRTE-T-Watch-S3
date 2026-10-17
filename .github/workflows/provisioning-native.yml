@@ -71,6 +71,9 @@ jobs:
             ${{ env.NATIVE_ROOT }}/metadata/
             ${{ env.NATIVE_ROOT }}/build/native-build-evidence/
             ${{ env.NATIVE_ROOT }}/build/log/
+            ${{ env.NATIVE_ROOT }}/build/riscrte_native.elf
+            ${{ env.NATIVE_ROOT }}/build/riscrte_native.bin
+            ${{ env.NATIVE_ROOT }}/build/riscrte_native.map
             ${{ env.NATIVE_ROOT }}/default-a/build.json
             ${{ env.NATIVE_ROOT }}/default-b/build.json
             ${{ env.NATIVE_ROOT }}/catalog/build.json

@@ -30,7 +30,7 @@ class ReleaseContracts(unittest.TestCase):
         q['preservation'].update(added_store_files=package.ADDED,store_files=125,elf_count=61,settings=p['settings'])
         q['preservation_software_model'].update(preserving_transition_eligible=False,namespace_authority_tested=False)
         for k in ('admission','admission_sanitized'):
-            q[k].update(mode='factory-bootstrap-self-admission',active_platform_count=22,candidate_platform_count=22,selected_platform_capacity=32,
+            q[k].update(mode='factory-bootstrap-self-admission',active_platform_count=21,candidate_platform_count=21,selected_platform_capacity=32,
               preserving_transition=dict(expected_rejection=True,prepared=True,cohort_validated=False,elf_count=0,hardware_calls=0,storage_calls=0,control_packaged=False,
                 authority_only_control=dict(prepared=True,cohort_validated=True,elf_count=61,hardware_calls=0,storage_calls=0)))
         q['feed']=dict(receipt=dict(assets={'bootfs-'+q['artifacts']['store.bin']['sha256']+'.bin':{'size':1,'sha256':'3'*64}},credential_free=True,file_count=125,product='twatch-s3',profile='core',wifi_headroom=512,feed_sha256='3'*64),
@@ -52,7 +52,7 @@ class ReleaseContracts(unittest.TestCase):
             ('controlled_build','detached_receipt_is_attestation'):True,('controlled_build','compile_jobs'):2,
             ('default','independent_builds_identical'):False,('default','hardware_tested'):True,('default','default_sha256'):'4'*64,
             ('feed','core_inventory_files'):0,('feed','receipt','credential_free'):False,('feed','controller','queue_calls'):0,
-            ('admission','selected_platform_capacity'):40,('admission','preserving_transition','cohort_validated'):True,
+            ('admission','active_platform_count'):22,('admission','candidate_platform_count'):22,('admission_sanitized','active_platform_count'):22,('admission_sanitized','candidate_platform_count'):22,('admission','selected_platform_capacity'):40,('admission','preserving_transition','cohort_validated'):True,
             ('serial_files','active_boot_bank_writable'):True,('serial_files','namespaces'):[],
             ('default','default_bytes'):1,('default','manifest_sha256'):'4'*64,('baseline_contract','factory_sha256'):'4'*64,
             ('native','arduino_core_linked'):True,('native','ordinary_app_payloads_rebuilt'):True,('native','unselected_usb_host_controller'):True,

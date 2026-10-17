@@ -60,7 +60,7 @@ list is empty. A complete provisional store using the lossless atlas remedy pass
 1.1.43-to-candidate admission and fresh-factory self-admission are distinct tests;
 Home's new namespace6 grant must not bypass existing ownership.
 
-The exact host graph has 22 platform tables and 36 driver instances after request
+The exact native-selected host graph has 21 platform tables and 36 driver instances after request
 and package-volume selection. Both capacity32 and capacity40 probes prepare it
 without hardware/storage calls. This product retains Runtime default capacity32;
 final linked IQ reservation and placement are checked in native CI.
@@ -75,3 +75,22 @@ Only the existing release/provisioning-1.1.44 branch performs publication.
 The feed branch is created after the immutable release is public; a retry must
 match identical bytes and cannot overwrite a different active feed. The public
 release discloses factory erasure and the rejected preserving-transition guard.
+
+### First native qualification diagnosis
+
+Exact-source run38989873077 at product790afc86 built the native firmware and
+passed linked IQ checks. Factory self-admission and its namespace-ownership
+negative/control ran before an incorrect expected22 platform-count assertion.
+The original standalone count probe had enabled USB PHY; actual T-Watch native
+selection excludes that symbol. A corrected native-selected probe measures21
+active and21 candidate tables through real Runtime validateCohort, with61
+inventory callbacks and zero hardware/storage calls. This diagnostic callback
+checks inventory only; exact ELF admission is still required in native CI.
+The production fixture now saves every measured admission JSON before asserting
+the expected21, and failure artifacts retain the native ELF/BIN/map. Capacity32
+and Runtime ownership/readiness guards are unchanged.
+
+Atlas source-set version8a81f433-fb4c-4625-9fe9-780c63a75adf pins the first exact
+native candidate and actual shared dependencies. At01:27UTC its product, Watch,
+Runtime and System access checks were waiting in the GitHub queue; Utilities had
+no exact index. No finalized compiler configuration qualified these revisions.
