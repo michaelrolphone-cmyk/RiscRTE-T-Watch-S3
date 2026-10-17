@@ -3,8 +3,10 @@
 The next product recipe starts from cumulative main
 `649b897ae928b388c2d1e125f88f7390e827bf79` and the exact delivered
 `test-shared-default-1.1.43` factory. All historical recipes and release assets
-remain unchanged. Candidate identity is 1.1.44; release and catalog rollout follow
-the existing X4, Waveshare, then T-Watch sequence.
+remain unchanged. Candidate identity is 1.1.44. Provisioning publication follows
+its software qualification. The separate serial firmware/storage hardware tests
+retain their X4, Waveshare, then T-Watch order; that testing order does not block
+this independent provisioning release.
 
 The delivered factory was downloaded independently and matched 16,777,216 bytes,
 SHA256 `f6b600197087ae93c93752507b89d6be0c248abb528c010da2d280f7a0166f36`.
@@ -60,7 +62,7 @@ list is empty. A complete provisional store using the lossless atlas remedy pass
 1.1.43-to-candidate admission and fresh-factory self-admission are distinct tests;
 Home's new namespace6 grant must not bypass existing ownership.
 
-The exact native-selected host graph has 21 platform tables and 36 driver instances after request
+The exact CI-native-selected host graph has 20 platform tables and 36 driver instances after request
 and package-volume selection. Both capacity32 and capacity40 probes prepare it
 without hardware/storage calls. This product retains Runtime default capacity32;
 final linked IQ reservation and placement are checked in native CI.
@@ -94,3 +96,16 @@ Atlas source-set version8a81f433-fb4c-4625-9fe9-780c63a75adf pins the first exac
 native candidate and actual shared dependencies. At01:27UTC its product, Watch,
 Runtime and System access checks were waiting in the GitHub queue; Utilities had
 no exact index. No finalized compiler configuration qualified these revisions.
+
+### Authoritative native feature-selection correction
+
+Run38991087546 at605274a9 persisted the actual factory ELF admission: active20
+and candidate20,61 ELFs,196 cooperative yields, no hardware/storage calls. The
+namespace negative measured19/20 and rejected before ELF admission; removing
+only the new grant admitted all61. The diagnostic21-table probe still forced
+platform.diagnostic-source. Exact native ELF SHA256
+9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5
+has neither risc_native_diagnostic_read nor risc_usb_phy_resource_enabled,
+and the actual fixture compiler flags omit both optional features. The fixture
+now binds expected20 to those exact absent hooks and persists its selected flags.
+Both earlier count failures remain in CI and platform-count-diagnosis.json.

@@ -72,6 +72,12 @@ def admit_product(sources, native, before, after, native_proof, sanitized=False,
     import check_runtime_store_admission as admission
     import verify_update_elf as verify
     runtime, product, helper = (sources[n] for n in ('runtime', 'product', 'image_helper'))
+    from serial_files_product import linked_symbols
+    names = set(linked_symbols(native))
+    selected_features = dict(usb_phy='risc_usb_phy_resource_enabled' in names,
+                             diagnostic_source='risc_native_diagnostic_read' in names)
+    require(selected_features == {'usb_phy': False, 'diagnostic_source': False},
+            'Native optional hook selection changed; remeasure the product graph')
     contract = json.loads((product / 'docs/provisioning-native/released-baseline.json').read_bytes())
     old_root, old_composition, old_header = admission.ROOT, admission.native_composition, verify.cohort_admission_header
     old_run, old_sanitize = subprocess.run, os.environ.get('SANITIZE')
@@ -144,7 +150,12 @@ static bool file(void* context,const char* path,bool provider){
                 scenario_count += 1
                 row = admission.admit_cohort(runtime, native, active, candidate, expected_valid=expected,
                     app_policy_rows=32, native_profile=product / 'profiles/native-provisioning.cmake')
-                receipt = dict(result=row, expected_valid=expected, sanitized=sanitized,
+                feature_flags = [x for x in commands[-1] if x.startswith('-DSTORE_ADMISSION_')]
+                require('-DSTORE_ADMISSION_USB_PHY' not in feature_flags and
+                        '-DSTORE_ADMISSION_DIAGNOSTIC_SOURCE' not in feature_flags,
+                        'Admission optional feature selection differs from native ELF')
+                receipt = dict(result=row, selected_native_features=selected_features, feature_flags=feature_flags,
+                    expected_valid=expected, sanitized=sanitized,
                     native_elf_sha256=sha(native), fixture_sha256=sha(source.encode()),
                     commands=commands, selected_platform_capacity=32)
                 label = ('sanitized' if sanitized else 'plain') + '-' + str(scenario_count)
@@ -158,9 +169,10 @@ static bool file(void* context,const char* path,bool provider){
                 measured_cohort,
                 before, after, contract['elf_count'] + 2, admission.store_digest)
             result.update(sanitized=sanitized, fixture_sha256=sha(source.encode()),
-                          hardware_calls=0, storage_calls=0, target_instructions_executed=False)
+                          hardware_calls=0, storage_calls=0, target_instructions_executed=False,
+                          selected_native_features=selected_features)
             require(result['elf_count'] == contract['elf_count'] + 2, 'Released ELF inventory not completely admitted')
-            require(result['active_platform_count'] == result['candidate_platform_count'] == 21,
+            require(result['active_platform_count'] == result['candidate_platform_count'] == 20,
                     'Exact T-Watch platform graph count changed: ' + json.dumps({k: result[k] for k in ('active_platform_count', 'candidate_platform_count')}))
             result['selected_platform_capacity'] = 32
             return result

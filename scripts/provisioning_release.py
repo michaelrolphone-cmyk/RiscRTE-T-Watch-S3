@@ -100,7 +100,8 @@ def check_qualification(q, p, revision):
         require(row['elf_count'] == baseline['elf_count'] + 2 and row['sanitized'] is sanitized
                 and row['hardware_calls'] == 0 and row['storage_calls'] == 0 and row['target_instructions_executed'] is False,
                 'Complete production-loader admission required: ' + key)
-        require(row['mode'] == 'factory-bootstrap-self-admission' and row['active_platform_count'] == row['candidate_platform_count'] == 21 and row['selected_platform_capacity'] == 32, 'Factory graph capacity differs')
+        require(row['mode'] == 'factory-bootstrap-self-admission' and row['active_platform_count'] == row['candidate_platform_count'] == 20 and row['selected_platform_capacity'] == 32, 'Factory graph capacity differs')
+        require(row['selected_native_features'] == {'usb_phy': False, 'diagnostic_source': False}, 'Unexpected native optional feature selection')
         rejected = row['preserving_transition']; control = rejected['authority_only_control']
         require(rejected['expected_rejection'] is True and rejected['prepared'] and not rejected['cohort_validated'] and rejected['elf_count'] == 0 and rejected['hardware_calls'] == rejected['storage_calls'] == 0 and rejected['control_packaged'] is False, 'Preserving ownership guard missing')
         require(control['prepared'] and control['cohort_validated'] and control['elf_count'] == 61 and control['hardware_calls'] == control['storage_calls'] == 0, 'Authority-only causal control missing')
