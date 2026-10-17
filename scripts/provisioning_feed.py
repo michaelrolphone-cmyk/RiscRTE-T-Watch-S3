@@ -48,7 +48,8 @@ int main(int argc,char**argv){
  auto native=core["native"];requestStatus.store_abi=native["store_abi"].as<uint32_t>();requestStatus.firmware_size=native["firmware_size"].as<uint32_t>();
  assert(copy(requestStatus.layout,sizeof(requestStatus.layout),native["layout"]));assert(copy(requestStatus.runtime_version,sizeof(requestStatus.runtime_version),native["runtime_version"]));
  assert(bootDigest(native["firmware_sha256"],requestStatus.firmware_sha256));
- beginCore();assert(driveCore(nullptr)==INSTALLED_APPS_PROFILE_QUEUED);assert(queueCalls==1);
+ beginCore();assert(driveCore(nullptr)==INSTALLED_APPS_NEEDS_PROFILE_WIFI);
+ assert(bootApi.supply_wifi(nullptr,"saved default","saved-password")==INSTALLED_APPS_PROFILE_QUEUED);assert(queueCalls==1);
  JsonDocument queued;assert(!deserializeJson(queued,queuedProfile));
  auto expected=core["profile"];assert(queued["files"].size()==125&&queued["files"]==expected["files"]&&queued["image"]==expected["image"]);
  assert(requestStatus.state==RISC_PROVISION_REQUEST_PENDING);uint8_t target[32];assert(bootDigest(expected["image"]["sha256"],target));assert(!memcmp(target,requestStatus.target_store_sha256,32));

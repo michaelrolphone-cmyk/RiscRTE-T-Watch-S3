@@ -18,7 +18,7 @@ class Contracts(unittest.TestCase):
     def test_product_profile_is_additive(self):
         profile=(p.ROOT/'profiles/native-provisioning.cmake').read_text()
         self.assertIn('include("${CMAKE_CURRENT_LIST_DIR}/native-idf61.cmake")',profile)
-        for name in ('RISC_NATIVE_PACKAGE_VOLUME=1','RISC_NATIVE_PROVISION_REQUEST=1','RISC_PLATFORM_CAPACITY=40'):
+        for name in ('RISC_NATIVE_PACKAGE_VOLUME=1','RISC_NATIVE_PROVISION_REQUEST=1','RISC_PLATFORM_CAPACITY=32'):
             self.assertEqual(profile.count(name),1)
         self.assertNotIn('SERIAL_SD',profile)
 

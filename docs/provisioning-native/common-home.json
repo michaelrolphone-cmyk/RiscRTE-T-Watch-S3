@@ -1,9 +1,9 @@
 {
-  "schema": 1,
-  "default_sha256": "db23f172746ab32c0ba9c94d4c7a93d99be5f16247b6f267b48af8d7ca252d6f",
-  "default_bytes": 625648,
-  "manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
+  "default_bytes": 610872,
+  "default_sha256": "b5d8d7b545da737879a1d369160cd4c6eea4cee8876d09ce783cf00560f70231",
+  "hardware_tested": false,
   "independent_builds_identical": true,
+  "manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
   "product_extractions": [],
-  "hardware_tested": false
+  "schema": 1
 }

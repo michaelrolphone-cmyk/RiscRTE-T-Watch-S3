@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 
 import native_idf61_build as controlled
 import native_idf61_candidate as native
@@ -21,14 +22,14 @@ from package_provisioning import require, sha, record, encoded
 
 def qualify_provisioning_native(blobs, proof, sources, build):
     import re
-    required = ('RISC_NATIVE_PACKAGE_VOLUME=1', 'RISC_NATIVE_PROVISION_REQUEST=1', 'RISC_PLATFORM_CAPACITY=40')
+    required = ('RISC_NATIVE_PACKAGE_VOLUME=1', 'RISC_NATIVE_PROVISION_REQUEST=1', 'RISC_PLATFORM_CAPACITY=32')
     commands = json.loads((build / 'compile_commands.json').read_bytes())
     selected = [r for r in commands if '/src/' in r['file'] and str(sources['runtime']) in r['file']]
     require(selected and all(all('-D' + flag in r['command'] for flag in required) for r in selected), 'Provisioning product flags missing from actual compilation')
     names = package.serial_files_product.linked_symbols(blobs['firmware_elf'])
     for symbol in ('RiscProvisionRequest', 'RiscPackageVolume'):
         require(any(symbol in n for n in names), 'Provisioning adapter not linked: ' + symbol)
-    require(b'RISC_PLATFORM_CAPACITY:40\0' in blobs['firmware_elf'], 'Platform capacity marker missing')
+    require(b'RISC_PLATFORM_CAPACITY:32\0' in blobs['firmware_elf'], 'Platform capacity marker missing')
     for name in ('NativeProvisionRequest.cpp', 'NativePackageVolume.cpp', 'NativePackageVolumeAdmission.cpp'):
         path = sources['runtime'] / 'src/ports/esp32s3' / name
         require(any(Path(r['file']).resolve() == path for r in commands), 'Provisioning unit not compiled: ' + name)
@@ -86,15 +87,27 @@ def qualify(args, sources, proof):
     provisioning_proof = qualify_provisioning_native(blobs, native_proof, sources, args.native_build)
     controlled.validate_build_proof(proof, sources, args.native_build, args.compiler, lock)
     native.verify_sources(lock, sources)
+    from provisioning_feed import prepare
+    with tempfile.TemporaryDirectory(prefix='twatch-qualified-feed-') as tmp:
+        feed_root = Path(tmp) / 'feed'
+        feed = prepare(sources, after, packed, blobs['firmware_bin'], p, feed_root)
+        feed_assets = {name: (feed_root / name).read_bytes() for name in ('native-packages-v1.json',)}
+        for name, row in feed['receipt']['assets'].items():
+            data = (feed_root / 'assets' / name).read_bytes()
+            require(record(data) == {'bytes': row['size'], 'sha256': row['sha256']}, 'Feed asset custody differs')
+            feed_assets[name] = data
+        feed_assets['feed-qualification.json'] = encoded(feed)
     assets = {'factory-candidate-erases-data-0x0.bin': factory, 'firmware.bin': blobs['firmware_bin'],
               'bootloader.bin': blobs['bootloader'], 'partitions.bin': blobs['partitions'], 'store.bin': packed}
+    require(not (set(assets) & set(feed_assets)), 'Feed asset name collision')
+    assets.update(feed_assets)
     report = dict(schema=1, status='software-qualified-candidate-hardware-pending',
                   product=p['product'], version=p['version'], source_revision=lock['sources']['product']['revision'],
                   hardware_tested=False, device_accessed=False, factory_erases_data=True, preserving_update_kit_emitted=False,
                   input_lock=lock, controlled_build=closure, native=native_proof, native_rebuilt=True,
                   default=canonical_proof, serial_files=serial_proof, provisioning=provisioning_proof, baseline_contract=contract, preservation=preservation, public_imports=imports,
                   admission=admission, admission_sanitized=admission_sanitized, preservation_software_model=fault_model,
-                  packing=packing, artifacts={n: record(b) for n, b in assets.items()})
+                  packing=packing, feed=feed, artifacts={n: record(b) for n, b in assets.items()})
     assets.update({'qualification.json': encoded(report), 'source-lock.json': args.lock.read_bytes(),
                    'source-pins.json': (package.DOCS / 'source-pins.json').read_bytes(), 'default.elf': default, 'default.json': manifest})
     evidence = {'qualification.json': assets['qualification.json'], 'canonical-a.json': (args.first / 'build.json').read_bytes(),
@@ -107,9 +120,6 @@ def qualify(args, sources, proof):
     assets['SHA256SUMS'] = ''.join(sha(b) + '  ' + n + '\n' for n, b in sorted(assets.items())).encode()
     args.output.mkdir(parents=True)
     for name, data in assets.items(): (args.output / name).write_bytes(data)
-    from provisioning_feed import prepare
-    feed = prepare(sources, after, packed, blobs['firmware_bin'], p, args.output / 'feeds')
-    (args.output / 'feed-qualification.json').write_bytes(encoded(feed))
     print(p['product'] + ': native source closure, complete default store admission/extraction and preservation model PASS; hardware pending', flush=True)
 
 

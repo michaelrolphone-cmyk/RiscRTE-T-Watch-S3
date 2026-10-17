@@ -80,7 +80,7 @@ def admit_product(sources, native, before, after, native_proof, sanitized=False)
         require(Path(selected_runtime) == runtime and elf == native and rows == 32 and
                 Path(profile) == product / 'profiles/native-provisioning.cmake', 'Wrong native host composition')
         return dict(bounds={'RISC_INSTALLED_APP_CAPACITY': 64, 'RISC_PROVIDER_CAPACITY': 40,
-                            'RISC_APP_POLICY_ROWS': 32, 'RISC_APP_REQUIREMENT_ROWS': 32, 'RISC_PLATFORM_CAPACITY': 40},
+                            'RISC_APP_POLICY_ROWS': 32, 'RISC_APP_REQUIREMENT_ROWS': 32, 'RISC_PLATFORM_CAPACITY': 32},
                     store_abi=3, file_source_enabled=True, runtime_commit=run_head(runtime),
                     native_layout=native_proof['native_layout'], product_profile_sha256=sha(Path(profile).read_bytes()))
     def header(*args, **kwargs):
@@ -128,8 +128,10 @@ static bool file(void* context,const char* path,bool provider){
                 '  runtimePort.files=files.sources();\n  RiscBoot::Runtime runtime(runtimePort);')
             source = replace_once(source, 'RiscBoot::Runtime candidate({});unsigned admitted=0;',
                 'RiscBoot::Runtime candidate({});CohortElf::Context admitted{&candidate,0};')
+            source = replace_once(source, r'\"cooperative_yields\":%u}',
+                r'\"cooperative_yields\":%u,\"active_platform_count\":%zu,\"candidate_platform_count\":%zu}')
             source = replace_once(source, 'storageCalls,admitted,cooperativeYields);',
-                'storageCalls,admitted.admitted,cooperativeYields);')
+                'storageCalls,admitted.admitted,cooperativeYields,runtime.platformCount_,candidate.platformCount_);')
             if contract['product'] == 'waveshare':
                 source = wave_fixture(source, product, sources['sdk'])
             (root / 'tests/runtime_store_admission.cpp').write_text(source)
@@ -142,6 +144,9 @@ static bool file(void* context,const char* path,bool provider){
             result.update(sanitized=sanitized, fixture_sha256=sha(source.encode()),
                           hardware_calls=0, storage_calls=0, target_instructions_executed=False)
             require(result['elf_count'] == contract['elf_count'] + 2, 'Released ELF inventory not completely admitted')
+            require(result['active_platform_count'] == result['candidate_platform_count'] == 22,
+                    'Exact T-Watch platform graph count changed; remeasure capacity')
+            result['selected_platform_capacity'] = 32
             return result
     finally:
         admission.ROOT, admission.native_composition, verify.cohort_admission_header = old_root, old_composition, old_header

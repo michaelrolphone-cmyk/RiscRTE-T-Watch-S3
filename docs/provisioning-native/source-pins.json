@@ -13,9 +13,9 @@
     "default.elf",
     "default.json"
   ],
-  "default_bytes": 625648,
+  "default_bytes": 610872,
   "default_manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
-  "default_sha256": "db23f172746ab32c0ba9c94d4c7a93d99be5f16247b6f267b48af8d7ca252d6f",
+  "default_sha256": "b5d8d7b545da737879a1d369160cd4c6eea4cee8876d09ce783cf00560f70231",
   "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
   "feed_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/provisioning-index/native-packages-v1.json",
   "historical_contracts": {
@@ -51,7 +51,7 @@
   },
   "release_branch": "release/provisioning-1.1.44",
   "release_tag": "test-provisioning-1.1.44",
-  "runtime_revision": "7110261067ea4a0030becb0632f92796fbf41534",
+  "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
   "settings": {
@@ -62,5 +62,5 @@
   "time_server": "time.cloudflare.com",
   "utilities_revision": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
   "version": "1.1.44",
-  "watch_revision": "bc72f4dd6ed492943881f4dfab1d04db9ec41aa8"
+  "watch_revision": "712127b109568431f1b34d4e947db46386945964"
 }
