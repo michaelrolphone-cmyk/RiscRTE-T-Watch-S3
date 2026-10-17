@@ -1,0 +1,67 @@
+{
+  "added_store_files": [
+    "installed-apps/driver.elf",
+    "installed-apps/manifest.json",
+    "pkg-internal/driver.elf",
+    "pkg-internal/manifest.json"
+  ],
+  "baseline_contract_sha256": "3b090c197a01059b72dd173b7843aff858ed0022e2152c0c7a70778cb09cbedb",
+  "baseline_version": "1.1.43",
+  "changed_store_files": [
+    "boot.json",
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "default_bytes": 610872,
+  "default_manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
+  "default_sha256": "b5d8d7b545da737879a1d369160cd4c6eea4cee8876d09ce783cf00560f70231",
+  "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
+  "feed_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/provisioning-index/native-packages-v1.json",
+  "historical_contracts": {
+    ".github/workflows/shared-default-native.yml": "2ccefd2d9c33c49dae5b82f5b7c7e568f9669487db87b727d95433fd97affbb9",
+    "docs/shared-default/README.md": "d510150f686a8d2be718ea349a779065dca393b2153cf66b80eee4d3834c913f",
+    "docs/shared-default/source-pins.json": "d813d8428f6c4ff35d3c9bda5fc95c7e697fe5537d578efad8453bc236c02e38",
+    "profiles/native-idf61.cmake": "6e87b761aa0d3abdaa4154481c0a2b0c7be7ffdc6b12b548e96dcc325e58fc75",
+    "scripts/build_shared_default_native.py": "c391c45e548b03857f9ad28f00e2c9a0ca06291a8340c54b11c2dfcb6c658e7c",
+    "scripts/package_shared_default.py": "a1258a42bc3077b25a0a6e6f007a113503e75f0ef5f0cf45fc5854ab01a6a1b6",
+    "scripts/shared_default_qualification.py": "f0dc1a3e44aab95026862e5816b3be5c78d1fc248995f84688edf7474a56fc26",
+    "scripts/shared_default_release.py": "4308d19aba0c137bfd4d559ffd01ba835e4498bb080b76c4a3d4dfcadf6a84a2"
+  },
+  "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+  "product": "twatch",
+  "product_id": "twatch-s3",
+  "providers": {
+    "installed-apps/driver.elf": {
+      "bytes": 85852,
+      "sha256": "9f559cea0458830ec2692f7b5a349fec7161d563eb8d5db0845d588727de87ea"
+    },
+    "installed-apps/manifest.json": {
+      "bytes": 643,
+      "sha256": "c2558c3f7f90aff674d4063070ca08310b825c392ca1ec98fa484993d0a52f70"
+    },
+    "pkg-internal/driver.elf": {
+      "bytes": 3164,
+      "sha256": "ed994405adad60aad06d297d53dddc613f38739ac0206fc579837ede37882a6b"
+    },
+    "pkg-internal/manifest.json": {
+      "bytes": 287,
+      "sha256": "1ec2aeb0c601c2aad2ce26b0d4cea1f8b87bb3fbd51b2288a8e6d9f6fddd2211"
+    }
+  },
+  "publication_enabled": true,
+  "release_branch": "release/provisioning-1.1.44",
+  "release_tag": "test-provisioning-1.1.44",
+  "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+  "schema": 1,
+  "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "settings": {
+    "bytes": 142164,
+    "sha256": "fa1c87a1e971d1d64a5d65d8e655d898bbd227a42364f639517ff53ea2966e3e"
+  },
+  "system_revision": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
+  "time_server": "time.cloudflare.com",
+  "utilities_revision": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
+  "version": "1.1.44",
+  "watch_revision": "712127b109568431f1b34d4e947db46386945964"
+}
