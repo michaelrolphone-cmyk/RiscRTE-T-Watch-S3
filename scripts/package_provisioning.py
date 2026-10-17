@@ -142,14 +142,20 @@ def verify_previous_provisioning(after, p):
     raw = (DOCS / 'previous-provisioning.json').read_bytes()
     require(sha(raw) == p['previous_provisioning_contract_sha256'], 'Previous provisioning contract changed')
     previous = json.loads(raw)
-    require(previous['version'] == '1.1.44' and previous['source_revision'] == '08e683507fbf0a375c3a36a602ad6cc257cb457e', 'Previous product source differs')
+    require(previous['version'] == '1.1.45' and previous['source_revision'] == '047e86eec40ecc2930b533be9ebb1e753e588a9c', 'Previous product source differs')
     require(set(after) == set(previous['files']), 'Previous provisioning inventory differs')
     changed = sorted(n for n in after if record(after[n]) != previous['files'][n])
-    require(changed == previous['expected_changes'] == ['cohort.json', 'default.elf'], 'Unrelated .44 provisioning payload changed')
+    require(changed == previous['expected_changes'] == ['cohort.json', 'default.elf', 'default.json'], 'Unrelated .45 provisioning payload changed')
     cohort = json.loads(after['cohort.json']); old = previous['cohort']
-    native_fields = {'version', 'source_revision', 'firmware_size', 'firmware_sha256'}
-    require({k:v for k,v in cohort.items() if k not in native_fields} == {k:v for k,v in old.items() if k not in native_fields}, 'Unrelated .44 cohort field changed')
+    native_fields = {'version', 'source_revision', 'firmware_size', 'firmware_sha256', 'runtime_version'}
+    require(cohort['runtime_version'] == p['runtime_version'], 'Selected Runtime version differs')
+    manifest = json.loads(after['default.json'])
+    require(manifest['version'] == '0.20.1', 'Current Home manifest version differs')
+    old_manifest = json.loads((DOCS / 'previous-home-1.1.45.json').read_bytes())
+    require(sha((DOCS / 'previous-home-1.1.45.json').read_bytes()) == previous['files']['default.json']['sha256'], 'Previous Home manifest custody differs')
+    require(dict(manifest, version=old_manifest['version']) == old_manifest, 'Home manifest authority changed')
+    require({k:v for k,v in cohort.items() if k not in native_fields} == {k:v for k,v in old.items() if k not in native_fields}, 'Unrelated .45 cohort field changed')
     return dict(version=previous['version'], source_revision=previous['source_revision'],
                 factory_sha256=previous['factory_sha256'], changed_store_files=changed,
                 unchanged_store_payloads=len(after)-len(changed), unchanged_elf_count=60,
-                boot_authority_unchanged=True, manifest_unchanged=True)
+                boot_authority_unchanged=True, manifest_version_only=True)

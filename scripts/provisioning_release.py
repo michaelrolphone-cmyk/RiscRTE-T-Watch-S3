@@ -93,10 +93,12 @@ def check_qualification(q, p, revision):
     require(canonical['default_sha256'] == p['default_sha256'] and canonical['default_bytes'] == p['default_bytes']
             and canonical['manifest_sha256'] == p['default_manifest_sha256'], 'Canonical default differs')
     require(q.get('serial_files') == package.serial_files_product.contract(p['product']), 'Native serial admission differs')
+    compatibility = q.get('provisioning', {}).get('home_compatibility', {})
+    require(all(compatibility.get(k) is True for k in ('abi_identical', 'append_only_sleep_abi_compiles', 'paired_confirmation_storage_veto_preserved', 'serial_control_progress_selected')) and compatibility.get('hardware_tested') is False, 'Current shared Home Runtime compatibility evidence missing')
     previous = json.loads((package.DOCS / 'previous-provisioning.json').read_bytes())
     expected_previous = dict(version=previous['version'], source_revision=previous['source_revision'],
-        factory_sha256=previous['factory_sha256'], changed_store_files=['cohort.json','default.elf'],
-        unchanged_store_payloads=123, unchanged_elf_count=60, boot_authority_unchanged=True, manifest_unchanged=True)
+        factory_sha256=previous['factory_sha256'], changed_store_files=['cohort.json','default.elf','default.json'],
+        unchanged_store_payloads=122, unchanged_elf_count=60, boot_authority_unchanged=True, manifest_version_only=True)
     require(q['preservation'].get('previous_provisioning') == expected_previous, 'Previous provisioning preservation proof differs')
     baseline = q['baseline_contract']
     require(baseline == package.baseline_contract(p), 'Released baseline contract differs')
@@ -177,7 +179,7 @@ def verify_ci_provenance(path, p, revision, native_proof):
     with zipfile.ZipFile(path) as z:
         ci = decode(z.read('ci-run.json'))
         require(ci['GITHUB_REPOSITORY'] == repo and ci['GITHUB_SHA'] == revision and ci['GITHUB_WORKFLOW_SHA'] == revision, 'CI source identity differs')
-        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/feat/twatch-optimized-home-20261017', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
+        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/feat/twatch-optimized-home-20261017', 'refs/heads/feat/twatch-current-home-20261017', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
         require(ci['GITHUB_WORKFLOW_REF'] == repo + '/.github/workflows/provisioning-native.yml@' + ci['GITHUB_REF'], 'CI workflow identity differs')
         require(all(re.fullmatch('[1-9][0-9]*', ci[k]) for k in ('GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')), 'CI run identity missing')
         require(z.read('workflow.yml') == (package.ROOT / '.github/workflows/provisioning-native.yml').read_bytes(), 'Published workflow snapshot differs')
@@ -223,12 +225,12 @@ def transport(args):
     _, rename = release_names(p, q)
     files = {rename.get(n, n): (args.candidate / n).read_bytes() for n in (CANDIDATE | feed_names(q)) - {'SHA256SUMS'}}
     notes = (prefix + ' ' + p['version'] + ' complete core provisioning\n\n'
-        'Home SHA256 ' + p['default_sha256'] + '. Runtime0.4.8; ESP-IDF6.1; GCC15.2.\n'
+        'Home SHA256 ' + p['default_sha256'] + '. Runtime ' + p['runtime_version'] + '; ESP-IDF 6.1; GCC 15.2.\n'
         'Complete125-file/61-ELF internal store and credential-free boot_profiles.core feed.\n'
         'The separate dynamic apps list is empty; the bootstrap inventory is complete.\n'
         'Settings, Springboard and58 retained ELFs remain byte-identical to1.1.43.\n'
-        'Compared with1.1.44,123 of125 store files and60 of61 ELFs are unchanged; only Home and native cohort identity differ.\n'
-        'Home matches Waveshare0.1.56 exactly, including the lossless ring atlas optimization.\n'
+        'Compared with 1.1.45, 122 of 125 store files and 60 of 61 ELFs are unchanged; only Home ELF, Home version manifest and native cohort identity differ.\n'
+        'Home 0.20.1 matches Waveshare 0.1.59 exactly, with native sleep transactions, confirmation deferral and first-exit checkpoint.\n'
         'The lossless atlas codec preserves decoded pixels and uses256 additional stack bytes per decode.\n'
         'RTEF1 serial file namespace2 remains private AppData, never the boot bank.\n'
         'Software-qualified; hardware first-start/profile acceptance has not been tested.\n'

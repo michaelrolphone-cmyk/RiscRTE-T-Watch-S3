@@ -90,15 +90,17 @@ def qualify_provisioning_native(blobs, proof, sources, build):
     commands = json.loads((build / 'compile_commands.json').read_bytes())
     required, selected = provisioning_compile_selection(commands, sources['runtime'])
     names = package.serial_files_product.linked_symbols(blobs['firmware_elf'])
-    for symbol in ('RiscProvisionRequest', 'RiscPackageVolume'):
+    for symbol in ('RiscProvisionRequest', 'RiscPackageVolume', 'sleepPrepare', 'sleepResume', 'controlCheckpoint'):
         require(any(symbol in n for n in names), 'Provisioning adapter not linked: ' + symbol)
     linked = linked_provisioning_layout(blobs['firmware_elf'])
+    from test_current_home_compatibility import qualify as qualify_home
+    home_compatibility = qualify_home(sources['runtime'], sources['watch'])
     allocation = (sources['runtime'] / 'src/ports/esp32s3/NativePackageVolume.cpp').read_text()
     require('heap_caps_malloc(sizeof(Workspace),MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)' in allocation, 'Package workspace allocator selection changed')
     for name in ('NativeProvisionRequest.cpp', 'NativePackageVolume.cpp', 'NativePackageVolumeAdmission.cpp'):
         path = sources['runtime'] / 'src/ports/esp32s3' / name
         require(any(Path(r['file']).resolve() == path for r in selected), 'Provisioning unit not compiled: ' + name)
-    return {'flags': list(required), 'compiled_runtime_rows': len(selected), 'linked_layout': linked, 'hardware_tested': False}
+    return {'flags': list(required), 'compiled_runtime_rows': len(selected), 'linked_layout': linked, 'home_compatibility': home_compatibility, 'hardware_tested': False}
 
 
 def canonical(args, sources, p):

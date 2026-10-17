@@ -1,6 +1,6 @@
 {
   "cohort": {
-    "firmware_sha256": "327abb93bbb206afadd221ecca752c2419c6642a8b6de9251c0ff6e3beac62da",
+    "firmware_sha256": "cb6daee8d22b697ce30f58902c67ba88dc7b020ffa0795b68d4f61eb141390f5",
     "firmware_size": 1620944,
     "layout": "riscrte-paired-appdata-v3",
     "product": "twatch-s3",
@@ -8,15 +8,16 @@
     "schema": "riscrte.cohort",
     "schema_version": 1,
     "source_repo": "michaelrolphone-cmyk/RiscRTE-T-Watch-S3",
-    "source_revision": "08e683507fbf0a375c3a36a602ad6cc257cb457e",
+    "source_revision": "047e86eec40ecc2930b533be9ebb1e753e588a9c",
     "store_abi": 3,
-    "version": "1.1.44"
+    "version": "1.1.45"
   },
   "expected_changes": [
     "cohort.json",
-    "default.elf"
+    "default.elf",
+    "default.json"
   ],
-  "factory_sha256": "5062c497b4938dde2009e49bc153b406e951f36105f8f666daf420a940295f3e",
+  "factory_sha256": "7ccd3b1b24e1ec0321a9cbb8e74806fce3dddb76f341828fff882d0d9e604e20",
   "files": {
     "alarm-service/driver.elf": {
       "bytes": 20684,
@@ -172,7 +173,7 @@
     },
     "cohort.json": {
       "bytes": 436,
-      "sha256": "b731b4efc945283fedba82e33f7092463e1fb9773f3f1a5d5420047a4e8e3f7e"
+      "sha256": "aed7810133cf32895619077160770004f32604f481ecc0297487cf908132e6d7"
     },
     "contexts.elf": {
       "bytes": 59156,
@@ -199,8 +200,8 @@
       "sha256": "e262550a971cfbe0f9ad688eec99c02413c776a192a3f75d1181ff1ae6462547"
     },
     "default.elf": {
-      "bytes": 610872,
-      "sha256": "b5d8d7b545da737879a1d369160cd4c6eea4cee8876d09ce783cf00560f70231"
+      "bytes": 552616,
+      "sha256": "5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d"
     },
     "default.json": {
       "bytes": 1692,
@@ -519,9 +520,7 @@
       "sha256": "cb1547703aca540dca05272f52a513a4e5efe44a001254b035506fcdee0ca14b"
     }
   },
-  "release_tag": "test-provisioning-1.1.44",
-  "schema": 1,
-  "source_revision": "08e683507fbf0a375c3a36a602ad6cc257cb457e",
-  "store_sha256": "e82df7af05aaa8990e6a9a705563de0344dcc850b68ef2b8ff3da6239da7e2ad",
-  "version": "1.1.44"
+  "source_revision": "047e86eec40ecc2930b533be9ebb1e753e588a9c",
+  "store_sha256": "5240158441c90332056b66250b2c8755796e5fdad8ffb4022ea4c2e23eee402a",
+  "version": "1.1.45"
 }

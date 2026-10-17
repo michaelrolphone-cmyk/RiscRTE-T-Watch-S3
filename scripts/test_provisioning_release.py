@@ -27,8 +27,9 @@ class ReleaseContracts(unittest.TestCase):
             preservation=dict(changed_store_files=package.CHANGED,unchanged_store_payloads=len(c['files'])-len(package.CHANGED),unchanged_elf_count=c['elf_count']-1,alarm_sha256=package.ALARM_SHA))
         for k,san in [('admission',False),('admission_sanitized',True)]:
             q[k]=dict(elf_count=c['elf_count']+2,sanitized=san,hardware_calls=0,storage_calls=0,target_instructions_executed=False)
+        q['provisioning']={'home_compatibility':dict(abi_identical=True,append_only_sleep_abi_compiles=True,paired_confirmation_storage_veto_preserved=True,serial_control_progress_selected=True,hardware_tested=False)}
         previous=json.loads((package.DOCS/'previous-provisioning.json').read_bytes())
-        q['preservation']['previous_provisioning']=dict(version=previous['version'],source_revision=previous['source_revision'],factory_sha256=previous['factory_sha256'],changed_store_files=['cohort.json','default.elf'],unchanged_store_payloads=123,unchanged_elf_count=60,boot_authority_unchanged=True,manifest_unchanged=True)
+        q['preservation']['previous_provisioning']=dict(version=previous['version'],source_revision=previous['source_revision'],factory_sha256=previous['factory_sha256'],changed_store_files=['cohort.json','default.elf','default.json'],unchanged_store_payloads=122,unchanged_elf_count=60,boot_authority_unchanged=True,manifest_version_only=True)
         q['preservation'].update(added_store_files=package.ADDED,store_files=125,elf_count=61,settings=p['settings'])
         q['preservation_software_model'].update(preserving_transition_eligible=False,namespace_authority_tested=False)
         for k in ('admission','admission_sanitized'):
@@ -47,7 +48,7 @@ class ReleaseContracts(unittest.TestCase):
 
     def test_every_contract_field_rejects_mutation(self):
         q,p,rev=self.fixture()
-        mutations={('schema',):2,('status',):'store-stage-only-not-firmware-qualified',('product',):'other',('version',):'0.0.0',('source_revision',):'4'*40,
+        mutations={('provisioning','home_compatibility'): {}, ('schema',):2,('status',):'store-stage-only-not-firmware-qualified',('product',):'other',('version',):'0.0.0',('source_revision',):'4'*40,
             ('hardware_tested',):True,('device_accessed',):True,('factory_erases_data',):False,
             ('preserving_update_kit_emitted',):True,('native_rebuilt',):False,('input_lock','schema'):2,('input_lock','publication_enabled'):True,
             ('input_lock','candidate_version'):'0.0.0',('controlled_build','fresh_build'):False,('controlled_build','same_process_qualification'):False,

@@ -34,7 +34,7 @@ class Payloads(unittest.TestCase):
         p.check_baseline(cls.before,cls.contract)
         cls.default=(ARGS.home/'default.elf').read_bytes();cls.manifest=(ARGS.home/'default.json').read_bytes()
         cls.providers=p.providers(ARGS.catalog,ARGS.internal,cls.pins)
-        cls.revision='a'*40;cls.firmware=b'RISC_RUNTIME_VERSION:0.4.8\0'
+        cls.revision='a'*40;cls.firmware=b'RISC_RUNTIME_VERSION:0.4.11\0'
         cls.after=p.compose(cls.before,cls.default,cls.manifest,cls.providers,cls.pins,cls.revision,cls.firmware)
     def verify(self,files):
         return p.verify_store(self.before,files,self.default,self.manifest,self.providers,self.pins,self.revision,self.firmware)
@@ -64,11 +64,11 @@ class Payloads(unittest.TestCase):
         self.assertFalse(any(r.get('image_source') for r in after['app_capabilities']+after['drivers']))
     def test_previous_provisioning_retained_exactly(self):
         proof=p.verify_previous_provisioning(self.after,self.pins)
-        self.assertEqual(proof['changed_store_files'],['cohort.json','default.elf'])
-        self.assertEqual(proof['unchanged_store_payloads'],123)
+        self.assertEqual(proof['changed_store_files'],['cohort.json','default.elf','default.json'])
+        self.assertEqual(proof['unchanged_store_payloads'],122)
         self.assertTrue(proof['boot_authority_unchanged'])
         for name in self.after:
-            if name in ('cohort.json','default.elf'):continue
+            if name in ('cohort.json','default.elf','default.json'):continue
             bad=dict(self.after);bad[name]+=b'x'
             with self.subTest(path=name),self.assertRaises(ValueError):p.verify_previous_provisioning(bad,self.pins)
         bad=dict(self.after);cohort=json.loads(bad['cohort.json']);cohort['runtime_version']='invalid';bad['cohort.json']=p.encoded(cohort)

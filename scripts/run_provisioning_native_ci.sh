@@ -47,6 +47,12 @@ while IFS=$'\t' read -r role repository revision; do
   clone_source "$repository" "$revision" "$NATIVE_ROOT/sources/$role"
 done < "$NATIVE_ROOT/metadata/source-roles.tsv"
 test "$(git -C "$IDF_PATH" rev-parse HEAD)" = fff9895c82d744c7237be8847347bdd1b07c6643
+python "$product/scripts/test_current_home_compatibility.py" --runtime "$NATIVE_ROOT/sources/runtime" --watch "$NATIVE_ROOT/sources/watch"
+for sanitize in 0 1; do
+ for runner in run_serial_files_test.sh run_serial_native_provider_test.sh run_diagnostic_checkpoint_test.sh; do
+  SANITIZE="$sanitize" ASAN_OPTIONS=detect_leaks=0 bash "$NATIVE_ROOT/sources/runtime/test/$runner"
+ done
+done
 compiler="$(command -v xtensa-esp-elf-gcc)"
 "$compiler" --version | tee "$NATIVE_ROOT/metadata/compiler-version.txt"
 grep -F 'esp-15.2.0_20251204' "$NATIVE_ROOT/metadata/compiler-version.txt"

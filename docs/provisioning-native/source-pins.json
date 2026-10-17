@@ -13,9 +13,9 @@
     "default.elf",
     "default.json"
   ],
-  "default_bytes": 552616,
-  "default_manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
-  "default_sha256": "5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d",
+  "default_bytes": 554744,
+  "default_manifest_sha256": "4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068",
+  "default_sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54",
   "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
   "feed_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/provisioning-index/native-packages-v1.json",
   "historical_contracts": {
@@ -29,8 +29,8 @@
     "scripts/shared_default_release.py": "4308d19aba0c137bfd4d559ffd01ba835e4498bb080b76c4a3d4dfcadf6a84a2"
   },
   "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
-  "previous_feed_sha256": "f80c68b24931c178cf9bd6f2d848bca8a0a0e5c75d42a2ab1e5a9f30704145bf",
-  "previous_provisioning_contract_sha256": "cace3dc8a4ed60ed96c32ded421f6fd093f976c9408e1991c0add4f81986252f",
+  "previous_feed_sha256": "f4fd3cf4672032375aa5a0513fd8b74e0f52f5a15c620de9cb28829bd95f2946",
+  "previous_provisioning_contract_sha256": "37588adccb3a978e8af8e5d562e540bf1befbbf49a459f3292fd894903e978be",
   "product": "twatch",
   "product_id": "twatch-s3",
   "providers": {
@@ -52,9 +52,10 @@
     }
   },
   "publication_enabled": true,
-  "release_branch": "release/provisioning-1.1.45",
-  "release_tag": "test-provisioning-1.1.45",
-  "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+  "release_branch": "release/provisioning-1.1.46",
+  "release_tag": "test-provisioning-1.1.46",
+  "runtime_revision": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+  "runtime_version": "0.4.11",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
   "settings": {
@@ -64,6 +65,6 @@
   "system_revision": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
   "time_server": "time.cloudflare.com",
   "utilities_revision": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
-  "version": "1.1.45",
-  "watch_revision": "2be519c2047b2323e4d399c1de19b0591dc87c59"
+  "version": "1.1.46",
+  "watch_revision": "416fa9f144fa5bd5471e6f4c9cefff21455c8361"
 }

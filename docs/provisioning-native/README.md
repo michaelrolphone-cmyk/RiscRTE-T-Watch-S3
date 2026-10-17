@@ -158,3 +158,47 @@ SHA as a lease. An unrelated active feed remains a hard rejection.
 Software qualification does not establish hardware or physical serial rollout
 acceptance. The factory image erases internal data; no preserving update kit is
 emitted. Mounted-SD changes are outside this successor.
+
+## Current shared Home counterpart 1.1.46
+
+This successor starts from main `794a62d0880d0f444ba02cf53330b978d6fc0f5d`
+and preserves the immutable public 1.1.45 producer
+`047e86eec40ecc2930b533be9ebb1e753e588a9c`. Shared Watch
+`416fa9f144fa5bd5471e6f4c9cefff21455c8361` supplies Home 0.20.1,
+554744 bytes, SHA256
+`f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54`.
+Its bytes and version-only manifest are identical to the delivered Wave 0.1.59.
+No product-specific Home code, build defines, or hardware selectors are added.
+
+Runtime selection is behavioral rather than based on version distance:
+
+- Released 0.4.8 `51520408` lacks the appended sleep transaction callbacks;
+  Home's short-table fallback is compatible but cannot deliver native sleep custody.
+- 0.4.9 `070d5c7` adds those callbacks. Its Runtime checkpoint still defers all
+  serial requests while generic AppData, file-source or provider storage is busy.
+- Selected 0.4.11 `48229bd1593a2e24e95bf4537b495ee615990fd3` also keeps
+  validated RAM-only HELLO/NS/PATH control requests responsive during that custody
+  and gives blocked storage requests a bounded BUSY response. This matters to
+  internal package discovery as well as removable media: NativePackageVolume
+  shares NativeAppDataMount and native background-resource ownership with the
+  private serial AppData route. T-Watch's internal-only selection is preserved.
+  The paired-boot confirmation providerStorageSafe veto remains unchanged.
+
+The exact ABI selection and append-only offsets are compiled, the selected
+Runtime serial/controller/diagnostic suites run normally and with ASan/UBSan,
+and linked native qualification requires sleepPrepare, sleepResume and the
+control checkpoint alongside the existing adapters. These are software checks,
+not evidence that an actual device exhibited or recovered from contention.
+
+The recipe checks all 125 released store files. Only default.elf, the version in
+default.json, and native cohort identity may change. All 122 unrelated files and
+60 retained ELFs, including Settings, remain byte-for-byte exact. The manifest's
+capability requirements and all boot authority are unchanged. Existing source
+closure, linked IQ memory reservation, platform capacity, sanitized production
+admission, complete feed/controller, fault-order and public transport checks remain
+mandatory. The older 1.1.43 ownership rejection/control is retained separately.
+
+The active feed can advance only from the exact public 1.1.45 feed digest or be
+an idempotent retry of identical 1.1.46 bytes. Publication uses the isolated
+release/provisioning-1.1.46 branch. Factory flashing erases data. No preserving
+update kit is supplied; physical testing remains pending.
