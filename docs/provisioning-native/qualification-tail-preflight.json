@@ -1,0 +1,330 @@
+{
+  "admission_replay": {
+    "False": {
+      "active_platform_count": 20,
+      "active_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+      "app_policy_rows": 32,
+      "candidate_platform_count": 20,
+      "candidate_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+      "cohort_validated": true,
+      "cooperative_yields": 196,
+      "elf_count": 61,
+      "error": "",
+      "fixture_sha256": "81403ddab6dd2be07c46b2c0859c86170f24a6be19d90aab8a6d6b77b0bb8bca",
+      "hardware_calls": 0,
+      "mode": "factory-bootstrap-self-admission",
+      "native_composition": {
+        "bounds": {
+          "RISC_APP_POLICY_ROWS": 32,
+          "RISC_APP_REQUIREMENT_ROWS": 32,
+          "RISC_INSTALLED_APP_CAPACITY": 64,
+          "RISC_PLATFORM_CAPACITY": 32,
+          "RISC_PROVIDER_CAPACITY": 40
+        },
+        "file_source_enabled": true,
+        "native_layout": {
+          "marker_address": 1008005654,
+          "marker_bytes": 24,
+          "marker_symbol": "risc_paired_store_abi",
+          "store_abi": 3
+        },
+        "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+        "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+        "store_abi": 3
+      },
+      "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+      "prepared": true,
+      "preserving_transition": {
+        "active_platform_count": 19,
+        "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+        "app_policy_rows": 32,
+        "authority_only_control": {
+          "active_platform_count": 19,
+          "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+          "app_policy_rows": 32,
+          "candidate_platform_count": 20,
+          "candidate_store_sha256": "05493907ca3099c26f81b9144e2853c25c517489a87ad5a01c19bfd192ff9d1c",
+          "cohort_validated": true,
+          "cooperative_yields": 196,
+          "elf_count": 61,
+          "error": "",
+          "hardware_calls": 0,
+          "native_composition": {
+            "bounds": {
+              "RISC_APP_POLICY_ROWS": 32,
+              "RISC_APP_REQUIREMENT_ROWS": 32,
+              "RISC_INSTALLED_APP_CAPACITY": 64,
+              "RISC_PLATFORM_CAPACITY": 32,
+              "RISC_PROVIDER_CAPACITY": 40
+            },
+            "file_source_enabled": true,
+            "native_layout": {
+              "marker_address": 1008005654,
+              "marker_bytes": 24,
+              "marker_symbol": "risc_paired_store_abi",
+              "store_abi": 3
+            },
+            "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+            "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+            "store_abi": 3
+          },
+          "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+          "prepared": true,
+          "storage_calls": 0,
+          "target_instructions_executed": false
+        },
+        "candidate_platform_count": 20,
+        "candidate_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+        "cohort_validated": false,
+        "control_packaged": false,
+        "cooperative_yields": 0,
+        "elf_count": 0,
+        "error": "",
+        "expected_rejection": true,
+        "hardware_calls": 0,
+        "native_composition": {
+          "bounds": {
+            "RISC_APP_POLICY_ROWS": 32,
+            "RISC_APP_REQUIREMENT_ROWS": 32,
+            "RISC_INSTALLED_APP_CAPACITY": 64,
+            "RISC_PLATFORM_CAPACITY": 32,
+            "RISC_PROVIDER_CAPACITY": 40
+          },
+          "file_source_enabled": true,
+          "native_layout": {
+            "marker_address": 1008005654,
+            "marker_bytes": 24,
+            "marker_symbol": "risc_paired_store_abi",
+            "store_abi": 3
+          },
+          "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+          "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+          "store_abi": 3
+        },
+        "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+        "prepared": true,
+        "reason": "Existing twatch-clock gains already-owned storage.key-value namespace 6 without migration authority.",
+        "runtime_guard": "src/bootstrap/CohortRuntime.inc: used && !owned; !migrating",
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "sanitized": false,
+      "selected_native_features": {
+        "diagnostic_source": false,
+        "usb_phy": false
+      },
+      "selected_platform_capacity": 32,
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    },
+    "True": {
+      "active_platform_count": 20,
+      "active_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+      "app_policy_rows": 32,
+      "candidate_platform_count": 20,
+      "candidate_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+      "cohort_validated": true,
+      "cooperative_yields": 196,
+      "elf_count": 61,
+      "error": "",
+      "fixture_sha256": "81403ddab6dd2be07c46b2c0859c86170f24a6be19d90aab8a6d6b77b0bb8bca",
+      "hardware_calls": 0,
+      "mode": "factory-bootstrap-self-admission",
+      "native_composition": {
+        "bounds": {
+          "RISC_APP_POLICY_ROWS": 32,
+          "RISC_APP_REQUIREMENT_ROWS": 32,
+          "RISC_INSTALLED_APP_CAPACITY": 64,
+          "RISC_PLATFORM_CAPACITY": 32,
+          "RISC_PROVIDER_CAPACITY": 40
+        },
+        "file_source_enabled": true,
+        "native_layout": {
+          "marker_address": 1008005654,
+          "marker_bytes": 24,
+          "marker_symbol": "risc_paired_store_abi",
+          "store_abi": 3
+        },
+        "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+        "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+        "store_abi": 3
+      },
+      "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+      "prepared": true,
+      "preserving_transition": {
+        "active_platform_count": 19,
+        "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+        "app_policy_rows": 32,
+        "authority_only_control": {
+          "active_platform_count": 19,
+          "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+          "app_policy_rows": 32,
+          "candidate_platform_count": 20,
+          "candidate_store_sha256": "05493907ca3099c26f81b9144e2853c25c517489a87ad5a01c19bfd192ff9d1c",
+          "cohort_validated": true,
+          "cooperative_yields": 196,
+          "elf_count": 61,
+          "error": "",
+          "hardware_calls": 0,
+          "native_composition": {
+            "bounds": {
+              "RISC_APP_POLICY_ROWS": 32,
+              "RISC_APP_REQUIREMENT_ROWS": 32,
+              "RISC_INSTALLED_APP_CAPACITY": 64,
+              "RISC_PLATFORM_CAPACITY": 32,
+              "RISC_PROVIDER_CAPACITY": 40
+            },
+            "file_source_enabled": true,
+            "native_layout": {
+              "marker_address": 1008005654,
+              "marker_bytes": 24,
+              "marker_symbol": "risc_paired_store_abi",
+              "store_abi": 3
+            },
+            "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+            "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+            "store_abi": 3
+          },
+          "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+          "prepared": true,
+          "storage_calls": 0,
+          "target_instructions_executed": false
+        },
+        "candidate_platform_count": 20,
+        "candidate_store_sha256": "60403e99a89b1ad5122030e01767f90c6eff451ab5d0ab07fd9a391145406328",
+        "cohort_validated": false,
+        "control_packaged": false,
+        "cooperative_yields": 0,
+        "elf_count": 0,
+        "error": "",
+        "expected_rejection": true,
+        "hardware_calls": 0,
+        "native_composition": {
+          "bounds": {
+            "RISC_APP_POLICY_ROWS": 32,
+            "RISC_APP_REQUIREMENT_ROWS": 32,
+            "RISC_INSTALLED_APP_CAPACITY": 64,
+            "RISC_PLATFORM_CAPACITY": 32,
+            "RISC_PROVIDER_CAPACITY": 40
+          },
+          "file_source_enabled": true,
+          "native_layout": {
+            "marker_address": 1008005654,
+            "marker_bytes": 24,
+            "marker_symbol": "risc_paired_store_abi",
+            "store_abi": 3
+          },
+          "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+          "runtime_commit": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
+          "store_abi": 3
+        },
+        "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+        "prepared": true,
+        "reason": "Existing twatch-clock gains already-owned storage.key-value namespace 6 without migration authority.",
+        "runtime_guard": "src/bootstrap/CohortRuntime.inc: used && !owned; !migrating",
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "sanitized": true,
+      "selected_native_features": {
+        "diagnostic_source": false,
+        "usb_phy": false
+      },
+      "selected_platform_capacity": 32,
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    }
+  },
+  "compile_path_prefix_remapped_only": true,
+  "complete_release_custody_unavailable": "Failure archive omitted20 hash-locked native input files; complete next CI required",
+  "feed_checks_passed": true,
+  "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+  "native_layout": {
+    "compiled_runtime_rows": 56,
+    "flags": [
+      "RISC_NATIVE_PACKAGE_VOLUME=1",
+      "RISC_NATIVE_PROVISION_REQUEST=1",
+      "RISC_PLATFORM_CAPACITY=32"
+    ],
+    "hardware_tested": false,
+    "linked_layout": {
+      "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+      "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+      "static_workspaces": {
+        "boot_view": {
+          "address": 1008205824,
+          "bytes": 288,
+          "section": ".ext_ram.bss"
+        },
+        "serial_workspace": {
+          "address": 1008206112,
+          "bytes": 2792,
+          "section": ".ext_ram.bss"
+        }
+      },
+      "types": {
+        "package_workspace_bytes": 15208,
+        "platform_entry_bytes": 120,
+        "platform_slots": 32,
+        "runtime_bytes": 327056
+      }
+    }
+  },
+  "scope": "qualification-tail diagnostic, not a fresh-build or release attestation",
+  "source_command_receipt_sha256": "27005889688c379ddfd00d123fc0fd2cce3e42455577e658fa538921d76b2e8e",
+  "tail_preflight": {
+    "command_scope": "Every archived compile command reconstructed; only checkout prefix remapped; runtime/src selected in production helper",
+    "compile_path_prefix_remapped_only": true,
+    "complete_release_custody_unavailable": "Failure archive omitted20 hash-locked native input files; complete next CI required",
+    "feed_checks_passed": true,
+    "native_elf_sha256": "9d9e671970ef2ce5ac942480f6a1b59c4947c2d68f93e7b1f9725c20d8baf7e5",
+    "native_layout": {
+      "compiled_runtime_rows": 56,
+      "flags": [
+        "RISC_NATIVE_PACKAGE_VOLUME=1",
+        "RISC_NATIVE_PROVISION_REQUEST=1",
+        "RISC_PLATFORM_CAPACITY=32"
+      ],
+      "hardware_tested": false,
+      "linked_layout": {
+        "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+        "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+        "static_workspaces": {
+          "boot_view": {
+            "address": 1008205824,
+            "bytes": 288,
+            "section": ".ext_ram.bss"
+          },
+          "serial_workspace": {
+            "address": 1008206112,
+            "bytes": 2792,
+            "section": ".ext_ram.bss"
+          }
+        },
+        "types": {
+          "package_workspace_bytes": 15208,
+          "platform_entry_bytes": 120,
+          "platform_slots": 32,
+          "runtime_bytes": 327056
+        }
+      }
+    },
+    "scope": "qualification-tail diagnostic, not a fresh-build or release attestation",
+    "source_command_receipt_sha256": "27005889688c379ddfd00d123fc0fd2cce3e42455577e658fa538921d76b2e8e"
+  },
+  "third_ci": {
+    "admission_modes_passed": [
+      "plain",
+      "sanitized"
+    ],
+    "artifact_id": 12084739830,
+    "artifact_sha256": "48ec2a1cb89f8f86f53d9710694a9b11c0446f12e0da0fe00f1508ce726e51a3",
+    "factory_elf_count": 61,
+    "factory_platform_count": 20,
+    "failure": "Product macro filter selected12 vendored elf_loader files outside runtime/src; all56 actual Runtime units have required flags",
+    "full_release_custody_replayed": false,
+    "native_elf_sha256": "17f0e6d4600b081e33231e8a7ed04b09180989b901858c89132dfb4bdf99c768",
+    "product_revision": "35b906e4c351ada570433c70bfd15184e508ae3e",
+    "run": 38992013559
+  }
+}

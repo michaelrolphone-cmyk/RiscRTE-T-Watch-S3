@@ -109,3 +109,27 @@ has neither risc_native_diagnostic_read nor risc_usb_phy_resource_enabled,
 and the actual fixture compiler flags omit both optional features. The fixture
 now binds expected20 to those exact absent hooks and persists its selected flags.
 Both earlier count failures remain in CI and platform-count-diagnosis.json.
+
+### Linked capacity and remaining-path preflight
+
+The native linker removes the unreferenced capacity-marker string. Capacity is
+therefore checked in every actual Runtime compile row and in the linked
+RiscBoot::Runtime.platforms_ DWARF array extent. The preserved 605274a9 ELF shows
+32 slots of 120 bytes, Runtime 327056 bytes, and a 15208-byte package workspace
+allocated from INTERNAL|8BIT memory after startup. Boot-view metadata 288 bytes
+and serial workspace 2792 bytes are in .ext_ram.bss. The final linked 64 KiB IQ
+reservation passes; the static internal heap start is 7952 bytes below its bank.
+This is a linked layout proof, not physical heap or hardware acceptance.
+
+Normal/sanitized admission replay, all remaining native-selected unit/flag/layout
+checks, the real 125-file controller/feed custody checks and transport mutation
+tests pass against the preserved exact CI native ELF. The earlier failure
+archive omitted 20 of 23 hash-locked native inputs, so complete release-archive
+custody still requires the full CI gate. Failure evidence now copies all locked
+native inputs before admission; no detached replay is promoted to a release.
+
+Run 38992013559 admitted all 61 ELFs in both modes, then exposed a second
+qualification-only selector issue: a substring test included 12 vendored
+elf_loader units under runtime/lib/.../src. All 56 actual runtime/src units have
+the required product flags. The selection now uses resolved runtime/src ancestry;
+its regression test rejects missing flags without selecting unrelated libraries.

@@ -11,6 +11,7 @@ cp "$product/.github/workflows/provisioning-native.yml" "$NATIVE_ROOT/metadata/w
 python -m pip install pyelftools==0.32
 python "$product/scripts/test_provisioning_package.py"
 python "$product/scripts/test_provisioning_release.py"
+python "$product/scripts/test_provisioning_native_layout.py"
 python - "$product" "$NATIVE_ROOT" <<'PY'
 import json,os,sys
 from pathlib import Path

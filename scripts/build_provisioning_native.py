@@ -20,20 +20,85 @@ from package_alarm_sleep import make_archive
 from package_provisioning import require, sha, record, encoded
 
 
-def qualify_provisioning_native(blobs, proof, sources, build):
-    import re
+def linked_provisioning_layout(raw):
+    import io
+    from elftools.elf.elffile import ELFFile
+    elf = ELFFile(io.BytesIO(raw))
+    require(elf.has_dwarf_info(), 'Linked native type evidence missing')
+    types = {}
+    for cu in elf.get_dwarf_info().iter_CUs():
+        name = cu.get_top_DIE().attributes.get('DW_AT_name')
+        unit = name.value.decode() if name else ''
+        if not unit.endswith(('/src/bootstrap/Runtime.cpp', '/src/ports/esp32s3/NativePackageVolume.cpp')):
+            continue
+        for die in cu.iter_DIEs():
+            name = die.attributes.get('DW_AT_name')
+            size = die.attributes.get('DW_AT_byte_size')
+            if not name or not size or die.tag not in ('DW_TAG_class_type', 'DW_TAG_structure_type'):
+                continue
+            parent = die.get_parent()
+            namespace = parent.attributes.get('DW_AT_name') if parent else None
+            namespace = namespace.value if namespace else None
+            if name.value == b'Runtime' and namespace == b'RiscBoot':
+                members = [x for x in die.iter_children() if x.tag == 'DW_TAG_member'
+                    and x.attributes.get('DW_AT_name') and x.attributes['DW_AT_name'].value == b'platforms_']
+                require(len(members) == 1, 'Linked Runtime platform array missing')
+                array = members[0].get_DIE_from_attribute('DW_AT_type')
+                require(array.tag == 'DW_TAG_array_type', 'Unexpected linked platform member type')
+                ranges = [x for x in array.iter_children() if x.tag == 'DW_TAG_subrange_type']
+                require(len(ranges) == 1, 'Unexpected linked platform array rank')
+                bounds = ranges[0].attributes
+                count = bounds['DW_AT_count'].value if 'DW_AT_count' in bounds else bounds['DW_AT_upper_bound'].value + 1
+                entry = array.get_DIE_from_attribute('DW_AT_type').attributes['DW_AT_byte_size'].value
+                types.update(platform_slots=count, platform_entry_bytes=entry, runtime_bytes=size.value)
+            elif name.value == b'Workspace' and unit.endswith('/NativePackageVolume.cpp'):
+                types['package_workspace_bytes'] = size.value
+    require(types.get('platform_slots') == 32 and types.get('package_workspace_bytes') == 15208,
+            'Linked platform capacity or package workspace changed')
+    symbols = elf.get_section_by_name('.symtab')
+    placements = {}
+    for label, suffix, expected_size in (
+        ('boot_view', 'L15bootViewStorageE', 288), ('serial_workspace', 'L16workspaceStorageE', 2792)):
+        rows = [x for x in symbols.iter_symbols() if x.name.endswith(suffix) and isinstance(x['st_shndx'], int)]
+        require(len(rows) == 1 and rows[0]['st_size'] == expected_size, 'Linked workspace differs: ' + label)
+        row = rows[0]; section = elf.get_section(row['st_shndx'])
+        require(section.name == '.ext_ram.bss', 'Workspace escaped retained external memory: ' + label)
+        placements[label] = dict(address=row['st_value'], bytes=row['st_size'], section=section.name)
+    return dict(types=types, static_workspaces=placements,
+                package_workspace_allocation='MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT',
+                scope='Linked types and static placement; no physical heap or hardware acceptance')
+
+
+def provisioning_compile_selection(commands, runtime):
+    import shlex
     required = ('RISC_NATIVE_PACKAGE_VOLUME=1', 'RISC_NATIVE_PROVISION_REQUEST=1', 'RISC_PLATFORM_CAPACITY=32')
+    source_root = (runtime / 'src').resolve()
+    def source(row):
+        path = Path(row['file'])
+        return path.resolve() if path.is_absolute() else (Path(row['directory']) / path).resolve()
+    selected = [r for r in commands if source(r).is_relative_to(source_root)]
+    require(selected, 'Runtime compilation missing')
+    for row in selected:
+        arguments = row.get('arguments') or shlex.split(row['command'])
+        for flag in required:
+            definitions = [x for x in arguments if x.startswith('-D' + flag.split('=')[0] + '=')]
+            require(definitions == ['-D' + flag], 'Provisioning product flags missing or ambiguous in actual compilation')
+    return required, selected
+
+
+def qualify_provisioning_native(blobs, proof, sources, build):
     commands = json.loads((build / 'compile_commands.json').read_bytes())
-    selected = [r for r in commands if '/src/' in r['file'] and str(sources['runtime']) in r['file']]
-    require(selected and all(all('-D' + flag in r['command'] for flag in required) for r in selected), 'Provisioning product flags missing from actual compilation')
+    required, selected = provisioning_compile_selection(commands, sources['runtime'])
     names = package.serial_files_product.linked_symbols(blobs['firmware_elf'])
     for symbol in ('RiscProvisionRequest', 'RiscPackageVolume'):
         require(any(symbol in n for n in names), 'Provisioning adapter not linked: ' + symbol)
-    require(b'RISC_PLATFORM_CAPACITY:32\0' in blobs['firmware_elf'], 'Platform capacity marker missing')
+    linked = linked_provisioning_layout(blobs['firmware_elf'])
+    allocation = (sources['runtime'] / 'src/ports/esp32s3/NativePackageVolume.cpp').read_text()
+    require('heap_caps_malloc(sizeof(Workspace),MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)' in allocation, 'Package workspace allocator selection changed')
     for name in ('NativeProvisionRequest.cpp', 'NativePackageVolume.cpp', 'NativePackageVolumeAdmission.cpp'):
         path = sources['runtime'] / 'src/ports/esp32s3' / name
-        require(any(Path(r['file']).resolve() == path for r in commands), 'Provisioning unit not compiled: ' + name)
-    return {'flags': list(required), 'compiled_runtime_rows': len(selected), 'hardware_tested': False}
+        require(any(Path(r['file']).resolve() == path for r in selected), 'Provisioning unit not compiled: ' + name)
+    return {'flags': list(required), 'compiled_runtime_rows': len(selected), 'linked_layout': linked, 'hardware_tested': False}
 
 
 def canonical(args, sources, p):
@@ -164,6 +229,12 @@ def main():
     args.lock = args.native_build / 'native-build-evidence/source-lock.json'
     native.freeze(sources, args.native_build, args.compiler, args.lock, p['version'])
     sys.path[:0] = [str(sources['runtime'] / 'scripts'), str(sources['image_helper'] / 'scripts')]
+    custody = args.native_build / 'native-build-evidence/locked-native'
+    custody.mkdir()
+    lock = json.loads(args.lock.read_bytes())
+    for row in lock['native_files'].values():
+        destination = custody / row['path']; destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(native.safe_path(args.native_build, row['path']), destination)
     qualify(args, sources, proof)
 
 
