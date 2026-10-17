@@ -1,7 +1,7 @@
 name: T-Watch provisioning native qualification
 on:
   push:
-    branches: [feat/twatch-provisioning-20261016, release/provisioning-1.1.44]
+    branches: [feat/twatch-provisioning-20261016, feat/twatch-optimized-home-20261017, release/provisioning-1.1.45]
   pull_request:
     paths:
       - .github/workflows/provisioning-native.yml

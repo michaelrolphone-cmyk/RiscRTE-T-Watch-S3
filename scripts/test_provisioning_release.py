@@ -27,6 +27,8 @@ class ReleaseContracts(unittest.TestCase):
             preservation=dict(changed_store_files=package.CHANGED,unchanged_store_payloads=len(c['files'])-len(package.CHANGED),unchanged_elf_count=c['elf_count']-1,alarm_sha256=package.ALARM_SHA))
         for k,san in [('admission',False),('admission_sanitized',True)]:
             q[k]=dict(elf_count=c['elf_count']+2,sanitized=san,hardware_calls=0,storage_calls=0,target_instructions_executed=False)
+        previous=json.loads((package.DOCS/'previous-provisioning.json').read_bytes())
+        q['preservation']['previous_provisioning']=dict(version=previous['version'],source_revision=previous['source_revision'],factory_sha256=previous['factory_sha256'],changed_store_files=['cohort.json','default.elf'],unchanged_store_payloads=123,unchanged_elf_count=60,boot_authority_unchanged=True,manifest_unchanged=True)
         q['preservation'].update(added_store_files=package.ADDED,store_files=125,elf_count=61,settings=p['settings'])
         q['preservation_software_model'].update(preserving_transition_eligible=False,namespace_authority_tested=False)
         for k in ('admission','admission_sanitized'):
@@ -59,7 +61,7 @@ class ReleaseContracts(unittest.TestCase):
             ('native','elf_bin_identical'):False,('preservation_software_model','passed'):False,('preservation_software_model','cases'):0,
             ('preservation_software_model','nvs_and_appdata_preserved'):False,('preservation_software_model','hardware_tested'):True,
             ('preservation_software_model','bootloader_compatibility_tested'):True,('preservation','changed_store_files'):[],
-            ('preservation','unchanged_store_payloads'):0,('preservation','unchanged_elf_count'):0,('preservation','alarm_sha256'):'4'*64}
+            ('preservation','unchanged_store_payloads'):0,('preservation','previous_provisioning'): {},('preservation','unchanged_elf_count'):0,('preservation','alarm_sha256'):'4'*64}
         for k in ('admission','admission_sanitized'):
             for field,v in [('elf_count',0),('sanitized',k!='admission_sanitized'),('hardware_calls',1),('storage_calls',1),('target_instructions_executed',True)]:mutations[(k,field)]=v
         for path,value in mutations.items():
@@ -261,6 +263,50 @@ class ReleaseContracts(unittest.TestCase):
         with self.assertRaises(ValueError):select_update(None,bad,tag)
         with self.assertRaises(ValueError):select_update(bad,feed,tag)
         with self.assertRaises(ValueError):select_update(None,feed,'wrong-tag')
+
+    def test_feed_pinned_predecessor_only(self):
+        from publish_provisioning_feed import select_update
+        p=package.pins();tag=p['release_tag']
+        feed={'apps':[],'profiles':{'core':[]},'boot_profiles':{'core':{'mirrors':[],
+          'profile':{'files':[['file'+str(i),1,'3'*64] for i in range(125)],'image':{'url':'https://github.com/release/'+tag+'/bootfs-abc.bin'}}}}}
+        old=copy.deepcopy(feed);old['boot_profiles']['core']['profile']['image']['url']='previous'
+        raw=package.encoded(old);digest=package.sha(raw)
+        self.assertTrue(select_update(old,feed,tag,raw,digest))
+        for args in [(None,digest),(raw,None),(raw,'0'*64),(raw+b'x',digest),(package.encoded(feed),package.sha(package.encoded(feed)))]:
+            with self.subTest(args=args),self.assertRaises(ValueError):select_update(old,feed,tag,*args)
+        self.assertIn("'sha=' + existing['sha']",(package.ROOT/'scripts/publish_provisioning_feed.py').read_text())
+
+    def test_feed_publication_uses_blob_lease(self):
+        import base64
+        import publish_provisioning_feed as feed_publisher
+        p=dict(package.pins());tag=p['release_tag'];rev='1'*40
+        new={'apps':[],'profiles':{'core':[]},'boot_profiles':{'core':{'mirrors':[],
+          'profile':{'files':[['file'+str(i),1,'3'*64] for i in range(125)],'image':{'url':'https://github.com/release/'+tag+'/bootfs-abc.bin'}}}}}
+        old=copy.deepcopy(new);old['boot_profiles']['core']['profile']['image']['url']='previous'
+        old_raw=package.encoded(old);new_raw=package.encoded(new);p['previous_feed_sha256']=package.sha(old_raw)
+        for mode in ('advance','identical','concurrent'):
+            state={'raw':new_raw if mode=='identical' else old_raw,'puts':0}
+            def api(*args,**kwargs):
+                endpoint=next((x for x in args if x.startswith('repos/')),'')
+                if '/git/ref/tags/' in endpoint:return {'ref':'refs/tags/'+tag,'object':{'type':'commit','sha':rev}}
+                if '/git/ref/heads/' in endpoint:return {'object':{'sha':rev}}
+                if '/contents/' in endpoint:
+                    if '--method' in args:
+                        self.assertEqual(args[args.index('--method')+1],'PUT');self.assertIn('sha=previous-blob',args)
+                        state['puts']+=1
+                        if mode=='concurrent':raise RuntimeError('HTTP409 blob lease conflict')
+                        state['raw']=new_raw;return {}
+                    return {'content':base64.b64encode(state['raw']).decode(),'sha':'previous-blob'}
+                self.fail(str(args))
+            with tempfile.TemporaryDirectory() as d:
+                root=Path(d);(root/'native-packages-v1.json').write_bytes(new_raw)
+                with patch.object(feed_publisher,'pins',return_value=p),patch.object(feed_publisher,'verify_output'),patch.object(feed_publisher,'find_release',return_value={'draft':False,'prerelease':True}),patch.object(feed_publisher,'object_json',side_effect=api):
+                    if mode=='concurrent':
+                        with self.assertRaises(RuntimeError):feed_publisher.publish(root,'digest',rev)
+                        self.assertEqual(state['raw'],old_raw)
+                    else:
+                        feed_publisher.publish(root,'digest',rev);self.assertEqual(state['raw'],new_raw)
+                    self.assertEqual(state['puts'],int(mode!='identical'))
 
     def test_workflow_and_shell_contract(self):
         p=package.pins(); workflow=(package.ROOT/'.github/workflows/provisioning-native.yml').read_text()

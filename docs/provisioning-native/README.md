@@ -133,3 +133,28 @@ qualification-only selector issue: a substring test included 12 vendored
 elf_loader units under runtime/lib/.../src. All 56 actual runtime/src units have
 the required product flags. The selection now uses resolved runtime/src ancestry;
 its regression test rejects missing flags without selecting unrelated libraries.
+
+
+## Optimized Home counterpart 1.1.45
+
+This successor selects Watch `2be519c2047b2323e4d399c1de19b0591dc87c59`,
+Home 552616 bytes, SHA256
+`5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d`.
+These are the exact common Home bytes qualified in Wave 0.1.56 producer
+`907b9551b0d8208a7f979b0a722a7a47618e0402`, native run 39006841493.
+The delivered 1.1.44 remains immutable. Runtime, System, Utilities, Drivers, SDK,
+provider payloads, generic serial contract and all unrelated store bytes remain
+unchanged. Each composition checks the hash-locked 1.1.44 extracted inventory:
+only default.elf and cohort.json may differ; boot and Home manifest remain exact.
+The original 1.1.43 additive admission and ownership controls also still run.
+
+The source-bound native workflow qualifies this complete successor on the feature
+branch; publication runs only on release/provisioning-1.1.45. Its active core-feed
+update accepts only the exact 1.1.44 feed SHA256
+`f80c68b24931c178cf9bd6f2d848bca8a0a0e5c75d42a2ab1e5a9f30704145bf`
+or identical already-published successor bytes. Updates use the existing Git blob
+SHA as a lease. An unrelated active feed remains a hard rejection.
+
+Software qualification does not establish hardware or physical serial rollout
+acceptance. The factory image erases internal data; no preserving update kit is
+emitted. Mounted-SD changes are outside this successor.
