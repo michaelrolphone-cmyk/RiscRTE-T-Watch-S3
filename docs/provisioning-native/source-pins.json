@@ -13,9 +13,9 @@
     "default.elf",
     "default.json"
   ],
-  "default_bytes": 610872,
+  "default_bytes": 552616,
   "default_manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
-  "default_sha256": "b5d8d7b545da737879a1d369160cd4c6eea4cee8876d09ce783cf00560f70231",
+  "default_sha256": "5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d",
   "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
   "feed_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/provisioning-index/native-packages-v1.json",
   "historical_contracts": {
@@ -29,6 +29,8 @@
     "scripts/shared_default_release.py": "4308d19aba0c137bfd4d559ffd01ba835e4498bb080b76c4a3d4dfcadf6a84a2"
   },
   "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+  "previous_feed_sha256": "f80c68b24931c178cf9bd6f2d848bca8a0a0e5c75d42a2ab1e5a9f30704145bf",
+  "previous_provisioning_contract_sha256": "cace3dc8a4ed60ed96c32ded421f6fd093f976c9408e1991c0add4f81986252f",
   "product": "twatch",
   "product_id": "twatch-s3",
   "providers": {
@@ -50,8 +52,8 @@
     }
   },
   "publication_enabled": true,
-  "release_branch": "release/provisioning-1.1.44",
-  "release_tag": "test-provisioning-1.1.44",
+  "release_branch": "release/provisioning-1.1.45",
+  "release_tag": "test-provisioning-1.1.45",
   "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
@@ -62,6 +64,6 @@
   "system_revision": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
   "time_server": "time.cloudflare.com",
   "utilities_revision": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
-  "version": "1.1.44",
-  "watch_revision": "712127b109568431f1b34d4e947db46386945964"
+  "version": "1.1.45",
+  "watch_revision": "2be519c2047b2323e4d399c1de19b0591dc87c59"
 }

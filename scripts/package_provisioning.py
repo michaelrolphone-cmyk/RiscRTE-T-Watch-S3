@@ -131,7 +131,25 @@ def verify_store(before, after, default, manifest, provider_files, p, revision, 
     require(after['settings.elf'] == before['settings.elf'] and record(after['settings.elf']) == p['settings'], 'Retained Settings changed')
     require(after['alarm-service/driver.elf'] == before['alarm-service/driver.elf'], 'Alarm fix changed')
     require(len(after) == 125 and sum(n.endswith('.elf') for n in after) == 61, 'Incomplete product store')
-    return {'changed_store_files': CHANGED, 'added_store_files': ADDED, 'store_files': len(after),
+    successor = verify_previous_provisioning(after, p)
+    return {'previous_provisioning': successor, 'changed_store_files': CHANGED, 'added_store_files': ADDED, 'store_files': len(after),
             'unchanged_store_payloads': len(before) - len(CHANGED), 'unchanged_elf_count': 58,
             'elf_count': 61, 'driver_instances': 36, 'settings': p['settings'], 'alarm_sha256': ALARM_SHA,
             'default': record(default), 'default_manifest': record(manifest)}
+
+
+def verify_previous_provisioning(after, p):
+    raw = (DOCS / 'previous-provisioning.json').read_bytes()
+    require(sha(raw) == p['previous_provisioning_contract_sha256'], 'Previous provisioning contract changed')
+    previous = json.loads(raw)
+    require(previous['version'] == '1.1.44' and previous['source_revision'] == '08e683507fbf0a375c3a36a602ad6cc257cb457e', 'Previous product source differs')
+    require(set(after) == set(previous['files']), 'Previous provisioning inventory differs')
+    changed = sorted(n for n in after if record(after[n]) != previous['files'][n])
+    require(changed == previous['expected_changes'] == ['cohort.json', 'default.elf'], 'Unrelated .44 provisioning payload changed')
+    cohort = json.loads(after['cohort.json']); old = previous['cohort']
+    native_fields = {'version', 'source_revision', 'firmware_size', 'firmware_sha256'}
+    require({k:v for k,v in cohort.items() if k not in native_fields} == {k:v for k,v in old.items() if k not in native_fields}, 'Unrelated .44 cohort field changed')
+    return dict(version=previous['version'], source_revision=previous['source_revision'],
+                factory_sha256=previous['factory_sha256'], changed_store_files=changed,
+                unchanged_store_payloads=len(after)-len(changed), unchanged_elf_count=60,
+                boot_authority_unchanged=True, manifest_unchanged=True)

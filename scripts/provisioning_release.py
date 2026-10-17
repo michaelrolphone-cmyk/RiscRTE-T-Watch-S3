@@ -93,6 +93,11 @@ def check_qualification(q, p, revision):
     require(canonical['default_sha256'] == p['default_sha256'] and canonical['default_bytes'] == p['default_bytes']
             and canonical['manifest_sha256'] == p['default_manifest_sha256'], 'Canonical default differs')
     require(q.get('serial_files') == package.serial_files_product.contract(p['product']), 'Native serial admission differs')
+    previous = json.loads((package.DOCS / 'previous-provisioning.json').read_bytes())
+    expected_previous = dict(version=previous['version'], source_revision=previous['source_revision'],
+        factory_sha256=previous['factory_sha256'], changed_store_files=['cohort.json','default.elf'],
+        unchanged_store_payloads=123, unchanged_elf_count=60, boot_authority_unchanged=True, manifest_unchanged=True)
+    require(q['preservation'].get('previous_provisioning') == expected_previous, 'Previous provisioning preservation proof differs')
     baseline = q['baseline_contract']
     require(baseline == package.baseline_contract(p), 'Released baseline contract differs')
     for key, sanitized in [('admission', False), ('admission_sanitized', True)]:
@@ -172,7 +177,7 @@ def verify_ci_provenance(path, p, revision, native_proof):
     with zipfile.ZipFile(path) as z:
         ci = decode(z.read('ci-run.json'))
         require(ci['GITHUB_REPOSITORY'] == repo and ci['GITHUB_SHA'] == revision and ci['GITHUB_WORKFLOW_SHA'] == revision, 'CI source identity differs')
-        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
+        require(ci['GITHUB_REF'] in ('refs/heads/feat/twatch-provisioning-20261016', 'refs/heads/feat/twatch-optimized-home-20261017', 'refs/heads/' + p['release_branch']), 'Unexpected CI source branch')
         require(ci['GITHUB_WORKFLOW_REF'] == repo + '/.github/workflows/provisioning-native.yml@' + ci['GITHUB_REF'], 'CI workflow identity differs')
         require(all(re.fullmatch('[1-9][0-9]*', ci[k]) for k in ('GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT')), 'CI run identity missing')
         require(z.read('workflow.yml') == (package.ROOT / '.github/workflows/provisioning-native.yml').read_bytes(), 'Published workflow snapshot differs')
@@ -222,6 +227,8 @@ def transport(args):
         'Complete125-file/61-ELF internal store and credential-free boot_profiles.core feed.\n'
         'The separate dynamic apps list is empty; the bootstrap inventory is complete.\n'
         'Settings, Springboard and58 retained ELFs remain byte-identical to1.1.43.\n'
+        'Compared with1.1.44,123 of125 store files and60 of61 ELFs are unchanged; only Home and native cohort identity differ.\n'
+        'Home matches Waveshare0.1.56 exactly, including the lossless ring atlas optimization.\n'
         'The lossless atlas codec preserves decoded pixels and uses256 additional stack bytes per decode.\n'
         'RTEF1 serial file namespace2 remains private AppData, never the boot bank.\n'
         'Software-qualified; hardware first-start/profile acceptance has not been tested.\n'
