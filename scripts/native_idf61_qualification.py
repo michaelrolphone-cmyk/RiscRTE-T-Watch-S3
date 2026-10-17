@@ -68,6 +68,38 @@ bool bind(RiscBoot::Runtime& runtime) {
     return source
 
 
+def source_bound_header(generated):
+    # Extract the exact generated body shape rather than replacing the
+    # production admission function or its compiled public export table.
+    anchor = 'static bool file(void* context,const char* path,bool provider){'
+    require(generated.count(anchor) == 1, 'Admission image callback source anchor changed')
+    start = generated.index(anchor)
+    end = generated.index('\n}', start) + 2
+    replacement = """struct Context { RiscBoot::Runtime* candidate; unsigned admitted; };
+static bool file(void* context,const char* path,bool provider){
+ auto& c=*static_cast<Context*>(context);
+ RiscBoot::RuntimeFileImage image;
+ if(!image.read(c.candidate->imageSource(),path,{malloc,free,
+     [](void*){return operationSafe();},[](void*,size_t){vTaskDelay(1);return operationSafe();},nullptr}))return false;
+ const bool valid=admitElf(image.bytes,image.size,provider?ElfRole::Driver:ElfRole::Application);
+ free(image.bytes);if(!valid)return false;++c.admitted;return true;
+}"""
+    generated = generated[:start] + replacement + generated[end:]
+    return '#include "bootstrap/RuntimeFileImage.h"\n' + generated
+
+
+def source_bound_fixture(source, runtime):
+    source = replace_once(source, '#undef private', '#undef private\n#include "' + str(runtime / 'test/RuntimeFileFixture.h') + '"')
+    source = replace_once(source, '  RiscBoot::Runtime runtime(runtimePort);',
+        '  RiscTest::FileSources files({std::string(argv[1]),std::string(argv[2])},owner,owner);\n'
+        '  runtimePort.files=files.sources();\n  RiscBoot::Runtime runtime(runtimePort);')
+    source = replace_once(source, 'RiscBoot::Runtime candidate({});unsigned admitted=0;',
+        'RiscBoot::Runtime candidate({});CohortElf::Context admitted{&candidate,0};')
+    source = replace_once(source, 'storageCalls,admitted,cooperativeYields);',
+        'storageCalls,admitted.admitted,cooperativeYields);')
+    return source
+
+
 def admit_product(sources, native, before, after, native_proof, sanitized=False):
     import check_runtime_store_admission as admission
     import verify_update_elf as verify
@@ -88,7 +120,7 @@ def admit_product(sources, native, before, after, native_proof, sanitized=False)
         if 'RiscPlatform::millis()' in generated:
             generated = replace_once(generated, 'static uint32_t millis(){return ticks;}',
                                      'namespace RiscPlatform { static uint32_t millis(){return ticks;} }')
-        return generated
+        return source_bound_header(generated)
     def run(command, *args, **kwargs):
         if isinstance(command, list) and command and command[0] in ('c++', 'cc'):
             command = [command[0], '-DRISC_NATIVE_ESP_IDF=1', *command[1:]]
@@ -106,6 +138,7 @@ def admit_product(sources, native, before, after, native_proof, sanitized=False)
             root = Path(tmp)
             (root / 'tests').mkdir()
             source = (helper / 'tests/runtime_store_admission.cpp').read_text()
+            source = source_bound_fixture(source, runtime)
             if contract['product'] == 'waveshare':
                 source = wave_fixture(source, product, sources['sdk'])
             (root / 'tests/runtime_store_admission.cpp').write_text(source)
