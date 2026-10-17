@@ -1,13 +1,12 @@
 {
-  "default_bytes": 552616,
-  "default_sha256": "5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d",
+  "default_bytes": 554744,
+  "default_sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54",
   "hardware_tested": false,
   "independent_builds_identical": true,
-  "manifest_sha256": "37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44",
+  "manifest_sha256": "4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068",
   "product_extractions": [],
   "schema": 1,
-  "watch_ci_run": 38992172220,
-  "watch_revision": "2be519c2047b2323e4d399c1de19b0591dc87c59",
-  "wave_ci_run": 39006841493,
-  "wave_producer": "907b9551b0d8208a7f979b0a722a7a47618e0402"
+  "watch_revision": "416fa9f144fa5bd5471e6f4c9cefff21455c8361",
+  "wave_producer": "d0f95bfcfbef90df58f1bd6e8a3cfe5c495ab8eb",
+  "wave_release": "https://github.com/michaelrolphone-cmyk/RiscRTE-Wavshare-S3-Touch-AMOLED-2.06/releases/tag/test-sd-apps-0.1.59"
 }
