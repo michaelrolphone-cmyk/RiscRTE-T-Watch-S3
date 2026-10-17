@@ -1,0 +1,2 @@
+Checkpoint bounded copy, UINT32_MAX, explicit truncation, identity, chatter isolation, immutable 1-byte replay, backpressure and reconnect PASS
+Native checkpoint owner/ISR, no-Serial capture, chatter isolation, replay and reset lifetime PASS

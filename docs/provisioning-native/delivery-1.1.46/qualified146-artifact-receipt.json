@@ -1,0 +1,104 @@
+{
+  "source_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "run_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39025819911",
+  "artifact_id": 12097774044,
+  "artifact_url": "https://api.github.com/repos/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/artifacts/12097774044/zip",
+  "artifact_sha256": "bd296f4eeb121d26fc69e5234ff1fbfe232ae6f5f86e1c52e1fe0b62274c40fc",
+  "assets": [
+    {
+      "name": "RELEASE-NOTES.txt",
+      "bytes": 1239,
+      "sha256": "554b126309cf66f38744f5ef3b26db28b7dc80564ed2ef0fefd683f008ede5ca"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1599,
+      "sha256": "af38ee1d03532e4ff5facddd165a19a8f23eb036d134cf6a4d1f3aaf5f935cbe"
+    },
+    {
+      "name": "TESTING.txt",
+      "bytes": 2313,
+      "sha256": "68964214c3d7c0834b788162fde2cffc4f49433b3388dece8e00f718a4833de4"
+    },
+    {
+      "name": "TWatch-1.1.46-Provisioning-Evidence.zip",
+      "bytes": 21863004,
+      "sha256": "a7a422d27e5deecff3bdf44f624a79de9b733b2ec85e92d3fb3380f9a7e897b0"
+    },
+    {
+      "name": "TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "ba736c8783c6a61783c3043d1fb13ae4afbbbc67e53dc05a05c6630210cdfb65"
+    },
+    {
+      "name": "bootfs-2411f55de8e84aca01cb9eb77716ce2613099c96af508437bbde6a4f200f710e.bin",
+      "bytes": 5570560,
+      "sha256": "2411f55de8e84aca01cb9eb77716ce2613099c96af508437bbde6a4f200f710e"
+    },
+    {
+      "name": "bootloader.bin",
+      "bytes": 22640,
+      "sha256": "209df38d3b6da2ed8526c65f4f36f92d09f75739d0740ff3e344f7f46cd17c55"
+    },
+    {
+      "name": "ci-provenance.zip",
+      "bytes": 6842,
+      "sha256": "a0175156276a534f22404d28bf004467599481bd7a00d18750a2cff1b076dca2"
+    },
+    {
+      "name": "default.elf",
+      "bytes": 554744,
+      "sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54"
+    },
+    {
+      "name": "default.json",
+      "bytes": 1692,
+      "sha256": "4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068"
+    },
+    {
+      "name": "feed-qualification.json",
+      "bytes": 1275,
+      "sha256": "f5736414287ba709452926fe938c8ae6d74103e8ea7d39f785875cb19fa923bb"
+    },
+    {
+      "name": "firmware.bin",
+      "bytes": 1624560,
+      "sha256": "07a8b2a754bd8b7506790bdf2aa29c5ad10a40460cf60da0a17fa7aa435f3722"
+    },
+    {
+      "name": "native-packages-v1.json",
+      "bytes": 12674,
+      "sha256": "a976a3c773226d7cc5320ec645beb78751930c9679d351bf3765a1410ca049fd"
+    },
+    {
+      "name": "partitions.bin",
+      "bytes": 3072,
+      "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+    },
+    {
+      "name": "qualification.json",
+      "bytes": 1414901,
+      "sha256": "d8b4ed64fcfd043cc6410e058646b2de7117aebe4ea158309f4e04297c726b45"
+    },
+    {
+      "name": "release.json",
+      "bytes": 14324,
+      "sha256": "7ad08f5889774db64a7f21aa003279e0b92f3bb61f302be5a018e9ceae6edb0a"
+    },
+    {
+      "name": "source-lock.json",
+      "bytes": 10148,
+      "sha256": "fb070662847aa4b173b984df5a8b8941a668012dbe4bae194359684c093adab8"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 3350,
+      "sha256": "004e24b2e6717fc8ba09f46a9ea2bd6ab99e82838da4c53bba435a4cd75bc061"
+    },
+    {
+      "name": "store.bin",
+      "bytes": 5570560,
+      "sha256": "2411f55de8e84aca01cb9eb77716ce2613099c96af508437bbde6a4f200f710e"
+    }
+  ]
+}

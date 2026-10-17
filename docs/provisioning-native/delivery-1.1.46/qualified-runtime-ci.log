@@ -1,0 +1,64 @@
+2026-10-17T10:42:26.7710274Z   "append_only_sleep_abi_compiles": true,
+2026-10-17T10:42:26.7710578Z   "hardware_tested": false,
+2026-10-17T10:42:26.7710900Z   "paired_confirmation_storage_veto_preserved": true,
+2026-10-17T10:42:26.7711541Z   "scope": "ABI/source selection; separate normal/sanitized Runtime behavior and exact linked native checks are required",
+2026-10-17T10:42:26.7712081Z   "serial_control_progress_selected": true,
+2026-10-17T10:42:26.7712366Z   "sources": {
+2026-10-17T10:42:26.7712791Z     "sdk/app/RiscRuntimeSleepV1.h": "b21695ec84db931e58ddb1a2a916f7f017d55d7546707eb25ee4247df87e3a28",
+2026-10-17T10:42:26.7713736Z     "sdk/app/RiscRuntimeV1.h": "fd7f2a7e817f12a78518176f5a3561b95cfdcfafebe19c980359162a5e29e2b6",
+2026-10-17T10:42:26.7714404Z     "src/bootstrap/Runtime.cpp": "9d1fa51f2c04153767cc2eaaf1a2f90ccb8907d41f2543cf50dacbcd9d42394e",
+2026-10-17T10:42:26.7715081Z     "src/runtime/serial/Files.cpp": "97f879319b2436c3975aac521130ee9f8dc37675b9811709b81e93bb8f4457f9"
+2026-10-17T10:42:26.7715518Z   }
+2026-10-17T10:42:26.7715696Z }
+2026-10-17T10:42:27.5534193Z serial control metadata, bounded Busy, owner/cancel/live-handle safety PASS
+2026-10-17T10:42:27.5620901Z Serial files normal PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5652171Z Serial files zero PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5682880Z Serial files full PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5713881Z Serial files sync PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5741095Z Serial files retained PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5768738Z Serial files invalid-count PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5796872Z Serial files lost-owner PASS (endpoint bytes=1432)
+2026-10-17T10:42:27.5825473Z Serial files failed-close PASS (endpoint bytes=1432)
+2026-10-17T10:42:35.6194084Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6222589Z Native graph serial retained custody PASS
+2026-10-17T10:42:35.6255540Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6287197Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6320181Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6349603Z Native graph serial retained custody PASS
+2026-10-17T10:42:35.6380865Z Native graph serial retained custody PASS
+2026-10-17T10:42:35.6410458Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6439741Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6471763Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6503493Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6531657Z Native graph serial retained custody PASS
+2026-10-17T10:42:35.6560682Z Native graph serial retained custody PASS
+2026-10-17T10:42:35.6592613Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:35.6624593Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:36.0346188Z Checkpoint bounded copy, UINT32_MAX, explicit truncation, identity, chatter isolation, immutable 1-byte replay, backpressure and reconnect PASS
+2026-10-17T10:42:36.6189133Z Native checkpoint owner/ISR, no-Serial capture, chatter isolation, replay and reset lifetime PASS
+2026-10-17T10:42:38.1261777Z serial control metadata, bounded Busy, owner/cancel/live-handle safety PASS
+2026-10-17T10:42:38.1486441Z Serial files normal PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.1597874Z Serial files zero PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.1691700Z Serial files full PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.1773080Z Serial files sync PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.1874602Z Serial files retained PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.1954173Z Serial files invalid-count PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.2051900Z Serial files lost-owner PASS (endpoint bytes=1432)
+2026-10-17T10:42:38.2128658Z Serial files failed-close PASS (endpoint bytes=1432)
+2026-10-17T10:42:55.9057519Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:55.9204078Z Native graph serial retained custody PASS
+2026-10-17T10:42:55.9336782Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:55.9521970Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:55.9667713Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:55.9824917Z Native graph serial retained custody PASS
+2026-10-17T10:42:55.9968914Z Native graph serial retained custody PASS
+2026-10-17T10:42:56.0118576Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.0254132Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.0431888Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.0559644Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.0675343Z Native graph serial retained custody PASS
+2026-10-17T10:42:56.0825892Z Native graph serial retained custody PASS
+2026-10-17T10:42:56.0991867Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.1152245Z Native graph serial explicit provider admission/wire/retirement PASS
+2026-10-17T10:42:56.6081741Z Checkpoint bounded copy, UINT32_MAX, explicit truncation, identity, chatter isolation, immutable 1-byte replay, backpressure and reconnect PASS
+2026-10-17T10:42:57.3048187Z Native checkpoint owner/ISR, no-Serial capture, chatter isolation, replay and reset lifetime PASS

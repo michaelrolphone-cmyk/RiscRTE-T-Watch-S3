@@ -1,0 +1,12 @@
+[
+  {
+    "version": "0.4.8",
+    "rejected": true,
+    "reason": "Exact shared Home Runtime ABI differs"
+  },
+  {
+    "version": "0.4.9",
+    "rejected": true,
+    "reason": "Selected Runtime lacks current Home lifecycle support: port_.serialFilesControlCheckpoint()"
+  }
+]

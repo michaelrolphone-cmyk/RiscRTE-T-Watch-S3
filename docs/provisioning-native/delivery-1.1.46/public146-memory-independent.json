@@ -1,0 +1,170 @@
+{
+  "source_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "native_run": 39026555734,
+  "native_attempt": 1,
+  "publisher_attempt": 2,
+  "elf_sha256": "6bf06b099b3d77e28150e2af5933d5a08427383fb9724ed4bb30316c8867d227",
+  "linked_layout": {
+    "types": {
+      "platform_slots": 32,
+      "platform_entry_bytes": 120,
+      "runtime_bytes": 327224,
+      "package_workspace_bytes": 15208
+    },
+    "static_workspaces": {
+      "boot_view": {
+        "address": 1008205824,
+        "bytes": 288,
+        "section": ".ext_ram.bss"
+      },
+      "serial_workspace": {
+        "address": 1008206112,
+        "bytes": 2792,
+        "section": ".ext_ram.bss"
+      }
+    },
+    "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+    "scope": "Linked types and static placement; no physical heap or hardware acceptance"
+  },
+  "iq": {
+    "allocated_sections": [
+      {
+        "address": 1611653120,
+        "bytes": 92,
+        "name": ".rtc.text"
+      },
+      {
+        "address": 1611653212,
+        "bytes": 4,
+        "name": ".rtc.force_fast"
+      },
+      {
+        "address": 1342177280,
+        "bytes": 2136,
+        "name": ".rtc_noinit"
+      },
+      {
+        "address": 1342179416,
+        "bytes": 36,
+        "name": ".rtc.force_slow"
+      },
+      {
+        "address": 1611661288,
+        "bytes": 24,
+        "name": ".rtc_reserved"
+      },
+      {
+        "address": 1077362688,
+        "bytes": 1028,
+        "name": ".iram0.vectors"
+      },
+      {
+        "address": 1077363716,
+        "bytes": 119359,
+        "name": ".iram0.text"
+      },
+      {
+        "address": 1070104576,
+        "bytes": 104192,
+        "name": ".dram0.dummy"
+      },
+      {
+        "address": 1070208768,
+        "bytes": 32339,
+        "name": ".dram0.data"
+      },
+      {
+        "address": 1070241107,
+        "bytes": 1,
+        "name": ".noinit"
+      },
+      {
+        "address": 1070241112,
+        "bytes": 19368,
+        "name": ".dram0.bss"
+      },
+      {
+        "address": 1107296288,
+        "bytes": 1203916,
+        "name": ".flash.text"
+      },
+      {
+        "address": 1006632992,
+        "bytes": 1245184,
+        "name": ".flash_rodata_dummy"
+      },
+      {
+        "address": 1007878176,
+        "bytes": 256,
+        "name": ".flash.appdesc"
+      },
+      {
+        "address": 1007878432,
+        "bytes": 267412,
+        "name": ".flash.rodata"
+      },
+      {
+        "address": 1008145844,
+        "bytes": 15967,
+        "name": ".flash.rodata_noload"
+      },
+      {
+        "address": 1006632992,
+        "bytes": 1572832,
+        "name": ".ext_ram.dummy"
+      },
+      {
+        "address": 1008205824,
+        "bytes": 26044,
+        "name": ".ext_ram.bss"
+      },
+      {
+        "address": 1077483075,
+        "bytes": 189,
+        "name": ".iram0.text_end"
+      }
+    ],
+    "bank_base": 1070268416,
+    "bank_bytes": 65536,
+    "elf_sha256": "6bf06b099b3d77e28150e2af5933d5a08427383fb9724ed4bb30316c8867d227",
+    "heap_start": 1070260480,
+    "iram_alias": 1077542912,
+    "iram_end": 1077483264,
+    "reservation_table": [
+      [
+        1611661288,
+        1611661312
+      ],
+      [
+        1611653120,
+        1611653216
+      ],
+      [
+        1006632960,
+        1040187392
+      ],
+      [
+        1077362688,
+        1077483264
+      ],
+      [
+        1070088192,
+        1070208768
+      ],
+      [
+        1070208768,
+        1070260480
+      ],
+      [
+        1070268416,
+        1070333952
+      ]
+    ],
+    "reservation_table_address": 1008145604,
+    "schema": 1,
+    "scope": "Pre-heap reservation and final linked static-memory proof only; no hardware or RF qualification.",
+    "target_identity": "esp32s3-16mb-appdata-expanded-iq"
+  },
+  "heap_to_iq_gap_bytes": 7936,
+  "hardware_tested": false
+}

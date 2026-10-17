@@ -1,0 +1,29 @@
+{
+  "comparison": "JSON-normalized tuples for reservation_table; direct Python tuple/list equality initially differed without numeric differences",
+  "iq_gap": 7936,
+  "iq_proof_matches": true,
+  "layout": {
+    "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+    "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+    "static_workspaces": {
+      "boot_view": {
+        "address": 1008205824,
+        "bytes": 288,
+        "section": ".ext_ram.bss"
+      },
+      "serial_workspace": {
+        "address": 1008206112,
+        "bytes": 2792,
+        "section": ".ext_ram.bss"
+      }
+    },
+    "types": {
+      "package_workspace_bytes": 15208,
+      "platform_entry_bytes": 120,
+      "platform_slots": 32,
+      "runtime_bytes": 327224
+    }
+  },
+  "linked_layout_matches": true,
+  "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28"
+}

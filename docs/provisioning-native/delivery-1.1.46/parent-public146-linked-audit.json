@@ -1,0 +1,32 @@
+{
+  "iq_gap": 7936,
+  "iq_proof_matches": true,
+  "layout": {
+    "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+    "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+    "static_workspaces": {
+      "boot_view": {
+        "address": 1008205824,
+        "bytes": 288,
+        "section": ".ext_ram.bss"
+      },
+      "serial_workspace": {
+        "address": 1008206112,
+        "bytes": 2792,
+        "section": ".ext_ram.bss"
+      }
+    },
+    "types": {
+      "package_workspace_bytes": 15208,
+      "platform_entry_bytes": 120,
+      "platform_slots": 32,
+      "runtime_bytes": 327224
+    }
+  },
+  "linked_layout_matches": true,
+  "native_elf_sha256": "6bf06b099b3d77e28150e2af5933d5a08427383fb9724ed4bb30316c8867d227",
+  "qualification_sha256": "2933128fa25f11e73774d3f3ba68baa4a1124670967490780cfb14fcf48371b4",
+  "scope": "Public publisher-run artifact, independent actual ELF recomputation; physical testing pending",
+  "source": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "version": "1.1.46"
+}

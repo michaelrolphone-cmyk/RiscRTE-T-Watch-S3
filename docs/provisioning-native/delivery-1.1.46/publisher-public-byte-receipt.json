@@ -1,0 +1,142 @@
+{
+  "run_id": 39026555734,
+  "source_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "artifact_id": 12097969226,
+  "artifact_sha256": "59ac4cbd0896797f024c450ea08a4d41161ff97341af38afe793885e6f65ac2d",
+  "release_id": 415753487,
+  "assets": [
+    {
+      "name": "bootfs-e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126.bin",
+      "bytes": 5570560,
+      "sha256": "e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/bootfs-e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126.bin",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "bootloader.bin",
+      "bytes": 22640,
+      "sha256": "e6f972e995732aa8ec92eb18d89f0240d0bcac8d1c80d0568c024eb23933dc64",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/bootloader.bin",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "ci-provenance.zip",
+      "bytes": 6832,
+      "sha256": "8e7b6a641d0008ec989d05465a49aad17a34509978e666eb2f03301f904a3734",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/ci-provenance.zip",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "default.elf",
+      "bytes": 554744,
+      "sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/default.elf",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "default.json",
+      "bytes": 1692,
+      "sha256": "4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/default.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "feed-qualification.json",
+      "bytes": 1275,
+      "sha256": "457f1f303065f324f076e24cfcdfa26e053072f595c6c78dc7f9e7f80c5ec0b1",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/feed-qualification.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "firmware.bin",
+      "bytes": 1624560,
+      "sha256": "cd8f7f51d9c604e4f3b12b5f54dcc83817b812baa973b5862321a94e951f0034",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/firmware.bin",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "native-packages-v1.json",
+      "bytes": 12674,
+      "sha256": "2f08c10587344d3eb2ae07967a990ec1102719c9298582daa60037bd470549c3",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/native-packages-v1.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "partitions.bin",
+      "bytes": 3072,
+      "sha256": "d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/partitions.bin",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "qualification.json",
+      "bytes": 1414901,
+      "sha256": "2933128fa25f11e73774d3f3ba68baa4a1124670967490780cfb14fcf48371b4",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/qualification.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "RELEASE-NOTES.txt",
+      "bytes": 1239,
+      "sha256": "554b126309cf66f38744f5ef3b26db28b7dc80564ed2ef0fefd683f008ede5ca",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/RELEASE-NOTES.txt",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "release.json",
+      "bytes": 14324,
+      "sha256": "da543f20f492b5e29de7ad79ee501632c2c7c6cb52b2a9468a4f1f1b62bfe940",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/release.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1599,
+      "sha256": "7c818e12031dc82196bbed340f8867be91a3fde075afa53734f7cbea496d3bf0",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/SHA256SUMS",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "source-lock.json",
+      "bytes": 10148,
+      "sha256": "a678bc8445ec5b0b0d573986dc47a81ffbc78599c8bd2be9c7ea62f31a78dec6",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/source-lock.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 3350,
+      "sha256": "004e24b2e6717fc8ba09f46a9ea2bd6ab99e82838da4c53bba435a4cd75bc061",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/source-pins.json",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "store.bin",
+      "bytes": 5570560,
+      "sha256": "e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/store.bin",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "TESTING.txt",
+      "bytes": 2313,
+      "sha256": "68964214c3d7c0834b788162fde2cffc4f49433b3388dece8e00f718a4833de4",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TESTING.txt",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "TWatch-1.1.46-Provisioning-Evidence.zip",
+      "bytes": 21862871,
+      "sha256": "07eecd7b47ce3368f89025981df048408ba84a981285415e9f56fd66902d18e3",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TWatch-1.1.46-Provisioning-Evidence.zip",
+      "publisher_artifact_identical": true
+    },
+    {
+      "name": "TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+      "bytes": 16777216,
+      "sha256": "e132a6276cd444cd41482ecfcc2043296b2acf02ef882acc83ba1af4c76edff6",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+      "publisher_artifact_identical": true
+    }
+  ]
+}

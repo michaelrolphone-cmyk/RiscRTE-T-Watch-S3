@@ -1,0 +1,186 @@
+{
+  "kind": "release",
+  "id": "RiscRTE-T-Watch-S3:test-provisioning-1.1.46",
+  "data": {
+    "repo": "RiscRTE-T-Watch-S3",
+    "tag": "test-provisioning-1.1.46",
+    "name": "T-Watch 1.1.46 current shared Home, hardware untested",
+    "date": "2026-10-17T11:01:55Z",
+    "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/tag/test-provisioning-1.1.46",
+    "body": "TWatch 1.1.46 complete core provisioning\n\nHome SHA256 f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54. Runtime 0.4.11; ESP-IDF 6.1; GCC 15.2.\nComplete125-file/61-ELF internal store and credential-free boot_profiles.core feed.\nThe separate dynamic apps list is empty; the bootstrap inventory is complete.\nSettings, Springboard and58 retained ELFs remain byte-identical to1.1.43.\nCompared with 1.1.45, 122 of 125 store files and 60 of 61 ELFs are unchanged; only Home ELF, Home version manifest and native cohort identity differ.\nHome 0.20.1 matches Waveshare 0.1.59 exactly, with native sleep transactions, confirmation deferral and first-exit checkpoint.\nThe lossless atlas codec preserves decoded pixels and uses256 additional stack bytes per decode.\nRTEF1 serial file namespace2 remains private AppData, never the boot bank.\nSoftware-qualified; hardware first-start/profile acceptance has not been tested.\nFactory image ERASES existing data. Back up first. No preserving update kit is supplied.\nThe1.1.43 preserving transition is rejected because Home gains already-owned namespace6 without migration authority.\nDo not flash firmware/store files independently; their native identity and bank binding must remain paired.\n",
+    "prerelease": true,
+    "assets": [
+      {
+        "name": "bootfs-e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126.bin",
+        "size": 5570560,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/bootfs-e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126.bin",
+        "digest": "sha256:e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126"
+      },
+      {
+        "name": "bootloader.bin",
+        "size": 22640,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/bootloader.bin",
+        "digest": "sha256:e6f972e995732aa8ec92eb18d89f0240d0bcac8d1c80d0568c024eb23933dc64"
+      },
+      {
+        "name": "ci-provenance.zip",
+        "size": 6832,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/ci-provenance.zip",
+        "digest": "sha256:8e7b6a641d0008ec989d05465a49aad17a34509978e666eb2f03301f904a3734"
+      },
+      {
+        "name": "default.elf",
+        "size": 554744,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/default.elf",
+        "digest": "sha256:f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54"
+      },
+      {
+        "name": "default.json",
+        "size": 1692,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/default.json",
+        "digest": "sha256:4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068"
+      },
+      {
+        "name": "feed-qualification.json",
+        "size": 1275,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/feed-qualification.json",
+        "digest": "sha256:457f1f303065f324f076e24cfcdfa26e053072f595c6c78dc7f9e7f80c5ec0b1"
+      },
+      {
+        "name": "firmware.bin",
+        "size": 1624560,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/firmware.bin",
+        "digest": "sha256:cd8f7f51d9c604e4f3b12b5f54dcc83817b812baa973b5862321a94e951f0034"
+      },
+      {
+        "name": "native-packages-v1.json",
+        "size": 12674,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/native-packages-v1.json",
+        "digest": "sha256:2f08c10587344d3eb2ae07967a990ec1102719c9298582daa60037bd470549c3"
+      },
+      {
+        "name": "partitions.bin",
+        "size": 3072,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/partitions.bin",
+        "digest": "sha256:d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+      },
+      {
+        "name": "qualification.json",
+        "size": 1414901,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/qualification.json",
+        "digest": "sha256:2933128fa25f11e73774d3f3ba68baa4a1124670967490780cfb14fcf48371b4"
+      },
+      {
+        "name": "RELEASE-NOTES.txt",
+        "size": 1239,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/RELEASE-NOTES.txt",
+        "digest": "sha256:554b126309cf66f38744f5ef3b26db28b7dc80564ed2ef0fefd683f008ede5ca"
+      },
+      {
+        "name": "release.json",
+        "size": 14324,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/release.json",
+        "digest": "sha256:da543f20f492b5e29de7ad79ee501632c2c7c6cb52b2a9468a4f1f1b62bfe940"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 1599,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/SHA256SUMS",
+        "digest": "sha256:7c818e12031dc82196bbed340f8867be91a3fde075afa53734f7cbea496d3bf0"
+      },
+      {
+        "name": "source-lock.json",
+        "size": 10148,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/source-lock.json",
+        "digest": "sha256:a678bc8445ec5b0b0d573986dc47a81ffbc78599c8bd2be9c7ea62f31a78dec6"
+      },
+      {
+        "name": "source-pins.json",
+        "size": 3350,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/source-pins.json",
+        "digest": "sha256:004e24b2e6717fc8ba09f46a9ea2bd6ab99e82838da4c53bba435a4cd75bc061"
+      },
+      {
+        "name": "store.bin",
+        "size": 5570560,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/store.bin",
+        "digest": "sha256:e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126"
+      },
+      {
+        "name": "TESTING.txt",
+        "size": 2313,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TESTING.txt",
+        "digest": "sha256:68964214c3d7c0834b788162fde2cffc4f49433b3388dece8e00f718a4833de4"
+      },
+      {
+        "name": "TWatch-1.1.46-Provisioning-Evidence.zip",
+        "size": 21862871,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TWatch-1.1.46-Provisioning-Evidence.zip",
+        "digest": "sha256:07eecd7b47ce3368f89025981df048408ba84a981285415e9f56fd66902d18e3"
+      },
+      {
+        "name": "TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+        "size": 16777216,
+        "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+        "digest": "sha256:e132a6276cd444cd41482ecfcc2043296b2acf02ef882acc83ba1af4c76edff6"
+      }
+    ],
+    "hardware_profiles": [
+      "watch"
+    ],
+    "source_commit": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+    "installation": "Factory image at offset 0 erases saved settings and internal device data. Back up first. No preserving update kit is supplied: the 1.1.43 transition correctly rejects Home's newly claimed namespace 6 without migration authority. Do not flash standalone firmware/store files independently; their identity and bank binding must remain paired. Follow TESTING.txt.",
+    "verification": {
+      "software": {
+        "status": "passed",
+        "summary": "Exact-source ESP-IDF 6.1/GCC 15.2 native build with Runtime 0.4.11 sleep custody and storage-busy serial control progress. Identical Home 0.20.1 ELF and manifest to Waveshare 0.1.59. Complete 125-file/61-ELF internal store, 21 free blocks, normal and ASan/UBSan native production-loader admission pass. All 19 public assets downloaded and exactly match publisher artifact 12097969226 from run39026555734 attempt1, reused by publisher attempt2. Final factory extraction preserves 122 of125 prior1.1.45 files and60 of61 ELFs; only Home, its version-only manifest and native cohort differ. Actual final ELF IQ reservation and linked workspace proof recomputed independently: 7936-byte heap-to-IQ gap, 32 platform slots, 15208-byte internal package workspace, boot and serial static workspaces in external RAM. Complete paired credential-free boot_profiles.core feed selects125 files; dynamic apps list is empty. Linked proof does not establish physical dynamic heap or hardware acceptance.",
+        "source_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/commit/ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+        "publication_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39026555734/attempts/2",
+        "native_run_attempt": 1,
+        "publication_run_attempt": 2,
+        "release_artifact_id": 12097969226,
+        "runtime_source": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+        "runtime_version": "0.4.11",
+        "watch_source": "416fa9f144fa5bd5471e6f4c9cefff21455c8361",
+        "system_source": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
+        "utilities_source": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
+        "default_sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54",
+        "default_bytes": 554744,
+        "default_manifest_sha256": "4d7e8efbc0b078c5b6f95123ae1b8a71006be8fbea1e900c0c9598e8a2cc3068",
+        "settings_sha256": "fa1c87a1e971d1d64a5d65d8e655d898bbd227a42364f639517ff53ea2966e3e",
+        "alarm_sha256": "189ce61b0e4a2b08cbd83ff90564a4c79a6c5e9a3d74b4ad4dcc2a61b4b51604",
+        "native_firmware_sha256": "cd8f7f51d9c604e4f3b12b5f54dcc83817b812baa973b5862321a94e951f0034",
+        "checksums_sha256": "7c818e12031dc82196bbed340f8867be91a3fde075afa53734f7cbea496d3bf0",
+        "independent_public_audit_sha256": "6505df6eaac2989bc7c0fc9fcd58262f2539a626002f277938bffc1064399474",
+        "baseline_release_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/tag/test-provisioning-1.1.45",
+        "provisioning_feed_url": "https://raw.githubusercontent.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/provisioning-index/native-packages-v1.json",
+        "provisioning_feed_commit": "c2ea463a0bff968ce38e2a270aedfae7c49fefb4",
+        "provisioning_feed_sha256": "2f08c10587344d3eb2ae07967a990ec1102719c9298582daa60037bd470549c3",
+        "native_elf_sha256": "6bf06b099b3d77e28150e2af5933d5a08427383fb9724ed4bb30316c8867d227"
+      },
+      "hardware": {
+        "status": "not_tested",
+        "accepted": false,
+        "summary": "Physical first-start, provisioning profiles, Wi-Fi/SNTP, display/touch, settings persistence, application loading, sleep/wake, alarms and serial file transfers remain untested for this release. Linked-memory proof does not establish dynamic physical heap fit. See TESTING.txt."
+      },
+      "factory_image": {
+        "status": "verified_release_bytes",
+        "offset": 0,
+        "size": 16777216,
+        "digest": "sha256:e132a6276cd444cd41482ecfcc2043296b2acf02ef882acc83ba1af4c76edff6",
+        "erases_saved_data": true,
+        "source_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/tag/test-provisioning-1.1.46"
+      },
+      "checked_at": "2026-10-17T11:04:52.499576+00:00"
+    },
+    "flash": {
+      "profile": "watch",
+      "asset_name": "TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin",
+      "offset": 0,
+      "size": 16777216
+    }
+  },
+  "revision": 1,
+  "archived": false,
+  "updatedAt": "2026-10-17T11:05:13.250Z"
+}

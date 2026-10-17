@@ -1,0 +1,337 @@
+{
+  "admission": {
+    "active_platform_count": 20,
+    "active_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+    "app_policy_rows": 32,
+    "candidate_platform_count": 20,
+    "candidate_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+    "cohort_validated": true,
+    "cooperative_yields": 196,
+    "elf_count": 61,
+    "error": "",
+    "fixture_sha256": "fce0d73e79f6f4a96968aa5d30e3ebd5f7627e50e7aa5202c3cdf43691b3c23d",
+    "hardware_calls": 0,
+    "mode": "factory-bootstrap-self-admission",
+    "native_composition": {
+      "bounds": {
+        "RISC_APP_POLICY_ROWS": 32,
+        "RISC_APP_REQUIREMENT_ROWS": 32,
+        "RISC_INSTALLED_APP_CAPACITY": 64,
+        "RISC_PLATFORM_CAPACITY": 32,
+        "RISC_PROVIDER_CAPACITY": 40
+      },
+      "file_source_enabled": true,
+      "native_layout": {
+        "marker_address": 1008006183,
+        "marker_bytes": 24,
+        "marker_symbol": "risc_paired_store_abi",
+        "store_abi": 3
+      },
+      "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+      "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+      "store_abi": 3
+    },
+    "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+    "prepared": true,
+    "preserving_transition": {
+      "active_platform_count": 19,
+      "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+      "app_policy_rows": 32,
+      "authority_only_control": {
+        "active_platform_count": 19,
+        "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+        "app_policy_rows": 32,
+        "candidate_platform_count": 20,
+        "candidate_store_sha256": "8f548a0f405a739a7907cafc748192b717d75b799562a60c923bb7ef74d1ed9e",
+        "cohort_validated": true,
+        "cooperative_yields": 196,
+        "elf_count": 61,
+        "error": "",
+        "hardware_calls": 0,
+        "native_composition": {
+          "bounds": {
+            "RISC_APP_POLICY_ROWS": 32,
+            "RISC_APP_REQUIREMENT_ROWS": 32,
+            "RISC_INSTALLED_APP_CAPACITY": 64,
+            "RISC_PLATFORM_CAPACITY": 32,
+            "RISC_PROVIDER_CAPACITY": 40
+          },
+          "file_source_enabled": true,
+          "native_layout": {
+            "marker_address": 1008006183,
+            "marker_bytes": 24,
+            "marker_symbol": "risc_paired_store_abi",
+            "store_abi": 3
+          },
+          "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+          "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+          "store_abi": 3
+        },
+        "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "candidate_platform_count": 20,
+      "candidate_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+      "cohort_validated": false,
+      "control_packaged": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "expected_rejection": true,
+      "hardware_calls": 0,
+      "native_composition": {
+        "bounds": {
+          "RISC_APP_POLICY_ROWS": 32,
+          "RISC_APP_REQUIREMENT_ROWS": 32,
+          "RISC_INSTALLED_APP_CAPACITY": 64,
+          "RISC_PLATFORM_CAPACITY": 32,
+          "RISC_PROVIDER_CAPACITY": 40
+        },
+        "file_source_enabled": true,
+        "native_layout": {
+          "marker_address": 1008006183,
+          "marker_bytes": 24,
+          "marker_symbol": "risc_paired_store_abi",
+          "store_abi": 3
+        },
+        "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+        "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+        "store_abi": 3
+      },
+      "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+      "prepared": true,
+      "reason": "Existing twatch-clock gains already-owned storage.key-value namespace 6 without migration authority.",
+      "runtime_guard": "src/bootstrap/CohortRuntime.inc: used && !owned; !migrating",
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    },
+    "sanitized": false,
+    "selected_native_features": {
+      "diagnostic_source": false,
+      "usb_phy": false
+    },
+    "selected_platform_capacity": 32,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "admission_sanitized": {
+    "active_platform_count": 20,
+    "active_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+    "app_policy_rows": 32,
+    "candidate_platform_count": 20,
+    "candidate_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+    "cohort_validated": true,
+    "cooperative_yields": 196,
+    "elf_count": 61,
+    "error": "",
+    "fixture_sha256": "fce0d73e79f6f4a96968aa5d30e3ebd5f7627e50e7aa5202c3cdf43691b3c23d",
+    "hardware_calls": 0,
+    "mode": "factory-bootstrap-self-admission",
+    "native_composition": {
+      "bounds": {
+        "RISC_APP_POLICY_ROWS": 32,
+        "RISC_APP_REQUIREMENT_ROWS": 32,
+        "RISC_INSTALLED_APP_CAPACITY": 64,
+        "RISC_PLATFORM_CAPACITY": 32,
+        "RISC_PROVIDER_CAPACITY": 40
+      },
+      "file_source_enabled": true,
+      "native_layout": {
+        "marker_address": 1008006183,
+        "marker_bytes": 24,
+        "marker_symbol": "risc_paired_store_abi",
+        "store_abi": 3
+      },
+      "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+      "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+      "store_abi": 3
+    },
+    "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+    "prepared": true,
+    "preserving_transition": {
+      "active_platform_count": 19,
+      "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+      "app_policy_rows": 32,
+      "authority_only_control": {
+        "active_platform_count": 19,
+        "active_store_sha256": "f422284729995c6cfdc173fc3c229f53e54d8a3cab057aca2fc9ada9e7fd74dc",
+        "app_policy_rows": 32,
+        "candidate_platform_count": 20,
+        "candidate_store_sha256": "8f548a0f405a739a7907cafc748192b717d75b799562a60c923bb7ef74d1ed9e",
+        "cohort_validated": true,
+        "cooperative_yields": 196,
+        "elf_count": 61,
+        "error": "",
+        "hardware_calls": 0,
+        "native_composition": {
+          "bounds": {
+            "RISC_APP_POLICY_ROWS": 32,
+            "RISC_APP_REQUIREMENT_ROWS": 32,
+            "RISC_INSTALLED_APP_CAPACITY": 64,
+            "RISC_PLATFORM_CAPACITY": 32,
+            "RISC_PROVIDER_CAPACITY": 40
+          },
+          "file_source_enabled": true,
+          "native_layout": {
+            "marker_address": 1008006183,
+            "marker_bytes": 24,
+            "marker_symbol": "risc_paired_store_abi",
+            "store_abi": 3
+          },
+          "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+          "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+          "store_abi": 3
+        },
+        "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+        "prepared": true,
+        "storage_calls": 0,
+        "target_instructions_executed": false
+      },
+      "candidate_platform_count": 20,
+      "candidate_store_sha256": "6a37519711bec144eded6922ebe3e89da87ca1afd5848b38b046e280308e954e",
+      "cohort_validated": false,
+      "control_packaged": false,
+      "cooperative_yields": 0,
+      "elf_count": 0,
+      "error": "",
+      "expected_rejection": true,
+      "hardware_calls": 0,
+      "native_composition": {
+        "bounds": {
+          "RISC_APP_POLICY_ROWS": 32,
+          "RISC_APP_REQUIREMENT_ROWS": 32,
+          "RISC_INSTALLED_APP_CAPACITY": 64,
+          "RISC_PLATFORM_CAPACITY": 32,
+          "RISC_PROVIDER_CAPACITY": 40
+        },
+        "file_source_enabled": true,
+        "native_layout": {
+          "marker_address": 1008006183,
+          "marker_bytes": 24,
+          "marker_symbol": "risc_paired_store_abi",
+          "store_abi": 3
+        },
+        "product_profile_sha256": "01d757e04c5cdf4c7eb1c82750ff62a3f52b4d74a39ae40ceb25faf7d8ff5fdc",
+        "runtime_commit": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+        "store_abi": 3
+      },
+      "native_elf_sha256": "d98c4bf22c837f880686b942725b636ba9042e30a710e37d1a2be1ec6436ef28",
+      "prepared": true,
+      "reason": "Existing twatch-clock gains already-owned storage.key-value namespace 6 without migration authority.",
+      "runtime_guard": "src/bootstrap/CohortRuntime.inc: used && !owned; !migrating",
+      "storage_calls": 0,
+      "target_instructions_executed": false
+    },
+    "sanitized": true,
+    "selected_native_features": {
+      "diagnostic_source": false,
+      "usb_phy": false
+    },
+    "selected_platform_capacity": 32,
+    "storage_calls": 0,
+    "target_instructions_executed": false
+  },
+  "boot_authority_unchanged": true,
+  "checksums_sha256": "af38ee1d03532e4ff5facddd165a19a8f23eb036d134cf6a4d1f3aaf5f935cbe",
+  "core_files": 125,
+  "default_bytes": 554744,
+  "default_sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54",
+  "device_accessed": false,
+  "factory_bytes": 16777216,
+  "factory_erases_data": true,
+  "factory_sha256": "ba736c8783c6a61783c3043d1fb13ae4afbbbc67e53dc05a05c6630210cdfb65",
+  "feed_sha256": "a976a3c773226d7cc5320ec645beb78751930c9679d351bf3765a1410ca049fd",
+  "firmware_sha256": "07a8b2a754bd8b7506790bdf2aa29c5ad10a40460cf60da0a17fa7aa435f3722",
+  "hardware_tested": false,
+  "home_manifest_version_only": true,
+  "linked_layout": {
+    "compiled_runtime_rows": 56,
+    "flags": [
+      "RISC_NATIVE_PACKAGE_VOLUME=1",
+      "RISC_NATIVE_PROVISION_REQUEST=1",
+      "RISC_PLATFORM_CAPACITY=32"
+    ],
+    "hardware_tested": false,
+    "home_compatibility": {
+      "abi_identical": true,
+      "append_only_sleep_abi_compiles": true,
+      "hardware_tested": false,
+      "paired_confirmation_storage_veto_preserved": true,
+      "scope": "ABI/source selection; separate normal/sanitized Runtime behavior and exact linked native checks are required",
+      "serial_control_progress_selected": true,
+      "sources": {
+        "sdk/app/RiscRuntimeSleepV1.h": "b21695ec84db931e58ddb1a2a916f7f017d55d7546707eb25ee4247df87e3a28",
+        "sdk/app/RiscRuntimeV1.h": "fd7f2a7e817f12a78518176f5a3561b95cfdcfafebe19c980359162a5e29e2b6",
+        "src/bootstrap/Runtime.cpp": "9d1fa51f2c04153767cc2eaaf1a2f90ccb8907d41f2543cf50dacbcd9d42394e",
+        "src/runtime/serial/Files.cpp": "97f879319b2436c3975aac521130ee9f8dc37675b9811709b81e93bb8f4457f9"
+      }
+    },
+    "linked_layout": {
+      "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+      "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+      "static_workspaces": {
+        "boot_view": {
+          "address": 1008205824,
+          "bytes": 288,
+          "section": ".ext_ram.bss"
+        },
+        "serial_workspace": {
+          "address": 1008206112,
+          "bytes": 2792,
+          "section": ".ext_ram.bss"
+        }
+      },
+      "types": {
+        "package_workspace_bytes": 15208,
+        "platform_entry_bytes": 120,
+        "platform_slots": 32,
+        "runtime_bytes": 327224
+      }
+    }
+  },
+  "observed_at": "2026-10-17T10:51:39.791594+00:00",
+  "packing": {
+    "config": {
+      "aligned": true,
+      "aligned_obj_ix_tables": false,
+      "block_ix_len": 2,
+      "block_size": 4096,
+      "endianness": "little",
+      "meta_len": 4,
+      "obj_id_len": 2,
+      "obj_name_len": 32,
+      "packed": true,
+      "page_ix_len": 2,
+      "page_size": 256,
+      "span_ix_len": 2,
+      "use_magic": true,
+      "use_magic_len": true
+    },
+    "empty_blocks": 21,
+    "file_count": 125,
+    "generator": "esp-idf-spiffsgen",
+    "generator_sha256": "5779792a4d98a12383233267511735769a201b5c2c79b582186a40c22b7c6466",
+    "image_bytes": 5570560,
+    "independent_round_trip_verified": true,
+    "metadata": "zero",
+    "occupied_blocks": 1339,
+    "order": "sorted ASCII path names",
+    "payload_bytes": 4958853,
+    "sha256": "2411f55de8e84aca01cb9eb77716ce2613099c96af508437bbde6a4f200f710e",
+    "upstream_commit": "38eeba213aa695aabfd6d89aa9f5078dbe5a94c3"
+  },
+  "previous045_changed_store_files": [
+    "cohort.json",
+    "default.elf",
+    "default.json"
+  ],
+  "previous045_unchanged_elfs": 60,
+  "previous045_unchanged_store_payloads": 122,
+  "public_assets": [],
+  "schema": 1,
+  "source_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "store_sha256": "2411f55de8e84aca01cb9eb77716ce2613099c96af508437bbde6a4f200f710e",
+  "wave059_home_byte_identical": true
+}

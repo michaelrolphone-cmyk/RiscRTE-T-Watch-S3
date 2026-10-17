@@ -1,0 +1,104 @@
+{
+  "release_id": 415626267,
+  "tag": "test-provisioning-1.1.45",
+  "source": "047e86eec40ecc2930b533be9ebb1e753e588a9c",
+  "assets_unchanged": 19,
+  "checksums_http_sha256": "ee90cd7cae52e09b47633d5aa89ddb2588950d05ac536a172c760ffdd85c4ed3",
+  "assets": [
+    {
+      "name": "RELEASE-NOTES.txt",
+      "bytes": 1162,
+      "digest": "sha256:2e52eaa8e0f5e4681ef6b38a77b704eaf40f16722fe1583f28788b4d6eda8e78"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1599,
+      "digest": "sha256:ee90cd7cae52e09b47633d5aa89ddb2588950d05ac536a172c760ffdd85c4ed3"
+    },
+    {
+      "name": "TESTING.txt",
+      "bytes": 2236,
+      "digest": "sha256:71306f2f0f6d60e452d74b572c3b43bee1ba23902095689afd9ba7de4bf62bd7"
+    },
+    {
+      "name": "TWatch-1.1.45-Provisioning-Evidence.zip",
+      "bytes": 21825878,
+      "digest": "sha256:088d2459bd52e3541255f3ac0dcb8308bfe7d21f2fec4bab332004419e163421"
+    },
+    {
+      "name": "TWatch-1.1.45-Provisioning-factory-erases-data-0x0.bin",
+      "bytes": 16777216,
+      "digest": "sha256:7ccd3b1b24e1ec0321a9cbb8e74806fce3dddb76f341828fff882d0d9e604e20"
+    },
+    {
+      "name": "bootfs-5240158441c90332056b66250b2c8755796e5fdad8ffb4022ea4c2e23eee402a.bin",
+      "bytes": 5570560,
+      "digest": "sha256:5240158441c90332056b66250b2c8755796e5fdad8ffb4022ea4c2e23eee402a"
+    },
+    {
+      "name": "bootloader.bin",
+      "bytes": 22640,
+      "digest": "sha256:03b8bbfedbfa689705ea0e362820c659d17989074aac950ee001daba2c208144"
+    },
+    {
+      "name": "ci-provenance.zip",
+      "bytes": 6823,
+      "digest": "sha256:2f140032d864bfef5fb64d8a5d28709c42390f301300f9cb338f2d089d6eb310"
+    },
+    {
+      "name": "default.elf",
+      "bytes": 552616,
+      "digest": "sha256:5797b757e228f2055f4fda3384659e91830f77ff03a636f9b3f605aeca8ace0d"
+    },
+    {
+      "name": "default.json",
+      "bytes": 1692,
+      "digest": "sha256:37be8bc578456c4fff51f2576ac7a657d5ee96fdd3d6a536abaf8db598653e44"
+    },
+    {
+      "name": "feed-qualification.json",
+      "bytes": 1275,
+      "digest": "sha256:9624853340984b97eff165ae22ffd3cafb76dae79eee877e347957fe5a33a4e8"
+    },
+    {
+      "name": "firmware.bin",
+      "bytes": 1620944,
+      "digest": "sha256:cb6daee8d22b697ce30f58902c67ba88dc7b020ffa0795b68d4f61eb141390f5"
+    },
+    {
+      "name": "native-packages-v1.json",
+      "bytes": 12673,
+      "digest": "sha256:f4fd3cf4672032375aa5a0513fd8b74e0f52f5a15c620de9cb28829bd95f2946"
+    },
+    {
+      "name": "partitions.bin",
+      "bytes": 3072,
+      "digest": "sha256:d27edcdba637142baa7d91e29b70df47554c22a4f14de303dc6a0cdcc1e25de8"
+    },
+    {
+      "name": "qualification.json",
+      "bytes": 1413809,
+      "digest": "sha256:384f48c25113195828168fc7914bc48f5294190855075a79d6edf5f7eea5207f"
+    },
+    {
+      "name": "release.json",
+      "bytes": 14324,
+      "digest": "sha256:ea013e49c660af29aeb78bf2132cf40cf2c99f6c487ae04825f3f4dae5e33afe"
+    },
+    {
+      "name": "source-lock.json",
+      "bytes": 10148,
+      "digest": "sha256:d1fe1f9da06511e6b756fffccfe4af36b1fa0e895b37ea12ee81062f05e11e17"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 3319,
+      "digest": "sha256:cbc1e9cd79bb7a8f0c0ee09557f1e60c0ae62a112e05e0defdd1b05dec402ab1"
+    },
+    {
+      "name": "store.bin",
+      "bytes": 5570560,
+      "digest": "sha256:5240158441c90332056b66250b2c8755796e5fdad8ffb4022ea4c2e23eee402a"
+    }
+  ]
+}

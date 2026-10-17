@@ -1,0 +1,9 @@
+serial control metadata, bounded Busy, owner/cancel/live-handle safety PASS
+Serial files normal PASS (endpoint bytes=1432)
+Serial files zero PASS (endpoint bytes=1432)
+Serial files full PASS (endpoint bytes=1432)
+Serial files sync PASS (endpoint bytes=1432)
+Serial files retained PASS (endpoint bytes=1432)
+Serial files invalid-count PASS (endpoint bytes=1432)
+Serial files lost-owner PASS (endpoint bytes=1432)
+Serial files failed-close PASS (endpoint bytes=1432)
