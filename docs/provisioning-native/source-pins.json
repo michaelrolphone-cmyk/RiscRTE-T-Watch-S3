@@ -49,6 +49,7 @@
       "sha256": "1ec2aeb0c601c2aad2ce26b0d4cea1f8b87bb3fbd51b2288a8e6d9f6fddd2211"
     }
   },
+  "publication_enabled": true,
   "release_branch": "release/provisioning-1.1.44",
   "release_tag": "test-provisioning-1.1.44",
   "runtime_revision": "51520408a5cfbcb7b8b1bcea482a2e4357224d10",

@@ -68,3 +68,10 @@ final linked IQ reservation and placement are checked in native CI.
 The selected Runtime0.4.8 union is `51520408a5cfbcb7b8b1bcea482a2e4357224d10`.
 Its idle serial cancellation repair retains live-transfer and reentrant guards.
 Both new provider ELFs rebuild byte-identically at this pin.
+
+The release workflow rebuilds and qualifies the exact pushed source, transports
+the complete native/store/feed payload, and verifies every asset on readback.
+Only the existing release/provisioning-1.1.44 branch performs publication.
+The feed branch is created after the immutable release is public; a retry must
+match identical bytes and cannot overwrite a different active feed. The public
+release discloses factory erasure and the rejected preserving-transition guard.

@@ -10,6 +10,7 @@ exec > >(tee "$NATIVE_ROOT/logs/native-release-build.log") 2>&1
 cp "$product/.github/workflows/provisioning-native.yml" "$NATIVE_ROOT/metadata/workflow.yml"
 python -m pip install pyelftools==0.32
 python "$product/scripts/test_provisioning_package.py"
+python "$product/scripts/test_provisioning_release.py"
 python - "$product" "$NATIVE_ROOT" <<'PY'
 import json,os,sys
 from pathlib import Path
@@ -25,7 +26,7 @@ expected='michaelrolphone-cmyk/'+{'twatch':'RiscRTE-T-Watch-S3','waveshare':'Ris
 assert os.environ['GITHUB_REPOSITORY']==expected
 (root/'metadata/baseline.json').write_text(json.dumps(c))
 with open(os.environ['GITHUB_OUTPUT'],'a') as out:
- for k in ('product','version','release_tag','release_branch'):
+ for k in ('product','version','release_tag','release_branch','publication_enabled'):
   print(k+'='+str(p[k]).lower() if isinstance(p[k],bool) else k+'='+str(p[k]),file=out)
 keys=('GITHUB_REPOSITORY','GITHUB_SHA','GITHUB_REF','GITHUB_RUN_ID','GITHUB_RUN_ATTEMPT','GITHUB_WORKFLOW_REF','GITHUB_WORKFLOW_SHA')
 (root/'metadata/ci-run.json').write_text(json.dumps({k:os.environ.get(k) for k in keys},sort_keys=True,indent=2)+'\n')
@@ -88,3 +89,9 @@ python "$NATIVE_ROOT/sources/runtime/test/native_firmware_idf6_test.py" --build 
 target="$(python -c "import json; print(json.load(open('$product/docs/native-idf61/released-baseline.json'))['target'])")"
 python "$NATIVE_ROOT/sources/runtime/scripts/native_idf_iq_link.py" verify \
  --elf "$NATIVE_ROOT/build/riscrte_native.elf" --target "$target" --output "$NATIVE_ROOT/metadata/iq-linked.json"
+
+python "$product/scripts/provisioning_release.py" --source-revision "$GITHUB_SHA" \
+ --candidate "$NATIVE_ROOT/candidate" --runtime "$NATIVE_ROOT/sources/runtime" --image-helper "$NATIVE_ROOT/sources/image_helper" \
+ --baseline "$NATIVE_ROOT/inputs/released-factory.bin" --metadata "$NATIVE_ROOT/metadata" --output "$NATIVE_ROOT/release"
+checksums_sha256="$(sha256sum "$NATIVE_ROOT/release/SHA256SUMS" | cut -d' ' -f1)"
+echo "checksums_sha256=$checksums_sha256" >> "$GITHUB_OUTPUT"

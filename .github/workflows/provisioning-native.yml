@@ -17,9 +17,16 @@ concurrency:
   cancel-in-progress: false
 jobs:
   native:
+    if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     container: espressif/idf:v6.1@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
+    outputs:
+      publication_enabled: ${{ steps.build.outputs.publication_enabled }}
+      release_tag: ${{ steps.build.outputs.release_tag }}
+      release_branch: ${{ steps.build.outputs.release_branch }}
+      version: ${{ steps.build.outputs.version }}
+      checksums_sha256: ${{ steps.build.outputs.checksums_sha256 }}
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONNOUSERSITE: '1'
@@ -45,12 +52,13 @@ jobs:
           git -C "$NATIVE_ROOT/sources/product" checkout --quiet --detach FETCH_HEAD
           test "$(git -C "$NATIVE_ROOT/sources/product" rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Build exact native product and qualify complete provisioning store and core feed
+        id: build
         run: bash "$NATIVE_ROOT/sources/product/scripts/run_provisioning_native_ci.sh"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success()
         with:
-          name: twatch-provisioning-candidate-${{ github.sha }}
-          path: ${{ env.NATIVE_ROOT }}/candidate/
+          name: twatch-provisioning-release-${{ github.sha }}
+          path: ${{ env.NATIVE_ROOT }}/release/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
@@ -70,3 +78,39 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
           compression-level: 0
+  publish:
+    needs: native
+    if: needs.native.outputs.publication_enabled == 'true' && github.repository == 'michaelrolphone-cmyk/RiscRTE-T-Watch-S3' && github.ref == format('refs/heads/{0}', needs.native.outputs.release_branch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: product
+    env:
+      RELEASE_TAG: ${{ needs.native.outputs.release_tag }}
+      VERSION: ${{ needs.native.outputs.version }}
+      EXPECTED_SHA: ${{ needs.native.outputs.checksums_sha256 }}
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: product
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: twatch-provisioning-release-${{ github.sha }}
+          path: release-assets
+      - name: Verify source-bound complete release bytes
+        run: python3 scripts/provisioning_release.py --verify ../release-assets --expected-sha "$EXPECTED_SHA" --source-revision "$GITHUB_SHA"
+      - name: Publish or resume exact-source draft; verify every asset before publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish_provisioning_release.py --assets ../release-assets --expected-sha "$EXPECTED_SHA" --source-revision "$GITHUB_SHA"
+      - name: Publish verified credential-free core feed after immutable release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish_provisioning_feed.py --assets ../release-assets --expected-sha "$EXPECTED_SHA" --source-revision "$GITHUB_SHA"
