@@ -200,6 +200,57 @@ class ReleaseContracts(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError,'Unexpected CI source branch'):release.verify_output(root,digest,rev)
                 else:release.verify_output(root,digest,rev)
 
+    def test_created_readback_transport_and_decode_fail_closed(self):
+        for status in (401, 403, 404, 500):
+            result = subprocess.CompletedProcess(['gh'], 1, '', 'HTTP ' + str(status))
+            with self.subTest(status=status), patch.object(publisher.subprocess, 'run', return_value=result) as run, patch.object(publisher.time, 'sleep') as sleep:
+                with self.assertRaisesRegex(RuntimeError, 'GitHub command failed'):
+                    publisher.wait_for_created_release('owner/repo', 'tag')
+                run.assert_called_once(); sleep.assert_not_called()
+        result = subprocess.CompletedProcess(['gh'], 0, '{broken', '')
+        with patch.object(publisher.subprocess, 'run', return_value=result) as run, patch.object(publisher.time, 'sleep') as sleep:
+            with self.assertRaises(json.JSONDecodeError):
+                publisher.wait_for_created_release('owner/repo', 'tag')
+            run.assert_called_once(); sleep.assert_not_called()
+
+    def test_created_readback_propagates_errors_without_retry(self):
+        for error in (RuntimeError('HTTP 401'), RuntimeError('HTTP 403'),
+                      RuntimeError('HTTP 404'), RuntimeError('HTTP 500'),
+                      ValueError('Malformed JSON'), ValueError('Ambiguous release tag')):
+            with self.subTest(error=str(error)), patch.object(publisher, 'find_release', side_effect=[None, error]) as read, patch.object(publisher.time, 'sleep') as sleep:
+                with self.assertRaises(type(error)) as raised:
+                    publisher.wait_for_created_release('owner/repo', 'tag')
+                self.assertIs(raised.exception, error)
+                self.assertEqual(read.call_count, 2)
+                sleep.assert_called_once_with(0.25)
+
+    def test_created_readback_never_retries_identity_or_asset_mismatch(self):
+        good = dict(tag_name='tag', prerelease=True, draft=True, name='title', body='body', assets=[])
+        bad_rows = [dict(good, tag_name='other'), dict(good, prerelease=False),
+                    dict(good, name='wrong'), dict(good, body='wrong'),
+                    dict(good, assets=[dict(name='unexpected', state='uploaded')]),
+                    dict(good, assets=[dict(name='one', state='new')]),
+                    dict(good, assets=[dict(name='one', state='uploaded')]*2)]
+        for row in bad_rows:
+            with self.subTest(row=row), patch.object(publisher, 'find_release', side_effect=[None, row]) as read, patch.object(publisher.time, 'sleep') as sleep:
+                result = publisher.wait_for_created_release('owner/repo', 'tag')
+                with self.assertRaises(ValueError):
+                    publisher.check_release(result, 'tag', {'one'}, 'title', 'body')
+                self.assertEqual(read.call_count, 2)
+                sleep.assert_called_once_with(0.25)
+
+    def test_created_readback_empty_only_and_duplicate_rejection(self):
+        with patch.object(publisher, 'object_json', side_effect=[[[{'tag_name':'other'}]], [[{'tag_name':'tag'}, {'tag_name':'tag'}]]]) as api, patch.object(publisher.time, 'sleep') as sleep:
+            with self.assertRaisesRegex(ValueError, 'Ambiguous'):
+                publisher.wait_for_created_release('owner/repo', 'tag')
+            self.assertEqual(api.call_count, 2)
+            sleep.assert_called_once_with(0.25)
+        for response in (None, {}, [None], [[{}]], [[None]], [[{'tag_name':None}]], 'invalid'):
+            with self.subTest(response=response), patch.object(publisher, 'object_json', return_value=response), patch.object(publisher.time, 'sleep') as sleep:
+                with self.assertRaises(ValueError):
+                    publisher.wait_for_created_release('owner/repo', 'tag')
+                sleep.assert_not_called()
+
     def test_immutable_publication_resume(self):
         rev='1'*40; tag='test-shared-default-1.2.3'; name='refs/tags/'+tag
         row={'ref':name,'object':{'type':'commit','sha':rev}}
@@ -218,11 +269,11 @@ class ReleaseContracts(unittest.TestCase):
         files,report,p,rev=self.output_fixture();p.update(finalized=True,publication_enabled=True);report['publication_enabled']=True
         repo='michaelrolphone-cmyk/'+release.PRODUCTS[p['product']][0];tag=p['release_tag']
         title=release.PRODUCTS[p['product']][1]+' '+p['version']+' complete provisioning, hardware pending'
-        for mode in ('new','tag_only','partial_draft','complete_published','corrupt_existing','wrong_text'):
+        for mode in ('new','tag_only','partial_draft','complete_published','corrupt_existing','wrong_text','delayed_one','delayed_four','absent_forever'):
             with self.subTest(mode=mode),tempfile.TemporaryDirectory() as d,patch.object(package,'pins',return_value=p):
                 root=Path(d);digest=self.write_output(root,files,report);all_files={f.name:f.read_bytes() for f in root.iterdir()}
-                state={'tag':mode!='new','release':None,'assets':{},'calls':[]}
-                if mode not in ('new','tag_only'):
+                state={'tag':mode!='new','release':None,'assets':{},'calls':[], 'hidden': {'delayed_one':1, 'delayed_four':4, 'absent_forever':5}.get(mode,0)}
+                if mode not in ('new','tag_only','delayed_one','delayed_four','absent_forever'):
                     state['release']={'tag_name':tag,'prerelease':True,'draft':mode!='complete_published','name':title,
                         'body':files['RELEASE-NOTES.txt'].decode(),'html_url':'https://github.com/'+repo+'/releases/tag/'+tag}
                     selected=all_files if mode=='complete_published' else dict(list(all_files.items())[:2])
@@ -236,6 +287,8 @@ class ReleaseContracts(unittest.TestCase):
                             return [[{'ref':'refs/tags/'+tag,'object':{'type':'commit','sha':rev}}]] if state['tag'] else [[]]
                         if args[3].endswith('/releases?per_page=100'):
                             if state['release'] is None:return [[]]
+                            if state['hidden']:
+                                state['hidden']-=1;return [[]]
                             r=copy.deepcopy(state['release']);r['assets']=[{'name':n,'state':'uploaded'} for n in state['assets']];return [[r]]
                     if args[:3]==('api','--method','POST'):
                         self.assertFalse(state['tag']);state['tag']=True;return {'ref':'refs/tags/'+tag,'object':{'type':'commit','sha':rev}}
@@ -260,14 +313,21 @@ class ReleaseContracts(unittest.TestCase):
                     if args[:2]==('release','edit'):
                         self.assertEqual(state['assets'],all_files);self.assertIn('--draft=false',args);state['release']['draft']=False;return ''
                     self.fail('Unexpected CLI command: '+str(args))
-                with patch.object(publisher,'object_json',side_effect=api),patch.object(publisher,'gh',side_effect=cli):
-                    if mode in ('corrupt_existing','wrong_text'):
+                with patch.object(publisher,'object_json',side_effect=api),patch.object(publisher,'gh',side_effect=cli),patch.object(publisher.time,'sleep') as sleep:
+                    if mode=='absent_forever':
+                        with self.assertRaisesRegex(RuntimeError,'draft may exist'):publisher.publish(root,digest,rev)
+                        self.assertTrue(state['release']['draft']);self.assertEqual(state['assets'],{})
+                        self.assertEqual(sum(call[:2]==('release','create') for call in state['calls']),1)
+                        self.assertFalse(any(call[:2] in (('release','upload'),('release','edit')) for call in state['calls']))
+                    elif mode in ('corrupt_existing','wrong_text'):
                         with self.assertRaises(ValueError):publisher.publish(root,digest,rev)
                         self.assertTrue(state['release']['draft'])
                     else:
                         publisher.publish(root,digest,rev)
                         self.assertFalse(state['release']['draft']);self.assertEqual(state['assets'],all_files)
-                        self.assertEqual(sum(call[:2]==('release','create') for call in state['calls']),int(mode in ('new','tag_only')))
+                        self.assertEqual(sum(call[:2]==('release','create') for call in state['calls']),int(mode in ('new','tag_only','delayed_one','delayed_four')))
+                    expected={'delayed_one':[0.25],'delayed_four':[0.25,0.5,1.0,2.0],'absent_forever':[0.25,0.5,1.0,2.0]}.get(mode,[])
+                    self.assertEqual([c.args[0] for c in sleep.call_args_list],expected)
 
     def test_feed_creation_and_idempotence(self):
         from publish_provisioning_feed import select_update
