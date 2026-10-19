@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import time
 
 import package_provisioning as package
 from package_provisioning import require, sha
@@ -39,9 +40,32 @@ def check_tags(rows, tag, version, revision):
 
 def find_release(repo, tag):
     pages = object_json('api', '--paginate', '--slurp', 'repos/' + repo + '/releases?per_page=100')
+    require(isinstance(pages, list) and all(isinstance(page, list) for page in pages), 'Malformed release pages')
+    require(all(isinstance(row, dict) and isinstance(row.get('tag_name'), str)
+                for page in pages for row in page), 'Malformed release row')
     rows = [row for page in pages for row in page if row['tag_name'] == tag]
     require(len(rows) <= 1, 'Ambiguous release tag')
     return rows[0] if rows else None
+
+
+
+def wait_for_created_release(repo, tag):
+    """Reconcile successful creation with reads only; errors are never retried.
+
+    Five reads and at most 3.75 seconds of intentional sleep. This is not a
+    wall-clock timeout: each existing gh read can paginate or wait on network I/O.
+    """
+    delays = (0.25, 0.5, 1.0, 2.0)
+    for attempt in range(len(delays) + 1):
+        row = find_release(repo, tag)
+        if row is not None:
+            return row  # The caller immediately applies all identity/asset checks.
+        if attempt < len(delays):
+            time.sleep(delays[attempt])
+    raise RuntimeError(
+        'Created release readback unavailable after 5 reads: ' + repo + ' ' + tag
+        + '; draft may exist. Reconcile with read-only inspection before resuming;'
+        + ' do not recreate or replace it.')
 
 
 def check_release(row, tag, names, title=None, body=None):
@@ -74,7 +98,7 @@ def publish(root, digest, revision):
         gh('release', 'create', tag, '--repo', repo, '--verify-tag', '--target', revision, '--draft', '--prerelease', '--latest=false',
            '--title', title,
            '--notes-file', str(root / 'RELEASE-NOTES.txt'))
-        row = find_release(repo, tag)
+        row = wait_for_created_release(repo, tag)
     missing = check_release(row, tag, names, title, body)
     # A resumed upload may only add missing names. Existing bytes must match;
     # no tag/asset replacement or deletion is performed.
