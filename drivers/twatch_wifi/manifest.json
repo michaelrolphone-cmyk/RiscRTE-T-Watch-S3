@@ -10,7 +10,7 @@
       "api": 1
     }
   ],
-  "version": "0.2.0",
+  "version": "0.2.1",
   "requires": [
     {
       "capability": "hardware.device",
@@ -31,6 +31,6 @@
       "config_version": 1
     }
   ],
-  "status": "software-verified-native-station-prerequisite",
+  "status": "software-verification-in-progress-async-native-prerequisite",
   "physical_verification": "pending"
 }
