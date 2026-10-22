@@ -128,7 +128,8 @@ binary. An offline repeat uses the already verified source cache. Optional
 `--write-matrix` regenerates only the two audit matrices deterministically.
 
 The 25 regression tests cover the complete positive inventory, each of the 125
-declared file hash bindings, all 20 source byte identities, missing/extra/duplicate
+declared path/size/hash bindings with an exact-encoding positive control, all 20
+source byte identities, missing/extra/duplicate
 and overlapping files, unsafe paths, size/hash/type errors, ordering, false
 mirrors or namespace aliases, source/release identity changes, source-root and
 reserve regressions, schema emptiness, invented budgets/consumer/hardware claims,

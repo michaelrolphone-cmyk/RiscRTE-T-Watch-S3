@@ -45,13 +45,21 @@ class SourceAudit(unittest.TestCase):
             self.assertFalse(row['execution_verified'])
             self.assertIn('store_files', row['evidence'])
 
-    def test_every_declared_file_hash_is_bound_by_exact_feed(self):
+    def test_every_declared_file_identity_is_bound_by_exact_feed(self):
+        def feed_bytes(value):
+            return (json.dumps(value, ensure_ascii=False, sort_keys=True,
+                               separators=(',', ':')) + '\n').encode()
+        # The positive control must use the exact feed serialization; otherwise
+        # a whitespace difference could make every negative pass spuriously.
+        self.assertEqual(feed_bytes(self.feed), (audit.DOCS / 'core-feed.json').read_bytes())
         for index in range(125):
-            with self.subTest(index=index):
-                changed = copy.deepcopy(self.feed)
-                changed['boot_profiles']['core']['profile']['files'][index][2] = '0' * 64
-                with self.assertRaises(ValueError):
-                    audit.exact(audit.encoded(changed), self.lock['snapshots']['core-feed.json'], 'feed')
+            for field in range(3):
+                with self.subTest(index=index, field=field):
+                    changed = copy.deepcopy(self.feed)
+                    row = changed['boot_profiles']['core']['profile']['files'][index]
+                    row[field] = [row[0] + '.changed', row[1] + 1, '0' * 64][field]
+                    with self.assertRaises(ValueError):
+                        audit.exact(feed_bytes(changed), self.lock['snapshots']['core-feed.json'], 'feed')
 
     def test_missing_extra_and_empty_inventory(self):
         for replacement in ([], self.feed['boot_profiles']['core']['profile']['files'][:-1],

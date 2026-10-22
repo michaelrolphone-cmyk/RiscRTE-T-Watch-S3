@@ -69,7 +69,8 @@ def exact(raw, expected, label):
 def bounded_read(path):
     path = Path(path)
     require(not path.is_symlink() and path.is_file(), 'regular input required')
-    raw = path.read_bytes()
+    with path.open('rb') as stream:
+        raw = stream.read(512 * 1024 + 1)
     require(0 < len(raw) <= 512 * 1024, 'input exceeds source/metadata bound')
     return raw
 
