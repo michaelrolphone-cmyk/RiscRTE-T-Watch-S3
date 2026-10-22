@@ -6,6 +6,9 @@
 #include "ports/esp32s3/CpuPort.h"
 #undef private
 #include <cstdio>
+#ifdef STORE_ADMISSION_RETAINED_WAKE
+#include "runtime/sleep/RetainedWake.h"
+#endif
 #if defined(STORE_ADMISSION_COHORT) && !defined(STORE_ADMISSION_COHORT_POLICY)
 #include "cohort_elf_admission.h"
 #endif
@@ -199,7 +202,7 @@ int main(int argc, char** argv) {
                             ,nullptr,nullptr,nullptr,&appData
 #endif
                             };
-#ifdef STORE_ADMISSION_RUNTIME_FEATURES
+#if defined(STORE_ADMISSION_RUNTIME_FEATURES) || defined(STORE_ADMISSION_RETAINED_WAKE)
   RiscRetainedWake::Image rtcImage{};
   RiscRetainedWake::Store wake(rtcImage);runtimePort.retainedWake=&wake;
 #endif
