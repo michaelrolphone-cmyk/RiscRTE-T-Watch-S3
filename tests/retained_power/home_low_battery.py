@@ -16,7 +16,7 @@ import qualify
 
 PINS = home_profile.PINS
 CASES = [(name, mode) for name in ('schedule', 'overrides') for mode in range(3)]
-CASES += [('invalid-charging', 2), ('partial', 2), ('retained', 2)]
+CASES += [('invalid-charging', 2), ('invalid-entry', 2), ('partial', 2), ('retained', 2)]
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()

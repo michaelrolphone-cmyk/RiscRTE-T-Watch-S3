@@ -13,7 +13,7 @@ static unsigned applied, partial, unconfirmed, healthy_samples, low_samples, inv
 static unsigned wifi_disconnects, wifi_reads, bluetooth_sets, last_brightness;
 static unsigned case_kind, chosen_mode, fail_kind, phase, end_at;
 static unsigned prepares, resumes, light_requests, deep_requests, arming_at, idle_at;
-static bool seed_write, scheduling, armed, predeadline, request_done, saw_policy;
+static bool seed_write, scheduling, armed, predeadline, request_done, saw_policy, saw_radios_on;
 static bool wifi_connected;
 static risc_key_value_v1 namespace_kv[7];
 static risc_key_value_atomic_v1 preference_api;
@@ -95,6 +95,19 @@ static bool composition_brightness(void *context,uint16_t value,uint16_t max) {
 }
 static bool composition_battery(void *context,risc_battery_sample_v1 *sample) {
  (void)context; boundary(); unsigned percent=case_kind==2?10:case_kind==0&&clock_ms<5000?10:9,flags=0;
+ if(case_kind==4) {
+  unsigned step=clock_ms/5000u;percent=10;
+  if(step==1){percent=9;flags=RISC_BATTERY_PROFILE_MISSING;}
+  if(step==2)percent=255;
+  if(step==3){percent=9;flags=PORTABLE_POWER_STATUS_VALID;}
+  if(step==4){++invalid_samples;return false;}
+  if(step==5)flags=RISC_BATTERY_CHARGING;
+  if(step>=6)flags=PORTABLE_POWER_STATUS_VALID|PORTABLE_POWER_BATTERY_PRESENT|PORTABLE_POWER_CHARGER_ENABLED|PORTABLE_POWER_INPUT_READY;
+ }
+ if(case_kind==5||case_kind==6) {
+  percent=case_kind==6?10:9;
+  flags=RISC_BATTERY_CHARGING|PORTABLE_POWER_STATUS_VALID|PORTABLE_POWER_BATTERY_PRESENT|PORTABLE_POWER_CHARGER_ENABLED|PORTABLE_POWER_INPUT_READY;
+ }
  if(case_kind==3) {
   unsigned step=clock_ms/5000u;
   if(step==1)flags=RISC_BATTERY_CHARGING;
@@ -122,6 +135,9 @@ static bool composition_health(risc_runtime_health_v1 *health_out) {
 static bool composition_key(void *context,uint32_t *events) {
  (void)context;boundary();*events=0;
  if(scheduling&&phase==2){assert(!light_requests&&!deep_requests);predeadline=true;}
+ if(!idle_at&&clock_deferred_phase==4&&!clock_radios_pending&&!applied&&case_kind==0) {
+  assert(clock_radios.flags==3&&ble_state&&wifi_connected&&hardware_brightness==75);saw_radios_on=true;
+ }
  if(!idle_at&&clock_deferred_phase==4&&!clock_radios_pending&&applied) {
   assert(clock_quick.brightness==15&&hardware_brightness==15);
   assert(clock_quick.idle_ms==20000&&clock_quick.deep_ms==(fail_kind==1?360000u:60000u));
@@ -170,7 +186,7 @@ static void initialize_invocation(unsigned kind,unsigned duration) {
  applied=partial=unconfirmed=healthy_samples=low_samples=invalid_samples=0;
  wifi_disconnects=wifi_reads=bluetooth_sets=last_brightness=0;wifi_connected=true;
  phase=prepares=resumes=light_requests=deep_requests=arming_at=idle_at=0;
- armed=predeadline=request_done=saw_policy=false;
+ armed=predeadline=request_done=saw_policy=saw_radios_on=false;
  preference_api=(risc_key_value_atomic_v1){1,sizeof(preference_api),(void*)(uintptr_t)1,preference_state,preference_get,preference_submit,preference_collect,preference_cancel};
  wifi_api=qa_wifi;wifi_api.disconnect_checked=wifi_disconnect;wifi_api.status=wifi_observe;
  bluetooth_api=fast_ble;bluetooth_api.set_enabled=bluetooth_set;
@@ -213,7 +229,7 @@ static void expect_writes(unsigned edge,unsigned idle,unsigned deep,unsigned bri
 }
 static void run_crossing(void) {
  initialize_invocation(0,scheduling?24000:17000);app_main();clean_invocation();
- assert(healthy_samples&&low_samples>1&&applied==1&&saw_policy&&last_brightness==15);
+ assert(healthy_samples&&low_samples>1&&applied==1&&saw_policy&&saw_radios_on&&last_brightness==15);
  profile_is(20000,fail_kind==1?360000:60000,15,0,true);
  expect_writes(1,1,fail_kind==1?0:1,1,1);
  for(unsigned i=0;i<MODE;++i)assert(records[i].attempts==1);
@@ -243,6 +259,15 @@ int main(int argc,char **argv) {
   assert(healthy_samples&&!applied);profile_is(120000,420000,65,3,false);clear_counts();
   initialize_invocation(1,17000);app_main();clean_invocation();expect_writes(1,1,1,1,1);
   assert(applied==1&&saw_policy&&low_samples>1);profile_is(20000,60000,15,0,true);
+ } else if(!strcmp(argv[1],"invalid-entry")) {
+  initialize_invocation(4,34000);app_main();clean_invocation();expect_writes(0,0,0,0,0);
+  assert(!applied&&!unconfirmed&&!submissions&&healthy_samples&&invalid_samples>3&&!low_samples);
+  assert(clock_low_battery.observed&&!clock_low_battery.low);profile_is(65000,360000,75,3,false);
+  /* Charging is not a veto: the valid percentage, not a charger flag, makes the edge. */
+  initialize_invocation(5,17000);app_main();clean_invocation();expect_writes(1,1,1,1,1);
+  assert(applied==1&&saw_policy&&low_samples>1);profile_is(20000,60000,15,0,true);clear_counts();
+  initialize_invocation(6,7000);app_main();clean_invocation();expect_writes(1,0,0,0,0);
+  assert(!applied&&healthy_samples&&!low_samples);profile_is(20000,60000,15,0,false);
  } else if(!strcmp(argv[1],"partial")) {
   fail_kind=1;run_crossing();clear_counts();fail_kind=0;
   initialize_invocation(1,17000);app_main();clean_invocation();expect_writes(0,0,0,0,0);
