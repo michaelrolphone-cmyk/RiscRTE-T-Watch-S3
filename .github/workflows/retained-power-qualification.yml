@@ -1,0 +1,38 @@
+name: Retained 1.1.46 power qualification
+on:
+  push:
+    branches: [test/retained-power-1146-20261022]
+    paths: ['tests/retained_power/**', 'docs/retained-power/**', '.github/workflows/retained-power-qualification.yml']
+  pull_request:
+    paths: ['tests/retained_power/**', 'docs/retained-power/**', '.github/workflows/retained-power-qualification.yml']
+permissions:
+  contents: read
+concurrency:
+  group: retained-power-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  retained-artifacts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: qualification
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ab9ff33975680c5bb8d9a2e7ed346d0300732a4e
+          path: product
+      - name: Install pinned reader dependency
+        run: python -m pip install pyelftools==0.32
+      - name: Verify exact public artifacts and linked evidence
+        run: python qualification/tests/retained_power/qualify.py --product product --assets inputs --output evidence/artifacts.json
+      - name: Reject wrong artifacts, source and bindings
+        run: python qualification/tests/retained_power/test_qualification.py --product product --assets inputs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: retained-power-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          retention-days: 30
+          if-no-files-found: warn
