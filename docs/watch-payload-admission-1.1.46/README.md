@@ -122,14 +122,23 @@ python3 scripts/watch_payload_1146_audit.py --git-scope --require-paired \
 ```
 
 The base commit must exist locally for `--git-scope`, and the tracked working tree
-and index must match HEAD. The exact nine-file additive scope and committed docs
-location are required before HEAD is attributed to the result. `--fetch` makes 20 bounded
+and index must match HEAD. HEAD attribution requires the committed docs location
+and either the original exact nine-file additive scope or that scope plus the
+complete 27-file companion delta retained in consolidation PR88. The latter pins
+every companion path, add/modify status, Git mode and blob ID to PR87
+(`697fac5510bb6a93119408edfa9c7ca8941f7ccf`, including PR84) and PR86
+(`271bc06f84476fad37545d5ff8b575135a810f05`). Partial compositions, unexpected
+paths, changed companion bytes/modes and changes to any other base file fail
+closed. This composition does not change the release or product pins.
+`--fetch` makes 20 bounded
 text-source reads and one release-metadata read, each capped at 512 KiB with a
 30-second timeout. It does not fetch any firmware, store, archive or factory
 binary. An offline repeat uses the already verified source cache. Optional
 `--write-matrix` regenerates only the two audit matrices deterministically.
 
-The 26 regression tests cover clean/dirty working-tree and index attribution,
+The 31 regression tests cover standalone and complete composition success;
+every companion blob/mode/missing-file mutation; partial, extra, renamed and
+preserved-base source rejection; clean/dirty working-tree and index attribution,
 alternate-docs refusal, the complete positive inventory, each of the 125
 declared path/size/hash bindings with an exact-encoding positive control, all 20
 source byte identities, missing/extra/duplicate
@@ -151,8 +160,11 @@ All existing publication triggers were inspected at the base before branching.
 This branch matches no firmware-publishing push route. The new directory avoids
 the historical `docs/catalog-payload/**` trigger, so it does not rerun or replace
 the frozen 1.1.43 asset audit. General inherited PR checks may also run and are
-reported separately. Diff checks permit only this directory, the two new scripts
-and the new workflow, with no modification/deletion/rename of existing base files.
+reported separately. Standalone diff checks permit only this directory, the two
+new scripts and the new workflow, with no changes to existing base files. The
+complete pinned consolidation additionally preserves the 25 additive companion
+files and the exact two provisioning-release script modifications from PR86;
+no other base-file changes are admitted.
 The historical PR78/649b897 audit, production bytes, accepted pins, complete feed,
 factory delivery and existing branches remain unchanged. No merge, tag, release,
 catalog mutation, new storage implementation or hardware action is performed.

@@ -2,6 +2,7 @@
 """Bounded positive/adversarial source-audit tests; no device or release writes."""
 import argparse
 import copy
+from contextlib import contextmanager
 import json
 from pathlib import Path
 import subprocess
@@ -13,6 +14,128 @@ import watch_payload_1146_audit as audit
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('--source-cache', type=Path, required=True)
 args, remaining = parser.parse_known_args()
+
+
+@contextmanager
+def scope_repository(consolidated):
+    """Exercise real Git trees; substitute only fixture-specific companion blobs."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        def git(*arguments):
+            return subprocess.check_output(['git', '-C', tmp, *arguments], stderr=subprocess.DEVNULL)
+        def write(path, raw):
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
+        git('init')
+        git('config', 'user.name', 'Audit Test')
+        git('config', 'user.email', 'audit@example.invalid')
+        for path, (status, _, _) in audit.CONSOLIDATED_FILES.items():
+            if status == 'M':
+                write(path, b'original base source\n')
+        write('historical.txt', b'preserved\n')
+        write('product.txt', b'frozen product\n')
+        git('add', '.')
+        git('commit', '-m', 'Base')
+        base = git('rev-parse', 'HEAD').decode().strip()
+        files = ['scripts/watch_payload_1146_audit.py', 'scripts/test_watch_payload_1146_audit.py',
+                 '.github/workflows/watch-payload-1146-audit.yml']
+        files += ['docs/watch-payload-admission-1.1.46/' + name for name in
+                  ('README.md', 'source-lock.json', 'core-feed.json', 'release-metadata.json',
+                   'inventory-consumers.json', 'inventory-consumers.md')]
+        for path in files:
+            write(path, b'audit source\n')
+        companions = {}
+        for path, (status, mode, _) in audit.CONSOLIDATED_FILES.items():
+            raw = ('companion ' + path + '\n').encode()
+            companions[path] = (status, mode, audit.blob(raw))
+            if consolidated:
+                write(path, raw)
+        git('add', '.')
+        git('commit', '-m', 'Source scope')
+        head = git('rev-parse', 'HEAD').decode().strip()
+        lock = {'historical_files_unchanged': [{'path': 'historical.txt', 'sha': audit.blob(b'preserved\n')}]}
+        with patch.object(audit, 'ROOT', root), patch.object(audit, 'BASE', base), \
+                patch.object(audit, 'CONSOLIDATED_FILES', companions):
+            yield root, git, lock, head
+
+
+class GitScope(unittest.TestCase):
+    def assert_rejected_commit(self, git, lock, head, message):
+        git('add', '-A')
+        git('commit', '-m', 'Rejected mutation')
+        with self.assertRaisesRegex(ValueError, message):
+            audit.check_git_scope(lock)
+        git('reset', '--hard', head)
+        self.assertEqual(audit.check_git_scope(lock), head)
+
+    def test_standalone_and_complete_consolidation(self):
+        self.assertEqual(len(audit.CONSOLIDATED_FILES), 27)
+        self.assertEqual({p for p, row in audit.CONSOLIDATED_FILES.items() if row[0] == 'M'},
+                         {'scripts/provisioning_release.py', 'scripts/test_provisioning_release.py'})
+        for consolidated in (False, True):
+            with self.subTest(consolidated=consolidated), scope_repository(consolidated) as (_, _, lock, head):
+                self.assertEqual(audit.check_git_scope(lock), head)
+
+    def test_each_companion_blob_and_mode_is_bound(self):
+        with scope_repository(True) as (root, git, lock, head):
+            for path in audit.CONSOLIDATED_FILES:
+                target = root / path
+                with self.subTest(path=path, mutation='bytes'):
+                    target.write_bytes(target.read_bytes() + b'changed\n')
+                    self.assert_rejected_commit(git, lock, head, 'consolidated source identity differs')
+                with self.subTest(path=path, mutation='mode'):
+                    target.chmod(0o755)
+                    self.assert_rejected_commit(git, lock, head, 'consolidated source identity differs')
+                with self.subTest(path=path, mutation='missing'):
+                    target.unlink()
+                    self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation|source identity differs')
+
+    def test_unexpected_missing_and_renamed_paths_rejected(self):
+        for consolidated in (False, True):
+            with self.subTest(consolidated=consolidated), scope_repository(consolidated) as (root, git, lock, head):
+                for path in ('extra.txt', 'docs/retained-power/unapproved.json', 'unexpected\npath.txt'):
+                    target = root / path
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text('unexpected\n')
+                    self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation')
+                target = root / 'docs/watch-payload-admission-1.1.46/README.md'
+                target.rename(target.with_name('renamed.md'))
+                self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation')
+                target.unlink()
+                self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation')
+                if not consolidated:
+                    # A proper subset is not the complete admitted composition.
+                    target = root / next(iter(audit.CONSOLIDATED_FILES))
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text('partial companion\n')
+                    self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation')
+
+    def test_preserved_base_and_historical_source_rejected(self):
+        for consolidated in (False, True):
+            with self.subTest(consolidated=consolidated), scope_repository(consolidated) as (root, git, lock, head):
+                for path in ('historical.txt', 'product.txt'):
+                    (root / path).write_text('changed preserved source\n')
+                    self.assert_rejected_commit(git, lock, head, 'scope or pinned consolidation')
+                bad_lock = copy.deepcopy(lock)
+                bad_lock['historical_files_unchanged'][0]['sha'] = '0' * 40
+                with self.assertRaisesRegex(ValueError, 'historical audit changed'):
+                    audit.check_git_scope(bad_lock)
+
+    def test_consolidated_dirty_worktree_and_index_rejected(self):
+        with scope_repository(True) as (root, git, lock, head):
+            path = next(iter(audit.CONSOLIDATED_FILES))
+            target = root / path
+            original = target.read_bytes()
+            target.write_bytes(original + b'dirty\n')
+            with self.assertRaisesRegex(ValueError, 'must match HEAD'):
+                audit.check_git_scope(lock)
+            git('add', path)
+            target.write_bytes(original)
+            with self.assertRaisesRegex(ValueError, 'must match HEAD'):
+                audit.check_git_scope(lock)
+            git('reset', '--hard', head)
+            self.assertEqual(audit.check_git_scope(lock), head)
 
 
 class SourceAudit(unittest.TestCase):

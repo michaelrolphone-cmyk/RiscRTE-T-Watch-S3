@@ -31,6 +31,41 @@ ADMISSION = {'generic_pair_available': False, 'rtef1_core_destination': None,
              'accepted_hardware_revisions': None, 'trusted_release_context': None,
              'payload_manifest_emitted': False, 'hardware_qualified': False}
 
+# Complete companion delta in PR88, copied without changing its source objects from
+# PR87 (including PR84): 697fac5510bb6a93119408edfa9c7ca8941f7ccf
+# PR86: 271bc06f84476fad37545d5ff8b575135a810f05
+# Values bind diff status, Git mode and blob ID relative to BASE. This is an
+# all-or-nothing composition, not permission for arbitrary neighboring files.
+CONSOLIDATED_FILES = {
+    ".github/workflows/provisioning-release-contracts.yml": ("A", "100644", "ddb2f9b0354afd8cdd9386579ab40ed56ec37412"),
+    ".github/workflows/retained-home-low-battery.yml": ("A", "100644", "509e50d2b6f0cc7548ea8a92baa908327e49ac24"),
+    ".github/workflows/retained-power-qualification.yml": ("A", "100644", "a4e4c14f3df3f9db64dacb530616ecf202e32463"),
+    "docs/retained-power/README.md": ("A", "100644", "6ffdc5a2485221c062bfc4c9d782f9df50e845d6"),
+    "docs/retained-power/evidence/d3829b6/artifacts.json": ("A", "100644", "1793a7e084abdadba6b22353b48709903ecde7ed"),
+    "docs/retained-power/evidence/d3829b6/artifacts.zip": ("A", "100644", "d536f3ab2c19cc28502d84e8a11e052c84e81d4e"),
+    "docs/retained-power/evidence/d3829b6/boundaries.json": ("A", "100644", "14993f0eee75f430eaa6f2a30abdd56dded572cf"),
+    "docs/retained-power/evidence/d3829b6/ci.json": ("A", "100644", "20d931659ff7cad08054c4c15a62c59631a23252"),
+    "docs/retained-power/evidence/d3829b6/source-checks.json": ("A", "100644", "15f53e4689a48d5a8253cf6236b852691b4fe22d"),
+    "docs/retained-power/evidence/d3829b6/sources.zip": ("A", "100644", "e06db6be7eb0df726efbe8da1b0b3ddc6242592b"),
+    "docs/retained-power/low-battery/README.md": ("A", "100644", "6111caef8dbb8ac1bac215a7a9bec4b9ffd88962"),
+    "docs/retained-power/low-battery/evidence/893f69f/ci-identity.json": ("A", "100644", "046e521afe18320ddd4eb39c99a7d9e87190a661"),
+    "docs/retained-power/low-battery/evidence/893f69f/home-low-battery.json": ("A", "100644", "2c3d158d583972146707d5af0f15a742473aeeb2"),
+    "docs/retained-power/low-battery/evidence/893f69f/logs.json": ("A", "100644", "9059ad4404ed97d8aac6d249d3d9f436fe9d7cf2"),
+    "docs/retained-power/low-battery/evidence/893f69f/manifest.json": ("A", "100644", "e55922e5d33cb4438754f791d8333d684b2bd6f5"),
+    "scripts/provisioning_release.py": ("M", "100644", "51eb92ca1a323eaf58e4e778425bd31a54e9c9e1"),
+    "scripts/test_provisioning_release.py": ("M", "100644", "c8fbb19019b2e88b18260118fd24a32a08bc307c"),
+    "tests/retained_power/home_low_battery.c": ("A", "100644", "8c7f9dc3219d2c944aab813d665c5db0f7c11207"),
+    "tests/retained_power/home_low_battery.py": ("A", "100644", "884a321bb6ec7871fe5c6d07ee85e78bb4821049"),
+    "tests/retained_power/home_profile.c": ("A", "100644", "0d9ce38afdca93ee87bea095d567a8c5225a4e47"),
+    "tests/retained_power/home_profile.py": ("A", "100644", "d626fffcd6c499a593ccd12a111e9fafefa8aeca"),
+    "tests/retained_power/qualify.py": ("A", "100644", "fe58c0d88652a171430e2e7fef4443be8480ceca"),
+    "tests/retained_power/run_boundaries.py": ("A", "100644", "4e11ab273ca34a88fe9e1dbadb02eb90a530d14e"),
+    "tests/retained_power/settings_profile.c": ("A", "100644", "28197f119b639361ac3308752d0cc06578181d06"),
+    "tests/retained_power/settings_profile.py": ("A", "100644", "28cd7f25dc169b17bc6226cb3fadf88798b3336d"),
+    "tests/retained_power/source_checks.py": ("A", "100644", "02081a524a867c6c97f8db49c7174b594ae20ae4"),
+    "tests/retained_power/test_qualification.py": ("A", "100644", "edabb0fddd49032e999fc0f19403faf30263c320"),
+}
+
 
 def require(ok, message):
     if not ok:
@@ -288,9 +323,23 @@ def check_git_scope(lock):
     allowed.update('docs/watch-payload-admission-1.1.46/' + name for name in
                    ('README.md', 'source-lock.json', 'core-feed.json', 'release-metadata.json',
                     'inventory-consumers.json', 'inventory-consumers.md'))
-    changed = git('diff', '--name-only', BASE, 'HEAD').decode().splitlines()
-    require(set(changed) == allowed, 'exact nine-file additive source scope required')
-    require(not git('diff', '--name-only', '--diff-filter=DMR', BASE, 'HEAD'), 'existing file modified, deleted or renamed')
+    fields = git('diff', '--name-status', '-z', '--no-renames', BASE, 'HEAD').decode().split('\0')[:-1]
+    changed = dict(zip(fields[1::2], fields[::2]))
+    # Retain the original standalone nine-file shape. The only other admitted
+    # shape is its complete, object-pinned PR87/PR86 companion delta.
+    companions = CONSOLIDATED_FILES if set(changed) == allowed | set(CONSOLIDATED_FILES) else {}
+    require(set(changed) == allowed | set(companions),
+            'exact nine-file additive source scope or pinned consolidation required')
+    require(all(changed[path] == 'A' for path in allowed), 'audit files must be additive')
+    if companions:
+        entries = {}
+        for entry in git('ls-tree', '-r', '-z', 'HEAD', '--', *sorted(companions)).split(b'\0'):
+            if entry:
+                identity, path = entry.decode().split('\t', 1)
+                entries[path] = identity.split()
+        for path, (status, mode, sha) in companions.items():
+            require(changed[path] == status and entries.get(path) == [mode, 'blob', sha],
+                    'consolidated source identity differs: ' + path)
     for row in lock['historical_files_unchanged']:
         require(blob(git('show', 'HEAD:' + row['path'])) == row['sha'], 'historical audit changed')
     return git('rev-parse', 'HEAD').decode().strip()
