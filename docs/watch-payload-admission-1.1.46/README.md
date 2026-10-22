@@ -121,13 +121,16 @@ python3 scripts/watch_payload_1146_audit.py --git-scope --require-paired \
 # The final command must exit 2 and report "generic pair rejected".
 ```
 
-The base commit must exist locally for `--git-scope`. `--fetch` makes 20 bounded
+The base commit must exist locally for `--git-scope`, and the tracked working tree
+and index must match HEAD. The exact nine-file additive scope and committed docs
+location are required before HEAD is attributed to the result. `--fetch` makes 20 bounded
 text-source reads and one release-metadata read, each capped at 512 KiB with a
 30-second timeout. It does not fetch any firmware, store, archive or factory
 binary. An offline repeat uses the already verified source cache. Optional
 `--write-matrix` regenerates only the two audit matrices deterministically.
 
-The 25 regression tests cover the complete positive inventory, each of the 125
+The 26 regression tests cover clean/dirty working-tree and index attribution,
+alternate-docs refusal, the complete positive inventory, each of the 125
 declared path/size/hash bindings with an exact-encoding positive control, all 20
 source byte identities, missing/extra/duplicate
 and overlapping files, unsafe paths, size/hash/type errors, ordering, false

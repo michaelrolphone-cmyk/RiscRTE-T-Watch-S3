@@ -281,14 +281,15 @@ def matrix_markdown(matrix):
 def check_git_scope(lock):
     def git(*args):
         return subprocess.check_output(['git', '-C', str(ROOT), *args])
+    require(not git('status', '--porcelain', '--untracked-files=no'),
+            'tracked working tree and index must match HEAD')
     allowed = {'scripts/watch_payload_1146_audit.py', 'scripts/test_watch_payload_1146_audit.py',
                '.github/workflows/watch-payload-1146-audit.yml'}
     allowed.update('docs/watch-payload-admission-1.1.46/' + name for name in
                    ('README.md', 'source-lock.json', 'core-feed.json', 'release-metadata.json',
                     'inventory-consumers.json', 'inventory-consumers.md'))
     changed = git('diff', '--name-only', BASE, 'HEAD').decode().splitlines()
-    require(changed and all(p in allowed for p in changed),
-            'source-only diff scope exceeded')
+    require(set(changed) == allowed, 'exact nine-file additive source scope required')
     require(not git('diff', '--name-only', '--diff-filter=DMR', BASE, 'HEAD'), 'existing file modified, deleted or renamed')
     for row in lock['historical_files_unchanged']:
         require(blob(git('show', 'HEAD:' + row['path'])) == row['sha'], 'historical audit changed')
@@ -301,6 +302,8 @@ def require_pair():
 
 def audit(docs=DOCS, cache=None, online=False, git_scope=False, write_matrix=False):
     docs = Path(docs)
+    require(not git_scope or docs.resolve() == DOCS.resolve(),
+            'git-scoped audit must read the committed docs location')
     lock = decode(bounded_read(docs / 'source-lock.json'))
     check_lock(lock)
     snapshots = {}

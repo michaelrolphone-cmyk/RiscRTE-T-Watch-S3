@@ -4,6 +4,7 @@ import argparse
 import copy
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -27,6 +28,44 @@ class SourceAudit(unittest.TestCase):
         mutate(feed)
         with self.assertRaises((ValueError, KeyError, TypeError)):
             audit.check_feed(feed)
+
+    def test_git_scope_rejects_dirty_index_worktree_and_alternate_docs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            def git(*arguments):
+                return subprocess.check_output(['git', '-C', tmp, *arguments], stderr=subprocess.DEVNULL)
+            git('init')
+            git('-c', 'user.name=Audit Test', '-c', 'user.email=audit@example.invalid',
+                'commit', '--allow-empty', '-m', 'Base')
+            base = git('rev-parse', 'HEAD').decode().strip()
+            files = ['scripts/watch_payload_1146_audit.py', 'scripts/test_watch_payload_1146_audit.py',
+                     '.github/workflows/watch-payload-1146-audit.yml']
+            files += ['docs/watch-payload-admission-1.1.46/' + name for name in
+                      ('README.md', 'source-lock.json', 'core-feed.json', 'release-metadata.json',
+                       'inventory-consumers.json', 'inventory-consumers.md')]
+            for name in files:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('committed\n')
+            git('add', '.')
+            git('-c', 'user.name=Audit Test', '-c', 'user.email=audit@example.invalid',
+                'commit', '-m', 'Nine source files')
+            head = git('rev-parse', 'HEAD').decode().strip()
+            with patch.object(audit, 'ROOT', root), patch.object(audit, 'BASE', base):
+                lock = {'historical_files_unchanged': []}
+                self.assertEqual(audit.check_git_scope(lock), head)
+                target = root / files[0]
+                target.write_text('dirty\n')
+                with self.assertRaises(ValueError):
+                    audit.check_git_scope(lock)
+                git('add', files[0])
+                target.write_text('committed\n')  # HEAD bytes restored, but index still differs.
+                with self.assertRaises(ValueError):
+                    audit.check_git_scope(lock)
+                git('reset', '--hard', 'HEAD')
+                self.assertEqual(audit.check_git_scope(lock), head)
+            with self.assertRaisesRegex(ValueError, 'committed docs location'):
+                audit.audit(docs=root, cache=args.source_cache, git_scope=True)
 
     def test_complete_positive_audit(self):
         result = audit.audit(cache=args.source_cache)
