@@ -1,0 +1,36 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "hardware_compatibility": [
+    {
+      "compatible": "maxim,max98357a",
+      "config_type": "audio.i2s",
+      "config_version": 1,
+      "revisions": [
+        "unspecified"
+      ]
+    }
+  ],
+  "id": "twatch-speaker",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "audio.output"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "hardware.device"
+    },
+    {
+      "api": 1,
+      "capability": "platform.i2s.controller"
+    }
+  ],
+  "status": "software-only-alarm-output-candidate",
+  "type": "driver",
+  "version": "0.2.1"
+}

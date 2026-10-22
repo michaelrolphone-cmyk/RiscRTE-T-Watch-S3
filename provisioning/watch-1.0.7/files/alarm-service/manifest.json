@@ -1,0 +1,38 @@
+{
+  "architecture": "xtensa-esp32s3",
+  "driver_abi": 2,
+  "file_name": "driver.elf",
+  "id": "alarm-service",
+  "physical_verification": "pending",
+  "provides": [
+    {
+      "api": 1,
+      "capability": "alarm.service"
+    }
+  ],
+  "requires": [
+    {
+      "api": 1,
+      "capability": "storage.key-value.bound"
+    },
+    {
+      "api": 1,
+      "capability": "platform.clock"
+    },
+    {
+      "api": 2,
+      "capability": "rtc.clock"
+    },
+    {
+      "api": 1,
+      "capability": "haptic.effect"
+    },
+    {
+      "api": 1,
+      "capability": "audio.output"
+    }
+  ],
+  "status": "development-only-points-cues-and-alarm-volume",
+  "type": "driver",
+  "version": "0.4.2"
+}
