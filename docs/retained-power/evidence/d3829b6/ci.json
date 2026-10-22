@@ -1,0 +1,125 @@
+{
+  "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+  "workflow_runs": [
+    {
+      "id": 39704855598,
+      "name": "Policy source custody",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855598",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855652,
+      "name": "PMU charge initialization",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855652",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855601,
+      "name": "HID increment source custody",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855601",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855684,
+      "name": "Watch compact image provisioning",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855684",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855636,
+      "name": "Contexts Clock and cohort policy",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855636",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855628,
+      "name": "Lifecycle source custody",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855628",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855594,
+      "name": "Retained 1.1.46 power qualification",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855594",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704855607,
+      "name": "T-Watch driver contracts",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855607",
+      "run_attempt": 1
+    },
+    {
+      "id": 39704851220,
+      "name": "Retained 1.1.46 power qualification",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704851220",
+      "run_attempt": 1
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12394277791,
+      "name": "retained-power-sources-d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "size": 30567,
+      "digest": "sha256:bd7c73bc83c4affd734d2c8c21a7e8ca1d3a9910510a64dad018bedc57af3610",
+      "expires_at": "2026-11-21T01:20:43Z",
+      "run_id": 39704855594
+    },
+    {
+      "id": 12393759981,
+      "name": "retained-power-d3829b66d79d726e70bb4f1ea49980f0ff879dac",
+      "size": 2363,
+      "digest": "sha256:9a2c781443fe3e42039f37a6bd7d694e35e1f5d21c722b543d5d862338e6dd1f",
+      "expires_at": "2026-11-21T01:18:08Z",
+      "run_id": 39704855594
+    }
+  ],
+  "schema": 1,
+  "conclusion": "bounded-artifact-and-source-qualification-passed; full-retained-profile-acceptance-open",
+  "not_claimed": [
+    "Clean bit-for-bit Settings fa1c reproduction",
+    "Combined retained Settings feature-profile mode/timer Save/Cancel fixture",
+    "Home LOW_BATTERY timer consumption/deadlines in original56case suite",
+    "Compatibility of inherited Off/over-one-hour records with selected Home",
+    "Physical sleep/wake/display/input/current",
+    "Live heap fit",
+    "Preserving installation route"
+  ],
+  "permanent_archives": "artifacts.zip and sources.zip are exact rehashed CI artifacts, retained here after their Actions copies expire. They contain reports/logs only, no firmware."
+}

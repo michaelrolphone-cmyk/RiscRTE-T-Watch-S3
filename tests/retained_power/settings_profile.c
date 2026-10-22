@@ -142,6 +142,15 @@ static void verify(unsigned mode,uint32_t idle,uint32_t deep) {
   assert(portable_sleep_timer_load(&profile_kv,false,&actual_idle)==PORTABLE_SLEEP_LOADED && actual_idle==idle);
   assert(portable_sleep_timer_load(&profile_kv,true,&actual_deep)==PORTABLE_SLEEP_LOADED && actual_deep==deep);
   assert(quick.idle_ms==idle && quick.deep_ms==deep && portable_idle_ms()==idle);
+  /* Reopened UI rows must report the saved values, not merely the helper or
+   * the quick-session cache. These are expected presentation values only. */
+  t5_app_setting_t item;const char *modes[]={"Light","Deep","Light then Deep"};char expected[32];
+  assert(settings_get(0,4,&item) && !strcmp(item.value,modes[mode]));
+  snprintf(expected,sizeof(expected),"%u sec",idle/1000u);
+  assert(settings_get(0,SETTINGS_TIMER_ROW,&item) && !strcmp(item.value,expected));
+  snprintf(expected,sizeof(expected),"%u sec",deep/1000u);
+  assert(settings_get(0,SETTINGS_TIMER_ROW+1,&item) && !strcmp(item.value,expected));
+  assert(alarm_steps && alarm_statuses && displays);
 }
 static void emit(const char *name,unsigned mode,uint32_t idle,uint32_t deep) {
   printf("{\"case\":\"%s\",\"mode\":%u,\"idle_ms\":%u,\"deep_ms\":%u,\"namespace\":1,\"records\":{",name,mode,idle,deep);

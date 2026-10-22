@@ -90,8 +90,10 @@ claim that those records now work or that ordinary controls are defective.
 Actual boot grants bind both apps to namespace 1 through `storage.key-value@1`.
 Settings writes `sleep_mode`, `sleep_idle`, and `sleep_deep`; Home consumes the
 opaque application records. Runtime owns authorization/NVS persistence, not the
-policy meanings. The retained composition is synchronous NVS, not the separate
-atomic-storage or SD configuration.
+policy meanings. Retained Settings uses synchronous key-value operations backed by native NVS.
+Selected Home independently enables WATCH_ATOMIC_PREFERENCES and
+PORTABLE_QUICK_ATOMIC_PREFERENCES in its canonical build receipt; its Runtime
+preference operations must not be inferred from the older Settings profile.
 
 Both apps receive `power.sleep@1:0`, `display.power@1:0` and
 `input.power-key@1:0`. The retained power bridge requires `board.battery@1` and
@@ -115,3 +117,62 @@ The workflow's JSON/log uploads expire after 30 days. They are transport, not th
 permanent acceptance record. Terminal run IDs, commit IDs, result summaries and
 receipt hashes are committed separately after CI verification. No local result
 or unpublished commit is represented as GitHub qualification.
+
+## Verified d3829b6 checkpoint
+
+Qualification [PR CI39704855594](https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39704855594)
+and push CI39704851220 passed at `d3829b66d79d726e70bb4f1ea49980f0ff879dac`.
+[Permanent receipts and exact CI ZIPs](evidence/d3829b6/) preserve the downloaded,
+rehashed evidence independently of Actions retention. This checkpoint is kept
+separately from subsequent full-feature fixture work.
+
+The 780-value matrices are **header record exchange**, not UI event traces or
+Home scheduling tests. The original 56-case Home runtime-sleep suite does not
+enable PORTABLE_LOW_BATTERY, so it does not exercise quick_session timer loads.
+The original Settings mode fixture likewise omits other retained feature flags.
+Historical 190-case native-height evidence omits LOW_BATTERY and TAP together,
+and does not close that combined-feature boundary. Dedicated additive
+feature-faithful fixtures are in progress; this checkpoint does not claim them.
+
+## Full-feature source fixtures
+
+`settings_profile.py` replays all 25 recorded Settings feature definitions and
+both forced includes using the documented System9dcb / Watch6e82 producer.
+It exercises real navigation/controller Save, Cancel, no-op, write failure,
+commit-with-error, failed readback and reopen/displayed values: 21 cases each in
+plain and ASan/UBSan builds. Its three actual UI-saved profiles contain all three
+modes, 65-second idle and 360-second deep timers. Timer readback can confirm a
+write whose provider returned IO; the mode path conservatively reports that
+same error as unconfirmed. This fixture preserves that historical distinction.
+
+`home_profile.py` separately reads Home's exact feature definitions from the
+hash-locked release receipt, including canonical crash namespace61, LOW_BATTERY,
+Runtime preferences and both atomic-preference flags. It executes selected
+`crown.c`, `quick_session.c` and the real sleep helpers with opaque Settings-saved
+records. For each mode it checks valid, missing, corrupt, wrongly namespaced,
+read-IO and acquisition-denied cases. The mock asserts actual shared namespace1
+access; records stored in namespace2 are not visible. Six additional historical
+Off/out-of-range records come from the separately compiled producer helper,
+not UI actions. Those records exercise the actual Home fallback/scheduling path.
+There are 24 cases per plain/ASan-UBSan build, not a 780-case UI/scheduler matrix.
+
+The clock is synthetic: the fixture checks no sleep request immediately before
+the idle deadline, then observes actual Home dispatch and propagation of the
+deep timer into the light-then-deep request. Deep callbacks return a modeled
+platform refusal to permit cleanup; no terminal deep entry is simulated.
+Persistent namespace1 acquisition denial loads default timers but subsequently
+refuses at motion preflight, after paired Runtime prepare/resume and before
+native sleep requests. Read failure under an acquired grant is a distinct case.
+
+The enabled `storage.preferences` facade is acquired, revision-checked and read
+by Home's healthy-battery path. Its mock advertises the selected Runtime's
+COPIED_INPUT-only flags. Timer reads themselves still use namespace1 generic
+KV. No Quick modal transaction, native atomic-group durability or physical NVS
+persistence is inferred from this fixture. Existing exact Runtime/NVS boundary
+suites remain separate evidence.
+
+Both host runners reject wrong source/provenance inputs and missing timer
+feature flags. Host compiler/ABI replaces target Xtensa options; full feature
+replay does not close the dirty historical source-to-retained-ELF reproduction
+gap. Optional devices/services are mocked, not target-qualified. Final CI
+receipts are published only after exact-head verification.

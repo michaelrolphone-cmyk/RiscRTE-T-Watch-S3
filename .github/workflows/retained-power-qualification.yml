@@ -75,8 +75,23 @@ jobs:
           repository: michaelrolphone-cmyk/RiscRTE-Drivers
           ref: 5890721073ebabd781d5d278e447c761947a5c58
           path: drivers
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: 6e82fdcaec0b73ed700d2104cfb4d94f011c19d4
+          path: settings-bridge
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ab9ff33975680c5bb8d9a2e7ed346d0300732a4e
+          path: product
+      - name: Install pinned artifact reader
+        run: python -m pip install pyelftools==0.32
       - name: Retained Settings producer and selected Home record compatibility
         run: python qualification/tests/retained_power/source_checks.py --producer-system producer --selected-system system --watch watch --output evidence/sources
+      - name: Exact retained Settings all-feature Save Cancel and readback
+        run: python qualification/tests/retained_power/settings_profile.py --producer-system producer --bridge settings-bridge --product product --output evidence/settings-profile
+      - name: Selected Home all-feature namespace1 timer consumption and sleep requests
+        run: python qualification/tests/retained_power/home_profile.py --watch watch --system system --utilities utilities --assets inputs --records evidence/settings-profile/namespace1-records.json --historical-records evidence/sources/source-checks.json --output evidence/home-profile
       - name: Exact Home, Runtime, NVS and capability-adapter host boundaries
         run: python qualification/tests/retained_power/run_boundaries.py --system system --watch watch --utilities utilities --runtime runtime --drivers drivers --output evidence/boundaries
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
