@@ -1,0 +1,24 @@
+{
+  "qualified_head": "893f69f671f12a7c8a2f7c9db3a37a3d040dc99d",
+  "run_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/actions/runs/39743754996",
+  "job_id": 119707039316,
+  "conclusion": "success",
+  "artifact_id": 12409349324,
+  "transport_archive_sha256": "d5988667c98a539c9828c4a9003b3b09e1361ce4debde39e31dc6bb20833a9b9",
+  "transport_archive_bytes": 14678,
+  "scope": "New PR87 composition evidence only. No prior PR84 archive is included.",
+  "files": {
+    "ci-identity.json": {
+      "bytes": 254,
+      "sha256": "5d9bfa1dd382f31c635f78638b2cb29ea49040ce688d140acff7cdeb4df26d48"
+    },
+    "home-low-battery.json": {
+      "bytes": 71283,
+      "sha256": "8718bde2d097175f71305b46e3829c96d2d060e1cf729f4fd678c89e5977cc79"
+    },
+    "logs.json": {
+      "bytes": 7251,
+      "sha256": "f756a93b7455065cc7cc62b0a2bc906e0a8e031423b7bb515deb3270637536e8"
+    }
+  }
+}

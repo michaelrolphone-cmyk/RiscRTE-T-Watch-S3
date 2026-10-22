@@ -1,0 +1,59 @@
+name: Retained Home low-battery composition
+on:
+  pull_request:
+    paths:
+      - 'tests/retained_power/**'
+      - 'docs/retained-power/low-battery/**'
+      - '.github/workflows/retained-home-low-battery.yml'
+permissions:
+  contents: read
+jobs:
+  exact-composition:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: qualification
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: 416fa9f144fa5bd5471e6f4c9cefff21455c8361
+          path: watch
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: bb0cadf3cec3445a64e11513b47b2676f3fdd92d
+          path: system
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 4fdcad2495c33fe63f5f6faca9b11ced3c739a5b
+          path: utilities
+      - name: Verify exact head and record CI identity
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          test "$(git -C qualification rev-parse HEAD)" = "$EXPECTED_HEAD"
+          mkdir -p evidence
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('evidence/ci-identity.json').write_text(json.dumps({
+              'head_sha': os.environ['EXPECTED_HEAD'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'scope': 'Exact source host composition only; no device, release or radio action'
+          }, indent=2) + '\n')
+          PY
+      - name: Run exact retained composition in plain and ASan UBSan variants
+        run: python qualification/tests/retained_power/home_low_battery.py --watch watch --system system --utilities utilities --assets inputs --output evidence/composition
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: retained-home-low-battery-${{ github.event.pull_request.head.sha }}
+          path: evidence/
+          retention-days: 30
+          if-no-files-found: error

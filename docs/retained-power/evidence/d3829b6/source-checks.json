@@ -1,0 +1,523 @@
+{
+  "status": "passed",
+  "git_pins": {
+    "producer_system": "9dcb2bbef44853e533d980a658a814d2c787a4fa",
+    "selected_system": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
+    "watch": "416fa9f144fa5bd5471e6f4c9cefff21455c8361"
+  },
+  "source_sha256": {
+    "producer_system": {
+      "Apps/settings.c": "2af07dfa4c19d8c1fd3f652fb052a33d40611a4c545e77ac7298328486626bd6",
+      "lib/PortableApps/src/settings.inc": "a20e0410b91bcac24459e720469afbe40af8397df918480e33b470a5a2c23fbe",
+      "lib/PortableApps/include/PortableSleepPolicy.h": "8d4b92e1f230bf13ad885dbc3f6a51f7a459d229703301d433124ccb428e557a",
+      "test/native_apps/portable_settings_test.c": "da9ed05d949b1f347b8811c86e918e53c053511583b1b201b87e47fc264948d7",
+      "test/native_apps/portable_sleep_policy_test.c": "4412e3045a70658af90d971564785ea21ee859287ad2f3a6cb6db82a90412d3e",
+      "scripts/test_low_battery.py": "a500f60a4ef626092eeaa052ecced9b35da601996262a22653bd1f6e868810cb",
+      "test/native_apps/low_battery_test.c": "12ea2dfcfa4101615c8eba8df07f2854a8b21aa0352364b031e6348a1ab487be",
+      "test/native_apps/low_battery_adapter_test.c": "7114a3aea42ab0136612b7a0027356a4a1b77b1a75f98efd825b00f325407d2c"
+    },
+    "selected_system": {
+      "lib/PortableApps/include/PortableSleepPolicy.h": "70fa8ff8f63270b2a04d591bdbc61cd7e16d6483421121a96fe22f2855966d9d",
+      "lib/PortableApps/src/quick_session.c": "7b2313c4f1a67f1c3ba2398c65851aad3c5c92b59f69534b5900d1362dc92c96"
+    },
+    "watch": {
+      "apps/clock/PortableSleepPolicy.h": "b0251ad4e4c25a4842ad19c1f998f9fb60a3ee2577f49784417d7db880d33995",
+      "apps/clock/crown.c": "78d867e6349c38231d6902a6530affa50e26b719147f7af7749e2e9379ed4891"
+    }
+  },
+  "script_sha256": "6d5b2428636604131e52ffd353a0e72d3104319cacbb22205aa771ae4609d6e1",
+  "negative_control": {
+    "wrong_selected_as_producer_rejected": true,
+    "reason": "producer_system: expected 9dcb2bbef44853e533d980a658a814d2c787a4fa, got bb0cadf3cec3445a64e11513b47b2676f3fdd92d"
+  },
+  "matrices": [
+    {
+      "sanitized": false,
+      "producer_cases": 804,
+      "ordinary_ui_bounded_cases": 780,
+      "accepted_records_read_by_each_consumer": 794,
+      "persisted_record_differences": [
+        {
+          "deep": false,
+          "milliseconds_written": 0,
+          "record_hex": "54010000a5",
+          "historical_read": [
+            0,
+            4294967295
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": false,
+          "milliseconds_written": 3601000,
+          "record_hex": "5401110eba",
+          "historical_read": [
+            0,
+            3601000
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": false,
+          "milliseconds_written": 14400000,
+          "record_hex": "54014038dd",
+          "historical_read": [
+            0,
+            14400000
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 0,
+          "record_hex": "54010000a5",
+          "historical_read": [
+            0,
+            4294967295
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 3601000,
+          "record_hex": "5401110eba",
+          "historical_read": [
+            0,
+            3601000
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 14400000,
+          "record_hex": "54014038dd",
+          "historical_read": [
+            0,
+            14400000
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        }
+      ]
+    },
+    {
+      "sanitized": true,
+      "producer_cases": 804,
+      "ordinary_ui_bounded_cases": 780,
+      "accepted_records_read_by_each_consumer": 794,
+      "persisted_record_differences": [
+        {
+          "deep": false,
+          "milliseconds_written": 0,
+          "record_hex": "54010000a5",
+          "historical_read": [
+            0,
+            4294967295
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": false,
+          "milliseconds_written": 3601000,
+          "record_hex": "5401110eba",
+          "historical_read": [
+            0,
+            3601000
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": false,
+          "milliseconds_written": 14400000,
+          "record_hex": "54014038dd",
+          "historical_read": [
+            0,
+            14400000
+          ],
+          "selected_home_read": [
+            2,
+            60000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 0,
+          "record_hex": "54010000a5",
+          "historical_read": [
+            0,
+            4294967295
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 3601000,
+          "record_hex": "5401110eba",
+          "historical_read": [
+            0,
+            3601000
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        },
+        {
+          "deep": true,
+          "milliseconds_written": 14400000,
+          "record_hex": "54014038dd",
+          "historical_read": [
+            0,
+            14400000
+          ],
+          "selected_home_read": [
+            2,
+            300000
+          ]
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "name": "compile-original-settings-mode",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/PortableApps/include",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/NativeApps/include",
+        "-DPORTABLE_SLEEP_SETTINGS",
+        "/tmp/retained-power-source-n4ghernt/producer_system/Apps/settings.c",
+        "/tmp/retained-power-source-n4ghernt/producer_system/test/native_apps/portable_settings_test.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/settings-mode"
+      ],
+      "returncode": 0,
+      "log": "compile-original-settings-mode.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "original-settings-mode-40",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "40"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-40.log",
+      "log_sha256": "a45875f47239468e5d2c70a611dd89622391088fdcf721629eff731cc168562f"
+    },
+    {
+      "name": "original-settings-mode-41",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "41"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-41.log",
+      "log_sha256": "51c5d3f0f9ce57cb1287b6e84c9876143d34b1f4960f32597e0ac999165d21e3"
+    },
+    {
+      "name": "original-settings-mode-42",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "42"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-42.log",
+      "log_sha256": "62b6898435f98adeb0a833e82c8286f53d4af8c4e49df4b23db6b76239f5365f"
+    },
+    {
+      "name": "original-settings-mode-43",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "43"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-43.log",
+      "log_sha256": "667dde57d35ddf1e9e35146d879e3e499684b8bea2b492a3ada67963ec33136d"
+    },
+    {
+      "name": "original-settings-mode-44",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "44"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-44.log",
+      "log_sha256": "63514bc16f8610a378e621b40b93228691c5fe9d5e82851ce3ea357f7cb28883"
+    },
+    {
+      "name": "original-settings-mode-45",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "45"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-45.log",
+      "log_sha256": "236949bb84513652b2f96fc76ddf47d734fe130958a2d63fe4c47c0bf39161e3"
+    },
+    {
+      "name": "original-settings-mode-46",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "46"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-46.log",
+      "log_sha256": "010490f0799087a4e11f81ccec3b63dcd6f446748072d654084bb9f95b23a06e"
+    },
+    {
+      "name": "original-settings-mode-47",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/settings-mode",
+        "47"
+      ],
+      "returncode": 0,
+      "log": "original-settings-mode-47.log",
+      "log_sha256": "b02499261c79381b60d45ea8e4ed472356084098913c53eb54de9aa3299fa8c4"
+    },
+    {
+      "name": "compile-original-sleep-policy",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/PortableApps/include",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/NativeApps/include",
+        "/tmp/retained-power-source-n4ghernt/producer_system/test/native_apps/portable_sleep_policy_test.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/sleep-policy"
+      ],
+      "returncode": 0,
+      "log": "compile-original-sleep-policy.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "original-sleep-policy",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/sleep-policy"
+      ],
+      "returncode": 0,
+      "log": "original-sleep-policy.log",
+      "log_sha256": "71d3b1002e252019ddad2dd218f41ba08e99dba5f2960233a4b771d8125ddc2a"
+    },
+    {
+      "name": "original-low-battery-runner",
+      "command": [
+        "/usr/bin/python",
+        "/tmp/retained-power-source-n4ghernt/producer_system/scripts/test_low_battery.py"
+      ],
+      "returncode": 0,
+      "log": "original-low-battery-runner.log",
+      "log_sha256": "4ee107caf22519191bcdec461e445662e2a0bc9e4d9825fe763c4c106381c7cb"
+    },
+    {
+      "name": "compile-records-producer_system-0",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/PortableApps/include",
+        "/tmp/retained-power-source-n4ghernt/records.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-0"
+      ],
+      "returncode": 0,
+      "log": "compile-records-producer_system-0.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compile-records-selected_system-0",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-I/tmp/retained-power-source-n4ghernt/selected_system/lib/PortableApps/include",
+        "-DSELECTED_HOME",
+        "-DWATCH_SHARED_PREFERENCE_HEADERS",
+        "-I/tmp/retained-power-source-n4ghernt/watch",
+        "/tmp/retained-power-source-n4ghernt/records.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/records-selected_system-0"
+      ],
+      "returncode": 0,
+      "log": "compile-records-selected_system-0.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "produce-records-0",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-0",
+        "produce"
+      ],
+      "returncode": 0,
+      "log": "produce-records-0.log",
+      "log_sha256": "8709c52b243ac8cf12d95db16fc2fc4ea3abef3738718db6da0fef2930ce23bf"
+    },
+    {
+      "name": "consume-producer_system-0",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-0",
+        "consume"
+      ],
+      "returncode": 0,
+      "log": "consume-producer_system-0.log",
+      "log_sha256": "21c99bb606d976aa733d81d5b6a5c2e9267a63f1522262e4b14d6c6e4a1506fc"
+    },
+    {
+      "name": "consume-selected_system-0",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-selected_system-0",
+        "consume"
+      ],
+      "returncode": 0,
+      "log": "consume-selected_system-0.log",
+      "log_sha256": "da4583305c7c4fef53d653f60ddbc4b48a953a5b326d86e1c6a1802a689a0c42"
+    },
+    {
+      "name": "compile-records-producer_system-1",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/tmp/retained-power-source-n4ghernt/producer_system/lib/PortableApps/include",
+        "/tmp/retained-power-source-n4ghernt/records.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-1"
+      ],
+      "returncode": 0,
+      "log": "compile-records-producer_system-1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compile-records-selected_system-1",
+      "command": [
+        "cc",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-no-pie",
+        "-I/tmp/retained-power-source-n4ghernt/selected_system/lib/PortableApps/include",
+        "-DSELECTED_HOME",
+        "-DWATCH_SHARED_PREFERENCE_HEADERS",
+        "-I/tmp/retained-power-source-n4ghernt/watch",
+        "/tmp/retained-power-source-n4ghernt/records.c",
+        "-o",
+        "/tmp/retained-power-source-n4ghernt/records-selected_system-1"
+      ],
+      "returncode": 0,
+      "log": "compile-records-selected_system-1.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "produce-records-1",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-1",
+        "produce"
+      ],
+      "returncode": 0,
+      "log": "produce-records-1.log",
+      "log_sha256": "8709c52b243ac8cf12d95db16fc2fc4ea3abef3738718db6da0fef2930ce23bf"
+    },
+    {
+      "name": "consume-producer_system-1",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-producer_system-1",
+        "consume"
+      ],
+      "returncode": 0,
+      "log": "consume-producer_system-1.log",
+      "log_sha256": "21c99bb606d976aa733d81d5b6a5c2e9267a63f1522262e4b14d6c6e4a1506fc"
+    },
+    {
+      "name": "consume-selected_system-1",
+      "command": [
+        "/tmp/retained-power-source-n4ghernt/records-selected_system-1",
+        "consume"
+      ],
+      "returncode": 0,
+      "log": "consume-selected_system-1.log",
+      "log_sha256": "da4583305c7c4fef53d653f60ddbc4b48a953a5b326d86e1c6a1802a689a0c42"
+    }
+  ],
+  "original_fixture_counts": {
+    "mode_cases": 8,
+    "sleep_policy_programs": 1,
+    "low_battery_program_runs": 38
+  },
+  "scope": "Exact historical source controller/policy host tests plus independent real-header record exchange; not exact retained Xtensa ELF execution or a full compile-flag replay.",
+  "observed_boundary": "Ordinary retained timer UI choices agree. Historical records 0 (Off sentinel), 3601s and 14400s are accepted historically but rejected by selected Home, which falls back to 60s idle/300s deep. This is a persisted-record compatibility boundary, not a demonstrated ordinary UI defect or whole-product failure.",
+  "not_qualified": [
+    "physical sleep entry",
+    "physical wake",
+    "physical input",
+    "physical display recovery",
+    "current consumption",
+    "live memory"
+  ]
+}

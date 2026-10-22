@@ -1,0 +1,158 @@
+{
+  "app_alloc_sections_not_live_heap": {
+    "default.elf": {
+      ".bss": 265776,
+      ".data": 28,
+      ".data.rel.ro": 1172,
+      ".dynamic": 160,
+      ".dynstr": 110,
+      ".dynsym": 224,
+      ".got": 4,
+      ".got.loc": 2424,
+      ".hash": 76,
+      ".rela.dyn": 30636,
+      ".rela.plt": 1524,
+      ".rodata": 388724,
+      ".text": 127816
+    },
+    "settings.elf": {
+      ".bss": 82824,
+      ".data": 56,
+      ".data.rel.ro": 7496,
+      ".dynamic": 160,
+      ".dynstr": 141,
+      ".dynsym": 256,
+      ".got": 4,
+      ".got.loc": 1704,
+      ".hash": 84,
+      ".rela.dyn": 28272,
+      ".rela.plt": 1176,
+      ".rodata": 33005,
+      ".text": 67954
+    }
+  },
+  "assets": {
+    "TESTING.txt": {
+      "bytes": 2313,
+      "sha256": "68964214c3d7c0834b788162fde2cffc4f49433b3388dece8e00f718a4833de4"
+    },
+    "TWatch-1.1.46-Provisioning-Evidence.zip": {
+      "bytes": 21862871,
+      "sha256": "07eecd7b47ce3368f89025981df048408ba84a981285415e9f56fd66902d18e3"
+    },
+    "TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin": {
+      "bytes": 16777216,
+      "sha256": "e132a6276cd444cd41482ecfcc2043296b2acf02ef882acc83ba1af4c76edff6"
+    },
+    "ci-provenance.zip": {
+      "bytes": 6832,
+      "sha256": "8e7b6a641d0008ec989d05465a49aad17a34509978e666eb2f03301f904a3734"
+    },
+    "firmware.bin": {
+      "bytes": 1624560,
+      "sha256": "cd8f7f51d9c604e4f3b12b5f54dcc83817b812baa973b5862321a94e951f0034"
+    },
+    "qualification.json": {
+      "bytes": 1414901,
+      "sha256": "2933128fa25f11e73774d3f3ba68baa4a1124670967490780cfb14fcf48371b4"
+    },
+    "source-lock.json": {
+      "bytes": 10148,
+      "sha256": "a678bc8445ec5b0b0d573986dc47a81ffbc78599c8bd2be9c7ea62f31a78dec6"
+    },
+    "store.bin": {
+      "bytes": 5570560,
+      "sha256": "e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126"
+    }
+  },
+  "factory_erases_data": true,
+  "factory_firmware_store_pair_verified": true,
+  "hardware_tested": false,
+  "historical_settings_recipe_flags": [
+    "-DPORTABLE_LOW_BATTERY",
+    "-DPORTABLE_BLE_BROADCAST",
+    "-DPORTABLE_TOUCH_ROTATION=0",
+    "-DPORTABLE_RTC_UTC8_DENVER",
+    "-DPORTABLE_FORCE_FULL_FRAMES",
+    "-DPORTABLE_INPUT_NAVIGATION",
+    "-DPORTABLE_INPUT_NAVIGATION_LOCAL",
+    "-DPORTABLE_APP_SLEEP_LOCAL",
+    "-DPORTABLE_ALARM_CLIENT",
+    "-DPORTABLE_QUICK_ACTIONS",
+    "-DPORTABLE_QUICK_RADIOS",
+    "-DPORTABLE_MOTION_WAKE",
+    "-DWATCH_ALARM_SLEEP_RESUME",
+    "-DPORTABLE_NOVA_UI",
+    "-DPORTABLE_SETTINGS_APP",
+    "-DPORTABLE_TAP_SETTINGS",
+    "-DPORTABLE_SLEEP_SETTINGS",
+    "-DPORTABLE_ALARM_SETTINGS",
+    "-DPORTABLE_SETTINGS_VERSION=\"1.3.24\"",
+    "-DPORTABLE_RETURN_APP=\"springboard.elf\"",
+    "-DPORTABLE_CONTEXTS_CLIENT",
+    "-DPORTABLE_ASYNC_RGB565",
+    "-DPORTABLE_SETTINGS_CLOCK_CHANGE_CONTROL",
+    "-DPORTABLE_WATCH_NATIVE_HEIGHT",
+    "-DPORTABLE_NAVIGATION_RETENTION"
+  ],
+  "home": {
+    "bytes": 554744,
+    "sha256": "f376d722b07c52184cf4cd27df306054920cdf742ccb8bdd4d476a08e35aef54"
+  },
+  "linked_layout": {
+    "package_workspace_allocation": "MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT",
+    "scope": "Linked types and static placement; no physical heap or hardware acceptance",
+    "static_workspaces": {
+      "boot_view": {
+        "address": 1008205824,
+        "bytes": 288,
+        "section": ".ext_ram.bss"
+      },
+      "serial_workspace": {
+        "address": 1008206112,
+        "bytes": 2792,
+        "section": ".ext_ram.bss"
+      }
+    },
+    "types": {
+      "package_workspace_bytes": 15208,
+      "platform_entry_bytes": 120,
+      "platform_slots": 32,
+      "runtime_bytes": 327224
+    }
+  },
+  "linked_native_sleep_symbols": [
+    "_ZN8RiscBoot7Runtime12sleepPrepareEPy",
+    "_ZN8RiscBoot7Runtime11sleepResumeEy",
+    "_ZN7RiscCpu4Port14gpioLightSleepEPvybP26risc_light_sleep_result_v1",
+    "_ZN7RiscCpu4Port13gpioDeepSleepEPvyb",
+    "_ZN7RiscCpu4Port16gpioDeepSleepForEPvybm",
+    "_ZN7RiscCpu4Port17gpioLightSleepForEPvybmP26risc_light_sleep_result_v1",
+    "_ZN7RiscCpu4Port17gpioLightSleepSetEPvybmP26risc_light_sleep_result_v1",
+    "_ZN7RiscCpu4Port16gpioDeepSleepSetEPvybm",
+    "_ZN7RiscCpu11NativeSleep8timerArmEm",
+    "_ZN7RiscCpu11NativeSleep5enterEv"
+  ],
+  "live_memory_fit_tested": false,
+  "namespace_1_granted_to_settings_and_home": true,
+  "native_elf_sha256": "6bf06b099b3d77e28150e2af5933d5a08427383fb9724ed4bb30316c8867d227",
+  "open_boundaries": [
+    "Historical recipe is not a bit-for-bit fa1c Settings reproduction receipt; persisted-record compatibility boundary is tested separately",
+    "Physical sleep/wake/display/input/current and live memory fit"
+  ],
+  "preserving_update_kit": false,
+  "producer_run": 39026555734,
+  "product_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "release_url": "https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/tag/test-provisioning-1.1.46",
+  "retained_files_verified": 117,
+  "runtime_revision": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+  "schema": 1,
+  "settings": {
+    "bytes": 142164,
+    "manifest_version": "1.3.25",
+    "sha256": "fa1c87a1e971d1d64a5d65d8e655d898bbd227a42364f639517ff53ea2966e3e"
+  },
+  "status": "artifact-and-structural-checks-passed-behavior-boundary-open",
+  "store_files": 125,
+  "target_instructions_executed": false
+}

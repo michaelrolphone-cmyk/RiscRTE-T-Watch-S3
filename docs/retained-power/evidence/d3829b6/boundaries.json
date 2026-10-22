@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "source_pins": {
+    "system": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
+    "watch": "416fa9f144fa5bd5471e6f4c9cefff21455c8361",
+    "utilities": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
+    "runtime": "48229bd1593a2e24e95bf4537b495ee615990fd3",
+    "drivers": "5890721073ebabd781d5d278e447c761947a5c58"
+  },
+  "runs": [
+    {
+      "name": "home-runtime-sleep",
+      "command": [
+        "/usr/bin/python",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/watch/scripts/test_runtime_sleep.py",
+        "--system",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/system",
+        "--utilities",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/utilities",
+        "--output",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/evidence/boundaries/home-runtime-sleep"
+      ],
+      "returncode": 0,
+      "log_sha256": "60526b2c8543c90c2ad525b721662a70b31e66939a5151958b51a0e86506460e"
+    },
+    {
+      "name": "runtime-light-sleep",
+      "command": [
+        "bash",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/runtime/test/run_light_sleep_test.sh"
+      ],
+      "returncode": 0,
+      "log_sha256": "693801ee8058fc3fba699d9978ed890aa13bf9dd22a140e08a3386d884066dba"
+    },
+    {
+      "name": "runtime-deep-timed-wake-set",
+      "command": [
+        "bash",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/runtime/test/run_deep_sleep_test.sh"
+      ],
+      "returncode": 0,
+      "log_sha256": "b537ece3985b5de1919c8591a19e1428e120d012191d12d30e0f5015fb2a4a66"
+    },
+    {
+      "name": "native-nvs",
+      "command": [
+        "bash",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/runtime/test/native_nvs_shim/run_test.sh"
+      ],
+      "returncode": 0,
+      "log_sha256": "e3d44b73b34d4a98bf45bff117f35a29619e4cc4b1c2182f0c348ff6506cde8b"
+    },
+    {
+      "name": "legacy-power-adapters",
+      "command": [
+        "/usr/bin/python",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/drivers/scripts/test_legacy_power_bridge.py",
+        "--sdk",
+        "/home/runner/work/RiscRTE-T-Watch-S3/RiscRTE-T-Watch-S3/runtime/sdk/driver",
+        "--sanitize"
+      ],
+      "returncode": 0,
+      "log_sha256": "ce2b168ee06ede1fb89d87af87d5d590a54a60982442c2908e5690fe81319b13"
+    }
+  ],
+  "scope": "Original host suites against exact selected sources, not full production flags or retained Xtensa ELF execution. SDK/board operations use host shims.",
+  "asan_ubsan": "Home normal and sanitized; deep/timed/wake/NVS/adapters sanitized where original runners honor SANITIZE; Light original runner not sanitized.",
+  "leak_detection": false,
+  "physical_tested": false,
+  "live_memory_fit_tested": false
+}

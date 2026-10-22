@@ -1,0 +1,67 @@
+name: T-Watch 1.1.46 source inventory audit
+on:
+  pull_request:
+    paths:
+      - docs/watch-payload-admission-1.1.46/**
+      - scripts/watch_payload_1146_audit.py
+      - scripts/test_watch_payload_1146_audit.py
+      - .github/workflows/watch-payload-1146-audit.yml
+permissions:
+  contents: read
+concurrency:
+  group: watch-payload-1146-source-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  source-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify exact head and obtain base for read-only diff scope
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          git fetch --no-tags --depth=1 https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3.git 81dbde86969615f7378cc03c5800960a9092e076
+      - name: Check pinned public sources, declared inventory and release metadata
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/watch-source-results"
+          python3 scripts/watch_payload_1146_audit.py --fetch --git-scope \
+            --source-cache "$RUNNER_TEMP/watch-source-cache" \
+            --output "$RUNNER_TEMP/watch-source-results/audit.json"
+      - name: Exercise positive and negative audit cases
+        run: |
+          set -euo pipefail
+          python3 scripts/test_watch_payload_1146_audit.py \
+            --source-cache "$RUNNER_TEMP/watch-source-cache" -v 2>&1 | tee "$RUNNER_TEMP/watch-source-results/tests.log"
+          set +e
+          python3 scripts/watch_payload_1146_audit.py --git-scope --require-paired \
+            --source-cache "$RUNNER_TEMP/watch-source-cache" \
+            --output "$RUNNER_TEMP/watch-source-results/refused-pair-audit.json" \
+            > "$RUNNER_TEMP/watch-source-results/pair-refusal.log" 2>&1
+          result=$?
+          set -e
+          test "$result" = 2
+          grep -q 'generic pair rejected' "$RUNNER_TEMP/watch-source-results/pair-refusal.log"
+      - name: Record bounded evidence digests and limits
+        run: |
+          set -euo pipefail
+          (cd "$RUNNER_TEMP/watch-source-results" && sha256sum audit.json tests.log refused-pair-audit.json pair-refusal.log > SHA256SUMS)
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          This is a source and declared-metadata audit of the exact PR head, not product admission.
+          125 core files remain firmware-owned internal-store files with no admitted RTEF1 destination.
+          No release binaries are downloaded, rebuilt or executed; no device, tag, release or catalog is changed.
+          A passing audit deliberately rejects the unsupported generic serial pair. Hardware and Waveshare gates remain open.
+          EOF
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: watch-1146-source-audit-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/watch-source-results/
+          if-no-files-found: error
+          retention-days: 7

@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
 """Release transport contracts and negative mutations; no hardware claims."""
 import copy
+import io
 import json
 from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 import provisioning_release as release
 import publish_provisioning_release as publisher
 import package_provisioning as package
+from current_bootfs import build as build_store
 
 
 class ReleaseContracts(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Real SPIFFS bytes with synthetic payloads, not retained release bytes.
+        # Include a nested path and enough data to cross an index-page boundary.
+        cls.store_files = {'file%03d' % i: bytes([i]) * (i + 1) for i in range(124)}
+        cls.store_files['nested/large.bin'] = b'index-boundary' * 2100
+        cls.store_image, _ = build_store(cls.store_files, size=0x550000)
+
     def fixture(self):
         p = package.pins(); c = package.baseline_contract(p); revision = '1' * 40
         sources = {r: {'revision': revision if r == 'product' else p[r+'_revision'], 'tree': '2'*40, 'submodules': []} for r in release.ROLES}
@@ -110,12 +121,12 @@ class ReleaseContracts(unittest.TestCase):
         target=json.loads((package.ROOT/'docs/native-idf61/released-baseline.json').read_bytes())['target']
         iq={'schema':1,'target_identity':target,'elf_sha256':package.sha(native_blobs['firmware_elf'])}
         q['native']['radio_iq']=iq
-        blobs={'factory-candidate-erases-data-0x0.bin':b'synthetic-factory','store.bin':b'synthetic-store',
+        blobs={'factory-candidate-erases-data-0x0.bin':b'synthetic-factory','store.bin':self.store_image,
                'firmware.bin':native_blobs['firmware_bin'],'bootloader.bin':native_blobs['bootloader'],'partitions.bin':native_blobs['partitions']}
         q['artifacts']={n:package.record(b) for n,b in blobs.items()}
         name='bootfs-'+package.sha(blobs['store.bin'])+'.bin'
         q['feed']['receipt']['assets']={name:{'size':len(blobs['store.bin']),'sha256':package.sha(blobs['store.bin'])}}
-        feed={'boot_profiles':{'core':{'mirrors':[],'profile':{'files':[['file'+str(i),1,'3'*64] for i in range(125)],
+        feed={'boot_profiles':{'core':{'mirrors':[],'profile':{'files':[[n,len(b),package.sha(b)] for n,b in sorted(self.store_files.items())],
           'image':{'url':'https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/'+p['release_tag']+'/'+name,
           'bytes':len(blobs['store.bin']),'sha256':package.sha(blobs['store.bin'])}},'native':{'firmware_size':len(blobs['firmware.bin']),'firmware_sha256':package.sha(blobs['firmware.bin'])}}},'apps':[],'profiles':{'core':[]}}
         feed_bytes=package.encoded(feed);q['feed']['receipt']['feed_sha256']=q['feed']['controller']['production_feed_sha256']=package.sha(feed_bytes)
@@ -143,6 +154,104 @@ class ReleaseContracts(unittest.TestCase):
             source_lock=q['input_lock'],qualification_sha256=package.sha(files['qualification.json']),
             ci={'repository':repo,'run_id':123,'run_attempt':1,'source_revision':rev,'firmware_elf_sha256':iq['elf_sha256'],'workflow_sha256':package.sha(workflow)})
         return files,report,p,rev
+
+    def reseal_feed(self, files, report, feed, image=None):
+        """Update every outer custody record, leaving declared tuples as supplied."""
+        files = dict(files); report = copy.deepcopy(report)
+        q = json.loads(files['qualification.json'])
+        _, renamed = release.release_names(package.pins(), q)
+        if image is not None:
+            old = 'bootfs-' + q['artifacts']['store.bin']['sha256'] + '.bin'
+            del files[old]; del q['artifacts'][old]
+            name = 'bootfs-' + package.sha(image) + '.bin'
+            files['store.bin'] = files[name] = image
+            q['artifacts'][name] = package.record(image)
+            q['feed']['receipt']['assets'] = {name: {'size': len(image), 'sha256': package.sha(image)}}
+            image_row = feed['boot_profiles']['core']['profile']['image']
+            image_row.update(bytes=len(image), sha256=package.sha(image),
+                             url=image_row['url'].rsplit('/', 1)[0] + '/' + name)
+        files['native-packages-v1.json'] = package.encoded(feed)
+        q['feed']['receipt']['feed_sha256'] = q['feed']['controller']['production_feed_sha256'] = package.sha(files['native-packages-v1.json'])
+        files['feed-qualification.json'] = package.encoded(q['feed'])
+        q['artifacts'] = {n: package.record(files[renamed.get(n, n)]) for n in q['artifacts']}
+        files['qualification.json'] = package.encoded(q)
+        evidence_name = renamed['candidate-evidence.zip']
+        with zipfile.ZipFile(io.BytesIO(files[evidence_name])) as archive:
+            evidence = {n: archive.read(n) for n in archive.namelist()}
+        evidence['qualification.json'] = files['qualification.json']
+        files[evidence_name] = release.make_archive(evidence)
+        report['qualification_sha256'] = package.sha(files['qualification.json'])
+        return files, report
+
+    def verify_resealed_feed(self, change, image=None, error='Feed inventory differs from store image'):
+        files, report, p, rev = self.output_fixture()
+        feed = json.loads(files['native-packages-v1.json'])
+        change(feed['boot_profiles']['core']['profile'])
+        files, report = self.reseal_feed(files, report, feed, image)
+        with tempfile.TemporaryDirectory() as d, patch.object(package, 'pins', return_value=p):
+            root = Path(d); digest = self.write_output(root, files, report)
+            with self.assertRaisesRegex(ValueError, error):
+                release.verify_output(root, digest, rev)
+
+    def test_real_synthetic_store_and_canonical_inventory(self):
+        self.assertEqual(len(self.store_image), 0x550000)
+        self.assertEqual(len(self.store_files), 125)
+        self.assertEqual(release.read_image(self.store_image, 0x550000), self.store_files)
+        files, report, p, rev = self.output_fixture()
+        with tempfile.TemporaryDirectory() as d, patch.object(package, 'pins', return_value=p):
+            root = Path(d); digest = self.write_output(root, files, report)
+            release.verify_output(root, digest, rev)
+
+    def test_resealed_path_size_and_digest_mutations(self):
+        for column, value in [(0, 'other-path'), (1, 2), (2, 'f' * 64)]:
+            with self.subTest(column=column):
+                self.verify_resealed_feed(lambda profile: profile['files'][0].__setitem__(column, value))
+
+    def test_resealed_duplicate_missing_extra_and_unsorted_rows(self):
+        changes = {
+            'duplicate': lambda rows: [rows[0], rows[0], *rows[2:]],
+            'missing': lambda rows: rows[:-1],
+            'extra': lambda rows: [*rows, ['extra', 1, 'f' * 64]],
+            'unsorted': lambda rows: list(reversed(rows)),
+        }
+        for name, change in changes.items():
+            with self.subTest(change=name):
+                self.verify_resealed_feed(lambda profile: profile.update(files=change(profile['files'])),
+                    error='Feed scope differs' if name in ('missing', 'extra') else 'Feed inventory differs from store image')
+
+    def test_resealed_inventory_requires_strict_row_types(self):
+        row = ['file000', 1, package.sha(self.store_files['file000'])]
+        malformed = [None, 'row', {}, row[:2], row + ['extra'],
+                     [None, *row[1:]], [1, *row[1:]], [[], *row[1:]],
+                     [row[0], True, row[2]], [row[0], 1.0, row[2]], [row[0], '1', row[2]],
+                     [row[0], -1, row[2]], [row[0], None, row[2]],
+                     [*row[:2], None], [*row[:2], 1], [*row[:2], 'F' * 64],
+                     [*row[:2], 'f' * 63], [*row[:2], 'g' * 64]]
+        for value in malformed:
+            with self.subTest(row=value):
+                self.verify_resealed_feed(lambda profile: profile['files'].__setitem__(0, value),
+                                          error='Malformed feed inventory row')
+        for value in (None, 'x' * 125, {str(i): i for i in range(125)}):
+            with self.subTest(files=value):
+                self.verify_resealed_feed(lambda profile: profile.update(files=value), error='Feed scope differs')
+
+    def test_valid_different_images_reject_stale_tuples_after_resealing(self):
+        changed = dict(self.store_files); changed['file000'] = b'changed'
+        missing = dict(self.store_files); del missing['file000']
+        extra = dict(self.store_files, extra=b'extra')
+        renamed = dict(missing, renamed=self.store_files['file000'])
+        for name, store in [('changed', changed), ('missing', missing), ('extra', extra), ('renamed', renamed)]:
+            with self.subTest(image=name):
+                image, _ = build_store(store, size=0x550000)
+                self.assertEqual(release.read_image(image, 0x550000), store)
+                self.verify_resealed_feed(lambda profile: None, image=image)
+
+    def test_malformed_image_and_wrong_geometry_rejected_after_resealing(self):
+        wrong_geometry, _ = build_store(self.store_files, size=0x510000)
+        malformed = bytearray(self.store_image); malformed[256] ^= 1  # Live lookup/header identity.
+        for image in (b'synthetic-store', self.store_image[:-1], wrong_geometry, bytes(malformed)):
+            with self.subTest(bytes=len(image)):
+                self.verify_resealed_feed(lambda profile: None, image=image, error='Invalid feed store image')
 
     def write_output(self,root,files,report):
         report=copy.deepcopy(report);report['artifacts']={n:package.record(b) for n,b in files.items()}
