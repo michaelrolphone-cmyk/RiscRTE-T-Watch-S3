@@ -1,0 +1,31 @@
+name: Watch provisioning release contracts
+on:
+  pull_request:
+    paths:
+      - .github/workflows/provisioning-release-contracts.yml
+      - .github/workflows/provisioning-native.yml
+      - scripts/*provisioning*.py
+      - scripts/current_bootfs.py
+      - scripts/read_only_spiffs.py
+      - vendor/esp-idf-spiffs/**
+      - docs/provisioning-native/**
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact PR head
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Test synthetic store binding and release publication guards
+        run: python scripts/test_provisioning_release.py

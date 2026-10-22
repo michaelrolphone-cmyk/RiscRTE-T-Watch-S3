@@ -13,6 +13,7 @@ import native_idf61_candidate as native
 from package_provisioning import require, record, sha, encoded
 from transport_native_idf61_release import archive_members, checksums, decode
 from package_alarm_sleep import make_archive
+from read_only_spiffs import read_image
 
 NATIVE = {'factory-candidate-erases-data-0x0.bin', 'firmware.bin', 'bootloader.bin', 'partitions.bin', 'store.bin'}
 CANDIDATE = NATIVE | {'qualification.json', 'source-lock.json', 'source-pins.json', 'default.elf', 'default.json', 'candidate-evidence.zip', 'SHA256SUMS', 'native-packages-v1.json', 'feed-qualification.json'}
@@ -42,11 +43,25 @@ def verify_feed_assets(root, q, names=None):
     require(proof == q['feed'], 'Feed qualification differs')
     require(sha(path('native-packages-v1.json').read_bytes()) == proof['receipt']['feed_sha256'], 'Feed digest differs')
     core = feed['boot_profiles']['core']; profile = core['profile']
-    require(len(profile['files']) == 125 and not core['mirrors'] and feed['apps'] == [] and feed['profiles'] == {'core': []}, 'Feed scope differs')
+    rows = profile['files']
+    require(type(rows) is list and len(rows) == 125 and not core['mirrors'] and feed['apps'] == [] and feed['profiles'] == {'core': []}, 'Feed scope differs')
+    for row in rows:
+        require(type(row) is list and len(row) == 3 and type(row[0]) is str
+                and type(row[1]) is int and row[1] >= 0 and type(row[2]) is str
+                and re.fullmatch('[0-9a-f]{64}', row[2]), 'Malformed feed inventory row')
     store = q['artifacts']['store.bin']; firmware = q['artifacts']['firmware.bin']
     name = 'bootfs-' + store['sha256'] + '.bin'
-    require(path(name).read_bytes() == path('store.bin').read_bytes(), 'Feed bootfs differs')
+    image = path('store.bin').read_bytes()
+    require(path(name).read_bytes() == image, 'Feed bootfs differs')
     require(profile['image']['sha256'] == store['sha256'] and profile['image']['bytes'] == store['bytes'], 'Feed image differs')
+    try:
+        files = read_image(image, 0x550000)
+    except (AssertionError, KeyError, ValueError) as error:
+        raise ValueError('Invalid feed store image') from error
+    # The pinned build_boot_profile_feed.py emits the complete inventory in
+    # sorted path order. Compare lists, not maps: duplicate rows must not vanish.
+    require(rows == [[n, len(b), sha(b)] for n, b in sorted(files.items())],
+            'Feed inventory differs from store image')
     require(core['native']['firmware_sha256'] == firmware['sha256'] and core['native']['firmware_size'] == firmware['bytes'], 'Feed native identity differs')
     expected = 'https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/' + package.pins()['release_tag'] + '/' + name
     require(profile['image']['url'] == expected, 'Immutable feed source differs')
