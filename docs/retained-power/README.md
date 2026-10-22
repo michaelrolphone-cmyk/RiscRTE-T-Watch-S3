@@ -25,10 +25,9 @@ passed native/store admission for all 61 ELFs, including the byte-retained Setti
    production logic with a duplicate model. Preserve any unresolved boundary.
 5. Add rejection controls for changed artifacts, sources and capability bindings.
 
-This first durable checkpoint covers artifact/structural validation. Behavior
-qualification is not yet claimed. Settings source attribution cannot be inferred
-from the later System pin used to build Home. The T054 recipe and manifest-only
-version increment are being reconciled before running producer-bound tests.
+Artifact validation, historical-source checks and current selected-boundary
+suites are separate gates. Their results must not be combined into a claim of
+physical acceptance or a bit-identical historical Settings rebuild.
 
 ## Installation and physical boundary
 
@@ -47,3 +46,72 @@ producer. Run `python tests/retained_power/qualify.py --product /path/to/produce
 --assets /path/to/cache --output /path/to/report.json`. The cache is rehashed on
 every run. The qualification workflow has read-only contents permission, no
 publishing job, no hardware tool and no production build step.
+
+## Historical producer and selected consumer
+
+The T054 [source pins](../t054/source-pins.json),
+[recorded Settings command](../t054/settings-command.json),
+[build recipe](../../scripts/t054/build_apps.py), and
+[assembly](../../scripts/t054/assemble.py) identify System
+`9dcb2bbef44853e533d980a658a814d2c787a4fa`. The command enables
+`PORTABLE_SLEEP_SETTINGS`, `PORTABLE_LOW_BATTERY`, tap Settings, rotation 0 and
+local navigation/sleep; it does not enable atomic key-value access. The command's
+version macro is 1.3.24; assembly increments the manifest to 1.3.25. The artifact
+report records every enabled `-D` argument instead of substituting a newer profile.
+
+The shared bridge provenance points to Watch
+`6e82fdcaec0b73ed700d2104cfb4d94f011c19d4` in the historical System
+[reproduction record](https://github.com/michaelrolphone-cmyk/RiscRTE-System-Apps/blob/9dcb2bbef44853e533d980a658a814d2c787a4fa/docs/t054/public-reproduction.json).
+That record includes different output profiles and dirty source metadata. It is
+**not** a clean, bit-for-bit reproduction receipt for retained `fa1c87a1…`.
+This qualification establishes documented lineage and actual retained bytes,
+not a newly proven complete source-to-byte rebuild. Current System `bb0cadf…`
+builds Home; it must not be mislabeled as the retained Settings producer.
+
+`source_checks.py` compiles the historical Settings controller and original
+policy tests without editing production source. It also compiles independent
+historical-producer and selected-Home-wrapper executables and passes the actual
+serialized records between them. It is not a Python reimplementation of policy.
+The source-only suites are not a full production-flag replay or execution of the
+retained Xtensa apps. The exact original fixtures cover mode Save/Cancel,
+readback, invalid/missing records and failure paths, and low-battery/timer UI.
+
+A specific persisted-record boundary is checked explicitly: historical policy
+accepts 0 (Off), 3601 seconds and 14400 seconds; selected Home rejects them and
+falls back to 60 seconds idle / 300 seconds deep. These are not ordinary editor
+choices. The retained UI edits idle in 5-second steps (5–3600 seconds) and deep in
+60-second steps (60–3600 seconds), with no explicit Off choice. Those 780 bounded
+choices are exchanged and checked in normal and ASan/UBSan builds. Preserving the
+six inherited-record differences is an expected qualification result, not a
+claim that those records now work or that ordinary controls are defective.
+
+## Shared capabilities and custody
+
+Actual boot grants bind both apps to namespace 1 through `storage.key-value@1`.
+Settings writes `sleep_mode`, `sleep_idle`, and `sleep_deep`; Home consumes the
+opaque application records. Runtime owns authorization/NVS persistence, not the
+policy meanings. The retained composition is synchronous NVS, not the separate
+atomic-storage or SD configuration.
+
+Both apps receive `power.sleep@1:0`, `display.power@1:0` and
+`input.power-key@1:0`. The retained power bridge requires `board.battery@1` and
+forwards available light/deep/timed/wake-set callbacks from PMU instance 4,
+through GPIO instance 1 and Runtime CpuPort to native ESP-IDF sleep functions.
+The display-power bridge requires `display.output@1` and forwards panel
+prepare/resume. Optional callbacks are not invented by the bridge. Original
+bridge tests exercise three roles, including absent callbacks. The released
+native ELF is independently checked for the sleep/custody implementation symbols.
+Presence is link evidence, not proof of executing the selected tables on hardware.
+
+The exact Watch source's original 56-case Runtime-sleep suite exercises production
+Home prepare/refusal/resume/retained-custody paths. Original exact Runtime suites
+exercise Light, Deep, timed/wake-set, lifecycle and NVS boundaries using host
+shims; they do not prove physical device behavior. Leak detection is explicitly
+disabled; ASan/UBSan are enabled wherever the original runners support them.
+
+## Durable evidence
+
+The workflow's JSON/log uploads expire after 30 days. They are transport, not the
+permanent acceptance record. Terminal run IDs, commit IDs, result summaries and
+receipt hashes are committed separately after CI verification. No local result
+or unpublished commit is represented as GitHub qualification.

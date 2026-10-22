@@ -18,6 +18,8 @@ PRODUCT = 'ab9ff33975680c5bb8d9a2e7ed346d0300732a4e'
 RUNTIME = '48229bd1593a2e24e95bf4537b495ee615990fd3'
 BASE = 'https://github.com/michaelrolphone-cmyk/RiscRTE-T-Watch-S3/releases/download/test-provisioning-1.1.46/'
 ASSETS = {
+    'TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin': (16777216, 'e132a6276cd444cd41482ecfcc2043296b2acf02ef882acc83ba1af4c76edff6'),
+    'firmware.bin': (1624560, 'cd8f7f51d9c604e4f3b12b5f54dcc83817b812baa973b5862321a94e951f0034'),
     'store.bin': (5570560, 'e50d26000dc0366be61abbf480cd39ee98323ea5ef489536baf0cf7c4097b126'),
     'TWatch-1.1.46-Provisioning-Evidence.zip': (21862871, '07eecd7b47ce3368f89025981df048408ba84a981285415e9f56fd66902d18e3'),
     'qualification.json': (1414901, '2933128fa25f11e73774d3f3ba68baa4a1124670967490780cfb14fcf48371b4'),
@@ -85,6 +87,9 @@ def qualify(product, raw):
     sys.path.insert(0, str(product / 'scripts'))
     from read_only_spiffs import read_image
     from build_provisioning_native import linked_provisioning_layout
+    factory = raw['TWatch-1.1.46-Provisioning-factory-erases-data-0x0.bin']
+    for name, offset in [('firmware.bin', 0x10000), ('store.bin', 0x2f0000)]:
+        need(factory[offset:offset + len(raw[name])] == raw[name], 'Factory pair differs: ' + name)
     store = read_image(raw['store.bin'], 0x550000)
     boot = binding(store)
     proof = json.loads(raw['qualification.json'])
@@ -98,6 +103,28 @@ def qualify(product, raw):
             exact(content, (item['bytes'], item['sha256']), 'Native input ' + key)
         native = archive.read('build-evidence/locked-native/riscrte_native.elf')
         layout = linked_provisioning_layout(native)
+    from elftools.elf.elffile import ELFFile
+    symbols = {s.name for s in ELFFile(io.BytesIO(native)).get_section_by_name('.symtab').iter_symbols()}
+    callbacks = ['_ZN8RiscBoot7Runtime12sleepPrepareEPy', '_ZN8RiscBoot7Runtime11sleepResumeEy',
+                 '_ZN7RiscCpu4Port14gpioLightSleepEPvybP26risc_light_sleep_result_v1',
+                 '_ZN7RiscCpu4Port13gpioDeepSleepEPvyb', '_ZN7RiscCpu4Port16gpioDeepSleepForEPvybm',
+                 '_ZN7RiscCpu4Port17gpioLightSleepForEPvybmP26risc_light_sleep_result_v1',
+                 '_ZN7RiscCpu4Port17gpioLightSleepSetEPvybmP26risc_light_sleep_result_v1',
+                 '_ZN7RiscCpu4Port16gpioDeepSleepSetEPvybm',
+                 '_ZN7RiscCpu11NativeSleep8timerArmEm', '_ZN7RiscCpu11NativeSleep5enterEv']
+    need(set(callbacks) <= symbols, 'Native sleep implementation missing')
+    app_sections = {}
+    for name in ('settings.elf', 'default.elf'):
+        elf = ELFFile(io.BytesIO(store[name]))
+        app_sections[name] = {section.name: section['sh_size'] for section in elf.iter_sections() if section['sh_flags'] & 2}
+    commands = json.loads((product / 'docs/t054/settings-command.json').read_bytes())
+    flags = [x for x in commands if x.startswith('-D')]
+    need(all(x in flags for x in ('-DPORTABLE_LOW_BATTERY', '-DPORTABLE_SLEEP_SETTINGS',
+                                 '-DPORTABLE_TAP_SETTINGS', '-DPORTABLE_TOUCH_ROTATION=0')), 'Retained Settings flags differ')
+    need(not any('ATOMIC' in x for x in flags), 'Retained Settings unexpectedly atomic')
+    producer_pins = json.loads((product / 'docs/t054/source-pins.json').read_bytes())
+    need(next(x['commit'] for x in producer_pins if x['checkout'] == 'System-rgb-t054') ==
+         '9dcb2bbef44853e533d980a658a814d2c787a4fa', 'Historical Settings producer differs')
     need(layout == proof['provisioning']['linked_layout'], 'Native linked layout differs')
     for label in ('admission', 'admission_sanitized'):
         admission = proof[label]
@@ -127,10 +154,13 @@ def qualify(product, raw):
             'settings': {'manifest_version': '1.3.25', 'bytes': SETTINGS[0], 'sha256': SETTINGS[1]},
             'home': {'bytes': HOME[0], 'sha256': HOME[1]}, 'store_files': len(store),
             'retained_files_verified': len(baseline) - len(changed), 'linked_layout': layout,
-            'native_elf_sha256': sha(native), 'namespace_1_granted_to_settings_and_home': True,
+            'native_elf_sha256': sha(native), 'linked_native_sleep_symbols': callbacks,
+            'app_alloc_sections_not_live_heap': app_sections,
+            'historical_settings_recipe_flags': flags, 'namespace_1_granted_to_settings_and_home': True,
             'factory_erases_data': True, 'preserving_update_kit': False,
+            'factory_firmware_store_pair_verified': True,
             'target_instructions_executed': False, 'hardware_tested': False, 'live_memory_fit_tested': False,
-            'open_boundaries': ['Exact retained Settings source/flags and behavior reconciliation',
+            'open_boundaries': ['Historical recipe is not a bit-for-bit fa1c Settings reproduction receipt; persisted-record compatibility boundary is tested separately',
                                 'Physical sleep/wake/display/input/current and live memory fit']}
 
 def main():

@@ -36,3 +36,53 @@ jobs:
           path: evidence/
           retention-days: 30
           if-no-files-found: warn
+
+  retained-sources:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: qualification
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 9dcb2bbef44853e533d980a658a814d2c787a4fa
+          path: producer
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: bb0cadf3cec3445a64e11513b47b2676f3fdd92d
+          path: system
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Watch
+          ref: 416fa9f144fa5bd5471e6f4c9cefff21455c8361
+          path: watch
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Utilities
+          ref: 4fdcad2495c33fe63f5f6faca9b11ced3c739a5b
+          path: utilities
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 48229bd1593a2e24e95bf4537b495ee615990fd3
+          path: runtime
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-Drivers
+          ref: 5890721073ebabd781d5d278e447c761947a5c58
+          path: drivers
+      - name: Retained Settings producer and selected Home record compatibility
+        run: python qualification/tests/retained_power/source_checks.py --producer-system producer --selected-system system --watch watch --output evidence/sources
+      - name: Exact Home, Runtime, NVS and capability-adapter host boundaries
+        run: python qualification/tests/retained_power/run_boundaries.py --system system --watch watch --utilities utilities --runtime runtime --drivers drivers --output evidence/boundaries
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: retained-power-sources-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          retention-days: 30
+          if-no-files-found: warn
