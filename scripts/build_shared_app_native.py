@@ -161,7 +161,7 @@ def qualify(args, sources, proof):
     from read_only_spiffs import read_image
     from prepare_preserving_update import layout, pair
     from current_bootfs import build
-    from provisioning_qualification import admit_product
+    from shared_app_native_admission import admit_product
     p = pins()
     lock = json.loads(args.lock.read_bytes())
     closure = controlled.validate_build_proof(proof, sources, args.native_build, args.compiler, lock)

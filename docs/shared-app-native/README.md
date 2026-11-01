@@ -35,3 +35,11 @@ external placement and the existing allocator/lifecycle checks. The complete
 released bootloader and protected factory ranges remain byte-identical; the newly
 compiled bootloader is build evidence only. The unchanged old package feed is
 retained as baseline evidence, not advertised as a feed for the new candidate.
+
+Successor admission preserves exact `boot.json` authority. It checks both the
+actual released-to-successor cohort and successor self-admission, with all 61
+ELFs, the selected 20-platform graph and zero hardware/storage callbacks. The
+historical factory-bootstrap admission remains unchanged: its namespace-6
+addition predicate applies to the original migration, not this already-admitted
+1.1.46 baseline. Initial CI reached that inapplicable predicate after successful
+native compilation; its failed logs and artifact remain retained.
