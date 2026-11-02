@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Capacity-only native successor: full locked build; no app/store composition."""
 import io
+import re
+import sys
 import json
 import shlex
 import subprocess
@@ -67,7 +69,7 @@ def linked_capacity(raw):
 
 def qualify(args,sources,proof,base,cmake):
     controlled,native=base.controlled,base.native
-    p=base.pins()
+    p=json.loads((base.ROOT/'docs/shared-home-capacity/source-pins.json').read_bytes())
     lock=json.loads(args.lock.read_bytes())
     closure=controlled.validate_build_proof(proof,sources,args.native_build,args.compiler,lock)
     before,after=profile_delta(base.ROOT,sources['runtime'],p['profile'],cmake)
@@ -92,10 +94,14 @@ def qualify(args,sources,proof,base,cmake):
     blobs,native_proof=native.verify_native(lock,sources,args.native_build,args.compiler,
         contract,args.baseline.read_bytes(),profile_text=after['definitions'])
     linked=linked_capacity(blobs['firmware_elf'])
+    require(set(re.findall(rb'RISC_RUNTIME_VERSION:([^\x00]*)\x00',blobs['firmware_bin']))=={p['runtime_version'].encode()},'Runtime version marker differs')
+    memory=args.native_build/'native-build-evidence/provider-capacity-layout'
+    subprocess.run([sys.executable,str(sources['runtime']/'test/home_provider_capacity_layout.py'),'--build',str(args.native_build),'--runtime',str(sources['runtime']),'--output',str(memory)],check=True)
+    measured=json.loads((memory/'memory.json').read_bytes())
     controlled.validate_build_proof(proof,sources,args.native_build,args.compiler,lock)
     native.verify_sources(lock,sources)
     report={'schema':1,'source_revision':lock['sources']['product']['revision'],
-        'runtime_revision':p['runtime_revision'],'profile_before':before,'profile_after':after,
+        'runtime_revision':p['runtime_revision'],'runtime_version':p['runtime_version'],'capacity_memory':measured,'profile_before':before,'profile_after':after,
         'compiled_runtime_rows':len(rows),'linked_capacity':linked,'native':native_proof,
         'build_closure_sha256':controlled.sha((args.native_build/'native-build-evidence/build-closure.json').read_bytes()),
         'scope':'Full native firmware dependency; final cumulative app/store graph admission is separate.',

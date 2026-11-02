@@ -11,7 +11,7 @@ python -m pip install pyelftools==0.32
 python - "$product" "$NATIVE_ROOT" <<'PY'
 import json,os,sys
 from pathlib import Path
-product,root=map(Path,sys.argv[1:]);p=json.loads((product/'docs/shared-app-native/source-pins.json').read_text())
+product,root=map(Path,sys.argv[1:]);p=json.loads((product/'docs/shared-home-capacity/source-pins.json').read_text())
 assert os.environ['GITHUB_REPOSITORY']=='michaelrolphone-cmyk/RiscRTE-T-Watch-S3'
 assert p['publication_enabled'] is False
 repos={'runtime':'RiscRTE','system':'RiscRTE-System-Apps','utilities':'RiscRTE-Utilities','drivers':'RiscRTE-Drivers','watch':'RiscRTE-Watch','image_helper':'RiscRTE-T-Watch-S3'}

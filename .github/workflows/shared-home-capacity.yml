@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/shared-home-capacity.yml
       - scripts/*shared_home_capacity*
+      - docs/shared-home-capacity/**
       - profiles/shared-home-capacity.cmake
       - scripts/native_idf61_candidate.py
 

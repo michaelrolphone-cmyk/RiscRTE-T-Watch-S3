@@ -4,6 +4,13 @@ import build_shared_app_native as base
 from build_shared_app_native import *
 import shared_home_capacity as capacity
 
+def pins():
+    p=json.loads((ROOT/'docs/shared-home-capacity/source-pins.json').read_bytes())
+    old=base.pins()
+    require(p['product']==old['product'] and p['profile']==old['profile'] and p['sdk_revision']==old['sdk_revision'], 'Capacity dependency profile differs')
+    require(p['runtime_version']=='0.4.19', 'Capacity Runtime version differs')
+    return p
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', action='append', default=[])
