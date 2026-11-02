@@ -8,7 +8,7 @@ def pins():
     p=json.loads((ROOT/'docs/shared-home-capacity/source-pins.json').read_bytes())
     old=base.pins()
     require(p['product']==old['product'] and p['profile']==old['profile'] and p['sdk_revision']==old['sdk_revision'], 'Capacity dependency profile differs')
-    require(p['runtime_version']=='0.4.19', 'Capacity Runtime version differs')
+    require(p['runtime_version']=='0.4.20', 'Capacity Runtime version differs')
     return p
 
 def main():
