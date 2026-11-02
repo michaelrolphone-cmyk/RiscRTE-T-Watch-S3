@@ -209,7 +209,7 @@ def checked_artifacts(lock, build):
     return result
 
 
-def verify_native(lock, sources, build, compiler, contract, baseline):
+def verify_native(lock, sources, build, compiler, contract, baseline, *, profile_text=None):
     from elftools.elf.elffile import ELFFile
     from release_assets import esp_image
     from paired_candidate import partitions, APP_DATA_EXPANDED_EXPECTED
@@ -286,7 +286,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
     family = compiler_family(compiler)
     require(lock.get('compiler_family') == family, 'Pinned compiler wrapper/configuration family differs')
     require(family['gcc']['sha256'] == lock['compiler']['sha256'], 'Pinned generic compiler digest differs')
-    profile = (ROOT / 'profiles/native-idf61.cmake').read_text()
+    profile = (ROOT / 'profiles/native-idf61.cmake').read_text() if profile_text is None else profile_text
     required_definitions = dict(re.findall(r'\b(RISC_[A-Z0-9_]+)=(\d+)\b', profile))
     required_definitions.update(RISC_NATIVE_ESP_IDF='1', RISC_TARGET='\"' + contract['target'] + '\"')
     for row in compile_rows:
@@ -323,7 +323,7 @@ def verify_native(lock, sources, build, compiler, contract, baseline):
         source_files['product-profile/native/VendorDisplayIdf6.inc'] = sha((ROOT / 'native/VendorDisplayIdf6.inc').read_bytes())
     require(runtime_rows and all('-DRISC_NATIVE_ESP_IDF=1' in command for command in runtime_rows), 'Resident Runtime not compiled in native-IDF mode')
     require(all('RISC_TARGET=' in command and contract['target'] in command for command in runtime_rows), 'Wrong compiled product target')
-    profile = (ROOT / 'profiles/native-idf61.cmake').read_text()
+    profile = (ROOT / 'profiles/native-idf61.cmake').read_text() if profile_text is None else profile_text
     definitions = set(re.findall(r'\bRISC_[A-Z0-9_]+=\d+\b', profile))
     require(all(all('-D' + flag in command for flag in definitions) for command in runtime_rows), 'Product profile definitions absent from actual compile commands')
     require(not re.search(r'framework-arduino|libFrameworkArduino|/cores/esp32/', blobs['firmware_map'].decode(errors='replace')), 'Arduino linked into map')
