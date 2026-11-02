@@ -16,7 +16,7 @@
   "profile": "profiles/native-provisioning.cmake",
   "publication_enabled": false,
   "purpose": "Capacity-only full native dependency for shared Home; final product composition is separate.",
-  "runtime_revision": "ab2680a7d965e3b6924bef5299eca9addc4a0026",
+  "runtime_revision": "a27c7541e0fcaa40290d7bb8dc6db07b2ea92f21",
   "runtime_version": "0.4.19",
   "schema": 1,
   "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",

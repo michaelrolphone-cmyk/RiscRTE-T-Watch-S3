@@ -94,7 +94,7 @@ def qualify(args,sources,proof,base,cmake):
     blobs,native_proof=native.verify_native(lock,sources,args.native_build,args.compiler,
         contract,args.baseline.read_bytes(),profile_text=after['definitions'])
     linked=linked_capacity(blobs['firmware_elf'])
-    require(set(re.findall(rb'RISC_RUNTIME_VERSION:([^\x00]*)\x00',blobs['firmware_bin']))=={p['runtime_version'].encode()},'Runtime version marker differs')
+    require(set(re.findall(rb'RISC_RUNTIME_VERSION:([^\x00]+)\x00',blobs['firmware_bin']))=={p['runtime_version'].encode()},'Runtime version marker differs')
     memory=args.native_build/'native-build-evidence/provider-capacity-layout'
     subprocess.run([sys.executable,str(sources['runtime']/'test/home_provider_capacity_layout.py'),'--build',str(args.native_build),'--runtime',str(sources['runtime']),'--output',str(memory)],check=True)
     measured=json.loads((memory/'memory.json').read_bytes())

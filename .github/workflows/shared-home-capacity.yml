@@ -47,6 +47,18 @@ jobs:
           test "$(git -C "$NATIVE_ROOT/sources/product" rev-parse HEAD)" = "$SOURCE_SHA"
       - name: Build and qualify preserved native firmware unit
         run: bash "$NATIVE_ROOT/sources/product/scripts/run_shared_home_capacity_ci.sh"
+      - name: Retain actual linked layout diagnostics
+        if: always()
+        run: |
+          set -euo pipefail
+          test -f "$NATIVE_ROOT/build/riscrte_native.elf" || exit 0
+          mkdir -p "$NATIVE_ROOT/logs"
+          . /opt/esp/idf/export.sh
+          xtensa-esp-elf-readelf -SW "$NATIVE_ROOT/build/riscrte_native.elf" | tee "$NATIVE_ROOT/logs/linked-sections.txt"
+          xtensa-esp-elf-nm -S --size-sort "$NATIVE_ROOT/build/riscrte_native.elf" | tail -100 | tee "$NATIVE_ROOT/logs/largest-symbols.txt"
+          if ! test -f "$NATIVE_ROOT/build/native-build-evidence/provider-capacity-layout/memory.json"; then
+            python "$NATIVE_ROOT/sources/runtime/test/home_provider_capacity_layout.py" --build "$NATIVE_ROOT/build" --runtime "$NATIVE_ROOT/sources/runtime" --output "$NATIVE_ROOT/build/native-build-evidence/diagnostic-capacity-layout"
+          fi
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
