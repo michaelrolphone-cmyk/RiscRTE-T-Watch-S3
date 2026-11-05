@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "product_base_revision": "81dbde86969615f7378cc03c5800960a9092e076",
+  "runtime_revision": "532c502fb2aad358d46166d5fd1df8358148f20e",
+  "runtime_version": "0.4.23",
+  "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "partition_blob": "b7f916aa0261e0723fe0f5eb75977a847c67290e",
+  "baseline_profile": "profiles/native-provisioning.cmake",
+  "qualification_profile": "profiles/wifi-local-native-qualification.cmake",
+  "publication_enabled": false,
+  "product_activation_enabled": false,
+  "hardware_tested": false,
+  "scope": "Native dependency qualification only. No app/store composition, migration kit or product release."
+}
