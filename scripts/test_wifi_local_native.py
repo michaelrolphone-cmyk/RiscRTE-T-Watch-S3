@@ -13,6 +13,47 @@ class GeneratorTests(unittest.TestCase):
         self.assertNotIn('+ variable +', script)
         self.assertIn('include("' + str(contract.ROOT / 'profiles/native-provisioning.cmake') + '")', script)
 
+class LinkedMarkerTests(unittest.TestCase):
+    def test_exact_mixed_representations(self):
+        expected = {
+            'risc_paired_store_abi': b'RISC_PAIRED_STORE_ABI:3\0',
+            'risc_tcp_listener_abi': b'\x01\0\0\0',
+            'risc_entropy_abi': b'\x01\0\0\0',
+            'risc_file_source_abi': b'\x01\0\0\0',
+            'risc_installed_app_capacity': b'\x40\0\0\0',
+            'risc_app_policy_rows': b'RISC_APP_POLICY_ROWS:32\0',
+            'risc_app_requirement_rows': b'RISC_APP_REQUIREMENT_ROWS:32\0',
+        }
+        self.assertEqual(contract.LINKED_MARKERS, expected)
+        contract.validate_linked_markers(expected)
+
+    def test_every_marker_mutation(self):
+        for name, expected in contract.LINKED_MARKERS.items():
+            for wrong in (b'', expected[:-1], expected + b'\0',
+                          bytes([expected[0] ^ 1]) + expected[1:]):
+                with self.subTest(name=name, wrong=wrong):
+                    actual = dict(contract.LINKED_MARKERS)
+                    actual[name] = wrong
+                    with self.assertRaises(ValueError):
+                        contract.validate_linked_markers(actual)
+
+    def test_paired_marker_is_not_integer(self):
+        actual = dict(contract.LINKED_MARKERS)
+        actual['risc_paired_store_abi'] = (3).to_bytes(4, 'little')
+        with self.assertRaises(ValueError):
+            contract.validate_linked_markers(actual)
+
+    def test_marker_set_is_exact(self):
+        for name in contract.LINKED_MARKERS:
+            actual = dict(contract.LINKED_MARKERS)
+            del actual[name]
+            with self.assertRaises(ValueError):
+                contract.validate_linked_markers(actual)
+        actual = dict(contract.LINKED_MARKERS)
+        actual['unknown_marker'] = b'\0'
+        with self.assertRaises(ValueError):
+            contract.validate_linked_markers(actual)
+
 class ContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

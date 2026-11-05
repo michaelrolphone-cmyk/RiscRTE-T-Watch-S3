@@ -111,13 +111,7 @@ def verify_selected(sources, build, compiler, lock, selection, variant):
         section = elf.get_section(symbol['st_shndx'])
         offset = symbol['st_value'] - section['sh_addr']
         return section.data()[offset:offset + symbol['st_size']]
-    for name, value in {'risc_paired_store_abi': 3, 'risc_tcp_listener_abi': 1,
-                        'risc_entropy_abi': 1, 'risc_file_source_abi': 1,
-                        'risc_installed_app_capacity': 64}.items():
-        require(symbol_bytes(name) == value.to_bytes(4, 'little'), 'Released linked ABI changed: ' + name)
-    for name, prefix in (('risc_app_policy_rows', 'RISC_APP_POLICY_ROWS'),
-                         ('risc_app_requirement_rows', 'RISC_APP_REQUIREMENT_ROWS')):
-        require(symbol_bytes(name) == (prefix + ':32\0').encode(), 'Linked app policy bound changed')
+    contract.validate_linked_markers({name: symbol_bytes(name) for name in contract.LINKED_MARKERS})
     retained = json.loads(native.CONTRACT.read_bytes())['app_descriptor']
     descriptor = native.descriptor(blobs['firmware_bin'])
     require(descriptor['project_name'] == retained['project_name'] and

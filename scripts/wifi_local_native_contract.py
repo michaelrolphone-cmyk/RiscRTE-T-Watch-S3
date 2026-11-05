@@ -44,6 +44,23 @@ def require(ok, message):
     if not ok:
         raise ValueError(message)
 
+# These allocated symbols have mixed C representations in the pinned Runtime.
+# PairedBank is a NUL-terminated marker, while backend/capacity markers are u32.
+LINKED_MARKERS = {
+    'risc_paired_store_abi': b'RISC_PAIRED_STORE_ABI:3\0',
+    'risc_tcp_listener_abi': (1).to_bytes(4, 'little'),
+    'risc_entropy_abi': (1).to_bytes(4, 'little'),
+    'risc_file_source_abi': (1).to_bytes(4, 'little'),
+    'risc_installed_app_capacity': (64).to_bytes(4, 'little'),
+    'risc_app_policy_rows': b'RISC_APP_POLICY_ROWS:32\0',
+    'risc_app_requirement_rows': b'RISC_APP_REQUIREMENT_ROWS:32\0',
+}
+
+def validate_linked_markers(actual):
+    require(set(actual) == set(LINKED_MARKERS), 'Missing or unexpected linked ABI marker')
+    for name, expected in LINKED_MARKERS.items():
+        require(actual[name] == expected, 'Released linked ABI changed: ' + name)
+
 def pins():
     p = json.loads((ROOT / 'docs/wifi-local-native/source-pins.json').read_bytes())
     require(type(p['schema']) is int and p['schema'] == 1 and p['publication_enabled'] is False
