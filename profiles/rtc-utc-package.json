@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "source": "drivers/twatch_rtc/driver.c",
+  "manifest": "drivers/twatch_rtc/manifest.json",
+  "package_version": "0.3.0",
+  "utc_offset_seconds": 28800,
+  "basis_authority": "Explicit successor selection preserving original PORTABLE_RTC_UTC8_DENVER app recipe; never inferred from chip identity",
+  "default_recipe": "unchanged prefix-only when RTC_UTC_OFFSET_SECONDS is undefined",
+  "builder": {
+    "repository": "michaelrolphone-cmyk/RiscRTE-System-Apps",
+    "path": "scripts/build_rtc_utc_provider.py",
+    "sha256": "2bff364525cf8cf35d21309ecb50a5a26813a847b24cef3642b5d9c28beb8c73",
+    "revision": "161d267a5ccf3ed176ff23320eba60e89fab7af1"
+  },
+  "required_contracts": {
+    "sdk/app/RiscRtcUtcV1.h": "f50ed950c38cc103f4d0076c14470eb77092ee44611d5e11bb0c212bea6803ac",
+    "sdk/driver/RiscRtcUtcCalendarV1.h": "ea8afec1753baf00f7cf8b7feaec1aec8d9fccea4a7ffcc5a64da91c320486a4"
+  },
+  "include_roots": [
+    "product/include",
+    "product/sdk/driver",
+    "runtime/sdk/app"
+  ],
+  "driver_count_change": 0,
+  "grant_changes": [],
+  "qualified_target": {
+    "sha256": "48fa47720e24623c8e93931ee7936aa2a9d1f0d0c3f436bf04945f9df46589a0",
+    "size_bytes": 6952,
+    "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0",
+    "repeat_identical": true
+  }
+}

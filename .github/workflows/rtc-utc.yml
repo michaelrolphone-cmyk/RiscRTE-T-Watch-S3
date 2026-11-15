@@ -1,0 +1,66 @@
+name: Opt-in RTC UTC successor (watch)
+on:
+  pull_request:
+    paths: ['drivers/twatch_rtc/**', 'profiles/rtc-utc-package.json', '.github/workflows/rtc-utc.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-System-Apps
+          ref: 161d267a5ccf3ed176ff23320eba60e89fab7af1
+          path: .source/system
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE
+          ref: 13eca114cb58469cf6004fafc3da84fbd9d29beb
+          path: .source/runtime
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: michaelrolphone-cmyk/RiscRTE-T-Watch-S3
+          ref: ab9ff33975680c5bb8d9a2e7ed346d0300732a4e
+          path: .source/watch-sdk
+          persist-credentials: false
+      - name: Official pinned ESP32-S3 compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .source/toolchain
+          curl --fail --location --retry 2 --max-time 180 https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/xtensa-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz -o "$RUNNER_TEMP/toolchain.tar.xz"
+          echo "3d50f5cd5f173acfd524e07c1cd69bc99585731a415ca2e5bce879997fe602b8  $RUNNER_TEMP/toolchain.tar.xz" | sha256sum --check
+          tar -xJf "$RUNNER_TEMP/toolchain.tar.xz" -C .source/toolchain
+      - name: Explicit UTC basis, repeat and selected Runtime validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export NATIVE_APP_CC="$PWD/.source/toolchain/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc"
+          python3 .source/system/scripts/build_rtc_utc_provider.py \
+            --source drivers/twatch_rtc/driver.c \
+            --manifest drivers/twatch_rtc/manifest.json \
+            --runtime .source/runtime --offset-seconds 28800 --version 0.3.0 \
+          --include .source/watch-sdk/include --include .source/watch-sdk/sdk/driver \
+            --include .source/runtime/sdk/app --output dist/rtc-utc
+          git rev-parse HEAD > dist/COMMIT.txt
+          git archive HEAD | gzip > dist/product-source.tar.gz
+          tar --exclude=.git -czf dist/dependency-source.tar.gz .source/system .source/runtime .source/watch-sdk
+          printf '%s\n' 'Successor package only; no original recipe, boot selection, native firmware or physical execution changed.' > dist/SCOPE.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rtc-utc-watch-0.3.0
+          if-no-files-found: error
+          path: |
+            dist/rtc-utc/**
+            dist/COMMIT.txt
+            dist/*source.tar.gz
+            dist/SCOPE.txt

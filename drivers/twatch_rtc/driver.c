@@ -155,8 +155,29 @@ static bool start(const risc_provider_dependency_v1 *deps, size_t count) {
 static void stop(void) {
     (void)quiesce();
 }
+#ifdef RTC_UTC_OFFSET_SECONDS
+#include "RiscRtcUtcCalendarV1.h"
+_Static_assert(RTC_UTC_OFFSET_SECONDS >= -86400 && RTC_UTC_OFFSET_SECONDS <= 86400, "Explicit RTC basis range");
+_Static_assert(sizeof(twatch_rtc_api_v1)==sizeof(risc_rtc_clock_prefix_v2), "RTC prefix unchanged");
+_Static_assert(sizeof(twatch_rtc_time_v1)==sizeof(risc_rtc_calendar_v2), "RTC calendar unchanged");
+static bool read_utc(void *context,risc_rtc_utc_snapshot_v1 *out) {
+    if(!out || out->struct_size!=sizeof(*out) || out->reserved)return false;
+    twatch_rtc_time_v1 raw={0};
+    if(!read_time(context,&raw))return false;
+    risc_rtc_calendar_v2 calendar={raw.year,raw.month,raw.day,raw.weekday,raw.hour,raw.minute,raw.second};
+    int64_t epoch;
+    if(!risc_rtc_calendar_utc_v1(&calendar,RTC_UTC_OFFSET_SECONDS,&epoch))return false;
+    risc_rtc_utc_snapshot_v1 copy={sizeof(copy),0,epoch};
+    *out=copy;return true;
+}
+static const struct {
+    twatch_rtc_api_v1 base;uint32_t utc_tag,utc_version;
+    bool (*read_utc)(void*,risc_rtc_utc_snapshot_v1*);
+} api={{2,sizeof(api),NULL,read_time,write_time,alarm,alarm_pending},RISC_RTC_UTC_TAG,1,read_utc};
+#else
 static const twatch_rtc_api_v1 api = {TWATCH_RTC_API_V1, sizeof(api), NULL,         read_time,
                                       write_time,        alarm,       alarm_pending};
+#endif
 static const risc_driver_v2 driver = {RISC_PROVIDER_DRIVER_ABI_V2,
                                       sizeof(driver),
                                       "twatch-rtc",
