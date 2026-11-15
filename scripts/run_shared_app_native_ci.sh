@@ -44,6 +44,7 @@ for copy in a b; do
 done
 python "$NATIVE_ROOT/sources/watch/scripts/verify_shared_default.py" --first "$NATIVE_ROOT/home-a" --second "$NATIVE_ROOT/home-b" --receipt "$NATIVE_ROOT/metadata/home-repeat.json"
 python "$product/scripts/test_shared_app_native_package.py"
+python "$product/scripts/test_shared_app_native_admission.py"
 python "$product/tests/shared_app_native/test_builder.py"
 python "$product/scripts/test_shared_app_native_fetch.py"
 source_args=(--source "product=$product" --source "sdk=$IDF_PATH")
