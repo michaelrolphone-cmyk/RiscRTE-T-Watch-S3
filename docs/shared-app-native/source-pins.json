@@ -1,0 +1,28 @@
+{
+  "drivers_revision": "5890721073ebabd781d5d278e447c761947a5c58",
+  "home": {
+    "version": "0.23.1",
+    "elf": {
+      "bytes": 564796,
+      "sha256": "d5c4ffb07f05c6455b056b47016b2af0d67f0d55e566830e31c2dd2ab84f98ac"
+    },
+    "manifest": {
+      "bytes": 1692,
+      "sha256": "f7561a9e9a38c9a334e45899219ab67242b9ed969ccb7c2fc4285ef1e03ef5cf"
+    }
+  },
+  "image_helper_revision": "74f7491dc470b92dfa41fce41bf0c500f3714a94",
+  "product": "twatch",
+  "profile": "profiles/native-provisioning.cmake",
+  "publication_enabled": false,
+  "purpose": "Published-only native Runtime/Home integration; preserve all released applications/providers and policies. Not Spectrum app delivery.",
+  "runtime_revision": "0052d1fc42e9cfc82d626c5a247d460919c87935",
+  "runtime_version": "0.4.18",
+  "schema": 1,
+  "sdk_revision": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "selected_product_revision": "ab9ff33975680c5bb8d9a2e7ed346d0300732a4e",
+  "system_revision": "bb0cadf3cec3445a64e11513b47b2676f3fdd92d",
+  "utilities_revision": "4fdcad2495c33fe63f5f6faca9b11ced3c739a5b",
+  "version": "1.1.47",
+  "watch_revision": "1c31856c06f6288fb9fb586f05185711596e963e"
+}
